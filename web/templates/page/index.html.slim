@@ -1,0 +1,105 @@
+header.header-home.bg-img.bg-home.bg-home-spacer
+  .container
+    = render Vae.ComponentView, "logo.html", conn: @conn
+    .text-center.my-5
+      h1.display-5.text-white Transformez votre expérience en diplôme reconnu
+      h2.text-white
+        small
+          | avec la Validation des Acquis de l’Expérience -
+          = link to: "#what", title: "Qu'est-ce que la V.A.E." do
+            span V.A.E.
+            i.fa.fa-question-circle
+    .row.justify-content-md-center
+      .col-lg-9
+        = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form"], fn f ->
+          = label f, :profession, "Quel métier avez-vous exercé ?", [class: 'sr-only']
+          .input-group.mb-5.justify-content-center
+            = render Vae.ComponentView, "suggest.html", form: f, position: :home
+            .input-group-append
+              = submit class: 'btn btn-primary btn-lg' do
+                span.d-none.d-md-block Rechercher
+                i.fa.fa-search.d-md-none
+.container
+  .how-to.m-2.my-5
+    h2.display-5.mb-2.text-center Comment ça marche ?
+    .how-to-detail
+      = render Vae.ComponentView, "steps.html", wizard_trails: Vae.Wizard.completed_trails(), conn: @conn
+
+.big-number.bg-default.p-2.p-md-5
+    .container.text-secondary
+        .row.align-items-center
+          .col-md-3.text-center.big-number-figure 80%
+          .col-md-9
+            p.text-left.big-number-details.m-0 des demandeurs d'emploi ont retrouvé un emploi <br/> 6 mois après leur V.A.E.
+        .row
+          .col-md-12
+            p.text-right
+              sub Source Pôle emploi 2015 sur validation de titres professionnels
+.container
+  .what-is-it.m-2.my-5
+    .row
+      .col-md-6
+        h3.mb-3#what Qu'est ce que la
+          |  <strong>V.A.E.</strong> ?
+        p
+          <strong>La VAE</strong> ou <strong>Validation des Acquis de l’Expérience</strong>, est le 3ème moyen en France pour obtenir un diplôme, titre ou certificat depuis 2002.
+        p
+          | Sans retourner en formation, que vous soyez demandeur d’emploi, salarié, non salarié ou sans activité, <strong>la VAE peut vous permettre d’obtenir un « vrai diplôme »</strong> !
+        p
+          | En effet, La VAE vous permet de faire reconnaitre la valeur de vos expériences et d’acquérir le diplôme qui s’y rapporte.
+        = link "En savoir plus sur la V.A.E.", to: page_path(@conn, :vae), class: 'btn btn-link mb-2'
+      .col-md-6= img_tag 'images/what-is-it.jpg', class: 'img-fluid', alt: "Qu'est ce que la V.A.E ?"
+
+.top-three.bg-default.p-2.p-md-5
+  .container
+    .row
+      .col-md-12
+        h3.display-5.mb-5.text-center Top 3 des diplômes
+    .row
+      = for certification <- @top_certifications do
+        .col-md-4
+          .mb-2= link Vae.CertificationView.formatted_name(certification), to: process_path(@conn, :index, certification: certification), class: 'text-secondary'
+    .row
+      .col-md-12.text-right
+        = link "Voir tous les diplômes", to: certification_path(@conn, :index), class: 'btn btn-link'
+
+
+.container
+  .testimonials.m-2.my-5
+    h2.display-5.mb-5.text-center Témoignages
+    .card-deck.mb-3
+      .card.d-flex.justify-content-between
+        .mt-4.text-center
+          = img_tag 'images/quote.png', class: "card-img-top", alt: "Guillemets"
+        .card-body.mt-3.d-flex
+          p.card-text.align-self-center Avril est un vrai coup de pouce pour que les demandeurs d’emploi s’y retrouvent et pour comprendre comment faire une VAE.
+        .footer.mb-2.p-3
+          .d-flex.justify-content-center.align-items-center
+            = img_tag 'images/patricia.png', class: "w-25 h-25 rounded-circle", alt: "Patricia"
+            .ml-3
+              .author Patricia L. (94)
+              .font-italic Conseillère pôle emploi
+
+      .card.d-flex.justify-content-between
+        .mt-4.text-center
+          = img_tag 'images/quote.png', class: "card-img-top", alt: "Guillemets"
+        .card-body.mt-3.d-flex
+          p.card-text.align-self-center Avec un CAP de mécanique, malgré 23 ans d'expérience, les recherches d'emploi étaient compliquées. Avec la VAE, j'ai obtenu un BTS MUC et mon profil a retenu l'attention de nombreux employeurs.
+        .footer.mb-2.p-3
+          .d-flex.justify-content-center.align-items-center
+            = img_tag 'images/thierry.jpg', class: "w-25 h-25 rounded-circle", alt: "Thierry"
+            .ml-3
+              .author Thierry B. (51)<br />
+              .font-italic Directeur commercial
+
+      .card.d-flex.justify-content-between
+        .mt-4.text-center
+          = img_tag 'images/quote.png', class: "card-img-top", alt: "Guillemets"
+        .card-body.mt-3.d-flex
+          p.card-text.align-self-center J'ai attendu trop longtemps pour le faire. Je n'avais rien, ça a vraiment valorisé mes capacités. J'ai obtenu mon CAP petite enfance. Je suis fière de mon diplôme!
+        .footer.mb-2.p-3
+          .d-flex.justify-content-center.align-items-center
+            = img_tag 'images/marie-cecile.jpg', class: "w-25 h-25 rounded-circle", alt: "Marie-Cécile"
+            .ml-3
+              .author Marie-Cécile A. (94)
+              .font-italic Aide à domicile

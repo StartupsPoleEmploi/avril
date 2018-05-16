@@ -1,0 +1,18 @@
+.card.mb-5
+  .card-body
+    .row
+      .col-md-12
+        h1.m-5 Liste des diplômes
+        .results-container
+          .results
+            = for certification <- @certifications do
+              .result-item
+                h3
+                  = link formatted_name(certification), to: process_path(@conn, :index, certification: certification), class: 'main-link'
+                p= level_info(certification.level)
+          = if @page.total_entries > @page.page_size do
+            = case assigns[:rome] do
+              - nil ->
+                = pagination_links @conn, @page
+              - rome ->
+                = pagination_links @conn, @page, [rome.id], path: &rome_path/4, action: :certifications

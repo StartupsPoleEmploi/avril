@@ -1,0 +1,121 @@
+.row
+  .col-md-12
+    .card.mb-5
+      .card-body
+        .d-none.d-md-block.px-3
+            = render Vae.ComponentView, "steps.html", wizard_trails: @wizard_trails
+
+        .px-md-5.pt-md-3
+          .d-flex.flex-row.justify-content-between.align-items-center.mb-md-3
+              h1 Parcours V.A.E
+                = if (!!assigns[:delegate] && assigns[:certification]) do
+                  = " - #{@certification.label}"
+
+              button.d-none.d-md-block.btn.btn-outline-secondary.no-print.no-border.h-50[onclick="javascript:window.print()"]
+                ' Imprimer
+                .fa.fa-print
+
+          .delegate.pt-3
+            .row
+              = if assigns[:delegate] do
+                .col-md-8
+                  .steps
+                    = for i <- 1..8 do
+                      .step.mb-5
+                        = raw Map.get(@delegate.process, :"step_#{i}")
+              - else
+                .col-md-8
+                  .alert.alert-warning.d-none.d-md-block.mb-4
+                    . Le parcours VAE peut présenter des différences selon le certificateur.
+                    . Trouvez le certificateur le plus proche pour connaitre votre parcours précis.
+                  .steps
+                    .step.mb-5
+                      h3 La candidature auprès du certificateur de votre diplôme
+                      p Constituez votre dossier, disponible sur ce site. <br />Prenez contact avec votre certificateur pour être orienté.
+                    .step.mb-5
+                      h3 Le dossier d’expériences
+                      p Présentez vos expériences, vos compétences, votre environnement de travail et vos outils.
+                    .step.mb-5
+                      h3 L’évaluation finale
+                      p Décrivez et précisez à l’oral certains éléments de votre dossier d’expérience
+                    .step.mb-5
+                      h3 Résultat
+                      p Les résultats vous seront communiqués quelques semaines après l’oral.
+
+              .col-md-4.order-first.order-md-last
+                = if assigns[:delegate] do
+                  .sticky-top
+                    .card.mb-4
+                      .card-body
+                        .card-title
+                          h4= @delegate.name
+                        .card-text
+                          ul.delegate-details.list-unstyled.pl-0
+                            = if @delegate.person_name && @delegate.person_name != "" do
+                              li
+                                i.fa.fa-user[aria-hidden: "true"]
+                                '
+                                = @delegate.person_name
+
+                            = if @delegate.telephone && @delegate.telephone != "" do
+                              li
+                                i.fa.fa-phone[aria-hidden: "true"]
+                                '
+                                = @delegate.telephone
+
+                            = if @delegate.email && @delegate.email != "" do
+                              li
+                                = link @delegate.email, to: "mailto:#{@delegate.email}"
+
+                            = if @delegate.website && @delegate.website != "" do
+                              li
+                                = link @delegate.website, to: @delegate.website, target: '_blank'
+                            li
+                              i.fa.fa-map-marker
+                              '
+                              = @delegate.address
+                        .text-center
+                          = render_contact(@delegate)
+                  .d-flex.flex-row.all-delegates
+                    = if assigns[:certification] do
+                      = link "Liste des centres de certification", to: process_path(@conn, :delegates, @delegate.process_id, certification: @certification, lat: @lat, lng: @lng), class: "text-secondary text-center w-100"
+
+                - else
+                  = if assigns[:certification] do
+                    .card.mb-4
+                      .card-body
+                        .card-title
+                            h4 Trouvez le certificateur le plus proche
+                        .card-text
+                          p
+                            = form_for @conn, process_path(@conn, :search, certification: @certification), [as: :delegate_search, id: "delegate_form"], fn f ->
+                              .form-group
+                              = search_input f, :address, placeholder: "Quelle est votre localité"
+                              = hidden_input f, :lat
+                              = hidden_input f, :lng
+
+                            p
+                              i Le certificateur est l’organisme qui vous permettra d’obtenir votre diplôme par la démarche VAE.
+
+                            script src="https://cdn.jsdelivr.net/npm/places.js@1.6.0"
+                            javascript:
+                              var placesAutocomplete = places({
+                                container: document.querySelector('#delegate_search_address'),
+                                countries: ['FR'],
+                                aroundLatLngViaIP: true,
+                                appId: #{System.get_env("ALGOLIA_PLACES_APP_ID")},
+                                apiKey: #{System.get_env("ALGOLIA_PLACES_SEARCH_API_KEY")}
+                              });
+
+                              var $lat = document.querySelector('#delegate_search_lat')
+                              var $lng = document.querySelector('#delegate_search_lng')
+                              placesAutocomplete.on('change', function(e) {
+                                $lat.value = e.suggestion.latlng.lat;
+                                $lng.value = e.suggestion.latlng.lng;
+                                document.querySelector('#delegate_form').submit()
+                              });
+
+                              placesAutocomplete.on('clear', function() {
+                                $lat.value = undefined;
+                                $lng.value = undefined;
+                              });

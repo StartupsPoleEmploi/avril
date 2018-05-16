@@ -1,0 +1,26 @@
+html.html_error_page[lang: "fr"]
+  head
+    meta content="text/html; charset=UTF-8" http-equiv="Content/type"
+    meta charset="UTF-8"
+    meta content="IE=edge" http-equiv="X-UA-Compatible"
+    meta content="width=device-width, initial-scale=1" name="viewport"
+
+    title 404 - Page non trouvée
+
+    link rel="icon" type="image/x-icon" href=static_path(@conn,"/favicon.ico")
+    link href=static_path(@conn,"/css/app.css") rel="stylesheet"
+    link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"
+
+  body.error_page.h-100.m-0
+    main.p-0[role: "main"]
+      .container
+        .row.h-100
+          .col.align-self-center.text-center
+            .error_code
+              = render Vae.ComponentView, "logo.html", conn: @conn
+              p 404
+            p.text-primary Il semblerait que vous vous soyez perdus !
+            = link "Retour", to: root_path(@conn, :index), class: "btn btn-primary btn-lg"
+
+    = if Mix.env == :prod do
+      = render ComponentView, "analytics", conn: @conn

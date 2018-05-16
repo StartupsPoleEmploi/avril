@@ -1,0 +1,20 @@
+footer{class=get_footer_class(@conn)}
+  .text-center
+    = link "Mentions légales", to: page_path(@conn, :terms_of_use), class: 'text-info'
+     |  · 
+    = link "Contact", to: "mailto:avril@pole-emploi.fr", class: 'text-info'
+     |  · 
+    = link "Métiers", to: profession_path(@conn, :index), class: 'text-info'
+     |  · 
+    = link "Diplômes", to: certification_path(@conn, :index), class: 'text-info'
+     |  · 
+    = link "Certificateurs", to: certifier_path(@conn, :index), class: 'text-info'
+     |  · 
+    = link "Délégataires", to: delegate_path(@conn, :index), class: 'text-info'
+
+  .font-italic.small
+    ' Propulsé par
+    = link to: "http://www.pole-emploi.fr" do
+      = img_tag '/images/pole_emploi.svg', class: 'h-50'
+
+script src=static_path(@conn,"/js/app.js")

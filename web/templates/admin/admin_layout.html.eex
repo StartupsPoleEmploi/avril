@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="<%= static_path(@conn, "/css/simditor.css") %>">
+<script src="<%= static_path(@conn, "/js/simditor.min.js") %>"></script>
+<link rel="stylesheet" href="<%= static_path(@conn, "/css/multi-select.dist.css") %>">
+<script src="<%= static_path(@conn, "/js/jquery.multi-select.js") %>"></script>
+<script type="text/javascript">
+ $(document).ready(function(){
+
+   Simditor.locale = 'en-US';
+
+   if ($("[id^=process_step_]").length) {
+     var i;
+     for (i = 1; i < 9; i++) {
+       var editor = new Simditor({
+         textarea: $('#process_step_' + i),
+         toolbar: [
+           'title',
+           'bold',
+           'italic',
+           'underline',
+           'strikethrough',
+           'ol',
+           'ul',
+           'blockquote',
+           'table',
+           'link',
+           'hr',
+           'indent',
+           'outdent',
+           'alignment'
+         ],
+         toolbarFloat: false,
+         defaultImage: 'http://temp.im/150x150'
+       });
+     }
+   }
+ })
+</script>

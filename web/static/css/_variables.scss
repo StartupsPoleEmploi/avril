@@ -1,0 +1,35 @@
+// BS4
+$theme-colors: (
+  primary: #05CFA8,
+  secondary: #194065,
+  info: #5D5C5B,
+  light: #F6F6F6
+);
+
+// VAE
+$brand-light: #7B81C1;
+$body-bg: #F7F8FA;
+$bg-secondary: #DEE6EB;
+$header-margin: 10rem;
+
+// Bootstrap
+$brand-primary: theme-color('primary');
+$brand-info: theme-color('info');
+$gray-light: theme-color('light');
+$gray: #292b2c;
+$teal: #05CFA8;
+
+$jumbotron-bg: #F5F3F5;
+$jumbotron-color: $brand-primary;
+
+//buttons
+$btn-info-color: $brand-primary;
+
+//$btn-primary-color: #fff;
+$headings-small-color: $brand-light !important;
+
+// Breadcrumbs
+$breadcrumb-active-color: theme-color('secondary');
+
+//Suggest
+$suggest-color: #59fbdc;

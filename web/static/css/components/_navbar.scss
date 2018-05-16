@@ -1,0 +1,32 @@
+/* Navbar */
+nav.navbar {
+  background-color: white !important;
+  border-bottom: 1px #ccc solid;
+
+  a {
+    &:hover {
+      text-decoration: none;
+      color: $brand-primary;
+    }
+    small{
+      color: $gray;
+    }
+  }
+
+  .form-inline .form-control {
+    width: 400px;
+    @include media-breakpoint-down(lg) {
+      width: 300px;
+    } 
+  }
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding: 0;
+  background-color: white;
+}
+
+.breadcrumb .breadcrumb-item::before {
+  color: $gray;
+} 

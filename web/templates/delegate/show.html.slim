@@ -1,0 +1,52 @@
+.row
+  .col-md-12
+    .card.mb-5
+      .card-body
+        .row
+          .col-md-12
+            h1.m-2.m-sm-5.text-center Découvrez votre parcours VAE
+        .d-none.d-md-block
+          = render Vae.ComponentView, "steps.html", wizard_trails: @wizard_trails
+        .delegate
+          .row
+            .col-md-4
+              .card.mb-4
+                .card-body
+                  .card-title
+                    h2= @delegate.name
+                  .card-text
+                    ul.delegate-details.list-unstyled.pl-0
+                      = if @delegate.person_name && @delegate.person_name != "" do
+                        li
+                          i.fa.fa-user[aria-hidden: "true"]
+                          '
+                          = @delegate.person_name
+
+                      = if @delegate.telephone && @delegate.telephone != "" do
+                        li
+                          i.fa.fa-phone[aria-hidden: "true"]
+                          '
+                          = @delegate.telephone
+
+                      = if @delegate.email && @delegate.email do
+                        li
+                          = link @delegate.email, to: "mailto:#{@delegate.email}"
+
+                      = if @delegate.website && @delegate.website do
+                        li= link @delegate.website, to: @delegate.website, target: '_blank'
+                      li
+                        i.fa.fa-map-marker
+                        '
+                        = @delegate.address
+                  button.btn.btn-outline-secondary.no-print[onclick="javascript:window.print()"]
+                    ' Imprimer
+                    .fa.fa-print
+
+            .col-md-8
+              h2.mb-4 Votre parcours V.A.E
+                = if @certification do
+                  = " - #{@certification.label}"
+              .steps
+                = for i <- 1..8 do
+                  .step.mb-5
+                    = raw Map.get(@delegate.process, :"step_#{i}")

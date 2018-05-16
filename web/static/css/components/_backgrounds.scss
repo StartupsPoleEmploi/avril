@@ -1,0 +1,44 @@
+.bg-default {
+  background-color: white;
+  color: #3a3a3a;
+}
+
+.bg-light {
+  background-color: $gray-light;
+  color: #fff;
+  a {
+    color: #fff;
+  }
+}
+
+.bg-secondary {
+  background-color: $bg-secondary !important;
+  color: theme-color('info');
+  a {
+    color: theme-color('info');
+  }
+}
+
+.bg-primary {
+  background-color: $brand-primary;
+  color: #fff;
+  a {
+    color: #fff;
+  }
+}
+
+.bg-img {
+  margin: 0;
+  padding: 0;
+  background-position: center top;
+  background-size: cover;
+}
+
+.bg-home {
+  background-color: #194065;
+  background-image: url("/images/home_cover.jpg");
+}
+
+.bg-header-default {
+  background-image: url("/images/default_cover.jpg");
+}
