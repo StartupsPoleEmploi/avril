@@ -7,31 +7,6 @@ html {
   min-height: 100%;
 }
 
-/* Footer */
-$footer-height: 4.5rem;
-body:not(.home) {
-  margin-bottom: $footer-height;
-}
-
-footer {
-  text-align: center;
-  height: $footer-height;
-  line-height: $footer-height;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  &.fixed {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-  }
-  .row > :last-child {
-    color: #194065;
-  }
-  img {
-    width: 50px;
-  }
-}
-
 body:not(.home) > main {
   margin-top: - $header-margin;
 }

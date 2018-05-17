@@ -3,8 +3,11 @@ exports.config = {
   files: {
     javascripts: {
       joinTo: {
-        'js/app.js': /^web\/static\/js|node_modules/,
-        'js/vendor.js': ["web/static/vendor/awesomplete-util.min.js"],
+        // 'js/app.js': /^web\/static\/js|node_modules/,
+        // 'js/vendor.js': ["web/static/vendor/awesomplete-util.min.js"],
+        // TODO: THis following works but introduce error... Uncaught Error: Cannot find module 'process' from '/'
+        'js/app.js': 'web/static/js/*.js',
+        'js/vendor.js': ["web/static/vendor/awesomplete-util.min.js", /node_modules/],
         'js/analytics.js': /^(web\/static\/vendor\/analytics\.js)/,
         "js/ex_admin_common.js": ["web/static/vendor/ex_admin_common.js"],
         "js/admin_lte2.js": ["web/static/vendor/admin_lte2.js"],
@@ -13,7 +16,7 @@ exports.config = {
                                "web/static/vendor/simditor/hotkeys.min.js",
                                "web/static/vendor/simditor/uploader.min.js",
                                "web/static/vendor/simditor/simditor.min.js"],
-         "js/jquery.multi-select.js": ["web/static/vendor/multiselect/jquery.multi-select.js"],
+         "js/jquery.multi-select.js": ["web/static/vendor/multiselect/jquery.multi-select.js"]
       }
     },
     stylesheets: {

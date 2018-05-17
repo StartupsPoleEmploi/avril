@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="46px" height="46px" viewBox="0 0 46 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <title>conseillere</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="WebDesign" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Étapes-VAE" transform="translate(-920.000000, -283.000000)">
+            <g id="Group-4" transform="translate(237.000000, 272.000000)">
+                <g id="conseillere" transform="translate(683.000000, 11.000000)">
+                    <circle id="Oval" fill="#B3B3B3" fill-rule="nonzero" cx="23" cy="23" r="23"></circle>
+                    <path d="M13,17 C13,11.47715 17.47715,7 23,7 C28.52285,7 33,11.47715 33,17 L33,25.9934998 C33,28.2062302 31.2075272,30 29.0007706,30 L16.9992294,30 C14.7905197,30 13,28.2060509 13,25.9934998 L13,17 Z" id="Shape" fill="#444444"></path>
+                    <rect id="Rectangle-path" fill="#EAC3A2" x="18" y="23" width="10" height="11.4130402"></rect>
+                    <path d="M36.309082,34.154541 L28,30 C28,30 26,32 23,32 C20,32 18,30 18,30 L9.690918,34.154541 C8.1981201,34.9009399 7,36.8392944 7,38.4914551 L7,39.5144654 C11.1401367,43.5264282 16.7797241,46 23,46 C29.2202759,46 34.8598633,43.5264282 39,39.5144653 L39,38.491455 C39,36.8416748 37.7952271,34.897583 36.309082,34.154541 Z" id="Shape" fill="#FA3877"></path>
+                    <path d="M15,18.5454483 L15,20 C15,24.4109097 18.5890903,28 23,28 C27.4109097,28 31,24.4109097 31,20 L31,18.5454483 C31,17.3404694 30.0231705,16.3636284 28.8181801,16.3636284 C26.2851391,16.3636284 24.0881691,14.9247685 23,12.8197785 C21.9118309,14.9247685 19.7148609,16.3636284 17.1818199,16.3636284 C15.9768295,16.3636284 15,17.3404694 15,18.5454483 Z" id="Shape" fill="#EAD8C5"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

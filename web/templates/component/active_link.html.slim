@@ -1,0 +1,4 @@
+= if current_path(@conn, %{}) == @to do
+  = link @text, to: @to, class: "#{@class} active"
+- else
+  = link @text, to: @to, class: @class

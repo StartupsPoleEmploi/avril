@@ -3,13 +3,6 @@ defmodule Vae.ComponentView do
 
   import PhoenixFormAwesomplete
 
-  def get_footer_class(conn) do
-    case root_path(conn, :index) == conn.request_path do
-      true -> ""
-      _    -> "fixed"
-    end
-  end
-
   def suggest_clean do
     script("""
       var accents = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž",
@@ -44,44 +37,52 @@ defmodule Vae.ComponentView do
   end
 
   def suggest(form, position) do
-    awesomplete(form,
+    awesomplete(
+      form,
       :profession,
-      [class: suggest_class(position),
-       onfocus: "this.value='';",
-       placeholder: "Quel métier avez-vous exercé ?",
-       required: true],
-      %{url: "/professions/_suggest?search[for]=",
+      [
+        class: suggest_class(position),
+        onfocus: "this.value='';",
+        placeholder: "Pour quelle expérience souhaitez-vous un diplôme ?",
+        required: true
+      ],
+      %{
+        url: "/professions/_suggest?search[for]=",
         value: "value",
         limit: 4,
         autoFirst: true,
         filter: "filterWords",
         item: "itemWords",
-        sort: false})
+        sort: false
+      }
+    )
   end
 
   defp suggest_class(:home), do: "form-control form-control-lg"
   defp suggest_class(_), do: "form-control mr-sm-2"
 
-  def render("analytics", %{ conn: conn }) do
+  def render("analytics", %{conn: conn}) do
     dimension1 =
       case conn.remote_ip do
         {109, 26, 209, n} when n >= 86 and n <= 89 -> "true"
         _ -> "false"
       end
-    {:safe,"""
-    <!-- Google Analytics -->
-    <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
-    ga('set', 'dimension1', '#{dimension1}');
-    ga('send', 'pageview');
-    </script>
-    <!-- End Google Analytics -->
-    """}
+    {:safe,
+     """
+     <!-- Google Analytics -->
+     <script>
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+     ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
+     ga('set', 'dimension1', '#{dimension1}');
+     ga('send', 'pageview');
+     </script>
+     <!-- End Google Analytics -->
+     """}
   end
 
   def render("hotjar", _) do
@@ -138,45 +139,51 @@ defmodule Vae.ComponentView do
     |> suffix()
   end
 
-  def complete_page_title(%{ view_module: Vae.CertificationView, page: %Scrivener.Page{total_entries: 0} } = assigns) do
+  def complete_page_title(
+        %{view_module: Vae.CertificationView, page: %Scrivener.Page{total_entries: 0}} = assigns
+      ) do
     "0 diplôme de #{assigns[:profession]}"
   end
 
-  def complete_page_title(%{ view_module: Vae.CertificationView, view_template: "show.html"} = assigns) do
+  def complete_page_title(
+        %{view_module: Vae.CertificationView, view_template: "show.html"} = assigns
+      ) do
     case assigns[:profession] do
-      nil        -> "Centre V.A.E – #{assigns[:certification].label}"
+      nil -> "Centre V.A.E – #{assigns[:certification].label}"
       profession -> "Centre V.A.E – #{assigns[:certification].label} - #{assigns[:profession]}"
     end
   end
 
-  def complete_page_title(%{ view_module: Vae.CertificationView } = assigns) do
+  def complete_page_title(%{view_module: Vae.CertificationView} = assigns) do
     "V.A.E #{assigns[:profession]}"
   end
 
-  def complete_page_title(%{ view_module: Vae.ProfessionView }) do
+  def complete_page_title(%{view_module: Vae.ProfessionView}) do
     "Choisissez votre métier pour obtenir votre diplôme grâce à la V.A.E"
   end
 
-  def complete_page_title(%{ view_module: Vae.CertifierView, page: %Scrivener.Page{total_entries: 0} } = assigns) do
+  def complete_page_title(
+        %{view_module: Vae.CertifierView, page: %Scrivener.Page{total_entries: 0}} = assigns
+      ) do
     "0 centre V.A.E pour #{assigns[:certification].label}"
   end
 
-  def complete_page_title(%{ view_module: Vae.CertifierView, view_template: "index.html" }) do
+  def complete_page_title(%{view_module: Vae.CertifierView, view_template: "index.html"}) do
     "Centres V.A.E"
   end
 
-  def complete_page_title(%{ view_module: Vae.CertifierView } = assigns) do
+  def complete_page_title(%{view_module: Vae.CertifierView} = assigns) do
     case assigns[:profession] do
-      nil        -> "Centre V.A.E – #{assigns[:certification].label}"
+      nil -> "Centre V.A.E – #{assigns[:certification].label}"
       profession -> "Centre V.A.E – #{assigns[:certification].label} - #{assigns[:profession]}"
     end
   end
 
-  def complete_page_title(%{ view_module: Vae.DelegateView, view_template: "show.html" } = assigns) do
+  def complete_page_title(%{view_module: Vae.DelegateView, view_template: "show.html"} = assigns) do
     "Parcours V.A.E #{assigns[:delegate].name}"
   end
 
-  def complete_page_title(%{ view_module: Vae.DelegateView }) do
+  def complete_page_title(%{view_module: Vae.DelegateView}) do
     "Liste des centres de certifications V.A.E"
   end
 

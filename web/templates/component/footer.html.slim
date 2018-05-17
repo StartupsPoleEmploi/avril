@@ -1,20 +1,16 @@
-footer{class=get_footer_class(@conn)}
-  .text-center
-    = link "Mentions légales", to: page_path(@conn, :terms_of_use), class: 'text-info'
-     |  · 
-    = link "Contact", to: "mailto:avril@pole-emploi.fr", class: 'text-info'
-     |  · 
-    = link "Métiers", to: profession_path(@conn, :index), class: 'text-info'
-     |  · 
-    = link "Diplômes", to: certification_path(@conn, :index), class: 'text-info'
-     |  · 
-    = link "Certificateurs", to: certifier_path(@conn, :index), class: 'text-info'
-     |  · 
-    = link "Délégataires", to: delegate_path(@conn, :index), class: 'text-info'
-
-  .font-italic.small
-    ' Propulsé par
-    = link to: "http://www.pole-emploi.fr" do
-      = img_tag '/images/pole_emploi.svg', class: 'h-50'
+footer.dm-footer
+  .container.d-flex
+    = link to: root_path(@conn, :index), do: img_tag '/images/avril.svg', class: 'logo', alt: 'Avril'
+    ul.nav.dm-nav.ml-auto
+      li.nav-item
+        = render "active_link.html", text: "Mentions légales", class: "nav-link", to: page_path(@conn, :terms_of_use), conn: @conn
+      li.nav-item
+        = render "active_link.html", text: "Métiers", class: "nav-link", to: profession_path(@conn, :index), conn: @conn
+      li.nav-item
+        = render "active_link.html", text: "Diplômes", class: "nav-link", to: certification_path(@conn, :index), conn: @conn
+      li.nav-item
+        = render "active_link.html", text: "Certificateurs", class: "nav-link", to: certifier_path(@conn, :index), conn: @conn
+      li.nav-item
+        = render "active_link.html", text: "Délégataires", class: "nav-link", to: delegate_path(@conn, :index), conn: @conn
 
 script src=static_path(@conn,"/js/app.js")
