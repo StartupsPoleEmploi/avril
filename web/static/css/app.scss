@@ -195,6 +195,20 @@ nav.navbar.dm-navbar {
   .navbar-toggler {
     font: normal 18px/30px $dm-font-lato;
     color: $dm-primary-blue;
+    &:before {
+      content: "\ea0b";
+      font: normal 16px/24px avril;
+      font-weight: normal;
+      font-style: normal;
+      margin-right: 0.5rem;
+    }
+    &.collapsed:before {
+      content: "\ea08";
+      font: normal 16px/24px avril;
+      font-weight: normal;
+      font-style: normal;
+      margin-right: 0.5rem;
+    }
   }
   .navbar-brand {
     img {
