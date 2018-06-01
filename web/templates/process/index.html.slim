@@ -103,8 +103,8 @@
                                 container: document.querySelector('#delegate_search_address'),
                                 countries: ['FR'],
                                 aroundLatLngViaIP: true,
-                                appId: #{System.get_env("ALGOLIA_PLACES_APP_ID")},
-                                apiKey: #{System.get_env("ALGOLIA_PLACES_SEARCH_API_KEY")}
+                                appId: #{Poison.encode!(System.get_env("ALGOLIA_PLACES_APP_ID"))},
+                                apiKey: #{Poison.encode!(System.get_env("ALGOLIA_PLACES_SEARCH_API_KEY"))}
                               });
 
                               var $lat = document.querySelector('#delegate_search_lat')
