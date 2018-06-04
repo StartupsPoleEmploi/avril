@@ -26,9 +26,8 @@ defmodule Vae.AlgoliaPlaces do
   def get(query) do
     with {:ok, body} <-
            Poison.encode(%{query: query, language: "fr", countries: ["fr"], hitsPerPage: 1}),
-         {:ok, response} <- HTTPoison.post(@algolia_places_query, body, @algolia_headers),
-         {:ok, body} <- Poison.decode(response.body) do
-      {:ok, body}
+         {:ok, response} <- HTTPoison.post(@algolia_places_query, body, @algolia_headers) do
+      Poison.decode(response.body)
     else
       {_, error} ->
         Logger.warn(fn -> error end)
