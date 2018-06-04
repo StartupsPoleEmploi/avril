@@ -43,7 +43,7 @@
       .col-md-6
         h2.dm-h2 La VAE est une démarche de certification diplômante reconnue
         p.dm-p C’est un véritable diplôme que vous propose la VAE. Pas de formation, simplement un diplôme en lien avec vos compétences acquises. <br />C'est le 3ème moyen en France pour obtenir un diplôme !
-        .d-flex.my-md-5.mt-2
+        = link to: page_path(@conn, :vae), class: "p-0 d-flex my-md-5 mt-2" do
           = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
           .d-flex.flex-column.ml-4
             h6.dm-h6 C’est quoi une VAE ?
