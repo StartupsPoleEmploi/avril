@@ -46,6 +46,6 @@ defmodule Vae.AlgoliaPlaces do
   def get_cities(%{"is_city" => true} = params), do: params["locale_names"]
   def get_cities(params), do: params["city"]
 
-  def get_administrative(%{"administrative" => nil}), do: nil
-  def get_administrative(%{"administrative" => administrative}), do: List.first(administrative)
+  def get_administrative(%{"administrative" => administrative}) when not is_nil(administrative), do: List.first(administrative)
+  def get_administrative(_), do: nil
 end
