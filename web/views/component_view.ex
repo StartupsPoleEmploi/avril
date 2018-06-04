@@ -100,6 +100,33 @@ defmodule Vae.ComponentView do
     """}
   end
 
+  def render("places", _) do
+    {:safe, """
+    <script>
+    var placesAutocomplete = places({
+      container: document.querySelector('#delegate_search_address'),
+      countries: ['FR'],
+      aroundLatLngViaIP: true,
+      appId: "#{Application.get_env(:vae, :algolia_places_app_id)}",
+      apiKey: "#{Application.get_env(:vae, :algolia_places_search_api_key)}"
+    });
+
+    var $lat = document.querySelector('#delegate_search_lat')
+    var $lng = document.querySelector('#delegate_search_lng')
+    placesAutocomplete.on('change', function(e) {
+      $lat.value = e.suggestion.latlng.lat;
+      $lng.value = e.suggestion.latlng.lng;
+      document.querySelector('#delegate_form').submit()
+    });
+
+    placesAutocomplete.on('clear', function() {
+      $lat.value = undefined;
+      $lng.value = undefined;
+    });
+    </script>
+    """}
+  end
+
   @title_suffix " | Avril - un service Pôle emploi"
 
   def suffix(title) do
