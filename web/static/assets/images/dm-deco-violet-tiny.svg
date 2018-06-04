@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="449px" height="449px" viewBox="0 0 449 449" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Rectangle</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="3.75429258%" y1="2.65796703%" x2="96.6294643%" y2="95.467033%" id="linearGradient-1">
+            <stop stop-color="#443C77" offset="0%"></stop>
+            <stop stop-color="#6758C7" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="WebDesign" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-956.000000, -1171.000000)" fill="url(#linearGradient-1)">
+            <path d="M1215.77787,1185.64466 L1390.2004,1360.06719 C1409.72661,1379.5934 1409.72661,1411.25165 1390.2004,1430.77787 L1215.77787,1605.2004 C1196.25165,1624.72661 1164.5934,1624.72661 1145.06719,1605.2004 L970.644661,1430.77787 C951.118446,1411.25165 951.118446,1379.5934 970.644661,1360.06719 L1145.06719,1185.64466 C1164.5934,1166.11845 1196.25165,1166.11845 1215.77787,1185.64466 Z" id="Rectangle"></path>
+        </g>
+    </g>
+</svg>
