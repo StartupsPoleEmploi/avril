@@ -34,3 +34,12 @@ $(function () {
     });
   }
 })
+
+$(window).scroll(function() {
+  var y = $(window).scrollTop();
+  if (y > 0) {
+    $("nav").addClass('--not-top');
+  } else {
+    $("nav").removeClass('--not-top');
+  }
+});
