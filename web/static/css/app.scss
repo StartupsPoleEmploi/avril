@@ -135,6 +135,8 @@ form.dm-search-box {
     border: 1px solid #E0E0E0;
     border-radius: 4px;
     min-height: 80px;
+    padding-top: 28px;
+    padding-bottom: 28px;
     @include media-breakpoint-up(md) {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
