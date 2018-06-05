@@ -152,33 +152,32 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
               i.ic-icon.ic-time-clock
               |  Temps de lecture : 4 minutes
 
-.dm-bg-deco-15
-  .container.mt-md-7.my-5
-    .row
-      .col-md-4
-        h3.dm-h3.my-4 Avril
-        ul.nav.dm-nav.flex-column
-          li.nav-item
-            = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
-          li.nav-item
-            = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-          li.nav-item
-            = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
-      .col-md-4
-        h3.dm-h3.my-4 Liens utiles pour la VAE
-        ul.nav.dm-nav.flex-column
-          li.nav-item
-            = link "Portail de la VAE", to: "http://www.vae.gouv.fr/", class: "nav-link p-0"
-          li.nav-item
-            = link "France-VAE", to: "https://www.francevae.fr/", class: "nav-link p-0"
-          li.nav-item
-            = link "Défi métiers", to: "https://www.defi-metiers.fr/dossiers/vae-mode-demploi", class: "nav-link p-0"
-      .col-md-4
-        h3.dm-h3.my-4 Pages du site
-        ul.nav.dm-nav.flex-column
-          li.nav-item
-            = link "C’est quoi une VAE ?", to: page_path(@conn, :vae), class: "nav-link p-0"
-          li.nav-item
-            = link "C’est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-          li.nav-item
-            = link "C’est quoi une certification ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+.container.mt-md-7.my-5
+  .row
+    .col-md-4
+      h3.dm-h3.my-4 Avril
+      ul.nav.dm-nav.flex-column
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
+        li.nav-item
+          = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        li.nav-item
+          = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
+    .col-md-4
+      h3.dm-h3.my-4 Liens utiles pour la VAE
+      ul.nav.dm-nav.flex-column
+        li.nav-item
+          = link "Portail de la VAE", to: "http://www.vae.gouv.fr/", class: "nav-link p-0"
+        li.nav-item
+          = link "France-VAE", to: "https://www.francevae.fr/", class: "nav-link p-0"
+        li.nav-item
+          = link "Défi métiers", to: "https://www.defi-metiers.fr/dossiers/vae-mode-demploi", class: "nav-link p-0"
+    .col-md-4
+      h3.dm-h3.my-4 Pages du site
+      ul.nav.dm-nav.flex-column
+        li.nav-item
+          = link "C’est quoi une VAE ?", to: page_path(@conn, :vae), class: "nav-link p-0"
+        li.nav-item
+          = link "C’est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        li.nav-item
+          = link "C’est quoi une certification ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
