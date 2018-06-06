@@ -24,22 +24,6 @@ $fa-font-path: "../fonts";
 @import "home";
 @import "delegate";
 
-html {
-  height: 100%;
-}
-
-body {
-  position: relative;
-  min-height: 100%;
-  padding-bottom: 40px;
-}
-
-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-
 .percent {
   color: $dm-primary-purple;
   font: bold 104px/142px $dm-font-nuito;
@@ -314,6 +298,7 @@ li.nav-item > a.nav-link[href^='mailto:']:before {
 }
 
 footer {
+  margin-top: auto;
   text-align: center;
   padding-top: 1rem;
   padding-bottom: 1rem;
