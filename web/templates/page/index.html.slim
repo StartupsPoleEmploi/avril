@@ -4,7 +4,7 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
   .collapse.navbar-collapse[id="navbarCollapse"]
     ul.navbar-nav.ml-auto.flex-md-row.flex-column.align-items-center.my-md-0.my-5
       li.nav-item
-       = render Vae.ComponentView, "active_link.html", text: "C'est quoi une VAE ?", class: "nav-link p-0", to: page_path(@conn, :vae), conn: @conn
+       = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: page_path(@conn, :vae), conn: @conn
       li.nav-item
         = link "C'est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
       li.nav-item
@@ -62,7 +62,7 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
             .green-line
             p.dm-read-time
               i.ic-icon.ic-time-clock
-              |  Temps de lecture : 4 minutes
+              |  Temps de lecture : 3 minutes
     .row.my-md-6.my-5
       .col-md-6
         h2.dm-h2 Obtenir un diplôme, se repositionner sur le marché de l’emploi…
@@ -74,7 +74,7 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
             .pink-line
             p.dm-read-time
               i.ic-icon.ic-time-clock
-              |  Temps de lecture : 4 minutes
+              |  Temps de lecture : 1 minute
     .row.my-md-6.my-5
       .col-md-6.best-way
       .col-md-6
@@ -84,11 +84,11 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
         .d-flex.my-md-5.mt-2
           = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
           .d-flex.flex-column.ml-4
-            h6.dm-h6 C'est quoi un certificateur ?
+            h6.dm-h6 C’est quoi un certificateur ?
             .purple-line
             p.dm-read-time
               i.ic-icon.ic-time-clock
-              |  Temps de lecture : 4 minutes
+              |  Temps de lecture : 1 minute
 
     .row.my-md-6.my-5
       .col-md-12.text-center
@@ -146,7 +146,7 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
         .d-flex.my-md-5.mt-2
           = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
           .d-flex.flex-column.ml-4
-            h6.dm-h6 Découvrez l'équipe Avril
+            h6.dm-h6 Découvrez l’équipe Avril
             .green-line
             p.dm-read-time
               i.ic-icon.ic-time-clock
