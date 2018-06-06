@@ -1,7 +1,9 @@
-# Vae
+# Avril
 
-To start your Phoenix app:
+Avril est un projet Open Source des Startups d'Etat Pôle emploi. 
+Avril traite le sujet de la VAE : validation des acquis de l'expérience. La VAE permet d'obtenir un diplôme grâce à ses compétences. 
 
+Pour lancer l'application Pheonix (EN) : 
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
   * Import data with `mix run priv/repo/seeds.exs`
