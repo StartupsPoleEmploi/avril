@@ -69,7 +69,10 @@ config :algolia,
 
 config :vae,
   algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
-  algolia_places_search_api_key: System.get_env("ALGOLIA_PLACES_SEARCH_API_KEY")
+  algolia_places_search_api_key: System.get_env("ALGOLIA_PLACES_SEARCH_API_KEY"),
+  algolia_places_load_balancer: [
+    System.get_env("ALGOLIA_PLACES_APPS")
+  ]
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom
