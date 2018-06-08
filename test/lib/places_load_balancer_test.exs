@@ -1,54 +1,36 @@
 defmodule Vae.PlacesLoadBalancerTest do
   use ExUnit.Case
-  
-  defmodule Vae.PlacesClientMock do
-    
-    def get_value(key) do
-      case key do
-        :foo -> :rand.uniform(10)  
-        :bar -> :rand.uniform(20) + 11 
-      end
+
+  describe "theory" do
+    test "test and learn" do
+      map = %{
+        "foo" => "123",
+        "bar" => "456"
+      }
       
-    end
-  
-    def get({k, _v}) do
-      %{
-        total_read_operations: [
-          %{
-            "t" => 1528243200000,
-            "v" => get_value(k) 
-          },
-          %{
-            "t" => 1528243200001,
-            "v" => get_value(k) 
-          }
-        ]
-      } 
-      |> Map.get(:total_read_operations)
-      |> Enum.reduce(%{k => 0}, fn %{"t" => _t, "v" => v}, acc ->
-        Map.update!(acc, k, &(&1 + v))
-      end)
+      {index, _usage} = map
+      |> Stream.with_index()
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.map(&Vae.PlacesClient.InMemory.get/1)
+      |> Enum.to_list
+      |> Enum.min_by(fn {_i, v} -> v end)
+
+      assert Enum.at(map, index) == {"foo", "123"}
     end
   end
   
-  test "test get" do
-    map = %{
-      foo: "123",
-      bar: "456"
-    }
+  describe "on use" do
+    setup do
+      Vae.PlacesLoadBalancer.start_link(%{})
+      :ok
+    end
+
+    test "test init ok" do
+      :ok = Vae.PlacesLoadBalancer.poll()
+      assert Vae.PlacesLoadBalancer.get_indice() == {"foo", "123456"}
+    end
     
-    assert map
-    |> Flow.from_enumerable
-    |> Flow.partition()
-    |> Flow.map(&Vae.PlacesClientMock.get/1)
-    |> Enum.to_list
-    |> Enum.min_by(fn map -> 
-      map
-      |> Map.values
-      |> hd()
-    end)
-    |> Map.keys
-    |> hd() == :foo
   end
   
 end

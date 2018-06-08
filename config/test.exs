@@ -26,3 +26,12 @@ config :vae, Vae.Repo,
   database: "vae_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :vae,
+  places_client: Vae.PlacesClient.InMemory,
+  algolia_places_apis: %{
+    "foo" => "123456",
+    "bar" => "098765",
+    "baz" => "789012"
+  }
+
