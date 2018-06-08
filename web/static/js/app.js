@@ -33,12 +33,13 @@ $(function () {
       $("#rome_form").submit()
     });
   }
-
-  $(window).on('resize', function(){
-    if ($(window).width() < 768 ) {
-      $("#search_profession").attr("placeholder","Votre métier");
-    } else {
-      $("#search_profession").attr("placeholder","Quel métier avez-vous exercé ?");
-    }
-  });
 })
+
+$(window).scroll(function() {
+  var y = $(window).scrollTop();
+  if (y > 0) {
+    $("nav").addClass('--not-top');
+  } else {
+    $("nav").removeClass('--not-top');
+  }
+});

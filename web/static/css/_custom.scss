@@ -2,34 +2,11 @@
 
 * { font-family: 'Roboto', sans-serif; }
 
-html {
+html, body {
   position: relative;
-  min-height: 100%;
-}
-
-/* Footer */
-$footer-height: 4.5rem;
-body:not(.home) {
-  margin-bottom: $footer-height;
-}
-
-footer {
-  text-align: center;
-  height: $footer-height;
-  line-height: $footer-height;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.125);
-  &.fixed {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-  }
-  .row > :last-child {
-    color: #194065;
-  }
-  img {
-    width: 50px;
-  }
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 body:not(.home) > main {
@@ -82,10 +59,6 @@ a[target="_blank"]:before {
 
 a[href^="mailto:"]:before {
   content: "\f003";
-}
-
-.sticky-top {
-  top: 2rem;
 }
 
 /* Utils */

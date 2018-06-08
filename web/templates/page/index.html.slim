@@ -1,105 +1,183 @@
-header.header-home.bg-img.bg-home.bg-home-spacer
-  .container
-    = render Vae.ComponentView, "logo.html", conn: @conn
-    .text-center.my-5
-      h1.display-5.text-white Transformez votre expérience en diplôme reconnu
-      h2.text-white
-        small
-          | avec la Validation des Acquis de l’Expérience -
-          = link to: "#what", title: "Qu'est-ce que la V.A.E." do
-            span V.A.E.
-            i.fa.fa-question-circle
-    .row.justify-content-md-center
-      .col-lg-9
-        = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form"], fn f ->
-          = label f, :profession, "Quel métier avez-vous exercé ?", [class: 'sr-only']
-          .input-group.mb-5.justify-content-center
-            = render Vae.ComponentView, "suggest.html", form: f, position: :home
-            .input-group-append
-              = submit class: 'btn btn-primary btn-lg' do
-                span.d-none.d-md-block Rechercher
-                i.fa.fa-search.d-md-none
-.container
-  .how-to.m-2.my-5
-    h2.display-5.mb-2.text-center Comment ça marche ?
-    .how-to-detail
-      = render Vae.ComponentView, "steps.html", wizard_trails: Vae.Wizard.completed_trails(), conn: @conn
+nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
+  = link to: root_path(@conn, :index), class: "navbar-brand", do: img_tag '/images/avril.svg', alt: 'Avril'
+  button.navbar-toggler.collapsed[type="button", data-toggle="collapse", data-target="#navbarCollapse", aria-controls="navbarCollapse", aria-label="Menu", href="#navbarCollapse"] Menu
+  .collapse.navbar-collapse[id="navbarCollapse"]
+    ul.navbar-nav.ml-auto.flex-md-row.flex-column.align-items-center.my-md-0.my-5
+      li.nav-item
+       = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: page_path(@conn, :vae), conn: @conn
+      li.nav-item
+        = link "C'est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+      li.nav-item
+        = link "Dîplomes les plus demandés", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+      li.nav-item.d-md-none.mt-4
+        = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
+      li.nav-item.d-md-none
+        = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+      li.nav-item.d-md-none
+        = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
 
-.big-number.bg-default.p-2.p-md-5
-    .container.text-secondary
-        .row.align-items-center
-          .col-md-3.text-center.big-number-figure 80%
-          .col-md-9
-            p.text-left.big-number-details.m-0 des demandeurs d'emploi ont retrouvé un emploi <br/> 6 mois après leur V.A.E.
-        .row
-          .col-md-12
-            p.text-right
-              sub Source Pôle emploi 2015 sur validation de titres professionnels
 .container
-  .what-is-it.m-2.my-5
+  .my-md-6.my-5.text-center
     .row
-      .col-md-6
-        h3.mb-3#what Qu'est ce que la
-          |  <strong>V.A.E.</strong> ?
-        p
-          <strong>La VAE</strong> ou <strong>Validation des Acquis de l’Expérience</strong>, est le 3ème moyen en France pour obtenir un diplôme, titre ou certificat depuis 2002.
-        p
-          | Sans retourner en formation, que vous soyez demandeur d’emploi, salarié, non salarié ou sans activité, <strong>la VAE peut vous permettre d’obtenir un « vrai diplôme »</strong> !
-        p
-          | En effet, La VAE vous permet de faire reconnaitre la valeur de vos expériences et d’acquérir le diplôme qui s’y rapporte.
-        = link "En savoir plus sur la V.A.E.", to: page_path(@conn, :vae), class: 'btn btn-link mb-2'
-      .col-md-6= img_tag 'images/what-is-it.jpg', class: 'img-fluid', alt: "Qu'est ce que la V.A.E ?"
-
-.top-three.bg-default.p-2.p-md-5
-  .container
+      .col-md-8.offset-md-2
+        h1.dm-h1 Transformez votre expérience en diplôme grâce à la VAE
+    .row
+      .col-md-10.offset-md-1
+        p.dm-sub-title Nouveau diplôme, nouvelle vie
+    .row.my-5
+      .col-md-10.offset-md-1
+        = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-md-stretch align-items-center"], fn f ->
+          .input-group
+            = render Vae.ComponentView, "suggest.html", form: f, position: :home
+          = submit class: 'btn btn-outline-primary btn-lg d-flex mt-md-0 mt-2' do
+            span.ic-icon.ic-zoom-bold
     .row
       .col-md-12
-        h3.display-5.mb-5.text-center Top 3 des diplômes
+        p.dm-logo Avril est une initiative Pôle Emploi
+      .col-md-12
+        = img_tag '/images/logo-pole-emploi.svg', alt: 'Avril'
+  javascript:
+    var hideous_count = 0;
+    var placeholders = [
+      'Pour quelle expérience souhaitez-vous un diplôme ?',
+      'Pour quel métier souhaitez-vous un diplôme ?',
+      'Pour quel ROME souhaitez-vous un diplôme ?'
+    ];
+    function animate(a, b) {
+      hideous_count = (hideous_count + 1) % 3;
+      document.getElementById('search_profession').placeholder = placeholders[hideous_count];
+    }
+    window.setInterval(animate, 2000);
+
+  .my-md-6.my-5
+    .row.my-md-6.my-5
+      .col-md-6.laurrier
+      .col-md-6
+        h2.dm-h2 La VAE est une démarche de certification diplômante reconnue
+        p.dm-p C’est un véritable diplôme que vous propose la VAE. Pas de formation, simplement un diplôme en lien avec vos compétences acquises. <br />C'est le 3ème moyen en France pour obtenir un diplôme !
+        = link to: page_path(@conn, :vae), class: "p-0 d-flex my-md-5 mt-2" do
+          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+          .d-flex.flex-column.ml-4
+            h6.dm-h6 C’est quoi une VAE ?
+            .green-line
+            p.dm-read-time
+              i.ic-icon.ic-time-clock
+              |  Temps de lecture : 3 minutes
+    .row.my-md-6.my-5
+      .col-md-6
+        h2.dm-h2 Obtenir un diplôme, se repositionner sur le marché de l’emploi…
+        p.dm-p Il y a de nombreuses raisons de se lancer dans une démarche VAE. Avec Avril, découvrez les perspectives que vous offrent la Validation des Acquis de l'Expérience.
+        .d-flex.my-md-5.mt-2
+          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+          .d-flex.flex-column.ml-4
+            h6.dm-h6 Pourquoi une certification ?
+            .pink-line
+            p.dm-read-time
+              i.ic-icon.ic-time-clock
+              |  Temps de lecture : 1 minute
+    .row.my-md-6.my-5
+      .col-md-6.best-way
+      .col-md-6
+        h2.dm-h2 En seulement 3 étapes, Avril vous aide à identifier votre parcours VAE pas à pas.
+        p.dm-sub-title Chez le <strong>certificateur</strong> le plus proche de chez vous !
+        p.dm-p Renseignez le métier pour lequel vous avez au moins 1 an d'expérience et pour lequel vous souhaitez obtenir un diplôme. <br />Nous vous indiquerons le certificateur le plus proche !
+        .d-flex.my-md-5.mt-2
+          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+          .d-flex.flex-column.ml-4
+            h6.dm-h6 C’est quoi un certificateur ?
+            .purple-line
+            p.dm-read-time
+              i.ic-icon.ic-time-clock
+              |  Temps de lecture : 1 minute
+
+    .row.my-md-6.my-5
+      .col-md-12.text-center
+        = link to: root_path(@conn, :index), class: 'btn btn-danger dm-btn-danger' do
+          span Je suis prêt.e<span class="d-none d-md-inline"> à faire valider mon expérience</span>
+
+  .my-md-6.my-5.dm-testimonials
+    .row.my-5
+      .col-md-6.offset-md-3
+        h3.dm-h3 « J’ai attendu trop longtemps pour le faire ! »
+        p.dm-p Je n'avais rien, ça a vraiment valorisé mes capacités. J'ai obtenu mon CAP petite enfance. Je suis fière de mon diplôme!
+      .col-md-2
+        = img_tag '/images/marie-cecile.jpg', alt: 'Marie-Cécile', class: 'img-fluid'
+        h5.dm-h5 Marie-Cécile A. (94)
+        p.dm-p Aide à domicile
+    .row.my-5
+      .col-md-2.offset-md-1.order-md-first.order-last
+        = img_tag '/images/thierry.jpg', alt: 'Thierry', class: 'img-fluid'
+        h5.dm-h5 Thierry B. (51)
+        p.dm-p Directeur commercial
+      .col-md-6
+        h3.dm-h3 « Mon profil a retenu l'attention de nombreux employeurs ! »
+        p.dm-p Avec un CAP de mécanique, malgré 23 ans d'expérience, les recherches d'emploi étaient compliquées. Avec la VAE, j'ai obtenu un BTS MUC et mon profil a retenu l'attention de nombreux employeurs.
+    .row.my-5
+      .col-md-6.offset-md-3
+        h3.dm-h3 « Avril est un vrai coup de pouce ! »
+        p.dm-p Avril est un vrai coup de pouce pour que les demandeurs d’emploi s’y retrouvent et pour comprendre comment faire une VAE.
+      .col-md-2
+        = img_tag '/images/patricia.png', alt: 'Patricia', class: 'img-fluid'
+        h5.dm-h5 Patricia L. (94)
+        p.dm-p Conseillère Pôle emploi
+
+  .my-md-6.my-5
+    .row.align-items-center
+      .col-md-3.d-none.d-md-inline
+        = img_tag '/images/laurrier.svg', alt: 'laurrier', class: 'img-fluid'
+      .col-md-7
+        .percent 80%
+        h2.dm-h2 des demandeurs d'emploi ont retrouvé un emploi 6 mois après leur VAE
+        = content_tag :p, "(source 2015 sur validation de Titres Professionnels)", class: "dm-p"
+
+.dm-bg-white.py-md-4.py-1
+  .container.my-5
     .row
-      = for certification <- @top_certifications do
-        .col-md-4
-          .mb-2= link Vae.CertificationView.formatted_name(certification), to: process_path(@conn, :index, certification: certification), class: 'text-secondary'
-    .row
-      .col-md-12.text-right
-        = link "Voir tous les diplômes", to: certification_path(@conn, :index), class: 'btn btn-link'
+      .col-md-3.mb-md-0.mb-4
+        .card.dm-card.h-100
+          .card-body.d-flex.justify-content-center.align-items-center
+            = img_tag '/images/fse.jpeg', alt: 'fse', class: 'img-fluid w-75 h-100'
+      .col-md-3.mb-md-0.mb-4
+        .card.dm-card.h-100
+          .card-body.d-flex.justify-content-center.align-items-center
+            = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid w-50 h-100'
+      .col-md-6.mt-md-0.mt-5
+        h3.dm-h3.mb-5 Avril est né d’une idée de <mark>Pôle Emploi</mark> et bénéficie du soutien du <mark>Fond Social Européen</mark>. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
+        .d-flex.my-md-5.mt-2
+          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+          .d-flex.flex-column.ml-4
+            h6.dm-h6 Découvrez l’équipe Avril
+            .green-line
+            p.dm-read-time
+              i.ic-icon.ic-time-clock
+              |  Temps de lecture : 4 minutes
 
-
-.container
-  .testimonials.m-2.my-5
-    h2.display-5.mb-5.text-center Témoignages
-    .card-deck.mb-3
-      .card.d-flex.justify-content-between
-        .mt-4.text-center
-          = img_tag 'images/quote.png', class: "card-img-top", alt: "Guillemets"
-        .card-body.mt-3.d-flex
-          p.card-text.align-self-center Avril est un vrai coup de pouce pour que les demandeurs d’emploi s’y retrouvent et pour comprendre comment faire une VAE.
-        .footer.mb-2.p-3
-          .d-flex.justify-content-center.align-items-center
-            = img_tag 'images/patricia.png', class: "w-25 h-25 rounded-circle", alt: "Patricia"
-            .ml-3
-              .author Patricia L. (94)
-              .font-italic Conseillère pôle emploi
-
-      .card.d-flex.justify-content-between
-        .mt-4.text-center
-          = img_tag 'images/quote.png', class: "card-img-top", alt: "Guillemets"
-        .card-body.mt-3.d-flex
-          p.card-text.align-self-center Avec un CAP de mécanique, malgré 23 ans d'expérience, les recherches d'emploi étaient compliquées. Avec la VAE, j'ai obtenu un BTS MUC et mon profil a retenu l'attention de nombreux employeurs.
-        .footer.mb-2.p-3
-          .d-flex.justify-content-center.align-items-center
-            = img_tag 'images/thierry.jpg', class: "w-25 h-25 rounded-circle", alt: "Thierry"
-            .ml-3
-              .author Thierry B. (51)<br />
-              .font-italic Directeur commercial
-
-      .card.d-flex.justify-content-between
-        .mt-4.text-center
-          = img_tag 'images/quote.png', class: "card-img-top", alt: "Guillemets"
-        .card-body.mt-3.d-flex
-          p.card-text.align-self-center J'ai attendu trop longtemps pour le faire. Je n'avais rien, ça a vraiment valorisé mes capacités. J'ai obtenu mon CAP petite enfance. Je suis fière de mon diplôme!
-        .footer.mb-2.p-3
-          .d-flex.justify-content-center.align-items-center
-            = img_tag 'images/marie-cecile.jpg', class: "w-25 h-25 rounded-circle", alt: "Marie-Cécile"
-            .ml-3
-              .author Marie-Cécile A. (94)
-              .font-italic Aide à domicile
+.container.mt-md-7.my-5
+  .row
+    .col-md-4
+      h3.dm-h3.my-4 Avril
+      ul.nav.dm-nav.flex-column
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
+        li.nav-item
+          = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        li.nav-item
+          = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
+    .col-md-4
+      h3.dm-h3.my-4 Liens utiles pour la VAE
+      ul.nav.dm-nav.flex-column
+        li.nav-item
+          = link "Portail de la VAE", to: "http://www.vae.gouv.fr/", class: "nav-link p-0"
+        li.nav-item
+          = link "France-VAE", to: "https://www.francevae.fr/", class: "nav-link p-0"
+        li.nav-item
+          = link "Défi métiers", to: "https://www.defi-metiers.fr/dossiers/vae-mode-demploi", class: "nav-link p-0"
+    .col-md-4
+      h3.dm-h3.my-4 Pages du site
+      ul.nav.dm-nav.flex-column
+        li.nav-item
+          = link "C’est quoi une VAE ?", to: page_path(@conn, :vae), class: "nav-link p-0"
+        li.nav-item
+          = link "C’est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        li.nav-item
+          = link "C’est quoi une certification ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
