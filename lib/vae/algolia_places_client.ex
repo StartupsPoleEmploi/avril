@@ -7,8 +7,8 @@ defmodule Vae.PlacesClient.Algolia do
     {index, do_get(credentials)}
   end
 
-  defp do_get({app_id, api_key}) do
-    headers = ["X-Algolia-Application-Id": app_id, "X-Algolia-API-Key": api_key]
+  defp do_get({app_id, %{monitoring: monitoring_api_key, search: _search_api_key}}) do
+    headers = ["X-Algolia-Application-Id": app_id, "X-Algolia-API-Key": monitoring_api_key]
     %Date{month: current_month} = Date.utc_today
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <-

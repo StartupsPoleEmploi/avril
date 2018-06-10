@@ -13,31 +13,34 @@ defmodule Vae.PlacesLoadBalancer do
 
   def start_link(state) do
     Logger.info("Start load balancer")
-    Agent.start_link(fn -> state end, name: @name)
+    Agent.start_link(fn -> poll(state) end, name: @name)
   end
 
-  def get_indice(), do: Agent.get(@name, &(&1))
+  def get_index(), do: Agent.get(@name, & &1)
 
-  def poll() do
+  def update_index(), do: Agent.update(@name, &poll/1)
+
+  def poll(_state) do
     Logger.info("Start poll available indexes from places")
-    Agent.update(
-      @name,
-      fn _state ->
-        {index, _usage} =
-          @apis
-          |> Stream.with_index()
-          |> Flow.from_enumerable()
-          |> Flow.partition()
-          |> Flow.map(&@places_client.get/1)
-          |> Enum.to_list()
-          |> Enum.min_by(&(elem(&1, 1)))
 
-          index = Enum.at(@apis, index)
-          
-          Logger.info("End of polling indexes from places, selected index: #{elem(index, 0)}")
-          
-          index
-        end
-    )
-   end
+    {index_of_selected_app, _usage} =
+      @apis
+      |> Stream.with_index()
+      |> Flow.from_enumerable()
+      |> Flow.partition()
+      |> Flow.map(&@places_client.get/1)
+      |> Enum.to_list()
+      |> Enum.min_by(&elem(&1, 1))
+
+    index =
+      Enum.at(@apis, index_of_selected_app)
+      |> extract_api_search_credentials()
+
+    Logger.info("End of polling indexes from places, selected index: #{elem(index, 0)}")
+
+    index
+  end
+
+  defp extract_api_search_credentials({app_id, %{search: search_api_key}}),
+    do: {app_id, search_api_key}
 end
