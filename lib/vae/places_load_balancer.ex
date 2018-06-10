@@ -1,4 +1,6 @@
 defmodule Vae.PlacesLoadBalancer do
+  require Logger
+
   use Agent
 
   @name __MODULE__
@@ -8,11 +10,16 @@ defmodule Vae.PlacesLoadBalancer do
   @apis Application.get_env(:vae, :algolia_places_apis)
 
   def start_link(), do: start_link(%{})
-  def start_link(state), do: Agent.start_link(fn -> state end, name: @name)
+
+  def start_link(state) do
+    Logger.info("Start load balancer")
+    Agent.start_link(fn -> state end, name: @name)
+  end
 
   def get_indice(), do: Agent.get(@name, &(&1))
 
   def poll() do
+    Logger.info("Start poll available indexes from places")
     Agent.update(
       @name,
       fn _state ->
@@ -23,9 +30,13 @@ defmodule Vae.PlacesLoadBalancer do
           |> Flow.partition()
           |> Flow.map(&@places_client.get/1)
           |> Enum.to_list()
-          |> Enum.min_by(fn {_index, value} -> value end)
+          |> Enum.min_by(&(elem(&1, 1)))
 
-          Enum.at(@apis, index)
+          index = Enum.at(@apis, index)
+          
+          Logger.info("End of polling indexes from places, selected index: #{elem(index, 0)}")
+          
+          index
         end
     )
    end

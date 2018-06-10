@@ -7,7 +7,8 @@ defmodule Vae do
     children = [
       supervisor(Vae.Repo, []),
       supervisor(Vae.Endpoint, []),
-      worker(Vae.PlacesLoadBalancer, [])
+      worker(Vae.PlacesLoadBalancer, []),
+      worker(Vae.Scheduler, [])
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

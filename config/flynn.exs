@@ -27,6 +27,14 @@ config :vae, Vae.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: false
 
+config :vae, Vae.Scheduler,
+  jobs: [
+    places_task: [
+      schedule: "*/30 * * * *",
+      task: {Vae.PlacesLoadBalancer, :poll, []}
+    ]
+  ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
