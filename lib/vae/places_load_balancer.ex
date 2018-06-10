@@ -9,19 +9,17 @@ defmodule Vae.PlacesLoadBalancer do
 
   @apis Application.get_env(:vae, :algolia_places_apis)
 
-  def start_link(), do: start_link(%{})
-
-  def start_link(state) do
+  def start_link() do
     Logger.info("Start load balancer")
-    Agent.start_link(fn -> poll(state) end, name: @name)
+    Agent.start_link(fn -> poll() end, name: @name)
   end
 
   def get_index(), do: Agent.get(@name, & &1)
 
-  def update_index(), do: Agent.update(@name, &poll/1)
+  def update_index(), do: Agent.update(@name, &poll/0)
 
-  def poll(_state) do
-    Logger.info("Start poll available indexes from places")
+  def poll() do
+    Logger.info("Start polling to retrieve available indexes from places")
 
     {index_of_selected_app, _usage} =
       @apis
