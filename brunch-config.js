@@ -3,12 +3,14 @@ exports.config = {
   files: {
     javascripts: {
       joinTo: {
-        // TODO: we load 3 jquery
+        // TODO: we load 2 jquery
         "js/app.js": ["web/static/js/*.js", /node_modules/],
         "js/vendor.js": ["web/static/vendor/awesomplete-util.min.js"],
         "js/analytics.js": ["web/static/vendor/analytics.js"],
         "js/ex_admin_common.js": ["web/static/vendor/ex_admin_common.js"],
         "js/admin_lte2.js": ["web/static/vendor/admin_lte2.js"],
+        // TODO: we need jquery minified for prod...
+        "js/jquery.min.js": ["web/static/vendor/jquery.min.js"],
         // Order here is important for simditor
         "js/simditor.min.js": ["web/static/vendor/simditor/module.min.js",
                                "web/static/vendor/simditor/hotkeys.min.js",
