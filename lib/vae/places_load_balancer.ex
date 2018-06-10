@@ -11,14 +11,14 @@ defmodule Vae.PlacesLoadBalancer do
 
   def start_link() do
     Logger.info("Start load balancer")
-    Agent.start_link(fn -> poll() end, name: @name)
+    Agent.start_link(fn -> poll(%{}) end, name: @name)
   end
 
   def get_index(), do: Agent.get(@name, & &1)
 
-  def update_index(), do: Agent.update(@name, &poll/0)
+  def update_index(), do: Agent.update(@name, &poll/1)
 
-  def poll() do
+  def poll(_state) do
     Logger.info("Start polling to retrieve available indexes from places")
 
     {index_of_selected_app, _usage} =

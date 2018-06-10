@@ -30,8 +30,17 @@ config :vae, Vae.Repo,
 config :vae,
   places_client: Vae.PlacesClient.InMemory,
   algolia_places_apis: %{
-    "foo" => "123456",
-    "bar" => "098765",
-    "baz" => "789012"
+    "foo" => %{
+      monitoring: "123456",
+      search: "foo_search"
+    },
+    "bar" => %{
+      monitoring: "098765",
+      search: "bar_search"
+    },
+    "baz" => %{
+      monitoring: "789012",
+      search: "baz_search"
+    }
   }
 
