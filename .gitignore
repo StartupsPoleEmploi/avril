@@ -26,3 +26,5 @@ erl_crash.dump
 /config/prod.secret.exs
 .env
 yarn.lock
+
+/config/dev.exs
