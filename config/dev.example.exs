@@ -41,3 +41,6 @@ config :vae, Vae.Repo,
   database: "vae_dev",
   hostname: "localhost",
   pool_size: 10
+
+config :vae, Vae.Scheduler,
+  jobs: []

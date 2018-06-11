@@ -102,14 +102,16 @@ defmodule Vae.ComponentView do
   end
 
   def render("places", _) do
+    {app_id, api_key} = Vae.PlacesLoadBalancer.get_index()
+
     {:safe, """
     <script>
     var placesAutocomplete = places({
       container: document.querySelector('#delegate_search_address'),
       countries: ['FR'],
       aroundLatLngViaIP: true,
-      appId: "#{Application.get_env(:vae, :algolia_places_app_id)}",
-      apiKey: "#{Application.get_env(:vae, :algolia_places_search_api_key)}"
+      appId: "#{app_id}",
+      apiKey: "#{api_key}"
     });
 
     var $lat = document.querySelector('#delegate_search_lat')

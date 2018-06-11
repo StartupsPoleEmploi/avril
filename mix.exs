@@ -73,7 +73,10 @@ defmodule Vae.Mixfile do
       {:floki, "~> 0.19.0", only: :dev},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.6.5"},
-      {:remote_ip, "~> 0.1.0"}
+      {:remote_ip, "~> 0.1.0"},
+      {:flow, "~> 0.13"},
+      {:quantum, "~> 2.2"},
+      {:timex, "~> 3.0"}
     ]
   end
 
