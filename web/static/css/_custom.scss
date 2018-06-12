@@ -9,10 +9,6 @@ html, body {
   flex-direction: column;
 }
 
-body:not(.home) > main {
-  margin-top: - $header-margin;
-}
-
 /* Delegator #show*/
 $header-height: 5rem;
 .step-title:before {

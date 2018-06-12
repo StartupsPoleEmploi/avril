@@ -182,8 +182,16 @@ form.dm-search-box {
   background-size: contain;
 }
 
-body.home {
+* {
+  color: $dm-primary-blue;
+  font: normal 18px/30px $dm-font-lato;
+}
+
+body {
   background-color: #FFFFFF;
+}
+
+body.home {
   @include media-breakpoint-up(md) {
     height: 40px;
     background-repeat: no-repeat;
