@@ -1,0 +1,45 @@
+.percent {
+  color: $dm-primary-purple;
+  font: bold 104px/142px $dm-font-nuito;
+  @include media-breakpoint-down(sm) {
+    text-align: center;
+    background: center / contain no-repeat url("/images/laurel.svg");
+    padding: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+
+.dm-testimonials {
+  img {
+    margin-bottom: 1rem;
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+}
+
+
+.dm-read-time {
+  color: $dm-primary-blue;
+  font: normal 16px/22px $dm-font-nuito;
+}
+
+.purple-line {
+  height: 6px;
+  width: 80%;
+  background-color: $dm-primary-purple;
+  margin-bottom: 0.5rem;
+}
+
+.pink-line {
+  height: 6px;
+  width: 80%;
+  background-color: $dm-primary-pink;
+  margin-bottom: 0.5rem;
+}
+
+.green-line {
+  height: 6px;
+  width: 80%;
+  background-color: $dm-primary-green;
+  margin-bottom: 0.5rem;
+}
