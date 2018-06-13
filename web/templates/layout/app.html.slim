@@ -17,7 +17,7 @@ html{lang="fr"}
   body.app
     main role="main"
       = render ComponentView, "navbar.html", conn: @conn
-      .container = render @view_module, @view_template, assigns
+      .container.py-3.py-md-5 = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn
