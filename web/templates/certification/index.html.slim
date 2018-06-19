@@ -9,10 +9,7 @@
           = render Vae.ComponentView, "steps.html", wizard_trails: @wizard_trails
         .results-container
           .results-count
-            = if @page.total_entries > 1 do
-              = render Vae.ComponentView, "certification_title.html", count: @page.total_entries, profession: @profession
-            - else
-              = render Vae.ComponentView, "certification_title_no_result.html", profession: @profession
+            = render "_certification_title.html", conn: @conn, count: @page.total_entries, profession: @profession
           .results
             = for certification <- @certifications do
               .result-item
