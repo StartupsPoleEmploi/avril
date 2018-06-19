@@ -5,10 +5,10 @@ nav.navbar.dm-navbar.navbar-expand-md.sticky-top.bg-white
     ul.navbar-nav.ml-auto.flex-md-row.flex-column.align-items-center.my-md-0.my-5
       li.nav-item
        = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: page_path(@conn, :vae), conn: @conn
-      li.nav-item
-        = link "C'est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-      li.nav-item
-        = link "Dîplomes les plus demandés", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        / li.nav-item
+        /   = link "C'est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        / li.nav-item
+        /   = link "Dîplomes les plus demandés", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
       li.nav-item.d-md-none.mt-4
         = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
       li.nav-item.d-md-none

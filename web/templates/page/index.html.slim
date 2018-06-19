@@ -48,28 +48,28 @@
       .col-md-6
         h2 Obtenir un diplôme, se repositionner sur le marché de l’emploi…
         p Il y a de nombreuses raisons de se lancer dans une démarche VAE. Avec Avril, découvrez les perspectives que vous offrent la Validation des Acquis de l'Expérience.
-        .d-flex.my-md-5.mt-2
-          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
-          .d-flex.flex-column.ml-4
-            h6 Pourquoi une certification ?
-            .pink-line
-            p.dm-read-time
-              i.ic-icon.ic-time-clock
-              |  Temps de lecture : 1 minute
+        / .d-flex.my-md-5.mt-2
+        /   = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+        /   .d-flex.flex-column.ml-4
+        /     h6 Pourquoi une certification ?
+        /     .pink-line
+        /     p.dm-read-time
+        /       i.ic-icon.ic-time-clock
+        /       |  Temps de lecture : 1 minute
     .row.my-md-6.my-5
       .col-md-6.bg-best-way
       .col-md-6
         h2 En seulement 3 étapes, Avril vous aide à identifier votre parcours VAE pas à pas.
         p.dm-sub-title Chez le <strong>certificateur</strong> le plus proche de chez vous !
         p Renseignez le métier pour lequel vous avez au moins 1 an d'expérience et pour lequel vous souhaitez obtenir un diplôme. <br />Nous vous indiquerons le certificateur le plus proche !
-        .d-flex.my-md-5.mt-2
-          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
-          .d-flex.flex-column.ml-4
-            h6 C’est quoi un certificateur ?
-            .purple-line
-            p.dm-read-time
-              i.ic-icon.ic-time-clock
-              |  Temps de lecture : 1 minute
+        / .d-flex.my-md-5.mt-2
+        /   = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+        /   .d-flex.flex-column.ml-4
+        /     h6 C’est quoi un certificateur ?
+        /     .purple-line
+        /     p.dm-read-time
+        /       i.ic-icon.ic-time-clock
+        /       |  Temps de lecture : 1 minute
 
     .row.my-md-6.my-5
       .col-md-12.text-center
@@ -124,14 +124,14 @@
             = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid w-50 h-100'
       .col-md-6.mt-md-0.mt-5
         h3.mb-5 Avril est né d’une idée de <mark>Pôle Emploi</mark> et bénéficie du soutien du <mark>Fond Social Européen</mark>. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
-        .d-flex.my-md-5.mt-2
-          = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
-          .d-flex.flex-column.ml-4
-            h6 Découvrez l’équipe Avril
-            .green-line
-            p.dm-read-time
-              i.ic-icon.ic-time-clock
-              |  Temps de lecture : 4 minutes
+        / .d-flex.my-md-5.mt-2
+        /   = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
+        /   .d-flex.flex-column.ml-4
+        /     h6 Découvrez l’équipe Avril
+        /     .green-line
+        /     p.dm-read-time
+        /       i.ic-icon.ic-time-clock
+        /       |  Temps de lecture : 4 minutes
 
 .container.mt-md-7.my-5
   .row
@@ -140,8 +140,8 @@
       ul.nav.dm-nav.flex-column
         li.nav-item
           = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
-        li.nav-item
-          = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        / li.nav-item
+        /   = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
         li.nav-item
           = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
     .col-md-4
@@ -158,7 +158,7 @@
       ul.nav.dm-nav.flex-column
         li.nav-item
           = link "C’est quoi une VAE ?", to: page_path(@conn, :vae), class: "nav-link p-0"
-        li.nav-item
-          = link "C’est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-        li.nav-item
-          = link "C’est quoi une certification ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        / li.nav-item
+        /   = link "C’est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        / li.nav-item
+        /   = link "C’est quoi une certification ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
