@@ -1,8 +1,8 @@
 .d-flex.align-items-center
-  button.btn.btn-link.d-flex.align-items-center.px-0
-    i.ic-icon.ic-tail-left
+  = link to: NavigationHistory.last_path(@conn, 1, default: "/"), class: "btn btn-link d-flex align-items-center px-0" do
+    i.ic-icon.ic-tail-left.mr-3
     | Retour
-  button.btn.btn-primary.ml-auto Trouver ma VAE
+  = link "Trouver ma VAE", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
 
 h1.my-5 Qu'est-ce que la VAE ?
 

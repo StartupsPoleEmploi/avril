@@ -76,7 +76,8 @@ defmodule Vae.Mixfile do
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.13"},
       {:quantum, "~> 2.2"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:navigation_history, "~> 0.0"}
     ]
   end
 

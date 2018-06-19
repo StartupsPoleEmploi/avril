@@ -23,10 +23,9 @@
     var placeholders = [
       'Pour quelle expérience souhaitez-vous un diplôme ?',
       'Pour quel métier souhaitez-vous un diplôme ?',
-      'Pour quel ROME souhaitez-vous un diplôme ?'
     ];
     function animate(a, b) {
-      hideous_count = (hideous_count + 1) % 3;
+      hideous_count = (hideous_count + 1) % placeholders.length;
       document.getElementById('search_profession').placeholder = placeholders[hideous_count];
     }
     window.setInterval(animate, 2000);

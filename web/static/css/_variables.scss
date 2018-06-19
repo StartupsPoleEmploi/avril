@@ -19,8 +19,8 @@ $dm-font-lato: 'Lato', sans-serif;
 
 // BS4
 $theme-colors: (
-  primary: #05CFA8,
-  secondary: #194065,
+  primary: $dm-primary-green,
+  secondary: $dm-primary-blue,
   info: #5D5C5B,
   light: #F6F6F6
 );
@@ -32,6 +32,7 @@ $bg-secondary: #DEE6EB;
 $header-margin: 10rem;
 
 // Bootstrap
+// TODO: exists in bs4 ?
 $brand-primary: theme-color('primary');
 $brand-info: theme-color('info');
 $gray-light: theme-color('light');
