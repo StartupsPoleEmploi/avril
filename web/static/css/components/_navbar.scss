@@ -1,3 +1,72 @@
+.navbar.dm-navbar {
+  li.nav-item {
+    @include media-breakpoint-up(md) {
+      margin-left: 2rem;
+    }
+  }
+}
+
+nav.navbar.dm-navbar {
+  &.--not-top {
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+  }
+  border: none;
+  padding: 1rem;
+  .navbar-toggler {
+    font: normal 18px/30px $dm-font-lato;
+    color: $dm-primary-blue;
+    &:before {
+      content: "\ea0b";
+      font: normal 16px/24px avril;
+      font-weight: normal;
+      font-style: normal;
+      margin-right: 0.5rem;
+    }
+    &.collapsed:before {
+      content: "\ea08";
+      font: normal 16px/24px avril;
+      font-weight: normal;
+      font-style: normal;
+      margin-right: 0.5rem;
+    }
+  }
+  .navbar-brand {
+    img {
+      @include media-breakpoint-down(sm) {
+        height: 40px;
+      }
+    }
+  }
+}
+
+ul.nav.dm-nav, ul.navbar-nav {
+  & > li.nav-item > a.nav-link {
+    display: inline-block;
+    color: $dm-primary-blue;
+    font: normal 18px/30px $dm-font-lato;
+    border-bottom: 3px solid transparent;
+    &:not(.disabled) {
+      &:hover {
+        border-bottom-color: $dm-primary-green;
+      }
+      &.active {
+        font-weight: bold;
+      }
+    }
+    &.disabled {
+      color: $dm-primary-grey;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+}
+
+li.nav-item > a.nav-link[href^='mailto:']:before {
+  content: none;
+}
+
+//TODO: find used where ?
+
 /* Breadcrumb */
 .breadcrumb {
   padding: 0;
@@ -6,4 +75,4 @@
 
 .breadcrumb .breadcrumb-item::before {
   color: $gray;
-} 
+}

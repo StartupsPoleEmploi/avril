@@ -42,3 +42,19 @@
 .bg-header-default {
   background-image: url("/images/default_cover.jpg");
 }
+
+.bg-laurel {
+  background: no-repeat url("/images/laurel.svg");
+  background-position: center;
+  background-size: contain;
+}
+
+.bg-best-way {
+  background: no-repeat url("/images/best-way.svg");
+  background-position: center;
+  background-size: contain;
+}
+
+.bg-light-grey {
+  background-color: $dm-primary-light-grey;
+}

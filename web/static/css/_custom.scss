@@ -1,16 +1,136 @@
 @import 'variables';
 
-* { font-family: 'Roboto', sans-serif; }
+.dm-logo {
+  color: $dm-logo;
+  font: 18px/30px $dm-font-lato;
+}
+
+.btn {
+  font: bold 18px/24px $dm-font-nuito;
+}
+
+.btn.btn-link {
+  color: $dm-primary-blue;
+  border-radius: 0;
+  border-bottom: 3px solid transparent;
+  padding-bottom: 8px;
+  text-decoration: none;
+  &:hover {
+    border-bottom-color: $dm-primary-green;
+  }
+}
+
+.btn.btn-danger.dm-btn-danger {
+	color: #FFFFFF;
+	background-color: $dm-primary-red;
+  font: bold 24px/32px $dm-font-nuito;
+  padding: 12px 50px;
+	text-align: center;
+	border-radius: 38.5px;
+	box-shadow: 0 8px 24px 0 rgba(250,56,119,0.38);
+}
+
+form.dm-search-box {
+  border: none;
+  .input-group .form-control {
+    border: none;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    min-height: 80px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+    @include media-breakpoint-up(md) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
+      padding-left: 40px;
+      padding-right: 40px;
+    }
+    @include media-breakpoint-down(sm) {
+      box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+  }
+  .btn {
+    border: none;
+    border-radius: 4px;
+    @include media-breakpoint-up(md) {
+      border: 1px solid #E0E0E0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      border-left: none;
+      box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
+    }
+    background-color: #FFFFFF;
+    color: $dm-primary-blue;
+    font-size: 40px;
+  }
+  input::placeholder, input {
+    color: $dm-primary-blue;
+    font: bold 18px/24px $dm-font-nuito;
+  }
+}
+
+body {
+  background-color: #FFFFFF;
+  &.app main {
+    padding-bottom: 3rem;
+  }
+  &.home {
+    @include media-breakpoint-up(md) {
+      height: 40px;
+      background-repeat: no-repeat;
+      background-image:
+        url("/images/dm-deco-green-medium.svg"),
+        url("/images/dm-deco-green-large.svg"),
+        url("/images/dm-deco-gray-large.svg"),
+        url("/images/dm-deco-violet-large.svg"),
+        url("/images/dm-deco-green-medium.svg"),
+        url("/images/dm-deco-violet-tiny.svg");
+      background-position:
+        calc(100% + 400px) 200px,
+        -800px 350px,
+        calc(100% + 600px) 1000px,
+        -800px 2300px,
+        -400px 3850px,
+        calc(100% + 350px) 4600px;
+    }
+  }
+}
+
+mark {
+  color: inherit;
+  position: relative;
+  padding: 0;
+  text-decoration: none;
+  background: linear-gradient(180deg, transparent calc(100% - 6px), $dm-primary-green calc(100% - 6px));
+}
+
+.card.dm-card {
+	box-sizing: border-box;
+	border: 1px solid #E0E0E0;
+	border-radius: 8px;
+	background-color: #FFFFFF;
+	box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
+}
+
+footer {
+  margin-top: auto;
+  text-align: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: $dm-primary-grey;
+  img.logo {
+    height: 40px;
+  }
+}
 
 html, body {
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-body:not(.home) > main {
-  margin-top: - $header-margin;
 }
 
 /* Delegator #show*/
