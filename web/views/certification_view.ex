@@ -15,7 +15,7 @@ defmodule Vae.CertificationView do
     "#{certification.acronym} #{String.downcase(certification.label)}"
   end
 
-  def render("_certification_title.html", %{count: count} = assigns) when count == 0 do
+  def render("_certification_title", %{count: count} = assigns) when count == 0 do
     render("certification_title_no_result.html", assigns)
   end
 

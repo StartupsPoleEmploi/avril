@@ -9,7 +9,7 @@
           = render Vae.ComponentView, "steps.html", wizard_trails: @wizard_trails
         .results-container
           .results-count
-            = render "certification_title.html", conn: @conn, count: @page.total_entries, profession: @profession
+            = render "_certification_title", conn: @conn, count: @page.total_entries, profession: @profession
           .results
             = for certification <- @certifications do
               .result-item
