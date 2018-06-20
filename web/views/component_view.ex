@@ -43,7 +43,7 @@ defmodule Vae.ComponentView do
       [
         class: suggest_class(position),
         onfocus: "this.value='';",
-        placeholder: "Pour quelle expérience souhaitez-vous un diplôme ?",
+        placeholder: "Pour quel métier souhaitez-vous un diplôme ?",
         required: true
       ],
       %{
@@ -86,48 +86,50 @@ defmodule Vae.ComponentView do
   end
 
   def render("hotjar", _) do
-    {:safe, """
-    <!-- Hotjar Tracking Code for http://avril.pole-emploi.fr -->
-    <script>
-    (function(h,o,t,j,a,r){
-    h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-    h._hjSettings={hjid:#{System.get_env("HOTJAR_ID")},hjsv:5};
-    a=o.getElementsByTagName('head')[0];
-    r=o.createElement('script');r.async=1;
-    r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-    a.appendChild(r);
-    })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
-    </script>
-    """}
+    {:safe,
+     """
+     <!-- Hotjar Tracking Code for http://avril.pole-emploi.fr -->
+     <script>
+     (function(h,o,t,j,a,r){
+     h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+     h._hjSettings={hjid:#{System.get_env("HOTJAR_ID")},hjsv:5};
+     a=o.getElementsByTagName('head')[0];
+     r=o.createElement('script');r.async=1;
+     r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+     a.appendChild(r);
+     })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+     </script>
+     """}
   end
 
   def render("places", _) do
     {app_id, api_key} = Vae.PlacesLoadBalancer.get_index()
 
-    {:safe, """
-    <script>
-    var placesAutocomplete = places({
-      container: document.querySelector('#delegate_search_address'),
-      countries: ['FR'],
-      aroundLatLngViaIP: true,
-      appId: "#{app_id}",
-      apiKey: "#{api_key}"
-    });
+    {:safe,
+     """
+     <script>
+     var placesAutocomplete = places({
+       container: document.querySelector('#delegate_search_address'),
+       countries: ['FR'],
+       aroundLatLngViaIP: true,
+       appId: "#{app_id}",
+       apiKey: "#{api_key}"
+     });
 
-    var $lat = document.querySelector('#delegate_search_lat')
-    var $lng = document.querySelector('#delegate_search_lng')
-    placesAutocomplete.on('change', function(e) {
-      $lat.value = e.suggestion.latlng.lat;
-      $lng.value = e.suggestion.latlng.lng;
-      document.querySelector('#delegate_form').submit()
-    });
+     var $lat = document.querySelector('#delegate_search_lat')
+     var $lng = document.querySelector('#delegate_search_lng')
+     placesAutocomplete.on('change', function(e) {
+       $lat.value = e.suggestion.latlng.lat;
+       $lng.value = e.suggestion.latlng.lng;
+       document.querySelector('#delegate_form').submit()
+     });
 
-    placesAutocomplete.on('clear', function() {
-      $lat.value = undefined;
-      $lng.value = undefined;
-    });
-    </script>
-    """}
+     placesAutocomplete.on('clear', function() {
+       $lat.value = undefined;
+       $lng.value = undefined;
+     });
+     </script>
+     """}
   end
 
   @title_suffix " | Avril - un service Pôle emploi"
