@@ -122,21 +122,35 @@ defmodule Vae.CertificationController do
       {geo, certification, _} ->
         delegates = get_delegates(certification, geo["_geoloc"])
 
-        delegate = Repo.get(Delegate, hd(delegates).id) |> Repo.preload(:process)
+        if length(delegates) > 1 do
+          delegate = Repo.get(Delegate, hd(delegates).id) |> Repo.preload(:process)
 
-        redirect(
-          conn,
-          to:
-            process_path(
-              conn,
-              :show,
-              delegate.process,
-              certification: certification,
-              delegate: delegate.id,
-              lat: to_string(geo["_geoloc"]["lat"]),
-              lng: to_string(geo["_geoloc"]["lng"])
-            )
-        )
+          redirect(
+            conn,
+            to:
+              process_path(
+                conn,
+                :show,
+                delegate.process,
+                certification: certification,
+                delegate: delegate,
+                lat: params["delegate_search"]["lat"],
+                lng: params["delegate_search"]["lng"]
+              )
+          )
+        else
+          redirect(
+            conn,
+            to:
+              process_path(
+                conn,
+                :index,
+                certification: certification,
+                lat: params["delegate_search"]["lat"],
+                lng: params["delegate_search"]["lng"]
+              )
+          )
+        end
     end
   end
 
