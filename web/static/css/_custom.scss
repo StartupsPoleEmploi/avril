@@ -173,10 +173,6 @@ a[target="_blank"]:before, a[href^="mailto:"]:before {
   margin-right: 0.3rem;
 }
 
-a[target="_blank"]:before {
-  content: "\f08e";
-}
-
 a[href^="mailto:"]:before {
   content: "\f003";
 }
