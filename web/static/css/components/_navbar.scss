@@ -31,9 +31,15 @@ nav.navbar.dm-navbar {
     }
   }
   .navbar-brand {
-    img {
+    img.logo {
       @include media-breakpoint-down(sm) {
         height: 40px;
+      }
+    }
+    img.beta {
+      margin-left: 10px;
+      @include media-breakpoint-down(sm) {
+        height: 18px;
       }
     }
   }
