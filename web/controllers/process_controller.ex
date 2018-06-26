@@ -108,10 +108,8 @@ defmodule Vae.ProcessController do
           Delegate.from_certification(certification) |> Repo.all()
       end
 
-    IO.inspect(length(delegates), label: "prout")
-
     if length(delegates) > 1 do
-      delegate = Repo.get(Delegate, hd(delegates).id) |> Repo.preload(:process)
+      delegate = Repo.preload(Repo.get(Delegate, hd(delegates).id), :process)
 
       redirect(
         conn,

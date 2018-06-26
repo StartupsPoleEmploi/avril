@@ -123,7 +123,7 @@ defmodule Vae.CertificationController do
         delegates = get_delegates(certification, geo["_geoloc"])
 
         if length(delegates) > 1 do
-          delegate = Repo.get(Delegate, hd(delegates).id) |> Repo.preload(:process)
+          delegate = Repo.preload(Repo.get(Delegate, hd(delegates).id), :process)
 
           redirect(
             conn,
