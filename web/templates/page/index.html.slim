@@ -15,7 +15,7 @@
             span.ic-icon.ic-zoom-bold
     .row
       .col-md-12
-        p.dm-logo Avril est une initiative Pôle Emploi
+        p.dm-logo Avril est une initiative Pôle emploi
       .col-md-12
         = img_tag '/images/logo-pole-emploi.svg', alt: 'Avril'
 
@@ -104,15 +104,17 @@
   .container.my-5
     .row
       .col-md-3.mb-md-0.mb-4
-        .card.dm-card.h-100
-          .card-body.d-flex.justify-content-center.align-items-center
-            = img_tag '/images/fse.jpeg', alt: 'fse', class: 'img-fluid w-75 h-100'
+        = link to: "http://www.fse.gouv.fr/", target: "_blank", rel: "noopener noreferrer" do
+          .card.dm-card.h-100
+            .card-body.d-flex.justify-content-center.align-items-center
+              = img_tag '/images/fse.jpeg', alt: 'fse', class: 'img-fluid'
       .col-md-3.mb-md-0.mb-4
-        .card.dm-card.h-100
-          .card-body.d-flex.justify-content-center.align-items-center
-            = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid w-50 h-100'
+        = link to: "https://www.pole-emploi.fr/accueil/", target: "_blank", rel: "noopener noreferrer" do
+          .card.dm-card.h-100
+            .card-body.d-flex.justify-content-center.align-items-center
+              = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid', style: 'min-width: 10rem'
       .col-md-6.mt-md-0.mt-5
-        h3.mb-5 Avril est né d’une idée de <mark>Pôle Emploi</mark> et bénéficie du soutien du <mark>Fond Social Européen</mark>. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
+        h3.mb-5 Avril est né d’une idée de Pôle emploi et bénéficie du soutien du Fond Social Européen. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
         / .d-flex.my-md-5.mt-2
         /   = img_tag '/images/book-08.svg', alt: 'book', class: 'align-self-start'
         /   .d-flex.flex-column.ml-4

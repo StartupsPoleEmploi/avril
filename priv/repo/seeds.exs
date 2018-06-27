@@ -81,8 +81,8 @@ cava_idf_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment {
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -224,8 +224,8 @@ dava_78_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment {
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -362,8 +362,8 @@ dava_75_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment {
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -500,10 +500,10 @@ asp_step3 = %Step{
   processes: [
     %Vae.Meta{
       title: "Si vous avez identifié un organisme accompagnateur VAE pour le DEAS, faites-vous confirmer qu’il est bien référencé par la région IDF",
-      description: "L’organisme peut vous le confirmer sinon, vous pouvez faire cette demande à votre conseiller-e Pôle Emploi depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»"
+      description: "L’organisme peut vous le confirmer sinon, vous pouvez faire cette demande à votre conseiller-e Pôle emploi depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»"
     }, %Vae.Meta{
       title: "Si vous n’avez pas identifié d’organisme accompagnateur",
-      description: "Adresser une demande à votre conseiller-e Pôle Emploi depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»"
+      description: "Adresser une demande à votre conseiller-e Pôle emploi depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»"
     }, %Vae.Meta{
       title: "Contacter l’organisme accompagnateur retenu et lui demander un devis et un contrat d’accompagnement nominatifs et personnalisés"
     }
@@ -517,8 +517,8 @@ asp_step4 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -921,8 +921,8 @@ afpa_75_93_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -942,8 +942,8 @@ afpa_92_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»"
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»"
     }, %Vae.Meta{
       description: "Fournir votre accord de recevabilité + votre contrat d’accompagnement + votre devis d’accompagnement signé à votre conseiller-e qui se chargera d'envoyer la demande au Conseil Régional"
     }, %Vae.Meta{
@@ -959,8 +959,8 @@ afpa_77_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -980,8 +980,8 @@ afpa_78_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -1001,8 +1001,8 @@ afpa_91_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -1022,8 +1022,8 @@ afpa_94_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -1043,8 +1043,8 @@ afpa_95_step3 = %Step{
   description: "Pour obtenir le financement de votre VAE par Pôle emploi et le Conseil Régional d'Ile de France",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment{
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
@@ -1548,11 +1548,11 @@ drjscs_step2 = %Step{
   processes: [
     %Vae.Meta{
       title: "Si vous avez identifié un organisme accompagnateur VAE",
-      description: "Faites-vous confirmer qu’il est bien référencé par la région IDF. L’organisme peut vous le confirmer sinon, vous pouvez faire cette demande à votre conseiller pôle emploi depuis votre « espace personnel », dans la rubrique « mes échanges avec pôle emploi » OU  depuis l’application mobile dans la rubrique « contacter un conseiller »
+      description: "Faites-vous confirmer qu’il est bien référencé par la région IDF. L’organisme peut vous le confirmer sinon, vous pouvez faire cette demande à votre conseiller Pôle emploi depuis votre « espace personnel », dans la rubrique « mes échanges avec Pôle emploi » OU  depuis l’application mobile dans la rubrique « contacter un conseiller »
 "
 }, %Vae.Meta{
       title: "Si vous n’avez pas identifié d’organisme accompagnateur VAE",
-      description: "Adressez une demande à votre conseiller pôle emploi depuis votre « espace personnel », dans la rubrique « mes échanges avec pôle emploi » OU  depuis l’application mobile dans la rubrique « contacter un conseiller ». Il pourra vous proposer les coordonnées d’un organisme accompagnateur référencé par la Région IDF pour la VAE de votre diplôme"
+      description: "Adressez une demande à votre conseiller Pôle emploi depuis votre « espace personnel », dans la rubrique « mes échanges avec Pôle emploi » OU  depuis l’application mobile dans la rubrique « contacter un conseiller ». Il pourra vous proposer les coordonnées d’un organisme accompagnateur référencé par la Région IDF pour la VAE de votre diplôme"
     }, %Vae.Meta{
       description: "Contacter l’organisme accompagnateur retenu et demandez-lui un devis et un contrat d’accompagnement nominatifs et personnalisés."
     }
@@ -1566,8 +1566,8 @@ drjscs_step3 = %Step{
   description: "Pour financer l’accompagnement de votre VAE",
   processes: [
     %Vae.Meta{
-      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle Emploi",
-      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
+      title: "Faire une demande de financement de votre VAE à votre conseiller-e Pôle emploi",
+      description: "Depuis pole-emploi.fr dans votre «espace personnel», dans la rubrique «mes échanges avec Pôle emploi» OU depuis l’application mobile dans la rubrique «contacter un conseiller»",
       attachment: %Vae.Attachment {
         type: "link",
         target: "https://candidat.pole-emploi.fr/candidat/espacepersonnel/authentification/"
