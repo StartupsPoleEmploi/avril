@@ -91,11 +91,24 @@ defmodule Vae.Certification do
     |> Repo.all()
   end
 
+  def add_delegates(%Ecto.Changeset{changes: %{certifier_id: certifier_id}} = changeset, _params) do
+    certifications_delegates =
+      Delegate.from_certifier(certifier_id)
+      |> Repo.all()
+      |> Enum.map(fn delegate ->
+        Ecto.build_assoc(changeset.data, :certifications_delegates, delegate_id: delegate.id)
+      end)
+
+    put_assoc(changeset, :certifications_delegates, certifications_delegates)
+  end
+
   def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
     changeset
     |> put_assoc(
       :certifications_delegates,
-      certifications_delegates |> ensure_not_nil |> transform_destroy
+      certifications_delegates
+      |> ensure_not_nil
+      |> transform_destroy
       |> Enum.uniq_by(& &1.delegate_id)
     )
   end

@@ -44,6 +44,10 @@ defmodule Vae.Delegate do
     from(d in assoc(certification, :delegates))
   end
 
+  def from_certifier(certifier_id) do
+    from d in Vae.Delegate, where: [certifier_id: ^certifier_id]
+  end
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """

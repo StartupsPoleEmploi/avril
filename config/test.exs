@@ -23,9 +23,9 @@ config :vae, Vae.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "",
-  database: "vae_dev",
+  database: "vae_test",
   hostname: "localhost",
-  pool_size: 10
+  pool: Ecto.Adapters.SQL.Sandbox
 
 config :vae,
   places_client: Vae.PlacesClient.InMemory,
