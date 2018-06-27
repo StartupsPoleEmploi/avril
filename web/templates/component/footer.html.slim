@@ -1,6 +1,6 @@
 footer.dm-footer
   .container.d-flex.align-items-center
-    = link to: root_path(@conn, :index), do: img_tag '/images/avril.svg', class: 'logo', alt: 'Avril'
+    = link to: root_path(@conn, :index), do: img_tag '/images/avril-beta.svg', class: 'logo', alt: 'Avril'
     ul.nav.dm-nav.ml-auto
       li.nav-item
         = render "active_link.html", text: "Mentions légales", class: "nav-link", to: page_path(@conn, :terms_of_use), conn: @conn
