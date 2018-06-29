@@ -5,11 +5,14 @@ defmodule Vae.ProcessController do
   alias Vae.Delegate
 
   def index(conn, params) do
-    certification = case params["certification"] do
-                      nil -> nil
-                      certification_id ->
-                        Repo.get(Certification, certification_id)
-                    end
+    certification =
+      case params["certification"] do
+        nil ->
+          nil
+
+        certification_id ->
+          Repo.get(Certification, certification_id)
+      end
 
     update_wizard_trails(conn, step: 3, url: "/processes")
     |> render(
@@ -19,11 +22,14 @@ defmodule Vae.ProcessController do
   end
 
   def delegates(conn, params) do
-    certification = case params["certification"] do
-                      nil -> nil
-                      certification_id ->
-                        Repo.get(Certification, certification_id)
-                    end
+    certification =
+      case params["certification"] do
+        nil ->
+          nil
+
+        certification_id ->
+          Repo.get(Certification, certification_id)
+      end
 
     update_wizard_trails(conn, step: 3, url: "/processes")
     |> render(
@@ -102,21 +108,35 @@ defmodule Vae.ProcessController do
           Delegate.from_certification(certification) |> Repo.all()
       end
 
-    delegate = Repo.get(Delegate, hd(delegates).id) |> Repo.preload(:process)
+    if length(delegates) > 1 do
+      delegate = Repo.preload(Repo.get(Delegate, hd(delegates).id), :process)
 
-    redirect(
-      conn,
-      to:
-        process_path(
-          conn,
-          :show,
-          delegate.process,
-          certification: certification,
-          delegate: delegate,
-          lat: params["delegate_search"]["lat"],
-          lng: params["delegate_search"]["lng"]
-        )
-    )
+      redirect(
+        conn,
+        to:
+          process_path(
+            conn,
+            :show,
+            delegate.process,
+            certification: certification,
+            delegate: delegate,
+            lat: params["delegate_search"]["lat"],
+            lng: params["delegate_search"]["lng"]
+          )
+      )
+    else
+      redirect(
+        conn,
+        to:
+          process_path(
+            conn,
+            :index,
+            certification: certification,
+            lat: params["delegate_search"]["lat"],
+            lng: params["delegate_search"]["lng"]
+          )
+      )
+    end
   end
 
   def show(conn, params) do
