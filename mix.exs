@@ -79,7 +79,8 @@ defmodule Vae.Mixfile do
       {:quantum, "~> 2.2"},
       {:timex, "~> 3.0"},
       {:navigation_history, "~> 0.0"},
-      {:bamboo_mailjet, github: "fpalluel/bamboo_mailjet"}
+      {:bamboo_mailjet, github: "fpalluel/bamboo_mailjet"},
+      {:plug, "1.5.0"}
     ]
   end
 
