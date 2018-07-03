@@ -15,4 +15,8 @@ defmodule Vae.Email do
     |> Helper.template_language(true)
     |> Helper.put_var("foo", "prout")
   end
+
+  def campain() do
+    Email.new_email()
+  end
 end
