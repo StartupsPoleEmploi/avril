@@ -3,11 +3,6 @@ defmodule Vae.AlgoliaPlaces do
 
   @algolia_places_query "https://places-dsn.algolia.net/1/places/query"
   @algolia_places_keys ~w(_geoloc country_code country administrative county city postcode locale_names _tags is_city)
-  @algolia_headers [
-    {"Content-type", "application/json"},
-    {"X-Algolia-Application-Id", Application.get_env(:vae, :algolia_places_app_id)},
-    {"X-Algolia-API-Key", Application.get_env(:vae, :algolia_places_search_api_key)}
-  ]
 
   def get_first_hit_to_index(query) do
     query
@@ -24,9 +19,15 @@ defmodule Vae.AlgoliaPlaces do
   end
 
   def get(query) do
+    {app_id, api_key} = Vae.PlacesLoadBalancer.get_index()
+    algolia_headers = [
+      {"Content-type", "application/json"},
+      {"X-Algolia-Application-Id", app_id},
+      {"X-Algolia-API-Key", api_key}
+    ]
     with {:ok, body} <-
            Poison.encode(%{query: query, language: "fr", countries: ["fr"], hitsPerPage: 1}),
-         {:ok, response} <- HTTPoison.post(@algolia_places_query, body, @algolia_headers) do
+         {:ok, response} <- HTTPoison.post(@algolia_places_query, body, algolia_headers) do
       Poison.decode(response.body)
     else
       {_, error} ->

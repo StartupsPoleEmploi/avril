@@ -68,8 +68,6 @@ config :algolia,
   api_key: System.get_env("ALGOLIA_API_KEY")
 
 config :vae,
-  algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
-  algolia_places_search_api_key: System.get_env("ALGOLIA_PLACES_SEARCH_API_KEY"),
   places_client: Vae.PlacesClient.Algolia,
   algolia_places_apis: %{}
 
