@@ -11,9 +11,8 @@ defmodule Vae.JobSeeker do
     field(:experience_level, :string)
     field(:education_level, :string)
 
-    field(:register_at, :date)
-    field(:last_visit_at, :date)
-    field(:sent_activation_email_at, :date)
+    field(:tracking_last_visit_at, :date)
+    field(:tracking_sent_activation_email_at, :date)
 
     field(:subscribed, :boolean)
 

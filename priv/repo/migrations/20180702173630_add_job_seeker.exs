@@ -12,14 +12,14 @@ defmodule Vae.Repo.Migrations.AddJobSeeker do
       add(:experience_level, :string)
       add(:education_level, :string)
 
-      add(:register_at, :utc_datetime)
-      add(:last_visit_at, :utc_datetime)
-      add(:sent_activation_email_at, :utc_datetime)
+      add(:tracking_last_visit_at, :utc_datetime)
+      add(:tracking_sent_activation_email_at, :utc_datetime)
 
       add(:subscribed, :boolean)
 
       timestamps()
     end
-    create unique_index(:job_seekers, [:email])
+
+    create(unique_index(:job_seekers, [:email]))
   end
 end
