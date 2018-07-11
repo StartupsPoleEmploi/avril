@@ -16,6 +16,7 @@ defmodule Vae.Repo.Migrations.AddJobSeeker do
       add(:tracking_sent_activation_email_at, :utc_datetime)
 
       add(:subscribed, :boolean)
+      add(:geolocation, :map)
 
       timestamps()
     end

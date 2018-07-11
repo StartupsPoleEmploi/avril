@@ -14,7 +14,8 @@ defmodule Vae.JobSeeker do
     field(:tracking_last_visit_at, :date)
     field(:tracking_sent_activation_email_at, :date)
 
-    field(:subscribed, :boolean)
+    field(:subscribed, :boolean, default: true)
+    field(:geolocation, :map)
 
     timestamps()
   end

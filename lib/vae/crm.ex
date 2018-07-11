@@ -1,7 +1,7 @@
 defmodule Vae.Crm do
   require Logger
 
-  @fields ~w(IDENTIFIANT PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL niveauxp LSNIVEAUENMAX)
+  @fields ~w(IDENTIFIANT PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL LSNIVEAUENMAX)
 
   def extract() do
     "priv/fixtures/extract.csv"
