@@ -29,6 +29,10 @@ defmodule Vae.ViewHelpers do
 
   def level_info_by_level(3), do: 'Bac +2 / DUT / BTS'
 
+  def level_info_by_level(2), do: 'Bac +3 ou +4'
+
+  def level_info_by_level(1), do: 'Bac +5 et plus'
+
   def level_info_by_level(_), do: 'Sans Diplôme'
 
   def profession_title(count) do
