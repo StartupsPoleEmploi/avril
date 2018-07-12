@@ -37,6 +37,7 @@ defmodule Vae.ExAdmin.Certification do
         rome_options_tags =
           Rome
           |> Repo.all()
+          |> Enum.sort_by(fn rome -> rome.code end)
           |> Enum.map(&option_tag(&1.id, "#{&1.code} - #{&1.label}", certification.romes))
 
         content do
