@@ -38,7 +38,7 @@ defmodule Vae.Mixfile do
         :coherence,
         :new_relixir,
         :algolia,
-        :bamboo_mailjet
+        :mailjex
       ]
     ]
   end
@@ -57,7 +57,7 @@ defmodule Vae.Mixfile do
       {:phoenix_ecto, "~> 3.0"},
       {:postgrex, "~> 0.13.5"},
       {:phoenix_html, "~> 2.6"},
-      {:gettext, "~> 0.11"},
+      {:gettext, "0.13.1"},
       {:cowboy, "~> 1.0"},
       {:distillery, "~> 1.4"},
       {:sweet_xml, "~> 0.6.5"},
@@ -79,7 +79,7 @@ defmodule Vae.Mixfile do
       {:quantum, "~> 2.2"},
       {:timex, "~> 3.0"},
       {:navigation_history, "~> 0.0"},
-      {:bamboo_mailjet, github: "fpalluel/bamboo_mailjet"},
+      {:mailjex, "~> 0.1.4"},
       {:plug, "1.5.0"}
     ]
   end

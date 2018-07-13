@@ -42,5 +42,10 @@ config :vae, Vae.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :vae, Vae.Scheduler,
-  jobs: []
+config :vae, Vae.Scheduler, jobs: []
+
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3",
+  public_api_key: "<your public key>",
+  private_api_key: "<your private key>",
+  development_mode: true
