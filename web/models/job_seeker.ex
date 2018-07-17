@@ -8,7 +8,7 @@ defmodule Vae.JobSeeker do
     field(:email, :string)
     field(:telephone, :string)
     field(:postal_code, :string)
-    field(:experience_level, :string)
+    field(:experience, :map)
     field(:education_level, :string)
 
     field(:tracking_last_visit_at, :date)

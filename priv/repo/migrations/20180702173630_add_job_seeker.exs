@@ -9,7 +9,7 @@ defmodule Vae.Repo.Migrations.AddJobSeeker do
       add(:email, :string)
       add(:telephone, :string)
       add(:postal_code, :string)
-      add(:experience_level, :string)
+      add(:experience, :map)
       add(:education_level, :string)
 
       add(:tracking_last_visit_at, :utc_datetime)
