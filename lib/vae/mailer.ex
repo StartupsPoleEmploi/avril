@@ -15,8 +15,6 @@ defmodule Vae.Email do
         utm_source
       ) do
     Mailjex.Delivery.send(%{
-      FromEmail: "avril@pole-emploi.fr",
-      FromName: "L'équipe Avril",
       "MJ-TemplateID": "475460",
       "MJ-TemplateLanguage": true,
       Vars: %{utm_campaign: utm_campaign, utm_source: utm_source},
