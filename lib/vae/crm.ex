@@ -2,9 +2,8 @@ defmodule Vae.Crm do
   require Logger
 
   def extract_test() do
-    "priv/fixtures/VAE_FULL_2018-07-08.csv"
+    "priv/fixtures/test.csv"
     |> File.stream!(read_ahead: 100_000)
-    |> Stream.take(4)
     |> extract()
   end
 
@@ -29,6 +28,7 @@ defmodule Vae.Crm do
       email: line["COURRIEL"],
       telephone: line["TELEPHONE"],
       postal_code: line["CODE_POSTAL"],
+      geolocation: Vae.AlgoliaPlaces.get_first_hit_to_index(line["CODE_POSTAL"]),
       education_level: line["NIV_EN_FORMATION1_NUM"],
       experience:
         %{
@@ -51,6 +51,11 @@ defmodule Vae.Crm do
 
   def send(job_seekers) do
     job_seekers
-    |> Enum.map(fn job_seeker -> Vae.Email.send_campain_email(job_seeker) end)
+    |> Enum.map(fn job_seeker ->
+      Vae.Email.send_campain_email(
+        job_seeker,
+        job_seeker.geolocation["administrative"] |> List.first()
+      )
+    end)
   end
 end

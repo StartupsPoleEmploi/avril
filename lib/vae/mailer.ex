@@ -1,24 +1,25 @@
 defmodule Vae.Email do
   def welcome_email() do
     Mailjex.Delivery.send(%{
-      FromEmail: "m.nicolas.zilli@gmail.com",
+      FromEmail: "avril@pole-emploi.fr",
       FromName: "L'équipe Avril",
-      Subject: "Test envoi email",
-      "MJ-TemplateID": "465443",
+      "MJ-TemplateID": "475460",
       "MJ-TemplateLanguage": true,
-      Vars: %{foo: "Prout"},
-      Recipients: [%{Email: "m.nicolas.zilli@gmail.com"}]
+      Recipients: [%{Email: "m.nicolas.zilli@gmail.com"}, %{Email: "nresnikow@gmail.com"}]
     })
   end
 
-  def send_campain_email(%{email: email, first_name: first_name, last_name: last_name}) do
+  def send_campain_email(
+        %{email: email, first_name: first_name, last_name: last_name},
+        utm_campaign \\ "lancement",
+        utm_source
+      ) do
     Mailjex.Delivery.send(%{
-      FromEmail: "m.nicolas.zilli@gmail.com",
-      FromName: "Votre conseiller VAE",
-      Subject: "Votre VAE",
-      "MJ-TemplateID": "480897",
+      FromEmail: "avril@pole-emploi.fr",
+      FromName: "L'équipe Avril",
+      "MJ-TemplateID": "475460",
       "MJ-TemplateLanguage": true,
-      # Vars: %{foo: "Prout"},
+      Vars: %{utm_campaign: utm_campaign, utm_source: utm_source},
       Recipients: [%{Email: email, Name: "#{first_name} #{last_name}"}]
     })
   end
