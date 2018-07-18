@@ -38,7 +38,8 @@ defmodule Vae.Mixfile do
         :coherence,
         :new_relixir,
         :algolia,
-        :mailjex
+        :mailjex,
+        :persistent_ets
       ]
     ]
   end
@@ -80,7 +81,9 @@ defmodule Vae.Mixfile do
       {:timex, "~> 3.0"},
       {:navigation_history, "~> 0.0"},
       {:mailjex, "~> 0.1.4"},
-      {:plug, "1.5.0"}
+      {:plug, "1.5.0"},
+      {:uuid, "~> 1.1"},
+      {:persistent_ets, "~> 0.1.0"}
     ]
   end
 

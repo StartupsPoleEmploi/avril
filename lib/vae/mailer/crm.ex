@@ -1,22 +1,22 @@
 defmodule Vae.Crm do
   require Logger
 
-  def extract_test() do
-    "priv/fixtures/test.csv"
-    |> File.stream!(read_ahead: 100_000)
-    |> extract()
-  end
-
   @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
 
-  def extract(stream) do
-    stream
+  def extract(path) do
+    File.stream!(path)
     |> CSV.decode(separator: ?;, headers: true)
     |> Enum.map(fn
       {:ok, line} -> Map.take(line, @fields)
       {:error, error} -> Logger.error(error)
     end)
     |> Enum.map(&build_job_seeker/1)
+    |> Enum.map(fn job_seeker ->
+      %Vae.Email{
+        custom_id: UUID.uuid5(nil, job_seeker.email),
+        job_seeker: job_seeker
+      }
+    end)
     |> Enum.to_list()
   end
 
