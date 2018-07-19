@@ -9,7 +9,7 @@ defmodule Vae do
       supervisor(Vae.Endpoint, []),
       worker(Vae.PlacesLoadBalancer, []),
       worker(Vae.Scheduler, []),
-      worker(Vae.MailerWorker, [])
+      worker(Vae.Mailer.Worker, [])
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

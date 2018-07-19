@@ -1,4 +1,4 @@
-defmodule Vae.MailerWorker do
+defmodule Vae.Mailer.Worker do
   use GenServer
 
   alias Vae.Mailer.{CsvExtractor, Sender}
@@ -19,24 +19,19 @@ defmodule Vae.MailerWorker do
   @impl true
   def handle_call({:extract, path}, _from, state) do
     emails = CsvExtractor.extract(path)
-    {:reply, emails, state ++ emails}
+    new_state = state ++ emails
+    {:reply, nil, new_state}
   end
 
   @impl true
-  def handle_call(:save, _from, emails) do
+  def handle_call(:send, _from, emails) do
+    new_emails = Enum.flat_map(emails, &Sender.send/1)
+    {:reply, nil, new_emails}
+  end
+
+  @impl true
+  def handle_cast(:persist, emails) do
     Enum.each(emails, fn email -> :ets.insert(:emails, {email.custom_id, email}) end)
-    {:reply, emails, emails}
-  end
-
-  @impl true
-  def handle_cast(:send, emails) do
-    Enum.each(emails, fn email ->
-      Sender.send(
-        email,
-        email.job_seeker.geolocation["administrative"] |> List.first()
-      )
-    end)
-
     {:noreply, emails}
   end
 end
