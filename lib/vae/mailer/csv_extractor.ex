@@ -1,4 +1,4 @@
-defmodule Vae.Crm do
+defmodule Vae.Mailer.CsvExtractor do
   require Logger
 
   @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
@@ -20,7 +20,7 @@ defmodule Vae.Crm do
     |> Enum.to_list()
   end
 
-  def build_job_seeker(line) do
+  defp build_job_seeker(line) do
     %Vae.JobSeeker{
       identifier: line["KN_INDIVIDU_NATIONAL"],
       first_name: String.capitalize(line["PRENOM"]),
@@ -47,15 +47,5 @@ defmodule Vae.Crm do
         }
         |> Map.delete("")
     }
-  end
-
-  def send(job_seekers) do
-    job_seekers
-    |> Enum.map(fn job_seeker ->
-      Vae.Email.send_campain_email(
-        job_seeker,
-        job_seeker.geolocation["administrative"] |> List.first()
-      )
-    end)
   end
 end
