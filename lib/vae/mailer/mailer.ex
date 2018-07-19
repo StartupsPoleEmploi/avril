@@ -3,11 +3,11 @@ defmodule Vae.Mailer do
     GenServer.call(MailerWorker, {:extract, path})
   end
 
-  def save() do
-    GenServer.call(MailerWorker, :save)
+  def persist() do
+    GenServer.cast(MailerWorker, :persist)
   end
 
   def send() do
-    GenServer.cast(MailerWorker, :send)
+    GenServer.call(MailerWorker, :send)
   end
 end

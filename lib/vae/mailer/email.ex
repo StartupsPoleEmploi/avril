@@ -3,7 +3,8 @@ defmodule Vae.Mailer.Email do
     custom_id: nil,
     job_seeker: nil,
     email_state: nil,
-    events: []
+    events: [],
+    errors: []
   )
 end
 
