@@ -1,6 +1,9 @@
 defmodule Vae.Mailer.CsvExtractor do
   require Logger
 
+  alias Vae.JobSeeker
+  alias Vae.Mailer.Email
+
   @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
 
   def extract(path) do
@@ -12,7 +15,7 @@ defmodule Vae.Mailer.CsvExtractor do
     end)
     |> Enum.map(&build_job_seeker/1)
     |> Enum.map(fn job_seeker ->
-      %Vae.Email{
+      %Email{
         custom_id: UUID.uuid5(nil, job_seeker.email),
         job_seeker: job_seeker
       }
@@ -21,7 +24,7 @@ defmodule Vae.Mailer.CsvExtractor do
   end
 
   defp build_job_seeker(line) do
-    %Vae.JobSeeker{
+    %JobSeeker{
       identifier: line["KN_INDIVIDU_NATIONAL"],
       first_name: String.capitalize(line["PRENOM"]),
       last_name: String.capitalize(line["NOM"]),

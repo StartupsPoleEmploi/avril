@@ -1,4 +1,4 @@
-defmodule Vae.Email do
+defmodule Vae.Mailer.Email do
   defstruct(
     custom_id: nil,
     job_seeker: nil,
@@ -7,7 +7,7 @@ defmodule Vae.Email do
   )
 end
 
-defmodule Vae.Event do
+defmodule Vae.Mailer.Event do
   defstruct(
     event: nil,
     received_at: nil

@@ -32,7 +32,7 @@ defmodule Vae.MailerWorker do
   def handle_cast(:send, emails) do
     Enum.each(emails, fn email ->
       Sender.send(
-        email.job_seeker,
+        email,
         email.job_seeker.geolocation["administrative"] |> List.first()
       )
     end)
