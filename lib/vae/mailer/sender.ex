@@ -32,12 +32,20 @@ defmodule Vae.Mailer.Sender do
            {:email, get_in(job_seeker, [Access.key(:email)])},
          first_name <- get_in(job_seeker, [Access.key(:first_name)]),
          last_name <- get_in(job_seeker, [Access.key(:last_name)]) do
+      mailjet_conf = Application.get_env(:vae, :mailjet)
+
       %{
-        TemplateID: 475_460,
+        TemplateID: mailjet_conf.campaign_template_id,
         TemplateLanguage: true,
-        From: %{Email: "contact@avril.pole-emploi.fr", Name: "📜 Avril"},
+        From: %{
+          Email: mailjet_conf.from_email,
+          Name: "📜 Avril"
+        },
         Variables: %{utm_campaign: utm_campaign, utm_source: utm_source},
-        To: [%{Email: email, Name: "#{first_name} #{last_name}"}],
+        To:
+          Map.get(mailjet_conf, :override_to, [
+            %{Email: email, Name: "#{first_name} #{last_name}"}
+          ]),
         CustomID: custom_id
       }
     else
