@@ -18,8 +18,11 @@ defmodule Vae.Mailer.Worker do
 
   @impl true
   def handle_call({:extract, path}, _from, state) do
-    emails = CsvExtractor.extract(path)
-    new_state = state ++ emails
+    custom_ids = Vae.Mailer.Email.extract_custom_ids(state)
+    emails = CsvExtractor.extract(path, custom_ids)
+
+    new_state = emails ++ state
+
     {:reply, nil, new_state}
   end
 
@@ -33,5 +36,11 @@ defmodule Vae.Mailer.Worker do
   def handle_cast(:persist, emails) do
     Enum.each(emails, fn email -> :ets.insert(:emails, {email.custom_id, email}) end)
     {:noreply, emails}
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    IO.inspect(msg)
+    {:noreply, state}
   end
 end

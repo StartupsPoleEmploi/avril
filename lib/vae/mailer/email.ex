@@ -6,6 +6,10 @@ defmodule Vae.Mailer.Email do
     events: [],
     errors: []
   )
+
+  def extract_custom_ids(emails) do
+    Enum.map(emails, & &1.custom_id)
+  end
 end
 
 defmodule Vae.Mailer.Event do

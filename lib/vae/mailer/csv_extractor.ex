@@ -4,21 +4,36 @@ defmodule Vae.Mailer.CsvExtractor do
   alias Vae.JobSeeker
   alias Vae.Mailer.Email
 
+  @stages 5
+
   @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
 
-  def extract(path) do
-    File.stream!(path)
+  def extract(path, existing_custom_ids) do
+    File.stream!(path, read_ahead: 100_000)
     |> CSV.decode(separator: ?;, headers: true)
-    |> Enum.map(fn
+    |> Flow.from_enumerable()
+    |> Flow.partition(stages: @stages)
+    |> Flow.map(fn
       {:ok, line} -> Map.take(line, @fields)
       {:error, error} -> Logger.error(error)
     end)
-    |> Enum.map(&build_job_seeker/1)
-    |> Enum.map(fn job_seeker ->
-      %Email{
-        custom_id: UUID.uuid5(nil, job_seeker.email),
-        job_seeker: job_seeker
-      }
+    |> Flow.partition(stages: @stages)
+    |> Flow.map(&build_job_seeker/1)
+    |> Flow.partition(stages: @stages)
+    |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
+      custom_id = UUID.uuid5(nil, job_seeker.email)
+
+      if Enum.member?(existing_custom_ids, custom_id) do
+        acc
+      else
+        [
+          %Email{
+            custom_id: custom_id,
+            job_seeker: job_seeker
+          }
+          | acc
+        ]
+      end
     end)
     |> Enum.to_list()
   end
@@ -36,13 +51,15 @@ defmodule Vae.Mailer.CsvExtractor do
       experience:
         %{
           line["ROME1V3"] =>
-            line["NROM1EXP"] |> Float.parse()
+            line["NROM1EXP"]
+            |> Float.parse()
             |> case do
               :error -> 0
               {level, _} -> level
             end,
           line["ROME2V3"] =>
-            line["NROM2EXP"] |> Float.parse()
+            line["NROM2EXP"]
+            |> Float.parse()
             |> case do
               :error -> 0
               {level, _} -> level

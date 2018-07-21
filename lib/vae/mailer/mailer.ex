@@ -1,6 +1,6 @@
 defmodule Vae.Mailer do
   def extract(path) do
-    GenServer.call(MailerWorker, {:extract, path})
+    GenServer.call(MailerWorker, {:extract, path}, :infinity)
   end
 
   def persist() do
