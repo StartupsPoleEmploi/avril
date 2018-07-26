@@ -68,7 +68,7 @@ config :algolia,
   api_key: System.get_env("ALGOLIA_API_KEY")
 
 config :vae,
-  places_client: Vae.PlacesClient.Algolia,
+  places_client: Vae.Places.Client.Algolia,
   algolia_places_apis: %{}
 
 # %% End Coherence Configuration %%

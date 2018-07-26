@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Delegate.Geocode do
 
   alias Vae.Repo
   alias Vae.Delegate
-  alias Vae.AlgoliaPlaces
+  alias Vae.Places
 
   def run(_args) do
     ensure_started(Repo, [])
@@ -23,12 +23,12 @@ defmodule Mix.Tasks.Delegate.Geocode do
   end
 
   def geocode_delegate(delegate) do
-    geolocation = AlgoliaPlaces.get_first_hit_to_index(delegate.address)
+    geolocation = Places.get_geoloc_from_address(delegate.address)
 
     geolocation_params = %{
       geolocation: geolocation,
-      city: AlgoliaPlaces.get_city(geolocation),
-      administrative: AlgoliaPlaces.get_administrative(geolocation)
+      city: Places.get_city(geolocation),
+      administrative: Places.get_administrative(geolocation)
     }
 
     delegate |> Delegate.changeset(geolocation_params)

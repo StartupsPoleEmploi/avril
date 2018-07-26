@@ -28,7 +28,8 @@ config :vae, Vae.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :vae,
-  places_client: Vae.PlacesClient.InMemory,
+  places_client: Vae.Places.Client.InMemory,
+  places_ets_table_name: :places_test,
   algolia_places_apis: %{
     "foo" => %{
       monitoring: "123456",
@@ -44,3 +45,8 @@ config :vae,
     }
   }
 
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3.1",
+  public_api_key: "myApiKey",
+  private_api_key: "MyPrivateKey",
+  development_mode: true
