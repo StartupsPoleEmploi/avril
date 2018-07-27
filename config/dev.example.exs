@@ -44,9 +44,22 @@ config :vae, Vae.Repo,
 
 config :vae, Vae.Scheduler, jobs: []
 
+config :vae,
+  places_client: Vae.Places.Client.Algolia,
+  places_ets_table_name: :places_dev,
+  algolia_places_apis:
+    %{
+      # "PLACES INDEX NAME" => %{
+      #   monitoring: "MONITORING API KEY",
+      #   search: "seARCH API KEY"
+      # }
+    }
+
+config :vae,
+  extractor: Vae.Mailer.FileExtractor.CsvExtractor
+
 config :mailjex,
   api_base: "https://api.mailjet.com/v3.1",
   public_api_key: "<your public key>",
   private_api_key: "<your private key>",
   development_mode: true
-

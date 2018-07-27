@@ -45,6 +45,9 @@ config :vae,
     }
   }
 
+config :vae,
+  extractor: Vae.Mailer.FileExtractor.Mock
+
 config :mailjex,
   api_base: "https://api.mailjet.com/v3.1",
   public_api_key: "myApiKey",

@@ -1,5 +1,7 @@
-defmodule Vae.Mailer.CsvExtractor do
+defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   require Logger
+
+  @behaviour Vae.Mailer.FileExtractor
 
   alias Vae.JobSeeker
   alias Vae.Mailer.Email
@@ -20,6 +22,7 @@ defmodule Vae.Mailer.CsvExtractor do
     |> Flow.partition(window: window)
     |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
       custom_id = UUID.uuid5(nil, job_seeker.email)
+
       if Enum.member?(existing_custom_ids, custom_id) do
         acc
       else
