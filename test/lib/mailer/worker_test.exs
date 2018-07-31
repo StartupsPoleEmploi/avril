@@ -36,7 +36,7 @@ defmodule Vae.Mailer.WorkerTest do
       custom_id: "45"
     }
 
-    existing_events = %Vae.Mailer.Event{
+    existing_events = %Vae.Event{
       custom_id: "46",
       message_id: "21",
       payload: "bonjour, deoijoij",
@@ -90,7 +90,7 @@ defmodule Vae.Mailer.WorkerTest do
       custom_id: "45"
     }
 
-    event_46 = %Vae.Mailer.Event{
+    event_46 = %Vae.Event{
       custom_id: "46",
       message_id: "21",
       payload: "bonjour, deoijoij",
@@ -109,10 +109,10 @@ defmodule Vae.Mailer.WorkerTest do
       custom_id: "46"
     }
 
-    built_params_45 = Vae.Mailer.Event.build_from_map(params_45)
+    built_params_45 = Vae.Event.build_from_map(params_45)
     updated_emails_45 = Map.put(emails_45, :events, [built_params_45 | emails_45.events])
 
-    built_params_46 = Vae.Mailer.Event.build_from_map(params_46)
+    built_params_46 = Vae.Event.build_from_map(params_46)
     updated_emails_46 = Map.put(emails_46, :events, [built_params_46 | emails_46.events])
 
     updated_emails =

@@ -72,7 +72,7 @@ defmodule Vae.Mailer.Worker do
   Visible for testing
   """
   def update_emails_from_events(emails, events) do
-    built_events = Enum.map(events, &Vae.Mailer.Event.build_from_map/1)
+    built_events = Enum.map(events, &Vae.Event.build_from_map/1)
 
     emails
     |> Enum.map(fn email ->

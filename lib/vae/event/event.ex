@@ -1,4 +1,4 @@
-defmodule Vae.Mailer.Event do
+defmodule Vae.Event do
   defstruct(
     event: nil,
     time: nil,

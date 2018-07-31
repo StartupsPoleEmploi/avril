@@ -1,4 +1,4 @@
-defmodule Vae.Mailer.EventTest do
+defmodule Vae.EventTest do
   use ExUnit.Case
 
   test "build event struct from params" do
@@ -14,7 +14,7 @@ defmodule Vae.Mailer.EventTest do
       "time" => "2018-07-08"
     }
 
-    assert %Vae.Mailer.Event{
+    assert %Vae.Event{
              custom_id: "45",
              customcampaign: "123",
              email: "nresnikow@gmail.com",
@@ -24,6 +24,6 @@ defmodule Vae.Mailer.EventTest do
              mj_contact_id: "avril@pole-emploi.fr",
              payload: "bonjour, deoijoij",
              time: "2018-07-08"
-           } == Vae.Mailer.Event.build_from_map(params)
+           } == Vae.Event.build_from_map(params)
   end
 end
