@@ -1,4 +1,4 @@
-defmodule Vae.PlacesLoadBalancer do
+defmodule Vae.Places.LoadBalancer do
   require Logger
 
   use Agent
@@ -14,7 +14,7 @@ defmodule Vae.PlacesLoadBalancer do
     Agent.start_link(fn -> poll(%{}) end, name: @name)
   end
 
-  def get_index(), do: Agent.get(@name, & &1)
+  def get_index_credentials(), do: Agent.get(@name, & &1)
 
   def update_index(), do: Agent.update(@name, &poll/1)
 
@@ -26,7 +26,7 @@ defmodule Vae.PlacesLoadBalancer do
       |> Stream.with_index()
       |> Flow.from_enumerable()
       |> Flow.partition()
-      |> Flow.map(&@places_client.get/1)
+      |> Flow.map(&@places_client.current_month_stats/1)
       |> Enum.to_list()
       |> Enum.min_by(&elem(&1, 1))
 

@@ -37,7 +37,9 @@ defmodule Vae.Mixfile do
         :httpoison,
         :coherence,
         :new_relixir,
-        :algolia
+        :algolia,
+        :mailjex,
+        :persistent_ets
       ]
     ]
   end
@@ -56,7 +58,7 @@ defmodule Vae.Mixfile do
       {:phoenix_ecto, "~> 3.0"},
       {:postgrex, "~> 0.13.5"},
       {:phoenix_html, "~> 2.6"},
-      {:gettext, "~> 0.11"},
+      {:gettext, "0.13.1"},
       {:cowboy, "~> 1.0"},
       {:distillery, "~> 1.4"},
       {:sweet_xml, "~> 0.6.5"},
@@ -77,7 +79,11 @@ defmodule Vae.Mixfile do
       {:flow, "~> 0.13"},
       {:quantum, "~> 2.2"},
       {:timex, "~> 3.0"},
-      {:navigation_history, "~> 0.0"}
+      {:navigation_history, "~> 0.0"},
+      {:mailjex, "~> 0.1.4"},
+      {:plug, "1.5.0"},
+      {:uuid, "~> 1.1"},
+      {:persistent_ets, "~> 0.1.0"}
     ]
   end
 
@@ -90,7 +96,7 @@ defmodule Vae.Mixfile do
   defp aliases do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"]
       # test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end

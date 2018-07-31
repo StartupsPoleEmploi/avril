@@ -31,7 +31,7 @@ config :vae, Vae.Scheduler,
   jobs: [
     places_task: [
       schedule: "*/30 * * * *",
-      task: {Vae.PlacesLoadBalancer, :update_index, []}
+      task: {Vae.Places.LoadBalancer, :update_index, []}
     ]
   ]
 

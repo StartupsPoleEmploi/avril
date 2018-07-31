@@ -2,7 +2,7 @@ defmodule Vae.CertificationController do
   use Vae.Web, :controller
 
   alias Vae.{Certification, Delegate, Rome}
-  alias Vae.{AlgoliaPlaces, Suggest}
+  alias Vae.Suggest
 
   def index(conn, params) do
     case params["search"]["rome_code"] do

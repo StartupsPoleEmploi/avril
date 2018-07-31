@@ -42,5 +42,27 @@ config :vae, Vae.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :vae, Vae.Scheduler,
-  jobs: []
+config :vae, Vae.Scheduler, jobs: []
+
+config :vae,
+  places_client: Vae.Places.Client.Algolia,
+  places_ets_table_name: :places_dev,
+  algolia_places_apis:
+    %{
+      # "PLACES INDEX NAME" => %{
+      #   monitoring: "MONITORING API KEY",
+      #   search: "seARCH API KEY"
+      # }
+    },
+  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
+  mailjet: %{
+    campaign_template_id: 070_460,
+    from_email: "lol@lol.fr",
+    override_to: [%{Email: "lol@gmail.com"}, %{Email: "lil@gmail.com"}]
+  }
+
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3.1",
+  public_api_key: "<your public key>",
+  private_api_key: "<your private key>",
+  development_mode: true

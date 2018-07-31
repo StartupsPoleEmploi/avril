@@ -4,7 +4,7 @@ defmodule Vae.Delegate do
   alias Ecto.Changeset
 
   alias Vae.Certification
-  alias Vae.AlgoliaPlaces
+  alias Vae.Places
 
   schema "delegates" do
     field(:name, :string)
@@ -88,11 +88,11 @@ defmodule Vae.Delegate do
   defp geocode_address(changeset) do
     case changeset do
       %{changes: %{address: address}} ->
-        geolocation = AlgoliaPlaces.get_first_hit_to_index(address)
+        geolocation = Places.get_geoloc_from_address(address)
 
         changeset
-        |> put_change(:city, AlgoliaPlaces.get_city(geolocation))
-        |> put_change(:administrative, AlgoliaPlaces.get_administrative(geolocation))
+        |> put_change(:city, Places.get_city(geolocation))
+        |> put_change(:administrative, Places.get_administrative(geolocation))
         |> put_change(:geolocation, geolocation)
 
       _ ->

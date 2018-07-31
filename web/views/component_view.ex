@@ -103,7 +103,7 @@ defmodule Vae.ComponentView do
   end
 
   def render("places", _) do
-    {app_id, api_key} = Vae.PlacesLoadBalancer.get_index()
+    {app_id, api_key} = Vae.Places.LoadBalancer.get_index_credentials()
 
     {:safe,
      """

@@ -25,6 +25,8 @@ defmodule Vae.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+
+    post("/mail_events", Vae.MailEventsController, :new_event)
   end
 
   scope "/" do
