@@ -64,7 +64,8 @@ defmodule Vae.Mailer.Worker do
         |> Map.update(:events, [], fn state_events ->
           state_events
           |> Enum.concat(
-            events |> Enum.map(&Vae.Mailer.Event.build_from_map/1)
+            events
+            |> Enum.map(&Vae.Mailer.Event.build_from_map/1)
             |> Enum.filter(fn e -> e.custom_id == email.custom_id end)
           )
         end)
