@@ -53,10 +53,13 @@ config :vae,
       #   monitoring: "MONITORING API KEY",
       #   search: "seARCH API KEY"
       # }
-    }
-
-config :vae,
-  extractor: Vae.Mailer.FileExtractor.CsvExtractor
+    },
+  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
+  mailjet: %{
+    campaign_template_id: 070_460,
+    from_email: "lol@lol.fr",
+    override_to: [%{Email: "lol@gmail.com"}, %{Email: "lil@gmail.com"}]
+  }
 
 config :mailjex,
   api_base: "https://api.mailjet.com/v3.1",

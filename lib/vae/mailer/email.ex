@@ -11,10 +11,3 @@ defmodule Vae.Mailer.Email do
     Enum.map(emails, & &1.custom_id)
   end
 end
-
-defmodule Vae.Mailer.Event do
-  defstruct(
-    event: nil,
-    received_at: nil
-  )
-end

@@ -24,9 +24,10 @@ defmodule Vae.Mailer.Worker do
   end
 
   @impl true
-  def init(state) do
+  def init(_state) do
     PersistentEts.new(:emails, "emails.tab", [:named_table])
-    {:ok, state}
+    new_state = :ets.tab2list(:emails) |> Enum.map(fn {_custom_id, email} -> email end)
+    {:ok, new_state}
   end
 
   @impl true
@@ -50,14 +51,39 @@ defmodule Vae.Mailer.Worker do
 
   @impl true
   def handle_cast(:persist, emails) do
-    Enum.each(emails, fn email -> :ets.insert(:emails, {email.custom_id, email}) end)
+    persist(emails)
     {:noreply, emails}
+  end
+
+  @impl true
+  def handle_cast({:handle_events, events}, emails) do
+    new_emails = update_emails_from_events(emails, events)
+    persist(new_emails)
+    {:noreply, new_emails}
   end
 
   @impl true
   def handle_info(msg, state) do
     IO.inspect(msg)
     {:noreply, state}
+  end
+
+  @doc """
+  Visible for testing
+  """
+  def update_emails_from_events(emails, events) do
+    built_events = Enum.map(events, &Vae.Mailer.Event.build_from_map/1)
+
+    emails
+    |> Enum.map(fn email ->
+      filtered_events = filter_events_by_custom_id(built_events, email.custom_id)
+      Map.put(email, :events, filtered_events ++ email.events)
+    end)
+  end
+
+  defp filter_events_by_custom_id(events, custom_id) do
+    events
+    |> Enum.filter(&(&1.custom_id == custom_id))
   end
 
   defp is_allowed_administrative?(email) do
@@ -67,5 +93,9 @@ defmodule Vae.Mailer.Worker do
       |> Places.get_administrative()
 
     Enum.member?(@allowed_administratives, administrative)
+  end
+
+  defp persist(emails) do
+    Enum.each(emails, fn email -> :ets.insert(:emails, {email.custom_id, email}) end)
   end
 end

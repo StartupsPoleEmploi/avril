@@ -4,7 +4,7 @@
 /deps
 /*.ez
 .DS_Store
-emails.tab
+*.tab
 
 # Generated on crash by the VM
 erl_crash.dump

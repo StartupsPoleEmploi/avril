@@ -43,10 +43,16 @@ config :vae,
       monitoring: "789012",
       search: "baz_search"
     }
+  },
+  mailjet: %{
+    campaign_template_id: 465_443,
+    from_email: "x@gmail.com",
+    # campaign_template_id: 475_460,
+    # from_email: "contact@avril.pole-emploi.fr"
+    override_to: [%{Email: "x@gmail.com"}]
   }
 
-config :vae,
-  extractor: Vae.Mailer.FileExtractor.Mock
+config :vae, extractor: Vae.Mailer.FileExtractor.Mock
 
 config :mailjex,
   api_base: "https://api.mailjet.com/v3.1",
