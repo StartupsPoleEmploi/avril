@@ -57,20 +57,7 @@ defmodule Vae.Mailer.Worker do
 
   @impl true
   def handle_cast({:handle_events, events}, emails) do
-    new_emails =
-      emails
-      |> Enum.map(fn email ->
-        email
-        |> Map.update(:events, [], fn state_events ->
-          state_events
-          |> Enum.concat(
-            events
-            |> Enum.map(&Vae.Mailer.Event.build_from_map/1)
-            |> Enum.filter(fn e -> e.custom_id == email.custom_id end)
-          )
-        end)
-      end)
-
+    new_emails = update_emails_from_events(emails, events)
     persist(new_emails)
     {:noreply, new_emails}
   end
@@ -79,6 +66,24 @@ defmodule Vae.Mailer.Worker do
   def handle_info(msg, state) do
     IO.inspect(msg)
     {:noreply, state}
+  end
+
+  @doc """
+  Visible for testing
+  """
+  def update_emails_from_events(emails, events) do
+    built_events = Enum.map(events, &Vae.Mailer.Event.build_from_map/1)
+
+    emails
+    |> Enum.map(fn email ->
+      filtered_events = filter_events_by_custom_id(built_events, email.custom_id)
+      Map.put(email, :events, filtered_events ++ email.events)
+    end)
+  end
+
+  defp filter_events_by_custom_id(events, custom_id) do
+    events
+    |> Enum.filter(&(&1.custom_id == custom_id))
   end
 
   defp is_allowed_administrative?(email) do
