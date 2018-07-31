@@ -34,6 +34,8 @@ defmodule Vae.ExAdmin.Process do
       end
     end
 
+    member_action(:duplicate, &__MODULE__.duplicate_action/2)
+
     form process do
       inputs do
         input(process, :name)
@@ -62,6 +64,27 @@ defmodule Vae.ExAdmin.Process do
               |> Enum.map(&{&1.id, &1.name})
           )
         end)
+      end
+    end
+
+    def duplicate_action(conn, params) do
+      Process
+      |> Repo.get(params[:id])
+      |> Repo.preload(:delegates)
+      |> Repo.preload(:processes_steps)
+      |> Process.duplicate()
+      |> case do
+        {:ok, new_process} ->
+          conn
+          |> Phoenix.Controller.put_flash(:notice, "Duplicated #{new_process.name}.")
+          |> Phoenix.Controller.redirect(
+            to: ExAdmin.Utils.admin_resource_path(new_process, :edit)
+          )
+
+        {:error, changeset} ->
+          conn
+          |> Phoenix.Controller.put_flash(:error, "Duplication Failed.")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Process))
       end
     end
 
