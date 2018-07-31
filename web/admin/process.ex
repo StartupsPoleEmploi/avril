@@ -81,7 +81,7 @@ defmodule Vae.ExAdmin.Process do
             to: ExAdmin.Utils.admin_resource_path(new_process, :edit)
           )
 
-        {:error, changeset} ->
+        {:error, _} ->
           conn
           |> Phoenix.Controller.put_flash(:error, "Duplication Failed.")
           |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Process))

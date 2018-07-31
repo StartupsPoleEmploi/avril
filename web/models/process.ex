@@ -68,17 +68,13 @@ defmodule Vae.Process do
         :step_5,
         :step_6,
         :step_7,
-        :step_8,
-        :delegates,
-        :steps,
-        :processes_steps
+        :step_8
       ])
       |> Map.update(:name, "", fn name -> "#{name}_copy" end)
-      |> IO.inspect(label: "la map")
 
-    changeset_update(%Process{}, duplicate)
+    changeset(%Process{}, duplicate)
+    |> put_assoc(:delegates, process.delegates)
     |> Repo.insert()
-    |> IO.inspect(label: "repo insert")
   end
 
   defp ensure_not_nil(delegates) do
