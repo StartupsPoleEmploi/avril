@@ -71,7 +71,6 @@ defmodule Vae.ExAdmin.Process do
       Process
       |> Repo.get(params[:id])
       |> Repo.preload(:delegates)
-      |> Repo.preload(:processes_steps)
       |> Process.duplicate()
       |> case do
         {:ok, new_process} ->
