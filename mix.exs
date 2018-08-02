@@ -69,7 +69,7 @@ defmodule Vae.Mixfile do
       {:httpoison, "~> 0.13"},
       {:poison, "~> 3.0", override: true},
       {:phoenix_slime, "~> 0.8.0"},
-      {:ex_admin, github: "nresni/ex_admin", tag: "0.8.3"},
+      {:ex_admin, github: "nresni/ex_admin", tag: "0.8.5"},
       {:coherence, "~> 0.4.0"},
       {:new_relixir, "~> 0.4.1"},
       {:floki, "~> 0.19.0", only: :dev},
