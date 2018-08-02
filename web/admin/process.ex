@@ -70,7 +70,6 @@ defmodule Vae.ExAdmin.Process do
     def duplicate_action(conn, params) do
       Process
       |> Repo.get(params[:id])
-      |> Repo.preload(:delegates)
       |> Process.duplicate()
       |> case do
         {:ok, new_process} ->

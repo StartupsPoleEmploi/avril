@@ -72,8 +72,8 @@ defmodule Vae.Process do
       ])
       |> Map.update(:name, "", fn name -> "#{name}_copy" end)
 
-    changeset(%Process{}, duplicate)
-    |> put_assoc(:delegates, process.delegates)
+    %Process{}
+    |> changeset(duplicate)
     |> Repo.insert()
   end
 
