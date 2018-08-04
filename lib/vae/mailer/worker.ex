@@ -3,6 +3,7 @@ defmodule Vae.Mailer.Worker do
 
   alias Vae.Mailer.{Email, Sender}
   alias Vae.Places
+  alias Vae.Event
 
   @extractor Application.get_env(:vae, :extractor)
 
@@ -72,7 +73,7 @@ defmodule Vae.Mailer.Worker do
   Visible for testing
   """
   def update_emails_from_events(emails, events) do
-    built_events = Enum.map(events, &Vae.Event.build_from_map/1)
+    built_events = Enum.map(events, &Event.build_from_map(:email, &1))
 
     emails
     |> Enum.map(fn email ->

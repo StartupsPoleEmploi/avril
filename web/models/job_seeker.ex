@@ -1,6 +1,8 @@
 defmodule Vae.JobSeeker do
   use Vae.Web, :model
-  alias Vae.JobSeeker
+
+  alias Vae.{Event, JobSeeker}
+  alias Vae.Repo
 
   schema "job_seekers" do
     field(:identifier, :string)
@@ -13,10 +15,11 @@ defmodule Vae.JobSeeker do
     field(:education_level, :string)
 
     field(:tracking_last_visit_at, :utc_datetime)
-    field(:tracking_email_sent_activation_email_at, :utc_datetime)
 
     field(:subscribed, :boolean, default: true)
     field(:geolocation, :map)
+
+    embeds_many(:events, Event, on_replace: :delete)
 
     timestamps()
   end
@@ -33,8 +36,27 @@ defmodule Vae.JobSeeker do
       :postal_code,
       :experience,
       :education_level,
-      :tracking_last_visit_at,
-      :tracking_sent_activation_email_at
+      :tracking_last_visit_at
     ])
+  end
+
+  def create_from_event(event) do
+    event_changeset = Event.changeset(%Event{}, event)
+
+    %__MODULE__{}
+    |> changeset(%{email: event.email})
+    |> put_embed(:events, [event_changeset])
+  end
+
+  def update_event_changeset(job_seeker, event) do
+    event_changeset = Event.changeset(%Event{}, event)
+
+    job_seeker
+    |> change()
+    |> put_embed(:events, [event_changeset | job_seeker.events])
+  end
+
+  def retrieve_by_email(email) do
+    Repo.get_by(__MODULE__, email: email)
   end
 end

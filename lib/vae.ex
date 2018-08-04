@@ -7,6 +7,7 @@ defmodule Vae do
     children = [
       supervisor(Vae.Repo, []),
       supervisor(Vae.Endpoint, []),
+      supervisor(Vae.Event.EventSupervisor, []),
       worker(Vae.Places.LoadBalancer, []),
       worker(Vae.Scheduler, []),
       worker(Vae.Mailer.Worker, []),
