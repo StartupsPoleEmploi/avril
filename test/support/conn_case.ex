@@ -32,13 +32,13 @@ defmodule Vae.ConnCase do
     end
   end
 
-  # setup tags do
-  #   :ok = Ecto.Adapters.SQL.Sandbox.checkout(Vae.Repo)
-  #
-  #   unless tags[:async] do
-  #     Ecto.Adapters.SQL.Sandbox.mode(Vae.Repo, {:shared, self()})
-  #   end
-  #
-  #   {:ok, conn: Phoenix.ConnTest.build_conn()}
-  # end
+  setup tags do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Vae.Repo)
+
+    unless tags[:async] do
+      Ecto.Adapters.SQL.Sandbox.mode(Vae.Repo, {:shared, self()})
+    end
+
+    :ok
+  end
 end
