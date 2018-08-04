@@ -20,7 +20,12 @@ defmodule Vae.Event.EventSupervisor do
   end
 
   def add_handler(event_type) do
-    spec = {Vae.Event.Handler, event_type: event_type}
+    spec = %{
+      id: Vae.Event.Handler,
+      restart: :temporary,
+      start: {Vae.Event.Handler, :start_link, [[event_type: :email]]}
+    }
+
     DynamicSupervisor.start_child(@name, spec)
   end
 
