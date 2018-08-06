@@ -3,6 +3,15 @@ defmodule Vae.Event.Handler do
 
   alias Vae.Event
 
+  def child_spec(event_type) do
+    %{
+      id: __MODULE__,
+      restart: :temporary,
+      start: {__MODULE__, :start_link, [[event_type: event_type]]},
+      type: :worker
+    }
+  end
+
   def start_link(args) do
     GenServer.start_link(__MODULE__, args)
   end
