@@ -8,7 +8,7 @@ defmodule Vae.MailEventsControllerTest do
       _json: [
         %{
           "CustomID" => "45",
-          "MessageID" => "23",
+          "MessageID" => 23,
           "Payload" => "bonjour, deoijoij",
           "agent" => "",
           "customcampaign" => "123",
@@ -16,8 +16,8 @@ defmodule Vae.MailEventsControllerTest do
           "event" => "open",
           "geo" => "",
           "ip" => "",
-          "mj_campaign_id" => "1",
-          "mj_contact_id" => "avril@pole-emploi.fr",
+          "mj_campaign_id" => 1,
+          "mj_contact_id" => 2323,
           "time" => 1_533_378_969
         }
       ]
@@ -25,13 +25,13 @@ defmodule Vae.MailEventsControllerTest do
 
     expected_events = [
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "open",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_533_378_969),
         type: "email"
@@ -51,7 +51,7 @@ defmodule Vae.MailEventsControllerTest do
       _json: [
         %{
           "CustomID" => "45",
-          "MessageID" => "23",
+          "MessageID" => 23,
           "Payload" => "bonjour, deoijoij",
           "agent" => "",
           "customcampaign" => "123",
@@ -59,13 +59,13 @@ defmodule Vae.MailEventsControllerTest do
           "event" => "open",
           "geo" => "",
           "ip" => "",
-          "mj_campaign_id" => "1",
-          "mj_contact_id" => "avril@pole-emploi.fr",
+          "mj_campaign_id" => 1,
+          "mj_contact_id" => 2323,
           "time" => 1_433_333_949
         },
         %{
           "CustomID" => "45",
-          "MessageID" => "23",
+          "MessageID" => 23,
           "Payload" => "bonjour, deoijoij",
           "agent" => "",
           "customcampaign" => "123",
@@ -73,8 +73,8 @@ defmodule Vae.MailEventsControllerTest do
           "event" => "click",
           "geo" => "",
           "ip" => "",
-          "mj_campaign_id" => "1",
-          "mj_contact_id" => "avril@pole-emploi.fr",
+          "mj_campaign_id" => 1,
+          "mj_contact_id" => 2323,
           "time" => 1_533_378_969
         }
       ]
@@ -82,25 +82,25 @@ defmodule Vae.MailEventsControllerTest do
 
     expected_events = [
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "open",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_433_333_949),
         type: "email"
       },
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "click",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_533_378_969),
         type: "email"

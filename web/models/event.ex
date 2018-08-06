@@ -10,10 +10,10 @@ defmodule Vae.Event do
     field(:event, :string)
     field(:email, :string)
     field(:time, :utc_datetime)
-    field(:campaign_id, :string)
-    field(:contact_id, :string)
+    field(:campaign_id, :integer)
+    field(:contact_id, :integer)
     field(:customcampaign, :string)
-    field(:message_id, :string)
+    field(:message_id, :integer)
     field(:custom_id, :string)
     field(:payload, :string)
   end

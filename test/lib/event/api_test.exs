@@ -6,13 +6,13 @@ defmodule Vae.ApiTest do
   test "convert email event params to email event struct" do
     params = %{
       "CustomID" => "45",
-      "MessageID" => "23",
+      "MessageID" => 23,
       "Payload" => "bonjour, deoijoij",
       "customcampaign" => "123",
       "email" => "foo@bar.com",
       "event" => "open",
-      "mj_campaign_id" => "1",
-      "mj_contact_id" => "avril@pole-emploi.fr",
+      "mj_campaign_id" => 1,
+      "mj_contact_id" => 2323,
       "time" => "2018-07-08"
     }
 
@@ -21,9 +21,9 @@ defmodule Vae.ApiTest do
              custom_id: "45",
              customcampaign: "123",
              event: "open",
-             message_id: "23",
-             campaign_id: "1",
-             contact_id: "avril@pole-emploi.fr",
+             message_id: 23,
+             campaign_id: 1,
+             contact_id: 2323,
              payload: "bonjour, deoijoij",
              time: "2018-07-08",
              email: "foo@bar.com"
@@ -48,26 +48,26 @@ defmodule Vae.ApiTest do
     params = [
       %{
         "CustomID" => "45",
-        "MessageID" => "23",
+        "MessageID" => 23,
         "Payload" => "bonjour, deoijoij",
         "customcampaign" => "123",
         "email" => "foo@bar.com",
         "event" => "open",
-        "mj_campaign_id" => "1",
-        "mj_contact_id" => "avril@pole-emploi.fr",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
         "time" => 1_433_333_949
       }
     ]
 
     expected_events = [
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "open",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_433_333_949),
         type: "email"
@@ -85,24 +85,24 @@ defmodule Vae.ApiTest do
     params = [
       %{
         "CustomID" => "45",
-        "MessageID" => "23",
+        "MessageID" => 23,
         "Payload" => "bonjour, deoijoij",
         "customcampaign" => "123",
         "email" => "foo@bar.com",
         "event" => "open",
-        "mj_campaign_id" => "1",
-        "mj_contact_id" => "avril@pole-emploi.fr",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
         "time" => 1_433_333_949
       },
       %{
         "CustomID" => "45",
-        "MessageID" => "23",
+        "MessageID" => 23,
         "Payload" => "bonjour, deoijoij",
         "customcampaign" => "123",
         "email" => "foo@bar.com",
         "event" => "click",
-        "mj_campaign_id" => "1",
-        "mj_contact_id" => "avril@pole-emploi.fr",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
         "time" => 1_533_374_065
       }
     ]
@@ -111,25 +111,25 @@ defmodule Vae.ApiTest do
 
     expected_events = [
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "open",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_433_333_949),
         type: "email"
       },
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "click",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_533_374_065),
         type: "email"
@@ -152,13 +152,13 @@ defmodule Vae.ApiTest do
     params = [
       %{
         "CustomID" => "45",
-        "MessageID" => "23",
+        "MessageID" => 23,
         "Payload" => "bonjour, deoijoij",
         "customcampaign" => "123",
         "email" => "foo@bar.com",
         "event" => "open",
-        "mj_campaign_id" => "1",
-        "mj_contact_id" => "avril@pole-emploi.fr",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
         "time" => 1_433_333_949
       }
     ]
@@ -167,13 +167,13 @@ defmodule Vae.ApiTest do
 
     expected_events = [
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "open",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_433_333_949),
         type: "email"
@@ -194,24 +194,24 @@ defmodule Vae.ApiTest do
     params = [
       %{
         "CustomID" => "45",
-        "MessageID" => "23",
+        "MessageID" => 23,
         "Payload" => "bonjour, deoijoij",
         "customcampaign" => "123",
         "email" => "foo@bar.com",
         "event" => "open",
-        "mj_campaign_id" => "1",
-        "mj_contact_id" => "avril@pole-emploi.fr",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
         "time" => 1_433_333_949
       },
       %{
         "CustomID" => "45",
-        "MessageID" => "23",
+        "MessageID" => 23,
         "Payload" => "bonjour, deoijoij",
         "customcampaign" => "123",
         "email" => "foo@bar.com",
         "event" => "click",
-        "mj_campaign_id" => "1",
-        "mj_contact_id" => "avril@pole-emploi.fr",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
         "time" => 1_533_374_065
       }
     ]
@@ -220,25 +220,25 @@ defmodule Vae.ApiTest do
 
     expected_events = [
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "open",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_433_333_949),
         type: "email"
       },
       %Vae.Event{
-        campaign_id: "1",
-        contact_id: "avril@pole-emploi.fr",
+        campaign_id: 1,
+        contact_id: 2323,
         custom_id: "45",
         customcampaign: "123",
         email: "foo@bar.com",
         event: "click",
-        message_id: "23",
+        message_id: 23,
         payload: "bonjour, deoijoij",
         time: DateTime.from_unix!(1_533_374_065),
         type: "email"
