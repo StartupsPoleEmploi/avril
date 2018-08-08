@@ -4,11 +4,11 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   @behaviour Vae.Mailer.FileExtractor
 
   alias Vae.JobSeeker
-  alias Vae.Mailer.Email
+  alias Vae.Repo.NewRelic, as: Repo
 
   @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
 
-  def extract(path, existing_custom_ids) do
+  def extract(path, _) do
     window = Flow.Window.count(10_000)
 
     File.stream!(path, read_ahead: 100_000)
@@ -21,37 +21,22 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     |> Flow.map(&build_job_seeker/1)
     |> Flow.partition(window: window)
     |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-      custom_id = UUID.uuid5(nil, job_seeker.email)
-
-      if Enum.member?(existing_custom_ids, custom_id) do
-        acc
-      else
-        [
-          %Email{
-            custom_id: custom_id,
-            job_seeker: job_seeker
-          }
-          | acc
-        ]
+      case Repo.get_by(JobSeeker, email: job_seeker.email) do
+        nil -> [job_seeker | acc]
+        _ -> acc
       end
     end)
     |> Flow.on_trigger(fn acc ->
-      new_acc =
-        Enum.map(acc, fn %Email{job_seeker: job_seeker} = email ->
-          geolocation = Vae.Places.get_geoloc_from_postal_code(job_seeker.postal_code)
-
-          %{
-            email
-            | job_seeker: %{
-                job_seeker
-                | geolocation: geolocation
-              }
-          }
-        end)
+      new_acc = Enum.map(acc, &build_geolocation/1)
 
       {new_acc, []}
     end)
     |> Enum.to_list()
+  end
+
+  defp build_geolocation(job_seeker) do
+    geolocation = Vae.Places.get_geoloc_from_postal_code(job_seeker.postal_code)
+    Map.put(job_seeker, :geolocation, geolocation)
   end
 
   defp build_job_seeker(line) do

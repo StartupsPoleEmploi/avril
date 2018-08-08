@@ -4,6 +4,7 @@ defmodule Vae.Mailer.Worker do
   alias Vae.Mailer.{Email, Sender}
   alias Vae.Places
   alias Vae.Event
+  alias Vae.Repo.NewRelic, as: Repo
 
   @extractor Application.get_env(:vae, :extractor)
 
@@ -35,9 +36,13 @@ defmodule Vae.Mailer.Worker do
   def handle_call({:extract, path}, _from, state) do
     custom_ids = Email.extract_custom_ids(state)
 
-    emails =
+    job_seekers =
       @extractor.extract(path, custom_ids)
       |> Enum.filter(&is_allowed_administrative?/1)
+      |> Enum.map(&Repo.insert!/1)
+
+    emails = Enum.map(job_seekers, &build_email/1)
+    persist(emails)
 
     new_state = emails ++ state
 
@@ -69,6 +74,13 @@ defmodule Vae.Mailer.Worker do
     {:noreply, state}
   end
 
+  defp build_email(job_seeker) do
+    %Email{
+      custom_id: UUID.uuid5(nil, job_seeker.email),
+      job_seeker_id: job_seeker.id
+    }
+  end
+
   @doc """
   Visible for testing
   """
@@ -87,10 +99,10 @@ defmodule Vae.Mailer.Worker do
     |> Enum.filter(&(&1.custom_id == custom_id))
   end
 
-  defp is_allowed_administrative?(email) do
+  defp is_allowed_administrative?(job_seeker) do
     administrative =
-      email
-      |> get_in([Access.key(:job_seeker), Access.key(:geolocation)])
+      job_seeker
+      |> get_in([Access.key(:geolocation)])
       |> Places.get_administrative()
 
     Enum.member?(@allowed_administratives, administrative)
