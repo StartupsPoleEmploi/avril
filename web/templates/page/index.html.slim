@@ -9,8 +9,10 @@
     .row.my-5
       .col-md-10.offset-md-1
         = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-md-stretch align-items-center"], fn f ->
-          .input-group
+          .input-group.suggest
             = render Vae.ComponentView, "suggest.html", form: f, position: :home
+          .input-group.geolocation
+            = render Vae.ComponentView, "geolocation.html", form: f
           = submit class: 'btn btn-outline-primary btn-lg d-flex mt-md-0 mt-2' do
             span.ic-icon.ic-zoom-bold
     .row
