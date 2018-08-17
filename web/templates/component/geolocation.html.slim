@@ -1,2 +1,4 @@
-= text_input(@form, :geolocation_text, class: "form-control form-control-lg", placeholder: "Votre ville de résidence")
-= hidden_input(@form, :geolocation)
+= search_input(@form, :geolocation_text, class: "form-control form-control-lg", placeholder: "Votre ville de résidence")
+= hidden_input(@form, :lat)
+= hidden_input(@form, :lng)
+= render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"

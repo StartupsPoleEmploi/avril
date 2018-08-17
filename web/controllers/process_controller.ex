@@ -5,20 +5,29 @@ defmodule Vae.ProcessController do
   alias Vae.Delegate
 
   def index(conn, params) do
-    certification =
-      case params["certification"] do
-        nil ->
-          nil
+    if Map.has_key?(params, "lat") and Map.has_key?(params, "lng") do
+      search(
+        conn,
+        Map.merge(params, %{
+          "delegate_search" => %{"lat" => params["lat"], "lng" => params["lng"]}
+        })
+      )
+    else
+      certification =
+        case params["certification"] do
+          nil ->
+            nil
 
-        certification_id ->
-          Repo.get(Certification, certification_id)
-      end
+          certification_id ->
+            Repo.get(Certification, certification_id)
+        end
 
-    update_wizard_trails(conn, step: 3, url: "/processes")
-    |> render(
-      "index.html",
-      certification: certification
-    )
+      update_wizard_trails(conn, step: 3, url: "/processes")
+      |> render(
+        "index.html",
+        certification: certification
+      )
+    end
   end
 
   def delegates(conn, params) do

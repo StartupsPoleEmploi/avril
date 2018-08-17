@@ -102,34 +102,50 @@ defmodule Vae.ComponentView do
      """}
   end
 
-  def render("places", _) do
+  def render("places", %{tag: tag, prefix: prefix, type: type}) do
     {app_id, api_key} = Vae.Places.LoadBalancer.get_index_credentials()
+
+    type_requested =
+      case type do
+        nil -> ""
+        _ -> "type: '#{type}',"
+      end
 
     {:safe,
      """
      <script>
-     var placesAutocomplete = places({
-       container: document.querySelector('#delegate_search_address'),
+     var placesAutocomplete#{prefix} = places({
+       container: document.querySelector('##{prefix}_#{tag}'),
        countries: ['FR'],
        aroundLatLngViaIP: true,
+       #{type_requested}
        appId: "#{app_id}",
        apiKey: "#{api_key}"
      });
 
-     var $lat = document.querySelector('#delegate_search_lat')
-     var $lng = document.querySelector('#delegate_search_lng')
-     placesAutocomplete.on('change', function(e) {
-       $lat.value = e.suggestion.latlng.lat;
-       $lng.value = e.suggestion.latlng.lng;
+     var #{prefix}lat = document.querySelector('##{prefix}_lat')
+     var #{prefix}lng = document.querySelector('##{prefix}_lng')
+     placesAutocomplete#{prefix}.on('change', function(e) {
+       #{prefix}lat.value = e.suggestion.latlng.lat;
+       #{prefix}lng.value = e.suggestion.latlng.lng;
        document.querySelector('#delegate_form').submit()
      });
 
-     placesAutocomplete.on('clear', function() {
-       $lat.value = undefined;
-       $lng.value = undefined;
+     placesAutocomplete#{prefix}.on('clear', function() {
+       #{prefix}lat.value = undefined;
+       #{prefix}lng.value = undefined;
      });
      </script>
      """}
+  end
+
+  def render("places", %{tag: tag, prefix: prefix}) do
+    render("places", %{tag: tag, type: nil})
+  end
+
+  def render("places", _) do
+    IO.inspect("passe")
+    render("places", %{prefix: "delegate_search", tag: "address", type: nil})
   end
 
   @title_suffix " | Avril - un service Pôle emploi"

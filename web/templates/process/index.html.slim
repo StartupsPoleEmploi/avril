@@ -93,9 +93,7 @@
                               = search_input f, :address, placeholder: "Quelle est votre localité"
                               = hidden_input f, :lat
                               = hidden_input f, :lng
+                              = render Vae.ComponentView, "places", conn: @conn
 
                             p
                               i Le certificateur est l’organisme qui vous permettra d’obtenir votre diplôme par la démarche VAE.
-
-                            script src="https://cdn.jsdelivr.net/npm/places.js@1.7.3"
-                            = render Vae.ComponentView, "places", conn: @conn

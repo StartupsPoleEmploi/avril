@@ -18,7 +18,7 @@
                     - nil ->
                       = link formatted_name(certification), to: process_path(@conn, :index, certification: certification), class: "main-link"
                     - _ ->
-                      = link formatted_name(certification), to: process_path(@conn, :index, certification: certification, "search[profession]": @search["profession"]), class: "main-link"
+                      = link formatted_name(certification), to: process_path(@conn, :search, certification: certification, "search[profession]": @search["profession"], lat: @search["lat"], lng: @search["lng"]), class: "main-link"
                 p= level_info(certification.level)
             = if @page.total_entries > @page.page_size do
               = case assigns[:rome] do
