@@ -132,8 +132,8 @@ defmodule Vae.ComponentView do
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {
-       #{prefix}lat.value = undefined;
-       #{prefix}lng.value = undefined;
+       #{prefix}lat.value = "";
+       #{prefix}lng.value = "";
      });
      </script>
      """}
@@ -144,7 +144,6 @@ defmodule Vae.ComponentView do
   end
 
   def render("places", _) do
-    IO.inspect("passe")
     render("places", %{prefix: "delegate_search", tag: "address", type: nil})
   end
 
