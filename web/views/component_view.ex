@@ -111,6 +111,7 @@ defmodule Vae.ComponentView do
         _ -> "type: '#{type}',"
       end
 
+    # TODO: Drop the #delegate_form submit
     {:safe,
      """
      <script>
@@ -137,7 +138,6 @@ defmodule Vae.ComponentView do
      placesAutocomplete#{prefix}.on('change', function(e) {
        #{prefix}lat.value = e.suggestion.latlng.lat;
        #{prefix}lng.value = e.suggestion.latlng.lng;
-       //TODO: drop that :shit:
        document.querySelector('#delegate_form').submit()
      });
 

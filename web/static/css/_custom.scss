@@ -34,9 +34,7 @@ form.dm-search-box {
   border: none;
   .input-group.suggest .form-control {
     @include media-breakpoint-down(sm) {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-      border-bottom: none;
+      border-bottom: 0;
     }
   }
   .input-group.geolocation {
@@ -45,12 +43,12 @@ form.dm-search-box {
     }
     .form-control {
       @include media-breakpoint-up(md) {
-        border-radius: 0px;
         border-left: none;
+        border-radius: 0;
       }
       @include media-breakpoint-down(sm) {
-          border-top-left-radius: 0;
-          border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
       }
     }
   }
