@@ -27,12 +27,6 @@ $(function () {
   $("body.home .wizard-step.complete a").on('click', function(e){
     e.preventDefault();
   });
-
-  if($(".awesomplete").length) {
-    Awesomplete.$(".awesomplete").addEventListener("awesomplete-selectcomplete", function(e){
-      $("#rome_form").submit()
-    });
-  }
 })
 
 $(window).scroll(function() {

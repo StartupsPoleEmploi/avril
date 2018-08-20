@@ -32,6 +32,26 @@
 
 form.dm-search-box {
   border: none;
+  .input-group.suggest .form-control {
+    @include media-breakpoint-down(sm) {
+      border-bottom: 0;
+    }
+  }
+  .input-group.geolocation {
+    @include media-breakpoint-up(md) {
+      width: 50%;
+    }
+    .form-control {
+      @include media-breakpoint-up(md) {
+        border-left: none;
+        border-radius: 0;
+      }
+      @include media-breakpoint-down(sm) {
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+    }
+  }
   .input-group .form-control {
     border: none;
     border: 1px solid #E0E0E0;
@@ -43,8 +63,8 @@ form.dm-search-box {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
       box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
-      padding-left: 40px;
-      padding-right: 40px;
+      padding-left: 25px;
+      padding-right: 25px;
     }
     @include media-breakpoint-down(sm) {
       box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
