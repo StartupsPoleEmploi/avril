@@ -120,7 +120,16 @@ defmodule Vae.ComponentView do
        aroundLatLngViaIP: true,
        #{type_requested}
        appId: "#{app_id}",
-       apiKey: "#{api_key}"
+       apiKey: "#{api_key}",
+       templates: {
+         value: function(suggestion) {
+           return suggestion.name;
+         },
+         suggestion: function(suggestion) {
+           console.log(suggestion)
+           return suggestion.highlight.name + ' <span class="administrative">' + suggestion.administrative + '</span>';
+         }
+       }
      });
 
      var #{prefix}lat = document.querySelector('##{prefix}_lat')
@@ -128,6 +137,7 @@ defmodule Vae.ComponentView do
      placesAutocomplete#{prefix}.on('change', function(e) {
        #{prefix}lat.value = e.suggestion.latlng.lat;
        #{prefix}lng.value = e.suggestion.latlng.lng;
+       //TODO: drop that :shit:
        document.querySelector('#delegate_form').submit()
      });
 

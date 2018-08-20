@@ -1,28 +1,22 @@
 .row
   .col-md-12
-    .card.mb-5
-      .card-body
-        .row
-          .col-md-12
-            h1.m-2.m-md-5.text-center Choisissez votre diplôme
-        .d-none.d-md-block
-          = render Vae.ComponentView, "steps.html", wizard_trails: @wizard_trails
-        .results-container
-          .results-count
-            = render "_certification_title", conn: @conn, count: @page.total_entries, profession: @profession
-          .results
-            = for certification <- @certifications do
-              .result-item
-                h3
-                  = case assigns[:search] do
-                    - nil ->
-                      = link formatted_name(certification), to: process_path(@conn, :index, certification: certification), class: "main-link"
-                    - _ ->
-                      = link formatted_name(certification), to: to_process(@conn, certification, @search), class: "main-link"
-                p= level_info(certification.level)
-            = if @page.total_entries > @page.page_size do
-              = case assigns[:rome] do
-                - nil ->
-                  = pagination_links @conn, @page
-                - rome ->
-                  = pagination_links @conn, @page, [rome.id], path: &rome_path/4, action: :certifications
+    h1.m-2.m-md-5.text-center Choisissez votre diplôme
+.results-container
+  .results-count
+    = render "_certification_title", conn: @conn, count: @page.total_entries, profession: @profession
+  .results
+    = for certification <- @certifications do
+      .result-item
+        h3
+          = case assigns[:search] do
+            - nil ->
+              = link formatted_name(certification), to: process_path(@conn, :index, certification: certification), class: "main-link"
+            - _ ->
+              = link formatted_name(certification), to: to_process(@conn, certification, @search), class: "main-link"
+        p= level_info(certification.level)
+    = if @page.total_entries > @page.page_size do
+      = case assigns[:rome] do
+        - nil ->
+          = pagination_links @conn, @page
+        - rome ->
+          = pagination_links @conn, @page, [rome.id], path: &rome_path/4, action: :certifications
