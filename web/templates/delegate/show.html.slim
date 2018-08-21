@@ -47,4 +47,4 @@
               .steps
                 = for i <- 1..8 do
                   .step.mb-5
-                    = raw Map.get(@delegate.process, :"step_#{i}")
+                    = if not is_nil(@delegate.process), do: raw Map.get(@delegate.process, :"step_#{i}")
