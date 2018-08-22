@@ -9,6 +9,7 @@
 nav.navbar.dm-navbar {
   &.--not-top {
     box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+    @extend .bg-white;
   }
   border: none;
   padding: 1rem;
