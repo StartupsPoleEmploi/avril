@@ -15,14 +15,11 @@ html{lang="fr"}
     script src="https://cdn.jsdelivr.net/npm/places.js@1.9.0"
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
-  body.app
+  body
     main role="main"
       = render ComponentView, "navbar.html", conn: @conn
-      .container.py-3.py-md-5
-        = render ComponentView, "searchbar.html", conn: @conn, headers: true
       .container.py-3.py-md-5
         = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn
-      script src=static_path(@conn,"/js/analytics.js")

@@ -22,8 +22,7 @@ defmodule Vae.ProcessController do
             Repo.get(Certification, certification_id)
         end
 
-      update_wizard_trails(conn, step: 3, url: "/processes")
-      |> render(
+      render(
         "index.html",
         certification: certification
       )
@@ -94,7 +93,7 @@ defmodule Vae.ProcessController do
 
     algolia_geo =
       case params["delegate_search"] do
-        %{"lat" => lat, "lng" => lng} when lat != nil and lng != nil and lat != "" and lng != "" ->
+        %{"lat" => lat, "lng" => lng} when lat != "" and lng != "" ->
           [{:aroundLatLng, [lat, lng]}]
 
         _ ->
@@ -161,9 +160,8 @@ defmodule Vae.ProcessController do
         delegate_id -> Repo.get(Delegate, delegate_id) |> Repo.preload(:process)
       end
 
-    conn
-    |> update_wizard_trails(step: 4, url: "/")
-    |> render(
+    render(
+      conn,
       "index.html",
       certification: certification,
       delegate: delegate,
