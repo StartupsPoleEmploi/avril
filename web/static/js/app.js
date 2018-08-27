@@ -37,3 +37,11 @@ $(window).scroll(function() {
     $("nav").removeClass('--not-top');
   }
 });
+
+$(window).on('resize', function(){
+  if ($(window).width() < 768 ) {
+    $("#search_profession").attr("placeholder","Votre métier");
+  } else {
+    $("#search_profession").attr("placeholder","Pour quel métier souhaitez-vous un diplôme ?");	
+  }
+});
