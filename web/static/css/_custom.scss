@@ -97,9 +97,11 @@ form.dm-search-box {
 
 body {
   background-color: #FFFFFF;
-  &.app main {
-    padding-bottom: 3rem;
+  &.app {
     background: $dm-primary-light-grey;
+    main {
+      padding-bottom: 3rem;
+    }
   }
   &.home {
     @include media-breakpoint-up(md) {
