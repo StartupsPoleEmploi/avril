@@ -27,12 +27,6 @@ $(function () {
   $("body.home .wizard-step.complete a").on('click', function(e){
     e.preventDefault();
   });
-
-  if($(".awesomplete").length) {
-    Awesomplete.$(".awesomplete").addEventListener("awesomplete-selectcomplete", function(e){
-      $("#rome_form").submit()
-    });
-  }
 })
 
 $(window).scroll(function() {
@@ -41,5 +35,13 @@ $(window).scroll(function() {
     $("nav").addClass('--not-top');
   } else {
     $("nav").removeClass('--not-top');
+  }
+});
+
+$(window).on('resize', function(){
+  if ($(window).width() < 768 ) {
+    $("#search_profession").attr("placeholder","Votre métier");
+  } else {
+    $("#search_profession").attr("placeholder","Pour quel métier souhaitez-vous un diplôme ?");	
   }
 });

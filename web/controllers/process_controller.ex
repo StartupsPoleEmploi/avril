@@ -5,20 +5,28 @@ defmodule Vae.ProcessController do
   alias Vae.Delegate
 
   def index(conn, params) do
-    certification =
-      case params["certification"] do
-        nil ->
-          nil
+    if Map.has_key?(params, "lat") and Map.has_key?(params, "lng") do
+      search(
+        conn,
+        Map.merge(params, %{
+          "delegate_search" => %{"lat" => params["lat"], "lng" => params["lng"]}
+        })
+      )
+    else
+      certification =
+        case params["certification"] do
+          nil ->
+            nil
 
-        certification_id ->
-          Repo.get(Certification, certification_id)
-      end
+          certification_id ->
+            Repo.get(Certification, certification_id)
+        end
 
-    update_wizard_trails(conn, step: 3, url: "/processes")
-    |> render(
-      "index.html",
-      certification: certification
-    )
+      render(
+        "index.html",
+        certification: certification
+      )
+    end
   end
 
   def delegates(conn, params) do
@@ -85,7 +93,7 @@ defmodule Vae.ProcessController do
 
     algolia_geo =
       case params["delegate_search"] do
-        %{"lat" => lat, "lng" => lng} when lat != nil and lng != nil and lat != "" and lng != "" ->
+        %{"lat" => lat, "lng" => lng} when lat != "" and lng != "" ->
           [{:aroundLatLng, [lat, lng]}]
 
         _ ->
@@ -152,9 +160,8 @@ defmodule Vae.ProcessController do
         delegate_id -> Repo.get(Delegate, delegate_id) |> Repo.preload(:process)
       end
 
-    conn
-    |> update_wizard_trails(step: 4, url: "/")
-    |> render(
+    render(
+      conn,
       "index.html",
       certification: certification,
       delegate: delegate,

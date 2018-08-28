@@ -8,11 +8,7 @@
         p.dm-sub-title Nouveau diplôme, nouvelle vie
     .row.my-5
       .col-md-10.offset-md-1
-        = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-md-stretch align-items-center"], fn f ->
-          .input-group
-            = render Vae.ComponentView, "suggest.html", form: f, position: :home
-          = submit class: 'btn btn-outline-primary btn-lg d-flex mt-md-0 mt-2' do
-            span.ic-icon.ic-zoom-bold
+        = render Vae.ComponentView, "searchbar.html", conn: @conn
     .row
       .col-md-12
         p.dm-logo Avril est une initiative Pôle emploi
