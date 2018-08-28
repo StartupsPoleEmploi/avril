@@ -3,6 +3,8 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
 
   @behaviour Vae.Mailer.FileExtractor
 
+  @limit Application.get_env(:vae, :mailer_extractor_limit)
+
   alias Vae.JobSeeker
   alias Vae.Repo.NewRelic, as: Repo
 
@@ -11,27 +13,32 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   def extract(path, _) do
     window = Flow.Window.count(10_000)
 
-    File.stream!(path, read_ahead: 100_000)
-    |> CSV.decode(separator: ?;, headers: true)
-    |> Flow.from_enumerable()
-    |> Flow.map(fn
-      {:ok, line} -> Map.take(line, @fields)
-      {:error, error} -> Logger.error(error)
-    end)
-    |> Flow.map(&build_job_seeker/1)
-    |> Flow.partition(window: window)
-    |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-      case Repo.get_by(JobSeeker, email: job_seeker.email) do
-        nil -> [job_seeker | acc]
-        _ -> acc
-      end
-    end)
-    |> Flow.on_trigger(fn acc ->
-      new_acc = Enum.map(acc, &build_geolocation/1)
+    extract_job_seekers_flow =
+      File.stream!(path, read_ahead: 100_000)
+      |> CSV.decode(separator: ?;, headers: true)
+      |> Flow.from_enumerable()
+      |> Flow.map(fn
+        {:ok, line} -> Map.take(line, @fields)
+        {:error, error} -> Logger.error(error)
+      end)
+      |> Flow.map(&build_job_seeker/1)
+      |> Flow.partition(window: window)
+      |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
+        case Repo.get_by(JobSeeker, email: job_seeker.email) do
+          nil -> [job_seeker | acc]
+          _ -> acc
+        end
+      end)
+      |> Flow.on_trigger(fn acc ->
+        new_acc = Enum.map(acc, &build_geolocation/1)
 
-      {new_acc, []}
-    end)
-    |> Enum.to_list()
+        {new_acc, []}
+      end)
+
+    case @limit do
+      :all -> Enum.to_list(extract_job_seekers_flow)
+      limit -> Enum.take(extract_job_seekers_flow, limit)
+    end
   end
 
   defp build_geolocation(job_seeker) do

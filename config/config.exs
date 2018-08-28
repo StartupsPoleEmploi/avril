@@ -69,7 +69,8 @@ config :algolia,
 
 config :vae,
   places_client: Vae.Places.Client.Algolia,
-  algolia_places_apis: %{}
+  algolia_places_apis: %{},
+  mailer_extractor_limit: 10_000
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom
