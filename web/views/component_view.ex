@@ -43,7 +43,6 @@ defmodule Vae.ComponentView do
       [
         class: suggest_class(position),
         onfocus: "this.value='';",
-        placeholder: "Pour quel métier souhaitez-vous un diplôme ?",
         required: true
       ],
       %{
@@ -111,7 +110,6 @@ defmodule Vae.ComponentView do
         _ -> "type: '#{type}',"
       end
 
-    # TODO: Drop the #delegate_form submit
     {:safe,
      """
      <script>
@@ -127,7 +125,6 @@ defmodule Vae.ComponentView do
            return suggestion.name;
          },
          suggestion: function(suggestion) {
-           console.log(suggestion)
            return suggestion.highlight.name + ' <span class="administrative">' + suggestion.administrative + '</span>';
          }
        }
@@ -138,7 +135,6 @@ defmodule Vae.ComponentView do
      placesAutocomplete#{prefix}.on('change', function(e) {
        #{prefix}lat.value = e.suggestion.latlng.lat;
        #{prefix}lng.value = e.suggestion.latlng.lng;
-       document.querySelector('#delegate_form').submit()
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {
@@ -218,5 +214,16 @@ defmodule Vae.ComponentView do
 
   def complete_page_title(_assigns) do
     "Avril | Comment faire une V.A.E ?"
+  end
+
+  def searchbar_labels() do
+    script("""
+      var label = 'Pour quel métier souhaitez-vous un diplôme ?';
+      if ($(window).width() < 768 ) {
+        label = 'Votre métier';
+      }
+      $("<label class='form-control-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
+      $("<label class='form-control-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+    """)
   end
 end

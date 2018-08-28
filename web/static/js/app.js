@@ -40,8 +40,8 @@ $(window).scroll(function() {
 
 $(window).on('resize', function(){
   if ($(window).width() < 768 ) {
-    $("#search_profession").attr("placeholder","Votre métier");
+    $("#label_search_profession").text("Votre métier");
   } else {
-    $("#search_profession").attr("placeholder","Pour quel métier souhaitez-vous un diplôme ?");	
+    $("#label_search_profession").text("Pour quel métier souhaitez-vous un diplôme ?");	
   }
 });
