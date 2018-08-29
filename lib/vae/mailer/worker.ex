@@ -2,23 +2,12 @@ defmodule Vae.Mailer.Worker do
   use GenServer
 
   alias Vae.Mailer.{Email, Sender}
-  alias Vae.Places
   alias Vae.Event
   alias Vae.Repo.NewRelic, as: Repo
 
   @extractor Application.get_env(:vae, :extractor)
 
   @name MailerWorker
-  @allowed_administratives [
-    "Bretagne",
-    "Île-de-France",
-    "Centre-Val de Loire",
-    "Occitanie",
-    "Bourgogne-Franche-Comté",
-    "Provence-Alpes-Côte d'Azur",
-    "Corse",
-    "Hauts-de-France"
-  ]
 
   @doc false
   def start_link() do
@@ -38,7 +27,6 @@ defmodule Vae.Mailer.Worker do
 
     job_seekers =
       @extractor.extract(path, custom_ids)
-      |> Enum.filter(&is_allowed_administrative?/1)
       |> Enum.map(&Repo.insert!/1)
 
     emails = Enum.map(job_seekers, &build_email/1)
@@ -97,15 +85,6 @@ defmodule Vae.Mailer.Worker do
   defp filter_events_by_custom_id(events, custom_id) do
     events
     |> Enum.filter(&(&1.custom_id == custom_id))
-  end
-
-  defp is_allowed_administrative?(job_seeker) do
-    administrative =
-      job_seeker
-      |> get_in([Access.key(:geolocation)])
-      |> Places.get_administrative()
-
-    Enum.member?(@allowed_administratives, administrative)
   end
 
   defp persist(emails) do

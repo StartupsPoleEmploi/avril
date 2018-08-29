@@ -76,7 +76,7 @@ defmodule Vae.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.6.5"},
       {:remote_ip, "~> 0.1.0"},
-      {:flow, "~> 0.13"},
+      {:flow, "~> 0.14.0"},
       {:quantum, "~> 2.2"},
       {:timex, "~> 3.0"},
       {:navigation_history, "~> 0.0"},

@@ -1,19 +1,28 @@
 defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   require Logger
 
+  alias Vae.JobSeeker
+  alias Vae.Places
+
   @behaviour Vae.Mailer.FileExtractor
 
   @limit Application.get_env(:vae, :mailer_extractor_limit)
 
-  alias Vae.JobSeeker
-  alias Vae.Repo.NewRelic, as: Repo
-
   @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
 
-  def extract(path, _) do
-    window = Flow.Window.count(10_000)
+  @allowed_administratives [
+    "Bretagne",
+    "Île-de-France",
+    "Centre-Val de Loire",
+    "Occitanie",
+    "Bourgogne-Franche-Comté",
+    "Provence-Alpes-Côte d'Azur",
+    "Corse",
+    "Hauts-de-France"
+  ]
 
-    extract_job_seekers_flow =
+  def extract(path, _) do
+    job_seekers_flow =
       File.stream!(path, read_ahead: 100_000)
       |> CSV.decode(separator: ?;, headers: true)
       |> Flow.from_enumerable()
@@ -22,22 +31,15 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
         {:error, error} -> Logger.error(error)
       end)
       |> Flow.map(&build_job_seeker/1)
-      |> Flow.partition(window: window)
       |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-        case Repo.get_by(JobSeeker, email: job_seeker.email) do
-          nil -> [job_seeker | acc]
-          _ -> acc
-        end
+        located_job_seeker = build_geolocation(job_seeker)
+        [located_job_seeker | acc]
       end)
-      |> Flow.on_trigger(fn acc ->
-        new_acc = Enum.map(acc, &build_geolocation/1)
-
-        {new_acc, []}
-      end)
+      |> Flow.filter(&is_allowed_administrative?/1)
 
     case @limit do
-      :all -> Enum.to_list(extract_job_seekers_flow)
-      limit -> Enum.take(extract_job_seekers_flow, limit)
+      :all -> Enum.to_list(job_seekers_flow)
+      limit -> Enum.take(job_seekers_flow, limit)
     end
   end
 
@@ -57,22 +59,28 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
       education_level: line["NIV_EN_FORMATION1_NUM"],
       experience:
         %{
-          line["ROME1V3"] =>
-            line["NROM1EXP"]
-            |> Float.parse()
-            |> case do
-              :error -> 0
-              {level, _} -> level
-            end,
-          line["ROME2V3"] =>
-            line["NROM2EXP"]
-            |> Float.parse()
-            |> case do
-              :error -> 0
-              {level, _} -> level
-            end
+          line["ROME1V3"] => map_xp_to_level(line["NROM1EXP"]),
+          line["ROME2V3"] => map_xp_to_level(line["NROM2EXP"])
         }
         |> Map.delete("")
     }
+  end
+
+  defp map_xp_to_level(xp) do
+    xp
+    |> Float.parse()
+    |> case do
+      :error -> 0
+      {level, _} -> level
+    end
+  end
+
+  defp is_allowed_administrative?(job_seeker) do
+    administrative =
+      job_seeker
+      |> get_in([Access.key(:geolocation)])
+      |> Places.get_administrative()
+
+    Enum.member?(@allowed_administratives, administrative)
   end
 end
