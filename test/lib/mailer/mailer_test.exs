@@ -1,5 +1,5 @@
 defmodule Vae.MailerTest do
-  use ExUnit.Case
+  use Vae.DataCase
 
   alias Vae.Mailer.Email
   alias Vae.JobSeeker
@@ -8,6 +8,7 @@ defmodule Vae.MailerTest do
     expected_emails = [
       %Email{
         job_seeker: %JobSeeker{
+          email: "foo@bar.com",
           geolocation: %{
             "_geoloc" => %{"lat" => 45.7578, "lng" => 4.80124},
             "_tags" => [
@@ -30,6 +31,7 @@ defmodule Vae.MailerTest do
       },
       %Email{
         job_seeker: %JobSeeker{
+          email: "baz@qux.com",
           geolocation: %{
             "_geoloc" => %{"lat" => 45.7578, "lng" => 4.80124},
             "_tags" => [
@@ -52,6 +54,13 @@ defmodule Vae.MailerTest do
       }
     ]
 
-    assert expected_emails == Vae.Mailer.extract("path/to/file")
+    extracted_emails = Vae.Mailer.extract("path/to/file")
+
+    assert length(extracted_emails) == 2
+
+    assert ["foo@bar.com", "baz@qux.com"] ==
+             Enum.map(extracted_emails, fn %Email{job_seeker: job_seeker} ->
+               job_seeker.email
+             end)
   end
 end

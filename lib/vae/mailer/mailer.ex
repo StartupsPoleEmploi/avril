@@ -10,8 +10,4 @@ defmodule Vae.Mailer do
   def persist() do
     GenServer.cast(MailerWorker, :persist)
   end
-
-  def handle_events(events) do
-    GenServer.cast(MailerWorker, {:handle_events, events})
-  end
 end

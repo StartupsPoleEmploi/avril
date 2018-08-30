@@ -1,7 +1,5 @@
 defmodule Vae.Mailer.Sender do
   alias Vae.Mailer.Email
-  alias Vae.JobSeeker
-  alias Vae.Repo.NewRelic, as: Repo
 
   def send(%Email{} = email) do
     build_message(email)
@@ -24,14 +22,12 @@ defmodule Vae.Mailer.Sender do
   end
 
   defp build_message(
-         %Email{custom_id: custom_id, job_seeker_id: job_seeker_id},
+         %Email{custom_id: custom_id, job_seeker: job_seeker},
          utm_campaign \\ "lancement"
        ) do
-    with job_seeker when not is_nil(job_seeker) <- Repo.get(JobSeeker, job_seeker_id),
-         {:email, email} when not is_nil(email) <-
-           {:email, get_in(job_seeker, [Access.key(:email)])},
-         first_name <- get_in(job_seeker, [Access.key(:first_name)]),
-         last_name <- get_in(job_seeker, [Access.key(:last_name)]),
+    with email when not is_nil(email) <- get_email(job_seeker),
+         first_name <- get_first_name(job_seeker),
+         last_name <- get_last_name(job_seeker),
          utm_source <- build_utm_source(job_seeker) do
       mailjet_conf = Application.get_env(:vae, :mailjet)
 
@@ -50,7 +46,6 @@ defmodule Vae.Mailer.Sender do
         CustomID: custom_id
       }
     else
-      {:email, nil} -> nil
       _ -> nil
     end
   end
@@ -60,4 +55,8 @@ defmodule Vae.Mailer.Sender do
       Messages: [message]
     })
   end
+
+  defp get_email(job_seeker), do: get_in(job_seeker, [Access.key(:email)])
+  defp get_first_name(job_seeker), do: get_in(job_seeker, [Access.key(:first_name)])
+  defp get_last_name(job_seeker), do: get_in(job_seeker, [Access.key(:last_name)])
 end

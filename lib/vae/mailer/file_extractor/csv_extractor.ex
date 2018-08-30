@@ -1,7 +1,6 @@
 defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   require Logger
 
-  alias Vae.JobSeeker
   alias Vae.Places
 
   @behaviour Vae.Mailer.FileExtractor
@@ -21,7 +20,7 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     "Hauts-de-France"
   ]
 
-  def extract(path, _) do
+  def extract(path) do
     job_seekers_flow =
       File.stream!(path, read_ahead: 100_000)
       |> CSV.decode(separator: ?;, headers: true)
@@ -49,7 +48,7 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   end
 
   defp build_job_seeker(line) do
-    %JobSeeker{
+    %{
       identifier: line["KN_INDIVIDU_NATIONAL"],
       first_name: String.capitalize(line["PRENOM"]),
       last_name: String.capitalize(line["NOM"]),
@@ -78,7 +77,7 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
   defp is_allowed_administrative?(job_seeker) do
     administrative =
       job_seeker
-      |> get_in([Access.key(:geolocation)])
+      |> get_in([:geolocation])
       |> Places.get_administrative()
 
     Enum.member?(@allowed_administratives, administrative)
