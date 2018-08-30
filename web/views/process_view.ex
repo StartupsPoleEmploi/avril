@@ -62,4 +62,41 @@ defmodule Vae.ProcessView do
       _ -> "ème"
     end
   end
+
+  def render_pagination() do
+    {:safe,
+     """
+     <script>
+     var currentStep = 1;
+
+     function prev_next(currentStep) {
+       if($('#step_' + (currentStep - 1)).length == 0) {
+         $('#previous-step').parent().addClass('disabled');
+       } else {
+         $('#previous-step').parent().removeClass('disabled');
+       }
+       if($('#step_' + (currentStep + 1)).length == 0) {
+         $('#next-step').parent().addClass('disabled');
+       } else {
+         $('#next-step').parent().removeClass('disabled');
+       }
+     }
+
+     $('#previous-step').click(function() {
+       if(#{Mix.env() == :prod}) ga.send('event', 'steps', 'previous')
+       $('#step_' + currentStep).addClass("d-none");
+       currentStep--;
+       $('#step_' + currentStep).removeClass("d-none");
+       prev_next(currentStep);
+     });
+     $('#next-step').click(function() {
+       if(#{Mix.env() == :prod}) ga.send('event', 'steps', 'next');
+       $('#step_' + currentStep).addClass("d-none");
+       currentStep++;
+       $('#step_' + currentStep).removeClass("d-none");
+       prev_next(currentStep);
+     });
+     </script>
+     """}
+  end
 end
