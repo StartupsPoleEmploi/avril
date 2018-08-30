@@ -46,3 +46,12 @@ h6 {
     font: normal 20px/25px $dm-font-nuito;
   }
 }
+
+.dm-step {
+  font: bold 64px/60px $dm-font-nuito;
+  color: $dm-primary-green;
+}
+
+.dm-step-sub {
+  vertical-align: top;
+}

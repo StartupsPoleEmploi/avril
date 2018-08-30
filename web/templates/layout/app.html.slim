@@ -18,9 +18,9 @@ html{lang="fr"}
   body.app
     main role="main"
       = render ComponentView, "navbar.html", conn: @conn
-      .container.py-3.py-md-5
-        = render ComponentView, "searchbar.html", conn: @conn, headers: true
-      .container.py-3.py-md-5
+      .container
+        .my-4
+          = render ComponentView, "searchbar.html", conn: @conn, headers: true
         = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do

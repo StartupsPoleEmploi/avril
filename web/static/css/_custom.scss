@@ -32,6 +32,7 @@
 
 form.dm-search-box {
   border: none;
+  margin-top: 2em;
   .input-group.suggest .form-control {
     @include media-breakpoint-down(sm) {
       border-bottom: 0;
@@ -255,5 +256,34 @@ a[href^="mailto:"]:before {
     transform: translate3d(0, -100%, 0);
     opacity: 1;
     height: inherit;
+  }
+}
+
+.card.card-step{
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
+
+  nav {
+    position: absolute;
+    right: 20px;
+
+    .pagination {
+      margin: 0;
+
+      .page-item.disabled .page-link {
+        color: $dm-primary-grey;
+      }
+
+      .page-item .page-link {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 0;
+        background-color: $dm-primary-light-grey;
+        color: $dm-primary-blue;
+        box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
+      }
+    }
   }
 }
