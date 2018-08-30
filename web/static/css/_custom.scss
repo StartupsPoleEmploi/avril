@@ -259,30 +259,34 @@ a[href^="mailto:"]:before {
   }
 }
 
-.card.card-step{
-  border: 1px solid #E0E0E0;
-  border-radius: 4px;
-  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
+.card {
+  @include media-breakpoint-up(lg) {
+    padding: 20px;
+  }
 
-  nav {
-    position: absolute;
-    right: 20px;
+  &.card-step {
+    nav {
+      position: absolute;
+      right: 20px;
 
-    .pagination {
-      margin: 0;
-
-      .page-item.disabled .page-link {
-        color: $dm-primary-grey;
+      @include media-breakpoint-up(lg) {
+        right: 40px;
       }
 
-      .page-item .page-link {
-        display: flex;
-        align-items: center;
-        padding: 12px;
-        border-radius: 0;
-        background-color: $dm-primary-light-grey;
-        color: $dm-primary-blue;
-        box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
+      .pagination {
+        margin: 0;
+
+        .page-item.disabled .page-link {
+          background-color: $dm-primary-light-grey;
+        }
+
+        .page-item .page-link {
+          display: flex;
+          align-items: center;
+          padding: 12px;
+          border-radius: 0;
+          color: $dm-primary-blue;
+        }
       }
     }
   }
