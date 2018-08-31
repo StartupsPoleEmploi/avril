@@ -1,12 +1,14 @@
 defmodule Vae.Mailer.Worker do
   use GenServer
 
-  alias Vae.Mailer.{Email, Sender}
-  alias Vae.{Event, JobSeeker}
+  alias Vae.JobSeeker
+  alias Vae.Mailer.Email
   alias Vae.Repo.NewRelic, as: Repo
   alias Ecto.Changeset
 
   @extractor Application.get_env(:vae, :extractor)
+
+  @sender Application.get_env(:vae, :sender)
 
   @name MailerWorker
 
@@ -17,8 +19,8 @@ defmodule Vae.Mailer.Worker do
 
   @impl true
   def init(_state) do
-    PersistentEts.new(:emails, "emails.tab", [:named_table])
-    new_state = :ets.tab2list(:emails) |> Enum.map(fn {_custom_id, email} -> email end)
+    PersistentEts.new(:pending_emails, "pending_emails.tab", [:named_table])
+    new_state = :ets.tab2list(:pending_emails) |> Enum.map(fn {_custom_id, email} -> email end)
     {:ok, new_state}
   end
 
@@ -34,15 +36,23 @@ defmodule Vae.Mailer.Worker do
   end
 
   @impl true
-  def handle_call(:send, _from, emails) do
-    new_emails = Enum.flat_map(emails, &Sender.send/1)
-    {:reply, nil, new_emails}
+  def handle_call({:send, emails}, _from, _state) do
+    {emails_sent, remaining_emails} =
+      emails
+      |> Enum.map(&@sender.send/1)
+      |> Enum.split_with(fn email ->
+        email.state == :success
+      end)
+
+    remove(emails_sent)
+
+    {:reply, remaining_emails, remaining_emails}
   end
 
   @impl true
-  def handle_cast(:persist, emails) do
-    persist(emails)
-    {:noreply, emails}
+  def handle_call(:flush, _from, _state) do
+    :ets.delete_all_objects(:pending_emails)
+    {:reply, [], []}
   end
 
   @impl true
@@ -61,7 +71,13 @@ defmodule Vae.Mailer.Worker do
   end
 
   defp persist(emails) do
-    Enum.each(emails, fn email -> :ets.insert(:emails, {email.custom_id, email}) end)
+    Enum.each(emails, fn email -> :ets.insert(:pending_emails, {email.custom_id, email}) end)
+    # Temporary
+    :ok
+  end
+
+  defp remove(emails) do
+    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.custom_id) end)
     # Temporary
     :ok
   end
@@ -70,15 +86,23 @@ defmodule Vae.Mailer.Worker do
     Enum.map(job_seekers, fn job_seeker ->
       case Repo.get_by(JobSeeker, email: job_seeker.email) do
         nil ->
-          %JobSeeker{}
-          |> Vae.JobSeeker.changeset(job_seeker)
-          |> Repo.insert!()
+          insert!(job_seeker)
 
-        existing_job_seeker ->
-          existing_job_seeker
-          |> Changeset.change(job_seeker)
-          |> Repo.update!()
+        actual_job_seeker ->
+          update!(actual_job_seeker, job_seeker)
       end
     end)
+  end
+
+  defp insert!(job_seeker) do
+    %JobSeeker{}
+    |> JobSeeker.changeset(job_seeker)
+    |> Repo.insert!()
+  end
+
+  defp update!(actual_job_seeker, job_seeker) do
+    actual_job_seeker
+    |> Changeset.change(job_seeker)
+    |> Repo.update!()
   end
 end

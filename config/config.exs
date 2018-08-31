@@ -70,7 +70,9 @@ config :algolia,
 config :vae,
   places_client: Vae.Places.Client.Algolia,
   algolia_places_apis: %{},
-  mailer_extractor_limit: 10_000
+  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
+  mailer_extractor_limit: 10_000,
+  sender: Vae.Mailer.Sender.Mailjet
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom

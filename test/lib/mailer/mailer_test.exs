@@ -1,10 +1,19 @@
 defmodule Vae.MailerTest do
   use Vae.DataCase
 
+  alias Vae.Mailer
   alias Vae.Mailer.Email
   alias Vae.JobSeeker
 
-  test "test filter by allowed administratives" do
+  setup do
+    Application.ensure_started(MailerWorker)
+    Mailer.flush()
+    :ok
+  end
+
+  test "test mailer extract" do
+    Application.ensure_started(MailerWorker)
+
     expected_emails = [
       %Email{
         job_seeker: %JobSeeker{
@@ -54,7 +63,7 @@ defmodule Vae.MailerTest do
       }
     ]
 
-    extracted_emails = Vae.Mailer.extract("path/to/file")
+    extracted_emails = Mailer.extract("path/to/file")
 
     assert length(extracted_emails) == 2
 
@@ -62,5 +71,44 @@ defmodule Vae.MailerTest do
              Enum.map(extracted_emails, fn %Email{job_seeker: job_seeker} ->
                job_seeker.email
              end)
+  end
+
+  describe "Mailer Workflow" do
+    test "no error on sending, the state is empty" do
+      Application.ensure_started(MailerWorker)
+
+      remaining_emails =
+        Mailer.extract("path/to/file")
+        |> Enum.map(fn email -> %{email | state: :success} end)
+        |> Mailer.send()
+
+      assert length(remaining_emails) == 0
+      assert length(:ets.tab2list(:pending_emails)) == 0
+    end
+
+    test "error on sending, the state keeps emails on error" do
+      Application.ensure_started(MailerWorker)
+
+      remaining_emails =
+        Mailer.extract("path/to/file")
+        |> Enum.map(fn email -> %{email | state: :error} end)
+        |> Mailer.send()
+
+      assert length(remaining_emails) == 2
+      assert length(:ets.tab2list(:pending_emails)) == 2
+    end
+
+    test "1 error on sending, the state keeps the email that is in error" do
+      Application.ensure_started(MailerWorker)
+
+      remaining_emails =
+        Mailer.extract("path/to/file")
+        |> List.update_at(0, fn email -> %{email | state: :error} end)
+        |> List.update_at(1, fn email -> %{email | state: :success} end)
+        |> Mailer.send()
+
+      assert length(remaining_emails) == 1
+      assert length(:ets.tab2list(:pending_emails)) == 1
+    end
   end
 end

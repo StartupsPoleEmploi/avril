@@ -54,7 +54,6 @@ config :vae,
       #   search: "seARCH API KEY"
       # }
     },
-  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailjet: %{
     campaign_template_id: 070_460,
     from_email: "lol@lol.fr",
