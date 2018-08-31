@@ -36,7 +36,9 @@ defmodule Vae.JobSeeker do
       :postal_code,
       :experience,
       :education_level,
-      :tracking_last_visit_at
+      :tracking_last_visit_at,
+      :subscribed,
+      :geolocation
     ])
   end
 

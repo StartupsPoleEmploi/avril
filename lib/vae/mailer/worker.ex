@@ -30,7 +30,11 @@ defmodule Vae.Mailer.Worker do
          inserted_job_seekers <- insert_or_update!(job_seekers),
          emails <- build_emails(inserted_job_seekers),
          :ok <- persist(emails) do
-      new_state = emails ++ state
+      new_state =
+        state
+        |> Kernel.++(emails)
+        |> Enum.uniq_by(& &1.custom_id)
+
       {:reply, new_state, new_state}
     end
   end
@@ -39,7 +43,7 @@ defmodule Vae.Mailer.Worker do
   def handle_call({:send, emails}, _from, _state) do
     {emails_sent, remaining_emails} =
       emails
-      |> Enum.map(&@sender.send/1)
+      |> Enum.flat_map(&@sender.send/1)
       |> Enum.split_with(fn email ->
         email.state == :success
       end)

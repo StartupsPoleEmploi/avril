@@ -4,7 +4,7 @@ defmodule Vae.Mailer do
   end
 
   def send(emails) do
-    GenServer.call(MailerWorker, {:send, emails})
+    GenServer.call(MailerWorker, {:send, emails}, :infinity)
   end
 
   @doc """

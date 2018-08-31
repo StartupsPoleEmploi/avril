@@ -3,5 +3,5 @@ defmodule Vae.Mailer.Sender.Mock do
 
   alias Vae.Mailer.Email
 
-  def send(email), do: email
+  def send(email), do: [email]
 end
