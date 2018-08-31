@@ -1,17 +1,16 @@
-.card.mb-5
-  .card-body
-    h2 Liste des codes ROME
-    table.table
-      thead
+.container
+  h2 Liste des codes ROME
+  table.table
+    thead
+      tr
+        th Code
+        th Nom
+        th
+        th
+    tbody
+      = for rome <- @romes do
         tr
-          th Code
-          th Nom
-          th
-          th
-      tbody
-        = for rome <- @romes do
-          tr
-            td= rome.code
-            td= rome.label
-            td.text-right= link "Voir les diplômes", to: rome_path(@conn, :certifications, rome), class: "btn btn-primary btn-xs"
-            td.text-right= link "Voir le code ROME", to: rome_path(@conn, :show, rome), class: "btn btn-default btn-xs"
+          td= rome.code
+          td= rome.label
+          td.text-right= link "Voir les diplômes", to: rome_path(@conn, :certifications, rome), class: "btn btn-primary btn-xs"
+          td.text-right= link "Voir le code ROME", to: rome_path(@conn, :show, rome), class: "btn btn-default btn-xs"

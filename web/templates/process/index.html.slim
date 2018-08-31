@@ -1,39 +1,41 @@
-.my-4
-  = if (assigns[:certification]) do
-    h3 #{@certification.acronym} #{String.downcase(@certification.label)}
+.container
+  .my-4
+    = if (assigns[:certification]) do
+      h3 #{@certification.acronym} #{String.downcase(@certification.label)}
 
-.my-4
-  .card-group
-    .card.card-step
-      .card-body
-        = render("pagination.html")
-        div id="steps"
-          = render_steps(@delegate.process)
-    .card.bg-primary.text-secondary
-      .card-body
-        p
-          | Votre conseiller
-          strong " #{@delegate.name} "
-          | sera votre contact privilégié pour vous aider à avoir votre diplôme.
-        h5.m-0 #{@delegate.name}
-        span #{@delegate.address}
+  .my-4
+    .card-group
+      .card.card-step
+        .card-body
+          = render("pagination.html")
+          div id="steps"
+            = render_steps(@delegate.process)
+      .card.bg-primary.text-secondary
+        .card-body
+          = render("contact-form.html", delegate: @delegate)
 
-.my-4
-  .row
-    .col-md
-    .col-md
-      h3 Dossier de recevabilité
-  .row
-    .col-md
-      h3 Dossier VAE
-    .col-md
-  .row
-    .col-md
-    .col-md
-      h3 Entretien avec un jury
-  .row
-    .col-md-6.offset-md-3.text-center
-      h3 Félicitations pour votre nouveau diplôme !
+  .my-4
+    .row
+      .col-md
+      .col-md
+        h3 Dossier de recevabilité
+    .row
+      .col-md
+        h3 Dossier VAE
+      .col-md
+    .row
+      .col-md
+      .col-md
+        h3 Entretien avec un jury
+    .row
+      .col-md-6.offset-md-3.text-center
+        h3 Félicitations pour votre nouveau diplôme !
+        h3 Et vous ?
+.bg-primary.text-secondary
+  .container.py-5
+    .row
+      .col-md-6.offset-md-3
+        = render("contact-form.html", delegate: @delegate)
 
 / take
 

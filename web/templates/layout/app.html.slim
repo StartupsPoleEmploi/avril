@@ -21,7 +21,7 @@ html{lang="fr"}
       .container
         .my-4
           = render ComponentView, "searchbar.html", conn: @conn, headers: true
-        = render @view_module, @view_template, assigns
+      = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn

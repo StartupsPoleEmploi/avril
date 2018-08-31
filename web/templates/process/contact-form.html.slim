@@ -1,0 +1,10 @@
+p
+  | Votre conseiller
+  strong " #{@delegate.name} "
+  | sera votre contact privilégié pour vous aider à avoir votre diplôme.
+.d-flex.flex-row.align-items-center.mb-3
+  = img_tag '/images/conseillere.svg', class: "mr-3", style: "width: 46px; height: 46px;"
+  .d-flex.flex-column
+    h5.m-0 #{@delegate.name}
+    span #{@delegate.address}
+/ = form_for

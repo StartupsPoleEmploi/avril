@@ -100,9 +100,6 @@ body {
   background-color: #FFFFFF;
   &.app {
     background: $dm-primary-light-grey;
-    main {
-      padding-bottom: 3rem;
-    }
   }
   &.home {
     @include media-breakpoint-up(md) {
