@@ -12,7 +12,7 @@
             = render_steps(@delegate.process)
       .card.bg-primary.text-secondary
         .card-body
-          = render("contact-form.html", delegate: @delegate)
+          = render("contact-form.html", conn: @conn, delegate: @delegate)
 
   .my-4
     .row
@@ -35,7 +35,7 @@
   .container.py-5
     .row
       .col-md-6.offset-md-3
-        = render("contact-form.html", delegate: @delegate)
+        = render("contact-form.html", conn: @conn, delegate: @delegate)
 
 / take
 

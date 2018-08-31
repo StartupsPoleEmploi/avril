@@ -169,4 +169,27 @@ defmodule Vae.ProcessController do
       lng: params["lng"]
     )
   end
+
+  def contact(conn, params) do
+    certification =
+      case params["certification"] do
+        nil -> nil
+        certification_id -> Repo.get(Certification, certification_id)
+      end
+
+    delegate =
+      case params["delegate"] do
+        nil -> nil
+        delegate_id -> Repo.get(Delegate, delegate_id) |> Repo.preload(:process)
+      end
+
+    render(
+      conn,
+      "index.html",
+      certification: certification,
+      delegate: delegate,
+      lat: params["lat"],
+      lng: params["lng"]
+    )
+  end
 end

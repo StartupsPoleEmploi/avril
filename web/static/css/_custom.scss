@@ -288,3 +288,8 @@ a[href^="mailto:"]:before {
     }
   }
 }
+
+// TODO bootstrap var
+.btn.btn-default {
+  color: $dm-primary-blue;
+}
