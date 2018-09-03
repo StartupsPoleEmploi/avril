@@ -31,8 +31,8 @@ defmodule Vae.Mailer.Worker do
          emails <- build_emails(inserted_job_seekers),
          :ok <- persist(emails) do
       new_state =
-        state
-        |> Kernel.++(emails)
+        emails
+        |> Kernel.++(state)
         |> Enum.uniq_by(& &1.custom_id)
 
       {:reply, new_state, new_state}

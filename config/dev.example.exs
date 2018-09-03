@@ -72,7 +72,7 @@ config :vae, Vae.Scheduler,
     #  schedule: "*/30 * * * *",
     #  task: {Vae.Places.LoadBalancer, :update_index, []}
     # ],
-    # campaing_task: [
+    # campaign_task: [
     #  timezone: "Europe/Paris",
     #  schedule: "00 10 * * 1",
     #  task: fn ->
