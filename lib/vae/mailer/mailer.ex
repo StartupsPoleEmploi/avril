@@ -3,15 +3,14 @@ defmodule Vae.Mailer do
     GenServer.call(MailerWorker, {:extract, path}, :infinity)
   end
 
-  def send() do
-    GenServer.call(MailerWorker, :send)
+  def send(emails) do
+    GenServer.call(MailerWorker, {:send, emails}, :infinity)
   end
 
-  def persist() do
-    GenServer.cast(MailerWorker, :persist)
-  end
-
-  def handle_events(events) do
-    GenServer.cast(MailerWorker, {:handle_events, events})
+  @doc """
+  Utility function to flush both state and ETS
+  """
+  def flush() do
+    GenServer.call(MailerWorker, :flush)
   end
 end

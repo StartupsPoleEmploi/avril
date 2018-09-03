@@ -1,5 +1,4 @@
 use Mix.Config
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -54,7 +53,6 @@ config :vae,
       #   search: "seARCH API KEY"
       # }
     },
-  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailjet: %{
     campaign_template_id: 070_460,
     from_email: "lol@lol.fr",
@@ -66,3 +64,20 @@ config :mailjex,
   public_api_key: "<your public key>",
   private_api_key: "<your private key>",
   development_mode: true
+
+config :vae, Vae.Scheduler,
+  timeout: :infinity,
+  jobs: [
+    # places_task: [
+    #  schedule: "*/30 * * * *",
+    #  task: {Vae.Places.LoadBalancer, :update_index, []}
+    # ],
+    # campaign_task: [
+    #  timezone: "Europe/Paris",
+    #  schedule: "00 10 * * 1",
+    #  task: fn ->
+    #    Vae.Mailer.extract("priv/fixtures/test_emails_2.csv")
+    #    |> Vae.Mailer.send()
+    #  end
+    # ]
+  ]

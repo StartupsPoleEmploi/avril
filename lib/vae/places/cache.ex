@@ -36,7 +36,7 @@ defmodule Vae.Places.Cache do
   @impl true
   def handle_call({:get, postal_code}, _from, state) do
     {value, new_state} =
-      case Map.get_lazy(state, postal_code, fn -> get_or_store(postal_code) end) do
+      case Map.get_lazy(state, postal_code, fn -> get_or_insert(postal_code) end) do
         {:new, {_key, value}} ->
           {value, Map.put(state, postal_code, value)}
 
@@ -54,7 +54,7 @@ defmodule Vae.Places.Cache do
     {:reply, value, new_state}
   end
 
-  defp get_or_store(postal_code) do
+  defp get_or_insert(postal_code) do
     case :ets.lookup(@places_ets_table_name, postal_code) do
       [] ->
         {:new, insert(postal_code)}
@@ -64,7 +64,7 @@ defmodule Vae.Places.Cache do
     end
   end
 
-  def insert(postal_code) do
+  defp insert(postal_code) do
     geoloc = @places_client.get_geoloc_from_postal_code(postal_code)
     :ets.insert(@places_ets_table_name, {postal_code, geoloc})
     {postal_code, geoloc}

@@ -1,23 +1,16 @@
 defmodule Vae.Mailer.Worker do
   use GenServer
 
-  alias Vae.Mailer.{Email, Sender}
-  alias Vae.Places
-  alias Vae.Event
+  alias Vae.JobSeeker
+  alias Vae.Mailer.Email
+  alias Vae.Repo.NewRelic, as: Repo
+  alias Ecto.Changeset
 
   @extractor Application.get_env(:vae, :extractor)
 
+  @sender Application.get_env(:vae, :sender)
+
   @name MailerWorker
-  @allowed_administratives [
-    "Bretagne",
-    "Île-de-France",
-    "Centre-Val de Loire",
-    "Occitanie",
-    "Bourgogne-Franche-Comté",
-    "Provence-Alpes-Côte d'Azur",
-    "Corse",
-    "Hauts-de-France"
-  ]
 
   @doc false
   def start_link() do
@@ -26,41 +19,44 @@ defmodule Vae.Mailer.Worker do
 
   @impl true
   def init(_state) do
-    PersistentEts.new(:emails, "emails.tab", [:named_table])
-    new_state = :ets.tab2list(:emails) |> Enum.map(fn {_custom_id, email} -> email end)
+    PersistentEts.new(:pending_emails, "pending_emails.tab", [:named_table])
+    new_state = :ets.tab2list(:pending_emails) |> Enum.map(fn {_custom_id, email} -> email end)
     {:ok, new_state}
   end
 
   @impl true
   def handle_call({:extract, path}, _from, state) do
-    custom_ids = Email.extract_custom_ids(state)
+    with job_seekers <- @extractor.extract(path),
+         inserted_job_seekers <- insert_or_update!(job_seekers),
+         emails <- build_emails(inserted_job_seekers),
+         :ok <- persist(emails) do
+      new_state =
+        emails
+        |> Kernel.++(state)
+        |> Enum.uniq_by(& &1.custom_id)
 
-    emails =
-      @extractor.extract(path, custom_ids)
-      |> Enum.filter(&is_allowed_administrative?/1)
-
-    new_state = emails ++ state
-
-    {:reply, emails, new_state}
+      {:reply, new_state, new_state}
+    end
   end
 
   @impl true
-  def handle_call(:send, _from, emails) do
-    new_emails = Enum.flat_map(emails, &Sender.send/1)
-    {:reply, nil, new_emails}
+  def handle_call({:send, emails}, _from, _state) do
+    {emails_sent, remaining_emails} =
+      emails
+      |> Enum.flat_map(&@sender.send/1)
+      |> Enum.split_with(fn email ->
+        email.state == :success
+      end)
+
+    remove(emails_sent)
+
+    {:reply, remaining_emails, remaining_emails}
   end
 
   @impl true
-  def handle_cast(:persist, emails) do
-    persist(emails)
-    {:noreply, emails}
-  end
-
-  @impl true
-  def handle_cast({:handle_events, events}, emails) do
-    new_emails = update_emails_from_events(emails, events)
-    persist(new_emails)
-    {:noreply, new_emails}
+  def handle_call(:flush, _from, _state) do
+    :ets.delete_all_objects(:pending_emails)
+    {:reply, [], []}
   end
 
   @impl true
@@ -69,34 +65,48 @@ defmodule Vae.Mailer.Worker do
     {:noreply, state}
   end
 
-  @doc """
-  Visible for testing
-  """
-  def update_emails_from_events(emails, events) do
-    built_events = Enum.map(events, &Event.build_from_map(:email, &1))
-
-    emails
-    |> Enum.map(fn email ->
-      filtered_events = filter_events_by_custom_id(built_events, email.custom_id)
-      Map.put(email, :events, filtered_events ++ email.events)
+  defp build_emails(job_seekers) do
+    Enum.map(job_seekers, fn job_seeker ->
+      %Email{
+        custom_id: UUID.uuid5(nil, job_seeker.email),
+        job_seeker: job_seeker
+      }
     end)
   end
 
-  defp filter_events_by_custom_id(events, custom_id) do
-    events
-    |> Enum.filter(&(&1.custom_id == custom_id))
-  end
-
-  defp is_allowed_administrative?(email) do
-    administrative =
-      email
-      |> get_in([Access.key(:job_seeker), Access.key(:geolocation)])
-      |> Places.get_administrative()
-
-    Enum.member?(@allowed_administratives, administrative)
-  end
-
   defp persist(emails) do
-    Enum.each(emails, fn email -> :ets.insert(:emails, {email.custom_id, email}) end)
+    Enum.each(emails, fn email -> :ets.insert(:pending_emails, {email.custom_id, email}) end)
+    # Temporary
+    :ok
+  end
+
+  defp remove(emails) do
+    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.custom_id) end)
+    # Temporary
+    :ok
+  end
+
+  defp insert_or_update!(job_seekers) do
+    Enum.map(job_seekers, fn job_seeker ->
+      case Repo.get_by(JobSeeker, email: job_seeker.email) do
+        nil ->
+          insert!(job_seeker)
+
+        actual_job_seeker ->
+          update!(actual_job_seeker, job_seeker)
+      end
+    end)
+  end
+
+  defp insert!(job_seeker) do
+    %JobSeeker{}
+    |> JobSeeker.changeset(job_seeker)
+    |> Repo.insert!()
+  end
+
+  defp update!(actual_job_seeker, job_seeker) do
+    actual_job_seeker
+    |> Changeset.change(job_seeker)
+    |> Repo.update!()
   end
 end

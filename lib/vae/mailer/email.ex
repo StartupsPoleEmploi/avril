@@ -2,8 +2,7 @@ defmodule Vae.Mailer.Email do
   defstruct(
     custom_id: nil,
     job_seeker: nil,
-    email_state: nil,
-    events: [],
+    state: :pending,
     errors: []
   )
 
