@@ -31,7 +31,14 @@
 }
 
 form.dm-search-box {
-  border: none;
+  @include media-breakpoint-down(sm) {
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  @include media-breakpoint-up(md) {
+    border: none;
+  }
+
   margin-top: 2em;
   .input-group.suggest .form-control {
     @include media-breakpoint-down(sm) {

@@ -8,7 +8,7 @@
     = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true)
     = hidden_input(f, :lat)
     = hidden_input(f, :lng)
-  = submit class: 'btn btn-outline-primary btn-lg d-flex mt-md-0 mt-2' do
+  = submit class: 'btn btn-outline-primary btn-lg d-flex my-md-0 my-2' do
     span.ic-icon.ic-zoom-bold
 = Vae.ComponentView.searchbar_labels()
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"

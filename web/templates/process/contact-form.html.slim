@@ -18,6 +18,6 @@ p
     .form-group.position-relative
       = text_input f, :phone_number, class: "form-control px-3 py-3", required: true
       label.form-control-placeholder for="#{Atom.to_string(@form)}_#{Atom.to_string(:phone_number)}" Votre numéro de téléphone
-  = submit class: 'btn btn-default d-flex align-items-center mt-md-0 mt-2 pl-3 pr-4 py-3' do
+  = submit class: 'btn btn-default bg-white d-flex align-items-center mt-md-0 mt-2 pl-3 pr-4 py-3' do
     = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;"
     span Recevoir ma synthèse VAE

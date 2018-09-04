@@ -5,12 +5,12 @@
 
   .my-5
     .card-group
-      .card.card-step
+      .col-md.order-2.order-md-1.card.card-step
         .card-body
           = render("pagination.html")
           div id="steps"
             = render_steps(@delegate.process)
-      .card.bg-primary.text-secondary
+      .col-md.order-1.order-md-2.card.bg-primary.text-secondary
         .card-body
           = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact)
 
@@ -23,12 +23,12 @@
         p Vous allez préparer votre dossier de candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
         / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
     .row.my-5
-      .col-md
+      .col-md.order-2.order-md-1
         h3 Dossier VAE
         p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
         p Durant cette étape, un expert pourra vous accompagner et vous préparer au jury.
         / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
-      .col-md
+      .col-md.order-1.order-md-2
         = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
     .row.my-5
       .col-md
@@ -46,7 +46,7 @@
   .container.py-5
     .row
       .col-md-6.offset-md-3
-        = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact_footer)
+        = render("contact-form.html", conn: @conn, delegate: @delegate, form: :footer)
 
 / take
 
