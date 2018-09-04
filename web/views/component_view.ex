@@ -220,8 +220,8 @@ defmodule Vae.ComponentView do
         if ($(window).width() < 768 ) {
           label = 'Votre métier';
         }
-        $("<label class='form-control-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
-        $("<label class='form-control-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+        $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
+        $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
       });
     """)
   end

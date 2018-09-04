@@ -224,72 +224,19 @@ a[href^="mailto:"]:before {
   }
 }
 
-.form-control-placeholder {
-  position: absolute;
-  top: 0;
-  transition: all 200ms;
-  opacity: 1;
-  font-weight: bold;
-  height: 100%;
-  width: 100%;
-  vertical-align: middle;
-  display: flex;
-  align-items: center;
-  @include media-breakpoint-down(sm) {
-    padding: 8px 15px 8px 15px;
-  }
-  @include media-breakpoint-up(md) {
-    padding: 8px 28px 8px 28px;
-  }
-}
-
-.form-control:focus + .form-control-placeholder,
-.form-control:valid + .form-control-placeholder {
-  @include media-breakpoint-down(sm) {
-    display: none;
-  }
-  @include media-breakpoint-up(md) {
-    font-size: 16px;
-    transform: translate3d(0, -100%, 0);
-    opacity: 1;
-    height: inherit;
-  }
-}
-
-.card {
-  @include media-breakpoint-up(lg) {
-    padding: 20px;
-  }
-
-  &.card-step {
-    nav {
-      position: absolute;
-      right: 20px;
-
-      @include media-breakpoint-up(lg) {
-        right: 40px;
-      }
-
-      .pagination {
-        margin: 0;
-
-        .page-item.disabled .page-link {
-          background-color: $dm-primary-light-grey;
-        }
-
-        .page-item .page-link {
-          display: flex;
-          align-items: center;
-          padding: 12px;
-          border-radius: 0;
-          color: $dm-primary-blue;
-        }
-      }
-    }
-  }
+.line {
+  height: 6px;
+  width: 80%;
+  margin-bottom: 0.5rem;
 }
 
 // TODO bootstrap var
 .btn.btn-default {
   color: $dm-primary-blue;
+}
+
+input.form-control {
+  font-size: 18px;
+  color: $dm-primary-blue;
+  border-color: transparent;
 }

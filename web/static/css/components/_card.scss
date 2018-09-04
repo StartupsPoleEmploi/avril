@@ -1,0 +1,32 @@
+.card {
+  @include media-breakpoint-up(lg) {
+    padding: 20px;
+  }
+
+  &.card-step {
+    nav {
+      position: absolute;
+      right: 20px;
+
+      @include media-breakpoint-up(lg) {
+        right: 40px;
+      }
+
+      .pagination {
+        margin: 0;
+
+        .page-item.disabled .page-link {
+          background-color: $dm-primary-light-grey;
+        }
+
+        .page-item .page-link {
+          display: flex;
+          align-items: center;
+          padding: 12px;
+          border-radius: 0;
+          color: $dm-primary-blue;
+        }
+      }
+    }
+  }
+}

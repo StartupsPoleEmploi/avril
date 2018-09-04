@@ -1,9 +1,9 @@
 .container
-  .my-4
+  .my-5
     = if (assigns[:certification]) do
       h3 #{@certification.acronym} #{String.downcase(@certification.label)}
 
-  .my-4
+  .my-5
     .card-group
       .card.card-step
         .card-body
@@ -12,30 +12,41 @@
             = render_steps(@delegate.process)
       .card.bg-primary.text-secondary
         .card-body
-          = render("contact-form.html", conn: @conn, delegate: @delegate)
+          = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact)
 
-  .my-4
-    .row
+  .my-5
+    .row.my-5
       .col-md
+        = img_tag '/images/step1-recevabilite.svg', alt: 'recevabilite', class: 'img-fluid my-4'
       .col-md
         h3 Dossier de recevabilité
-    .row
+        p Vous allez préparer votre dossier de candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
+        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+    .row.my-5
       .col-md
         h3 Dossier VAE
+        p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
+        p Durant cette étape, un expert pourra vous accompagner et vous préparer au jury.
+        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
       .col-md
-    .row
+        = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
+    .row.my-5
       .col-md
+        = img_tag '/images/step3-jury.svg', alt: 'jury', class: 'img-fluid my-4'
       .col-md
         h3 Entretien avec un jury
-    .row
+        p Un jury composé de professionnels du métier du diplôme visé, évaluera avec vous, lors d’un entretien, si vos compétences correspondent aux compétences attendues.
+        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+    .row.my-5
       .col-md-6.offset-md-3.text-center
         h3 Félicitations pour votre nouveau diplôme !
+        = img_tag '/images/step4-diplome-ok.svg', alt: 'diplome-ok', class: 'img-fluid my-4'
         h3 Et vous ?
 .bg-primary.text-secondary
   .container.py-5
     .row
       .col-md-6.offset-md-3
-        = render("contact-form.html", conn: @conn, delegate: @delegate)
+        = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact_footer)
 
 / take
 
