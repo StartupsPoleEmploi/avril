@@ -1,10 +1,12 @@
 defmodule Vae.Mailer.Worker do
   use GenServer
 
+  alias Ecto.Changeset
   alias Vae.JobSeeker
   alias Vae.Mailer.Email
   alias Vae.Repo.NewRelic, as: Repo
-  alias Ecto.Changeset
+
+  require Logger
 
   @extractor Application.get_env(:vae, :extractor)
 
@@ -26,6 +28,8 @@ defmodule Vae.Mailer.Worker do
 
   @impl true
   def handle_call({:extract, path}, _from, state) do
+    Logger.info("Start extracting job seekers")
+
     with job_seekers <- @extractor.extract(path),
          inserted_job_seekers <- insert_or_update!(job_seekers),
          emails <- build_emails(inserted_job_seekers),
@@ -35,12 +39,16 @@ defmodule Vae.Mailer.Worker do
         |> Kernel.++(state)
         |> Enum.uniq_by(& &1.custom_id)
 
+      Logger.info("End of extracting job seekers")
+
       {:reply, new_state, new_state}
     end
   end
 
   @impl true
   def handle_call({:send, emails}, _from, _state) do
+    Logger.info("Start sending #{length(emails)}")
+
     {emails_sent, remaining_emails} =
       emails
       |> Enum.flat_map(&@sender.send/1)
@@ -49,6 +57,10 @@ defmodule Vae.Mailer.Worker do
       end)
 
     remove(emails_sent)
+
+    Logger.info(
+      "#{length(emails_sent)} emails sent, #{length(remaining_emails)} remaining emails"
+    )
 
     {:reply, remaining_emails, remaining_emails}
   end
