@@ -7,7 +7,7 @@ p
   .d-flex.flex-column
     h5.m-0 #{@delegate.name}
     span #{@delegate.address}
-= form_for @conn, process_path(@conn, :contact), [as: @form, id: "#{Atom.to_string(@form)}_form", class: "d-flex flex-column align-items-center"], fn f ->
+= form_for @conn, "mailto:#{@delegate.email}?subject=Demande de Vae", [as: @form, id: "#{Atom.to_string(@form)}_form", class: "d-flex flex-column align-items-center", enctype: "text/plain"], fn f ->
   .my-5.w-100
     .form-group.position-relative
       = text_input f, :name, class: "form-control px-3 py-3", required: true
@@ -21,3 +21,4 @@ p
   = submit class: 'btn btn-default bg-white d-flex align-items-center mt-md-0 mt-2 pl-3 pr-4 py-3' do
     = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;"
     span Recevoir ma synthèse VAE
+= Vae.ComponentView.form_submit(@form)

@@ -225,4 +225,12 @@ defmodule Vae.ComponentView do
       });
     """)
   end
+
+  def form_submit(form) do
+    script("""
+      $('##{form}_form').submit(function(event) {
+        if(#{Mix.env() == :prod}) ga.send('event', 'delegates', 'contact');
+      });
+    """)
+  end
 end
