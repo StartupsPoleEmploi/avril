@@ -25,7 +25,14 @@
 .form-control:focus + .form-control-placeholder,
 .form-control:valid + .form-control-placeholder {
   @include media-breakpoint-down(sm) {
-    display: none;
+    font-size: 11px;
+    transform: translate3d(0, -25%, 0);
+    opacity: 1;
+    height: inherit;
+
+    &.form-control-lg-placeholder {
+      font-size: 14px;
+    }
   }
   @include media-breakpoint-up(md) {
     font-size: 11px;

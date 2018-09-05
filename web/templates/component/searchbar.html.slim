@@ -1,4 +1,4 @@
-= form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-md-stretch align-items-center text-left"], fn f ->
+= form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
   .input-group.suggest
     = copy_to_field(f, :profession, "id", f, :rome_code)
     = Vae.ComponentView.suggest_clean
@@ -8,7 +8,7 @@
     = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true)
     = hidden_input(f, :lat)
     = hidden_input(f, :lng)
-  = submit class: 'btn btn-outline-primary btn-lg d-flex my-md-0 my-2' do
+  = submit class: 'btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2' do
     span.ic-icon.ic-zoom-bold
 = Vae.ComponentView.searchbar_labels()
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"

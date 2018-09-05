@@ -5,12 +5,12 @@
 
   .my-5
     .card-group
-      .col-md.order-2.order-md-1.card.card-step
+      .col-md.order-2.order-md-1.card.card-step.mb-0
         .card-body
           = render("pagination.html")
           div id="steps"
             = render_steps(@delegate.process)
-      .col-md.order-1.order-md-2.card.bg-primary.text-secondary
+      .col-md.order-1.order-md-2.card.bg-primary.text-secondary.mb-0
         .card-body
           = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact)
 
@@ -47,97 +47,3 @@
     .row
       .col-md-6.offset-md-3
         = render("contact-form.html", conn: @conn, delegate: @delegate, form: :footer)
-
-/ take
-
-    / .d-flex.flex-row.justify-content-between.align-items-center.mb-md-3
-    /   h1 Parcours V.A.E
-    /     = if (!!assigns[:delegate] && assigns[:certification]) do
-    /       = " - #{@certification.label}"
-    /
-    /   button.d-none.d-md-block.btn.btn-outline-secondary.no-print.no-border.h-50[onclick="javascript:window.print()"]
-    /     ' Imprimer
-    /     .fa.fa-print
-    /
-    / .delegate.pt-3
-    /   .row
-    /     = if assigns[:delegate] do
-    /       .col-md-8
-    /         .steps
-    /           = for i <- 1..8 do
-    /             .step.mb-5
-    /               = raw Map.get(@delegate.process, :"step_#{i}")
-    /     - else
-    /       .col-md-8
-    /         .alert.alert-warning.d-none.d-md-block.mb-4
-    /           . Le parcours VAE peut présenter des différences selon le certificateur.
-    /           . Trouvez le certificateur le plus proche pour connaitre votre parcours précis.
-    /         .steps
-    /           .step.mb-5
-    /             h3 La candidature auprès du certificateur de votre diplôme
-    /             p Constituez votre dossier, disponible sur ce site. <br />Prenez contact avec votre certificateur pour être orienté.
-    /           .step.mb-5
-    /             h3 Le dossier d’expériences
-    /             p Présentez vos expériences, vos compétences, votre environnement de travail et vos outils.
-    /           .step.mb-5
-    /             h3 L’évaluation finale
-    /             p Décrivez et précisez à l’oral certains éléments de votre dossier d’expérience
-    /           .step.mb-5
-    /             h3 Résultat
-    /             p Les résultats vous seront communiqués quelques semaines après l’oral.
-    /
-    /     .col-md-4.order-first.order-md-last
-    /       = if assigns[:delegate] do
-    /         .sticky-top
-    /           .card.mb-4
-    /             .card-body
-    /               .card-title
-    /                 h4= @delegate.name
-    /               .card-text
-    /                 ul.delegate-details.list-unstyled.pl-0
-    /                   = if @delegate.person_name && @delegate.person_name != "" do
-    /                     li
-    /                       i.fa.fa-user[aria-hidden: "true"]
-    /                       '
-    /                       = @delegate.person_name
-    /
-    /                   = if @delegate.telephone && @delegate.telephone != "" do
-    /                     li
-    /                       i.fa.fa-phone[aria-hidden: "true"]
-    /                       '
-    /                       = @delegate.telephone
-    /
-    /                   = if @delegate.email && @delegate.email != "" do
-    /                     li
-    /                       = link @delegate.email, to: "mailto:#{@delegate.email}"
-    /
-    /                   = if @delegate.website && @delegate.website != "" do
-    /                     li
-    /                       = link @delegate.website, to: @delegate.website, target: '_blank'
-    /                   li
-    /                     i.fa.fa-map-marker
-    /                     '
-    /                     = @delegate.address
-    /               .text-center
-    /                 = render_contact(@delegate)
-    /         .d-flex.flex-row.all-delegates
-    /           = if assigns[:certification] do
-    /             = link "Liste des centres de certification", to: process_path(@conn, :delegates, @delegate.process_id, certification: @certification, lat: @lat, lng: @lng), class: "text-secondary text-center w-100"
-    /
-    /       - else
-    /         = if assigns[:certification] do
-    /           .card.mb-4
-    /             .card-body
-    /               .card-title
-    /                   h4 Trouvez le certificateur le plus proche
-    /               .card-text
-    /                 p
-    /                   = form_for @conn, process_path(@conn, :search, certification: @certification), [as: :delegate_search, id: "delegate_form"], fn f ->
-    /                     .form-group
-    /                     = search_input f, :address, placeholder: "Quelle est votre localité"
-    /                     = hidden_input f, :lat
-    /                     = hidden_input f, :lng
-    /                     = render Vae.ComponentView, "places", conn: @conn
-    /
-    /                   p
-    /                     i Le certificateur est l’organisme qui vous permettra d’obtenir votre diplôme par la démarche VAE.
