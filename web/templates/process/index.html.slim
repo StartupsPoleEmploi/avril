@@ -1,7 +1,12 @@
 .container
-  .my-5
-    = if (assigns[:certification]) do
-      h3 #{@certification.acronym} #{String.downcase(@certification.label)}
+  .my-5.d-flex.flex-row.align-items-center style="margin-left: -10px;"
+    = link to: NavigationHistory.last_path(@conn, 2, default: "/"), class: "btn btn-link p-0 mr-3" do
+      i.ic-icon.ic-tail-left
+    .d-flex.flex-column
+      h3.m-0 #{@certification.acronym} #{String.downcase(@certification.label)}
+      / TODO: dropdown
+      / = link to: NavigationHistory.last_path(@conn, 2, default: "/"), class: "btn btn-link p-0" do
+      /   p.m-0 Changer de diplôme
 
   .my-5
     .card-group
@@ -13,6 +18,10 @@
       .col-md.order-1.order-md-2.card.bg-primary.text-secondary.mb-0
         .card-body
           = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact)
+
+  button.d-none.d-md-block.btn.btn-link.no-print.px-0[onclick="javascript:window.print()"]
+    = img_tag '/images/printer.svg', alt: 'print'
+    |  Imprimer
 
   .my-5
     .row.my-5
