@@ -229,7 +229,7 @@ defmodule Vae.ComponentView do
   def form_submit(form) do
     script("""
       $('##{form}_form').submit(function(event) {
-        if(#{Mix.env() == :prod}) ga.send('event', 'delegates', 'contact');
+        if(#{Mix.env() == :prod}) event_delegates_contact();
       });
     """)
   end

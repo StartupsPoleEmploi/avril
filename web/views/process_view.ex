@@ -83,14 +83,14 @@ defmodule Vae.ProcessView do
      }
 
      $('#previous-step').click(function() {
-       if(#{Mix.env() == :prod}) ga.send('event', 'steps', 'previous')
+       if(#{Mix.env() == :prod}) event_steps_previous();
        $('#step_' + currentStep).addClass("d-none");
        currentStep--;
        $('#step_' + currentStep).removeClass("d-none");
        prev_next(currentStep);
      });
      $('#next-step').click(function() {
-       if(#{Mix.env() == :prod}) ga.send('event', 'steps', 'next');
+       if(#{Mix.env() == :prod}) event_steps_next();
        $('#step_' + currentStep).addClass("d-none");
        currentStep++;
        $('#step_' + currentStep).removeClass("d-none");

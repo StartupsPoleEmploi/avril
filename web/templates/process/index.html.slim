@@ -20,7 +20,7 @@
           = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact)
           / = render("contact-ok.html", delegate: @delegate.name, certification: "#{@certification.acronym} #{String.downcase(@certification.label)}")
 
-  button.d-none.d-md-block.btn.btn-link.no-print.px-0[onclick="javascript:window.print()"]
+  button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="javascript:window.print()"]
     = img_tag '/images/printer.svg', alt: 'print'
     |  Imprimer
 
