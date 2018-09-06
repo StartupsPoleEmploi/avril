@@ -1,0 +1,10 @@
+h3.text-center Nous vous avons fait parvenir votre synthèse
+p
+  | Votre conseiller
+  strong " #{@delegate} "
+  | sera votre contact privilégié pour vous aider à avoir votre diplôme.
+.position-relative.d-none.d-md-block
+  = img_tag '/images/step-confirmation.svg', alt: 'confirmation', class: "img-fluid", style: "min-width: 100%;"
+  .position-absolute.d-flex.flex-column.justify-content-center.text-truncate.px-lg-3.px-0 style="top: 10%; width: 56%; height: 34%; left: 25%;"
+    h5 Mon projet
+    h5 #{@certification}

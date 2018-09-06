@@ -1,5 +1,5 @@
 .container
-  .my-5.d-flex.flex-row.align-items-center style="margin-left: -10px;"
+  .my-5.d-flex.flex-row.align-items-center style="margin-left: -5px;"
     = link to: NavigationHistory.last_path(@conn, 2, default: "/"), class: "btn btn-link p-0 mr-3" do
       i.ic-icon.ic-tail-left
     .d-flex.flex-column
@@ -18,6 +18,7 @@
       .col-md.order-1.order-md-2.card.bg-primary.text-secondary.mb-0
         .card-body
           = render("contact-form.html", conn: @conn, delegate: @delegate, form: :contact)
+          / = render("contact-ok.html", delegate: @delegate.name, certification: "#{@certification.acronym} #{String.downcase(@certification.label)}")
 
   button.d-none.d-md-block.btn.btn-link.no-print.px-0[onclick="javascript:window.print()"]
     = img_tag '/images/printer.svg', alt: 'print'
