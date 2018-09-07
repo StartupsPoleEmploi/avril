@@ -31,10 +31,20 @@
 }
 
 form.dm-search-box {
-  border: none;
+  @include media-breakpoint-down(sm) {
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  @include media-breakpoint-up(md) {
+    border: none;
+  }
+
+  margin-top: 2em;
   .input-group.suggest .form-control {
     @include media-breakpoint-down(sm) {
       border-bottom: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
   .input-group.geolocation {
@@ -89,19 +99,12 @@ form.dm-search-box {
     color: $dm-primary-blue;
     font-size: 40px;
   }
-  input::placeholder, input {
-    color: $dm-primary-blue;
-    font: bold 18px/24px $dm-font-nuito;
-  }
 }
 
 body {
   background-color: #FFFFFF;
   &.app {
     background: $dm-primary-light-grey;
-    main {
-      padding-bottom: 3rem;
-    }
   }
   &.home {
     @include media-breakpoint-up(md) {
@@ -171,8 +174,6 @@ $header-height: 5rem;
 
 .alert:empty { display: none; }
 
-.form-control::placeholder { color: darken($gray-light, 30%); }
-
 .brand-icon {
   width: 2rem;
   height: 2rem;
@@ -208,52 +209,25 @@ a[href^="mailto:"]:before {
   border-style: none;
 }
 
-@media print {
-  .fixed-top {
-    position: relative;
-  }
+.line {
+  height: 6px;
+  width: 80%;
+  margin-bottom: 0.5rem;
+}
 
-  .breadcrumb,
-  .no-print {
-    display: none;
-  }
-
-  .step {
-    page-break-inside: avoid;
-    p {
-      page-break-inside: avoid;
-    }
+#steps {
+  h3 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 }
 
-.form-control-placeholder {
-  position: absolute;
-  top: 0;
-  transition: all 200ms;
-  opacity: 1;
-  font-weight: bold;
-  height: 100%;
-  width: 100%;
-  vertical-align: middle;
-  display: flex;
-  align-items: center;
-  @include media-breakpoint-down(sm) {
-    padding: 8px 15px 8px 15px;
-  }
-  @include media-breakpoint-up(md) {
-    padding: 8px 28px 8px 28px;
-  }
+.btn.btn-default {
+  color: $dm-primary-blue;
 }
 
-.form-control:focus + .form-control-placeholder,
-.form-control:valid + .form-control-placeholder {
-  @include media-breakpoint-down(sm) {
-    display: none;
-  }
-  @include media-breakpoint-up(md) {
-    font-size: 16px;
-    transform: translate3d(0, -100%, 0);
-    opacity: 1;
-    height: inherit;
-  }
+input.form-control {
+  font-size: 18px;
+  color: $dm-primary-blue;
+  border-color: transparent;
 }

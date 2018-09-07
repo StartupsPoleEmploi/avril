@@ -1,26 +1,12 @@
-.card.mb-5
-  .card-body
-    .row
-      .col-md-12
-        h1.m-5 Liste des métiers
-    = if @conn.params["search"]["for"] == nil do
-      .row
-        .col-md-6.offset-md-3
-          = form_for @conn, profession_path(@conn, :index), [as: :search, method: "get"], fn f ->
-            = label f, :for, "Quel métier avez-vous exercé ?", [class: 'sr-only']
-            .input-group.mt-3
-              = render Vae.ComponentView, "suggest.html", form: f, position: :home
-              span.input-group-btn
-                = submit class: 'btn btn-primary btn-lg' do
-                  'Rechercher
-                  i.fa.fa-search
-    .results-container.mt-5
-      .results
-        = for profession <- @professions do
-          .result-item
-            h3
-              = link profession.label, to: rome_path(@conn, :certifications, profession.rome), class: 'main-link'
-               |  | 
-              small= target_blank "Fiche métier", profession.rome.url
-      = if @page.total_entries > @page.page_size do
-        = pagination_links @conn, @page, "search[for]": @search_terms
+.container
+  h1.m-5 Liste des métiers
+  .results-container.mt-5
+    .results
+      = for profession <- @professions do
+        .result-item
+          h3
+            = link profession.label, to: rome_path(@conn, :certifications, profession.rome), class: 'main-link'
+             |  |
+            small= target_blank "Fiche métier", profession.rome.url
+    = if @page.total_entries > @page.page_size do
+      = pagination_links @conn, @page, "search[for]": @search_terms

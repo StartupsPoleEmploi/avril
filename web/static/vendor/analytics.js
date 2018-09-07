@@ -1,6 +1,18 @@
 $(function(){
-  $("a[href^='mailto:']").on("click", function () {
+  event_delegates_contact = function() {
     ga('send', 'event', 'Delegates', 'contact');
+  };
+
+  event_steps_previous = function() {
+    ga('send', 'event', 'Steps', 'previous');
+  };
+
+  event_steps_next = function() {
+    ga('send', 'event', 'Steps', 'next');
+  };
+
+  $("button.steps-print-button").on("click", function() {
+    ga('send', 'event', 'Steps', 'print');
   });
 
   $(".delegate-details a[href]:not([href^='mailto:'])").on("click", function() {
@@ -21,9 +33,5 @@ $(function(){
 
   $(".step p a[href^='https://candidat.pole-emploi.fr']").on("click", function() {
     ga('send', 'event', 'Delegates', 'espace personnel');
-  });
-
-  $(".card-body button.no-print").on("click", function() {
-    ga('send', 'event', 'Delegates', 'print');
   });
 });

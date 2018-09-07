@@ -1,10 +1,7 @@
-.card.mb-5
-  .card-body
-    .row
-      .col-md-12
-        h1.m-5 Liste des autorités certificatrices
-        .results-container
-          .results
-            = for certifier <- @certifiers do
-              .result-item
-                h3= link certifier.name, to: certifier_path(@conn, :delegates, certifier), class: 'main-link'
+.container
+  h1.m-5 Liste des autorités certificatrices
+  .results-container
+    .results
+      = for certifier <- @certifiers do
+        .result-item
+          h3= link certifier.name, to: certifier_path(@conn, :delegates, certifier), class: 'main-link'

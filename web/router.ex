@@ -66,6 +66,7 @@ defmodule Vae.Router do
     get("/processes/:id", ProcessController, :show)
     get("/processes/:id/delegates", ProcessController, :delegates)
     post("/processes", ProcessController, :search)
+    post("/processes/contact", ProcessController, :contact)
   end
 
   scope "/admin", ExAdmin do

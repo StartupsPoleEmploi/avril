@@ -36,14 +36,15 @@ defmodule Vae.ComponentView do
     """)
   end
 
-  def suggest(form, position) do
+  def suggest(form) do
     awesomplete(
       form,
       :profession,
       [
-        class: suggest_class(position),
+        class: "form-control form-control-lg",
         onfocus: "this.value='';",
-        required: true
+        required: true,
+        placeholder: "ex: Boulanger"
       ],
       %{
         url: "/professions/_suggest?search[for]=",
@@ -56,9 +57,6 @@ defmodule Vae.ComponentView do
       }
     )
   end
-
-  defp suggest_class(:home), do: "form-control form-control-lg"
-  defp suggest_class(_), do: "form-control mr-sm-2"
 
   def render("analytics", %{conn: conn}) do
     dimension1 =
@@ -218,12 +216,24 @@ defmodule Vae.ComponentView do
 
   def searchbar_labels() do
     script("""
-      var label = 'Pour quel métier souhaitez-vous un diplôme ?';
-      if ($(window).width() < 768 ) {
-        label = 'Votre métier';
-      }
-      $("<label class='form-control-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
-      $("<label class='form-control-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+      $(document).ready(function() {
+        var label = 'Pour quel métier souhaitez-vous un diplôme ?';
+        if ($(window).width() < 768 ) {
+          label = 'Votre métier';
+        }
+        $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
+        $("#search_profession").parent().addClass('form-label-group')
+        $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+        $("#search_geolocation_text").parent().addClass('form-label-group')
+      });
+    """)
+  end
+
+  def form_submit(form) do
+    script("""
+      $('##{form}_form').submit(function(event) {
+        if(#{Mix.env() == :prod}) event_delegates_contact();
+      });
     """)
   end
 end
