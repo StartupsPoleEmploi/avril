@@ -3,7 +3,6 @@ exports.config = {
   files: {
     javascripts: {
       joinTo: {
-        // TODO: we load 2 jquery
         "js/app.js": ["web/static/js/*.js", /node_modules/],
         "js/vendor.js": ["web/static/vendor/awesomplete-util.min.js"],
         "js/analytics.js": ["web/static/vendor/analytics.js"],

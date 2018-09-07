@@ -7,7 +7,6 @@
       padding: 20px;
     }
 
-    // TODO fix md breakpoint
     @include media-breakpoint-down(sm) {
       border-radius: 0;
       border: none;

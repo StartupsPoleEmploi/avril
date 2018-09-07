@@ -3,25 +3,6 @@ defmodule Vae.ProcessView do
   alias Phoenix.HTML
   alias Phoenix.HTML.{Link, Tag}
 
-  def render_contact(delegate) do
-    case delegate.email do
-      nil ->
-        Link.link(
-          "Prendre contact",
-          to: delegate.website,
-          class: "btn btn-primary btn-block no-print",
-          target: "_blank"
-        )
-
-      _ ->
-        Link.link(
-          "Prendre contact",
-          to: "mailto:#{delegate.email}",
-          class: "btn btn-primary btn-block no-print"
-        )
-    end
-  end
-
   def render_steps(process) do
     process
     |> Map.take(Enum.map(1..8, &:"step_#{&1}"))
@@ -29,20 +10,17 @@ defmodule Vae.ProcessView do
     |> Enum.map(fn {k, step} ->
       i = k |> Atom.to_string() |> String.at(5) |> String.to_integer()
 
-      class =
-        case i do
-          1 -> ""
-          _ -> "d-none"
-        end
-
       Tag.content_tag(
         :div,
         [step_title(i), HTML.raw(step)],
-        class: class,
+        class: step_class(i),
         id: "step_#{i}"
       )
     end)
   end
+
+  def step_class(1), do: ""
+  def step_class(_), do: "d-none"
 
   def step_title(number) do
     Tag.content_tag(
@@ -55,13 +33,9 @@ defmodule Vae.ProcessView do
     )
   end
 
-  def ordinal_number(number) do
-    case number do
-      1 -> "ère"
-      2 -> "nde"
-      _ -> "ème"
-    end
-  end
+  def ordinal_number(1), do: "ère"
+  def ordinal_number(2), do: "nde"
+  def ordinal_number(_), do: "ème"
 
   def render_pagination() do
     {:safe,
