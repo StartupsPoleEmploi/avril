@@ -43,7 +43,8 @@ defmodule Vae.ComponentView do
       [
         class: "form-control form-control-lg",
         onfocus: "this.value='';",
-        required: true
+        required: true,
+        placeholder: "ex: Boulanger"
       ],
       %{
         url: "/professions/_suggest?search[for]=",
@@ -221,7 +222,9 @@ defmodule Vae.ComponentView do
           label = 'Votre métier';
         }
         $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
+        $("#search_profession").parent().addClass('form-label-group')
         $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+        $("#search_geolocation_text").parent().addClass('form-label-group')
       });
     """)
   end

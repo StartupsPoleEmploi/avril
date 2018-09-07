@@ -43,6 +43,8 @@ form.dm-search-box {
   .input-group.suggest .form-control {
     @include media-breakpoint-down(sm) {
       border-bottom: 0;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
   }
   .input-group.geolocation {
@@ -96,10 +98,6 @@ form.dm-search-box {
     }
     color: $dm-primary-blue;
     font-size: 40px;
-  }
-  input::placeholder, input {
-    color: $dm-primary-blue;
-    font: bold 18px/24px $dm-font-nuito;
   }
 }
 
@@ -175,8 +173,6 @@ $header-height: 5rem;
 }
 
 .alert:empty { display: none; }
-
-.form-control::placeholder { color: darken($gray-light, 30%); }
 
 .brand-icon {
   width: 2rem;

@@ -5,7 +5,7 @@
     = Vae.ComponentView.suggest(f)
     = hidden_input(f, :rome_code)
   .input-group.geolocation
-    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true)
+    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, placeholder: "ex: Paris")
     = hidden_input(f, :lat)
     = hidden_input(f, :lng)
   = submit class: 'btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2' do
