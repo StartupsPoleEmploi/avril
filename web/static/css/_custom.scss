@@ -213,28 +213,17 @@ a[href^="mailto:"]:before {
   border-style: none;
 }
 
-@media print {
-  .fixed-top {
-    position: relative;
-  }
-
-  .breadcrumb,
-  .no-print {
-    display: none;
-  }
-
-  .step {
-    page-break-inside: avoid;
-    p {
-      page-break-inside: avoid;
-    }
-  }
-}
-
 .line {
   height: 6px;
   width: 80%;
   margin-bottom: 0.5rem;
+}
+
+#steps {
+  h3 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
 }
 
 // TODO bootstrap var

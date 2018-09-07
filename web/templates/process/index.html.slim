@@ -25,14 +25,14 @@
     |  Imprimer
 
   .my-5
-    .row.my-5
+    .row.my-5.align-items-center
       .col-md
         = img_tag '/images/step1-recevabilite.svg', alt: 'recevabilite', class: 'img-fluid my-4'
       .col-md
         h3 Dossier de recevabilité
         p Vous allez préparer votre dossier de candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
         / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
-    .row.my-5
+    .row.my-5.align-items-center
       .col-md.order-2.order-md-1
         h3 Dossier VAE
         p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
@@ -40,7 +40,7 @@
         / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
       .col-md.order-1.order-md-2
         = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
-    .row.my-5
+    .row.my-5.align-items-center
       .col-md
         = img_tag '/images/step3-jury.svg', alt: 'jury', class: 'img-fluid my-4'
       .col-md
