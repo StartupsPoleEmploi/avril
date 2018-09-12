@@ -213,27 +213,4 @@ defmodule Vae.ComponentView do
   def complete_page_title(_assigns) do
     "Avril | Comment faire une V.A.E ?"
   end
-
-  def searchbar_labels() do
-    script("""
-      $(document).ready(function() {
-        var label = 'Pour quel métier souhaitez-vous un diplôme ?';
-        if ($(window).width() < 768 ) {
-          label = 'Votre métier';
-        }
-        $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + label + "</label>").insertAfter("#search_profession");
-        $("#search_profession").parent().addClass('form-label-group')
-        $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
-        $("#search_geolocation_text").parent().addClass('form-label-group')
-      });
-    """)
-  end
-
-  def form_submit(form) do
-    script("""
-      $('##{form}_form').submit(function(event) {
-        if(#{Mix.env() == :prod}) event_delegates_contact();
-      });
-    """)
-  end
 end

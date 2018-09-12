@@ -7,19 +7,18 @@ p
   .d-flex.flex-column
     h5.m-0 #{@delegate.name}
     span #{@delegate.address}
-= form_for @conn, "mailto:#{@delegate.email}?subject=Demande de Vae", [as: @form, id: "#{Atom.to_string(@form)}_form", class: "d-flex flex-column align-items-center", enctype: "text/plain"], fn f ->
+form.md-flex.flex-column.align-items-center id="#{@form}_form"
   .my-5.w-100
     .form-group.form-label-group
-      = text_input f, :name, class: "form-control px-3 py-3", placeholder: "ex: Georges Abitbol", required: true
-      label.form-control-placeholder for="#{Atom.to_string(@form)}_#{Atom.to_string(:name)}" Votre prénom et nom
+      input.form-control.px-3.py-3 id="#{@form}_name" name="name" placeholder="ex: Georges Abitbol" required="true"
+      label.form-control-placeholder for="#{@form}_name" Votre prénom et nom
     .form-group.form-label-group
-      = text_input f, :email, class: "form-control px-3 py-3", placeholder: "ex: la.classe@americaine.com", required: true
-      label.form-control-placeholder for="#{Atom.to_string(@form)}_#{Atom.to_string(:email)}" Votre email
+      input.form-control.px-3.py-3 id="#{@form}_email" name="email" placeholder="ex: la.classe@americaine.com" required="true"
+      label.form-control-placeholder for="#{@form}_email" Votre email
     .form-group.form-label-group
-      = text_input f, :phone_number, class: "form-control px-3 py-3", placeholder: "ex: 0606060606"
-      label.form-control-placeholder for="#{Atom.to_string(@form)}_#{Atom.to_string(:phone_number)}" Votre numéro de téléphone *
+      input.form-control.px-3.py-3 id="#{@form}_phone_number" name="phone_number" placeholder="ex: 0606060606"
+      label.form-control-placeholder for="#{@form}_phone_number" Votre numéro de téléphone *
     small.form-text.text-muted * facultatif
   = submit class: 'btn btn-default bg-white d-flex align-items-center mt-md-0 mt-2 pl-3 pr-4 py-3' do
     = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;"
     span Recevoir ma synthèse VAE
-= Vae.ComponentView.form_submit(@form)
