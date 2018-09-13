@@ -50,15 +50,26 @@ defmodule Vae.JobSeeker do
     |> put_embed(:events, [event_changeset])
   end
 
-  def update_event_changeset(job_seeker, event) do
-    event_changeset = Event.changeset(%Event{}, event)
+  def update_event_changeset(job_seeker, %{event: "unsub"} = event) do
+    job_seeker
+    |> change(subscribed: false)
+    |> put_event(event, job_seeker.events)
+  end
 
+  def update_event_changeset(job_seeker, event) do
     job_seeker
     |> change()
-    |> put_embed(:events, [event_changeset | job_seeker.events])
+    |> put_event(event, job_seeker.events)
   end
 
   def retrieve_by_email(email) do
     Repo.get_by(__MODULE__, email: email)
+  end
+
+  defp put_event(changeset, event, events) do
+    event_changeset = Event.changeset(%Event{}, event)
+
+    changeset
+    |> put_embed(:events, [event_changeset | events])
   end
 end
