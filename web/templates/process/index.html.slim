@@ -17,10 +17,7 @@
             = render_steps(@delegate.process)
       .col-md.order-1.order-md-2.card.bg-primary.text-secondary.mb-0
         .card-body
-          = if assigns[:submitted] do
-            = render("contact-ok.html", delegate: @delegate.name, certification: "#{@certification.acronym} #{String.downcase(@certification.label)}")
-          - else
-            = render("contact-form.html", conn: @conn, delegate: @delegate, form: "contact")
+          = render("contact-form.html", conn: @conn, delegate: @delegate, certification: @certification, form: "contact")
 
   button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="javascript:window.print()"]
     = img_tag '/images/printer.svg', alt: 'print'
@@ -58,4 +55,4 @@
   .container.py-5
     .row
       .col-md-6.offset-md-3
-        = render("contact-form.html", conn: @conn, delegate: @delegate, form: "footer")
+        = render("contact-form.html", conn: @conn, delegate: @delegate, certification: @certification, form: "footer")

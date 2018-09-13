@@ -60,17 +60,23 @@ let channel = socket.channel("contact:send", {})
 
 // Contact form
 function contact(event) {
+  const contactData = $(this).serializeJSON()
   event.preventDefault()
-  channel.push("contact_request", {body: $(this).serializeJSON()})
+  channel.push("contact_request", {
+      body: contactData
+    })
+    .receive("ok", () => {
+      $('.request-contact').addClass('d-none')
+      $('.result-contact').removeClass('d-none')
+      channel.leave()
+    })
 };
 
-$(function () {
+$(function() {
   $('#footer_form').submit(contact)
   $('#contact_form').submit(contact)
 });
 
 channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
 
 export default socket
