@@ -5,9 +5,15 @@ import 'jquery-serializejson'
 
 // To use Phoenix channels, the first step is to import Socket
 // and connect at the socket path in "lib/my_app/endpoint.ex":
-import {Socket} from "phoenix"
+import {
+  Socket
+} from "phoenix"
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+let socket = new Socket("/socket", {
+  params: {
+    token: window.userToken
+  }
+})
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -63,7 +69,15 @@ function contact(event) {
   const contactData = $(this).serializeJSON()
   event.preventDefault()
   channel.push("contact_request", {
-      body: contactData
+      body: Object.assign({}, contactData, {
+        process_path: window.location.href,
+        delegate_city: window.delegate_city,
+        delegate_name: window.delegate_name,
+        delegate_address: window.delegate_address,
+        delegate_phone_number: window.delegate_phone_number,
+        certification: window.certification,
+        job: window.job
+      })
     })
     .receive("ok", () => {
       $('.request-contact').addClass('d-none')
