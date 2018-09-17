@@ -20,7 +20,7 @@ html{lang="fr"}
       = render ComponentView, "navbar.html", conn: @conn
       .container
         .my-4
-          = render ComponentView, "searchbar.html", conn: @conn, headers: true
+          = render ComponentView, "searchbar.html", conn: @conn
       = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do

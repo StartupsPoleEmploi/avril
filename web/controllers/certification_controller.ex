@@ -5,7 +5,13 @@ defmodule Vae.CertificationController do
   alias Vae.Suggest
 
   def index(conn, params) do
-    conn_updated = put_session(conn, :search_job, params["search"]["profession"])
+    conn_updated =
+      conn
+      |> put_session(:search_job, params["search"]["profession"])
+      |> put_session(:search_rome, params["search"]["rome_code"])
+      |> put_session(:search_geo, params["search"]["geolocation_text"])
+      |> put_session(:search_lat, params["search"]["lat"])
+      |> put_session(:search_lng, params["search"]["lng"])
 
     case params["search"]["rome_code"] do
       nil -> redirections(conn_updated, params)

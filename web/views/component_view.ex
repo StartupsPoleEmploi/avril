@@ -36,7 +36,7 @@ defmodule Vae.ComponentView do
     """)
   end
 
-  def suggest(form) do
+  def suggest(form, value) do
     awesomplete(
       form,
       :profession,
@@ -44,7 +44,8 @@ defmodule Vae.ComponentView do
         class: "form-control form-control-lg",
         onfocus: "this.value='';",
         required: true,
-        placeholder: "ex: Boulanger"
+        placeholder: "ex: Boulanger",
+        value: value
       ],
       %{
         url: "/professions/_suggest?search[for]=",
