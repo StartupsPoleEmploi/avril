@@ -1,15 +1,18 @@
 $(function(){
-  event_delegates_contact = function() {
+  function event_delegates_contact() {
     ga('send', 'event', 'Delegates', 'contact');
   };
 
-  event_steps_previous = function() {
-    ga('send', 'event', 'Steps', 'previous');
-  };
+  $('#footer_form').submit(event_delegates_contact);
+  $('#contact_form').submit(event_delegates_contact);
 
-  event_steps_next = function() {
+  $("#previous-step").on("click", function() {
+    ga('send', 'event', 'Steps', 'previous');
+  });
+
+  $("#next-step").on("click", function() {
     ga('send', 'event', 'Steps', 'next');
-  };
+  });
 
   $("button.steps-print-button").on("click", function() {
     ga('send', 'event', 'Steps', 'print');

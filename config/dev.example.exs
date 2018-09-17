@@ -55,6 +55,7 @@ config :vae,
     },
   mailjet: %{
     campaign_template_id: 070_460,
+    vae_recap_template_id: 532_261,
     from_email: "lol@lol.fr",
     override_to: [%{Email: "lol@gmail.com"}, %{Email: "lil@gmail.com"}]
   }

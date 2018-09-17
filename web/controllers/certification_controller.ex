@@ -5,9 +5,11 @@ defmodule Vae.CertificationController do
   alias Vae.Suggest
 
   def index(conn, params) do
+    conn_updated = put_session(conn, :search_job, params["search"]["profession"])
+
     case params["search"]["rome_code"] do
-      nil -> redirections(conn, params)
-      _ -> search_by_rome(conn, params)
+      nil -> redirections(conn_updated, params)
+      _ -> search_by_rome(conn_updated, params)
     end
   end
 

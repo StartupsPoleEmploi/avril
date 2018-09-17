@@ -8,4 +8,31 @@ nav aria-label="Étapes"
       a.page-link aria-label="Next" id="next-step"
         span.ic-icon.ic-tail-right-2 aria-hidden="true"
         .sr-only Next
-= render_pagination()
+javascript:
+  var currentStep = 1;
+
+  function prev_next(currentStep) {
+    if($('#step_' + (currentStep - 1)).length == 0) {
+      $('#previous-step').parent().addClass('disabled');
+    } else {
+      $('#previous-step').parent().removeClass('disabled');
+    }
+    if($('#step_' + (currentStep + 1)).length == 0) {
+      $('#next-step').parent().addClass('disabled');
+    } else {
+      $('#next-step').parent().removeClass('disabled');
+    }
+  }
+
+  $('#previous-step').click(function() {
+    $('#step_' + currentStep).addClass("d-none");
+    currentStep--;
+    $('#step_' + currentStep).removeClass("d-none");
+    prev_next(currentStep);
+  });
+  $('#next-step').click(function() {
+    $('#step_' + currentStep).addClass("d-none");
+    currentStep++;
+    $('#step_' + currentStep).removeClass("d-none");
+    prev_next(currentStep);
+  });

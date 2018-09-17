@@ -37,39 +37,16 @@ defmodule Vae.ProcessView do
   def ordinal_number(2), do: "nde"
   def ordinal_number(_), do: "ème"
 
-  def render_pagination() do
+  def render_contact_form_data(conn, delegate, certification) do
     {:safe,
      """
      <script>
-     var currentStep = 1;
-
-     function prev_next(currentStep) {
-       if($('#step_' + (currentStep - 1)).length == 0) {
-         $('#previous-step').parent().addClass('disabled');
-       } else {
-         $('#previous-step').parent().removeClass('disabled');
-       }
-       if($('#step_' + (currentStep + 1)).length == 0) {
-         $('#next-step').parent().addClass('disabled');
-       } else {
-         $('#next-step').parent().removeClass('disabled');
-       }
-     }
-
-     $('#previous-step').click(function() {
-       if(#{Mix.env() == :prod}) event_steps_previous();
-       $('#step_' + currentStep).addClass("d-none");
-       currentStep--;
-       $('#step_' + currentStep).removeClass("d-none");
-       prev_next(currentStep);
-     });
-     $('#next-step').click(function() {
-       if(#{Mix.env() == :prod}) event_steps_next();
-       $('#step_' + currentStep).addClass("d-none");
-       currentStep++;
-       $('#step_' + currentStep).removeClass("d-none");
-       prev_next(currentStep);
-     });
+     window.delegate_city = "#{Vae.Places.get_city(delegate.geolocation)}"
+     window.delegate_name = "#{delegate.name}"
+     window.delegate_address = "#{delegate.address}"
+     window.delegate_phone_number = "#{delegate.telephone}"
+     window.job = "#{Plug.Conn.get_session(conn, :search_job)}"
+     window.certification = "#{certification.acronym} #{String.downcase(certification.label)}"
      </script>
      """}
   end
