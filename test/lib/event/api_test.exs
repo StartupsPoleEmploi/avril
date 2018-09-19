@@ -250,4 +250,48 @@ defmodule Vae.ApiTest do
     assert Enum.sort_by(updated_job_seeker.events, & &1.time) ==
              Enum.sort_by(expected_events, & &1.time)
   end
+
+  test "handle unsubscribe events, update job_seeker and unsubscribe it" do
+    job_seeker =
+      %JobSeeker{
+        email: "foo@bar.com"
+      }
+      |> Vae.Repo.insert!()
+
+    params = [
+      %{
+        "event" => "unsub",
+        "time" => 1_433_334_941,
+        "MessageID" => 23,
+        "email" => "foo@bar.com",
+        "mj_campaign_id" => 1,
+        "mj_contact_id" => 2323,
+        "customcampaign" => "123",
+        "CustomID" => "45",
+        "Payload" => ""
+      }
+    ]
+
+    updated_job_seekers = Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
+
+    expected_events = [
+      %Vae.Event{
+        campaign_id: 1,
+        contact_id: 2323,
+        custom_id: "45",
+        customcampaign: "123",
+        email: "foo@bar.com",
+        event: "unsub",
+        message_id: 23,
+        payload: nil,
+        time: DateTime.from_unix!(1_433_334_941),
+        type: "email"
+      }
+    ]
+
+    updated_job_seeker = Vae.Repo.get(JobSeeker, job_seeker.id)
+
+    assert Enum.sort_by(updated_job_seeker.events, & &1.time) ==
+             Enum.sort_by(expected_events, & &1.time)
+  end
 end
