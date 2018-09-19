@@ -18,23 +18,38 @@ defmodule Vae.ContactChannel do
             Name: "📜 Avril"
           },
           Variables: %{
-            delegate_city: Map.get(body, "delegate_city", "????"),
-            delegate_name: Map.get(body, "delegate_name", "????"),
-            delegate_address: Map.get(body, "delegate_address", "????"),
-            delegate_phone_number: Map.get(body, "delegate_phone_number", "????"),
-            job: Map.get(body, "job", "????"),
-            certification: Map.get(body, "certification", "????"),
-            process_path: Map.get(body, "process_path", "????")
+            delegate_city: body["delegate_city"],
+            delegate_name: body["delegate_name"],
+            delegate_address: body["delegate_address"],
+            delegate_phone_number: body["delegate_phone_number"],
+            job: body["job"],
+            certification: body["certification"]
           },
           To:
             Map.get(@mailjet_conf, :override_to, [
               %{Email: body["email"], Name: body["name"]}
             ]),
-          CustomID: UUID.uuid5(nil, body["email"])
+          CustomID: UUID.uuid5(nil, body["email"]),
+          Attachments: vae_recap(body)
         }
       ]
     })
 
     {:reply, {:ok, %{}}, socket}
+  end
+
+  defp vae_recap(%{"process" => id}) do
+    with process when not is_nil(process) <- Vae.Repo.get(Vae.Process, id),
+         {:ok, file} <- Vae.StepsPdf.create_pdf(process) do
+      [
+        %{
+          ContentType: "application/pdf",
+          Filename: "etapes.pdf",
+          Base64Content: Base.encode64(file)
+        }
+      ]
+    else
+      []
+    end
   end
 end

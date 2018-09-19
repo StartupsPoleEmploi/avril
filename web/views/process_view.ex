@@ -3,7 +3,7 @@ defmodule Vae.ProcessView do
   alias Phoenix.HTML
   alias Phoenix.HTML.{Link, Tag}
 
-  def render_steps(process) do
+  def render_steps(process, opts \\ []) do
     process
     |> Map.take(Enum.map(1..8, &:"step_#{&1}"))
     |> Enum.filter(fn {k, v} -> not is_nil(v) end)
@@ -13,7 +13,7 @@ defmodule Vae.ProcessView do
       Tag.content_tag(
         :div,
         [step_title(i), HTML.raw(step)],
-        class: step_class(i),
+        class: Keyword.get(opts, :step_class, step_class(i)),
         id: "step_#{i}"
       )
     end)
@@ -47,6 +47,7 @@ defmodule Vae.ProcessView do
      window.delegate_phone_number = "#{delegate.telephone}"
      window.job = "#{Plug.Conn.get_session(conn, :search_job)}"
      window.certification = "#{certification.acronym} #{String.downcase(certification.label)}"
+     window.process = #{delegate.process.id}
      </script>
      """}
   end

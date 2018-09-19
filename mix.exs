@@ -39,7 +39,8 @@ defmodule Vae.Mixfile do
         :new_relixir,
         :algolia,
         :mailjex,
-        :persistent_ets
+        :persistent_ets,
+        :pdf_generator
       ]
     ]
   end
@@ -83,7 +84,8 @@ defmodule Vae.Mixfile do
       {:mailjex, "~> 0.1.4"},
       {:plug, "1.5.0"},
       {:uuid, "~> 1.1"},
-      {:persistent_ets, "~> 0.1.0"}
+      {:persistent_ets, "~> 0.1.0"},
+      {:pdf_generator, ">=0.4.0"}
     ]
   end
 
