@@ -14,8 +14,8 @@ defmodule Vae.StepsPdf do
 
     PdfGenerator.generate_binary(
       full,
-      page_size: "A4",
-      shell_params: ["--encoding", "UTF8"]
+      shell_params: ["--encoding", "UTF8"],
+      delete_temporary: true
     )
   end
 end
