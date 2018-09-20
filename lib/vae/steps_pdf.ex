@@ -4,7 +4,7 @@ defmodule Vae.StepsPdf do
 
     full = """
       <head>
-        <link href="http://localhost:4000/css/app.css" rel="stylesheet">
+        <link href="https://avril.pole-emploi.fr/css/app.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet">
       </head>
       <body>
