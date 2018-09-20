@@ -38,7 +38,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
         TemplateLanguage: true,
         From: %{
           Email: @mailjet_conf.from_email,
-          Name: "📜 Avril"
+          Name: @mailjet_conf.from_name
         },
         Variables: %{utm_campaign: utm_campaign, utm_source: utm_source},
         To:

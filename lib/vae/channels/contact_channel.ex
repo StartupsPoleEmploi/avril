@@ -15,7 +15,7 @@ defmodule Vae.ContactChannel do
           TemplateLanguage: true,
           From: %{
             Email: @mailjet_conf.from_email,
-            Name: "📜 Avril"
+            Name: @mailjet_conf.from_name
           },
           Variables: %{
             delegate_city: body["delegate_city"],
