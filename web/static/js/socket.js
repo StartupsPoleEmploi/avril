@@ -70,13 +70,13 @@ function contact(event) {
   event.preventDefault()
   channel.push("contact_request", {
       body: Object.assign({}, contactData, {
-        process_path: window.location.href,
         delegate_city: window.delegate_city,
         delegate_name: window.delegate_name,
         delegate_address: window.delegate_address,
         delegate_phone_number: window.delegate_phone_number,
         certification: window.certification,
-        job: window.job
+        job: window.job,
+        process: window.process
       })
     })
     .receive("ok", () => {
