@@ -66,6 +66,7 @@ let channel = socket.channel("contact:send", {})
 
 // Contact form
 function contact(event) {
+  $('.request-contact button').prop('disabled', true)
   const contactData = $(this).serializeJSON()
   event.preventDefault()
   channel.push("contact_request", {
@@ -87,8 +88,7 @@ function contact(event) {
 };
 
 $(function() {
-  $('#footer_form').submit(contact)
-  $('#contact_form').submit(contact)
+  $('.request-contact form').submit(contact)
 });
 
 channel.join()
