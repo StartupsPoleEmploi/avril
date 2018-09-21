@@ -40,7 +40,11 @@ defmodule Vae.Mailer.Sender.Mailjet do
           Email: @mailjet_conf.from_email,
           Name: @mailjet_conf.from_name
         },
-        Variables: %{utm_campaign: utm_campaign, utm_source: utm_source},
+        Variables: %{
+          utm_campaign: utm_campaign,
+          utm_source: utm_source,
+          js_id: job_seeker.id
+        },
         To:
           Map.get(@mailjet_conf, :override_to, [
             %{Email: email, Name: "#{first_name} #{last_name}"}
