@@ -1,6 +1,8 @@
 defmodule Vae.ContactChannel do
   use Phoenix.Channel
 
+  alias Vae.Event
+
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
   def join("contact:send", _message, socket) do
@@ -10,11 +12,30 @@ defmodule Vae.ContactChannel do
   def handle_in("contact_request", %{"body" => body}, socket) do
     body_updated = Map.put_new(body, "contact_delegate", "off")
 
+    add_contact_event(body_updated)
+
+    send_messages(body_updated)
+
+    {:reply, {:ok, %{}}, socket}
+  end
+
+  defp add_contact_event(body) do
+    Event.create_or_update_job_seeker(%{
+      type: "contact_form",
+      event: "submitted",
+      email: body["email"],
+      # field(:time, :utc_datetime)
+      payload: ""
+      # TODO: add params -> delegate id etc
+    })
+  end
+
+  defp send_messages(body) do
     messages =
       Enum.reject(
         [
-          vae_recap_message(body_updated),
-          delegate_message(body_updated)
+          vae_recap_message(body),
+          delegate_message(body)
         ],
         &is_nil/1
       )
@@ -22,8 +43,6 @@ defmodule Vae.ContactChannel do
     Mailjex.Delivery.send(%{
       Messages: messages
     })
-
-    {:reply, {:ok, %{}}, socket}
   end
 
   defp vae_recap_message(body) do
