@@ -24,9 +24,7 @@ defmodule Vae.ContactChannel do
       type: "contact_form",
       event: "submitted",
       email: body["email"],
-      # field(:time, :utc_datetime)
-      payload: ""
-      # TODO: add params -> delegate id etc
+      payload: Kernel.inspect(body)
     })
   end
 

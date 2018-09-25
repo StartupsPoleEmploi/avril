@@ -26,7 +26,10 @@ defmodule Vae.Event do
     |> cast_unix_timestamp_to_datetime(params[:time])
   end
 
-  def cast_unix_timestamp_to_datetime(changeset, nil), do: changeset
+  def cast_unix_timestamp_to_datetime(changeset, nil) do
+    datetime = DateTime.utc_now()
+    put_change(changeset, :time, datetime)
+  end
 
   def cast_unix_timestamp_to_datetime(changeset, timestamp) do
     datetime = DateTime.from_unix!(timestamp)
