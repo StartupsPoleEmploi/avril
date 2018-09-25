@@ -49,9 +49,8 @@ defmodule Vae.CertificationController do
           |> order_by(desc: :level)
           |> Repo.paginate(params)
 
-        conn
-        |> put_session(:search_job_id, rome.id)
-        |> render(
+        render(
+          conn,
           Vae.CertificationView,
           "index.html",
           certifications: page.entries,

@@ -48,10 +48,6 @@ defmodule Vae.ProcessView do
      window.job = "#{Plug.Conn.get_session(conn, :search_job)}"
      window.certification = "#{certification.acronym} #{String.downcase(certification.label)}"
      window.process = #{delegate.process.id}
-
-     window.job_id = #{Plug.Conn.get_session(conn, :search_job_id)}
-     window.certification_id = #{certification.id}
-     window.delegate_id = #{delegate.id}
      </script>
      """}
   end

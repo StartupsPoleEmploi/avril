@@ -77,11 +77,7 @@ function contact(event) {
         delegate_phone_number: window.delegate_phone_number,
         certification: window.certification,
         job: window.job,
-        process: window.process,
-
-        job_id: window.job_id,
-        certification_id: window.certification_id,
-        delegate_id: window.delegate_id
+        process: window.process
       })
     })
     .receive("ok", () => {
