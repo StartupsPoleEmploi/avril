@@ -43,6 +43,7 @@ defmodule Vae.ProcessView do
      <script>
      window.delegate_city = "#{Vae.Places.get_city(delegate.geolocation)}"
      window.delegate_name = "#{delegate.name}"
+     window.delegate_email = "#{delegate.email}"
      window.delegate_address = "#{delegate.address}"
      window.delegate_phone_number = "#{delegate.telephone}"
      window.job = "#{Plug.Conn.get_session(conn, :search_job)}"

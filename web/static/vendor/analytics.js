@@ -1,10 +1,7 @@
-$(function(){
-  function event_delegates_contact() {
+$(function() {
+  $('.request-contact form').submit(function() {
     ga('send', 'event', 'Delegates', 'contact');
-  };
-
-  $('#footer_form').submit(event_delegates_contact);
-  $('#contact_form').submit(event_delegates_contact);
+  });
 
   $("#previous-step").on("click", function() {
     ga('send', 'event', 'Steps', 'previous');

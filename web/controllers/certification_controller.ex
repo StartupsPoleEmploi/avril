@@ -33,8 +33,8 @@ defmodule Vae.CertificationController do
     |> get_certifications_by_rome
     |> case do
       nil ->
-        update_wizard_trails(conn, step: 2, url: "/certifications")
-        |> render(
+        render(
+          conn,
           Vae.CertificationView,
           "index.html",
           certifications: [],
@@ -49,8 +49,8 @@ defmodule Vae.CertificationController do
           |> order_by(desc: :level)
           |> Repo.paginate(params)
 
-        update_wizard_trails(conn, step: 2, url: "/certifications")
-        |> render(
+        render(
+          conn,
           Vae.CertificationView,
           "index.html",
           certifications: page.entries,
@@ -109,7 +109,6 @@ defmodule Vae.CertificationController do
               nil
 
             rome ->
-              update_wizard_trails(conn, step: 2, url: "/romes/#{rome.id}/certifications")
               rome.id
           end
       end
