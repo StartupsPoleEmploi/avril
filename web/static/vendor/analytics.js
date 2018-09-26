@@ -1,6 +1,11 @@
 $(function() {
   $('.request-contact form').submit(function() {
-    ga('send', 'event', 'Delegates', 'contact');
+    const contactData = $(this).serializeJSON();
+    if (contactData.contact_delegate) {
+      ga('send', 'event', 'Delegates', 'contact');
+    } else {
+      ga('send', 'event', 'Steps', 'email');
+    }
   });
 
   $("#previous-step").on("click", function() {
