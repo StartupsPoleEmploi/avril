@@ -2,6 +2,7 @@ defmodule Vae.ContactChannel do
   use Phoenix.Channel
 
   alias Vae.Event
+  alias Vae.Mailer.Sender.Mailjet
 
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
@@ -10,11 +11,9 @@ defmodule Vae.ContactChannel do
   end
 
   def handle_in("contact_request", %{"body" => body}, socket) do
-    body_updated = Map.put_new(body, "contact_delegate", "off")
-
-    add_contact_event(body_updated)
-
-    send_messages(body_updated)
+    Map.put_new(body, "contact_delegate", "off")
+    |> add_contact_event()
+    |> send_messages()
 
     {:reply, {:ok, %{}}, socket}
   end
@@ -26,6 +25,8 @@ defmodule Vae.ContactChannel do
       email: body["email"],
       payload: Kernel.inspect(body)
     })
+
+    body
   end
 
   defp send_messages(body) do
@@ -44,21 +45,12 @@ defmodule Vae.ContactChannel do
   end
 
   defp vae_recap_message(body) do
-    %{
+    Map.merge(generic_message(body), %{
       TemplateID: @mailjet_conf.vae_recap_template_id,
-      TemplateLanguage: true,
-      From: %{
-        Email: @mailjet_conf.from_email,
-        Name: @mailjet_conf.from_name
-      },
-      Variables: body,
-      To:
-        Map.get(@mailjet_conf, :override_to, [
-          %{Email: body["email"], Name: body["name"]}
-        ]),
-      CustomID: UUID.uuid5(nil, body["email"]),
+      ReplyTo: Mailjet.generic_reply_to(),
+      To: Mailjet.build_to(body["email"], body["name"]),
       Attachments: vae_recap(body)
-    }
+    })
   end
 
   defp vae_recap(%{"process" => id}) do
@@ -76,24 +68,20 @@ defmodule Vae.ContactChannel do
     end
   end
 
-  defp delegate_message(body = %{"contact_delegate" => "on"}) do
-    %{
+  defp delegate_message(%{"contact_delegate" => "on"} = body) do
+    Map.merge(generic_message(body), %{
       TemplateID: @mailjet_conf.contact_template_id,
+      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      To: Mailjet.build_to(body["delegate_email"], body["delegate_name"])
+    })
+  end
+
+  defp generic_message(body) do
+    %{
       TemplateLanguage: true,
-      From: %{
-        Email: @mailjet_conf.from_email,
-        Name: @mailjet_conf.from_name
-      },
-      ReplyTo: %{
-        Email: body["email"],
-        Name: body["name"]
-      },
-      Variables: body,
-      To:
-        Map.get(@mailjet_conf, :override_to, [
-          %{Email: Map.get(body, "email", "avril@pole-emploi.fr"), Name: body["delegate_name"]}
-        ]),
-      CustomID: UUID.uuid5(nil, body["email"])
+      From: Mailjet.generic_from(),
+      CustomID: UUID.uuid5(nil, body["email"]),
+      Variables: body
     }
   end
 

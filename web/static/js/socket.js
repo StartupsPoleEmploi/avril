@@ -73,6 +73,7 @@ function contact(event) {
       body: Object.assign({}, contactData, {
         delegate_city: window.delegate_city,
         delegate_name: window.delegate_name,
+        delegate_email: window.delegate_email,
         delegate_address: window.delegate_address,
         delegate_phone_number: window.delegate_phone_number,
         certification: window.certification,
