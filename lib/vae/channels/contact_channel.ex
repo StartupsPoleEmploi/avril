@@ -11,7 +11,8 @@ defmodule Vae.ContactChannel do
   end
 
   def handle_in("contact_request", %{"body" => body}, socket) do
-    Map.put_new(body, "contact_delegate", "off")
+    body
+    |> Map.put_new("contact_delegate", "off")
     |> add_contact_event()
     |> send_messages()
 
@@ -44,11 +45,19 @@ defmodule Vae.ContactChannel do
     })
   end
 
+  defp vae_recap_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
+    body
+    |> Map.merge(%{"contact_delegate" => "off"})
+    |> vae_recap_message()
+  end
+
   defp vae_recap_message(body) do
-    Map.merge(generic_message(body), %{
+    body
+    |> generic_message()
+    |> Map.merge(%{
       TemplateID: @mailjet_conf.vae_recap_template_id,
-      ReplyTo: Mailjet.generic_reply_to(),
-      To: Mailjet.build_to(body["email"], body["name"]),
+      ReplyTo: Mailjet.avril_email(),
+      To: Mailjet.build_to(%{Email: body["email"], Name: body["name"]}),
       Attachments: vae_recap(body)
     })
   end
@@ -68,13 +77,27 @@ defmodule Vae.ContactChannel do
     end
   end
 
-  defp delegate_message(%{"contact_delegate" => "on"} = body) do
-    Map.merge(generic_message(body), %{
+  defp delegate_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
+    body
+    |> generic_message()
+    |> Map.merge(%{
       TemplateID: @mailjet_conf.contact_template_id,
       ReplyTo: %{Email: body["email"], Name: body["name"]},
-      To: Mailjet.build_to(body["delegate_email"], body["delegate_name"])
+      To: Mailjet.build_to(Mailjet.avril_email())
     })
   end
+
+  defp delegate_message(%{"contact_delegate" => "on", "delegate_email" => _} = body) do
+    body
+    |> generic_message()
+    |> Map.merge(%{
+      TemplateID: @mailjet_conf.contact_template_id,
+      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      To: Mailjet.build_to(%{Email: body["delegate_email"], Name: body["delegate_name"]})
+    })
+  end
+
+  defp delegate_message(_), do: nil
 
   defp generic_message(body) do
     %{
@@ -84,6 +107,4 @@ defmodule Vae.ContactChannel do
       Variables: body
     }
   end
-
-  defp delegate_message(_), do: nil
 end

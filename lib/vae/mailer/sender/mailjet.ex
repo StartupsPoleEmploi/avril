@@ -37,9 +37,9 @@ defmodule Vae.Mailer.Sender.Mailjet do
         TemplateID: @mailjet_conf.campaign_template_id,
         TemplateLanguage: true,
         From: generic_from(),
-        ReplyTo: generic_reply_to(),
+        ReplyTo: avril_email(),
         Variables: %{utm_campaign: utm_campaign, utm_source: utm_source},
-        To: build_to(email, "#{first_name} #{last_name}"),
+        To: build_to(%{Email: email, Name: "#{first_name} #{last_name}"}),
         CustomID: custom_id
       }
     else
@@ -64,7 +64,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
     }
   end
 
-  def generic_reply_to() do
+  def avril_email() do
     %{
       Email: "avril@pole-emploi.fr",
       Name: "Avril"
@@ -79,7 +79,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
     override_to([%{Email: "avril@pole-emploi.fr", Name: "Avril"}])
   end
 
-  def build_to(email, name) do
-    override_to([%{Email: email, Name: name}])
+  def build_to(to) do
+    override_to([to])
   end
 end
