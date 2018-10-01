@@ -1,6 +1,9 @@
 defmodule Vae.ContactChannel do
   use Phoenix.Channel
 
+  alias Vae.Event
+  alias Vae.Mailer.Sender.Mailjet
+
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
   def join("contact:send", _message, socket) do
@@ -8,34 +11,55 @@ defmodule Vae.ContactChannel do
   end
 
   def handle_in("contact_request", %{"body" => body}, socket) do
-    Mailjex.Delivery.send(%{
-      Messages: [
-        %{
-          TemplateID: @mailjet_conf.vae_recap_template_id,
-          TemplateLanguage: true,
-          From: %{
-            Email: @mailjet_conf.from_email,
-            Name: @mailjet_conf.from_name
-          },
-          Variables: %{
-            delegate_city: body["delegate_city"],
-            delegate_name: body["delegate_name"],
-            delegate_address: body["delegate_address"],
-            delegate_phone_number: body["delegate_phone_number"],
-            job: body["job"],
-            certification: body["certification"]
-          },
-          To:
-            Map.get(@mailjet_conf, :override_to, [
-              %{Email: body["email"], Name: body["name"]}
-            ]),
-          CustomID: UUID.uuid5(nil, body["email"]),
-          Attachments: vae_recap(body)
-        }
-      ]
-    })
+    body
+    |> Map.put_new("contact_delegate", "off")
+    |> add_contact_event()
+    |> send_messages()
 
     {:reply, {:ok, %{}}, socket}
+  end
+
+  defp add_contact_event(body) do
+    Event.create_or_update_job_seeker(%{
+      type: "contact_form",
+      event: "submitted",
+      email: body["email"],
+      payload: Kernel.inspect(body)
+    })
+
+    body
+  end
+
+  defp send_messages(body) do
+    messages =
+      Enum.reject(
+        [
+          vae_recap_message(body),
+          delegate_message(body)
+        ],
+        &is_nil/1
+      )
+
+    Mailjex.Delivery.send(%{
+      Messages: messages
+    })
+  end
+
+  defp vae_recap_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
+    body
+    |> Map.merge(%{"contact_delegate" => "off"})
+    |> vae_recap_message()
+  end
+
+  defp vae_recap_message(body) do
+    body
+    |> generic_message()
+    |> Map.merge(%{
+      TemplateID: @mailjet_conf.vae_recap_template_id,
+      ReplyTo: Mailjet.avril_email(),
+      To: Mailjet.build_to(%{Email: body["email"], Name: body["name"]}),
+      Attachments: vae_recap(body)
+    })
   end
 
   defp vae_recap(%{"process" => id}) do
@@ -51,5 +75,36 @@ defmodule Vae.ContactChannel do
     else
       []
     end
+  end
+
+  defp delegate_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
+    body
+    |> generic_message()
+    |> Map.merge(%{
+      TemplateID: @mailjet_conf.contact_template_id,
+      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      To: Mailjet.build_to(Mailjet.avril_email())
+    })
+  end
+
+  defp delegate_message(%{"contact_delegate" => "on", "delegate_email" => _} = body) do
+    body
+    |> generic_message()
+    |> Map.merge(%{
+      TemplateID: @mailjet_conf.contact_template_id,
+      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      To: Mailjet.build_to(%{Email: body["delegate_email"], Name: body["delegate_name"]})
+    })
+  end
+
+  defp delegate_message(_), do: nil
+
+  defp generic_message(body) do
+    %{
+      TemplateLanguage: true,
+      From: Mailjet.generic_from(),
+      CustomID: UUID.uuid5(nil, body["email"]),
+      Variables: body
+    }
   end
 end

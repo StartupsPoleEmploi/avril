@@ -26,8 +26,7 @@ defmodule Vae.DelegateController do
     delegate = Repo.get!(Delegate, id)
                |> Repo.preload(:process)
 
-    update_wizard_trails(conn, step: 4, url: "delegates/#{id}")
-    |> render("show.html", delegate: delegate, certification: certification)
+    render(conn, "show.html", delegate: delegate, certification: certification)
   end
 
 end

@@ -1,14 +1,20 @@
 # Avril
 
-Avril est un projet Open Source des Startups d'Etat Pôle emploi. 
-Avril traite le sujet de la VAE : validation des acquis de l'expérience. La VAE permet d'obtenir un diplôme grâce à ses compétences. 
+Avril est un projet Open Source des Startups d'Etat Pôle emploi.
+Avril traite le sujet de la VAE : validation des acquis de l'expérience. La VAE permet d'obtenir un diplôme grâce à ses compétences.
 
-Pour lancer l'application Pheonix (EN) : 
+Pour lancer l'application Pheonix (EN) :
   * Install dependencies with `mix deps.get`
   * Create and migrate your database with `mix ecto.create && mix ecto.migrate`
   * Import data with `mix run priv/repo/seeds.exs`
   * Install Node.js dependencies with `npm install`
   * Start Phoenix endpoint with `mix phoenix.server`
+
+Pour dump la database:
+  * psql postgres
+  * CREATE EXTENSION citext;
+  * pg_restore --clean --no-acl --no-owner -d vae_dev 2018_09_25.dump
+  * mix phx.server
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 

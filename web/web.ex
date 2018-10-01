@@ -37,8 +37,6 @@ defmodule Vae.Web do
 
       import Vae.Router.Helpers
       import Vae.Gettext
-
-      import Vae.Wizard, [:update_wizard_trails / 2]
     end
   end
 
@@ -58,8 +56,6 @@ defmodule Vae.Web do
       import Vae.ViewHelpers
       import Vae.Gettext
       import PhoenixFormAwesomplete
-
-      import Vae.Wizard, [:completed_trails / 0]
     end
   end
 

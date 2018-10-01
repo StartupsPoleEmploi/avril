@@ -23,8 +23,8 @@ defmodule Vae.ProcessController do
           Repo.get(Certification, certification_id)
       end
 
-    update_wizard_trails(conn, step: 3, url: "/processes")
-    |> render(
+    render(
+      conn,
       "delegates.html",
       certification: certification,
       profession: params["search"]["profession"],

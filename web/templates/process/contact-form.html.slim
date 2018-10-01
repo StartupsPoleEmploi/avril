@@ -16,10 +16,14 @@
       .form-group.form-label-group
         input.form-control.px-3.py-3 id="#{@form}_email" name="email" placeholder="ex: la.classe@americaine.com" required="true" type="email"
         label.form-control-placeholder for="#{@form}_email" Votre email
-      .form-group.form-label-group
-        input.form-control.px-3.py-3 id="#{@form}_phone_number" name="phone_number" placeholder="ex: 0606060606" type="tel" pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
-        label.form-control-placeholder for="#{@form}_phone_number" Votre numéro de téléphone *
-      small.form-text.text-muted * facultatif
+      .form-group
+        .form-label-group
+          input.form-control.px-3.py-3 id="#{@form}_phone_number" name="phone_number" placeholder="ex: 0606060606" type="tel" pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
+          label.form-control-placeholder for="#{@form}_phone_number" Votre numéro de téléphone *
+        small.form-text.text-muted * facultatif
+      .form-check
+        input.form-check-input id="#{@form}_contact_delegate" name="contact_delegate" type="checkbox" value=""
+        label.form-check-label for="#{@form}_contact_delegate" Je souhaite être recontacté par mon centre certificateur
     button.btn.btn-default.bg-white.d-flex.align-items-center.mt-md-0.mt-2.mx-auto.pl-3.pr-4.py-3'
       = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;"
       span Recevoir ma synthèse VAE
