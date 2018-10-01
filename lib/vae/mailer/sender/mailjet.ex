@@ -38,7 +38,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
         TemplateLanguage: true,
         From: generic_from(),
         ReplyTo: avril_email(),
-        Variables: %{utm_campaign: utm_campaign, utm_source: utm_source},
+        Variables: %{utm_campaign: utm_campaign, utm_source: utm_source, js_id: job_seeker.id},
         To: build_to(%{Email: email, Name: "#{first_name} #{last_name}"}),
         CustomID: custom_id
       }

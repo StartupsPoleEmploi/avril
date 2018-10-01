@@ -6,7 +6,7 @@ defmodule Vae.Visit do
 
   @primary_key false
   embedded_schema do
-    field(:path_info, :string)
+    field(:path_info, {:array, :string})
     field(:certification_id, :integer)
     field(:delegate_id, :integer)
 
