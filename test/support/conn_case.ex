@@ -39,6 +39,6 @@ defmodule Vae.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(Vae.Repo, {:shared, self()})
     end
 
-    :ok
+    {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

@@ -11,6 +11,7 @@ defmodule Vae.Router do
     plug(:put_secure_browser_headers)
     plug(Coherence.Authentication.Session)
     plug(NavigationHistory.Tracker, excluded_paths: [~r(/professions/_suggest*)])
+    plug(Vae.Tracker)
   end
 
   pipeline :protected do
