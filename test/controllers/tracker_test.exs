@@ -3,6 +3,25 @@ defmodule Vae.TrackerTest do
 
   alias Vae.JobSeeker
 
+  test "no tracking on profession suggest", %{conn: conn} do
+    job_seeker =
+      %JobSeeker{
+        email: "foo@bar.com"
+      }
+      |> Vae.Repo.insert!()
+
+    conn =
+      build_conn()
+      |> get("/?js_id=#{job_seeker.id}")
+      |> get("/professions/_suggest?search[for]=patissier")
+
+    updated_job_seeker = Vae.Repo.get(JobSeeker, job_seeker.id)
+
+    assert Enum.flat_map(updated_job_seeker.analytics, fn analytic ->
+             analytic.visits
+           end) == []
+  end
+
   test "no start to track when coming from another source than email", %{conn: conn} do
     conn = get(conn, "/")
 
