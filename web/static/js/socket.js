@@ -78,7 +78,8 @@ function contact(event) {
         delegate_phone_number: window.delegate_phone_number,
         certification: window.certification,
         job: window.job,
-        process: window.process
+        process: window.process,
+        href: window.location.href
       })
     })
     .receive("ok", () => {
