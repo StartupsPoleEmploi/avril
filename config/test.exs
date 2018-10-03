@@ -30,20 +30,6 @@ config :vae, Vae.Repo,
 config :vae,
   places_client: Vae.Places.Client.InMemory,
   places_ets_table_name: :places_test,
-  algolia_places_apis: %{
-    "foo" => %{
-      monitoring: "123456",
-      search: "foo_search"
-    },
-    "bar" => %{
-      monitoring: "098765",
-      search: "bar_search"
-    },
-    "baz" => %{
-      monitoring: "789012",
-      search: "baz_search"
-    }
-  },
   mailjet: %{
     campaign_template_id: 465_443,
     from_email: "x@gmail.com",

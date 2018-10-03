@@ -101,8 +101,6 @@ defmodule Vae.ComponentView do
   end
 
   def render("places", %{tag: tag, prefix: prefix, type: type}) do
-    {app_id, api_key} = Vae.Places.LoadBalancer.get_index_credentials()
-
     type_requested =
       case type do
         nil -> ""
@@ -117,8 +115,8 @@ defmodule Vae.ComponentView do
        countries: ['FR'],
        aroundLatLngViaIP: true,
        #{type_requested}
-       appId: "#{app_id}",
-       apiKey: "#{api_key}",
+       appId: '#{System.get_env("ALGOLIA_PLACES_APP_ID")}',
+       apiKey: '#{System.get_env("ALGOLIA_PLACES_API_KEY")}',
        templates: {
          value: function(suggestion) {
            return suggestion.name;
