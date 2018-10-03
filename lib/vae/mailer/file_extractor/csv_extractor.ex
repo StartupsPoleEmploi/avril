@@ -18,7 +18,8 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     "Provence-Alpes-Côte d'Azur",
     "Corse",
     "Hauts-de-France",
-    "Auvergne-Rhône-Alpes"
+    "Auvergne-Rhône-Alpes",
+    "Nouvelle-Aquitaine"
   ]
 
   def extract(path) do
