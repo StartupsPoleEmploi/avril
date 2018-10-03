@@ -107,6 +107,18 @@ defmodule Vae.ComponentView do
         _ -> "type: '#{type}',"
       end
 
+    credentials =
+      case {System.get_env("ALGOLIA_PLACES_APP_ID"), System.get_env("ALGOLIA_PLACES_API_KEY")} do
+        {appId, apiKey} when not is_nil(appId) and not is_nil(apiKey) ->
+          """
+            appId: '#{appId}',
+            apiKey: '#{apiKey}',
+          """
+
+        _ ->
+          ""
+      end
+
     {:safe,
      """
      <script>
@@ -115,8 +127,7 @@ defmodule Vae.ComponentView do
        countries: ['FR'],
        aroundLatLngViaIP: true,
        #{type_requested}
-       appId: '#{System.get_env("ALGOLIA_PLACES_APP_ID")}',
-       apiKey: '#{System.get_env("ALGOLIA_PLACES_API_KEY")}',
+       #{credentials}
        templates: {
          value: function(suggestion) {
            return suggestion.name;
