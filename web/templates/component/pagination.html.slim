@@ -1,0 +1,27 @@
+.container.mt-auto
+  .my-4.d-flex.align-items-center
+    h5.m-0 Page : #{@page.page_number}
+    nav.ml-auto aria-label="Pages"
+      ul.pagination id="pagination"
+        li.page-item
+          = link(class: "page-link", to: "lol", aria_label: "Précédent") do
+            span.ic-icon.ic-tail-left aria-hidden="true"
+            .sr-only Précédent
+        li.page-item
+          = link(class: "page-link", to: "lol", aria_label: "Suivant") do
+            span.ic-icon.ic-tail-right-2 aria-hidden="true"
+            .sr-only Suivant
+
+
+
+/ .container.mt-auto
+/   .my-4.d-flex
+/     h5 Page : #{@page.page_number}
+/
+/       .ml-auto
+/         = case assigns[:rome] do
+/           - nil ->
+/             = pagination_links @conn, @page
+/           - rome ->
+/             = pagination_links @conn, @page, [rome.id], path: &rome_path/4, action: :certifications
+/ = if @page.total_pages > 1 do
