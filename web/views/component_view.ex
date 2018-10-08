@@ -185,45 +185,45 @@ defmodule Vae.ComponentView do
         %{view_module: Vae.CertificationView, view_template: "show.html"} = assigns
       ) do
     case assigns[:profession] do
-      nil -> "Centre V.A.E – #{assigns[:certification].label}"
-      profession -> "Centre V.A.E – #{assigns[:certification].label} - #{assigns[:profession]}"
+      nil -> "Centre VAE – #{assigns[:certification].label}"
+      profession -> "Centre VAE – #{assigns[:certification].label} - #{assigns[:profession]}"
     end
   end
 
   def complete_page_title(%{view_module: Vae.CertificationView} = assigns) do
-    "V.A.E #{assigns[:profession]}"
+    "VAE #{assigns[:profession]}"
   end
 
   def complete_page_title(%{view_module: Vae.ProfessionView}) do
-    "Choisissez votre métier pour obtenir votre diplôme grâce à la V.A.E"
+    "Choisissez votre métier pour obtenir votre diplôme grâce à la VAE"
   end
 
   def complete_page_title(
         %{view_module: Vae.CertifierView, page: %Scrivener.Page{total_entries: 0}} = assigns
       ) do
-    "0 centre V.A.E pour #{assigns[:certification].label}"
+    "0 centre VAE pour #{assigns[:certification].label}"
   end
 
   def complete_page_title(%{view_module: Vae.CertifierView, view_template: "index.html"}) do
-    "Centres V.A.E"
+    "Centres VAE"
   end
 
   def complete_page_title(%{view_module: Vae.CertifierView} = assigns) do
     case assigns[:profession] do
-      nil -> "Centre V.A.E – #{assigns[:certification].label}"
-      profession -> "Centre V.A.E – #{assigns[:certification].label} - #{assigns[:profession]}"
+      nil -> "Centre VAE – #{assigns[:certification].label}"
+      profession -> "Centre VAE – #{assigns[:certification].label} - #{assigns[:profession]}"
     end
   end
 
   def complete_page_title(%{view_module: Vae.DelegateView, view_template: "show.html"} = assigns) do
-    "Parcours V.A.E #{assigns[:delegate].name}"
+    "Parcours VAE #{assigns[:delegate].name}"
   end
 
   def complete_page_title(%{view_module: Vae.DelegateView}) do
-    "Liste des centres de certifications V.A.E"
+    "Liste des centres de certifications VAE"
   end
 
   def complete_page_title(_assigns) do
-    "Avril | Comment faire une V.A.E ?"
+    "Avril | Comment faire une VAE ?"
   end
 end
