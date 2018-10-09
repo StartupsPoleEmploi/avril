@@ -44,7 +44,7 @@ defmodule Vae.ComponentView do
         class: "form-control form-control-lg",
         onfocus: "this.value='';",
         required: true,
-        placeholder: "ex: Boulanger",
+        placeholder: 'Essayez "Boulanger"',
         value: value
       ],
       %{
