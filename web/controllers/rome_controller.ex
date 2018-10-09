@@ -21,8 +21,15 @@ defmodule Vae.RomeController do
            |> preload(:delegates)
            |> Repo.paginate(params)
 
-    update_wizard_trails(conn, step: 2, url: "/romes/#{params["id"]}/certifications")
-    |> render(Vae.CertificationView, "index.html", certifications: page.entries, page: page, rome: rome, profession: params["search"]["profession"] || rome.label)
+    render(
+      conn,
+      Vae.CertificationView,
+      "index.html",
+      certifications: page.entries,
+      page: page,
+      rome: rome,
+      profession: params["search"]["profession"] || rome.label
+    )
   end
 
 end

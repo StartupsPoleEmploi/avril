@@ -66,17 +66,20 @@ let channel = socket.channel("contact:send", {})
 
 // Contact form
 function contact(event) {
+  $('.request-contact button').prop('disabled', true)
   const contactData = $(this).serializeJSON()
   event.preventDefault()
   channel.push("contact_request", {
       body: Object.assign({}, contactData, {
         delegate_city: window.delegate_city,
         delegate_name: window.delegate_name,
+        delegate_email: window.delegate_email,
         delegate_address: window.delegate_address,
         delegate_phone_number: window.delegate_phone_number,
         certification: window.certification,
         job: window.job,
-        process: window.process
+        process: window.process,
+        county: window.county
       })
     })
     .receive("ok", () => {
@@ -87,8 +90,7 @@ function contact(event) {
 };
 
 $(function() {
-  $('#footer_form').submit(contact)
-  $('#contact_form').submit(contact)
+  $('.request-contact form').submit(contact)
 });
 
 channel.join()

@@ -1,7 +1,7 @@
 defmodule Vae.JobSeeker do
   use Vae.Web, :model
 
-  alias Vae.{Event, JobSeeker}
+  alias Vae.{Analytic, Event, JobSeeker}
   alias Vae.Repo
 
   schema "job_seekers" do
@@ -20,6 +20,7 @@ defmodule Vae.JobSeeker do
     field(:geolocation, :map)
 
     embeds_many(:events, Event, on_replace: :delete)
+    embeds_many(:analytics, Analytic, on_replace: :delete)
 
     timestamps()
   end
@@ -62,8 +63,45 @@ defmodule Vae.JobSeeker do
     |> put_event(event, job_seeker.events)
   end
 
+  def update_analytics_changeset(job_seeker, :new, analytic) do
+    job_seeker
+    |> change()
+    |> put_embed(:analytics, [analytic | job_seeker.analytics])
+  end
+
+  def update_analytics_changeset(job_seeker, :old, analytic) do
+    updated_analytics =
+      job_seeker.analytics
+      |> Enum.map(fn old_analytic ->
+        case Date.compare(old_analytic.date, Date.utc_today()) do
+          :eq -> analytic
+          _ -> old_analytic
+        end
+      end)
+
+    job_seeker
+    |> change()
+    |> put_embed(:analytics, updated_analytics)
+  end
+
   def retrieve_by_email(email) do
     Repo.get_by(__MODULE__, email: email)
+  end
+
+  def init_analytic(job_seeker) do
+    Enum.filter(job_seeker.analytics, fn analytic ->
+      Date.compare(analytic.date, Date.utc_today()) == :eq
+    end)
+    |> case do
+      [] ->
+        {:new, Analytic.new()}
+
+      [analytic | []] ->
+        {:old, analytic}
+
+      _ ->
+        {:error, job_seeker}
+    end
   end
 
   defp put_event(changeset, event, events) do

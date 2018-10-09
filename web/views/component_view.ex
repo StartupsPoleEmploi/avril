@@ -101,12 +101,22 @@ defmodule Vae.ComponentView do
   end
 
   def render("places", %{tag: tag, prefix: prefix, type: type}) do
-    {app_id, api_key} = Vae.Places.LoadBalancer.get_index_credentials()
-
     type_requested =
       case type do
         nil -> ""
         _ -> "type: '#{type}',"
+      end
+
+    credentials =
+      case {System.get_env("ALGOLIA_PLACES_APP_ID"), System.get_env("ALGOLIA_PLACES_API_KEY")} do
+        {appId, apiKey} when not is_nil(appId) and not is_nil(apiKey) ->
+          """
+            appId: '#{appId}',
+            apiKey: '#{apiKey}',
+          """
+
+        _ ->
+          ""
       end
 
     {:safe,
@@ -117,8 +127,7 @@ defmodule Vae.ComponentView do
        countries: ['FR'],
        aroundLatLngViaIP: true,
        #{type_requested}
-       appId: "#{app_id}",
-       apiKey: "#{api_key}",
+       #{credentials}
        templates: {
          value: function(suggestion) {
            return suggestion.name;
@@ -131,14 +140,17 @@ defmodule Vae.ComponentView do
 
      var #{prefix}lat = document.querySelector('##{prefix}_lat')
      var #{prefix}lng = document.querySelector('##{prefix}_lng')
+     var #{prefix}county = document.querySelector('##{prefix}_county')
      placesAutocomplete#{prefix}.on('change', function(e) {
        #{prefix}lat.value = e.suggestion.latlng.lat;
        #{prefix}lng.value = e.suggestion.latlng.lng;
+       #{prefix}county.value = e.suggestion.county || e.suggestion.city || e.suggestion.name;
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {
        #{prefix}lat.value = "";
        #{prefix}lng.value = "";
+       #{prefix}county.value = "";
      });
      </script>
      """}
@@ -173,45 +185,45 @@ defmodule Vae.ComponentView do
         %{view_module: Vae.CertificationView, view_template: "show.html"} = assigns
       ) do
     case assigns[:profession] do
-      nil -> "Centre V.A.E – #{assigns[:certification].label}"
-      profession -> "Centre V.A.E – #{assigns[:certification].label} - #{assigns[:profession]}"
+      nil -> "Centre VAE – #{assigns[:certification].label}"
+      profession -> "Centre VAE – #{assigns[:certification].label} - #{assigns[:profession]}"
     end
   end
 
   def complete_page_title(%{view_module: Vae.CertificationView} = assigns) do
-    "V.A.E #{assigns[:profession]}"
+    "VAE #{assigns[:profession]}"
   end
 
   def complete_page_title(%{view_module: Vae.ProfessionView}) do
-    "Choisissez votre métier pour obtenir votre diplôme grâce à la V.A.E"
+    "Choisissez votre métier pour obtenir votre diplôme grâce à la VAE"
   end
 
   def complete_page_title(
         %{view_module: Vae.CertifierView, page: %Scrivener.Page{total_entries: 0}} = assigns
       ) do
-    "0 centre V.A.E pour #{assigns[:certification].label}"
+    "0 centre VAE pour #{assigns[:certification].label}"
   end
 
   def complete_page_title(%{view_module: Vae.CertifierView, view_template: "index.html"}) do
-    "Centres V.A.E"
+    "Centres VAE"
   end
 
   def complete_page_title(%{view_module: Vae.CertifierView} = assigns) do
     case assigns[:profession] do
-      nil -> "Centre V.A.E – #{assigns[:certification].label}"
-      profession -> "Centre V.A.E – #{assigns[:certification].label} - #{assigns[:profession]}"
+      nil -> "Centre VAE – #{assigns[:certification].label}"
+      profession -> "Centre VAE – #{assigns[:certification].label} - #{assigns[:profession]}"
     end
   end
 
   def complete_page_title(%{view_module: Vae.DelegateView, view_template: "show.html"} = assigns) do
-    "Parcours V.A.E #{assigns[:delegate].name}"
+    "Parcours VAE #{assigns[:delegate].name}"
   end
 
   def complete_page_title(%{view_module: Vae.DelegateView}) do
-    "Liste des centres de certifications V.A.E"
+    "Liste des centres de certifications VAE"
   end
 
   def complete_page_title(_assigns) do
-    "Avril | Comment faire une V.A.E ?"
+    "Avril | Comment faire une VAE ?"
   end
 end

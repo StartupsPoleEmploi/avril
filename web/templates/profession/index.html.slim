@@ -6,7 +6,5 @@
         .result-item
           h3
             = link profession.label, to: rome_path(@conn, :certifications, profession.rome), class: 'main-link'
-             |  |
-            small= target_blank "Fiche métier", profession.rome.url
     = if @page.total_entries > @page.page_size do
       = pagination_links @conn, @page, "search[for]": @search_terms

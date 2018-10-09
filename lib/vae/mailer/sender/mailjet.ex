@@ -36,15 +36,10 @@ defmodule Vae.Mailer.Sender.Mailjet do
       %{
         TemplateID: @mailjet_conf.campaign_template_id,
         TemplateLanguage: true,
-        From: %{
-          Email: @mailjet_conf.from_email,
-          Name: @mailjet_conf.from_name
-        },
-        Variables: %{utm_campaign: utm_campaign, utm_source: utm_source},
-        To:
-          Map.get(@mailjet_conf, :override_to, [
-            %{Email: email, Name: "#{first_name} #{last_name}"}
-          ]),
+        From: generic_from(),
+        ReplyTo: avril_email(),
+        Variables: %{utm_campaign: utm_campaign, utm_source: utm_source, js_id: job_seeker.id},
+        To: build_to(%{Email: email, Name: "#{first_name} #{last_name}"}),
         CustomID: custom_id
       }
     else
@@ -61,4 +56,30 @@ defmodule Vae.Mailer.Sender.Mailjet do
   defp get_email(job_seeker), do: get_in(job_seeker, [Access.key(:email)])
   defp get_first_name(job_seeker), do: get_in(job_seeker, [Access.key(:first_name)])
   defp get_last_name(job_seeker), do: get_in(job_seeker, [Access.key(:last_name)])
+
+  def generic_from() do
+    %{
+      Email: @mailjet_conf.from_email,
+      Name: @mailjet_conf.from_name
+    }
+  end
+
+  def avril_email() do
+    %{
+      Email: "avril@pole-emploi.fr",
+      Name: "Avril"
+    }
+  end
+
+  defp override_to(to) do
+    Map.get(@mailjet_conf, :override_to, to)
+  end
+
+  def build_to(nil, _name) do
+    override_to([%{Email: "avril@pole-emploi.fr", Name: "Avril"}])
+  end
+
+  def build_to(to) do
+    override_to([to])
+  end
 end
