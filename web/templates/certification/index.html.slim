@@ -1,7 +1,6 @@
 .container
   .my-5.mx-4
-    a.btn.btn-lg.btn-link.px-0.mx-3.font-weight-bold Diplômes possibles
-    / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, :index), conn: @conn
+    = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, :index), conn: @conn
     / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
   = if @page.total_entries == 0 do
     p Aucun résultat
@@ -18,4 +17,4 @@
             = link(to: to_process(@conn, certification, assigns[:search]), class: "btn btn-sm btn-primary d-flex align-items-center") do
               i.ic-icon.ic-tail-right-2.mr-2
               span Les étapes VAE
-= render Vae.ComponentView, "pagination.html", page: @page
+= render Vae.ComponentView, "pagination.html", conn: @conn, page: @page
