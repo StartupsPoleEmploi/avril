@@ -5,7 +5,7 @@
     = Vae.ComponentView.suggest(f, Plug.Conn.get_session(@conn, :search_job))
     = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
   .input-group.geolocation
-    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: "ex: Paris")
+    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"')
     = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
     = hidden_input(f, :lng, value: Plug.Conn.get_session(@conn, :search_lng))
     = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
