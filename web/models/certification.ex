@@ -3,8 +3,6 @@ defmodule Vae.Certification do
   alias Vae.Repo.NewRelic, as: Repo
   alias Vae.{CertificationDelegate, Certifier, Delegate, Rome}
 
-  @top_three [2535, 2537, 2536]
-
   schema "certifications" do
     field(:label, :string)
     field(:acronym, :string)
@@ -41,17 +39,6 @@ defmodule Vae.Certification do
     )
 
     timestamps()
-  end
-
-  @doc """
-  Returns the certification top three
-    * DE diplôme d’état d'accompagnant éducatif et social - id 2536
-    * CAP Petite enfance - id 2535
-    * DE diplôme d'état d'aide soignant - id 2537
-  """
-  def top_three(query) do
-    query
-    |> where([c], c.id in @top_three)
   end
 
   def get_certifications_by_certifier(certifier_id) do
