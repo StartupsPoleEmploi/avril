@@ -1,20 +1,48 @@
 .container
-  .my-5.mx-4
-    = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, :index), conn: @conn
+  .m-4
+    = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
     / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
+  .m-4.d-flex.flex-column
+    / select id="level-select" multiple="multiple"
+    / = for level <- 5..1 do
+    / option #{level_info_by_level(level)}
+    / button.btn.btn-link.p-0.d-flex.align-items-center type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+    /   h5.m-0 Tous les niveaux
+    /   span.ic-icon.ic-minimal-down.ml-4 aria-hidden="true"
+    / .dropdown-menu aria-labelledby="dropdownMenuButton"
+    /   form.px-4.py-3 method="get"
+    /     = for level <- 5..1 do
+    /       .form-check
+    /         input.form-check-input type="checkbox" value="#{level}" id="level-#{level}" checked="#{not Map.has_key?(@conn.params, :level)}"
+    /         label.form-check-label for="level-#{level}" #{level_info_by_level(level)}
+    /     button.d-none type="submit"
+    em Le niveau indiqué est celui que vous obtiendrez.
   = if @page.total_entries == 0 do
     p Aucun résultat
   = for certification <- @certifications do
     .my-4.card.p-0.p-md-2
       .card-body
-        h5.card-title #{certification.acronym} #{String.downcase(certification.label)}
-        h6.card-subtitle
+        h5.card-title
+          = link("#{certification.acronym} #{String.downcase(certification.label)}", to: to_process(@conn, certification, assigns[:search]))
+        h6.card-subtitle.my-3
           span.font-weight-normal> Niveau obtenu :
           a href="#" #{level_info_by_level(certification.level)}
-        p.card-text
+        / p.card-text.my-3 TODO: C'est ici mon bon et beau nico qu'il faut que tu insères le code
         .d-flex
           .ml-auto
             = link(to: to_process(@conn, certification, assigns[:search]), class: "btn btn-sm btn-primary d-flex align-items-center") do
               i.ic-icon.ic-tail-right-2.mr-2
               span Les étapes VAE
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page
+
+javascript:
+  $('#level-select').multiselect({
+    allSelectedText: 'Tous les niveaux',
+    nonSelectedText: 'Sélectionnez un ou plusieurs niveaux',
+    nSelectedText: 'niveaux',
+    delimiterText: ' / ',
+    numberDisplayed: 5,
+    includeSelectAllOption: true,
+    selectAllText: 'Tous les niveaux',
+    buttonClass: 'btn btn-link p-0'
+  });

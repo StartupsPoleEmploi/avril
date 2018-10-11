@@ -22,8 +22,9 @@ import socket from "./socket"
 
 import "awesomplete"
 import "./smooth_scroll"
+import "bootstrap-multiselect"
 
-$(function () {
+$(function() {
   // Search labels
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_profession");
   $("#search_profession").parent().addClass('form-label-group');
@@ -32,13 +33,14 @@ $(function () {
 
   // Steps navigation
   var currentStep = 1;
+
   function prev_next(currentStep) {
-    if($('#step_' + (currentStep - 1)).length == 0) {
+    if ($('#step_' + (currentStep - 1)).length == 0) {
       $('#previous-step').parent().addClass('disabled');
     } else {
       $('#previous-step').parent().removeClass('disabled');
     }
-    if($('#step_' + (currentStep + 1)).length == 0) {
+    if ($('#step_' + (currentStep + 1)).length == 0) {
       $('#next-step').parent().addClass('disabled');
     } else {
       $('#next-step').parent().removeClass('disabled');
@@ -72,7 +74,7 @@ $(window).on('resize', function() {
 });
 
 function stepLabel(width) {
-  if (width < 768 ) {
+  if (width < 768) {
     return "Votre métier";
   } else {
     return "Pour quel métier souhaitez-vous un diplôme ?";

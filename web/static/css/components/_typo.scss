@@ -7,6 +7,15 @@ h1, h2, h3, h4, h5, h6, .dm-sub-title {
   color: $dm-primary-blue;
 }
 
+h1, h2, h3, h4, h5 {
+  a {
+    color: $dm-primary-blue;
+  }
+  a:hover {
+    color: darken($dm-primary-blue, 10%);
+  }
+}
+
 h1 {
   font: bold 48px/60px $dm-font-nuito;
   @include media-breakpoint-down(sm) {
@@ -38,6 +47,10 @@ h5 {
 
 h6 {
   font: bold 18px/24px $dm-font-nuito;
+}
+
+em {
+  font-size: 16px;
 }
 
 .dm-sub-title {

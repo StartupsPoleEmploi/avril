@@ -1,10 +1,19 @@
+- class_previous = if (@page.page_number <= 1), do: " disabled", else: ""
+- class_next = if (@page.page_number >= @page.total_pages), do: " disabled", else: ""
+- params_previous = Map.merge(@conn.params, %{ page: @page.page_number - 1 })
+- params_next = Map.merge(@conn.params, %{ page: @page.page_number + 1 })
 .container.mt-auto
   .my-4.d-flex.align-items-center
-    h5.m-0 Page : #{@page.page_number}
-    - class_previous = if (@page.page_number <= 1), do: " disabled", else: ""
-    - class_next = if (@page.page_number >= @page.total_pages), do: " disabled", else: ""
-    - params_previous = Map.merge(@conn.params, %{ page: @page.page_number - 1 })
-    - params_next = Map.merge(@conn.params, %{ page: @page.page_number + 1 })
+    .dropdown
+      button.dropdown-toggle.btn.btn-link.p-0.d-flex.align-items-center type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        h5.m-0 Page : #{@page.page_number}
+      .dropdown-menu aria-labelledby="dropdownMenuButton"
+        = for {label, number} <- Scrivener.HTML.raw_pagination_links(@page, [distance: 1, next: false, previous: false, first: true, last: true, ellipsis: 0]) do
+          = if(number == 0) do
+            .dropdown-divider
+          - else
+            - params = Map.merge(@conn.params, %{ page: number })
+            = link("Page #{label}", class: "dropdown-item", to: certification_path(@conn, :index, params), aria_label: "Page #{label}")
     nav.ml-auto aria-label="Pages"
       ul.pagination id="pagination"
         = content_tag(:li, class: "page-item" <> class_previous) do

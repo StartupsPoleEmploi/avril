@@ -265,3 +265,22 @@ input.form-control {
   color: $dm-primary-blue;
   border-color: transparent;
 }
+
+.dropdown-toggle.btn.btn-link {
+  font-size: 20px;
+}
+
+.dropdown-menu {
+  border-radius: 0;
+}
+
+.dropdown-toggle::after {
+  content: "\ea0c";
+  font-family: "avril";
+  font-size: 14px;
+  border: none;
+  height: inherit;
+  width: inherit;
+  vertical-align: 0;
+  margin-left: 1rem;
+}
