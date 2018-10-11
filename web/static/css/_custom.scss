@@ -22,10 +22,12 @@
     padding-bottom: 0;
     border-bottom: 6px solid transparent;
     &:hover {
+      border-bottom-color: transparent;
       font-weight: bold;
     }
     &.active {
       border-bottom-color: $dm-primary-green;
+      font-weight: bold;
     }
   }
 }
