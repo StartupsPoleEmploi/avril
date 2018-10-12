@@ -61,11 +61,11 @@ let socket = new Socket("/socket", {
 
 socket.connect()
 
-// Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("contact:send", {})
-
 // Contact form
 function contact(event) {
+  // Now that you are connected, you can join channels with a topic:
+  let channel = socket.channel("contact:send", {})
+  channel.join()
   $('.request-contact button').prop('disabled', true)
   const contactData = $(this).serializeJSON()
   event.preventDefault()
@@ -92,7 +92,5 @@ function contact(event) {
 $(function() {
   $('.request-contact form').submit(contact)
 });
-
-channel.join()
 
 export default socket

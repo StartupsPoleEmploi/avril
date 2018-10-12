@@ -79,14 +79,14 @@
     .row
       .col-md-3.mb-md-0.mb-4
         = link to: "http://www.fse.gouv.fr/", target: "_blank", rel: "noopener noreferrer" do
-          .card.dm-card.h-100
+          .card.h-100
             .card-body.d-flex.justify-content-center.align-items-center
               = img_tag '/images/fse.jpeg', alt: 'fse', class: 'img-fluid'
       .col-md-3.mb-md-0.mb-4
         = link to: "https://www.pole-emploi.fr/accueil/", target: "_blank", rel: "noopener noreferrer" do
-          .card.dm-card.h-100
+          .card.h-100
             .card-body.d-flex.justify-content-center.align-items-center
-              = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid', style: 'min-width: 10rem'
+              = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid', style: 'min-width: 8rem'
       .col-md-6.mt-md-0.mt-5
         h3.mb-5 Avril est né d’une idée de Pôle emploi et bénéficie du soutien du Fonds Social Européen. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
         / = render Vae.ComponentView, "reading-time.html", title: "Découvrez l’équipe Avril", duration: "4 minutes", color: "#20D7A4", to: page_path(@conn, :vae)

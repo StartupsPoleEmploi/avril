@@ -26,23 +26,27 @@
         @include media-breakpoint-up(lg) {
           right: 40px;
         }
-
-        .pagination {
-          margin: 0;
-
-          .page-item.disabled .page-link {
-            background-color: $dm-primary-light-grey;
-          }
-
-          .page-item .page-link {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border-radius: 0;
-            color: $dm-primary-blue;
-          }
-        }
       }
     }
   }
+}
+
+.pagination {
+  margin: 0;
+
+  .page-item.disabled .page-link {
+    background-color: $dm-primary-light-grey;
+  }
+
+  .page-item .page-link {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 0;
+    color: $dm-primary-blue;
+  }
+}
+
+.card {
+  box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
 }

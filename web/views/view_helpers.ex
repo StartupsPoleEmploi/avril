@@ -23,9 +23,9 @@ defmodule Vae.ViewHelpers do
      """}
   end
 
-  def level_info_by_level(5), do: 'Niveau CAP / BEP'
+  def level_info_by_level(5), do: 'CAP / BEP'
 
-  def level_info_by_level(4), do: 'Niveau Bac / BP / BT'
+  def level_info_by_level(4), do: 'Bac / BP / BT'
 
   def level_info_by_level(3), do: 'Bac +2 / DUT / BTS'
 

@@ -6,6 +6,14 @@ defmodule Vae.CertificationView do
   alias Vae.Delegate
   alias Vae.Certification
 
+  def to_process(conn, certification, nil) do
+    process_path(
+      conn,
+      :index,
+      certification: certification
+    )
+  end
+
   def to_process(conn, certification, search) do
     params =
       Enum.filter(search, fn {k, v} -> v != "" end)
@@ -27,13 +35,5 @@ defmodule Vae.CertificationView do
 
   def formatted_name(certification) do
     "#{certification.acronym} #{String.downcase(certification.label)}"
-  end
-
-  def render("_certification_title", %{count: count} = assigns) when count == 0 do
-    render("certification_title_no_result.html", assigns)
-  end
-
-  def render("_certification_title", assigns) do
-    render("certification_title.html", assigns)
   end
 end

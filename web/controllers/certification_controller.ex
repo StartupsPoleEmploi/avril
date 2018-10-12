@@ -25,7 +25,7 @@ defmodule Vae.CertificationController do
       Certification
       |> Repo.paginate(params)
 
-    render(conn, "list.html", certifications: page.entries, page: page)
+    render(conn, "index.html", certifications: page.entries, page: page)
   end
 
   defp search_by_rome(conn, params) do
