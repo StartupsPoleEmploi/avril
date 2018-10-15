@@ -1,6 +1,7 @@
 .container
   .m-4
-    = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
+    h4 Diplômes possibles
+    / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
     / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
   .m-4.d-flex.flex-column
     / select id="level-select" multiple="multiple"
