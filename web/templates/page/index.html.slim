@@ -34,10 +34,10 @@
         p.dm-sub-title Chez le <strong>certificateur</strong> le plus proche de chez vous !
         p Renseignez le métier pour lequel vous avez au moins 1 an d'expérience et pour lequel vous souhaitez obtenir un diplôme. <br />Nous vous indiquerons le certificateur le plus proche !
         / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "1 minute", color: "#443C77", to: page_path(@conn, :vae)
-    .row.my-md-6.my-5
-      .col-md-12.text-center
-        = link to: root_path(@conn, :index), class: 'btn btn-danger dm-btn-danger' do
-          span Je suis prêt.e<span class="d-none d-md-inline"> à faire valider mon expérience</span>
+    / .row.my-md-6.my-5
+    /   .col-md-12.text-center
+    /     = link to: root_path(@conn, :index), class: 'btn btn-danger dm-btn-danger' do
+    /       span Je suis prêt.e <span class="d-none d-md-inline">à faire valider mon expérience</span>
 
   .my-md-6.my-5.dm-testimonials
     .row.my-5
