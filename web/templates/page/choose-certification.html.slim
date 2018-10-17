@@ -1,88 +1,51 @@
-#nav__utilities.justify-content-between.d-flex <a href="/">Retour</a> <a href="/">Trouver ma VAE</a>
+.d-flex.align-items-center
+  = link to: NavigationHistory.last_path(@conn, 1, default: "/"), class: "btn btn-link d-flex align-items-center px-0" do
+    i.ic-icon.ic-tail-left.mr-3
+    | Retour
+  = link "Trouver ma VAE", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
 
-h1.text-center.py-6 Comment bien choisir son diplôme ?
+h1.my-5.text-center Comment bien choisir son diplôme ?
+.text-center
+  = img_tag '/images/illustration-choisir-son-diplome.jpg', class: 'img-fluid', alt: 'Illustration d\'un parcours en montagne avec un objectif'
 
-.mb-5
-  h2 1. Informations légales
+.row.my-5
+  .col.col-md-8.offset-md-2
+    p Rappelez-vous que la VAE, c’est une autre façon d’obtenir un diplôme. <br/>Depuis 2002, + de 330000 diplômes ont été délivrés par le biais de la VAE !
+    h2.my-5.text-center 330 000 diplômes délivrés
 
-  p
-    strong Editeur Pôle emploi
-    div 15 avenue du Docteur Gley
-    div 75987 Paris cedex 20
-    div Tél. 01 40 30 60 00.
+    p Ce diplôme est le même que celui qui est obtenu à l’issue d’une formation, il est reconnu de la même manière.
+    p La VAE n’est donc pas une formation. La VAE est une démarche par laquelle vos expériences vont être considérées. En effet, vos expériences vous ont permis d’acquérir des compétences qui correspondent  aux compétences d’un diplôme. Elles vous permettent donc par le biais d’un dossier  que vous constituez chez vous, à votre rythme et, d’un oral devant un jury, d’obtenir tout ou partie d’un diplôme.
+    p Vous engager en VAE va donc vous permettre de valoriser votre expérience mais aussi de sécuriser votre avenir professionnel. Cela peut aussi être un point d’étape pour une réorientation ou le moyen de vous mettre à votre compte. Dans certaines situations, vous pouvez aussi être repositionné dans la grille de salaire de votre entreprise ou vous présenter à un concours. N’hésitez plus !!!!
+    .text-center.my-5
+      = img_tag '/images/mon-diplome.jpg', class: 'img-fluid', alt: 'Illustration de l\'obtention d\'un diplome'
+    p Choisir le diplôme qui correspond le mieux à vos expériences est donc une étape importante. En effet, selon le diplôme que vous choisirez, dépendra le résultat de votre démarche.
+    p Il parait pertinent que les compétences acquises dans votre parcours  « couvrent » 80 % des compétences du référentiel du diplôme visé pour une validation totale. Il s’agit donc de mesurer la correspondance entre votre expérience et les attentes du diplôme.
 
-  p
-    strong Directeur de la publication :
-    Monsieur Jean Bassères, Directeur général.
+    div.h1.avril-color-green.mt-5 1
+    p.mt-4 Prenez connaissance de la fiche ROME (fiche métier) de votre métier. Vous trouverez le lien dans la page/fenêtre du diplôme retenu. Vérifiez que la description de l’emploi  ainsi que les compétences de base et les compétences spécifiques de la fiche correspondent au(x)poste(s) que vous avez occupé(s)
 
-  p
-    strong Hébergeur
-    div OVH
-    div rue Kellermann
-    div 59100 Roubaix
-    div Tél. 09 72 10 10 07
-.mb-5
-  h2 2. Objet du site internet
-  p Le site internet <a href='https://avril.pole-emploi.fr'> avril.pole-emploi.fr</a> a pour objet de permettre à l’utilisateur, sur la base des informations qu’il fournit, d'identifier une liste de certifications et le parcours V.A.E. - Validation des Acquis de l'Expérience - associé.
-.mb-5
-  h2 3. Données collectées
+    div.h1.avril-color-green.mt-5 2
+    p.mt-4 Prenez connaissance du contenu du « résumé du référentiel emploi et éléments de compétence acquis » du RNCP (Répertoire National des Certifications Professionnelles) du diplôme retenu. Vous devez alors observer si ces éléments correspondent assez largement au(x)poste(s) que vous avez occupé(s).
 
-  p Est collectée pour permettre le fonctionnement du service l’indication du métier exercé par l’utilisateur. L’utilisateur sélectionne ensuite dans la liste proposée, le diplôme souhaité, puis le certificateur choisi.
-  p L’outil lui fournit des informations afin de l’orienter dans son parcours V.A.E. La pertinence des résultats de recherche fournis par le service dépend de l’exactitude des renseignements donnés par l’utilisateur. L’utilisateur est averti par une mention « veuillez renseigner ce champ » lorsqu’une information est requise pour le bon fonctionnement du service.
-  p Les données collectées sur le site internet sont traitées par Pôle emploi pour le fonctionnement du service et ne sont pas conservées.
-  p Toutefois, l’utilisateur est informé que conformément aux articles 39 et suivants de la loi n° 78-17 du 6 janvier 1978 relative à l’informatique, aux fichiers et aux libertés, il dispose d’un droit d’accès, et le cas échéant, de rectification ou suppression des informations le concernant, en s’adressant au Correspondant informatique et libertés de Pôle emploi aux coordonnées suivantes : Pôle emploi, Correspondant informatique et libertés, 1-5 avenue du Docteur Gley, 75987 Paris cedex 20 (adresse électronique : courriers-cnil@pole-emploi.fr).
+    div.h1.avril-color-green.mt-5 3
+    p.mt-4 Tenez compte du niveau du diplôme choisi : il doit correspondre au niveau d’emploi et/ou de responsabilité que vous avez occupés. Plus le niveau de diplôme est élevé, plus le niveau de responsabilité occupé est élevé. Ainsi :
+    ul
+      li Un niveau 5 (niveau CAP) correspond plutôt à un emploi d'exécutant novice
+      li Un niveau 4 (Bac) correspond à un emploi d’exécutant
+      li Un diplôme de niveau 3 (niveau Bac+2) correspond à un emploi d'assistant expérimenté
+      li Un diplôme de niveau 2 (Bac +3 et +4) correspond à un emploi de manger
+      li Un diplôme de niveau 1 (bac +5 et +) correspond à un emploi de manager décisionnaire
 
-.mb-5
-  h2#cookies 4. Cookies
-  p <a href='https://avril.pole-emploi.fr'>avril.pole-emploi.fr</a> utilise des cookies. Ces cookies enregistrent uniquement des informations relatives à la navigation de l’utilisateur sur le site internet <a href='https://avril.pole-emploi.fr'> avril.pole-emploi.fr</a> dans un but d’analyses statistiques. En aucun cas,<a href='https://avril.pole-emploi.fr'> avril.pole-emploi.fr</a> ne peut identifier un utilisateur par un cookie. Ces cookies sont émis par la société Google et Hotjar.
-  p La durée de conservation des informations relatives à la navigation est de 10 ans.
-  p L’utilisateur peut s’opposer à l’enregistrement de cookies sur son ordinateur :
-  ul
-    li en configurant son poste informatique de la manière suivante :
-    ol
-      strong Pour Microsoft Internet Explorer 6.0 et + :
-      li Choisir le menu “Outils” (ou “Tools”), puis “Options Internet” (ou “Internet Options”)
-      li Cliquer sur l’onglet “Confidentialité” (ou “Confidentiality”)
-      li Sélectionner le niveau souhaité à l’aide du curseur ou cliquer sur le bouton “Avancé” pour personnaliser la gestion des cookies.
+    div.h1.avril-color-green.mt-5 4
+    p.mt-4 Prenez connaissance du marché de l’emploi que vous visez en recherchant des offres d'emploi sur <a href="https://pole-emploi.fr" target="_blank">pole-emploi.fr</a> par exemple. Tenez compte des diplômes demandés par les employeurs pour confirmer votre choix.
 
-    ol
-      strong Pour Firefox 3.5 et + :
-      li Choisir le menu “Outils” (ou “Tools”), puis “Options”
-      li Cliquer sur l’onglet “Vie privée”
-      li Dans « Règles de conservation », sélectionner « Utiliser les paramètres personnalisés pour l’historique » et décocher le bouton “Accepter les cookies”.
-    ol
-      strong Pour Chrome :
-      li Choisir le menu “Outils” (ou “Tools”), puis “Options”
-      li Cliquer sur l’onglet “Options avancées”
-      li Dans « Paramètres de contenu », cocher le bouton « Interdire à tous les sites de stocker les données ».
-    ol
-      strong Pour Netscape 6.X et 7.X :
-      li Choisir le menu “Edition” > “Préférences”
-      li Confidentialité et Sécurité
-      li Cookies
-    ol
-      strong Pour Opéra 6.0 et au-delà :
-      li Choisir le menu “Fichier” > “Préférences”
-      li Vie Privée
-  p A défaut, l’utilisateur accepte les cookies en poursuivant sa navigation.
-.mb-5
-  h2 5. Responsabilité
-  h3 5.1. Accessibilité et utilisation du service
-  p Pôle emploi ne peut être tenu pour responsable vis-à-vis de l’utilisateur des dommages de toute nature, directs ou indirects, résultant de l’utilisation du site internet avril.pole-emploi.fr, ni de l’impossibilité d’y accéder.
-  h3 5.2. Résultats de recherche
-  p Pôle emploi décline toute responsabilité, envers l’utilisateur et/ou envers les tiers concernant notamment :
-  ul
-    li l’absence de résultat au regard des critères définis par l’utilisateur
-    li la non-exhaustivité des résultats obtenus
-    li la présence d’erreurs dans les résultats communiqués
-    li le contenu et la disponibilité des sites tiers vers lesquels le site <a href='avril.pole-emploi.fr'>avril.pole-emploi.fr</a> renvoie.
-.mb-5
-  h2 6. Obligations de l’utilisateur
-  p L’utilisateur du site reconnaît avoir pris connaissance et accepter les présentes conditions d’utilisation avant toute utilisation du site.
-  p L’utilisation du site internet <a href='avril.pole-emploi.fr'>avril.pole-emploi.fr</a> est soumise au respect par l’utilisateur de la législation française et des présentes conditions d’utilisation.
-  p Les présentes conditions d’utilisation peuvent être modifiées à tout moment ; la date de mise à jour est mentionnée. Ces modifications sont opposables à l’utilisateur dès leur mise en ligne sur le site internet <a href='avril.pole-emploi.fr'>avril.pole-emploi.fr</a>. L’utilisateur est donc invité à consulter régulièrement la dernière version mise à jour.
-.mb-5
-  h2 7. Propriété intellectuelle
-  p Le site web <a href="avril.pole-emploi.fr">avril.pole-emploi.fr</a> est protégé au titre des dispositions relatives au droit d’auteur défini aux articles L.111-1 et suivants du code de la propriété intellectuelle. Pôle emploi est titulaire de l’ensemble des droits de propriété intellectuelle sur les éléments composant le site.
-  p Sans préjudice des dispositions prévues à l’article L.1225 du code de la propriété intellectuelle, toute représentation, reproduction ou diffusion, intégrale ou partielle du site, sur quelque support que ce soit, sans l'autorisation expresse et préalable de Pôle emploi constitue un acte de contrefaçon, sanctionné au titre des articles L.335-2 et L.335-3 du même code.
-  p Par ailleurs, la marque Pôle emploi est protégée au titre des articles L.712-1 et suivants du code de la propriété intellectuelle. Toute représentation, reproduction ou diffusion, intégrale ou partielle de cette marque, sur quelque support que ce soit, sans l'autorisation expresse et préalable de Pôle emploi constitue un acte de contrefaçon, sanctionné au titre des articles L.716-1 du même code.
+    div.h1.avril-color-green.mt-5 5
+    p.mt-4 Rencontrez un conseiller spécialisé dans un <a href="http://www.vae.gouv.fr/?page=carte-prc" target="_blank">centre de conseils en VAE</a> ou votre conseiller pôle emploi.
+
+    div.h1.avril-color-green.mt-5 6
+    p.mt-4 Tenez aussi compte de votre projet : quel diplôme nécessite-t-il ?
+
+    div.h1.avril-color-green.mt-5 7
+    p.mt-4 Vous pouvez approfondir votre recherche en consultant les sites des ministères, écoles, chambres consulaires ou branches professionnelles.
+
+    p.mt-6 Obtenir un diplôme partiellement par le biais de la VAE est aussi une réussite ! En effet, un bloc de compétences validé fait l’objet d’une attestation. Cela peut aussi constituer une première étape pour se réorienter ou entrer en formation, en ne suivant que les enseignements manquants !

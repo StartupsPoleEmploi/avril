@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="887px" height="180px" viewBox="0 0 887 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>illustration-choisir-son-diplome</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="916" height="198"></rect>
+        <linearGradient x1="3.75429258%" y1="2.65796703%" x2="96.6294643%" y2="95.467033%" id="linearGradient-3">
+            <stop stop-color="#20D7A4" offset="0%"></stop>
+            <stop stop-color="#9EFFB3" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="WebDesign" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Comment-bien-choisir-son-diplome" transform="translate(-259.000000, -363.000000)">
+            <g id="illustration-choisir-son-diplome" transform="translate(242.000000, 345.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Mask"></g>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(254.346717, 206.346717) rotate(-315.000000) translate(-254.346717, -206.346717) " x="208.846717" y="160.846717" width="91" height="91" rx="10"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(161.346717, 201.346717) rotate(-315.000000) translate(-161.346717, -201.346717) " x="115.846717" y="155.846717" width="91" height="91" rx="10"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(375.237590, 181.237590) rotate(-315.000000) translate(-375.237590, -181.237590) " x="302.23759" y="108.23759" width="146" height="146" rx="16.0000002"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(510.237590, 142.237590) rotate(-315.000000) translate(-510.237590, -142.237590) " x="437.23759" y="69.2375901" width="146" height="146" rx="16.0000002"></rect>
+                <rect id="Rectangle-3" fill="#2E5266" mask="url(#mask-2)" x="509" y="28" width="3" height="23"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(636.237590, 198.237590) rotate(-315.000000) translate(-636.237590, -198.237590) " x="563.23759" y="125.23759" width="146" height="146" rx="16.0000002"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(782.000000, 209.000000) rotate(-315.000000) translate(-782.000000, -209.000000) " x="731" y="158" width="102" height="102" rx="11.2"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(882.000000, 249.000000) rotate(-315.000000) translate(-882.000000, -249.000000) " x="831" y="198" width="102" height="102" rx="11.2"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-3)" mask="url(#mask-2)" transform="translate(38.124892, 249.124892) rotate(-315.000000) translate(-38.124892, -249.124892) " x="-12.8751083" y="198.124892" width="102" height="102" rx="11.2"></rect>
+                <path d="M509,30.4794922 C509,27.7854818 509,23.625651 509,18 C513.53125,18.7832031 517.493815,20.3968099 520.887695,22.8408203 C525.978516,26.5068359 529.211914,24.432283 534.033203,22.8408203 C532.489258,26.5068359 529.211914,32.5878906 509,30.4794922 Z" id="Path-2" fill="#2E5266" mask="url(#mask-2)"></path>
+            </g>
+        </g>
+    </g>
+</svg>
