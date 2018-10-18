@@ -101,7 +101,13 @@ defmodule Vae.ProcessController do
       end
 
     if length(delegates) > 1 do
-      delegate = Repo.preload(Repo.get(Delegate, hd(delegates).id), :process)
+      delegate =
+        delegates
+        |> filter_delegates_from_postalcode(get_session(conn, :search_postcode))
+        |> filter_delegates_from_administrative_if_no_postcode_found(
+          get_session(conn, :search_administrative)
+        )
+        |> select_near_delegate()
 
       redirect(
         conn,
@@ -147,4 +153,38 @@ defmodule Vae.ProcessController do
 
   def get_delegate(nil), do: nil
   def get_delegate(delegate_id), do: Delegate |> Repo.get(delegate_id) |> Repo.preload(:process)
+
+  defp filter_delegates_from_postalcode(delegates, search_postcode) do
+    filtered_delegates =
+      delegates
+      |> Enum.filter(fn delegate ->
+        delegate_postcode = delegate.geolocation["postcode"] |> hd() |> String.slice(0..1)
+
+        delegate_postcode == search_postcode
+      end)
+
+    {filtered_delegates, delegates}
+  end
+
+  defp filter_delegates_from_administrative_if_no_postcode_found(
+         {[], delegates},
+         administrative
+       ) do
+    filtered_delegates =
+      delegates
+      |> Enum.filter(fn %{geolocation: %{"administrative" => [delegate_administrative]}} ->
+        delegate_administrative == administrative
+      end)
+
+    {filtered_delegates, delegates}
+  end
+
+  defp filter_delegates_from_administrative_if_no_postcode_found(tuple, _administrative),
+    do: tuple
+
+  defp select_near_delegate({[], [delegate | _delegates]}), do: preload_process(delegate)
+  defp select_near_delegate({[delegate | _], _delegates}), do: preload_process(delegate)
+
+  defp preload_process(delegate),
+    do: Repo.get(Delegate, delegate.id) |> Repo.preload(:process)
 end

@@ -13,6 +13,8 @@ defmodule Vae.CertificationController do
       |> put_session(:search_lat, params["search"]["lat"])
       |> put_session(:search_lng, params["search"]["lng"])
       |> put_session(:search_county, params["search"]["county"])
+      |> put_session(:search_postcode, params["search"]["postcode"])
+      |> put_session(:search_administrative, params["search"]["administrative"])
 
     case params["search"]["rome_code"] do
       nil -> redirections(conn_updated, params)
