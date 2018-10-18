@@ -74,7 +74,7 @@ defmodule Vae.ComponentView do
      h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
      (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
      })(window,document.documentElement,'async-hide','dataLayer',4000,
-     {'GTM-NJL86DT':true});</script>
+     {'#{System.get_env("GO_TEST_KEY")}':true});</script>
      <!-- End Google Optimize -->
      <!-- Google Analytics -->
      <script>
