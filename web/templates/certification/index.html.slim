@@ -18,22 +18,35 @@
     /         label.form-check-label for="level-#{level}" #{level_info_by_level(level)}
     /     button.d-none type="submit"
     em Le niveau indiqué est celui que vous obtiendrez.
-  = if @page.total_entries == 0 do
-    p Aucun résultat
-  = for certification <- @certifications do
-    .my-4.card.p-0.p-md-2
-      .card-body
-        h5.card-title
-          = link("#{certification.acronym} #{String.downcase(certification.label)}", to: to_process(@conn, certification, assigns[:search]))
-        h6.card-subtitle.my-3
-          span.font-weight-normal> Niveau obtenu :
-          a href="#" #{level_info_by_level(certification.level)}
-        / p.card-text.my-3 TODO: C'est ici mon bon et beau nico qu'il faut que tu insères le code
-        .d-flex
-          .ml-auto
-            = link(to: to_process(@conn, certification, assigns[:search]), class: "btn btn-sm btn-primary d-flex align-items-center") do
-              i.ic-icon.ic-tail-right-2.mr-2
-              span Les étapes VAE
+
+  .row
+    .col-md-9
+      = if @page.total_entries == 0 do
+        p Aucun résultat
+      = for certification <- @certifications do
+        .my-4.card.p-0.p-md-2
+          .card-body
+            h5.card-title
+              = link("#{certification.acronym} #{String.downcase(certification.label)}", to: to_process(@conn, certification, assigns[:search]))
+            h6.card-subtitle.my-3
+              span.font-weight-normal> Niveau obtenu :
+              a href="#" #{level_info_by_level(certification.level)}
+            / p.card-text.my-3 TODO: C'est ici mon bon et beau nico qu'il faut que tu insères le code
+            .d-flex
+              .ml-auto
+                = link(to: to_process(@conn, certification, assigns[:search]), class: "btn btn-sm btn-primary d-flex align-items-center") do
+                  i.ic-icon.ic-tail-right-2.mr-2
+                  span Les étapes VAE
+    .col
+      h4.h6.mb-4 Besoin d'aide pour choisir un diplôme ?
+      = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4" do
+        h5.mb-5 Comment bien choisir son diplôme ?
+        div.d-flex
+          div.mr-4
+            i.ic-icon.ic-time-clock.mr-2
+            | 4 minutes
+          = img_tag '/images/play.svg', alt: 'lecture'
+
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page
 
 javascript:

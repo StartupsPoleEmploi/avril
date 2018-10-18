@@ -49,4 +49,13 @@
 
 .card {
   box-shadow: 0 4px 4px 0 rgba(0,0,0,0.06);
+
+  &-pages {
+    color: #2E5266;
+    box-shadow: 4px 0 0 rgba(0,0,0,.1);
+    &:hover{
+      box-shadow: 7px 0 10px rgba(0,0,0,.1);
+    }
+  }
+
 }
