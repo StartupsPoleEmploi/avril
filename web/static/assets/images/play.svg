@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>small-triangle-right</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="WebDesign" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Métiers" transform="translate(-1068.000000, -592.000000)">
+            <g id="Group-8" transform="translate(931.000000, 391.000000)">
+                <g id="small-triangle-right" transform="translate(137.000000, 201.000000)">
+                    <circle id="Oval-3" fill="#DF286E" cx="16" cy="16" r="16"></circle>
+                    <polygon id="Shape" fill="#FFFFFF" fill-rule="nonzero" points="14 21 20 16 14 11"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

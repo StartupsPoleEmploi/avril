@@ -1,26 +1,27 @@
-@import "variables";
+@import 'variables';
 
-$fa-font-path: "../fonts";
-@import "font-awesome";
-@import "icons/nucleo.scss";
+$fa-font-path: '../fonts';
+@import 'font-awesome';
+@import 'icons/nucleo';
 
-@import "bootstrap"; /* imports node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss */
+@import 'bootstrap'; // imports node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss
 
 /* Custom Stuff */
-@import "custom";
+@import 'custom';
 
 /* components */
-@import "components/backgrounds";
-@import "components/navbar";
-@import "components/results";
-@import "components/badge";
-@import "components/typo";
-@import "components/error_page";
-@import "components/awesomplete";
-@import "components/algolia_places";
-@import "components/card";
-@import "components/form_control_placeholder";
+@import 'components/backgrounds';
+@import 'components/helpers';
+@import 'components/navbar';
+@import 'components/results';
+@import 'components/badge';
+@import 'components/typo';
+@import 'components/error_page';
+@import 'components/awesomplete';
+@import 'components/algolia_places';
+@import 'components/card';
+@import 'components/form_control_placeholder';
 
 /* page specific */
-@import "home";
-@import "delegate";
+@import 'home';
+@import 'delegate';
