@@ -158,9 +158,10 @@ defmodule Vae.ProcessController do
     filtered_delegates =
       delegates
       |> Enum.filter(fn delegate ->
-        delegate_postcode = delegate.geolocation["postcode"] |> hd() |> String.slice(0..1)
-
-        delegate_postcode == search_postcode
+        case delegate.geolocation["postcode"] do
+          [] -> false
+          [postcode | _tail] -> String.slice(postcode, 0..1) |> Kernel.==(search_postcode)
+        end
       end)
 
     {filtered_delegates, delegates}
