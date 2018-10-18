@@ -9,6 +9,7 @@
     = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
     = hidden_input(f, :lng, value: Plug.Conn.get_session(@conn, :search_lng))
     = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
+    = hidden_input(f, :postcode, value: Plug.Conn.get_session(@conn, :search_postcode))
   = submit class: 'btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2' do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
