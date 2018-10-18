@@ -68,6 +68,14 @@ defmodule Vae.ComponentView do
 
     {:safe,
      """
+     <!-- Google Optimize -->
+     <style>.async-hide { opacity: 0 !important} </style>
+     <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
+     h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
+     (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
+     })(window,document.documentElement,'async-hide','dataLayer',4000,
+     {'GTM-NJL86DT':true});</script>
+     <!-- End Google Optimize -->
      <!-- Google Analytics -->
      <script>
      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -76,6 +84,7 @@ defmodule Vae.ComponentView do
      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
      ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
+     ga('require', '#{System.get_env("GO_TEST_KEY")}');
      ga('set', 'dimension1', '#{dimension1}');
      ga('send', 'pageview');
      </script>
