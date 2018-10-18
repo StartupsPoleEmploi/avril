@@ -142,11 +142,13 @@ defmodule Vae.ComponentView do
      var #{prefix}lng = document.querySelector('##{prefix}_lng')
      var #{prefix}county = document.querySelector('##{prefix}_county')
      var #{prefix}postcode = document.querySelector('##{prefix}_postcode')
+     var #{prefix}administrative = document.querySelector('##{prefix}_administrative')
      placesAutocomplete#{prefix}.on('change', function(e) {
        #{prefix}lat.value = e.suggestion.latlng.lat;
        #{prefix}lng.value = e.suggestion.latlng.lng;
        #{prefix}county.value = e.suggestion.county || e.suggestion.city || e.suggestion.name;
        #{prefix}postcode.value = e.suggestion.postcode;
+       #{prefix}administrative.value = e.suggestion.administrative;
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {

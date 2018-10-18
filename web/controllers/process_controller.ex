@@ -104,6 +104,9 @@ defmodule Vae.ProcessController do
       delegate =
         delegates
         |> filter_delegates_from_postalcode(get_session(conn, :search_postcode))
+        |> filter_delegates_from_administrative_if_no_postcode_found(
+          get_session(conn, :search_administrative)
+        )
         |> select_near_delegate()
 
       redirect(
@@ -162,6 +165,22 @@ defmodule Vae.ProcessController do
 
     {filtered_delegates, delegates}
   end
+
+  defp filter_delegates_from_administrative_if_no_postcode_found(
+         {[], delegates},
+         administrative
+       ) do
+    filtered_delegates =
+      delegates
+      |> Enum.filter(fn %{geolocation: %{"administrative" => [delegate_administrative]}} ->
+        delegate_administrative == administrative
+      end)
+
+    {filtered_delegates, delegates}
+  end
+
+  defp filter_delegates_from_administrative_if_no_postcode_found(tuple, _administrative),
+    do: tuple
 
   defp select_near_delegate({[], [delegate | _delegates]}), do: preload_process(delegate)
   defp select_near_delegate({[delegate | _], _delegates}), do: preload_process(delegate)
