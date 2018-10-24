@@ -13,7 +13,8 @@ use Mix.Config
 # which you typically run after static files are built.
 config :vae, Vae.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [scheme: "http", host: System.get_env("WHOST"), port: 80],
+  url: [scheme: "https", host: System.get_env("WHOST"), port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
@@ -25,6 +26,25 @@ config :vae, Vae.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
+
+config :vae, Vae.Scheduler, jobs: []
+
+config :vae,
+  places_client: Vae.Places.Client.Algolia,
+  places_ets_table_name: :places_dev,
+  mailjet: %{
+    campaign_template_id: 512_948,
+    vae_recap_template_id: 529_420,
+    contact_template_id: 543_455,
+    from_email: "contact@avril.pole-emploi.fr",
+    from_name: "Avril"
+  }
+
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3.1",
+  public_api_key: "ad00ed9ffd4bd927a1e2a2cef44402e3",
+  private_api_key: "c7ccc3bd117d2294a6fd8ab999b2f920",
+  development_mode: false
 
 # ## SSL Support
 #
