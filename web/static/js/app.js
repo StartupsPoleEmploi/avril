@@ -91,7 +91,7 @@ $(function() {
       cT.slideToggle(500);
 
       $('html, body').animate({
-        scrollTop: thisEl.closest(".card-body").offset().top - 100
+        scrollTop: thisEl.closest(".card-body").offset().top - 130
       }, 500);
 
     } else {
