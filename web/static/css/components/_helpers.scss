@@ -3,8 +3,11 @@
 }
 
 .screen-accessibility-helper {
+
   position: absolute;
   top: -1000em;
+  background: #000;
+  color: #fff;
 
   &:focus {
     left: 6px;
@@ -14,8 +17,6 @@
     display: block;
     font-weight: 600;
     padding: 15px 23px 14px;
-    background: #f1f1f1;
-    color: #0073aa;
     z-index: 100000;
     line-height: normal;
     text-decoration: none;
