@@ -16,9 +16,9 @@ html{lang="fr"}
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
   body.app
-    main role="main"
+    main
       = render ComponentView, "navbar.html", conn: @conn
-      .container
+      #content.container
         .mt-4
           = render ComponentView, "searchbar.html", conn: @conn
       = render @view_module, @view_template, assigns
