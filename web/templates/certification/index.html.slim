@@ -31,7 +31,9 @@
             h6.card-subtitle.my-3
               span.font-weight-normal> Niveau obtenu :
               a href="#" #{level_info_by_level(certification.level)}
-            / p.card-text.my-3 TODO: C'est ici mon bon et beau nico qu'il faut que tu insères le code
+            .card-text.my-3
+              .truncate
+                = raw certification.description
             .d-flex
               .ml-auto
                 = link(to: to_process(@conn, certification, assigns[:search]), class: "btn btn-sm btn-primary d-flex align-items-center") do

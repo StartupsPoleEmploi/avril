@@ -1,7 +1,7 @@
 defmodule Vae.Endpoint do
   use Phoenix.Endpoint, otp_app: :vae
 
-  plug RemoteIp
+  plug(RemoteIp)
 
   socket("/socket", Vae.UserSocket)
 
