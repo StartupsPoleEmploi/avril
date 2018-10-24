@@ -45,7 +45,8 @@ defmodule Vae.ComponentView do
         onfocus: "this.value='';",
         required: true,
         placeholder: 'Essayez "Boulanger"',
-        value: value
+        value: value,
+        title: "Utilisez les flèches haut bas pour naviguer dans les suggestions"
       ],
       %{
         url: "/professions/_suggest?search[for]=",

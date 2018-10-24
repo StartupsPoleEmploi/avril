@@ -1,3 +1,25 @@
 .avril-color-green {
   color: theme-color('primary');
 }
+
+.screen-accessibility-helper {
+  position: absolute;
+  top: -1000em;
+
+  &:focus {
+    left: 6px;
+    top: 25px;
+    height: auto;
+    width: auto;
+    display: block;
+    font-weight: 600;
+    padding: 15px 23px 14px;
+    background: #f1f1f1;
+    color: #0073aa;
+    z-index: 100000;
+    line-height: normal;
+    text-decoration: none;
+    outline: 0;
+  }
+
+}
