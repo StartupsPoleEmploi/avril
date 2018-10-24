@@ -8,6 +8,7 @@ defmodule Vae.Certification do
     field(:acronym, :string)
     field(:level, :integer)
     field(:rncp_id, :string)
+    field(:description, :string)
 
     belongs_to(:certifier, Certifier)
 
@@ -57,7 +58,8 @@ defmodule Vae.Certification do
       :acronym,
       :level,
       :rncp_id,
-      :certifier_id
+      :certifier_id,
+      :description
     ])
     |> validate_required([:label])
     |> assoc_constraint(:certifier)
