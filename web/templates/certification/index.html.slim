@@ -1,6 +1,6 @@
 .container
   .m-4
-    h4 Diplômes possibles
+    h1.h4 Diplômes possibles
     / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
     / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
   .m-4.d-flex.flex-column
@@ -26,16 +26,16 @@
       = for certification <- @certifications do
         .my-4.card.p-0.p-md-2
           .card-body
-            h5.card-title
+            h2.h5.card-title
               = link("#{certification.acronym} #{String.downcase(certification.label)}", to: to_process(@conn, certification, assigns[:search]))
-            h6.card-subtitle.my-3
+            h3.h6.card-subtitle.my-3
               span.font-weight-normal> Niveau obtenu :
               a href="#" #{level_info_by_level(certification.level)}
             / p.card-text.my-3 TODO: C'est ici mon bon et beau nico qu'il faut que tu insères le code
             .d-flex
               .ml-auto
-                = link(to: to_process(@conn, certification, assigns[:search]), class: "btn btn-sm btn-primary d-flex align-items-center") do
-                  i.ic-icon.ic-tail-right-2.mr-2
+                = link(to: to_process(@conn, certification, assigns[:search]), aria_label: "Les étapes VAE pour #{certification.acronym} #{String.downcase(certification.label)}", class: "btn btn-sm btn-primary d-flex align-items-center") do
+                  span.ic-icon.ic-tail-right-2.mr-2
                   span Les étapes VAE
     .col
       h4.h6.mb-4 Besoin d'aide pour choisir un diplôme ?
@@ -43,7 +43,7 @@
         h5.mb-5 Comment bien choisir son diplôme ?
         div.d-flex
           div.mr-4
-            i.ic-icon.ic-time-clock.mr-2
+            span.ic-icon.ic-time-clock.mr-2
             | 4 minutes
           = img_tag '/images/play.svg', alt: 'lecture'
 
