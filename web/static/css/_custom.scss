@@ -1,5 +1,32 @@
 @import 'variables';
 
+// global link refacto for accessibility
+a {
+  color: #2E5266;
+  // &:after {
+  //   content:"";
+  //   // position: absolute;
+  //   display: block;
+  //   // width: 100%;
+  //   height: 4px;
+  //   background: #20D7A4;
+  // }
+  &:focus {
+    outline:none;
+    border:1px solid #4D90FE;
+    -webkit-box-shadow: 0px 0px 5px  #4D90FE;
+    box-shadow: 0px 0px 5px  #4D90FE;
+  }
+}
+
+button {
+  &:focus {
+    outline:none;
+    border:1px solid #4D90FE;
+    -webkit-box-shadow: 0px 0px 5px  #4D90FE;
+    box-shadow: 0px 0px 5px  #4D90FE;
+  }
+}
 .dm-logo {
   color: $dm-logo;
   font: 18px/30px $dm-font-lato;
@@ -89,7 +116,7 @@ form.dm-search-box {
     border: none;
     border: 1px solid #E0E0E0;
     border-radius: 4px;
-    min-height: 80px;
+    min-height: 85px;
     padding-top: 28px;
     padding-bottom: 28px;
     @include media-breakpoint-up(md) {
@@ -121,6 +148,12 @@ form.dm-search-box {
     }
     color: $dm-primary-blue;
     font-size: 40px;
+    &:focus {
+      outline:none;
+      border:1px solid #4D90FE;
+      -webkit-box-shadow: 0px 0px 5px  #4D90FE;
+      box-shadow: 0px 0px 5px  #4D90FE;
+    }
   }
 }
 

@@ -5,12 +5,12 @@
     = Vae.ComponentView.suggest(f, Plug.Conn.get_session(@conn, :search_job))
     = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
   .input-group.geolocation
-    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"')
+    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"', autocomplete: 'on')
     = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
     = hidden_input(f, :lng, value: Plug.Conn.get_session(@conn, :search_lng))
     = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
     = hidden_input(f, :postcode, value: Plug.Conn.get_session(@conn, :search_postcode))
     = hidden_input(f, :administrative, value: Plug.Conn.get_session(@conn, :search_administrative))
-  = submit class: 'btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2' do
+  = submit class: 'btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2', title: 'Valider la recherche' do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
