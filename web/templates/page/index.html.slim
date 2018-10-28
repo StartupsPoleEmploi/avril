@@ -1,4 +1,4 @@
-.container
+#content.container
   .my-md-6.my-5.text-center
     .row
       .col-md-8.offset-md-2
@@ -13,7 +13,7 @@
       .col-md-12
         p.dm-logo Avril est une initiative Pôle emploi
       .col-md-12
-        = img_tag '/images/logo-pole-emploi.svg', alt: 'Avril'
+        = img_tag '/images/logo-pole-emploi.svg', alt: 'Logo de Pôle emploi'
 
   .my-md-6.my-5
     .row.my-md-6.my-5
@@ -42,33 +42,33 @@
   .my-md-6.my-5.dm-testimonials
     .row.my-5
       .col-md-6.offset-md-3
-        h3 « J’ai attendu trop longtemps pour le faire ! »
+        h3 « J’ai attendu trop longtemps pour le faire ! »
         p Je n'avais rien, ça a vraiment valorisé mes capacités. J'ai obtenu mon CAP petite enfance. Je suis fière de mon diplôme!
       .col-md-2
-        = img_tag '/images/marie-cecile.jpg', alt: 'Marie-Cécile', class: 'img-fluid'
-        h5 Marie-Cécile A. (94)
+        = img_tag '/images/marie-cecile.jpg', alt: 'Photo de Marie-Cécile', class: 'img-fluid'
+        h4 Marie-Cécile A. (94)
         p Aide à domicile
     .row.my-5
       .col-md-2.offset-md-1.order-md-first.order-last
-        = img_tag '/images/thierry.jpg', alt: 'Thierry', class: 'img-fluid'
-        h5 Thierry B. (51)
+        = img_tag '/images/thierry.jpg', alt: 'Photo de Thierry', class: 'img-fluid'
+        h4 Thierry B. (51)
         p Directeur commercial
       .col-md-6
-        h3 « Mon profil a retenu l'attention de nombreux employeurs ! »
+        h3 « Mon profil a retenu l'attention de nombreux employeurs ! »
         p Avec un CAP de mécanique, malgré 23 ans d'expérience, les recherches d'emploi étaient compliquées. Avec la VAE, j'ai obtenu un BTS MUC et mon profil a retenu l'attention de nombreux employeurs.
     .row.my-5
       .col-md-6.offset-md-3
-        h3 « Avril est un vrai coup de pouce ! »
+        h3 « Avril est un vrai coup de pouce ! »
         p Avril est un vrai coup de pouce pour que les demandeurs d’emploi s’y retrouvent et pour comprendre comment faire une VAE.
       .col-md-2
-        = img_tag '/images/patricia.png', alt: 'Patricia', class: 'img-fluid'
-        h5 Patricia L. (94)
+        = img_tag '/images/patricia.png', alt: 'Photo de Patricia', class: 'img-fluid'
+        h4 Patricia L. (94)
         p Conseillère Pôle emploi
 
   .my-md-6.my-5
     .row.align-items-center
       .col-md-3.d-none.d-md-inline
-        = img_tag '/images/laurel.svg', alt: 'laurier', class: 'img-fluid'
+        = img_tag '/images/laurel.svg', alt: 'Illustration de laurier', class: 'img-fluid'
       .col-md-7
         .percent 80%
         h2 des demandeurs d'emploi ont retrouvé un emploi 6 mois après leur VAE
@@ -81,12 +81,12 @@
         = link to: "http://www.fse.gouv.fr/", target: "_blank", rel: "noopener noreferrer" do
           .card.h-100
             .card-body.d-flex.justify-content-center.align-items-center
-              = img_tag '/images/fse.jpeg', alt: 'fse', class: 'img-fluid'
+              = img_tag '/images/fse.jpeg', alt: 'Logo du fond social européen', class: 'img-fluid'
       .col-md-3.mb-md-0.mb-4
         = link to: "https://www.pole-emploi.fr/accueil/", target: "_blank", rel: "noopener noreferrer" do
           .card.h-100
             .card-body.d-flex.justify-content-center.align-items-center
-              = img_tag '/images/logo-pole-emploi.svg', alt: 'pole-emploi', class: 'img-fluid', style: 'min-width: 8rem'
+              = img_tag '/images/logo-pole-emploi.svg', alt: 'Logo de Pôle emploi', class: 'img-fluid', style: 'min-width: 8rem'
       .col-md-6.mt-md-0.mt-5
         h3.mb-5 Avril est né d’une idée de Pôle emploi et bénéficie du soutien du Fonds Social Européen. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
         / = render Vae.ComponentView, "reading-time.html", title: "Découvrez l’équipe Avril", duration: "4 minutes", color: "#20D7A4", to: page_path(@conn, :vae)
