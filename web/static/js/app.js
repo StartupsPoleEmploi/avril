@@ -71,6 +71,9 @@ $(function() {
 
     $('#search_profession').attr('aria-controls', 'awesomplete_list_1');
     $('#search_profession').attr('aria-expanded', 'false');
+    $('#search_profession').attr('aria-activedescendant', '');
+    $('#search_profession').attr('aria-readonly', 'true');
+    $('#search_profession').attr('autocomplete', 'off');
 
     $('#awesomplete_list_1').attr('aria-label', 'liste des métiers issus des RNCP');
     $('#awesomplete_list_1').attr('aria-selected', 'false');
