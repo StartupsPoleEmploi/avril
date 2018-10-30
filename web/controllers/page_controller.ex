@@ -16,4 +16,8 @@ defmodule Vae.PageController do
   def choose_certification(conn, _params) do
     render(conn, "choose-certification.html", layout: {Vae.LayoutView, "home-white.html"})
   end
+
+  def accessibility_promess(conn, _params) do
+    render(conn, "accessibility-promess.html", layout: {Vae.LayoutView, "home-white.html"})
+  end
 end
