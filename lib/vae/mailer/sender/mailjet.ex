@@ -27,7 +27,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
 
   defp build_message(
          %Email{custom_id: custom_id, job_seeker: job_seeker},
-         utm_campaign \\ "lancement"
+         utm_campaign \\ "mj-#{Date.utc_today() |> to_string()}"
        ) do
     with email when not is_nil(email) <- get_email(job_seeker),
          first_name <- get_first_name(job_seeker),
