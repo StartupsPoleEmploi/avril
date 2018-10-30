@@ -1,0 +1,25 @@
+.d-flex.align-items-center
+  = link to: NavigationHistory.last_path(@conn, 1, default: "/"), class: "btn btn-link d-flex align-items-center px-0" do
+    span.ic-icon.ic-tail-left.mr-3
+    | Retour
+  = link "Trouver ma VAE", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
+
+h1.my-5.text-center Avril et l'accessibilité
+.row.my-5
+  .col.col-md-8.offset-md-2
+    p Parce que notre objectif est de rendre accessible la VAE, nous nous sommes engagés à orienter tous nos efforts pour offrir notre service à tous.
+    p C'est fort de cette énergie que notre équipe participe tous les jours à améliorer notre service.
+
+    h2.mt-5 Nos engagements
+    ul.mt-5
+      li Audit de mise en conformité (en cours) pour nous aider à détecter les potentiels oublis d'accessibilité
+      li Déclaration d'accessibilité (en cours de rédaction) pour expliquer en toute transparence notre démarche
+      li Mise à jour de cette page pour vous tenir informé de notre progression
+
+    p.mt-5 Rappelez-vous que la VAE, c’est une autre façon d’obtenir un diplôme ! <br/>Depuis 2002, + de 330000 diplômes ont été délivrés par le biais de la VAE !
+    p Nous pouvons encore faire mieux et permettre d'inscrire la VAE comme un moyen actif pour obtenir un diplôme.
+    p C'est avec vous que nous construisons cet objectif et que nous progressons chaque jour.
+
+    h2.mt-5 Nous contacter
+    p.mt-5 L'équipe d'Avril reste à votre écoute et entière disposition, si vous souhaitez nous signaler le moindre défaut de conception.
+    <a href="mailto:avril@pole-emploi.fr" class="btn btn-primary mt-5">Contactez-nous</a>

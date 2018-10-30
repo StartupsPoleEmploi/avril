@@ -120,6 +120,8 @@
           = link "C’est quoi une VAE ?", to: page_path(@conn, :vae), class: "nav-link p-0"
         li.nav-item
           = render Vae.ComponentView, "active_link.html", text: "Bien choisir son diplôme", class: "nav-link p-0", to: page_path(@conn, :choose_certification), conn: @conn
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: page_path(@conn, :accessibility_promess), conn: @conn
         / li.nav-item
         /   = link "C’est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
         / li.nav-item
