@@ -4,28 +4,30 @@
     strong " #{@delegate.name} "
     | sera votre contact privilégié pour vous aider à avoir votre diplôme.
   .d-flex.flex-row.align-items-center.mt-5
-    = img_tag '/images/conseillere.svg', class: "mr-3", style: "width: 46px; height: 46px;"
+    = img_tag '/images/conseillere.svg', class: "mr-3", style: "width: 46px; height: 46px;", alt: "Votre conseillère VAE"
     .d-flex.flex-column
       h5.m-0 #{@delegate.name}
       span #{@delegate.address}
   form.md-flex.flex-column.align-items-center id="#{@form}_form"
     .my-5.w-100
-      .form-group.form-label-group
-        input.form-control.px-3.py-3 id="#{@form}_name" name="name" placeholder="ex: Georges Abitbol" required="true"
-        label.form-control-placeholder for="#{@form}_name" Votre prénom et nom
-      .form-group.form-label-group
-        input.form-control.px-3.py-3 id="#{@form}_email" name="email" placeholder="ex: la.classe@americaine.com" required="true" type="email"
-        label.form-control-placeholder for="#{@form}_email" Votre email
-      .form-group
-        .form-label-group
-          input.form-control.px-3.py-3 id="#{@form}_phone_number" name="phone_number" placeholder="ex: 0606060606" type="tel" pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
-          label.form-control-placeholder for="#{@form}_phone_number" Votre numéro de téléphone *
-        small.form-text.text-muted * facultatif
-      .form-check
-        input.form-check-input id="#{@form}_contact_delegate" name="contact_delegate" type="checkbox" value=""
-        label.form-check-label for="#{@form}_contact_delegate" Je souhaite être recontacté par mon centre certificateur
+      fieldset
+        legend.d-none Vos informations
+        .form-group.form-label-group
+          input.form-control.px-3.py-3 id="#{@form}_name" name="name" placeholder="ex: Georges Abitbol" required="true"
+          label.form-control-placeholder for="#{@form}_name" Votre prénom et nom
+        .form-group.form-label-group
+          input.form-control.px-3.py-3 id="#{@form}_email" name="email" placeholder="ex: la.classe@americaine.com" required="true" type="email"
+          label.form-control-placeholder for="#{@form}_email" Votre email
+        .form-group
+          .form-label-group
+            input.form-control.px-3.py-3 id="#{@form}_phone_number" name="phone_number" placeholder="ex: 0606060606" type="tel" pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
+            label.form-control-placeholder for="#{@form}_phone_number" Votre numéro de téléphone *
+          small.form-text.text-muted.text-white * facultatif
+        .form-check
+          input.form-check-input id="#{@form}_contact_delegate" name="contact_delegate" type="checkbox" value=""
+          label.form-check-label for="#{@form}_contact_delegate" Je souhaite être recontacté par mon centre certificateur
     button.btn.btn-default.bg-white.d-flex.align-items-center.mt-md-0.mt-2.mx-auto.pl-3.pr-4.py-3'
-      = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;"
+      = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;", alt: "Votre conseillère VAE"
       span Recevoir ma synthèse VAE
 = render_contact_form_data(@conn, @delegate, @certification)
 

@@ -2,7 +2,7 @@
 
 // global link refacto for accessibility
 a {
-  color: #2E5266;
+  color: #000;
   position: relative;
   &:focus {
     outline:none;
@@ -13,7 +13,7 @@ a {
 }
 #content {
   a{
-    color: #2E5266;
+    color: #000;
     position: relative;
     &:after {
       content:"";
