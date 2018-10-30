@@ -48,7 +48,8 @@ defmodule Vae.Router do
     get("/conditions-generales-d-utilisation", PageController, :terms_of_use)
     get("/bien-choisir-son-diplome-vae", PageController, :choose_certification)
     get("/avril-aime-tous-ces-utilisateurs", PageController, :accessibility_promess)
-
+    get("/point-relais-conseil-vae", PageController, :point_relais_conseil)
+    
     get("/professions", ProfessionController, :index)
     get("/professions/_suggest", ProfessionController, :suggest)
 
