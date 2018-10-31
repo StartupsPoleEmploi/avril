@@ -62,7 +62,8 @@ em {
 
 .dm-step {
   font: bold 64px/60px $dm-font-nuito;
-  color: $dm-primary-green;
+  // accessibility broken
+  // color: $dm-primary-green;
 }
 
 .dm-step-sub {
