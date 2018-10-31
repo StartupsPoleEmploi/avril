@@ -39,6 +39,11 @@ a {
         display: none;
       }
     }
+    &.reading-link {
+      &:after {
+        display: none;
+      }
+    }
   }
 }
 
