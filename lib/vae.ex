@@ -9,7 +9,6 @@ defmodule Vae do
       supervisor(Vae.Endpoint, []),
       supervisor(Vae.Event.EventSupervisor, []),
       worker(Vae.Scheduler, []),
-      worker(Vae.Mailer.Worker, []),
       worker(Vae.Places.Cache, [])
     ]
 
