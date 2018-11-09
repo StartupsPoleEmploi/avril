@@ -4,7 +4,7 @@ defmodule Vae.Mailer do
 
     send(
       pid,
-      {:run,
+      {:execute,
        "priv/campaigns/emails_#{Date.utc_today() |> to_string() |> String.replace("-", "_")}.csv"}
     )
   end
