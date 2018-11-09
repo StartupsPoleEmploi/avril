@@ -40,9 +40,16 @@
                   span.ic-icon.ic-tail-right-2.mr-2
                   span Les étapes VAE
     .col
-      h4.h6.mb-4 Besoin d'aide pour choisir un diplôme ?
+      h4.h6.mb-4 Vous ne trouvez pas votre diplôme ?
       = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4" do
         h5.mb-5 Comment bien choisir son diplôme ?
+        div.d-flex
+          div.mr-4
+            span.ic-icon.ic-time-clock.mr-2
+            | 4 minutes
+          = img_tag '/images/play.svg', alt: 'lecture'
+      = link to: page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 mt-5" do
+        h5.mb-5 Les Points Relais Conseil
         div.d-flex
           div.mr-4
             span.ic-icon.ic-time-clock.mr-2

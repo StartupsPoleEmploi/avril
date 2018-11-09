@@ -8,9 +8,6 @@ defmodule Vae.Places.Client.Algolia do
   @algolia_places_query "https://places-dsn.algolia.net/1/places/query"
   @algolia_places_keys ~w(_geoloc country_code country administrative county city postcode locale_names _tags is_city)
 
-  @algolia_places_app_id System.get_env("ALGOLIA_PLACES_APP_ID")
-  @algolia_places_api_key System.get_env("ALGOLIA_PLACES_API_KEY")
-
   # ------------------------#
   #          Search        #
   # ------------------------#
@@ -51,10 +48,17 @@ defmodule Vae.Places.Client.Algolia do
   defp build_headers() do
     [
       {"Content-type", "application/json"},
-      {"X-Algolia-Application-Id", @algolia_places_app_id},
-      {"X-Algolia-API-Key", @algolia_places_api_key}
+      {"X-Algolia-Application-Id", get_algolia_app_id()},
+      {"X-Algolia-API-Key", get_algolia_api_key()}
     ]
   end
+
+  def get_algolia_app_id(), do: get_config(:algolia_places_app_id)
+  def get_algolia_api_key(), do: get_config(:algolia_places_api_key)
+
+  # TODO: extract to config module
+  def get_config(:algolia_places_app_id), do: System.get_env("ALGOLIA_PLACES_APP_ID")
+  def get_config(:algolia_places_api_key), do: System.get_env("ALGOLIA_PLACES_API_KEY")
 
   # ------------------------#
   #         STATS          #

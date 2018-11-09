@@ -1,0 +1,35 @@
+.container.py-3.py-md-5
+  .d-flex.align-items-center
+    = link to: NavigationHistory.last_path(@conn, 1, default: "/"), class: "btn btn-link d-flex align-items-center px-0" do
+      span.ic-icon.ic-tail-left.mr-3
+      | Retour
+    = link "Trouver ma VAE", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
+
+.container-fluid
+  h1.my-5.text-center C'est quoi un certificateur ?
+  .row.my-5.align-items-center
+    .col.col-md-4.offset-md-2
+      p <strong>Le certificateur est l’organisme qui possède l’autorité pour délivrer les certifications.</strong>
+      p Le certificateur définit le contenu des certifications et la procédure  VAE de celles-ci.  Il est aussi celui qui étudiera votre demande de VAE en évaluant la proximité des compétences que vous avez acquises et celles du diplôme, titre ou certificat visé.
+    .col.col-md-6
+      p illustration
+  .row.my-5
+    .col.col-md-8.offset-md-2
+      h2 Vous souhaitez élaborer votre projet de VAE ?
+      p Vous hésitez sur le choix du diplôme ?
+      p Vous voulez une aide pour constituer votre demande de VAE ?
+      p Prenez un <a href="http://www.vae.gouv.fr/?page=carte-prc" target="_blank">rendez-vous</a> gratuit avec un conseiller VAE spécialisé.
+
+      p.mt-5 Les centres de conseil en VAE peuvent vous renseigner par téléphone, mail ou directement sur place sur votre projet VAE.
+      p Ils peuvent vous conseiller lors d’un entretien individuel, neutre et confidentiel pour :
+      ul.mt-5
+        li Cerner les certifications qui correspondent le mieux au projet de validation en lien avec les activités que vous avez exercées et le projet professionnel
+        li Expliquer les procédures associées aux solutions de validation d’acquis repérées
+        li Qualifier le parcours correspondant à chaque solution (élaboration des dossiers, suivi d’éventuelles formations avant et/ou après jury)
+        li Identifier les moyens de financer les différentes solutions
+        li Aider à l’évaluation des solutions pour permettre de choisir la plus pertinente
+        li Elaborer un planning prévisionnel de votre parcours de VAE  en fonction des dates de jury potentielles
+        li Explorer les pistes alternatives si nécessaire : formation, bilan de compétences...
+        li Orienter sur la prochaine étape (certificateur ou autre piste) et fournir les ressources nécessaires (référentiel de certification, dossier de recevabilité, coordonnées des certificateurs, financeurs, d’opérateurs CEP...)
+
+      <a href="http://www.vae.gouv.fr/?page=carte-prc" target="_blank" class="btn btn-primary mt-5">Trouver votre PRC</a>

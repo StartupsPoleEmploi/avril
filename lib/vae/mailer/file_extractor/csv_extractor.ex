@@ -19,29 +19,37 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     "Corse",
     "Hauts-de-France",
     "Auvergne-Rhône-Alpes",
-    "Nouvelle-Aquitaine"
+    "Nouvelle-Aquitaine",
+    "Grand-Est"
   ]
 
-  def extract(path) do
-    job_seekers_flow =
-      File.stream!(path, read_ahead: 100_000)
-      |> CSV.decode(separator: ?;, headers: true)
-      |> Flow.from_enumerable()
-      |> Flow.map(fn
-        {:ok, line} -> Map.take(line, @fields)
-        {:error, error} -> Logger.error(error)
-      end)
-      |> Flow.map(&build_job_seeker/1)
-      |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-        located_job_seeker = build_geolocation(job_seeker)
-        [located_job_seeker | acc]
-      end)
-      |> Flow.filter(&is_allowed_administrative?/1)
+  def build_enumerable(path) do
+    File.stream!(path)
+    |> CSV.decode(separator: ?;, headers: true)
+  end
 
-    case @limit do
-      :all -> Enum.to_list(job_seekers_flow)
-      limit -> Enum.take(job_seekers_flow, limit)
-    end
+  def extract_lines_flow(flow) do
+    flow
+    |> Flow.map(fn
+      {:ok, line} -> Map.take(line, @fields)
+      {:error, error} -> Logger.error(error)
+    end)
+  end
+
+  def build_job_seeker_flow(flow) do
+    flow |> Flow.map(&build_job_seeker/1)
+  end
+
+  def add_geolocation_flow(flow) do
+    flow
+    |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
+      build_geolocation(job_seeker)
+      |> is_allowed_administrative?()
+      |> case do
+        {:allowed, located_job_seeker} -> [located_job_seeker | acc]
+        _ -> acc
+      end
+    end)
   end
 
   defp build_geolocation(job_seeker) do
@@ -82,6 +90,10 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
       |> get_in([:geolocation])
       |> Places.get_administrative()
 
-    Enum.member?(@allowed_administratives, administrative)
+    if Enum.member?(@allowed_administratives, administrative) do
+      {:allowed, job_seeker}
+    else
+      {:not_allowed, job_seeker}
+    end
   end
 end

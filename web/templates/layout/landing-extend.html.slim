@@ -1,0 +1,25 @@
+doctype html
+html{lang="fr"}
+  head
+    meta charset="UTF-8"
+    meta content="IE=edge" http-equiv="X-UA-Compatible"
+    meta content="width=device-width, initial-scale=1" name="viewport"
+
+    title = ComponentView.page_title(assigns)
+
+    link rel="icon" type="image/x-icon" href=static_path(@conn,"/favicon.ico")
+    link href=static_path(@conn,"/css/app.css") rel="stylesheet"
+    link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
+    script src=static_path(@conn,"/js/app.js")
+    script src=static_path(@conn,"/js/vendor.js")
+    script src="https://cdn.jsdelivr.net/npm/places.js@1.9.0"
+    = if Mix.env == :prod do
+      = render ComponentView, "analytics", conn: @conn
+  body
+    main
+      = render ComponentView, "navbar.html", conn: @conn
+      #content
+        = render @view_module, @view_template, assigns
+    = render ComponentView, "footer.html", conn: @conn
+    = if Mix.env == :prod do
+      = render ComponentView, "hotjar", conn: @conn

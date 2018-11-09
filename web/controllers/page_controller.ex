@@ -20,4 +20,12 @@ defmodule Vae.PageController do
   def accessibility_promess(conn, _params) do
     render(conn, "accessibility-promess.html", layout: {Vae.LayoutView, "home-white.html"})
   end
+
+  def point_relais_conseil(conn, _params) do
+    render(conn, "point-relais-conseil.html", layout: {Vae.LayoutView, "home-white.html"})
+  end
+
+  def certificateur_vae_definition(conn, _params) do
+    render(conn, "certificateur-vae-definition.html", layout: {Vae.LayoutView, "landing-extend.html"})
+  end
 end
