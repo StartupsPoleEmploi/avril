@@ -4,6 +4,16 @@ defmodule Vae.CertificationController do
   alias Vae.{Certification, Delegate, Rome}
   alias Vae.Suggest
 
+  def cast_array(str), do: String.split(str, ",")
+
+  filterable do
+    @options default: [1, 2, 3, 4, 5], cast: &Vae.CertificationController.cast_array/1
+
+    filter levels(query, value, _conn) do
+      query |> where([c], c.level in ^value)
+    end
+  end
+
   def index(conn, params) do
     conn_updated =
       conn
@@ -50,6 +60,7 @@ defmodule Vae.CertificationController do
           rome
           |> assoc(:certifications)
           |> order_by(desc: :level)
+          |> apply_filters!(conn) |> elem(0)
           |> Repo.paginate(params)
 
         render(

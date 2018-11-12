@@ -87,7 +87,8 @@ defmodule Vae.Mixfile do
       {:uuid, "~> 1.1"},
       {:persistent_ets, "~> 0.1.0"},
       {:pdf_generator, ">=0.4.0"},
-      {:observer_cli, "~> 1.4"}
+      {:observer_cli, "~> 1.4"},
+      {:filterable, "~> 0.7.0"}
     ]
   end
 
