@@ -1,0 +1,57 @@
+.container.py-3.py-md-5
+  .d-flex.align-items-center
+    = link to: NavigationHistory.last_path(@conn, 1, default: "/"), class: "btn btn-link d-flex align-items-center px-0" do
+      span.ic-icon.ic-tail-left.mr-3
+      | Retour
+    = link "Trouver ma VAE", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
+
+.container
+  h1.my-5.text-center Pourquoi une certification ?
+  .row
+    .col.align-self-end.col-md-3.d-none.d-md-block
+      = img_tag '/images/tampon-vae.svg', class: 'my-5 img-fluid', alt: "Représentation d'un tampon encreur de validation d'une VAE."
+    .col.col-md-6
+      p.mt-4
+        strong Faire valider les acquis de votre expérience permet d’obtenir tout ou partie d’une certification.
+      p Vous obtenez ainsi une véritable reconnaissance et évaluation du niveau de vos compétences au regard des compétences attendues par un diplôme, titre ou certificat. <br/>C’est la dignité du diplôme qui est transférée à la valeur de ce que vos expériences.
+
+  .row.mt-4
+    .col.align-self-center.text-center.col-3
+      = img_tag '/images/check-validation-vae.svg', alt: "Symbole de validation"
+    .col.col-9.col-md-6
+      h2.h3 Prétendre à des postes pour lesquels la certification est exigée.
+
+  .row.mt-4
+    .col.align-self-center.text-center.col-md-3
+      = img_tag '/images/check-validation-vae.svg', alt: "Symbole de validation"
+    .col.col-9.col-md-6
+      h2.h3 Sécuriser votre parcours professionnel en vous rendant plus employable.
+
+  .row.mt-4
+    .col.align-self-center.text-center.col-md-3
+      = img_tag '/images/check-validation-vae.svg', alt: "Symbole de validation"
+    .col.col-9.col-md-6
+      h2.h3 Obtenir la reconnaissance officielle de vos compétences.
+
+  .row.mt-4
+    .col.align-self-center.text-center.col-md-3
+      = img_tag '/images/check-validation-vae.svg', alt: "Symbole de validation"
+    .col.col-9.col-md-6
+      h2.h3 Faciliter une revalorisation de salaire ou une promotion.
+
+  .row.mt-4
+    .col.align-self-center.text-center.col-md-3
+      = img_tag '/images/check-validation-vae.svg', alt: "Symbole de validation"
+    .col.col-9.col-md-6
+      h2.h3 Gagner en confiance en soi.
+
+  .row.mt-4
+    .col.align-self-center.text-center.col-md-3
+      = img_tag '/images/check-validation-vae.svg', alt: "Symbole de validation"
+    .col.col-9.col-md-6
+      h2.h3 Créer ou reprendre une entreprise.
+
+.container
+  .row
+    .col-12.text-center.mt-5
+      <a href="http://www.vae.gouv.fr/" target="_blank" class="btn btn-primary mt-4 mb-6">Trouver la vôtre</a>

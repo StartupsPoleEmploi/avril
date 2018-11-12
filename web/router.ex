@@ -50,6 +50,7 @@ defmodule Vae.Router do
     get("/avril-aime-tous-ses-utilisateurs", PageController, :accessibility_promess)
     get("/point-relais-conseil-vae", PageController, :point_relais_conseil)
     get("/certificateur-vae-definition", PageController, :certificateur_vae_definition)
+    get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
 
     get("/professions", ProfessionController, :index)
     get("/professions/_suggest", ProfessionController, :suggest)
