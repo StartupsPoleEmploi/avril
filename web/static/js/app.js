@@ -22,7 +22,6 @@ import socket from "./socket"
 
 import "awesomplete"
 import "./smooth_scroll"
-import "bootstrap-multiselect"
 
 $(function() {
   // Search labels
@@ -60,10 +59,10 @@ $(function() {
   });
 
   // accessibility
-  setTimeout(function(){
+  setTimeout(function() {
     // Ajout d'un aria pour aider à la compréhesion de l'utilité
-    $('#algolia-places-listbox-0').attr('aria-labelledby',"residence");
-    $('#algolia-places-listbox-0').attr('aria-selected',"false");
+    $('#algolia-places-listbox-0').attr('aria-labelledby', "residence");
+    $('#algolia-places-listbox-0').attr('aria-selected', "false");
     // Ajout d'un aria atomic pour les aria assertive. A quoi çà sert ? Je ne sais pas.
     $("[aria-live='assertive']").attr('aria-atomic', 'true');
     // Ajout d'un aide à la compréhesion de qui controle quoi
@@ -77,7 +76,7 @@ $(function() {
 
     $('#awesomplete_list_1').attr('aria-label', 'liste des métiers issus des RNCP');
     $('#awesomplete_list_1').attr('aria-selected', 'false');
-  },200);
+  }, 200);
 
   var showChar = 300;
   var ellipsestext = "...";
@@ -88,13 +87,13 @@ $(function() {
       var c = content.substr(0, showChar);
       var h = content;
       var html =
-          '<div class="truncate-text" style="display:block">' +
-          c +
-          '<span class="moreellipses">' +
-          ellipsestext +
-          '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
-          h +
-          '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
+        '<div class="truncate-text" style="display:block">' +
+        c +
+        '<span class="moreellipses">' +
+        ellipsestext +
+        '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
+        h +
+        '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
 
       $(this).html(html);
     }
