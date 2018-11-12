@@ -18,7 +18,7 @@ html{lang="fr"}
   body
     main
       = render ComponentView, "navbar.html", conn: @conn
-      #content
+      #content.overflow-hidden
         = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do
