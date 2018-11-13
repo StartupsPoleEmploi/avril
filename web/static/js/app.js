@@ -22,6 +22,8 @@ import socket from "./socket"
 
 import "awesomplete"
 import "./smooth_scroll"
+import "bootstrap-select"
+import "url-search-params"
 
 $(function() {
   // Search labels
