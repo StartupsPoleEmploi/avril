@@ -1,6 +1,6 @@
 #content.container
   .my-5.d-flex.flex-row.align-items-center style="margin-left: -5px;"
-    = link to: NavigationHistory.last_path(@conn, 2, default: "/"), class: "btn btn-link p-0 mr-3" do
+    button.btn.btn-link.p-0.mr-3.btn-history-back
       span.ic-icon.ic-tail-left
     .d-flex.flex-column
       h1.h2.m-0 #{@certification.acronym} #{String.downcase(@certification.label)}

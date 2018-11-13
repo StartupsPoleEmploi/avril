@@ -101,6 +101,10 @@ $(function() {
     }
   });
 
+  $(".btn-history-back").click(function() {
+    history.back();
+  })
+
   $(".moreless").click(function() {
     var thisEl = $(this);
     var cT = thisEl.closest(".truncate-text");
