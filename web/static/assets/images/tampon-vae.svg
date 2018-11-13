@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="209px" height="288px" viewBox="0 0 209 288" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>tampon-vae</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <ellipse id="path-1" cx="90.7764571" cy="202.602223" rx="76" ry="21.5"></ellipse>
+        <filter x="-42.1%" y="-74.4%" width="184.2%" height="397.7%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="32" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="16" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.263756793 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="WebDesign" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Pourquoi-une-certification-?" transform="translate(-194.000000, -589.000000)">
+            <g id="tampon-vae" transform="translate(266.500000, 699.500000) rotate(-15.000000) translate(-266.500000, -699.500000) translate(177.000000, 587.000000)">
+                <g id="Oval-2">
+                    <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                    <use fill="#868686" fill-rule="evenodd" xlink:href="#path-1"></use>
+                </g>
+                <path d="M0.0237262829,199 L0,199 L0,169 L179,169 L179,199 L178.976274,199 C178.992063,199.166208 179,199.332881 179,199.5 C179,211.374122 138.929485,221 89.5,221 C40.0705149,221 0,211.374122 0,199.5 C0,199.332881 0.00793730085,199.166208 0.0237262829,199 Z" id="Combined-Shape" fill="#E8E8E8"></path>
+                <ellipse id="Oval-2" fill="#CDCCCC" cx="89.5" cy="169.5" rx="89.5" ry="21.5"></ellipse>
+                <path d="M24,167 L24,146 L155,146 L155,167 C155,175.836556 126.226936,183 89.5,183 C52.7730641,183 24,175.836556 24,167 Z" id="Combined-Shape" fill="#E8E8E8"></path>
+                <path d="M89.5,163 C126.226936,163 155,155.836556 155,147 C155,138.163444 126.226936,131 89.5,131 C52.7730641,131 24,138.163444 24,147 C24,155.836556 52.7730641,163 89.5,163 Z" id="Oval-2" fill="#CDCCCC"></path>
+                <path d="M48.4473704,141.09544 C59.7691738,125.39696 65.6902814,109.69848 66.2106934,94 C66.7742513,77 61.3378092,60 49.9013672,43 L129.327148,43 C117.852458,60 112.377767,77 112.903076,94 C113.388262,109.701527 119.27624,125.403054 130.567011,141.104581 C132.464532,142.312355 133.5,143.626072 133.5,145 C133.5,150.936007 114.171529,155.748092 89.5,155.748092 C64.8284706,155.748092 45.5,150.936007 45.5,145 C45.5,143.622605 46.5407001,142.305725 48.4473704,141.09544 Z" id="Combined-Shape" fill="#E8E8E8"></path>
+                <circle id="Oval-3" fill="#E8E8E8" cx="89.5" cy="41.5" r="41.5"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

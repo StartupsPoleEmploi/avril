@@ -24,4 +24,12 @@ defmodule Vae.PageController do
   def point_relais_conseil(conn, _params) do
     render(conn, "point-relais-conseil.html", layout: {Vae.LayoutView, "home-white.html"})
   end
+
+  def certificateur_vae_definition(conn, _params) do
+    render(conn, "certificateur-vae-definition.html", layout: {Vae.LayoutView, "landing-extend.html"})
+  end
+
+  def pourquoi_une_certification(conn, _params) do
+    render(conn, "pourquoi-une-certification.html", layout: {Vae.LayoutView, "landing-extend.html"})
+  end
 end
