@@ -12,9 +12,10 @@ exports.config = {
         "js/jquery.min.js": ["web/static/vendor/jquery.min.js"],
         // Order here is important for simditor
         "js/simditor.min.js": ["web/static/vendor/simditor/module.min.js",
-                               "web/static/vendor/simditor/hotkeys.min.js",
-                               "web/static/vendor/simditor/uploader.min.js",
-                               "web/static/vendor/simditor/simditor.min.js"],
+          "web/static/vendor/simditor/hotkeys.min.js",
+          "web/static/vendor/simditor/uploader.min.js",
+          "web/static/vendor/simditor/simditor.min.js"
+        ],
         "js/jquery.multi-select.js": ["web/static/vendor/multiselect/jquery.multi-select.js"]
       },
       order: {
@@ -63,13 +64,13 @@ exports.config = {
         parser: require('postcss-scss'),
       },
       processors: [
-       require('autoprefixer')(['last 8 versions']),
-       require('csswring')()
+        require('autoprefixer')(['last 8 versions']),
+        require('csswring')()
       ]
     },
     sass: {
       options: {
-        includePaths: ["node_modules/bootstrap/scss", "node_modules/font-awesome/scss"], // tell sass-brunch where to look for files to @import
+        includePaths: ["node_modules/bootstrap/scss", "node_modules/font-awesome/scss", "node_modules/bootstrap-select/sass"], // tell sass-brunch where to look for files to @import
         precision: 8 // minimum precision required by bootstrap-sass
       }
     }

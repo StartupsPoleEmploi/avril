@@ -30,6 +30,7 @@ defmodule Vae.Web do
   def controller do
     quote do
       use Phoenix.Controller
+      use Filterable.Phoenix.Controller
 
       alias Vae.Repo.NewRelic, as: Repo
       import Ecto

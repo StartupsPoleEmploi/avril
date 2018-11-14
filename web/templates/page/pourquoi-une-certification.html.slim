@@ -1,6 +1,6 @@
 .container.py-3.py-md-5
   .d-flex.align-items-center
-    = link to: NavigationHistory.last_path(@conn, 1, default: "/"), class: "btn btn-link d-flex align-items-center px-0" do
+    button.btn.btn-link.d-flex.align-items-center.px-0.btn-history-back
       span.ic-icon.ic-tail-left.mr-3
       | Retour
     = link "Trouver ma VAE", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
