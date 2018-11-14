@@ -1,22 +1,23 @@
 @import 'variables';
-
 // global link refacto for accessibility
 a {
   color: #000;
   position: relative;
+
   &:focus {
-    outline:none;
-    border:1px solid #4D90FE;
-    -webkit-box-shadow: 0px 0px 5px  #4D90FE;
-    box-shadow: 0px 0px 5px  #4D90FE;
+    outline: 1px solid #4D90FE;
+    -webkit-box-shadow: 0 0 5px #4D90FE;
+    box-shadow: 0 0 5px #4D90FE;
   }
 }
+
 #content {
-  a{
+  a {
     color: #000;
     position: relative;
+
     &:after {
-      content:"";
+      content: "";
       position: absolute;
       display: block;
       width: 100%;
@@ -24,21 +25,23 @@ a {
       left: 0;
       bottom: -4px;
       background: #20D7A4;
-      transition: background-color .3s ease-in-out;
+      transition: background-color 0.3s ease-in-out;
     }
+
     &:hover {
       text-decoration: none;
+
       &:after {
         background: #21B087;
       }
     }
-
     // on annule le soulignement pour les liens de type 'button'
     &.btn {
       &:after {
         display: none;
       }
     }
+
     &.reading-link {
       &:after {
         display: none;
@@ -49,12 +52,12 @@ a {
 
 button {
   &:focus {
-    outline:none;
-    border:1px solid #4D90FE;
-    -webkit-box-shadow: 0px 0px 5px  #4D90FE;
-    box-shadow: 0px 0px 5px  #4D90FE;
+    outline: 1px solid #4D90FE;
+    -webkit-box-shadow: 0 0 5px #4D90FE;
+    box-shadow: 0 0 5px #4D90FE;
   }
 }
+
 .dm-logo {
   color: $dm-logo;
   font: 18px/30px $dm-font-lato;
@@ -72,14 +75,17 @@ button {
 
 .btn.btn-lg {
   font: bold 28px/38px $dm-font-nuito;
+
   &.btn-link {
     font-weight: normal;
     padding-bottom: 0;
     border-bottom: 6px solid transparent;
+
     &:hover {
       border-bottom-color: transparent;
       font-weight: bold;
     }
+
     &.active {
       border-bottom-color: $dm-primary-green;
       font-weight: bold;
@@ -93,6 +99,7 @@ button {
   border-bottom: 3px solid transparent;
   padding-bottom: 8px;
   text-decoration: none;
+
   &:hover {
     border-bottom-color: $dm-primary-green;
   }
@@ -112,12 +119,11 @@ form.dm-search-box {
   @include media-breakpoint-down(sm) {
     border-bottom: 1px solid #E0E0E0;
   }
-
   @include media-breakpoint-up(md) {
     border: none;
   }
-
   margin-top: 2em;
+
   .input-group.suggest .form-control {
     @include media-breakpoint-down(sm) {
       border-bottom: 0;
@@ -125,10 +131,12 @@ form.dm-search-box {
       border-bottom-right-radius: 0;
     }
   }
+
   .input-group.geolocation {
     @include media-breakpoint-up(md) {
       width: 50%;
     }
+
     .form-control {
       @include media-breakpoint-up(md) {
         border-left: none;
@@ -140,6 +148,7 @@ form.dm-search-box {
       }
     }
   }
+
   .input-group .form-control {
     border: none;
     border: 1px solid #E0E0E0;
@@ -160,6 +169,7 @@ form.dm-search-box {
       padding-right: 15px;
     }
   }
+
   .btn {
     border: none;
     border-radius: 4px;
@@ -176,38 +186,28 @@ form.dm-search-box {
     }
     color: $dm-primary-blue;
     font-size: 40px;
+
     &:focus {
-      outline:none;
-      border:1px solid #4D90FE;
-      -webkit-box-shadow: 0px 0px 5px  #4D90FE;
-      box-shadow: 0px 0px 5px  #4D90FE;
+      outline: 1px solid #4D90FE;
+      -webkit-box-shadow: 0 0 5px #4D90FE;
+      box-shadow: 0 0 5px #4D90FE;
     }
   }
 }
 
 body {
   background-color: #FFFFFF;
+
   &.app {
     background: $dm-primary-light-grey;
   }
+
   &.home {
     @include media-breakpoint-up(md) {
       height: 40px;
       background-repeat: no-repeat;
-      background-image:
-        url("/images/dm-deco-green-medium.svg"),
-        url("/images/dm-deco-green-large.svg"),
-        url("/images/dm-deco-gray-large.svg"),
-        url("/images/dm-deco-green-large.svg"),
-        url("/images/dm-deco-green-medium.svg"),
-        url("/images/dm-deco-violet-tiny.svg");
-      background-position:
-        calc(100% + 400px) 200px,
-        -800px 350px,
-        calc(100% + 600px) 1000px,
-        -800px 2300px,
-        -400px 3850px,
-        calc(100% + 350px) 4600px;
+      background-image: url("/images/dm-deco-green-medium.svg"), url("/images/dm-deco-green-large.svg"), url("/images/dm-deco-gray-large.svg"), url("/images/dm-deco-green-large.svg"), url("/images/dm-deco-green-medium.svg"), url("/images/dm-deco-violet-tiny.svg");
+      background-position: calc(100% + 400px) 200px, -800px 350px, calc(100% + 600px) 1000px, -800px 2300px, -400px 3850px, calc(100% + 350px) 4600px;
     }
   }
 }
@@ -220,7 +220,8 @@ mark {
   background: linear-gradient(180deg, transparent calc(100% - 6px), $dm-primary-green calc(100% - 6px));
 }
 
-html, body {
+body,
+html {
   width: 100%;
   height: 100%;
 }
@@ -235,10 +236,12 @@ body {
 main {
   flex-grow: 1;
   display: flex;
-    flex-direction: column;
+  flex-direction: column;
 }
 
-header, main, footer {
+footer,
+header,
+main {
   flex-shrink: 0;
 }
 
@@ -247,20 +250,22 @@ footer {
   padding-top: 1rem;
   padding-bottom: 1rem;
   background-color: $dm-primary-grey;
+
   img.logo {
     height: 40px;
   }
 }
 
-html, body {
+body,
+html {
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-
 /* Delegator #show*/
 $header-height: 5rem;
+
 .step-title:before {
   display: block;
   content: " ";
@@ -269,7 +274,9 @@ $header-height: 5rem;
   visibility: hidden;
 }
 
-.alert:empty { display: none; }
+.alert:empty {
+  display: none;
+}
 
 .brand-icon {
   width: 2rem;
@@ -287,8 +294,8 @@ $header-height: 5rem;
   border-radius: 2px;
 }
 
-
-a[target="_blank"]:before, a[href^="mailto:"]:before {
+a[target="_blank"]:before,
+a[href^="mailto:"]:before {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -300,7 +307,6 @@ a[target="_blank"]:before, a[href^="mailto:"]:before {
 a[href^="mailto:"]:before {
   content: "\f003";
 }
-
 /* Utils */
 .no-border {
   border-style: none;
@@ -347,7 +353,6 @@ input.form-control {
   vertical-align: 0;
   margin-left: 1rem;
 }
-
 // illustration landing page "certificateur definition"
 .illustration-grand-diplome {
   top: -3rem;

@@ -26,14 +26,14 @@
       .col-md-6
         h2 Obtenir un diplôme, se repositionner sur le marché de l’emploi…
         p Il y a de nombreuses raisons de se lancer dans une démarche VAE. Avec Avril, découvrez les perspectives que vous offre la Validation des Acquis de l'Expérience.
-        / = render Vae.ComponentView, "reading-time.html", title: "Pourquoi une certification", duration: "1 minute", color: "#DF286E", to: page_path(@conn, :vae)
+        = render Vae.ComponentView, "reading-time.html", title: "Pourquoi une certification", duration: "1 minute", color: "#DF286E", to: page_path(@conn, :pourquoi_une_certification)
     .row.my-md-6.my-5
       .col-md-6.bg-best-way
       .col-md-6
         h2 En seulement 3 étapes, Avril vous aide à identifier votre parcours VAE pas à pas.
         p.dm-sub-title Chez le <strong>certificateur</strong> le plus proche de chez vous !
         p Renseignez le métier pour lequel vous avez au moins 1 an d'expérience et pour lequel vous souhaitez obtenir un diplôme. <br />Nous vous indiquerons le certificateur le plus proche !
-        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "1 minute", color: "#443C77", to: page_path(@conn, :vae)
+        = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "1 minute", color: "#443C77", to: page_path(@conn, :certificateur_vae_definition)
     / .row.my-md-6.my-5
     /   .col-md-12.text-center
     /     = link to: root_path(@conn, :index), class: 'btn btn-danger dm-btn-danger' do
