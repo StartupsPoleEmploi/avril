@@ -6,11 +6,14 @@
   }
 }
 
-nav.navbar.dm-navbar {
-  &.--not-top {
-    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+.sticky-top.--not-top {
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+  nav.navbar.dm-navbar {
     @extend .bg-white;
   }
+}
+
+nav.navbar.dm-navbar {
   border: none;
   padding: 1rem;
   .navbar-toggler {
@@ -82,4 +85,11 @@ li.nav-item > a.nav-link[href^='mailto:']:before {
 
 .breadcrumb .breadcrumb-item::before {
   color: $gray;
+}
+
+.cookies.alert.alert-warning {
+  border: 1px solid #EFEF97;
+  background-color: #FFFFD5;
+  color: #2E5266;
+  line-height: 36px;
 }

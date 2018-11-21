@@ -15,9 +15,13 @@ html{lang="fr"}
     script src="https://cdn.jsdelivr.net/npm/places.js@1.9.0"
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
+    <script>window.disableGa = function() {window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;};</script>
+    <script>window.userToken = "<%= assigns[:user_token] %>";</script>
   body
     main
-      = render ComponentView, "navbar.html", conn: @conn
+      .sticky-top
+        = render "cookies.html", conn: @conn
+        = render ComponentView, "navbar.html", conn: @conn
       #content.overflow-hidden
         = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn
