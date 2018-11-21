@@ -125,19 +125,33 @@ $(function() {
     }
     return false;
   });
+
+  if (!sessionStorage.getItem('cookies_choice')) $('.cookies').removeClass('d-none');
+  if (sessionStorage.getItem('cookies_choice') == 'reject') window.disableGa();
+
+  $('.cookies .btn-reject').click(function() {
+    sessionStorage.setItem('cookies_choice', 'reject')
+    $('.cookies').addClass('d-none');
+    window.disableGa();
+  })
+
+  $('.cookies .btn-primary').click(function() {
+    sessionStorage.setItem('cookies_choice', 'accept');
+    $('.cookies').addClass('d-none');
+  })
 })
 
 $(window).scroll(function() {
   var y = $(window).scrollTop();
   if (y > 0) {
-    $("nav").addClass('--not-top');
+    $('.sticky-top').addClass('--not-top');
   } else {
-    $("nav").removeClass('--not-top');
+    $('.sticky-top').removeClass('--not-top');
   }
 });
 
 $(window).on('resize', function() {
-  $("#label_search_profession").text(stepLabel($(window).width()));
+  $('#label_search_profession').text(stepLabel($(window).width()));
 });
 
 function stepLabel(width) {
