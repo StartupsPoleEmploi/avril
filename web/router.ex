@@ -51,6 +51,8 @@ defmodule Vae.Router do
     get("/certificateur-vae-definition", PageController, :certificateur_vae_definition)
     get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
 
+    get("/stats", PageController, :stats)
+
     get("/professions", ProfessionController, :index)
     get("/professions/_suggest", ProfessionController, :suggest)
 

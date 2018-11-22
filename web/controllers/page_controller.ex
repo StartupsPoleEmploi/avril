@@ -32,4 +32,8 @@ defmodule Vae.PageController do
   def pourquoi_une_certification(conn, _params) do
     render(conn, "pourquoi-une-certification.html", layout: {Vae.LayoutView, "landing-extend.html"})
   end
+
+  def stats(conn, _params) do
+    redirect(conn, external: "https://datastudio.google.com/u/0/reporting/1t7iUT7wGQn9U7ODZeDyXIvIRlK-BJAZs/page/1M")
+  end
 end
