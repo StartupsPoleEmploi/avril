@@ -329,10 +329,11 @@ a[href^="mailto:"]:before {
   color: $dm-primary-blue;
 }
 
-input.form-control {
+.form-control {
   font-size: 18px;
   color: $dm-primary-blue;
   border-color: transparent;
+  min-height: 60px;
 }
 
 .dropdown-toggle.btn.btn-link {
