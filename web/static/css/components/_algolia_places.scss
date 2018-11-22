@@ -10,6 +10,7 @@
   .ap-dataset-places {
     em {
       @extend mark;
+      font-size: inherit;
       font-style: normal;
       font-weight: normal;
     }
