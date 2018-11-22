@@ -91,5 +91,7 @@ li.nav-item > a.nav-link[href^='mailto:']:before {
   border: 1px solid #EFEF97;
   background-color: #FFFFD5;
   color: #2E5266;
-  line-height: 36px;
+  @include media-breakpoint-up(md) {
+    line-height: 36px;
+  }
 }
