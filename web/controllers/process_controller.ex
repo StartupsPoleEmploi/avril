@@ -68,11 +68,14 @@ defmodule Vae.ProcessController do
     certification =
       case params["certification"] do
         nil -> nil
-        certification_id -> Repo.get(Certification, certification_id)
+        certification_id -> Repo.get(Certification, certification_id) |> Repo.preload(:certifiers)
       end
 
+    certifiers_query_filter =
+      Enum.map(certification.certifiers, &"certifier_id=#{&1.id}") |> Enum.join(" OR ")
+
     algolia_filters = [
-      {:filters, "certifier_id:#{certification.certifier_id} AND is_active:true"}
+      {:filters, "(#{certifiers_query_filter}) AND is_active:true"}
     ]
 
     algolia_geo =
@@ -159,8 +162,11 @@ defmodule Vae.ProcessController do
       delegates
       |> Enum.filter(fn delegate ->
         case delegate.geolocation["postcode"] do
-          [] -> false
-          [postcode | _tail] -> String.slice(postcode, 0..1) |> Kernel.==(search_postcode)
+          [] ->
+            false
+
+          [postcode | _tail] ->
+            String.slice(postcode, 0..1) == String.slice(search_postcode, 0..1)
         end
       end)
 

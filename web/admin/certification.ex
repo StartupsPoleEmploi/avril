@@ -32,13 +32,22 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym)
         input(certification, :level)
         input(certification, :rncp_id)
-        input(certification, :certifier, collection: Certifier.all())
+
+        certifier_option_tags =
+          Certifier
+          |> Repo.all()
+          |> Enum.sort_by(fn certifier -> certifier.name end)
+          |> Enum.map(&option_tag(&1.id, &1.name, certification.certifiers))
 
         rome_options_tags =
           Rome
           |> Repo.all()
           |> Enum.sort_by(fn rome -> rome.code end)
           |> Enum.map(&option_tag(&1.id, "#{&1.code} - #{&1.label}", certification.romes))
+
+        content do
+          form_select_tag("certifiers", "Certificateurs", certifier_option_tags)
+        end
 
         content do
           form_select_tag("romes", "Romes", rome_options_tags)
@@ -48,6 +57,7 @@ defmodule Vae.ExAdmin.Certification do
           """
           $(document).ready(function() {
             $('#certification_romes').multiSelect();
+            $('#certification_certifiers').multiSelect();
           });
           """
         end
@@ -75,6 +85,7 @@ defmodule Vae.ExAdmin.Certification do
       %{
         all: [
           preload: [
+            :certifiers,
             romes: from(r in Rome, order_by: r.code),
             delegates: from(d in Delegate, order_by: d.name),
             certifier: from(c in Certifier, order_by: c.name)

@@ -17,7 +17,7 @@ defmodule Vae.Repo do
 
         {:ok, delegate}
       else
-        {:format, error} -> Logger.warn fn -> inspect(error) end
+        {:format, error} -> Logger.warn(fn -> inspect(error) end)
         t -> t
       end
     end
@@ -30,7 +30,7 @@ defmodule Vae.Repo do
 
         {:ok, delegate}
       else
-        {:format, error} -> Logger.warn fn -> inspect(error) end
+        {:format, error} -> Logger.warn(fn -> inspect(error) end)
         t -> t
       end
     end
