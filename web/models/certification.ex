@@ -10,8 +10,6 @@ defmodule Vae.Certification do
     field(:rncp_id, :string)
     field(:description, :string)
 
-    belongs_to(:certifier, Certifier)
-
     many_to_many(
       :certifiers,
       Certifier,
@@ -59,7 +57,6 @@ defmodule Vae.Certification do
       :acronym,
       :level,
       :rncp_id,
-      :certifier_id,
       :description
     ])
     |> validate_required([:label])
