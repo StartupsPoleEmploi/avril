@@ -159,12 +159,16 @@ defmodule Vae.ComponentView do
        #{prefix}county.value = e.suggestion.county || e.suggestion.city || e.suggestion.name;
        #{prefix}postcode.value = e.suggestion.postcode;
        #{prefix}administrative.value = e.suggestion.administrative;
+       $('.dm-search-box button').removeClass('disabled')
+       $('.dm-search-box button').removeAttr('disabled')
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {
        #{prefix}lat.value = "";
        #{prefix}lng.value = "";
        #{prefix}county.value = "";
+       $('.dm-search-box button').addClass('disabled')
+       $('.dm-search-box button').attr('disabled', true)
      });
      </script>
      """}
