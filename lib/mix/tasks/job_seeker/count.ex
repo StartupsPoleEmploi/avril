@@ -30,7 +30,7 @@ defmodule Mix.Tasks.JobSeeker.Count do
 
     events = Enum.flat_map(job_seekers, fn js -> js.events end)
 
-    file = File.open!("afpa-comma-2.csv", [:write, :utf8])
+    file = File.open!("file.csv", [:write, :utf8])
 
     Enum.filter(events, fn event ->
       not is_nil(event.payload)
@@ -46,8 +46,7 @@ defmodule Mix.Tasks.JobSeeker.Count do
       )
     end)
     |> Enum.filter(fn p ->
-      (p["delegate_email"] == "cecile.cramer@afpa,fr" or
-         p["delegate_email"] == "pierre-louis.teneau@afpa,fr") and p["contact_delegate"] == "on"
+      (p["delegate_email"] == "" or p["delegate_email"] == "") and p["contact_delegate"] == "on"
 
       # p["delegate_email"] in delegates_email and p["contact_delegate"] == "on" and
       # p["contact_delegate"] == "on" and not is_nil(p["certification"]) and

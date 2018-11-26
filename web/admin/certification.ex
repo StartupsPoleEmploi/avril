@@ -85,10 +85,9 @@ defmodule Vae.ExAdmin.Certification do
       %{
         all: [
           preload: [
-            :certifiers,
             romes: from(r in Rome, order_by: r.code),
             delegates: from(d in Delegate, order_by: d.name),
-            certifier: from(c in Certifier, order_by: c.name)
+            certifiers: from(c in Certifier, order_by: c.name)
           ]
         ]
       }
