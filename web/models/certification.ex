@@ -10,13 +10,12 @@ defmodule Vae.Certification do
     field(:rncp_id, :string)
     field(:description, :string)
 
-    belongs_to(:certifier, Certifier)
-
     many_to_many(
       :certifiers,
       Certifier,
       join_through: "certifier_certifications",
-      on_delete: :delete_all
+      on_delete: :delete_all,
+      on_replace: :delete
     )
 
     many_to_many(
@@ -58,12 +57,11 @@ defmodule Vae.Certification do
       :acronym,
       :level,
       :rncp_id,
-      :certifier_id,
       :description
     ])
     |> validate_required([:label])
-    |> assoc_constraint(:certifier)
     |> add_romes(params)
+    |> add_certifiers(params)
     |> add_delegates(params)
   end
 
@@ -80,15 +78,41 @@ defmodule Vae.Certification do
     |> Repo.all()
   end
 
-  def add_delegates(%Ecto.Changeset{changes: %{certifier_id: certifier_id}} = changeset, _params) do
+  def add_certifiers(changeset, %{certifiers: certifiers}) do
+    changeset
+    |> put_assoc(:certifiers, get_certifiers(certifiers))
+  end
+
+  def add_certifiers(changeset, _no_certifiers), do: changeset
+
+  def get_certifiers(certifiers) do
+    Certifier
+    |> where([c], c.id in ^certifiers)
+    |> Repo.all()
+  end
+
+  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers}} = changeset, params) do
     certifications_delegates =
-      Delegate.from_certifier(certifier_id)
-      |> Repo.all()
-      |> Enum.map(fn delegate ->
-        Ecto.build_assoc(changeset.data, :certifications_delegates, delegate_id: delegate.id)
+      Enum.reduce(certifiers, [], fn
+        %{action: :update, data: data}, acc ->
+          [
+            Delegate.from_certifier(data.id)
+            |> Repo.all()
+            |> Enum.map(fn delegate ->
+              Ecto.build_assoc(changeset.data, :certifications_delegates, delegate_id: delegate.id)
+            end)
+            | acc
+          ]
+
+        _, acc ->
+          acc
       end)
 
-    put_assoc(changeset, :certifications_delegates, certifications_delegates)
+    put_assoc(
+      changeset,
+      :certifications_delegates,
+      List.flatten(certifications_delegates)
+    )
   end
 
   def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
