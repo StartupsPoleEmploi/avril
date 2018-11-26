@@ -9,16 +9,19 @@ defmodule Mix.Tasks.Certification.AttachCertifiersCertifications do
   def run(_args) do
     {:ok, _pid, _apps} = ensure_started(Vae.Repo, [])
 
-    certifications = Repo.all(Certification) |> Repo.preload(:certifiers)
-
-    certifications
+    Repo.all(Certification)
+    |> Repo.preload(:certifiers)
     |> Enum.map(fn certification ->
       certifier = Ecto.assoc(certification, :certifier) |> Repo.one()
 
-      certification
-      |> Ecto.Changeset.change()
-      |> Ecto.Changeset.put_assoc(:certifiers, [certifier])
-      |> Repo.update!()
+      if is_nil(certifier) do
+        true
+      else
+        certification
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:certifiers, [certifier])
+        |> Repo.update!()
+      end
     end)
   end
 end
