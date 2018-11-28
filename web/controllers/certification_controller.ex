@@ -56,23 +56,27 @@ defmodule Vae.CertificationController do
         )
 
       rome ->
-        page =
+        certifications =
           rome
           |> assoc(:certifications)
           |> order_by(desc: :level)
-          |> apply_filters!(conn) |> elem(0)
-          |> Repo.paginate(params)
 
-        render(
-          conn,
-          Vae.CertificationView,
-          "index.html",
-          certifications: page.entries,
-          page: page,
-          rome: rome,
-          profession: rome.label,
-          search: params["search"]
-        )
+        total_without_filter_level = Repo.aggregate(certifications, :count, :id)
+
+        with {:ok, certifications_by_level, _filter_values} <- apply_filters(certifications, conn),
+             page <- Repo.paginate(certifications_by_level, params) do
+          render(
+            conn,
+            Vae.CertificationView,
+            "index.html",
+            certifications: page.entries,
+            no_results: total_without_filter_level == 0,
+            page: page,
+            rome: rome,
+            profession: rome.label,
+            search: params["search"]
+          )
+        end
     end
   end
 
