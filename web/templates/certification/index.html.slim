@@ -1,18 +1,23 @@
 .container
-  .m-4
-    h1.h4 Diplômes possibles
-    / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
-    / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
-  .m-4.d-flex.flex-column
-    select.selectpicker id="level-selector" multiple="multiple"
-      = for level <- 5..1 do
-        option value="#{level}" #{level_info_by_level(level)}
-    em Le niveau indiqué est celui que vous obtiendrez.
+  = if !@no_results do
+    .m-4
+      h1.h4 Diplômes possibles
+      / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
+      / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
 
-  .row
+    .m-4.d-flex.flex-column
+      select.selectpicker id="level-selector" multiple="multiple"
+        = for level <- 5..1 do
+          option value="#{level}" #{level_info_by_level(level)}
+      em Le niveau indiqué est celui que vous obtiendrez.
+
+  .row.mt-4
     .col-md-9
-      = if @page.total_entries == 0 do
-        p Aucun résultat
+      = if @no_results do
+        = render("no-results.html")
+      - else
+        = if @page.total_entries == 0 do
+          p Aucun résultat pour le niveau sélectionné
       = for certification <- @certifications do
         .my-4.card.p-0.p-md-2
           .card-body
