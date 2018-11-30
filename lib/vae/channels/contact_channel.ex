@@ -3,6 +3,9 @@ defmodule Vae.ContactChannel do
 
   alias Vae.Event
   alias Vae.Mailer.Sender.Mailjet
+  alias Vae.Repo
+  alias Vae.Delegate
+  alias Vae.Places
 
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
@@ -11,12 +14,28 @@ defmodule Vae.ContactChannel do
   end
 
   def handle_in("contact_request", %{"body" => body}, socket) do
+    delegate_info = get_delegate_info(body)
+
     body
+    |> Map.merge(delegate_info)
     |> Map.put_new("contact_delegate", "off")
     |> add_contact_event()
     |> send_messages()
 
     {:reply, {:ok, %{}}, socket}
+  end
+
+  defp get_delegate_info(body) do
+    delegate = Repo.get(Delegate, body["delegate"])
+
+    %{
+      "delegate_city" => Places.get_city(delegate.geolocation),
+      "delegate_name" => delegate.name,
+      "delegate_email" => delegate.email,
+      "delegate_address" => delegate.address,
+      "delegate_phone_number" => delegate.telephone,
+      "process" => delegate.process_id
+    }
   end
 
   defp add_contact_event(body) do

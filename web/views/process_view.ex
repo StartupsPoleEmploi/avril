@@ -41,14 +41,9 @@ defmodule Vae.ProcessView do
     {:safe,
      """
      <script>
-     window.delegate_city = "#{Vae.Places.get_city(delegate.geolocation)}"
-     window.delegate_name = "#{delegate.name}"
-     window.delegate_email = "#{delegate.email}"
-     window.delegate_address = "#{delegate.address}"
-     window.delegate_phone_number = "#{delegate.telephone}"
+     window.delegate = #{delegate.id}
      window.job = "#{Plug.Conn.get_session(conn, :search_job)}"
      window.certification = "#{certification.acronym} #{String.downcase(certification.label)}"
-     window.process = #{delegate.process.id}
      window.county = "#{Plug.Conn.get_session(conn, :search_county)}"
      </script>
      """}
