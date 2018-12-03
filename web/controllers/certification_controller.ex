@@ -63,7 +63,8 @@ defmodule Vae.CertificationController do
 
         total_without_filter_level = Repo.aggregate(certifications, :count, :id)
 
-        with {:ok, certifications_by_level, _filter_values} <- apply_filters(certifications, conn),
+        with {:ok, certifications_by_level, _filter_values} <-
+               apply_filters(certifications, conn),
              page <- Repo.paginate(certifications_by_level, params) do
           render(
             conn,
@@ -181,8 +182,11 @@ defmodule Vae.CertificationController do
 
   # TODO: Need to extract this shit used in process_controller
   defp get_delegates(certification, geo) do
+    certifiers_query_filter =
+      Enum.map(certification.certifiers, &"certifier_id=#{&1.id}") |> Enum.join(" OR ")
+
     algolia_filters = [
-      {:filters, "certifier_id:#{certification.certifier_id} AND is_active:true"}
+      {:filters, "(#{certifiers_query_filter}) AND is_active:true"}
     ]
 
     algolia_geo =

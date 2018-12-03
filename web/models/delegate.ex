@@ -45,7 +45,7 @@ defmodule Vae.Delegate do
   end
 
   def from_certifier(certifier_id) do
-    from d in Vae.Delegate, where: [certifier_id: ^certifier_id]
+    from(d in Vae.Delegate, where: [certifier_id: ^certifier_id])
   end
 
   @doc """

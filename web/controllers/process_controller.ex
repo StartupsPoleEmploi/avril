@@ -35,8 +35,11 @@ defmodule Vae.ProcessController do
   end
 
   def get_delegates(certification, geo) do
+    certifiers_query_filter =
+      Enum.map(certification.certifiers, &"certifier_id=#{&1.id}") |> Enum.join(" OR ")
+
     algolia_filters = [
-      {:filters, "certifier_id:#{certification.certifier_id} AND is_active:true"}
+      {:filters, "(#{certifiers_query_filter}) AND is_active:true"}
     ]
 
     algolia_geo =
