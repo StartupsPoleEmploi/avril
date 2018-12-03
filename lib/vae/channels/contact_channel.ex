@@ -34,8 +34,12 @@ defmodule Vae.ContactChannel do
       "delegate_email" => delegate.email,
       "delegate_address" => delegate.address,
       "delegate_phone_number" => delegate.telephone,
+      "delegate_website" => delegate.website,
+      "delegate_person_name" => delegate.person_name,
       "process" => delegate.process_id
     }
+    |> Enum.filter(fn {_, v} -> v != nil end)
+    |> Enum.into(%{})
   end
 
   defp add_contact_event(body) do
