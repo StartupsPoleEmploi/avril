@@ -15,6 +15,7 @@ defmodule Vae.ExAdmin.Delegate do
       selectable_column()
       column(:id)
       column(:name)
+      column(:process)
       column(:is_active)
       column(:administrative)
       column(:city)
