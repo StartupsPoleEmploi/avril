@@ -82,14 +82,13 @@ defmodule Vae.Delegate do
     struct
     |> change(params)
     |> link_certifications()
-    |> geocode_address()
+    |> add_geolocation(params)
   end
 
-  defp geocode_address(changeset) do
-    case changeset do
-      %{changes: %{address: address}} ->
-        geolocation = Places.get_geoloc_from_address(address)
-
+  defp add_geolocation(changeset, params) do
+    case params do
+      %{geo: encoded} ->
+        geolocation = Poison.decode!(encoded)
         changeset
         |> put_change(:city, Places.get_city(geolocation))
         |> put_change(:administrative, Places.get_administrative(geolocation))
