@@ -35,8 +35,7 @@ defmodule Vae.ExAdmin.Delegate do
           :email,
           :person_name,
           :certifier,
-          :process,
-          :geolocation
+          :process
         ]
       )
     end
@@ -47,6 +46,7 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :name)
         input(delegate, :website)
         input(delegate, :address)
+        input(delegate, :geo, type: :hidden)
         input(delegate, :telephone)
         input(delegate, :email)
         input(delegate, :person_name)
