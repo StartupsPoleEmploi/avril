@@ -82,23 +82,20 @@ defmodule Vae.Delegate do
     struct
     |> change(params)
     |> link_certifications()
-    |> geocode_address()
+    |> add_geolocation(params)
   end
 
-  defp geocode_address(changeset) do
-    case changeset do
-      %{changes: %{address: address}} ->
-        geolocation = Places.get_geoloc_from_address(address)
+  defp add_geolocation(%{changes: %{address: _}} = changeset, %{geo: encoded})
+       when not is_nil(encoded) do
+    geolocation = Poison.decode!(encoded)
 
-        changeset
-        |> put_change(:city, Places.get_city(geolocation))
-        |> put_change(:administrative, Places.get_administrative(geolocation))
-        |> put_change(:geolocation, geolocation)
-
-      _ ->
-        changeset
-    end
+    changeset
+    |> put_change(:city, Places.get_city(geolocation))
+    |> put_change(:administrative, Places.get_administrative(geolocation))
+    |> put_change(:geolocation, geolocation)
   end
+
+  defp add_geolocation(changeset, _params), do: changeset
 
   def link_certifications(%Changeset{changes: %{certifier_id: certifier_id}} = changeset) do
     certifications_delegates =

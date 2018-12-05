@@ -2,8 +2,35 @@
 <script src="<%= static_path(@conn, "/js/simditor.min.js") %>"></script>
 <link rel="stylesheet" href="<%= static_path(@conn, "/css/multi-select.dist.css") %>">
 <script src="<%= static_path(@conn, "/js/jquery.multi-select.js") %>"></script>
+<script src="https://cdn.jsdelivr.net/npm/places.js@1.14.0"></script>
 <script type="text/javascript">
- $(document).ready(function(){
+ $(document).ready(function() {
+   if(document.querySelector('#delegate_address')) {
+     var placesAutocomplete = places({
+     <% app_id = System.get_env("ALGOLIA_PLACES_APP_ID") %>
+     <%= if not is_nil app_id do %>
+     appId: '<%= app_id %>',
+     <% end %>
+     <% api_key = System.get_env("ALGOLIA_PLACES_API_KEY") %>
+     <%= if not is_nil api_key do %>
+     apiKey: '<%= api_key %>',
+     <% end %>
+     container: document.querySelector('#delegate_address'),
+     language: 'fr',
+     countries: ['fr'],
+     templates: {
+       value: ({ name, postcode, city }) => city ? `${name} ${postcode} ${city}` : `${postcode} ${name}`
+     }
+    });
+
+    placesAutocomplete.on('change', function(e) {
+      delegate_geo.value = JSON.stringify(e.suggestion.hit);
+    });
+
+    placesAutocomplete.on('clear', function() {
+     delegate_geo.value = '';
+    });
+   }
 
    Simditor.locale = 'en-US';
 
