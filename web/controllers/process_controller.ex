@@ -1,8 +1,12 @@
 defmodule Vae.ProcessController do
   use Vae.Web, :controller
 
+  require Logger
+
   alias Vae.Certification
   alias Vae.Delegate
+
+  @search_client Application.get_env(:vae, :search_client)
 
   def index(conn, params) do
     search(
@@ -34,35 +38,17 @@ defmodule Vae.ProcessController do
     )
   end
 
-  def get_delegates(certification, geo) do
-    certifiers_query_filter =
-      Enum.map(certification.certifiers, &"certifier_id=#{&1.id}") |> Enum.join(" OR ")
+  defp get_delegates(certification, geo) do
+    certification
+    |> Ecto.assoc(:certifiers)
+    |> Repo.all()
+    |> @search_client.get_delegates(geo)
+    |> case do
+      {:ok, delegates} ->
+        delegates
 
-    algolia_filters = [
-      {:filters, "(#{certifiers_query_filter}) AND is_active:true"}
-    ]
-
-    algolia_geo =
-      case geo do
-        %{lat: lat, lng: lng} when lat != nil and lng != nil ->
-          [{:aroundLatLng, [lat, lng]}]
-
-        _ ->
-          []
-      end
-
-    case "delegate" |> Algolia.search("", algolia_filters ++ algolia_geo) do
-      {:ok, response} ->
-        response
-        |> Map.get("hits")
-        |> Enum.map(fn item ->
-          item
-          |> Enum.reduce(%{}, fn {key, val}, acc ->
-            Map.put(acc, String.to_atom(key), val)
-          end)
-        end)
-
-      _ ->
+      {:error, msg} ->
+        Logger.error("Error on searching delegates: #{msg}")
         Delegate.from_certification(certification) |> Repo.all()
     end
   end
@@ -74,37 +60,7 @@ defmodule Vae.ProcessController do
         certification_id -> Repo.get(Certification, certification_id) |> Repo.preload(:certifiers)
       end
 
-    certifiers_query_filter =
-      Enum.map(certification.certifiers, &"certifier_id=#{&1.id}") |> Enum.join(" OR ")
-
-    algolia_filters = [
-      {:filters, "(#{certifiers_query_filter}) AND is_active:true"}
-    ]
-
-    algolia_geo =
-      case params["delegate_search"] do
-        %{"lat" => lat, "lng" => lng} when lat != "" and lng != "" ->
-          [{:aroundLatLng, [lat, lng]}]
-
-        _ ->
-          []
-      end
-
-    delegates =
-      case "delegate" |> Algolia.search("", algolia_filters ++ algolia_geo) do
-        {:ok, response} ->
-          response
-          |> Map.get("hits")
-          |> Enum.map(fn item ->
-            item
-            |> Enum.reduce(%{}, fn {key, val}, acc ->
-              Map.put(acc, String.to_atom(key), val)
-            end)
-          end)
-
-        _ ->
-          Delegate.from_certification(certification) |> Repo.all()
-      end
+    delegates = get_delegates(certification, params["delegate_search"])
 
     if length(delegates) > 1 do
       delegate =

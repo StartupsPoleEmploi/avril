@@ -47,7 +47,10 @@ defmodule Vae.Process do
     changeset
     |> put_assoc(
       :delegates,
-      delegates |> ensure_not_nil |> transform_destroy |> retrieve_delegates
+      delegates
+      |> ensure_not_nil
+      |> transform_destroy
+      |> retrieve_delegates
       |> Enum.uniq_by(& &1.id)
     )
   end

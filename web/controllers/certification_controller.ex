@@ -1,8 +1,11 @@
 defmodule Vae.CertificationController do
+  require Logger
   use Vae.Web, :controller
 
   alias Vae.{Certification, Delegate, Rome}
   alias Vae.Suggest
+
+  @search_client Application.get_env(:vae, :search_client)
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -51,7 +54,12 @@ defmodule Vae.CertificationController do
           Vae.CertificationView,
           "index.html",
           certifications: [],
-          page: %Scrivener.Page{total_entries: 0},
+          no_results: true,
+          page: %Scrivener.Page{
+            total_entries: 0,
+            page_number: 0,
+            total_pages: 0
+          },
           profession: params["search"]["profession"]
         )
 
@@ -112,8 +120,12 @@ defmodule Vae.CertificationController do
 
     certification =
       case params["rncp_id"] do
-        nil -> nil
-        rncp_id -> Certification |> where(rncp_id: ^rncp_id) |> first() |> Repo.one()
+        nil ->
+          nil
+
+        rncp_id ->
+          Certification.search_by_rncp_id(rncp_id)
+          |> Repo.one()
       end
 
     rome_id =
@@ -180,36 +192,17 @@ defmodule Vae.CertificationController do
     end
   end
 
-  # TODO: Need to extract this shit used in process_controller
   defp get_delegates(certification, geo) do
-    certifiers_query_filter =
-      Enum.map(certification.certifiers, &"certifier_id=#{&1.id}") |> Enum.join(" OR ")
+    certification
+    |> Ecto.assoc(:certifiers)
+    |> Repo.all()
+    |> @search_client.get_delegates(geo)
+    |> case do
+      {:ok, delegates} ->
+        delegates
 
-    algolia_filters = [
-      {:filters, "(#{certifiers_query_filter}) AND is_active:true"}
-    ]
-
-    algolia_geo =
-      case geo do
-        %{"lat" => lat, "lng" => lng} when lat != nil and lng != nil ->
-          [{:aroundLatLng, [lat, lng]}]
-
-        _ ->
-          []
-      end
-
-    case "delegate" |> Algolia.search("", algolia_filters ++ algolia_geo) do
-      {:ok, response} ->
-        response
-        |> Map.get("hits")
-        |> Enum.map(fn item ->
-          item
-          |> Enum.reduce(%{}, fn {key, val}, acc ->
-            Map.put(acc, String.to_atom(key), val)
-          end)
-        end)
-
-      _ ->
+      {:error, msg} ->
+        Logger.error("Error on searching delegates: #{msg}")
         Delegate.from_certification(certification) |> Repo.all()
     end
   end

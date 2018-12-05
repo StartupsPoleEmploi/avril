@@ -3,10 +3,9 @@ defmodule Vae.Repo.Migrations.CreateCertfication do
 
   def change do
     create table(:certifications) do
-      add :label, :string
-
+      add(:label, :string)
+      add(:description, :string)
       timestamps()
     end
-
   end
 end

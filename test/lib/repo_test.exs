@@ -1,5 +1,5 @@
 defmodule Vae.RepoTest do
-  use Vae.ModelCase
+  use Vae.DataCase
 
   alias Vae.Repo.NewRelic, as: Repo
 
