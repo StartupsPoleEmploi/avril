@@ -10,10 +10,9 @@ defmodule Vae.TrackerTest do
       }
       |> Vae.Repo.insert!()
 
-    conn =
-      build_conn()
-      |> get("/?js_id=#{job_seeker.id}")
-      |> get("/professions/_suggest?search[for]=patissier")
+    conn
+    |> get("/?js_id=#{job_seeker.id}")
+    |> get("/professions/_suggest?search[for]=patissier")
 
     updated_job_seeker = Vae.Repo.get(JobSeeker, job_seeker.id)
 

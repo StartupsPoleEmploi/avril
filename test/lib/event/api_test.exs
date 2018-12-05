@@ -107,7 +107,7 @@ defmodule Vae.ApiTest do
       }
     ]
 
-    updated_job_seekers = Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
+    Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
 
     expected_events = [
       %Vae.Event{
@@ -143,11 +143,10 @@ defmodule Vae.ApiTest do
   end
 
   test "handle event params on existing job seeker, update it" do
-    job_seeker =
-      %JobSeeker{
-        email: "foo@bar.com"
-      }
-      |> Vae.Repo.insert!()
+    %JobSeeker{
+      email: "foo@bar.com"
+    }
+    |> Vae.Repo.insert!()
 
     params = [
       %{
@@ -216,7 +215,7 @@ defmodule Vae.ApiTest do
       }
     ]
 
-    updated_job_seekers = Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
+    Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
 
     expected_events = [
       %Vae.Event{
@@ -272,7 +271,7 @@ defmodule Vae.ApiTest do
       }
     ]
 
-    updated_job_seekers = Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
+    Event.Api.new_email_event() |> Event.Api.handle_email_event(params)
 
     expected_events = [
       %Vae.Event{

@@ -44,6 +44,8 @@ defmodule Vae.Repo do
       end
     end
 
+    def format_delegate_for_index(nil), do: nil
+
     # TODO: extract this to a index service (duplicated code from Task.Index)
     def format_delegate_for_index(delegate) do
       delegate
