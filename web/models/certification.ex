@@ -1,6 +1,8 @@
 defmodule Vae.Certification do
   use Vae.Web, :model
   alias Vae.Repo.NewRelic, as: Repo
+
+  alias __MODULE__
   alias Vae.{CertificationDelegate, Certifier, Delegate, Rome}
 
   schema "certifications" do
@@ -135,6 +137,12 @@ defmodule Vae.Certification do
     Delegate
     |> where([d], d.id in ^delegates)
     |> Repo.all()
+  end
+
+  def search_by_rncp_id(rncp_id) do
+    from(c in Certification,
+      where: c.rncp_id == ^rncp_id
+    )
   end
 
   defp ensure_not_nil(certifications_delegates) do

@@ -69,6 +69,7 @@ config :algolia,
 
 config :vae,
   places_client: Vae.Places.Client.Algolia,
+  search_client: Vae.Search.Client.Algolia,
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailer_extractor_limit: 10_000,
   sender: Vae.Mailer.Sender.Mailjet
