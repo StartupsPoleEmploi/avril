@@ -11,7 +11,7 @@ defmodule Vae.CertificationTest do
     changeset =
       Certification.changeset(%Certification{}, %{
         label: "certification",
-        certifier_id: certifier.id
+        certifiers: [certifier.id]
       })
 
     certification =
@@ -28,7 +28,7 @@ defmodule Vae.CertificationTest do
     changeset =
       Certification.changeset(%Certification{}, %{
         label: "certification",
-        certifier_id: certifier_1.id
+        certifiers: [certifier_1.id]
       })
 
     certification =
@@ -37,7 +37,7 @@ defmodule Vae.CertificationTest do
 
     assert certification.delegates == certifier_1.delegates
 
-    update_changeset = Certification.changeset(certification, %{certifier_id: certifier_2.id})
+    update_changeset = Certification.changeset(certification, %{certifiers: [certifier_2.id]})
 
     updated_certification =
       Repo.update!(update_changeset)

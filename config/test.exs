@@ -38,10 +38,6 @@ config :vae,
     override_to: [%{Email: "x@gmail.com"}]
   }
 
-config :vae,
-  extractor: Vae.Mailer.FileExtractor.Mock,
-  sender: Vae.Mailer.Sender.Mock
-
 config :mailjex,
   api_base: "https://api.mailjet.com/v3.1",
   public_api_key: "myApiKey",

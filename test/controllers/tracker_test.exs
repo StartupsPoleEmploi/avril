@@ -119,7 +119,8 @@ defmodule Vae.TrackerTest do
   test "update visits with search tracking", %{conn: conn} do
     certification =
       %Vae.Certification{
-        label: "test certification"
+        label: "test certification",
+        description: "Certification description"
       }
       |> Vae.Repo.insert!()
 
