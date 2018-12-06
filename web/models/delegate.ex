@@ -86,8 +86,8 @@ defmodule Vae.Delegate do
         end
       )
 
-    # TODO: index after putting it to DB (not a changeset)
     struct
+    |> Repo.preload([:certifiers, :certifications_delegates])
     |> cast(params, [
       :name,
       :website,
