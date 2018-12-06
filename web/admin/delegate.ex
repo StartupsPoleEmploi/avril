@@ -34,7 +34,6 @@ defmodule Vae.ExAdmin.Delegate do
           :telephone,
           :email,
           :person_name,
-          :certifier,
           :process
         ]
       )
@@ -50,17 +49,75 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :telephone)
         input(delegate, :email)
         input(delegate, :person_name)
-        input(delegate, :certifier, collection: certifiers())
         input(delegate, :process, collection: processes())
+
+        certifiers_options_tags =
+          Certifier
+          |> Repo.all()
+          |> Enum.sort_by(fn certifier -> certifier.name end)
+          |> Enum.map(&option_tag(&1.id, "#{&1.name}", delegate.certifiers))
+
+        content do
+          form_select_tag("certifiers", "Certifiers", certifiers_options_tags)
+        end
+
+        javascript do
+          """
+          $(document).ready(function() {
+            $('#delegate_certifiers').multiSelect();
+          });
+          """
+        end
       end
     end
-  end
 
-  defp certifiers() do
-    Certifier |> Query.order_by(:name) |> Repo.all()
+    query do
+      %{
+        all: [
+          preload: [
+            certifiers: from(c in Certifier, order_by: c.name),
+            process: from(p in Process, order_by: p.name)
+          ]
+        ]
+      }
+    end
   end
 
   defp processes() do
     Process |> Query.order_by(:name) |> Repo.all()
+  end
+
+  defp form_select_tag(id, label, options) do
+    content_tag(
+      :div,
+      [
+        content_tag(
+          :label,
+          label,
+          class: "col-sm-2 control-label"
+        ),
+        content_tag(
+          :div,
+          content_tag(
+            :select,
+            options,
+            id: "delegate_#{id}",
+            name: "delegate[#{id}][]",
+            multiple: true
+          ),
+          class: "col-sm-10"
+        )
+      ],
+      class: "form-group"
+    )
+  end
+
+  defp option_tag(id, label, collection) do
+    content_tag(
+      :option,
+      label,
+      value: id,
+      selected: Ecto.assoc_loaded?(collection) && Enum.any?(collection, fn c -> c.id == id end)
+    )
   end
 end
