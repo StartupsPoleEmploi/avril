@@ -7,8 +7,8 @@ defmodule Vae.Repo.Migrations.AddCertifiersDelegatesManyToManyAssoc do
       add(:certifier_id, references(:certifiers))
     end
 
-    alter table(:delegates) do
-      remove(:certifier_id)
-    end
+    #    alter table(:delegates) do
+    #      remove(:certifier_id)
+    #    end
   end
 end
