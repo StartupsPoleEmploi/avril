@@ -76,7 +76,7 @@ defmodule Vae.Mixfile do
       {:new_relixir, "~> 0.4.1"},
       {:floki, "~> 0.19.0", only: :dev},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
-      {:algolia, "~> 0.6.5"},
+      {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.14.0"},
       {:quantum, "~> 2.2"},

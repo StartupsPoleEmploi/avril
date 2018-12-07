@@ -4,11 +4,16 @@ defmodule Vae.Certifier do
   alias Vae.{Certification, Delegate}
 
   schema "certifiers" do
-    field :name, :string
+    field(:name, :string)
 
-    has_many :certifications, Certification
+    has_many(:certifications, Certification)
 
-    has_many :delegates, Delegate
+    many_to_many(
+      :delegates,
+      Delegate,
+      join_through: "certifiers_delegates",
+      on_delete: :delete_all
+    )
 
     timestamps()
   end

@@ -48,8 +48,16 @@ defmodule Vae.Repo do
 
     # TODO: extract this to a index service (duplicated code from Task.Index)
     def format_delegate_for_index(delegate) do
+      delegate = delegate |> Vae.Repo.preload(:certifiers)
+
+      certifiers =
+        Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
+          [certifier.id | acc]
+        end)
+
       delegate
       |> Map.take(Vae.Delegate.__schema__(:fields))
+      |> Map.put(:certifiers, certifiers)
       |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
     end
   end

@@ -17,7 +17,7 @@ defmodule Vae.Search.Client.Algolia do
   defp build_certifier_filter(query, certifiers) do
     filter =
       certifiers
-      |> Enum.map(&"certifier_id=#{&1.id}")
+      |> Enum.map(&"certifiers=#{&1.id}")
       |> Enum.join(" OR ")
 
     [{:filters, filter} | query]
