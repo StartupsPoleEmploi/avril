@@ -43,15 +43,6 @@ defmodule Vae.Certification do
     timestamps()
   end
 
-  def get_certifications_by_certifier(certifier_id) do
-    from(c in Vae.Certification,
-      join: cc in "certifier_certifications",
-      on: c.id == cc.certification_id and cc.certifier_id == ^certifier_id,
-      select: c
-    )
-    |> Repo.all()
-  end
-
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
