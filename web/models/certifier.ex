@@ -6,7 +6,13 @@ defmodule Vae.Certifier do
   schema "certifiers" do
     field(:name, :string)
 
-    has_many(:certifications, Certification)
+    many_to_many(
+      :certifications,
+      Certification,
+      join_through: "certifier_certifications",
+      on_delete: :delete_all,
+      on_replace: :delete
+    )
 
     many_to_many(
       :delegates,
