@@ -50,7 +50,10 @@ defmodule Mix.Tasks.Delegate.AttachCertifiersToDelegate do
 
   def index(delegates) do
     with {:ok, _index_details} <-
-           Algolia.set_settings("delegate_tmp", %{"attributeForDistinct" => "name"}) do
+           Algolia.set_settings("delegate_tmp", %{
+             "attributeForDistinct" => "name",
+             "distinct" => 1
+           }) do
       Algolia.save_objects(
         "delegate_tmp",
         delegates
