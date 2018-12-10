@@ -136,6 +136,14 @@ defmodule Vae.Certification do
     )
   end
 
+  def from_certifier(certifier_id) do
+    from(c in Certification,
+      join: cc in "certifier_certifications",
+      on: c.id == cc.certification_id and cc.certifier_id == ^certifier_id,
+      select: c
+    )
+  end
+
   defp ensure_not_nil(certifications_delegates) do
     certifications_delegates
     |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)

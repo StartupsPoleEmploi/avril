@@ -101,8 +101,7 @@ defmodule Vae.Delegate do
     ])
     |> add_certifiers(params)
     |> link_certifications()
-
-    #     |> add_geolocation(params)
+    |> add_geolocation(params)
   end
 
   def add_certifiers(changeset, %{certifiers: certifiers}) do
@@ -123,10 +122,12 @@ defmodule Vae.Delegate do
       Enum.reduce(certifiers, [], fn
         %{action: :update, data: data}, acc ->
           [
-            Delegate.from_certifier(data.id)
+            Certification.from_certifier(data.id)
             |> Repo.all()
-            |> Enum.map(fn delegate ->
-              Ecto.build_assoc(changeset.data, :certifications_delegates, delegate_id: delegate.id)
+            |> Enum.map(fn certification ->
+              Ecto.build_assoc(changeset.data, :certifications_delegates,
+                certification_id: certification.id
+              )
             end)
             | acc
           ]
