@@ -20,7 +20,6 @@ defmodule Vae.Delegate do
     field(:city, :string)
     field(:administrative, :string)
 
-    belongs_to(:certifier, Certifier)
     belongs_to(:process, Process)
 
     has_many(
