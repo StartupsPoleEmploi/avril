@@ -20,7 +20,9 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     "Hauts-de-France",
     "Auvergne-Rhône-Alpes",
     "Nouvelle-Aquitaine",
-    "Grand-Est"
+    "Grand-Est",
+    "Pays-de-la-Loire",
+    "Normandie"
   ]
 
   def build_enumerable(path) do
