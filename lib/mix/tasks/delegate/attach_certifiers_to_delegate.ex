@@ -12,14 +12,8 @@ defmodule Mix.Tasks.Delegate.AttachCertifiersToDelegate do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
-    with delegates <- extract(),
-         updated_delegates <- attach_certifiers(delegates),
-         {:ok, _objects} <- index(updated_delegates),
-         {:ok, _details} <- move_index() do
-      Logger.info("Hey dude... all done !")
-    else
-      msg -> Logger.error(fn -> inspect(msg) end)
-    end
+    extract()
+    |> attach_certifiers()
   end
 
   def extract() do
@@ -47,21 +41,4 @@ defmodule Mix.Tasks.Delegate.AttachCertifiersToDelegate do
     end)
     |> Enum.map(&Repo.update!/1)
   end
-
-  def index(delegates) do
-    with {:ok, _index_details} <-
-           Algolia.set_settings("delegate_tmp", %{
-             "attributeForDistinct" => "name",
-             "distinct" => 1
-           }) do
-      Algolia.save_objects(
-        "delegate_tmp",
-        delegates
-        |> Enum.map(&Repo.NewRelic.format_delegate_for_index/1),
-        id_attribute: :id
-      )
-    end
-  end
-
-  def move_index(), do: Algolia.move_index("delegate_tmp", "delegate")
 end
