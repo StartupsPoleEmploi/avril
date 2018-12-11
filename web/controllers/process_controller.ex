@@ -60,42 +60,46 @@ defmodule Vae.ProcessController do
         certification_id -> Repo.get(Certification, certification_id) |> Repo.preload(:certifiers)
       end
 
-    delegates = get_delegates(certification, params["delegate_search"])
+    case get_delegates(certification, params["delegate_search"]) do
+      [head | _tail = []] ->
+        delegate = preload_process(head)
 
-    if length(delegates) > 1 do
-      delegate =
-        delegates
-        |> filter_delegates_from_postalcode(get_session(conn, :search_postcode))
-        |> filter_delegates_from_administrative_if_no_postcode_found(
-          get_session(conn, :search_administrative)
+        redirect(
+          conn,
+          to:
+            process_path(
+              conn,
+              :show,
+              delegate.process,
+              certification: certification,
+              delegate: delegate,
+              lat: params["delegate_search"]["lat"],
+              lng: params["delegate_search"]["lng"]
+            )
         )
-        |> select_near_delegate()
 
-      redirect(
-        conn,
-        to:
-          process_path(
-            conn,
-            :show,
-            delegate.process,
-            certification: certification,
-            delegate: delegate,
-            lat: params["delegate_search"]["lat"],
-            lng: params["delegate_search"]["lng"]
+      delegates ->
+        delegate =
+          delegates
+          |> filter_delegates_from_postalcode(get_session(conn, :search_postcode))
+          |> filter_delegates_from_administrative_if_no_postcode_found(
+            get_session(conn, :search_administrative)
           )
-      )
-    else
-      redirect(
-        conn,
-        to:
-          process_path(
-            conn,
-            :index,
-            certification: certification,
-            lat: params["delegate_search"]["lat"],
-            lng: params["delegate_search"]["lng"]
-          )
-      )
+          |> select_near_delegate()
+
+        redirect(
+          conn,
+          to:
+            process_path(
+              conn,
+              :show,
+              delegate.process,
+              certification: certification,
+              delegate: delegate,
+              lat: params["delegate_search"]["lat"],
+              lng: params["delegate_search"]["lng"]
+            )
+        )
     end
   end
 
