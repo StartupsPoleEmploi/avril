@@ -17,7 +17,7 @@ defmodule Vae.Search.Client.Algolia do
   def init(), do: %{filters: %{and: [], or: []}, query: [], aroundLatLng: []}
 
   def build_active_filter(query) do
-    add_and_filter(query, "is_active=true")
+    add_and_filter(query, "is_active:true")
   end
 
   def build_certifier_filter(query, certifiers) do
@@ -57,7 +57,7 @@ defmodule Vae.Search.Client.Algolia do
   defp build_filters(%{filters: []} = query), do: query
 
   defp build_filters(%{filters: %{or: or_filter, and: and_filter}}) do
-    [filters: "(#{Enum.join(or_filter, " OR ")}) AND (#{Enum.join(and_filter, " AND ")})"]
+    [filters: "(#{Enum.join(or_filter, " OR ")}) AND #{Enum.join(and_filter, " AND ")}"]
   end
 
   defp build_geo(%{aroundLatLng: []} = query), do: query
