@@ -8,7 +8,7 @@ defmodule Vae.Search.Client.AlgoliaTest do
     query = %{
       filters: %{
         and: [
-          "is_active=true"
+          "is_active:true"
         ],
         or: []
       },
@@ -59,7 +59,7 @@ defmodule Vae.Search.Client.AlgoliaTest do
     query = %{
       filters: %{
         and: [
-          "is_active=true"
+          "is_active:true"
         ],
         or: ["certifiers=1", "certifiers=2", "certifiers=3"]
       },
