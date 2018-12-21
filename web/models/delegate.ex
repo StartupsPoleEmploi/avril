@@ -97,7 +97,8 @@ defmodule Vae.Delegate do
       :is_active,
       :geolocation,
       :city,
-      :administrative
+      :administrative,
+      :process_id
     ])
     |> add_certifiers(params)
     |> link_certifications()
