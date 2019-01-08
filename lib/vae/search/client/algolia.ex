@@ -60,7 +60,7 @@ defmodule Vae.Search.Client.Algolia do
     [filters: "(#{Enum.join(or_filter, " OR ")}) AND #{Enum.join(and_filter, " AND ")}"]
   end
 
-  defp build_geo(%{aroundLatLng: []} = query), do: query
+  defp build_geo(%{aroundLatLng: []} = query), do: []
 
   defp build_geo(%{aroundLatLng: lat_lng}) do
     [aroundLatLng: lat_lng]
