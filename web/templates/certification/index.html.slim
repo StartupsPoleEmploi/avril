@@ -1,5 +1,5 @@
 .container
-  = if assigns[:search] && assigns[:no_results] && !@no_results do
+  = if !(assigns[:no_results] && @no_results) do
     .m-4
       h1.h4 Diplômes possibles
       / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
@@ -13,7 +13,7 @@
 
   .row
     .col-md-9
-      = if assigns[:search] && assigns[:no_results] && @no_results do
+      = if assigns[:no_results] && @no_results do
         = render("no-results.html")
       - else
         = if @page.total_entries == 0 do
