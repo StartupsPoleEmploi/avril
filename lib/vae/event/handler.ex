@@ -21,6 +21,10 @@ defmodule Vae.Event.Handler do
     {:ok, event_type}
   end
 
+  def handle_call({:handle_email_event, nil}, _from, event_type) do
+    {:reply, nil, event_type}
+  end
+
   def handle_call({:handle_email_event, events}, _from, event_type) do
     job_seekers = Event.update_job_seeker_from_events(event_type, events)
     {:reply, job_seekers, event_type}
