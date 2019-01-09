@@ -27,4 +27,10 @@ defmodule Vae.Rome do
     |> order_by(:code)
     |> Repo.all
   end
+
+  def format_for_index(delegate) do
+    delegate
+    |> Map.take(__schema__(:fields))
+    |> Map.drop([:inserted_at, :updated_at])
+  end
 end

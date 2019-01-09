@@ -17,12 +17,8 @@ defmodule Mix.Tasks.Delegate.Index do
 
   def index_delegates() do
     "delegate"
-    |> Algolia.save_objects(Delegate.all() |> Enum.map(&format_for_index/1), id_attribute: :id)
-  end
-
-  def format_for_index(delegate) do
-    delegate
-    |> Map.take(Delegate.__schema__(:fields))
-    |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
+    |> Algolia.save_objects(Delegate.all() |> Enum.map(&Delegate.format_for_index/1),
+      id_attribute: :id
+    )
   end
 end

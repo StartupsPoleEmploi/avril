@@ -1,9 +1,11 @@
 = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
   .input-group.suggest
-    = copy_to_field(f, :profession, "id", f, :rome_code)
-    = Vae.ComponentView.suggest_clean
-    = Vae.ComponentView.suggest(f, Plug.Conn.get_session(@conn, :search_job))
-    = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
+    / = copy_to_field(f, :profession, "id", f, :rome_code)
+    / = Vae.ComponentView.suggest_clean
+    / = Vae.ComponentView.suggest(f, Plug.Conn.get_session(@conn, :search_job))
+    / = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
+    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_job), placeholder: 'Essayez "truc"')
+    #hits
   .input-group.geolocation
     = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"')
     = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
@@ -16,3 +18,25 @@
   = submit class: "btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2" <> class_search, title: 'Valider la recherche', disabled: disabled_search do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
+
+javascript:
+  const searchClient = algoliasearch('VKO8QTO21W', '95ab665ab87f69716aeed890c795d816');
+
+  const search = instantsearch({
+    indexName: 'rome',
+    searchClient,
+  });
+
+  search.addWidget(
+    instantsearch.widgets.searchBox({
+      container: '#search_profession',
+    })
+  );
+
+  search.addWidget(
+    instantsearch.widgets.hits({
+      container: '#awesomplete_list_1',
+    })
+  );
+
+  search.start();
