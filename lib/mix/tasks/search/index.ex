@@ -4,7 +4,7 @@ defmodule Mix.Tasks.Search.Index do
   require Logger
   import Mix.Ecto
 
-  alias Vae.Repo
+  alias Vae.Delegate
 
   @moduledoc """
   Index DB entries for the given model.
@@ -50,7 +50,7 @@ defmodule Mix.Tasks.Search.Index do
       |> (fn model -> "#{get_index_name(model)}_tmp" end).()
       |> Algolia.save_objects(
         delegates
-        |> Enum.map(&Repo.NewRelic.format_delegate_for_index/1),
+        |> Enum.map(&Delegate.format_for_index/1),
         id_attribute: :id
       )
     end
