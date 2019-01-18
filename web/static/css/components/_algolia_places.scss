@@ -1,22 +1,21 @@
-.algolia-places {
-  .ap-input {
-    height: inherit;
+.ap-input, .ap-hint {
+  height: inherit;
+}
+
+.ap-hint {
+  opacity: .3;
+}
+
+.ap-input-icon.ap-icon-pin {
+  display: none;
+}
+
+.ap-suggestion {
+  > em {
+    font-size: inherit;
   }
 
-  .ap-input-icon.ap-icon-pin {
-    display: none;
-  }
-
-  .ap-dataset-places {
-    em {
-      @extend mark;
-      font-size: inherit;
-      font-style: normal;
-      font-weight: normal;
-    }
-
-    .administrative {
-      font-size: 12px;
-    }
+  .administrative {
+    font-size: 12px;
   }
 }

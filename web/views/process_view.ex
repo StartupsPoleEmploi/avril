@@ -42,7 +42,7 @@ defmodule Vae.ProcessView do
      """
      <script>
      window.delegate = #{delegate.id}
-     window.job = "#{Plug.Conn.get_session(conn, :search_job)}"
+     window.profession = "#{Plug.Conn.get_session(conn, :search_profession)}"
      window.certification = "#{certification.acronym} #{String.downcase(certification.label)}"
      window.county = "#{Plug.Conn.get_session(conn, :search_county)}"
      </script>

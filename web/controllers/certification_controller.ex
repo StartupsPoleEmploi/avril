@@ -20,7 +20,7 @@ defmodule Vae.CertificationController do
   def index(conn, params) do
     conn_updated =
       conn
-      |> put_session(:search_job, params["search"]["profession"])
+      |> put_session(:search_profession, params["search"]["profession"])
       |> put_session(:search_rome, params["search"]["rome_code"])
       |> put_session(:search_geo, params["search"]["geolocation_text"])
       |> put_session(:search_lat, params["search"]["lat"])

@@ -1,11 +1,7 @@
 = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
   .input-group.suggest
-    / = copy_to_field(f, :profession, "id", f, :rome_code)
-    / = Vae.ComponentView.suggest_clean
-    / = Vae.ComponentView.suggest(f, Plug.Conn.get_session(@conn, :search_job))
-    / = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
-    = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_job), placeholder: 'Essayez "truc"')
-    #hits
+    = search_input(f, :profession, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_profession), placeholder: 'Essayez "Boulanger"')
+    = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
   .input-group.geolocation
     = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"')
     = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
@@ -20,23 +16,26 @@
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
 
 javascript:
-  const searchClient = algoliasearch('VKO8QTO21W', '95ab665ab87f69716aeed890c795d816');
-
-  const search = instantsearch({
-    indexName: 'rome',
-    searchClient,
+  var client = algoliasearch('VKO8QTO21W', '95ab665ab87f69716aeed890c795d816');
+  var romes = client.initIndex('rome');
+  autocomplete('#search_profession', {
+    autoselect: true,
+    autoselectOnBlur: true,
+    debug: true,
+    cssClasses: {
+      prefix: 'ap'
+    }
+  }, [{
+    source: autocomplete.sources.hits(romes, { hitsPerPage: 3 }),
+    displayKey: 'label',
+    templates: {
+      suggestion: function(suggestion) {
+        return suggestion._highlightResult.label.value;
+      }
+    }
+  }]).on('autocomplete:selected', function(event, suggestion, dataset) {
+    $('#search_rome_code').val(suggestion.code)
+    // todo check geoloc pareil dans places
+    $('.dm-search-box button').removeClass('disabled')
+    $('.dm-search-box button').removeAttr('disabled')
   });
-
-  search.addWidget(
-    instantsearch.widgets.searchBox({
-      container: '#search_profession',
-    })
-  );
-
-  search.addWidget(
-    instantsearch.widgets.hits({
-      container: '#awesomplete_list_1',
-    })
-  );
-
-  search.start();
