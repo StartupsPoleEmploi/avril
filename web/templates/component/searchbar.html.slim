@@ -16,6 +16,8 @@
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
 
 javascript:
+  // TODO: pass to window appid et searchk_ey
+  // var client = algoliasearch(window.app_id, window.search_key);
   var client = algoliasearch('VKO8QTO21W', '95ab665ab87f69716aeed890c795d816');
   var romes = client.initIndex('rome');
   autocomplete('#search_profession', {
@@ -35,7 +37,8 @@ javascript:
     }
   }]).on('autocomplete:selected', function(event, suggestion, dataset) {
     $('#search_rome_code').val(suggestion.code)
-    // todo check geoloc pareil dans places
-    $('.dm-search-box button').removeClass('disabled')
-    $('.dm-search-box button').removeAttr('disabled')
+    if($('#search_lat').val()) {
+      $('.dm-search-box button').removeClass('disabled')
+      $('.dm-search-box button').removeAttr('disabled')
+    }
   });

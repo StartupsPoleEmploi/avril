@@ -145,6 +145,9 @@ defmodule Vae.ComponentView do
          suggestion: function(suggestion) {
            return suggestion.highlight.name + ' <span class="administrative">' + suggestion.administrative + '</span>';
          }
+       },
+       autocompleteOptions: {
+         hint: true
        }
      });
 
@@ -159,8 +162,10 @@ defmodule Vae.ComponentView do
        #{prefix}county.value = e.suggestion.county || e.suggestion.city || e.suggestion.name;
        #{prefix}postcode.value = e.suggestion.postcode;
        #{prefix}administrative.value = e.suggestion.administrative;
-       $('.dm-search-box button').removeClass('disabled')
-       $('.dm-search-box button').removeAttr('disabled')
+       if($('#search_rome_code').val()) {
+         $('.dm-search-box button').removeClass('disabled')
+         $('.dm-search-box button').removeAttr('disabled')
+       }
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {
