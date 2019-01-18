@@ -14,21 +14,18 @@
   = submit class: "btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2" <> class_search, title: 'Valider la recherche', disabled: disabled_search do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
-
+= render Vae.ComponentView, "searchbar_variables"
 javascript:
-  // TODO: pass to window appid et searchk_ey
-  // var client = algoliasearch(window.app_id, window.search_key);
-  var client = algoliasearch('VKO8QTO21W', '95ab665ab87f69716aeed890c795d816');
+  var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
   var romes = client.initIndex('rome');
   autocomplete('#search_profession', {
     autoselect: true,
     autoselectOnBlur: true,
-    debug: true,
     cssClasses: {
       prefix: 'ap'
     }
   }, [{
-    source: autocomplete.sources.hits(romes, { hitsPerPage: 3 }),
+    source: autocomplete.sources.hits(romes, { hitsPerPage: 4 }),
     displayKey: 'label',
     templates: {
       suggestion: function(suggestion) {

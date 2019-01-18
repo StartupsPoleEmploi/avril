@@ -58,7 +58,7 @@ defmodule Vae.Tracker do
   end
 
   def track({%Plug.Conn{request_path: path, path_info: path_info} = conn, {func, analytic}})
-      when path == "/" or path_info == ["professions", "_suggest"],
+      when path == "/",
       do: {:ok, analytic}
 
   def track({%Plug.Conn{request_path: "/"} = conn, {func, analytic}}),

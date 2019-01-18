@@ -3,7 +3,6 @@ defmodule Vae.CertificationController do
   use Vae.Web, :controller
 
   alias Vae.{Certification, Delegate, Rome}
-  alias Vae.Suggest
 
   @search_client Application.get_env(:vae, :search_client)
 
@@ -86,17 +85,6 @@ defmodule Vae.CertificationController do
             search: params["search"]
           )
         end
-    end
-  end
-
-  defp get_rome("", profession) do
-    {:ok, professions} = Suggest.get_suggest(profession)
-
-    professions
-    |> Enum.at(0)
-    |> case do
-      nil -> ""
-      professions -> professions |> Map.get("id")
     end
   end
 

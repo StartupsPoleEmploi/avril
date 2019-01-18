@@ -54,7 +54,6 @@ defmodule Vae.Router do
     get("/stats", PageController, :stats)
 
     get("/professions", ProfessionController, :index)
-    get("/professions/_suggest", ProfessionController, :suggest)
 
     resources("/romes", RomeController, only: [:index, :show])
     get("/romes/:id/certifications", RomeController, :certifications)

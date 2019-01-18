@@ -1,5 +1,11 @@
+.algolia-autocomplete, .algolia-places {
+  width: 100%;
+  background-color: white;
+}
+
 .ap-input, .ap-hint {
   height: inherit;
+  width: 100%;
 }
 
 .ap-hint {
