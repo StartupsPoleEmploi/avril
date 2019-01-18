@@ -2,23 +2,24 @@ defmodule Vae.Profession do
   use Vae.Web, :model
 
   schema "professions" do
-    field :label, :string
-    belongs_to :rome, Vae.Rome
+    field(:label, :string)
+    belongs_to(:rome, Vae.Rome)
     timestamps()
   end
 
   def search(query, nil) do
-    from p in query,
+    from(p in query,
       preload: [:rome]
+    )
   end
 
   def search(query, label) do
-    from p in query,
+    from(p in query,
       join: r in assoc(p, :rome),
-      where: ilike(p.label, ^"%#{label}%") or
-             ilike(r.label, ^"%#{label}%"),
+      where: ilike(p.label, ^"%#{label}%") or ilike(r.label, ^"%#{label}%"),
       order_by: [asc: :label],
       preload: [:rome]
+    )
   end
 
   @doc """
@@ -31,5 +32,12 @@ defmodule Vae.Profession do
     |> validate_required([:label])
     |> unique_constraint(:label)
     |> assoc_constraint(:rome)
+  end
+
+  def format_for_index(struct) do
+    struct
+    |> Map.take(__schema__(:fields))
+    |> Map.put_new(:rome_code, struct.rome.code)
+    |> Map.drop([:inserted_at, :updated_at])
   end
 end

@@ -17,7 +17,7 @@
 = render Vae.ComponentView, "searchbar_variables"
 javascript:
   var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
-  var romes = client.initIndex('rome');
+  var professions = client.initIndex('professions');
   autocomplete('#search_profession', {
     autoselect: true,
     autoselectOnBlur: true,
@@ -25,7 +25,7 @@ javascript:
       prefix: 'ap'
     }
   }, [{
-    source: autocomplete.sources.hits(romes, { hitsPerPage: 4 }),
+    source: autocomplete.sources.hits(professions, { hitsPerPage: 4 }),
     displayKey: 'label',
     templates: {
       suggestion: function(suggestion) {
@@ -33,7 +33,8 @@ javascript:
       }
     }
   }]).on('autocomplete:selected', function(event, suggestion, dataset) {
-    $('#search_rome_code').val(suggestion.code)
+    console.log(suggestion);
+    $('#search_rome_code').val(suggestion.rome_code)
     if($('#search_lat').val()) {
       $('.dm-search-box button').removeClass('disabled')
       $('.dm-search-box button').removeAttr('disabled')

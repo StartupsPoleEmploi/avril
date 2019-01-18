@@ -9,41 +9,53 @@ defmodule Vae.Repo do
     alias Vae.Delegate
     alias Vae.Repo
     alias Vae.Rome
+    alias Vae.Profession
 
-    # TODO: clean this dirty things
+    # TODO: @nresni on peut pas passer en const ? genre
+    # @entities [Delegate, Profession, Rome]
+
     defoverridable update: 2, update!: 2, insert: 2, insert!: 2, delete: 2, delete!: 2
 
     def insert(struct, opts) do
       case Repo.insert(struct, opts) do
-        {:ok, %type{} = inserted} when type in [Delegate, Rome] -> save_object_index(inserted)
-        t -> t
+        {:ok, %type{} = inserted} when type in [Delegate, Profession, Rome] ->
+          save_object_index(inserted)
+
+        t ->
+          t
       end
     end
 
     def insert!(struct, opts) do
       case Repo.insert!(struct, opts) do
-        %type{} = inserted when type in [Delegate, Rome] -> save_object_index!(inserted)
-        t -> t
+        %type{} = inserted when type in [Delegate, Profession, Rome] ->
+          save_object_index!(inserted)
+
+        t ->
+          t
       end
     end
 
     def update(struct, opts) do
       case Repo.update(struct, opts) do
-        {:ok, %type{} = updated} when type in [Delegate, Rome] -> save_object_index(updated)
-        t -> t
+        {:ok, %type{} = updated} when type in [Delegate, Profession, Rome] ->
+          save_object_index(updated)
+
+        t ->
+          t
       end
     end
 
     def update!(struct, opts) do
       case Repo.update!(struct, opts) do
-        %type{} = updated when type in [Delegate, Rome] -> save_object_index!(updated)
+        %type{} = updated when type in [Delegate, Profession, Rome] -> save_object_index!(updated)
         t -> t
       end
     end
 
     def delete(struct, opts) do
       case Repo.delete(struct, opts) do
-        {:ok, %type{} = deleted} when type in [Delegate, Rome] ->
+        {:ok, %type{} = deleted} when type in [Delegate, Profession, Rome] ->
           {:ok, delete_object_index(deleted)}
 
         t ->
@@ -53,8 +65,11 @@ defmodule Vae.Repo do
 
     def delete!(struct, opts) do
       case Repo.delete!(struct, opts) do
-        %type{} = deleted when type in [Delegate, Rome] -> delete_object_index(deleted)
-        t -> t
+        %type{} = deleted when type in [Delegate, Profession, Rome] ->
+          delete_object_index(deleted)
+
+        t ->
+          t
       end
     end
 
