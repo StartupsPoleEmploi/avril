@@ -98,6 +98,8 @@ defmodule Vae.ComponentView do
          }
        },
        autocompleteOptions: {
+         autoselect: true,
+         autoselectOnBlur: true,
          hint: true
        }
      });

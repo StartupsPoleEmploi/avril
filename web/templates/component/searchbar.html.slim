@@ -25,7 +25,7 @@ javascript:
       prefix: 'ap'
     }
   }, [{
-    source: autocomplete.sources.hits(professions, { hitsPerPage: 4 }),
+    source: autocomplete.sources.hits(professions, { hitsPerPage: 4, queryType: 'prefixAll' }),
     displayKey: 'label',
     templates: {
       suggestion: function(suggestion) {
