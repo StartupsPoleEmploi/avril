@@ -33,7 +33,6 @@ javascript:
       }
     }
   }]).on('autocomplete:selected', function(event, suggestion, dataset) {
-    console.log(suggestion);
     $('#search_rome_code').val(suggestion.rome_code)
     if($('#search_lat').val()) {
       $('.dm-search-box button').removeClass('disabled')
