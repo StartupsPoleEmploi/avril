@@ -2,6 +2,7 @@ defmodule Mix.Tasks.Profession.Index do
   use Mix.Task
 
   import Mix.Ecto
+  import Ecto.Query, only: [from: 2]
 
   alias Vae.Repo
   alias Vae.Profession
@@ -16,10 +17,19 @@ defmodule Mix.Tasks.Profession.Index do
   end
 
   def index() do
+    # TODO: Remove this when no more limitations from algolia 
+    query =
+      from(p in Profession,
+        join: r in "rome_certifications",
+        on: p.rome_id == r.rome_id,
+        group_by: p.id,
+        select: p
+      )
+
+    professions = Repo.all(query)
+
     objects =
-      Profession.all()
-      # TODO remove when no limit
-      |> Enum.take(8000)
+      professions
       |> Repo.preload(:rome)
       |> Enum.map(&Profession.format_for_index/1)
 
