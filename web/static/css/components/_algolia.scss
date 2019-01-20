@@ -1,6 +1,9 @@
 .algolia-autocomplete, .algolia-places {
   width: 100%;
   background-color: white;
+  a:after {
+   content: none !important;
+  }
 }
 
 .ap-input, .ap-hint {

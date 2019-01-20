@@ -16,7 +16,8 @@ defmodule Mix.Tasks.Rome.Index do
   end
 
   def index_romes() do
-    "romes"
-    |> Algolia.save_objects(Rome.all() |> Enum.map(&Rome.format_for_index/1), id_attribute: :id)
+    objects = Enum.map(Rome.all(), &Rome.format_for_index/1)
+
+    Algolia.save_objects("romes", objects, id_attribute: :id)
   end
 end
