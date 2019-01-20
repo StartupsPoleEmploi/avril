@@ -70,13 +70,12 @@ $(function() {
     // Ajout d'un aide à la compréhesion de qui controle quoi
     $('#search_geolocation_text').attr('aria-controls', 'algolia-places-listbox-0');
 
-    $('#search_profession').attr('aria-controls', 'awesomplete_list_1');
-    $('#search_profession').attr('aria-expanded', 'false');
-    $('#search_profession').attr('aria-activedescendant', '');
-    $('#search_profession').attr('aria-readonly', 'true');
+    $('#search_query').attr('aria-controls', 'algolia-autocomplete-listbox-0');
+    $('#search_query').attr('aria-activedescendant', '');
+    $('#search_query').attr('aria-readonly', 'true');
 
-    $('#awesomplete_list_1').attr('aria-label', 'liste des métiers issus des RNCP');
-    $('#awesomplete_list_1').attr('aria-selected', 'false');
+    $('#algolia-autocomplete-listbox-0').attr('aria-label', 'liste des métiers ou diplomes');
+    $('#algolia-autocomplete-listbox-0').attr('aria-selected', 'false');
   }, 200);
 
   var showChar = 300;

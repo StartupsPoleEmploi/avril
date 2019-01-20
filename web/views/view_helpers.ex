@@ -68,8 +68,16 @@ defmodule Vae.ViewHelpers do
 
   def add_delegate_suffix(count, certification) do
     count <>
-      " pour <strong>#{certification.acronym} #{String.downcase(certification.label)}<strong>"
+      " pour <strong>#{format_certification_label(certification)}<strong>"
   end
 
   def not_nil?(map, term), do: Map.get(map, term) != nil
+
+  def format_certification_label(%{acronym: nil, label: label}) do
+    label
+  end
+
+  def format_certification_label(%{acronym: acronym, label: label}) do
+    "#{acronym} #{label}"
+  end
 end

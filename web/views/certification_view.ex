@@ -32,8 +32,4 @@ defmodule Vae.CertificationView do
     certification
     |> Repo.all()
   end
-
-  def formatted_name(certification) do
-    "#{certification.acronym} #{String.downcase(certification.label)}"
-  end
 end

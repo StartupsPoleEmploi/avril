@@ -44,14 +44,14 @@ javascript:
     displayKey: function(suggestion) {
       var acronym = suggestion.acronym;
       var label = suggestion.label;
-      return `${acronym} ${label}`;
+      return acronym ? `${acronym} ${label}` : label;
     },
     templates: {
       header: '<div class="ap-suggestions-category">Dîplomes</div>',
       suggestion: function(suggestion) {
-        var acronym = suggestion._highlightResult.acronym.value;
+        var acronym = suggestion._highlightResult.acronym && suggestion._highlightResult.acronym.value;
         var label = suggestion._highlightResult.label.value;
-        return `${acronym} ${label}`;
+        return acronym ? `${acronym} ${label}` : label;
       }
     }
   }, {
