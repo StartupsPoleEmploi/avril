@@ -6,6 +6,7 @@ defmodule Vae.Repo do
     use NewRelixir.Plug.Repo, repo: Vae.Repo
     use Scrivener, page_size: 20
 
+    alias Vae.Certification
     alias Vae.Delegate
     alias Vae.Repo
     alias Vae.Rome
@@ -18,7 +19,7 @@ defmodule Vae.Repo do
 
     def insert(struct, opts) do
       case Repo.insert(struct, opts) do
-        {:ok, %type{} = inserted} when type in [Delegate, Profession, Rome] ->
+        {:ok, %type{} = inserted} when type in [Certification, Delegate, Profession, Rome] ->
           save_object_index(inserted)
 
         t ->
@@ -28,7 +29,7 @@ defmodule Vae.Repo do
 
     def insert!(struct, opts) do
       case Repo.insert!(struct, opts) do
-        %type{} = inserted when type in [Delegate, Profession, Rome] ->
+        %type{} = inserted when type in [Certification, Delegate, Profession, Rome] ->
           save_object_index!(inserted)
 
         t ->
@@ -38,7 +39,7 @@ defmodule Vae.Repo do
 
     def update(struct, opts) do
       case Repo.update(struct, opts) do
-        {:ok, %type{} = updated} when type in [Delegate, Profession, Rome] ->
+        {:ok, %type{} = updated} when type in [Certification, Delegate, Profession, Rome] ->
           save_object_index(updated)
 
         t ->
@@ -48,14 +49,14 @@ defmodule Vae.Repo do
 
     def update!(struct, opts) do
       case Repo.update!(struct, opts) do
-        %type{} = updated when type in [Delegate, Profession, Rome] -> save_object_index!(updated)
+        %type{} = updated when type in [Certification, Delegate, Profession, Rome] -> save_object_index!(updated)
         t -> t
       end
     end
 
     def delete(struct, opts) do
       case Repo.delete(struct, opts) do
-        {:ok, %type{} = deleted} when type in [Delegate, Profession, Rome] ->
+        {:ok, %type{} = deleted} when type in [Certification, Delegate, Profession, Rome] ->
           {:ok, delete_object_index(deleted)}
 
         t ->
@@ -65,7 +66,7 @@ defmodule Vae.Repo do
 
     def delete!(struct, opts) do
       case Repo.delete!(struct, opts) do
-        %type{} = deleted when type in [Delegate, Profession, Rome] ->
+        %type{} = deleted when type in [Certification, Delegate, Profession, Rome] ->
           delete_object_index(deleted)
 
         t ->
