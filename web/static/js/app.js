@@ -27,8 +27,8 @@ import "url-search-params"
 
 $(function() {
   // Search labels
-  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_profession");
-  $("#search_profession").parent().addClass('form-label-group');
+  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_query");
+  $("#search_query").parent().addClass('form-label-group');
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
   $("#search_geolocation_text").parent().addClass('form-label-group');
 
@@ -74,7 +74,6 @@ $(function() {
     $('#search_profession').attr('aria-expanded', 'false');
     $('#search_profession').attr('aria-activedescendant', '');
     $('#search_profession').attr('aria-readonly', 'true');
-    $('#search_profession').attr('autocomplete', 'off');
 
     $('#awesomplete_list_1').attr('aria-label', 'liste des métiers issus des RNCP');
     $('#awesomplete_list_1').attr('aria-selected', 'false');
@@ -151,7 +150,7 @@ $(window).scroll(function() {
 });
 
 $(window).on('resize', function() {
-  $('#label_search_profession').text(stepLabel($(window).width()));
+  $('#label_search_query').text(stepLabel($(window).width()));
 });
 
 function stepLabel(width) {

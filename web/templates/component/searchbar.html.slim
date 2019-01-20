@@ -1,7 +1,9 @@
 = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
   .input-group.suggest
-    = search_input(f, :profession, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_profession), placeholder: 'Essayez "Boulanger"')
+    = search_input(f, :query, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_query), placeholder: 'Essayez "Boulanger" ou "CAP Coiffeur"')
+    = hidden_input(f, :profession, value: Plug.Conn.get_session(@conn, :search_profession))
     = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
+    = hidden_input(f, :certification, value: Plug.Conn.get_session(@conn, :search_certification))
   .input-group.geolocation
     = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"')
     = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
@@ -9,16 +11,16 @@
     = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
     = hidden_input(f, :postcode, value: Plug.Conn.get_session(@conn, :search_postcode))
     = hidden_input(f, :administrative, value: Plug.Conn.get_session(@conn, :search_administrative))
-    - disabled_search = is_nil(Plug.Conn.get_session(@conn, :search_lat)) or is_nil(Plug.Conn.get_session(@conn, :search_lng))
-    - class_search = if (disabled_search), do: " disabled", else: ""
-  = submit class: "btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2" <> class_search, title: 'Valider la recherche', disabled: disabled_search do
+  = submit class: "btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2", title: 'Valider la recherche' do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
 = render Vae.ComponentView, "searchbar_variables"
 javascript:
   var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
   var professions = client.initIndex('professions');
-  autocomplete('#search_profession', {
+  var certifications = client.initIndex('certifications');
+  var romes = client.initIndex('romes');
+  autocomplete('#search_query', {
     autoselect: true,
     autoselectOnBlur: true,
     cssClasses: {
@@ -26,16 +28,58 @@ javascript:
     }
   }, [{
     source: autocomplete.sources.hits(professions, { hitsPerPage: 4, queryType: 'prefixAll' }),
-    displayKey: 'label',
+    displayKey: function(suggestion) {
+      var label = suggestion.label;
+      return label;
+    },
     templates: {
+      header: '<div class="ap-suggestions-category">Métiers</div>',
       suggestion: function(suggestion) {
-        return suggestion._highlightResult.label.value;
+        var label = suggestion._highlightResult.label.value;
+        return label;
+      }
+    }
+  }, {
+    source: autocomplete.sources.hits(certifications, { hitsPerPage: 3, queryType: 'prefixAll' }),
+    displayKey: function(suggestion) {
+      var acronym = suggestion.acronym;
+      var label = suggestion.label;
+      return `${acronym} ${label}`;
+    },
+    templates: {
+      header: '<div class="ap-suggestions-category">Dîplomes</div>',
+      suggestion: function(suggestion) {
+        var acronym = suggestion._highlightResult.acronym.value;
+        var label = suggestion._highlightResult.label.value;
+        return `${acronym} ${label}`;
+      }
+    }
+  }, {
+    source: autocomplete.sources.hits(romes, { hitsPerPage: 1, queryType: 'prefixAll' }),
+    displayKey: function(suggestion) {
+      var code = suggestion.code;
+      var label = suggestion.label;
+      return `${label} (${code})`;
+    },
+    templates: {
+      header: '<div class="ap-suggestions-category">Romes</div>',
+      suggestion: function(suggestion) {
+        var code = suggestion._highlightResult.code.value;
+        var label = suggestion._highlightResult.label.value;
+        return `${label} (${code})`;
       }
     }
   }]).on('autocomplete:selected', function(event, suggestion, dataset) {
-    $('#search_rome_code').val(suggestion.rome_code)
-    if($('#search_lat').val()) {
-      $('.dm-search-box button').removeClass('disabled')
-      $('.dm-search-box button').removeAttr('disabled')
+    if(dataset === 1) {
+      $('#search_rome_code').val(suggestion.rome_code);
+      $('#search_certification').val('');
+    }
+    if(dataset === 3) {
+      $('#search_rome_code').val(suggestion.code);
+      $('#search_certification').val('');
+    }
+    if(dataset === 2) {
+      $('#search_rome_code').val('');
+      $('#search_certification').val(suggestion.id);
     }
   });

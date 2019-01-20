@@ -17,21 +17,41 @@ defmodule Vae.CertificationController do
   end
 
   def index(conn, params) do
-    conn_updated =
-      conn
-      |> put_session(:search_profession, params["search"]["profession"])
-      |> put_session(:search_rome, params["search"]["rome_code"])
-      |> put_session(:search_geo, params["search"]["geolocation_text"])
-      |> put_session(:search_lat, params["search"]["lat"])
-      |> put_session(:search_lng, params["search"]["lng"])
-      |> put_session(:search_county, params["search"]["county"])
-      |> put_session(:search_postcode, params["search"]["postcode"])
-      |> put_session(:search_administrative, params["search"]["administrative"])
+    conn_updated = save_search_to_session(conn, params)
 
-    case params["search"]["rome_code"] do
-      nil -> redirections(conn_updated, params)
-      _ -> search_by_rome(conn_updated, params)
+    if is_nil(params["search"]) do
+      redirections(conn_updated, params)
+    else
+      if String.length(params["search"]["rome_code"]) > 0 do
+        search_by_rome(conn_updated, params)
+      else
+        redirect(
+          conn_updated,
+          to:
+            process_path(
+              conn,
+              :index,
+              certification: params["search"]["certification"],
+              lat: params["search"]["lat"],
+              lng: params["search"]["lng"]
+            )
+        )
+      end
     end
+  end
+
+  defp save_search_to_session(conn, params) do
+    conn
+    |> put_session(:search_query, params["search"]["query"])
+    |> put_session(:search_profession, params["search"]["profession"])
+    |> put_session(:search_certification, params["search"]["certification"])
+    |> put_session(:search_rome, params["search"]["rome_code"])
+    |> put_session(:search_geo, params["search"]["geolocation_text"])
+    |> put_session(:search_lat, params["search"]["lat"])
+    |> put_session(:search_lng, params["search"]["lng"])
+    |> put_session(:search_county, params["search"]["county"])
+    |> put_session(:search_postcode, params["search"]["postcode"])
+    |> put_session(:search_administrative, params["search"]["administrative"])
   end
 
   defp list(conn, params) do
