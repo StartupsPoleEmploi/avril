@@ -65,7 +65,8 @@ config :new_relixir,
 
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
-  api_key: System.get_env("ALGOLIA_API_KEY")
+  api_key: System.get_env("ALGOLIA_API_KEY"),
+  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
 
 config :vae,
   places_client: Vae.Places.Client.Algolia,

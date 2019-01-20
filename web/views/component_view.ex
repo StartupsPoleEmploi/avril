@@ -1,65 +1,6 @@
 defmodule Vae.ComponentView do
   use Vae.Web, :view
 
-  import PhoenixFormAwesomplete
-
-  def suggest_clean do
-    script("""
-      var accents = "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž",
-      accentsOut = "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz",
-      accentsIndex = function(str) { return accents.indexOf(str) },
-      removeAccents = function(str) {
-        str = str.split('');
-        var strLen = str.length;
-        var i, x;
-        for (i = 0; i < strLen; i++) {
-          if ((x = accentsIndex(str[i])) != -1) {
-            str[i] = accentsOut[x];
-          }
-        }
-        return str.join('');
-      },
-      filterWords = function(data, input) {
-        return data;
-      },
-      itemWords = function(text, input) {
-        var clean_text = text.replace(/[-]/g, " "),
-        clean_input = input.replace(/[-]/g, " ");
-
-        if(accentsIndex(input) != -1)
-          text = AwesompleteUtil.mark(removeAccents(clean_text), removeAccents(clean_input));
-        else
-          text = AwesompleteUtil.mark(clean_text, clean_input);
-
-        return AwesompleteUtil.item(text, input);
-      };
-    """)
-  end
-
-  def suggest(form, value) do
-    awesomplete(
-      form,
-      :profession,
-      [
-        class: "form-control form-control-lg",
-        onfocus: "this.value='';",
-        required: true,
-        placeholder: 'Essayez "Boulanger"',
-        value: value,
-        title: "Utilisez les flèches haut bas pour naviguer dans les suggestions"
-      ],
-      %{
-        url: "/professions/_suggest?search[for]=",
-        value: "value",
-        limit: 4,
-        autoFirst: true,
-        filter: "filterWords",
-        item: "itemWords",
-        sort: false
-      }
-    )
-  end
-
   def render("analytics", %{conn: conn}) do
     dimension1 =
       case conn.remote_ip do
@@ -110,6 +51,16 @@ defmodule Vae.ComponentView do
      """}
   end
 
+  def render("searchbar_variables", _) do
+    {:safe,
+     """
+     <script>
+     window.algolia_app_id = '#{Application.get_env(:algolia, :application_id)}'
+     window.algolia_search_api_key = '#{Application.get_env(:algolia, :search_api_key)}'
+     </script>
+     """}
+  end
+
   def render("places", %{tag: tag, prefix: prefix, type: type}) do
     type_requested =
       case type do
@@ -145,6 +96,11 @@ defmodule Vae.ComponentView do
          suggestion: function(suggestion) {
            return suggestion.highlight.name + ' <span class="administrative">' + suggestion.administrative + '</span>';
          }
+       },
+       autocompleteOptions: {
+         autoselect: true,
+         autoselectOnBlur: true,
+         hint: true
        }
      });
 
@@ -159,8 +115,10 @@ defmodule Vae.ComponentView do
        #{prefix}county.value = e.suggestion.county || e.suggestion.city || e.suggestion.name;
        #{prefix}postcode.value = e.suggestion.postcode;
        #{prefix}administrative.value = e.suggestion.administrative;
-       $('.dm-search-box button').removeClass('disabled')
-       $('.dm-search-box button').removeAttr('disabled')
+       if($('#search_rome_code').val()) {
+         $('.dm-search-box button').removeClass('disabled')
+         $('.dm-search-box button').removeAttr('disabled')
+       }
      });
 
      placesAutocomplete#{prefix}.on('clear', function() {

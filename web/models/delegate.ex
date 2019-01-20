@@ -169,4 +169,20 @@ defmodule Vae.Delegate do
   end
 
   defp add_geolocation(changeset, _params), do: changeset
+
+  def format_for_index(nil), do: nil
+
+  def format_for_index(delegate) do
+    delegate = delegate |> Repo.preload(:certifiers)
+
+    certifiers =
+      Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
+        [certifier.id | acc]
+      end)
+
+    delegate
+    |> Map.take(Delegate.__schema__(:fields))
+    |> Map.put(:certifiers, certifiers)
+    |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
+  end
 end

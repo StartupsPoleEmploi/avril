@@ -73,7 +73,7 @@ function contact(event) {
       body: Object.assign({}, contactData, {
         delegate: window.delegate,
         certification: window.certification,
-        job: window.job,
+        job: window.profession,
         county: window.county
       })
     })

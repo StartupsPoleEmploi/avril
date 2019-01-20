@@ -6,59 +6,108 @@ defmodule Vae.Repo do
     use NewRelixir.Plug.Repo, repo: Vae.Repo
     use Scrivener, page_size: 20
 
-    # TODO: clean this dirty things
+    alias Vae.Delegate
+    alias Vae.Repo
+    alias Vae.Rome
+    alias Vae.Profession
+
+    # TODO: @nresni on peut pas passer en const ? genre
+    # @entities [Delegate, Profession, Rome]
+
     defoverridable update: 2, update!: 2, insert: 2, insert!: 2, delete: 2, delete!: 2
 
     def insert(struct, opts) do
-      with {:ok, delegate = %Vae.Delegate{}} <- Vae.Repo.insert(struct, opts),
-           {:format, delegate_to_index} <- {:format, format_delegate_for_index(delegate)} do
-        "delegate"
-        |> Algolia.save_object(delegate_to_index, id_attribute: :id)
+      case Repo.insert(struct, opts) do
+        {:ok, %type{} = inserted} when type in [Delegate, Profession, Rome] ->
+          save_object_index(inserted)
 
-        {:ok, delegate}
-      else
-        {:format, error} -> Logger.warn(fn -> inspect(error) end)
-        t -> t
+        t ->
+          t
+      end
+    end
+
+    def insert!(struct, opts) do
+      case Repo.insert!(struct, opts) do
+        %type{} = inserted when type in [Delegate, Profession, Rome] ->
+          save_object_index!(inserted)
+
+        t ->
+          t
       end
     end
 
     def update(struct, opts) do
-      with {:ok, delegate = %Vae.Delegate{}} <- Vae.Repo.update(struct, opts),
-           {:format, delegate_to_index} <- {:format, format_delegate_for_index(delegate)} do
-        "delegate"
-        |> Algolia.save_object(delegate_to_index, id_attribute: :id)
+      case Repo.update(struct, opts) do
+        {:ok, %type{} = updated} when type in [Delegate, Profession, Rome] ->
+          save_object_index(updated)
 
-        {:ok, delegate}
-      else
-        {:format, error} -> Logger.warn(fn -> inspect(error) end)
+        t ->
+          t
+      end
+    end
+
+    def update!(struct, opts) do
+      case Repo.update!(struct, opts) do
+        %type{} = updated when type in [Delegate, Profession, Rome] -> save_object_index!(updated)
         t -> t
       end
     end
 
     def delete(struct, opts) do
-      with {:ok, delegate = %Vae.Delegate{}} <- Vae.Repo.delete(struct, opts) do
-        "delegate"
-        |> Algolia.delete_object(delegate.id)
+      case Repo.delete(struct, opts) do
+        {:ok, %type{} = deleted} when type in [Delegate, Profession, Rome] ->
+          {:ok, delete_object_index(deleted)}
 
-        {:ok, delegate}
+        t ->
+          t
       end
     end
 
-    def format_delegate_for_index(nil), do: nil
+    def delete!(struct, opts) do
+      case Repo.delete!(struct, opts) do
+        %type{} = deleted when type in [Delegate, Profession, Rome] ->
+          delete_object_index(deleted)
 
-    # TODO: extract this to a index service (duplicated code from Task.Index)
-    def format_delegate_for_index(delegate) do
-      delegate = delegate |> Vae.Repo.preload(:certifiers)
+        t ->
+          t
+      end
+    end
 
-      certifiers =
-        Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
-          [certifier.id | acc]
-        end)
+    defp save_object_index(%type{} = struct) do
+      with {:format, struct_to_index} <- {:format, type.format_for_index(struct)} do
+        type
+        |> index_name()
+        |> Algolia.save_object(struct_to_index, id_attribute: :id)
 
-      delegate
-      |> Map.take(Vae.Delegate.__schema__(:fields))
-      |> Map.put(:certifiers, certifiers)
-      |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
+        {:ok, struct}
+      else
+        {:format, error} ->
+          Logger.warn(fn -> inspect(error) end)
+          {:error, "format error"}
+      end
+    end
+
+    defp save_object_index!(struct) do
+      case save_object_index(struct) do
+        {:ok, value} -> value
+        {:error, error} -> raise error
+      end
+    end
+
+    defp delete_object_index(%type{} = struct) do
+      type
+      |> index_name()
+      |> Algolia.delete_object(struct.id)
+
+      struct
+    end
+
+    defp index_name(type) do
+      type
+      |> to_string()
+      |> String.split(".")
+      |> List.last()
+      |> String.downcase()
     end
   end
 end

@@ -3,12 +3,16 @@ defmodule Vae.Rome do
   alias Vae.Repo.NewRelic, as: Repo
 
   schema "romes" do
-    field :code, :string
-    field :label, :string
-    field :url, :string
+    field(:code, :string)
+    field(:label, :string)
+    field(:url, :string)
 
-    has_many :professions, Vae.Profession
-    many_to_many :certifications, Vae.Certification, join_through: "rome_certifications", on_delete: :delete_all
+    has_many(:professions, Vae.Profession)
+
+    many_to_many(:certifications, Vae.Certification,
+      join_through: "rome_certifications",
+      on_delete: :delete_all
+    )
 
     timestamps()
   end
@@ -25,6 +29,12 @@ defmodule Vae.Rome do
   def all do
     __MODULE__
     |> order_by(:code)
-    |> Repo.all
+    |> Repo.all()
+  end
+
+  def format_for_index(struct) do
+    struct
+    |> Map.take(__schema__(:fields))
+    |> Map.drop([:inserted_at, :updated_at])
   end
 end

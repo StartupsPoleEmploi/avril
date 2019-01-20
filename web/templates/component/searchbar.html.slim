@@ -1,8 +1,6 @@
 = form_for @conn, certification_path(@conn, :index), [as: :search, method: "get", id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
   .input-group.suggest
-    = copy_to_field(f, :profession, "id", f, :rome_code)
-    = Vae.ComponentView.suggest_clean
-    = Vae.ComponentView.suggest(f, Plug.Conn.get_session(@conn, :search_job))
+    = search_input(f, :profession, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_profession), placeholder: 'Essayez "Boulanger"')
     = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
   .input-group.geolocation
     = search_input(f, :geolocation_text, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Essayez "Paris"')
@@ -16,3 +14,28 @@
   = submit class: "btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2" <> class_search, title: 'Valider la recherche', disabled: disabled_search do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
+= render Vae.ComponentView, "searchbar_variables"
+javascript:
+  var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
+  var professions = client.initIndex('professions');
+  autocomplete('#search_profession', {
+    autoselect: true,
+    autoselectOnBlur: true,
+    cssClasses: {
+      prefix: 'ap'
+    }
+  }, [{
+    source: autocomplete.sources.hits(professions, { hitsPerPage: 4, queryType: 'prefixAll' }),
+    displayKey: 'label',
+    templates: {
+      suggestion: function(suggestion) {
+        return suggestion._highlightResult.label.value;
+      }
+    }
+  }]).on('autocomplete:selected', function(event, suggestion, dataset) {
+    $('#search_rome_code').val(suggestion.rome_code)
+    if($('#search_lat').val()) {
+      $('.dm-search-box button').removeClass('disabled')
+      $('.dm-search-box button').removeAttr('disabled')
+    }
+  });

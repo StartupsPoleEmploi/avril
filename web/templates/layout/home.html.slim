@@ -13,6 +13,8 @@ html{lang="fr"}
     script src=static_path(@conn,"/js/app.js")
     script src=static_path(@conn,"/js/vendor.js")
     script src="https://cdn.jsdelivr.net/npm/places.js@1.14.0"
+    script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"
+    script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
     <script>window.disableGa = function() {window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;};</script>
