@@ -16,7 +16,7 @@ defmodule Mix.Tasks.Certification.Index do
   end
 
   def index_romes() do
-    objects = Enum.map(Certification.all(), &Certification.format_for_index/1) |> Enum.take(2)
+    objects = Enum.map(Certification.all(), &Certification.format_for_index/1)
 
     Algolia.save_objects("certifications", objects, id_attribute: :id)
   end
