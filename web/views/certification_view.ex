@@ -23,7 +23,7 @@ defmodule Vae.CertificationView do
 
     process_path(
       conn,
-      :search,
+      :index,
       params
     )
   end

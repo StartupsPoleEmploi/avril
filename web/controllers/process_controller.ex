@@ -9,13 +9,53 @@ defmodule Vae.ProcessController do
   @search_client Application.get_env(:vae, :search_client)
 
   def index(conn, params) do
-    search(
-      conn,
-      Map.merge(params, %{
-        "delegate_search" => %{"lat" => params["lat"], "lng" => params["lng"]}
-      })
-    )
+    lat = Plug.Conn.get_session(conn, :search_lat)
+    lng = Plug.Conn.get_session(conn, :search_lng)
+    certification = get_certification_or_nil(params["certification"])
+
+    case get_delegates(certification, %{"lat" => lat, "lng" => lng}) do
+      [head | _tail = []] ->
+        delegate = preload_process(head)
+
+        redirect(
+          conn,
+          to:
+            process_path(
+              conn,
+              :show,
+              delegate.process,
+              certification: certification,
+              delegate: delegate
+            )
+        )
+
+      delegates ->
+        delegate =
+          delegates
+          |> filter_delegates_from_postalcode(get_session(conn, :search_postcode))
+          |> filter_delegates_from_administrative_if_no_postcode_found(
+            get_session(conn, :search_administrative)
+          )
+          |> select_near_delegate()
+
+        redirect(
+          conn,
+          to:
+            process_path(
+              conn,
+              :show,
+              delegate.process,
+              certification: certification,
+              delegate: delegate
+            )
+        )
+    end
   end
+
+  defp get_certification_or_nil(nil), do: nil
+
+  defp get_certification_or_nil(certification_id),
+    do: Repo.get(Certification, certification_id) |> Repo.preload(:certifiers)
 
   def delegates(conn, params) do
     certification =
@@ -50,56 +90,6 @@ defmodule Vae.ProcessController do
       {:error, msg} ->
         Logger.error("Error on searching delegates: #{msg}")
         Delegate.from_certification(certification) |> Repo.all()
-    end
-  end
-
-  def search(conn, params) do
-    certification =
-      case params["certification"] do
-        nil -> nil
-        certification_id -> Repo.get(Certification, certification_id) |> Repo.preload(:certifiers)
-      end
-
-    case get_delegates(certification, params["delegate_search"]) do
-      [head | _tail = []] ->
-        delegate = preload_process(head)
-
-        redirect(
-          conn,
-          to:
-            process_path(
-              conn,
-              :show,
-              delegate.process,
-              certification: certification,
-              delegate: delegate,
-              lat: params["delegate_search"]["lat"],
-              lng: params["delegate_search"]["lng"]
-            )
-        )
-
-      delegates ->
-        delegate =
-          delegates
-          |> filter_delegates_from_postalcode(get_session(conn, :search_postcode))
-          |> filter_delegates_from_administrative_if_no_postcode_found(
-            get_session(conn, :search_administrative)
-          )
-          |> select_near_delegate()
-
-        redirect(
-          conn,
-          to:
-            process_path(
-              conn,
-              :show,
-              delegate.process,
-              certification: certification,
-              delegate: delegate,
-              lat: params["delegate_search"]["lat"],
-              lng: params["delegate_search"]["lng"]
-            )
-        )
     end
   end
 
