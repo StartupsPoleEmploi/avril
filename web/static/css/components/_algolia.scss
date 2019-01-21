@@ -30,7 +30,8 @@
 }
 
 .ap-suggestions-category {
-  border-bottom: 1px solid rgba(228, 228, 228, 0.6);
-  border-top: 1px solid rgba(228, 228, 228, 0.6);
-  padding: 6px 12px;
+  height: 46px;
+  line-height: 46px;
+  padding-left: 18px;
+  background: $dm-primary-light-grey;
 }

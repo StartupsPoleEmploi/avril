@@ -33,7 +33,7 @@ javascript:
       return label;
     },
     templates: {
-      header: '<div class="ap-suggestions-category">Métiers</div>',
+      header: '<h5 class="m-0 ap-suggestions-category">Métiers</div>',
       suggestion: function(suggestion) {
         var label = suggestion._highlightResult.label.value;
         return label;
@@ -47,7 +47,7 @@ javascript:
       return acronym ? `${acronym} ${label}` : label;
     },
     templates: {
-      header: '<div class="ap-suggestions-category">Dîplomes</div>',
+      header: '<h5 class="m-0 ap-suggestions-category">Dîplomes</div>',
       suggestion: function(suggestion) {
         var acronym = suggestion._highlightResult.acronym && suggestion._highlightResult.acronym.value;
         var label = suggestion._highlightResult.label.value;
@@ -62,7 +62,7 @@ javascript:
       return `${label} (${code})`;
     },
     templates: {
-      header: '<div class="ap-suggestions-category">Romes</div>',
+      header: '<h5 class="m-0 ap-suggestions-category">Romes</div>',
       suggestion: function(suggestion) {
         var code = suggestion._highlightResult.code.value;
         var label = suggestion._highlightResult.label.value;
