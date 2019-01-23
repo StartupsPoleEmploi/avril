@@ -6,7 +6,7 @@ defmodule Vae.ProcessView do
   def render_steps(process, opts \\ []) do
     process
     |> Map.take(Enum.map(1..8, &:"step_#{&1}"))
-    |> Enum.filter(fn {k, v} -> not is_nil(v) end)
+    |> Enum.filter(fn {_k, v} -> not is_nil(v) end)
     |> Enum.map(fn {k, step} ->
       i = k |> Atom.to_string() |> String.at(5) |> String.to_integer()
 
