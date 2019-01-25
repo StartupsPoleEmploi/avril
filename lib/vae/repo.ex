@@ -12,6 +12,8 @@ defmodule Vae.Repo do
     alias Vae.Rome
     alias Vae.Profession
 
+    @search_client Application.get_env(:vae, :search_client)
+
     # TODO: @nresni on peut pas passer en const ? genre
     # @entities [Delegate, Profession, Rome]
 
@@ -77,7 +79,7 @@ defmodule Vae.Repo do
     defp save_object_index(%type{} = struct) do
       with {:format, struct_to_index} <- {:format, type.format_for_index(struct)} do
         type
-        |> index_name()
+        |> @search_client.get_index_name()
         |> Algolia.save_object(struct_to_index, id_attribute: :id)
 
         {:ok, struct}
@@ -97,18 +99,10 @@ defmodule Vae.Repo do
 
     defp delete_object_index(%type{} = struct) do
       type
-      |> index_name()
+      |> @search_client.get_index_name()
       |> Algolia.delete_object(struct.id)
 
       struct
-    end
-
-    defp index_name(type) do
-      type
-      |> to_string()
-      |> String.split(".")
-      |> List.last()
-      |> String.downcase()
     end
   end
 end

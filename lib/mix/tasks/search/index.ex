@@ -6,7 +6,6 @@ defmodule Mix.Tasks.Search.Index do
 
   alias Vae.Repo
   alias Vae.Delegate
-  alias Vae.Search
 
   @moduledoc """
   Index DB entries for the given model.
@@ -49,7 +48,7 @@ defmodule Mix.Tasks.Search.Index do
              "distinct" => 1
            }) do
       model
-      |> (fn model -> "#{get_index_name(model)}_tmp" end).()
+      |> (fn model -> "#{Vae.Search.Client.Algolia.get_index_name(model)}_tmp" end).()
       |> Algolia.save_objects(
         delegates
         |> Enum.map(&Delegate.format_for_index/1),
@@ -59,15 +58,7 @@ defmodule Mix.Tasks.Search.Index do
   end
 
   defp move_index(model) do
-    index_name = get_index_name(model)
+    index_name = Vae.Search.Client.Algolia.get_index_name(model)
     Algolia.move_index("#{index_name}_tmp", "#{index_name}")
-  end
-
-  defp get_index_name(model) do
-    model
-    |> to_string()
-    |> String.split(".")
-    |> List.last()
-    |> String.downcase()
   end
 end
