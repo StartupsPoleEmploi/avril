@@ -10,14 +10,14 @@ defmodule Mix.Tasks.Rome.Index do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
-    with true <- index_romes() do
+    with true <- index() do
       {:ok, "Well done !"}
     end
   end
 
-  def index_romes() do
+  def index() do
     objects = Enum.map(Rome.all(), &Rome.format_for_index/1)
 
-    Algolia.save_objects("romes", objects, id_attribute: :id)
+    Algolia.save_objects("rome", objects, id_attribute: :id)
   end
 end

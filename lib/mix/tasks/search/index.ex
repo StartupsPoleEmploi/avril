@@ -4,7 +4,9 @@ defmodule Mix.Tasks.Search.Index do
   require Logger
   import Mix.Ecto
 
+  alias Vae.Repo
   alias Vae.Delegate
+  alias Vae.Search
 
   @moduledoc """
   Index DB entries for the given model.

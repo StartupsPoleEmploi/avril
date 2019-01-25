@@ -10,14 +10,14 @@ defmodule Mix.Tasks.Certification.Index do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
-    with true <- index_romes() do
+    with true <- index() do
       {:ok, "Well done !"}
     end
   end
 
-  def index_romes() do
+  def index() do
     objects = Enum.map(Certification.all(), &Certification.format_for_index/1)
 
-    Algolia.save_objects("certifications", objects, id_attribute: :id)
+    Algolia.save_objects("certification", objects, id_attribute: :id)
   end
 end

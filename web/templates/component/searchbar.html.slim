@@ -17,9 +17,9 @@
 = render Vae.ComponentView, "searchbar_variables"
 javascript:
   var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
-  var professions = client.initIndex('professions');
-  var certifications = client.initIndex('certifications');
-  var romes = client.initIndex('romes');
+  var professions = client.initIndex('profession');
+  var certifications = client.initIndex('certification');
+  var romes = client.initIndex('rome');
   autocomplete('#search_query', {
     autoselect: true,
     autoselectOnBlur: true,
