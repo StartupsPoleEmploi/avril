@@ -1,18 +1,21 @@
-.algolia-autocomplete, .algolia-places {
+.algolia-autocomplete,
+.algolia-places {
   width: 100%;
   background-color: white;
-  a:after {
-   content: none !important;
+
+  a::after {
+    content: none !important;
   }
 }
 
-.ap-input, .ap-hint {
+.ap-hint,
+.ap-input {
   height: inherit;
   width: 100%;
 }
 
 .ap-hint {
-  opacity: .3 !important;
+  opacity: 0.3 !important;
 }
 
 .ap-input-icon {
@@ -31,7 +34,7 @@
 
 .ap-suggestions-category {
   height: 46px;
-  line-height: 46px;
   padding-left: 18px;
+  line-height: 46px;
   background: $dm-primary-light-grey;
 }
