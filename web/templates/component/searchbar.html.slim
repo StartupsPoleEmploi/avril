@@ -1,6 +1,6 @@
 = form_for @conn, search_path(@conn, :search), [as: :search, id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
   .input-group.suggest
-    = search_input(f, :query, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_query), placeholder: 'Essayez "Boulanger" ou "CAP Coiffeur"')
+    = search_input(f, :query, class: "form-control form-control-lg", required: true, value: Plug.Conn.get_session(@conn, :search_query), placeholder: 'Essayez "Assistante maternelle"')
     = hidden_input(f, :profession, value: Plug.Conn.get_session(@conn, :search_profession))
     = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
     = hidden_input(f, :certification, value: Plug.Conn.get_session(@conn, :search_certification))
