@@ -3,62 +3,114 @@ defmodule Mix.Tasks.Search.Index do
 
   require Logger
   import Mix.Ecto
+  import Ecto.Query, only: [from: 2]
+
+  import Vae.Search.Client.Algolia, only: [get_index_name: 1]
 
   alias Vae.Repo
   alias Vae.Delegate
+  alias Vae.Profession
 
   @moduledoc """
   Index DB entries for the given model.
 
   ## Examples
     mix search.index -m Vae.Delegate
+    mix search.index -m Vae.Rome -m Vae.Profession -m Vae.Certification -c
 
   ## Command line options
 
-  * `-m`, `--model` - the model to index
+  * `-m`, `--model` - the models to index
+  * `-c`, `--clear-before` - clear index before indexing
   """
 
   def run(args) do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
-    with {:ok, model} <- parse_args(args),
-         entries <- Repo.all(model),
-         {:ok, _index_details} <- index(entries, model),
-         {:ok, _op} <- move_index(model) do
-      Logger.info("#{length(entries)} #{model} have been indexed")
+    with {parsed, _argv, []} <- option_parser(args),
+         {:ok, models} <- get_models(parsed) do
+      if Keyword.get(parsed, :clear_before, false) do
+        Enum.map(models, &clear_index/1)
+      end
+
+      Enum.map(models, &get_and_index/1)
+    else
+      {_parsed, _args, errors} -> Logger.error(fn -> inspect(errors) end)
+      {:error, msg} -> Logger.error(fn -> inspect(msg) end)
+    end
+  end
+
+  defp option_parser(args) do
+    OptionParser.parse(args,
+      aliases: [m: :model, c: :clear_before],
+      strict: [model: :keep, clear_before: :boolean]
+    )
+  end
+
+  defp get_models(parsed) do
+    models = Keyword.get_values(parsed, :model)
+
+    if models != [] do
+      {:ok, Enum.map(models, &Module.concat([&1]))}
+    else
+      {:error, "You must provide a model name"}
+    end
+  end
+
+  defp clear_index(model) do
+    model
+    |> get_index_name()
+    |> Algolia.clear_index()
+  end
+
+  defp get_and_index(model) do
+    with entries <- get(model),
+         {:ok, _index_details} <- index_settings(model),
+         {:ok, index_info} <- index(entries, model) do
+      Logger.info(
+        "#{length(index_info["objectIDs"])} #{index_info["indexName"]} have been indexed"
+      )
     else
       {:error, msg} -> Logger.error(fn -> inspect(msg) end)
       msg -> Logger.error(fn -> inspect(msg) end)
     end
   end
 
-  defp parse_args([]), do: {:error, "You must provide a model name"}
-
-  defp parse_args([key, value | _t]) when key in ~w(--model -m) and not is_nil(value) do
-    {:ok, Module.concat([value])}
-  end
-
-  defp parse_args(args), do: {:error, "Unknown args: #{inspect(args)}"}
-
-  defp index(delegates, model) do
-    with {:ok, _index_details} <-
-           Algolia.set_settings("delegate_tmp", %{
-             "attributeForDistinct" => "name",
-             "distinct" => 1
-           }) do
-      model
-      |> (fn model -> "#{Vae.Search.Client.Algolia.get_index_name(model)}_tmp" end).()
-      |> Algolia.save_objects(
-        delegates
-        |> Enum.map(&Delegate.format_for_index/1),
-        id_attribute: :id
+  # TODO: Remove this when no more limitations from algolia
+  defp get(Profession) do
+    query =
+      from(p in Profession,
+        join: r in "rome_certifications",
+        on: p.rome_id == r.rome_id,
+        group_by: p.id,
+        select: p
       )
-    end
+
+    Repo.all(query)
+    |> Repo.preload(:rome)
   end
 
-  defp move_index(model) do
-    index_name = Vae.Search.Client.Algolia.get_index_name(model)
-    Algolia.move_index("#{index_name}_tmp", "#{index_name}")
+  defp get(model) do
+    Repo.all(model)
+  end
+
+  defp index_settings(Delegate) do
+    settings = %{
+      "attributesForFaceting" => ["is_active"],
+      "attributeForDistinct" => "name",
+      "distinct" => 1
+    }
+
+    Algolia.set_settings("delegate", settings)
+  end
+
+  defp index_settings(_model) do
+    {:ok, nil}
+  end
+
+  defp index(entries, model) do
+    objects = Enum.map(entries, &model.format_for_index/1)
+    Algolia.save_objects(get_index_name(model), objects, id_attribute: :id)
   end
 end
