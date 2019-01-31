@@ -106,13 +106,8 @@ defmodule Vae.ContactChannel do
       [
         %{
           ContentType: "application/pdf",
-          Filename: "cerfa_12818-02.pdf",
+          Filename: "livret1.pdf",
           Base64Content: Base.encode64(File.read!("priv/cerfa_12818-02.pdf"))
-        },
-        %{
-          ContentType: "application/pdf",
-          Filename: "notice_51260#02.pdf",
-          Base64Content: Base.encode64(File.read!("priv/notice_51260#02.pdf"))
         }
       ]
   end
