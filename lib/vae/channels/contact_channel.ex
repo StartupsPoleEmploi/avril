@@ -19,6 +19,7 @@ defmodule Vae.ContactChannel do
     body
     |> Map.merge(delegate_info)
     |> Map.put_new("contact_delegate", "off")
+    |> Map.put_new("booklet_1", "off")
     |> add_contact_event()
     |> send_messages()
 
@@ -63,14 +64,12 @@ defmodule Vae.ContactChannel do
         &is_nil/1
       )
 
-    Mailjex.Delivery.send(%{
-      Messages: messages
-    })
+    Mailjex.Delivery.send(%{Messages: messages})
   end
 
   defp vae_recap_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
     body
-    |> Map.merge(%{"contact_delegate" => "off"})
+    |> Map.put("contact_delegate", "off")
     |> vae_recap_message()
   end
 
@@ -81,11 +80,13 @@ defmodule Vae.ContactChannel do
       TemplateID: @mailjet_conf.vae_recap_template_id,
       ReplyTo: Mailjet.avril_email(),
       To: Mailjet.build_to(%{Email: body["email"], Name: body["name"]}),
-      Attachments: vae_recap(body)
+      Attachments:
+        vae_recap_attachments(body)
+        |> add_booklet_1(body)
     })
   end
 
-  defp vae_recap(%{"process" => id}) do
+  defp vae_recap_attachments(%{"process" => id}) do
     with process when not is_nil(process) <- Vae.Repo.get(Vae.Process, id),
          {:ok, file} <- Vae.StepsPdf.create_pdf(process) do
       [
@@ -98,6 +99,26 @@ defmodule Vae.ContactChannel do
     else
       []
     end
+  end
+
+  defp add_booklet_1(attachments, %{"booklet_1" => "on"}) do
+    attachments ++
+      [
+        %{
+          ContentType: "application/pdf",
+          Filename: "cerfa_12818-02.pdf",
+          Base64Content: Base.encode64(File.read!("priv/cerfa_12818-02.pdf"))
+        },
+        %{
+          ContentType: "application/pdf",
+          Filename: "notice_51260#02.pdf",
+          Base64Content: Base.encode64(File.read!("priv/notice_51260#02.pdf"))
+        }
+      ]
+  end
+
+  defp add_booklet_1(attachments, _body) do
+    attachments
   end
 
   defp delegate_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
