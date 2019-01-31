@@ -6,6 +6,9 @@ $(function() {
     } else {
       ga('send', 'event', 'Steps', 'email');
     }
+    if (contactData.booklet_1) {
+      ga('send', 'event', 'Steps', 'livret 1');
+    }
   });
 
   $("#previous-step").on("click", function() {
