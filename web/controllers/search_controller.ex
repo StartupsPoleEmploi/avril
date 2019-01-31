@@ -3,29 +3,33 @@ defmodule Vae.SearchController do
   use Vae.Web, :controller
 
   def search(conn, params) do
-    conn_updated = save_search_to_session(conn, params)
+    conn
+    |> save_search_to_session(params)
+    |> redirect_to_result(params)
+  end
 
-    if String.length(params["search"]["rome_code"]) > 0 do
-      redirect(
-        conn_updated,
-        to:
-          certification_path(
-            conn,
-            :index,
-            rome_code: params["search"]["rome_code"]
-          )
-      )
-    else
-      redirect(
-        conn_updated,
-        to:
-          process_path(
-            conn,
-            :index,
-            certification: params["search"]["certification"]
-          )
-      )
-    end
+  defp redirect_to_result(conn, %{"search" => %{"rome_code" => rome_code}}) do
+    redirect(
+      conn,
+      to:
+        certification_path(
+          conn,
+          :index,
+          rome_code: rome_code
+        )
+    )
+  end
+
+  defp redirect_to_result(conn, %{"search" => %{"certification" => certification_id}}) do
+    redirect(
+      conn,
+      to:
+        process_path(
+          conn,
+          :index,
+          certification: certification_id
+        )
+    )
   end
 
   defp save_search_to_session(conn, params) do

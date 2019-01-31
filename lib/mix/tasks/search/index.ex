@@ -31,7 +31,7 @@ defmodule Mix.Tasks.Search.Index do
     with {parsed, _argv, []} <- option_parser(args),
          {:ok, models} <- get_models(parsed) do
       if Keyword.get(parsed, :clear_before, false) do
-        Enum.map(models, &clear_index/1)
+        Enum.each(models, &clear_index/1)
       end
 
       Enum.map(models, &get_and_index/1)

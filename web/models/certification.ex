@@ -162,6 +162,6 @@ defmodule Vae.Certification do
   def format_for_index(struct) do
     struct
     |> Map.take(__schema__(:fields))
-    |> Map.drop([:inserted_at, :updated_at])
+    |> Map.drop([:inserted_at, :updated_at, :description])
   end
 end
