@@ -86,4 +86,12 @@ defmodule Vae.Search.Client.Algolia do
         {:error, msg}
     end
   end
+
+  def get_index_name(model) do
+    model
+    |> to_string()
+    |> String.split(".")
+    |> List.last()
+    |> String.downcase()
+  end
 end

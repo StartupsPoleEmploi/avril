@@ -5,6 +5,6 @@
       = for profession <- @professions do
         .result-item
           h3
-            = link profession.label, to: rome_path(@conn, :certifications, profession.rome), class: 'main-link'
+            = link profession.label, to: certification_path(@conn, :index, rome_id: profession.rome), class: 'main-link'
     = if @page.total_entries > @page.page_size do
       = pagination_links @conn, @page, "search[for]": @search_terms

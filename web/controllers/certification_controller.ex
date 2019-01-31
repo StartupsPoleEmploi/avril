@@ -17,166 +17,86 @@ defmodule Vae.CertificationController do
   end
 
   def index(conn, params) do
-    conn_updated =
-      conn
-      |> put_session(:search_profession, params["search"]["profession"])
-      |> put_session(:search_rome, params["search"]["rome_code"])
-      |> put_session(:search_geo, params["search"]["geolocation_text"])
-      |> put_session(:search_lat, params["search"]["lat"])
-      |> put_session(:search_lng, params["search"]["lng"])
-      |> put_session(:search_county, params["search"]["county"])
-      |> put_session(:search_postcode, params["search"]["postcode"])
-      |> put_session(:search_administrative, params["search"]["administrative"])
-
-    case params["search"]["rome_code"] do
-      nil -> redirections(conn_updated, params)
-      _ -> search_by_rome(conn_updated, params)
+    if is_nil(params["rncp_id"]) do
+      certifications_by_rome(conn, params)
+    else
+      redirections(conn, params)
     end
   end
 
-  defp list(conn, params) do
-    page =
-      Certification
-      |> Repo.paginate(params)
-
-    render(conn, "index.html", certifications: page.entries, page: page)
-  end
-
-  defp search_by_rome(conn, params) do
-    params["search"]["rome_code"]
-    |> get_rome(params["search"]["profession"])
-    |> get_certifications_by_rome
-    |> case do
-      nil ->
-        render(
-          conn,
-          Vae.CertificationView,
-          "index.html",
-          certifications: [],
-          no_results: true,
-          page: %Scrivener.Page{
-            total_entries: 0,
-            page_number: 0,
-            total_pages: 0
-          },
-          profession: params["search"]["profession"]
-        )
-
-      rome ->
-        certifications =
-          rome
-          |> assoc(:certifications)
-          |> order_by(desc: :level)
-
-        total_without_filter_level = Repo.aggregate(certifications, :count, :id)
-
-        with {:ok, certifications_by_level, _filter_values} <-
-               apply_filters(certifications, conn),
-             page <- Repo.paginate(certifications_by_level, params) do
-          render(
-            conn,
-            Vae.CertificationView,
-            "index.html",
-            certifications: page.entries,
-            no_results: total_without_filter_level == 0,
-            page: page,
-            rome: rome,
-            profession: rome.label,
-            search: params["search"]
-          )
-        end
+  defp certifications_by_rome(conn, params) do
+    case get_rome(params) do
+      nil -> list(conn, params, Certification)
+      rome -> list(conn, params, get_certifications_by_rome(rome))
     end
   end
 
-  defp get_rome(rome_code, _profession) do
-    rome_code
+  defp get_rome(%{"rome_id" => rome_id}) do
+    Repo.get(Rome, rome_id)
   end
 
-  defp get_certifications_by_rome(rome_id) do
-    Repo.get_by(Rome, code: rome_id)
+  defp get_rome(%{"rome_code" => rome_code}) do
+    Repo.get_by(Rome, code: rome_code)
+  end
+
+  defp get_rome(_params) do
+    nil
+  end
+
+  def get_certifications_by_rome(rome) do
+    rome
+    |> assoc(:certifications)
+    |> order_by(desc: :level)
+  end
+
+  defp list(conn, params, certifications) do
+    total_without_filter_level = Repo.aggregate(certifications, :count, :id)
+
+    with {:ok, certifications_by_level, _filter_values} <- apply_filters(certifications, conn),
+         page <- Repo.paginate(certifications_by_level, params) do
+      render(
+        conn,
+        Vae.CertificationView,
+        "index.html",
+        certifications: page.entries,
+        no_results: total_without_filter_level == 0,
+        page: page
+      )
+    end
   end
 
   defp redirections(conn, params) do
-    geo =
-      case {params["lat"], params["lng"]} do
-        {lat, lng} when lat != nil and lng != nil ->
-          %{"_geoloc" => %{"lat" => lat, "lng" => lng}}
+    certification = Certification.search_by_rncp_id(params["rncp_id"]) |> Repo.one()
 
-        _ ->
-          nil
-      end
+    delegates = get_delegates(certification, %{"lat" => params["lat"], "lng" => params["lng"]})
 
-    certification =
-      case params["rncp_id"] do
-        nil ->
-          nil
+    if length(delegates) > 1 do
+      delegate =
+        Delegate
+        |> Repo.get(hd(delegates).id)
+        |> Repo.preload(:process)
 
-        rncp_id ->
-          Certification.search_by_rncp_id(rncp_id)
-          |> Repo.one()
-      end
-
-    rome_id =
-      case params["rome_code"] do
-        nil ->
-          nil
-
-        rome_code ->
-          Repo.get_by(Rome, code: rome_code)
-          |> case do
-            nil ->
-              nil
-
-            rome ->
-              rome.id
-          end
-      end
-
-    case {geo, certification, rome_id} do
-      {_, nil, nil} ->
-        list(conn, params)
-
-      {_, nil, rome_id} ->
-        redirect(
-          conn,
-          to: rome_path(conn, :certifications, rome_id)
-        )
-
-      {nil, certification, _} ->
-        redirect(conn, to: process_path(conn, :index, certification: certification))
-
-      {geo, certification, _} ->
-        delegates = get_delegates(certification, geo["_geoloc"])
-
-        if length(delegates) > 1 do
-          delegate = Repo.preload(Repo.get(Delegate, hd(delegates).id), :process)
-
-          redirect(
+      redirect(
+        conn,
+        to:
+          process_path(
             conn,
-            to:
-              process_path(
-                conn,
-                :show,
-                delegate.process,
-                certification: certification,
-                delegate: delegate,
-                lat: params["delegate_search"]["lat"],
-                lng: params["delegate_search"]["lng"]
-              )
+            :show,
+            delegate.process,
+            certification: certification,
+            delegate: delegate
           )
-        else
-          redirect(
+      )
+    else
+      redirect(
+        conn,
+        to:
+          process_path(
             conn,
-            to:
-              process_path(
-                conn,
-                :index,
-                certification: certification,
-                lat: params["delegate_search"]["lat"],
-                lng: params["delegate_search"]["lng"]
-              )
+            :index,
+            certification: certification
           )
-        end
+      )
     end
   end
 

@@ -6,10 +6,13 @@ defmodule Vae.Repo do
     use NewRelixir.Plug.Repo, repo: Vae.Repo
     use Scrivener, page_size: 20
 
+    alias Vae.Certification
     alias Vae.Delegate
     alias Vae.Repo
     alias Vae.Rome
     alias Vae.Profession
+
+    @search_client Application.get_env(:vae, :search_client)
 
     # TODO: @nresni on peut pas passer en const ? genre
     # @entities [Delegate, Profession, Rome]
@@ -18,7 +21,7 @@ defmodule Vae.Repo do
 
     def insert(struct, opts) do
       case Repo.insert(struct, opts) do
-        {:ok, %type{} = inserted} when type in [Delegate, Profession, Rome] ->
+        {:ok, %type{} = inserted} when type in [Certification, Delegate, Profession, Rome] ->
           save_object_index(inserted)
 
         t ->
@@ -28,7 +31,7 @@ defmodule Vae.Repo do
 
     def insert!(struct, opts) do
       case Repo.insert!(struct, opts) do
-        %type{} = inserted when type in [Delegate, Profession, Rome] ->
+        %type{} = inserted when type in [Certification, Delegate, Profession, Rome] ->
           save_object_index!(inserted)
 
         t ->
@@ -38,7 +41,7 @@ defmodule Vae.Repo do
 
     def update(struct, opts) do
       case Repo.update(struct, opts) do
-        {:ok, %type{} = updated} when type in [Delegate, Profession, Rome] ->
+        {:ok, %type{} = updated} when type in [Certification, Delegate, Profession, Rome] ->
           save_object_index(updated)
 
         t ->
@@ -48,14 +51,14 @@ defmodule Vae.Repo do
 
     def update!(struct, opts) do
       case Repo.update!(struct, opts) do
-        %type{} = updated when type in [Delegate, Profession, Rome] -> save_object_index!(updated)
+        %type{} = updated when type in [Certification, Delegate, Profession, Rome] -> save_object_index!(updated)
         t -> t
       end
     end
 
     def delete(struct, opts) do
       case Repo.delete(struct, opts) do
-        {:ok, %type{} = deleted} when type in [Delegate, Profession, Rome] ->
+        {:ok, %type{} = deleted} when type in [Certification, Delegate, Profession, Rome] ->
           {:ok, delete_object_index(deleted)}
 
         t ->
@@ -65,7 +68,7 @@ defmodule Vae.Repo do
 
     def delete!(struct, opts) do
       case Repo.delete!(struct, opts) do
-        %type{} = deleted when type in [Delegate, Profession, Rome] ->
+        %type{} = deleted when type in [Certification, Delegate, Profession, Rome] ->
           delete_object_index(deleted)
 
         t ->
@@ -76,7 +79,7 @@ defmodule Vae.Repo do
     defp save_object_index(%type{} = struct) do
       with {:format, struct_to_index} <- {:format, type.format_for_index(struct)} do
         type
-        |> index_name()
+        |> @search_client.get_index_name()
         |> Algolia.save_object(struct_to_index, id_attribute: :id)
 
         {:ok, struct}
@@ -96,18 +99,10 @@ defmodule Vae.Repo do
 
     defp delete_object_index(%type{} = struct) do
       type
-      |> index_name()
+      |> @search_client.get_index_name()
       |> Algolia.delete_object(struct.id)
 
       struct
-    end
-
-    defp index_name(type) do
-      type
-      |> to_string()
-      |> String.split(".")
-      |> List.last()
-      |> String.downcase()
     end
   end
 end

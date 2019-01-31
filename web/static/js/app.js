@@ -27,8 +27,8 @@ import "url-search-params"
 
 $(function() {
   // Search labels
-  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_profession' id='label_search_profession'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_profession");
-  $("#search_profession").parent().addClass('form-label-group');
+  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_query");
+  $("#search_query").parent().addClass('form-label-group');
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
   $("#search_geolocation_text").parent().addClass('form-label-group');
 
@@ -70,14 +70,12 @@ $(function() {
     // Ajout d'un aide à la compréhesion de qui controle quoi
     $('#search_geolocation_text').attr('aria-controls', 'algolia-places-listbox-0');
 
-    $('#search_profession').attr('aria-controls', 'awesomplete_list_1');
-    $('#search_profession').attr('aria-expanded', 'false');
-    $('#search_profession').attr('aria-activedescendant', '');
-    $('#search_profession').attr('aria-readonly', 'true');
-    $('#search_profession').attr('autocomplete', 'off');
+    $('#search_query').attr('aria-controls', 'algolia-autocomplete-listbox-0');
+    $('#search_query').attr('aria-activedescendant', '');
+    $('#search_query').attr('aria-readonly', 'true');
 
-    $('#awesomplete_list_1').attr('aria-label', 'liste des métiers issus des RNCP');
-    $('#awesomplete_list_1').attr('aria-selected', 'false');
+    $('#algolia-autocomplete-listbox-0').attr('aria-label', 'liste des métiers ou diplomes');
+    $('#algolia-autocomplete-listbox-0').attr('aria-selected', 'false');
   }, 200);
 
   var showChar = 300;
@@ -151,7 +149,7 @@ $(window).scroll(function() {
 });
 
 $(window).on('resize', function() {
-  $('#label_search_profession').text(stepLabel($(window).width()));
+  $('#label_search_query').text(stepLabel($(window).width()));
 });
 
 function stepLabel(width) {

@@ -23,7 +23,7 @@ defmodule Vae.CertificationView do
 
     process_path(
       conn,
-      :search,
+      :index,
       params
     )
   end
@@ -31,9 +31,5 @@ defmodule Vae.CertificationView do
   def certifiers(certification) do
     certification
     |> Repo.all()
-  end
-
-  def formatted_name(certification) do
-    "#{certification.acronym} #{String.downcase(certification.label)}"
   end
 end

@@ -55,9 +55,6 @@ defmodule Vae.Router do
 
     get("/professions", ProfessionController, :index)
 
-    resources("/romes", RomeController, only: [:index, :show])
-    get("/romes/:id/certifications", RomeController, :certifications)
-
     get("/certifications", CertificationController, :index)
     get("/certifications/:id", CertificationController, :show)
     get("/certifications/:id/certifiers", CertificationController, :certifiers)
@@ -70,8 +67,9 @@ defmodule Vae.Router do
     get("/processes", ProcessController, :index)
     get("/processes/:id", ProcessController, :show)
     get("/processes/:id/delegates", ProcessController, :delegates)
-    post("/processes", ProcessController, :search)
     post("/processes/contact", ProcessController, :contact)
+
+    post("/search", SearchController, :search)
   end
 
   scope "/admin", ExAdmin do

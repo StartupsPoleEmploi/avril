@@ -1,8 +1,0 @@
-.container
-  h2= @rome.label
-  ul
-    li
-      b= "Code: #{@rome.code}"
-    li
-      b= "Nom: #{@rome.label}"
-    li= link "Voir les certifications", to: rome_path(@conn, :certifications, @rome)
