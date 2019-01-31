@@ -126,17 +126,17 @@ $(function() {
     return false;
   });
 
-  if (!sessionStorage.getItem('cookies_choice')) $('.cookies').removeClass('d-none');
-  if (sessionStorage.getItem('cookies_choice') == 'reject') window.disableGa();
+  if (!localStorage.getItem('cookies_choice')) $('.cookies').removeClass('d-none');
+  if (localStorage.getItem('cookies_choice') == 'reject') window.disableGa();
 
   $('.cookies .btn-reject').click(function() {
-    sessionStorage.setItem('cookies_choice', 'reject')
+    localStorage.setItem('cookies_choice', 'reject')
     $('.cookies').addClass('d-none');
     window.disableGa();
   })
 
   $('.cookies .btn-primary').click(function() {
-    sessionStorage.setItem('cookies_choice', 'accept');
+    localStorage.setItem('cookies_choice', 'accept');
     $('.cookies').addClass('d-none');
   })
 })
