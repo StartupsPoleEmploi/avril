@@ -8,26 +8,26 @@ defmodule Vae.SearchController do
     |> redirect_to_result(params)
   end
 
-  defp redirect_to_result(conn, %{"search" => %{"rome_code" => rome_code}}) do
+  defp redirect_to_result(conn, %{"search" => %{"rome_code" => r, "certification" => ""}}) do
     redirect(
       conn,
       to:
         certification_path(
           conn,
           :index,
-          rome_code: rome_code
+          rome_code: r
         )
     )
   end
 
-  defp redirect_to_result(conn, %{"search" => %{"certification" => certification_id}}) do
+  defp redirect_to_result(conn, %{"search" => %{"rome_code" => "", "certification" => c}}) do
     redirect(
       conn,
       to:
         process_path(
           conn,
           :index,
-          certification: certification_id
+          certification: c
         )
     )
   end
