@@ -12,9 +12,15 @@
     .my-5.w-100
       fieldset
         legend.d-none Vos informations
-        .form-group.form-label-group
-          input.form-control.px-3.py-3 id="#{@form}_name" name="name" placeholder="ex: Georges Abitbol" required="true"
-          label.form-control-placeholder for="#{@form}_name" Votre prénom et nom
+        .row
+          .col-lg
+            .form-group.form-label-group
+              input.form-control.px-3.py-3 id="#{@form}_first_name" name="first_name" placeholder="ex: Georges" required="true"
+              label.form-control-placeholder for="#{@form}_first_name" Votre prénom
+          .col-lg
+            .form-group.form-label-group
+              input.form-control.px-3.py-3 id="#{@form}_last_name" name="last_name" placeholder="ex: Abitbol" required="true"
+              label.form-control-placeholder for="#{@form}_last_name" Votre nom
         .form-group.form-label-group
           input.form-control.px-3.py-3 id="#{@form}_email" name="email" placeholder="ex: la.classe@americaine.com" required="true" type="email"
           label.form-control-placeholder for="#{@form}_email" Votre email

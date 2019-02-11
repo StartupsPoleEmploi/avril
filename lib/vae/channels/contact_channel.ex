@@ -79,7 +79,7 @@ defmodule Vae.ContactChannel do
     |> Map.merge(%{
       TemplateID: @mailjet_conf.vae_recap_template_id,
       ReplyTo: Mailjet.avril_email(),
-      To: Mailjet.build_to(%{Email: body["email"], Name: body["name"]}),
+      To: Mailjet.build_to(%{Email: body["email"], Name: get_name(body)}),
       Attachments:
         vae_recap_attachments(body)
         |> add_booklet_1(body)
@@ -126,7 +126,7 @@ defmodule Vae.ContactChannel do
     |> generic_message()
     |> Map.merge(%{
       TemplateID: @mailjet_conf.contact_template_id,
-      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      ReplyTo: %{Email: body["email"], Name: get_name(body)},
       To: Mailjet.build_to(Mailjet.avril_email())
     })
   end
@@ -136,7 +136,7 @@ defmodule Vae.ContactChannel do
     |> generic_message()
     |> Map.merge(%{
       TemplateID: @mailjet_conf.contact_template_id,
-      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      ReplyTo: %{Email: body["email"], Name: get_name(body)},
       To: Mailjet.build_to(%{Email: body["delegate_email"], Name: body["delegate_name"]})
     })
   end
@@ -151,4 +151,6 @@ defmodule Vae.ContactChannel do
       Variables: body
     }
   end
+
+  defp get_name(body), do: "#{body["first_name"]} #{body["last_name"]}"
 end
