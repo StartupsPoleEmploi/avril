@@ -66,41 +66,55 @@ defmodule Vae.CertificationController do
   end
 
   defp redirections(conn, params) do
-    certification = Certification.search_by_rncp_id(params["rncp_id"]) |> Repo.one()
+    with certification when not is_nil(certification) <- get_certification(params),
+         delegates <- get_delegates(certification, params) do
+      if length(delegates) > 0 do
+        delegate =
+          Delegate
+          |> Repo.get(hd(delegates).id)
+          |> Repo.preload(:process)
 
-    delegates = get_delegates(certification, %{"lat" => params["lat"], "lng" => params["lng"]})
-
-    if length(delegates) > 1 do
-      delegate =
-        Delegate
-        |> Repo.get(hd(delegates).id)
-        |> Repo.preload(:process)
-
-      redirect(
-        conn,
-        to:
-          process_path(
-            conn,
-            :show,
-            delegate.process,
-            certification: certification,
-            delegate: delegate
-          )
-      )
+        redirect(
+          conn,
+          to:
+            process_path(
+              conn,
+              :show,
+              delegate.process,
+              certification: certification,
+              delegate: delegate
+            )
+        )
+      else
+        redirect(
+          conn,
+          to:
+            process_path(
+              conn,
+              :index,
+              certification: certification
+            )
+        )
+      end
     else
-      redirect(
-        conn,
-        to:
-          process_path(
-            conn,
-            :index,
-            certification: certification
-          )
-      )
+      _ ->
+        redirect(
+          conn,
+          to:
+            certification_path(
+              conn,
+              :index,
+              rome_code: params["rome_code"]
+            )
+        )
     end
   end
 
-  defp get_delegates(certification, geo) do
+  defp get_certification(params), do: Repo.one(Certification.search_by_rncp_id(params["rncp_id"]))
+
+  defp get_delegates(certification, params) do
+    geo = Map.take(params, ["lat", "lng"])
+
     certification
     |> Ecto.assoc(:certifiers)
     |> Repo.all()

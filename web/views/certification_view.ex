@@ -16,7 +16,7 @@ defmodule Vae.CertificationView do
 
   def to_process(conn, certification, search) do
     params =
-      Enum.filter(search, fn {k, v} -> v != "" end)
+      Enum.filter(search, fn {_k, v} -> v != "" end)
       |> Keyword.take(["lat", "lng"])
       |> Keyword.put(:certification, certification)
       |> Keyword.put(:"search[profession]", search["profession"])
