@@ -104,6 +104,31 @@ defmodule Vae.JobSeeker do
     end
   end
 
+  def list_from_events_month(%DateTime{} = current_date) do
+    sql = """
+      SELECT * FROM job_seekers, jsonb_array_elements(events) AS e
+      WHERE (e->>'time')::timestamp BETWEEN $1 AND $2
+    """
+
+    start_date = get_first_day_of_previous_month(current_date)
+
+    end_date = get_last_day_of_previous_month(current_date)
+
+    Ecto.Adapters.SQL.query!(Repo, sql, [start_date, end_date])
+  end
+
+  defp get_first_day_of_previous_month(date) do
+    get_previous_month(date) |> Timex.beginning_of_month()
+  end
+
+  defp get_last_day_of_previous_month(date) do
+    get_previous_month(date) |> Timex.end_of_month()
+  end
+
+  defp get_previous_month(date) do
+    Timex.shift(date, months: -1)
+  end
+
   defp put_event(changeset, event, events) do
     event_changeset = Event.changeset(%Event{}, event)
 
