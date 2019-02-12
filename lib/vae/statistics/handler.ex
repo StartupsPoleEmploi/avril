@@ -137,15 +137,11 @@ defmodule Vae.Statistics.Handler do
       From: %{
         Email: @email_config.email_from,
         Name: @email_config.email_from_name
-        #        Email: "statistiques@avril.pole-emploi.fr",
-        #        Name: "Avril Statistiques"
       },
       To: [
         %{
           Email: @email_config.email_to,
           Name: @email_config.email_to_name
-          #          Email: "avril@pole-emploi.fr",
-          #          Name: "Avril"
         }
       ],
       Attachments: [

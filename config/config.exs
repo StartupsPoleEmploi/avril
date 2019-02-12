@@ -73,7 +73,13 @@ config :vae,
   search_client: Vae.Search.Client.Algolia,
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailer_extractor_limit: 10_000,
-  sender: Vae.Mailer.Sender.Mailjet
+  sender: Vae.Mailer.Sender.Mailjet,
+  statistics: %{
+    email_from: "from@email.com",
+    email_from_name: "From Name",
+    email_to: "to@email.com",
+    email_to_name: "To Name"
+  }
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom
