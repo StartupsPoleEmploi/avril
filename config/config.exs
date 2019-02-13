@@ -83,6 +83,12 @@ config :vae,
     email_to_name: "To Name"
   }
 
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3.1",
+  public_api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
+  private_api_key: System.get_env("MAILJET_PRIVATE_API_KEY"),
+  development_mode: false
+
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
