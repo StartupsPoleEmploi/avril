@@ -1,0 +1,29 @@
+# App artifacts
+/_build
+/.elixir_ls
+/.vscode
+/.env
+/deps
+/releases
+/test
+/*.ez
+.DS_Store
+
+# Databases and persistant
+db
+*.dump
+*.log
+*.tab
+*.md
+yarn.lock
+ebert.yml
+.buildpacks
+elixir_static_buildpack.config
+Procfile
+
+# Static artifacts
+/node_modules
+
+# Priv files
+/priv/static/
+/priv/fixtures/
