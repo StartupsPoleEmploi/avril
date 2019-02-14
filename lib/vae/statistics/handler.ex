@@ -111,24 +111,32 @@ defmodule Vae.Statistics.Handler do
   defp get_certification_labels_from_rome_code(key) do
     case :ets.lookup(:romes, key) do
       [] ->
-        case Certification.from_rome(key) do
-          nil ->
-            nil
+        get_from_db_and_cache(key)
 
-          certifications ->
-            labels =
-              certifications
-              |> Enum.map(fn certification ->
-                certification.label
-              end)
-              |> Enum.join(", ")
-
-            :ets.insert(:romes, {key, labels})
-        end
-
-      [labels] ->
+      [{_rome, labels} = entry] when not is_nil(entry) ->
         labels
+
+      _ ->
+        nil
     end
+  end
+
+  defp get_from_db_and_cache(key) do
+    case Certification.from_rome(key) do
+      nil ->
+        nil
+
+      certifications ->
+        certifications
+        |> Enum.map(& &1.label)
+        |> Enum.join(", ")
+        |> cache(key)
+    end
+  end
+
+  defp cache(labels, key) do
+    :ets.insert(:romes, {key, labels})
+    labels
   end
 
   defp prepare_experiences_to_export(experiences) do
