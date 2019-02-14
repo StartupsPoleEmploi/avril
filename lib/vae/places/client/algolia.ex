@@ -6,24 +6,35 @@ defmodule Vae.Places.Client.Algolia do
   @url_places "https://status.algolia.com/1/usage/total_read_operations/period/month/places"
 
   @algolia_places_query "https://places-dsn.algolia.net/1/places/query"
+  @algolia_places_query_options %{language: "fr", countries: ["fr"], hitsPerPage: 1}
+  @algolia_places_reverse "https://places-dsn.algolia.net/1/places/reverse"
   @algolia_places_keys ~w(_geoloc country_code country administrative county city postcode locale_names _tags is_city)
+  @algolia_places_reverse_options %{language: "fr", hitsPerPage: 1}
 
   # ------------------------#
   #          Search        #
   # ------------------------#
 
-  def get_geoloc_from_postal_code(postal_code), do: get(postal_code)
+  def get_geoloc_from_postal_code(postal_code) do
+    get(%{query: postal_code}, @algolia_places_query)
+  end
 
-  def get_geoloc_from_address(address), do: get(address)
+  def get_geoloc_from_address(address) do
+    get(%{query: address}, @algolia_places_query)
+  end
 
-  defp get(query) do
+  def get_geoloc_from_geo(%{"lat" => lat, "lng" => lng}) do
+    get(%{aroundLatLng: "#{lat},#{lng}"}, @algolia_places_reverse)
+  end
+
+  defp get(query, endpoint) do
     query
-    |> get_first_hit()
+    |> get_first_hit(endpoint)
     |> Map.take(@algolia_places_keys)
   end
 
-  defp get_first_hit(query) do
-    with {:ok, result} <- execute(query),
+  defp get_first_hit(query, endpoint) do
+    with {:ok, result} <- execute(query, endpoint),
          hits <- Map.get(result, "hits"),
          first_hit <- List.first(hits) do
       first_hit
@@ -32,11 +43,26 @@ defmodule Vae.Places.Client.Algolia do
     end
   end
 
-  defp execute(query) do
+  defp execute(query, @algolia_places_query) do
     with headers <- build_headers(),
          {:ok, body} <-
-           Poison.encode(%{query: query, language: "fr", countries: ["fr"], hitsPerPage: 1}),
+           query
+           |> Map.merge(@algolia_places_query_options)
+           |> Poison.encode(),
          {:ok, response} <- HTTPoison.post(@algolia_places_query, body, headers) do
+      Poison.decode(response.body)
+    else
+      {_, error} ->
+        Logger.warn(fn -> error end)
+        {:error, error}
+    end
+  end
+
+  defp execute(query, @algolia_places_reverse) do
+    params = Map.merge(query, @algolia_places_reverse_options)
+
+    with headers <- build_headers(),
+         {:ok, response} <- HTTPoison.get(@algolia_places_reverse, headers, params: params) do
       Poison.decode(response.body)
     else
       {_, error} ->
@@ -51,6 +77,7 @@ defmodule Vae.Places.Client.Algolia do
       {"X-Algolia-Application-Id", get_algolia_app_id()},
       {"X-Algolia-API-Key", get_algolia_api_key()}
     ]
+    |> Enum.filter(fn {_k, v} -> not is_nil(v) end)
   end
 
   def get_algolia_app_id(), do: get_config(:algolia_places_app_id)
