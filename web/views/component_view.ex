@@ -57,6 +57,8 @@ defmodule Vae.ComponentView do
      <script>
      window.algolia_app_id = '#{Application.get_env(:algolia, :application_id)}'
      window.algolia_search_api_key = '#{Application.get_env(:algolia, :search_api_key)}'
+     window.algolia_places_app_id = '#{Application.get_env(:vae, :algolia_places_app_id)}'
+     window.algolia_places_api_key = '#{Application.get_env(:vae, :algolia_places_api_key)}'
      </script>
      """}
   end
@@ -69,7 +71,7 @@ defmodule Vae.ComponentView do
       end
 
     credentials =
-      case {System.get_env("ALGOLIA_PLACES_APP_ID"), System.get_env("ALGOLIA_PLACES_API_KEY")} do
+      case {Application.get_env(:vae, :algolia_places_app_id), Application.get_env(:vae, :algolia_places_api_key)} do
         {appId, apiKey} when not is_nil(appId) and not is_nil(apiKey) ->
           """
             appId: '#{appId}',
@@ -121,7 +123,7 @@ defmodule Vae.ComponentView do
   end
 
   def render("places", %{tag: tag, prefix: prefix}) do
-    render("places", %{tag: tag, type: nil})
+    render("places", %{tag: tag, prefix: prefix, type: nil})
   end
 
   def render("places", _) do

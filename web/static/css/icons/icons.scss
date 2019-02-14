@@ -1,9 +1,13 @@
 /*------------------------
-	font icons
+  font icons
 -------------------------*/
 
 .ic-icon.ic-crosshair:before {
   content: "\ea02";
+}
+.ic-icon.ic-crosshair {
+  padding-right: 1px;
+  padding-bottom: 1px;
 }
 
 .ic-icon.ic-book-08:before {
@@ -65,4 +69,3 @@
 .ic-icon.ic-check-curve:before {
   content: "\ea11";
 }
-
