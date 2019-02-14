@@ -31,18 +31,17 @@ defmodule Vae.Statistics.Handler do
     "phone_number"
   ]
 
-  def child_spec(month) do
+  def child_spec() do
     %{
       id: __MODULE__,
       restart: :temporary,
-      start: {__MODULE__, :start_link, [[month: month]]},
+      start: {__MODULE__, :start_link, []},
       type: :worker
     }
   end
 
   def start_link(args) do
-    month = args[:month]
-    {:ok, month}
+    GenServer.start_link(__MODULE__, args)
   end
 
   def init(args) do
@@ -53,20 +52,10 @@ defmodule Vae.Statistics.Handler do
     JobSeeker.list_from_events_month(DateTime.utc_now())
     |> build_records()
     |> build_csv()
-
-    #    |> write()
-    #    |> send_email()
+    |> write()
+    |> send_email()
 
     {:reply, :ok, state}
-  end
-
-  def foo() do
-    JobSeeker.list_from_events_month(DateTime.utc_now())
-    |> build_records()
-    |> build_csv()
-    |> write()
-
-    # |> send_email()
   end
 
   defp build_records(job_seekers) do

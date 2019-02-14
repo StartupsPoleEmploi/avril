@@ -8,6 +8,7 @@ defmodule Vae do
       supervisor(Vae.Repo, []),
       supervisor(Vae.Endpoint, []),
       supervisor(Vae.Event.EventSupervisor, []),
+      supervisor(Vae.Statistics.StatisticsSupervisor, []),
       worker(Vae.Scheduler, []),
       worker(Vae.Places.Cache, [])
     ]

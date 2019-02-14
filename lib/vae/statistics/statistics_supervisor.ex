@@ -15,8 +15,8 @@ defmodule Vae.Statistics.StatisticsSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def add_statistic_handler(month) do
-    DynamicSupervisor.start_child(@name, {Vae.Statistics.Handler, month})
+  def add_statistic_handler() do
+    DynamicSupervisor.start_child(@name, {Vae.Statistics.Handler, []})
   end
 
   def terminate(handler_pid) do
