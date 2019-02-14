@@ -67,15 +67,7 @@ defmodule Vae.Statistics.Handler do
           acc
 
         events ->
-          with experiences <- build_experiences(js),
-               job_seeker <- build_job_seeker(js),
-               events <- build_events(events) do
-            Enum.map(events, fn event ->
-              event
-              |> Map.merge(job_seeker)
-              |> Map.merge(experiences)
-            end)
-          end
+          build(js, events)
           |> Kernel.++(acc)
       end
     end)
@@ -85,7 +77,19 @@ defmodule Vae.Statistics.Handler do
     Enum.filter(events, fn event -> not is_nil(event.payload) end)
   end
 
-  def build_experiences(job_seeker) do
+  defp build(job_seeker, events) do
+    with experiences <- build_experiences(job_seeker),
+         job_seeker <- build_job_seeker(job_seeker),
+         events <- build_events(events) do
+      Enum.map(events, fn event ->
+        event
+        |> Map.merge(job_seeker)
+        |> Map.merge(experiences)
+      end)
+    end
+  end
+
+  defp build_experiences(job_seeker) do
     case job_seeker.experience do
       nil ->
         [%Vae.Statistics.Experience{}]
@@ -136,7 +140,7 @@ defmodule Vae.Statistics.Handler do
     |> Kernel.elem(1)
   end
 
-  def build_job_seeker(job_seeker) do
+  defp build_job_seeker(job_seeker) do
     %{
       "education_level" => job_seeker.education_level,
       "identifier" => job_seeker.identifier,
@@ -148,7 +152,7 @@ defmodule Vae.Statistics.Handler do
     }
   end
 
-  def build_events(events) do
+  defp build_events(events) do
     events
     |> Enum.map(fn event ->
       {payload, _} = Code.eval_string(event.payload)
