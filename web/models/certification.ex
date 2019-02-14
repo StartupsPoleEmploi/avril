@@ -144,6 +144,16 @@ defmodule Vae.Certification do
     )
   end
 
+  def from_rome(nil), do: nil
+
+  def from_rome(rome) do
+    from(c in Certification,
+      join: r in assoc(c, :romes),
+      where: r.code == ^rome
+    )
+    |> Repo.all()
+  end
+
   defp ensure_not_nil(certifications_delegates) do
     certifications_delegates
     |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
