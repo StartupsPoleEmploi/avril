@@ -45,6 +45,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   def init(args) do
+    PersistentEts.new(:romes, "romes.tab", [:named_table])
     {:ok, args}
   end
 
@@ -108,16 +109,25 @@ defmodule Vae.Statistics.Handler do
   end
 
   defp get_certification_labels_from_rome_code(key) do
-    case Certification.from_rome(key) do
-      nil ->
-        nil
+    case :ets.lookup(:romes, key) do
+      [] ->
+        case Certification.from_rome(key) do
+          nil ->
+            nil
 
-      certifications ->
-        certifications
-        |> Enum.map(fn certification ->
-          certification.label
-        end)
-        |> Enum.join(", ")
+          certifications ->
+            labels =
+              certifications
+              |> Enum.map(fn certification ->
+                certification.label
+              end)
+              |> Enum.join(", ")
+
+            :ets.insert(:romes, {key, labels})
+        end
+
+      [labels] ->
+        labels
     end
   end
 
