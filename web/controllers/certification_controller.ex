@@ -2,7 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, Rome}
+  alias Vae.{Certification, Delegate, Rome, Places, ViewHelpers}
 
   @search_client Application.get_env(:vae, :search_client)
 
@@ -17,10 +17,12 @@ defmodule Vae.CertificationController do
   end
 
   def index(conn, params) do
+    conn_with_geo = save_geo_to_session(conn, params)
+
     if is_nil(params["rncp_id"]) do
-      certifications_by_rome(conn, params)
+      certifications_by_rome(conn_with_geo, params)
     else
-      redirections(conn, params)
+      redirections(conn_with_geo, params)
     end
   end
 
@@ -74,8 +76,9 @@ defmodule Vae.CertificationController do
           |> Repo.get(hd(delegates).id)
           |> Repo.preload(:process)
 
-        redirect(
-          conn,
+        conn
+        |> save_certification_to_session(certification)
+        |> redirect(
           to:
             process_path(
               conn,
@@ -86,8 +89,9 @@ defmodule Vae.CertificationController do
             )
         )
       else
-        redirect(
-          conn,
+        conn
+        |> save_certification_to_session(certification)
+        |> redirect(
           to:
             process_path(
               conn,
@@ -98,8 +102,9 @@ defmodule Vae.CertificationController do
       end
     else
       _ ->
-        redirect(
-          conn,
+        conn
+        |> save_rome_to_session(params)
+        |> redirect(
           to:
             certification_path(
               conn,
@@ -109,6 +114,33 @@ defmodule Vae.CertificationController do
         )
     end
   end
+
+  defp save_rome_to_session(conn, params) do
+    conn
+    |> put_session(:search_query, params["romelabel"])
+    |> put_session(:search_profession, params["romelabel"])
+    |> put_session(:search_rome, params["rome_code"])
+  end
+
+  defp save_certification_to_session(conn, certification) do
+    conn
+    |> put_session(:search_query, ViewHelpers.format_certification_label(certification))
+    |> put_session(:search_certification, certification.id)
+  end
+
+  defp save_geo_to_session(conn, %{"lat" => lat, "lng" => lng} = params) do
+    place = Places.get_geoloc_from_geo(params)
+
+    conn
+    |> put_session(:search_geo, List.first(place["city"]))
+    |> put_session(:search_lat, lat)
+    |> put_session(:search_lng, lng)
+    |> put_session(:search_county, List.first(place["county"]))
+    |> put_session(:search_postcode, List.first(place["postcode"]))
+    |> put_session(:search_administrative, List.first(place["administrative"]))
+  end
+
+  defp save_geo_to_session(conn, _params), do: conn
 
   defp get_certification(params), do: Repo.one(Certification.search_by_rncp_id(params["rncp_id"]))
 
