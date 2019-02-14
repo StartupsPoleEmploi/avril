@@ -4,6 +4,32 @@ defmodule Vae.Statistics.Handler do
   alias Vae.{Certification, JobSeeker}
 
   @email_config Application.get_env(:vae, :statistics)
+  @csv_headers [
+    "date",
+    "identifier",
+    "DL_first_name",
+    "DL_last_name",
+    "DL_email",
+    "name",
+    "first_name",
+    "last_name",
+    "email",
+    "delegate_email",
+    "delegate_name",
+    "job",
+    "DL_ROME_1",
+    "DL_ROME_1_LABELS",
+    "DL_ROME_1_DURATION",
+    "DL_ROME_2",
+    "DL_ROME_2_LABELS",
+    "DL_ROME_2_DURATION",
+    "education_level",
+    "certification",
+    "county",
+    "DL_postal_code",
+    "contact_delegate",
+    "phone_number"
+  ]
 
   def child_spec(month) do
     %{
@@ -39,7 +65,8 @@ defmodule Vae.Statistics.Handler do
     |> build_records()
     |> build_csv()
     |> write()
-    |> send_email()
+
+    # |> send_email()
   end
 
   defp build_records(job_seekers) do
@@ -51,71 +78,98 @@ defmodule Vae.Statistics.Handler do
           acc
 
         events ->
-          experiences = build_experiences(js)
-          count = length(experiences)
-
-          {_count, full_experiences} =
-            Enum.reduce(experiences, {count, %{}}, fn experience, {count, acc} ->
-              {count - 1,
-               Map.merge(
-                 acc,
-                 %{
-                   "DL_ROME_#{count}" => experience.code,
-                   "DL_ROME_#{count}_LABELS" => experience.labels,
-                   "DL_ROME_#{count}_DURATION" => experience.duration,
-                   "education_level" => js.education_level,
-                   "identifier" => js.identifier,
-                   "postal_code" => js.postal_code,
-                   "DL_first_name" => js.first_name,
-                   "DL_last_name" => js.last_name,
-                   "DL_email" => js.email,
-                   "DL_postal_code" => js.postal_code
-                 }
-               )}
+          with experiences <- build_experiences(js),
+               job_seeker <- build_job_seeker(js),
+               events <- build_events(events) do
+            Enum.map(events, fn event ->
+              event
+              |> Map.merge(job_seeker)
+              |> Map.merge(experiences)
             end)
-
-          events
-          |> Enum.map(fn event ->
-            {payload, _} = Code.eval_string(event.payload)
-
-            Map.put(payload, "date", time_to_string(event.time))
-            |> Map.merge(full_experiences)
-          end)
+          end
           |> Kernel.++(acc)
       end
     end)
   end
 
+  defp filter_by_empty_event_payload(events) do
+    Enum.filter(events, fn event -> not is_nil(event.payload) end)
+  end
+
+  def build_experiences(job_seeker) do
+    case job_seeker.experience do
+      nil ->
+        [%Vae.Statistics.Experience{}]
+
+      map ->
+        map
+        |> Enum.map(fn {key, value} ->
+          %Vae.Statistics.Experience{
+            labels: get_certification_labels_from_rome_code(key),
+            code: key,
+            duration: value
+          }
+        end)
+    end
+    |> prepare_experiences_to_export()
+  end
+
+  defp get_certification_labels_from_rome_code(key) do
+    case Certification.from_rome(key) do
+      nil ->
+        nil
+
+      certifications ->
+        certifications
+        |> Enum.map(fn certification ->
+          certification.label
+        end)
+        |> Enum.join(", ")
+    end
+  end
+
+  defp prepare_experiences_to_export(experiences) do
+    count = length(experiences)
+
+    Enum.reduce(experiences, {count, %{}}, fn experience, {count, acc} ->
+      {
+        count - 1,
+        Map.merge(
+          acc,
+          %{
+            "DL_ROME_#{count}" => experience.code,
+            "DL_ROME_#{count}_LABELS" => experience.labels,
+            "DL_ROME_#{count}_DURATION" => experience.duration
+          }
+        )
+      }
+    end)
+    |> Kernel.elem(1)
+  end
+
+  def build_job_seeker(job_seeker) do
+    %{
+      "education_level" => job_seeker.education_level,
+      "identifier" => job_seeker.identifier,
+      "postal_code" => job_seeker.postal_code,
+      "DL_first_name" => job_seeker.first_name,
+      "DL_last_name" => job_seeker.last_name,
+      "DL_email" => job_seeker.email,
+      "DL_postal_code" => job_seeker.postal_code
+    }
+  end
+
+  def build_events(events) do
+    events
+    |> Enum.map(fn event ->
+      {payload, _} = Code.eval_string(event.payload)
+
+      Map.put(payload, "date", time_to_string(event.time))
+    end)
+  end
+
   defp build_csv(records) do
-    records
-    |> CSV.encode(
-      headers: [
-        "date",
-        "identifier",
-        "DL_first_name",
-        "DL_last_name",
-        "DL_email",
-        "name",
-        "first_name",
-        "last_name",
-        "email",
-        "delegate_email",
-        "delegate_name",
-        "job",
-        "DL_ROME_1",
-        "DL_ROME_1_LABELS",
-        "DL_ROME_1_DURATION",
-        "DL_ROME_2",
-        "DL_ROME_2_LABELS",
-        "DL_ROME_2_DURATION",
-        "education_level",
-        "certification",
-        "county",
-        "DL_postal_code",
-        "contact_delegate",
-        "phone_number"
-      ]
-    )
+    CSV.encode(records, headers: @csv_headers)
   end
 
   defp write(records) do
@@ -158,41 +212,6 @@ defmodule Vae.Statistics.Handler do
     Mailjex.Delivery.send(%{
       Messages: [content]
     })
-  end
-
-  defp filter_by_empty_event_payload(events) do
-    Enum.filter(events, fn event -> not is_nil(event.payload) end)
-  end
-
-  def build_experiences(job_seeker) do
-    case job_seeker.experience do
-      nil ->
-        [%Vae.Statistics.Experience{}]
-
-      map ->
-        map
-        |> Enum.map(fn {key, value} ->
-          certifications_labels =
-            Certification.from_rome(key)
-            |> case do
-              nil ->
-                nil
-
-              certifications ->
-                certifications
-                |> Enum.map(fn certification ->
-                  certification.label
-                end)
-                |> Enum.join(", ")
-            end
-
-          %Vae.Statistics.Experience{
-            labels: certifications_labels,
-            code: key,
-            duration: value
-          }
-        end)
-    end
   end
 
   defp time_to_string(%DateTime{

@@ -2,66 +2,89 @@ defmodule Mix.Tasks.JobSeeker.Count do
   use Mix.Task
 
   import Mix.Ecto
-  import Ecto.Query
 
   alias Vae.Repo
-  alias Vae.{Delegate, JobSeeker}
+  alias Vae.JobSeeker
 
   def run(_args) do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:poison)
 
-    # date = ~N[2018-11-19 00:00:00]
+    from_date =
+      ~N[2018-12-01 00:00:00]
+      |> DateTime.from_naive!("Etc/UTC")
 
-    # delegates_email =
-    #  from(d in Delegate,
-    #    where: d.administrative == "Nouvelle-Aquitaine"
-    #  )
-    #  |> Repo.all()
-    #  |> Enum.map(& &1.email)
+    end_date =
+      ~N[2018-12-31 23:59:59]
+      |> DateTime.from_naive!("Etc/UTC")
 
-    job_seekers = Repo.all(JobSeeker)
-    #      from(js in JobSeeker,
-    #        where: js.updated_at > ^date
-    #      )
-    #      |> Repo.all()
+    file = File.open!("12_2018.csv", [:write, :utf8])
 
-    # job_seekers = Repo.all(JobSeeker)
+    Repo.all(JobSeeker)
+    |> Enum.reduce([], fn js, acc ->
+      case Enum.filter(js.events, fn event -> not is_nil(event.payload) end)
+           |> Enum.filter(
+             &(DateTime.compare(&1.time, from_date) in [:gt, :eq] and
+                 DateTime.compare(&1.time, end_date) in [:lt, :eq])
+           ) do
+        [] ->
+          acc
 
-    events = Enum.flat_map(job_seekers, fn js -> js.events end)
+        events ->
+          events
+          |> Enum.map(fn e ->
+            {payload, _} = Code.eval_string(e.payload)
 
-    file = File.open!("file.csv", [:write, :utf8])
+            romes =
+              case js.experience do
+                nil ->
+                  [%{rome: nil, exp: nil}]
 
-    Enum.filter(events, fn event ->
-      not is_nil(event.payload)
+                map ->
+                  map
+                  |> Enum.map(fn {key, value} -> %{rome: key, exp: value} end)
+              end
+
+            Map.merge(payload, %{
+              "date" => time_to_string(e.time),
+              "education_level" => js.education_level,
+              "identifier" => js.identifier,
+              "postal_code" => js.postal_code,
+              "DL_first_name" => js.first_name,
+              "DL_last_name" => js.last_name,
+              "DL_email" => js.email,
+              "DL_ROME_1" => romes |> hd() |> get_rome(),
+              "DL_XP_ROME_1" => romes |> hd() |> get_exp(),
+              "DL_ROME_2" => romes |> List.last() |> get_rome(),
+              "DL_XP_ROME_2" => romes |> List.last() |> get_exp(),
+              "DL_postal_code" => js.postal_code
+            })
+          end)
+          |> Kernel.++(acc)
+      end
     end)
-    |> Enum.map(fn e ->
-      e.payload
-      |> String.replace("%", "")
-      |> String.replace(" =>", ":")
-      |> Poison.decode!()
-      |> Map.put_new(
-        "date",
-        time_to_string(e.time)
-      )
-    end)
-    |> Enum.filter(fn p ->
-      (p["delegate_email"] == "" or p["delegate_email"] == "") and p["contact_delegate"] == "on"
-
-      # p["delegate_email"] in delegates_email and p["contact_delegate"] == "on" and
-      # p["contact_delegate"] == "on" and not is_nil(p["certification"]) and
-      # not is_nil(p["delegate_email"])
-    end)
-    |> Enum.sort_by(& &1["delegate_name"])
     |> CSV.encode(
       headers: [
         "date",
-        "job",
-        "certification",
-        "county",
+        "identifier",
+        "DL_first_name",
+        "DL_last_name",
+        "DL_email",
+        "name",
+        "email",
         "delegate_email",
         "delegate_name",
-        "email"
+        "job",
+        "DL_ROME_1",
+        "DL_XP_ROME_1",
+        "DL_ROME_2",
+        "DL_XP_ROME_2",
+        "education_level",
+        "certification",
+        "county",
+        "DL_postal_code",
+        "contact_delegate",
+        "phone_number"
       ]
     )
     |> Enum.each(&IO.write(file, &1))
@@ -85,4 +108,10 @@ defmodule Mix.Tasks.JobSeeker.Count do
     |> Integer.to_string()
     |> String.pad_leading(2, "0")
   end
+
+  defp get_rome(nil), do: nil
+  defp get_rome(map), do: Map.get(map, :rome)
+
+  defp get_exp(nil), do: nil
+  defp get_exp(map), do: Map.get(map, :exp)
 end
