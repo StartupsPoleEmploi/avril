@@ -169,7 +169,7 @@ form.dm-search-box {
     }
   }
 
-  .btn {
+  .btn[type="submit"] {
     border: none;
     border-radius: 4px;
     @include media-breakpoint-up(md) {
