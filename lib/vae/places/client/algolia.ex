@@ -77,7 +77,6 @@ defmodule Vae.Places.Client.Algolia do
       {"X-Algolia-Application-Id", get_algolia_app_id()},
       {"X-Algolia-API-Key", get_algolia_api_key()}
     ]
-    |> Enum.filter(fn {_k, v} -> not is_nil(v) end)
   end
 
   def get_algolia_app_id(), do: get_config(:algolia_places_app_id)
