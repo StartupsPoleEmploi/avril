@@ -3,6 +3,8 @@ defmodule Vae.Places do
 
   defdelegate get_geoloc_from_postal_code(postal_code), to: Vae.Places.Cache
 
+  defdelegate get_geoloc_from_geo(geo), to: Vae.Places.Client.Algolia
+
   def get_city(geolocation) do
     case get_cities(geolocation) do
       nil -> nil

@@ -11,75 +11,119 @@
     = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
     = hidden_input(f, :postcode, value: Plug.Conn.get_session(@conn, :search_postcode))
     = hidden_input(f, :administrative, value: Plug.Conn.get_session(@conn, :search_administrative))
-  = submit class: "btn btn-outline-primary btn-lg d-flex justify-content-center my-md-0 my-2", title: 'Valider la recherche' do
+    button#locate-me.position-absolute.btn.btn-outline-secondary.p-2.d-flex.align-items-center.justify-content-center type="button" style="height:36px;width:36px;top:29%;right:14px"
+      span.ic-icon.ic-crosshair
+      span.fa.fa-refresh.fa-spin.d-none
+  = submit class: "btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center my-md-0 my-2", title: 'Valider la recherche' do
     span.ic-icon.ic-zoom-bold
 = render Vae.ComponentView, "places", conn: @conn, prefix: "search", tag: "geolocation_text", type: "city"
 = render Vae.ComponentView, "searchbar_variables"
 javascript:
-  var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
-  var professions = client.initIndex('profession');
-  var certifications = client.initIndex('certification');
-  var romes = client.initIndex('rome');
-  autocomplete('#search_query', {
-    autoselect: true,
-    autoselectOnBlur: true,
-    cssClasses: {
-      prefix: 'ap'
-    }
-  }, [{
-    source: autocomplete.sources.hits(professions, { hitsPerPage: 4, queryType: 'prefixAll' }),
-    displayKey: function(suggestion) {
-      var label = suggestion.label;
-      return label;
-    },
-    templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">Métiers</div>',
-      suggestion: function(suggestion) {
-        var label = suggestion._highlightResult.label.value;
+  (function() {
+    var client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
+    var professions = client.initIndex('profession');
+    var certifications = client.initIndex('certification');
+    var romes = client.initIndex('rome');
+    autocomplete('#search_query', {
+      autoselect: true,
+      autoselectOnBlur: true,
+      cssClasses: {
+        prefix: 'ap'
+      }
+    }, [{
+      source: autocomplete.sources.hits(professions, { hitsPerPage: 4, queryType: 'prefixAll' }),
+      displayKey: function(suggestion) {
+        var label = suggestion.label;
         return label;
+      },
+      templates: {
+        header: '<h5 class="m-0 ap-suggestions-category">Métiers</div>',
+        suggestion: function(suggestion) {
+          var label = suggestion._highlightResult.label.value;
+          return label;
+        }
       }
-    }
-  }, {
-    source: autocomplete.sources.hits(certifications, { hitsPerPage: 3, queryType: 'prefixAll' }),
-    displayKey: function(suggestion) {
-      var acronym = suggestion.acronym;
-      var label = suggestion.label;
-      return acronym ? `${acronym} ${label}` : label;
-    },
-    templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">Dîplomes</div>',
-      suggestion: function(suggestion) {
-        var acronym = suggestion._highlightResult.acronym && suggestion._highlightResult.acronym.value;
-        var label = suggestion._highlightResult.label.value;
+    }, {
+      source: autocomplete.sources.hits(certifications, { hitsPerPage: 3, queryType: 'prefixAll' }),
+      displayKey: function(suggestion) {
+        var acronym = suggestion.acronym;
+        var label = suggestion.label;
         return acronym ? `${acronym} ${label}` : label;
+      },
+      templates: {
+        header: '<h5 class="m-0 ap-suggestions-category">Dîplomes</div>',
+        suggestion: function(suggestion) {
+          var acronym = suggestion._highlightResult.acronym && suggestion._highlightResult.acronym.value;
+          var label = suggestion._highlightResult.label.value;
+          return acronym ? `${acronym} ${label}` : label;
+        }
       }
-    }
-  }, {
-    source: autocomplete.sources.hits(romes, { hitsPerPage: 1, queryType: 'prefixAll' }),
-    displayKey: function(suggestion) {
-      var code = suggestion.code;
-      var label = suggestion.label;
-      return `${label} (${code})`;
-    },
-    templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">Romes</div>',
-      suggestion: function(suggestion) {
-        var code = suggestion._highlightResult.code.value;
-        var label = suggestion._highlightResult.label.value;
+    }, {
+      source: autocomplete.sources.hits(romes, { hitsPerPage: 1, queryType: 'prefixAll' }),
+      displayKey: function(suggestion) {
+        var code = suggestion.code;
+        var label = suggestion.label;
         return `${label} (${code})`;
+      },
+      templates: {
+        header: '<h5 class="m-0 ap-suggestions-category">Romes</div>',
+        suggestion: function(suggestion) {
+          var code = suggestion._highlightResult.code.value;
+          var label = suggestion._highlightResult.label.value;
+          return `${label} (${code})`;
+        }
       }
+    }]).on('autocomplete:selected', function(event, suggestion, dataset) {
+      if(dataset === 1) {
+        $('#search_rome_code').val(suggestion.rome_code);
+        $('#search_certification').val('');
+      }
+      if(dataset === 3) {
+        $('#search_rome_code').val(suggestion.code);
+        $('#search_certification').val('');
+      }
+      if(dataset === 2) {
+        $('#search_rome_code').val('');
+        $('#search_certification').val(suggestion.id);
+      }
+    });
+
+    var places = algoliasearch.initPlaces(window.algolia_places_app_id, window.algolia_places_api_key);
+
+    function updateForm(response) {
+      var hits = response.hits;
+      var suggestion = hits[0];
+
+      if (suggestion && suggestion.locale_names && suggestion.city) {
+        $('#search_geolocation_text').val(suggestion.is_city ? suggestion.locale_names[0] : suggestion.city[0]);
+        $('#search_county').val(suggestion.county || suggestion.city || suggestion.name);
+        $('#search_postcode').val(suggestion.postcode);
+        $('#search_administrative').val(suggestion.administrative);
+      }
+
+      $('#locate-me .fa-refresh').addClass('d-none');
+      $('#locate-me .ic-icon').removeClass('d-none');
     }
-  }]).on('autocomplete:selected', function(event, suggestion, dataset) {
-    if(dataset === 1) {
-      $('#search_rome_code').val(suggestion.rome_code);
-      $('#search_certification').val('');
-    }
-    if(dataset === 3) {
-      $('#search_rome_code').val(suggestion.code);
-      $('#search_certification').val('');
-    }
-    if(dataset === 2) {
-      $('#search_rome_code').val('');
-      $('#search_certification').val(suggestion.id);
-    }
-  });
+
+    $('#locate-me').click(function() {
+      $('#locate-me .fa-refresh').removeClass('d-none');
+      $('#locate-me .ic-icon').addClass('d-none');
+      navigator.geolocation.getCurrentPosition(function(response) {
+        var coords = response.coords;
+        var lat = coords.latitude.toFixed(6);
+        var lng = coords.longitude.toFixed(6);
+
+        $('#search_lat').val(lat);
+        $('#search_lng').val(lng);
+
+        places.reverse({
+          aroundLatLng: lat + ',' + lng,
+          language: 'fr',
+          hitsPerPage: 1
+        }).then(updateForm);
+      }, function() {
+        $('#locate-me').addClass('d-none');
+        $('#locate-me').removeClass('d-flex');
+      });
+    });
+  })();

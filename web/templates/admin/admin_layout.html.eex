@@ -7,11 +7,11 @@
  $(document).ready(function() {
    if(document.querySelector('#delegate_address')) {
      var placesAutocomplete = places({
-     <% app_id = System.get_env("ALGOLIA_PLACES_APP_ID") %>
+     <% app_id = Application.get_env(:vae, :algolia_places_app_id) %>
      <%= if not is_nil app_id do %>
      appId: '<%= app_id %>',
      <% end %>
-     <% api_key = System.get_env("ALGOLIA_PLACES_API_KEY") %>
+     <% api_key = Application.get_env(:vae, :algolia_places_api_key) %>
      <%= if not is_nil api_key do %>
      apiKey: '<%= api_key %>',
      <% end %>
