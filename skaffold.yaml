@@ -1,0 +1,22 @@
+apiVersion: skaffold/v1beta4
+kind: Config
+build:
+  tagPolicy:
+    gitCommit: {}
+  artifacts:
+  - image: avril
+    context: .
+    docker: {}
+  local: {}
+deploy:
+  helm:
+    releases:
+    - name: avril
+      chartPath: helm
+      # namespace: skaffold
+      # valuesFilePath: helm-skaffold-values.yaml
+      values:
+        image: avril
+      # setValues get appended to the helm deploy with --set.
+      # setValues:
+        # some.key: someValue
