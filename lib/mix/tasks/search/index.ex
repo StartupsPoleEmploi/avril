@@ -77,6 +77,12 @@ defmodule Mix.Tasks.Search.Index do
     end
   end
 
+  defp get(Profession) do
+    Profession
+    |> Repo.all()
+    |> Repo.preload(:rome)
+  end
+
   defp get(model) do
     Repo.all(model)
   end
