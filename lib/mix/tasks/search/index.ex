@@ -77,20 +77,6 @@ defmodule Mix.Tasks.Search.Index do
     end
   end
 
-  # TODO: Remove this when no more limitations from algolia
-  defp get(Profession) do
-    query =
-      from(p in Profession,
-        join: r in "rome_certifications",
-        on: p.rome_id == r.rome_id,
-        group_by: p.id,
-        select: p
-      )
-
-    Repo.all(query)
-    |> Repo.preload(:rome)
-  end
-
   defp get(model) do
     Repo.all(model)
   end
