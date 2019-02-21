@@ -58,9 +58,6 @@ defmodule Vae.Router do
     get("/certifications", CertificationController, :index)
     get("/certifications/:id/certifiers", CertificationController, :certifiers)
 
-    resources("/certifiers", CertifierController, only: [:index, :show])
-    get("/certifiers/:id/delegates", CertifierController, :delegates)
-
     resources("/delegates", DelegateController, only: [:index, :show])
 
     get("/processes", ProcessController, :index)

@@ -9,6 +9,4 @@ footer
       li.nav-item
         = render "active_link.html", text: "Diplômes", class: "nav-link", to: certification_path(@conn, :index), conn: @conn
       li.nav-item
-        = render "active_link.html", text: "Certificateurs", class: "nav-link", to: certifier_path(@conn, :index), conn: @conn
-      li.nav-item
         = render "active_link.html", text: "Délégataires", class: "nav-link", to: delegate_path(@conn, :index), conn: @conn
