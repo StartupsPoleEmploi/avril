@@ -8,13 +8,12 @@ defmodule Vae.ProfessionController do
   def index(conn, params) do
     page =
       Profession
-      |> Profession.search(params["search"]["for"])
+      |> preload(:rome)
       |> Repo.paginate(params)
 
     render(conn, "index.html",
       professions: page.entries,
-      page: page,
-      search_terms: params["search"]["for"]
+      page: page
     )
   end
 end

@@ -1,9 +1,9 @@
 .container
-  h1.m-5 Liste des délégataires
+  h1.m-5 Liste des certificateurs
   .results-container
     .results
       = for delegate <- @delegates do
         .result-item
-          h3= link delegate.name, to: delegate_path(@conn, :show, delegate.id), class: 'main-link'
+          h3= link delegate.name, to: certification_path(@conn, :index, certificateur: delegate), class: 'main-link'
     = if assigns[:page] && @page.total_entries > @page.page_size do
       = pagination_links @conn, @page

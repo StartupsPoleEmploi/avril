@@ -2,7 +2,6 @@ defmodule Vae.DelegateController do
   use Vae.Web, :controller
 
   alias Vae.Delegate
-  alias Vae.Certification
 
   filterable do
     @options param: :diplome
@@ -23,22 +22,5 @@ defmodule Vae.DelegateController do
          page <- Repo.paginate(filtered_query, params) do
       render(conn, "index.html", delegates: page.entries, page: page, meta: filter_values)
     end
-  end
-
-  def show(conn, %{"id" => id, "certification" => certification_id}) do
-    certification = Repo.get!(Certification, certification_id)
-    render_result(conn, id, certification)
-  end
-
-  def show(conn, %{"id" => id}) do
-    render_result(conn, id, nil)
-  end
-
-  defp render_result(conn, id, certification) do
-    delegate =
-      Repo.get!(Delegate, id)
-      |> Repo.preload(:process)
-
-    render(conn, "show.html", delegate: delegate, certification: certification)
   end
 end
