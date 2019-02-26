@@ -2,15 +2,16 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, Rome, Places, ViewHelpers}
+  alias Vae.{Certification, Delegate, Places, ViewHelpers}
 
   @search_client Application.get_env(:vae, :search_client)
 
   def cast_array(str), do: String.split(str, ",")
 
   filterable do
-    @options default: [1, 2, 3, 4, 5], cast: &Vae.CertificationController.cast_array/1
-
+    @options param: :levels,
+             default: [1, 2, 3, 4, 5],
+             cast: &Vae.CertificationController.cast_array/1
     filter levels(query, value, _conn) do
       query |> where([c], c.level in ^value)
     end
@@ -21,56 +22,58 @@ defmodule Vae.CertificationController do
       |> join(:inner, [d], d in assoc(d, :delegates))
       |> where([c, d], d.id == ^value)
     end
+
+    @options param: :rome
+    filter rome(query, value, _conn) do
+      query
+      |> join(:inner, [r], r in assoc(r, :romes))
+      |> where([c, r], r.id == ^value)
+    end
+
+    @options param: :rome_code
+    filter rome_code(query, value, _conn) do
+      query
+      |> join(:inner, [r], r in assoc(r, :romes))
+      |> where([c, r], r.code == ^value)
+    end
   end
 
   def index(conn, params) do
     conn_with_geo = save_geo_to_session(conn, params)
 
     if is_nil(params["rncp_id"]) do
-      certifications_by_rome(conn_with_geo, params)
+      list(conn_with_geo, params)
     else
       redirections(conn_with_geo, params)
     end
   end
 
-  defp certifications_by_rome(conn, params) do
-    case get_rome(params) do
-      nil -> list(conn, params, Certification)
-      rome -> list(conn, params, get_certifications_by_rome(rome))
-    end
-  end
-
-  defp get_rome(%{"rome_id" => rome_id}) do
-    Repo.get(Rome, rome_id)
-  end
-
-  defp get_rome(%{"rome_code" => rome_code}) do
-    Repo.get_by(Rome, code: rome_code)
-  end
-
-  defp get_rome(_params) do
-    nil
-  end
-
-  def get_certifications_by_rome(rome) do
-    rome
-    |> assoc(:certifications)
-    |> order_by(desc: :level)
-  end
-
-  defp list(conn, params, certifications) do
-    total_without_filter_level = Repo.aggregate(certifications, :count, :id)
-
-    with {:ok, certifications_by_level, _filter_values} <- apply_filters(certifications, conn),
-         page <- Repo.paginate(certifications_by_level, params) do
+  defp list(conn, params) do
+    with {:ok, filtered_query, filter_values} <- apply_filters(Certification, conn),
+         page <- Repo.paginate(filtered_query, params) do
       render(
         conn,
         Vae.CertificationView,
         "index.html",
         certifications: page.entries,
-        no_results: total_without_filter_level == 0,
-        page: page
+        no_results: count_without_level_filter(params) == 0,
+        page: page,
+        meta: filter_values
       )
+    end
+  end
+
+  defp count_without_level_filter(params) do
+    conn_without_filter_level = %Plug.Conn{
+      params: Map.drop(params, ["levels"])
+    }
+
+    with {:ok, filtered_query, _filter_values} <-
+           apply_filters(
+             Certification,
+             conn_without_filter_level
+           ) do
+      Repo.aggregate(filtered_query, :count, :id)
     end
   end
 
