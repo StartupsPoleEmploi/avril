@@ -58,10 +58,6 @@ defmodule Vae.Router do
     resources("/certificateurs", DelegateController, only: [:index])
     resources("/diplomes", CertificationController, only: [:index, :show])
 
-    # TODO Old -> func to remove
-    get("/processes", ProcessController, :index)
-    get("/processes/:id", ProcessController, :show)
-
     # Search endpoint
     post("/search", SearchController, :search)
   end
