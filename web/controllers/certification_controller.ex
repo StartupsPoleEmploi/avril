@@ -14,6 +14,13 @@ defmodule Vae.CertificationController do
     filter levels(query, value, _conn) do
       query |> where([c], c.level in ^value)
     end
+
+    @options param: :certificateur
+    filter delegate(query, value, _conn) do
+      query
+      |> join(:inner, [d], d in assoc(d, :delegates))
+      |> where([c, d], d.id == ^value)
+    end
   end
 
   def index(conn, params) do
