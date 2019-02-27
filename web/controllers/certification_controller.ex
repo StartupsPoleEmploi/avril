@@ -2,9 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, Places, ViewHelpers}
-
-  @search_client Application.get_env(:vae, :search_client)
+  alias Vae.{Certification, Delegate, Places, ViewHelpers, Search}
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -48,6 +46,52 @@ defmodule Vae.CertificationController do
     end
   end
 
+  def show(conn, params) do
+    certification = Certification.get_certification(params["id"])
+
+    delegate =
+      Map.take(params, ["certificateur"])
+      |> Map.put_new(:geo, %{
+        "lat" => Plug.Conn.get_session(conn, :search_lat),
+        "lng" => Plug.Conn.get_session(conn, :search_lng)
+      })
+      |> Map.put_new(:postcode, Plug.Conn.get_session(conn, :search_postcode))
+      |> Map.put_new(:administrative, Plug.Conn.get_session(conn, :search_administrative))
+      |> get_delegate(certification)
+
+    if(not is_nil(delegate)) do
+      if(not is_nil(params["certificateur"])) do
+        render(
+          conn,
+          "show.html",
+          certification: certification,
+          delegate: delegate
+        )
+      else
+        redirect(
+          conn,
+          to:
+            certification_path(
+              conn,
+              :show,
+              certification,
+              certificateur: delegate
+            )
+        )
+      end
+    else
+      redirect(
+        conn,
+        to:
+          delegate_path(
+            conn,
+            :index,
+            diplome: certification
+          )
+      )
+    end
+  end
+
   defp list(conn, params) do
     with {:ok, filtered_query, filter_values} <- apply_filters(Certification, conn),
          page <- Repo.paginate(filtered_query, params) do
@@ -78,38 +122,22 @@ defmodule Vae.CertificationController do
   end
 
   defp redirections(conn, params) do
-    with certification when not is_nil(certification) <- get_certification(params),
-         delegates <- get_delegates(certification, params) do
-      if length(delegates) > 0 do
-        delegate =
-          Delegate
-          |> Repo.get(hd(delegates).id)
-          |> Repo.preload(:process)
+    postcode = Plug.Conn.get_session(conn, :search_postcode)
+    administrative = Plug.Conn.get_session(conn, :search_administrative)
 
-        conn
-        |> save_certification_to_session(certification)
-        |> redirect(
-          to:
-            process_path(
-              conn,
-              :show,
-              delegate.process,
-              certification: certification,
-              delegate: delegate
-            )
-        )
-      else
-        conn
-        |> save_certification_to_session(certification)
-        |> redirect(
-          to:
-            process_path(
-              conn,
-              :index,
-              certification: certification
-            )
-        )
-      end
+    with certification when not is_nil(certification) <- Certification.get_certification(params),
+         delegate <- Search.get_delegate(certification, params, postcode, administrative) do
+      conn
+      |> save_certification_to_session(certification)
+      |> redirect(
+        to:
+          certification_path(
+            conn,
+            :show,
+            certification,
+            certificateur: delegate
+          )
+      )
     else
       _ ->
         conn
@@ -124,6 +152,24 @@ defmodule Vae.CertificationController do
         )
     end
   end
+
+  defp get_delegate(%{"certificateur" => delegate_id}, _certification) do
+    Delegate
+    |> Repo.get(delegate_id)
+    |> Repo.preload(:process)
+  end
+
+  defp get_delegate(%{geo: %{"lat" => lat, "lng" => lng} = geo} = params, certification)
+       when not (is_nil(lat) or is_nil(lng)) do
+    Search.get_delegate(
+      certification,
+      geo,
+      params["postcode"],
+      params["administrative"]
+    )
+  end
+
+  defp get_delegate(_params, _certification), do: nil
 
   defp save_rome_to_session(conn, params) do
     conn
@@ -151,23 +197,4 @@ defmodule Vae.CertificationController do
   end
 
   defp save_geo_to_session(conn, _params), do: conn
-
-  defp get_certification(params), do: Repo.one(Certification.search_by_rncp_id(params["rncp_id"]))
-
-  defp get_delegates(certification, params) do
-    geo = Map.take(params, ["lat", "lng"])
-
-    certification
-    |> Ecto.assoc(:certifiers)
-    |> Repo.all()
-    |> @search_client.get_delegates(geo)
-    |> case do
-      {:ok, delegates} ->
-        delegates
-
-      {:error, msg} ->
-        Logger.error("Error on searching delegates: #{msg}")
-        Delegate.from_certification(certification) |> Repo.all()
-    end
-  end
 end

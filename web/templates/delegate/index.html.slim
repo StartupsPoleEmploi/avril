@@ -4,6 +4,6 @@
     .results
       = for delegate <- @delegates do
         .result-item
-          h3= link delegate.name, to: certification_path(@conn, :index, certificateur: delegate), class: 'main-link'
+          h3= link delegate.name, to: to_certification(@conn, delegate, @conn.params["diplome"]), class: 'main-link'
     = if assigns[:page] && @page.total_entries > @page.page_size do
       = pagination_links @conn, @page

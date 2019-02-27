@@ -58,6 +58,8 @@ defmodule Vae.Router do
     resources("/certificateurs", DelegateController, only: [:index])
     resources("/diplomes", CertificationController, only: [:index, :show])
 
+    get("/certifications", CertificationController, :index)
+
     # Search endpoint
     post("/search", SearchController, :search)
   end

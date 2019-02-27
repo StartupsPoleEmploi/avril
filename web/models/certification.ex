@@ -61,6 +61,12 @@ defmodule Vae.Certification do
     |> add_delegates(params)
   end
 
+  def get_certification(%{"rncp_id" => rncp_id}), do: Repo.get_by(Certification, rncp_id: rncp_id)
+
+  def get_certification(nil), do: nil
+
+  def get_certification(certification_id), do: Repo.get(Certification, certification_id)
+
   def add_romes(changeset, %{romes: romes}) do
     changeset
     |> put_assoc(:romes, get_romes(romes))
@@ -87,7 +93,7 @@ defmodule Vae.Certification do
     |> Repo.all()
   end
 
-  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers}} = changeset, params) do
+  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers}} = changeset, _params) do
     certifications_delegates =
       Enum.reduce(certifiers, [], fn
         %{action: :update, data: data}, acc ->
@@ -128,12 +134,6 @@ defmodule Vae.Certification do
     Delegate
     |> where([d], d.id in ^delegates)
     |> Repo.all()
-  end
-
-  def search_by_rncp_id(rncp_id) do
-    from(c in Certification,
-      where: c.rncp_id == ^rncp_id
-    )
   end
 
   def from_certifier(certifier_id) do

@@ -1,0 +1,38 @@
+nav aria-label="Étapes"
+  ul.pagination id="pagination-steps"
+    li.page-item.disabled
+      a.page-link aria-label="Précédent" id="previous-step"
+        span.ic-icon.ic-tail-left aria-hidden="true"
+        .sr-only Précédent
+    li.page-item
+      a.page-link aria-label="Suivant" id="next-step"
+        span.ic-icon.ic-tail-right-2 aria-hidden="true"
+        .sr-only Suivant
+javascript:
+  var currentStep = 1;
+
+  function prev_next(currentStep) {
+    if($('#step_' + (currentStep - 1)).length == 0) {
+      $('#previous-step').parent().addClass('disabled');
+    } else {
+      $('#previous-step').parent().removeClass('disabled');
+    }
+    if($('#step_' + (currentStep + 1)).length == 0) {
+      $('#next-step').parent().addClass('disabled');
+    } else {
+      $('#next-step').parent().removeClass('disabled');
+    }
+  }
+
+  $('#previous-step').click(function() {
+    $('#step_' + currentStep).addClass("d-none");
+    currentStep--;
+    $('#step_' + currentStep).removeClass("d-none");
+    prev_next(currentStep);
+  });
+  $('#next-step').click(function() {
+    $('#step_' + currentStep).addClass("d-none");
+    currentStep++;
+    $('#step_' + currentStep).removeClass("d-none");
+    prev_next(currentStep);
+  });

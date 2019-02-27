@@ -22,7 +22,7 @@
         .my-4.card.p-0.p-md-2
           .card-body
             h2.h5.card-title
-              = link("#{certification.acronym} #{String.downcase(certification.label)}", to: to_process(@conn, certification, assigns[:search]))
+              = link("#{certification.acronym} #{String.downcase(certification.label)}", to: link_certification_to(@conn, certification, @conn.params["certificateur"]))
             h3.h6.card-subtitle.my-3
               span.font-weight-normal> Niveau obtenu :
               a href="#" #{level_info_by_level(certification.level)}
@@ -31,7 +31,7 @@
                 = raw certification.description
             .d-flex
               .ml-auto
-                = link(to: to_process(@conn, certification, assigns[:search]), aria_label: "Les étapes VAE pour #{certification.acronym} #{String.downcase(certification.label)}", class: "btn btn-sm btn-primary d-flex align-items-center") do
+                = link(to: link_certification_to(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{certification.acronym} #{String.downcase(certification.label)}", class: "btn btn-sm btn-primary d-flex align-items-center") do
                   span.ic-icon.ic-tail-right-2.mr-2
                   span Les étapes VAE
     .col
