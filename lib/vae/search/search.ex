@@ -32,14 +32,13 @@ defmodule Vae.Search do
 
       {:error, msg} ->
         Logger.error("Error on searching delegates: #{msg}")
-        Delegate.from_certification(certification) |> Repo.all()
+        certification |> Delegate.from_certification() |> Repo.all()
     end
   end
 
   defp filter_delegates_from_postalcode(delegates, search_postcode) do
     filtered_delegates =
-      delegates
-      |> Enum.filter(fn delegate ->
+      Enum.filter(delegates, fn delegate ->
         case delegate.geolocation["postcode"] do
           [] ->
             false
@@ -57,8 +56,7 @@ defmodule Vae.Search do
          administrative
        ) do
     filtered_delegates =
-      delegates
-      |> Enum.filter(fn %{geolocation: %{"administrative" => [delegate_administrative]}} ->
+      Enum.filter(delegates, fn %{geolocation: %{"administrative" => [delegate_administrative]}} ->
         delegate_administrative == administrative
       end)
 
@@ -71,5 +69,5 @@ defmodule Vae.Search do
   defp select_near_delegate({[], [delegate | _delegates]}), do: preload_process(delegate)
   defp select_near_delegate({[delegate | _], _delegates}), do: preload_process(delegate)
 
-  defp preload_process(delegate), do: Repo.get(Delegate, delegate.id) |> Repo.preload(:process)
+  defp preload_process(delegate), do: Delegate |> Repo.get(delegate.id) |> Repo.preload(:process)
 end

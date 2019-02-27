@@ -2,7 +2,11 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, Places, ViewHelpers, Search}
+  alias Vae.Certification
+  alias Vae.Delegate
+  alias Vae.Places
+  alias Vae.ViewHelpers
+  alias Vae.Search
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -59,15 +63,18 @@ defmodule Vae.CertificationController do
       |> Map.put_new(:administrative, Plug.Conn.get_session(conn, :search_administrative))
       |> get_delegate(certification)
 
-    if(not is_nil(delegate)) do
-      if(not is_nil(params["certificateur"])) do
-        render(
-          conn,
-          "show.html",
-          certification: certification,
-          delegate: delegate
-        )
-      else
+    if is_nil(delegate) do
+      redirect(
+        conn,
+        to:
+          delegate_path(
+            conn,
+            :index,
+            diplome: certification
+          )
+      )
+    else
+      if is_nil(params["certificateur"]) do
         redirect(
           conn,
           to:
@@ -78,17 +85,14 @@ defmodule Vae.CertificationController do
               certificateur: delegate
             )
         )
+      else
+        render(
+          conn,
+          "show.html",
+          certification: certification,
+          delegate: delegate
+        )
       end
-    else
-      redirect(
-        conn,
-        to:
-          delegate_path(
-            conn,
-            :index,
-            diplome: certification
-          )
-      )
     end
   end
 

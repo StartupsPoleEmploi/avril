@@ -2,7 +2,8 @@ defmodule Vae.SearchController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Search}
+  alias Vae.Certification
+  alias Vae.Search
 
   def search(conn, params) do
     conn
