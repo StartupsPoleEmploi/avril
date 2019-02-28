@@ -3,7 +3,7 @@ defmodule Vae.SearchController do
   use Vae.Web, :controller
 
   alias Vae.Certification
-  alias Vae.Search
+  alias Vae.SearchDelegate
 
   def search(conn, params) do
     conn
@@ -26,7 +26,7 @@ defmodule Vae.SearchController do
   defp redirect_to_result(conn, %{"search" => %{"rome_code" => _r, "certification" => c} = search}) do
     with certification when not is_nil(certification) <- Certification.get_certification(c),
          delegate <-
-           Search.get_delegate(
+           SearchDelegate.get_delegate(
              certification,
              Map.take(search, ["lat", "lng"]),
              search["postcode"],

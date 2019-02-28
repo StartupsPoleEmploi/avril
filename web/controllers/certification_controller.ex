@@ -6,7 +6,7 @@ defmodule Vae.CertificationController do
   alias Vae.Delegate
   alias Vae.Places
   alias Vae.ViewHelpers
-  alias Vae.Search
+  alias Vae.SearchDelegate
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -130,7 +130,7 @@ defmodule Vae.CertificationController do
     administrative = Plug.Conn.get_session(conn, :search_administrative)
 
     with certification when not is_nil(certification) <- Certification.get_certification(params),
-         delegate <- Search.get_delegate(certification, params, postcode, administrative) do
+         delegate <- SearchDelegate.get_delegate(certification, params, postcode, administrative) do
       conn
       |> save_certification_to_session(certification)
       |> redirect(
@@ -165,7 +165,7 @@ defmodule Vae.CertificationController do
 
   defp get_delegate(%{geo: %{"lat" => lat, "lng" => lng} = geo} = params, certification)
        when not (is_nil(lat) or is_nil(lng)) do
-    Search.get_delegate(
+    SearchDelegate.get_delegate(
       certification,
       geo,
       params["postcode"],

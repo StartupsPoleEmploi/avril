@@ -1,8 +1,8 @@
-defmodule Vae.Search do
+defmodule Vae.SearchDelegate do
   require Logger
-  use Vae.Web, :controller
 
   alias Vae.Delegate
+  alias Vae.Repo
 
   @search_client Application.get_env(:vae, :search_client)
 
