@@ -3,7 +3,6 @@ defmodule Mix.Tasks.Search.Index do
 
   require Logger
   import Mix.Ecto
-  import Ecto.Query, only: [from: 2]
 
   import Vae.Search.Client.Algolia, only: [get_index_name: 1]
 

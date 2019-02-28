@@ -71,7 +71,8 @@ defmodule Vae.ComponentView do
       end
 
     credentials =
-      case {Application.get_env(:vae, :algolia_places_app_id), Application.get_env(:vae, :algolia_places_api_key)} do
+      case {Application.get_env(:vae, :algolia_places_app_id),
+            Application.get_env(:vae, :algolia_places_api_key)} do
         {appId, apiKey} when not is_nil(appId) and not is_nil(apiKey) ->
           """
             appId: '#{appId}',
@@ -142,54 +143,28 @@ defmodule Vae.ComponentView do
   end
 
   def complete_page_title(
-        %{view_module: Vae.CertificationView, page: %Scrivener.Page{total_entries: 0}} = assigns
-      ) do
-    "0 diplôme de #{assigns[:profession]}"
-  end
-
-  def complete_page_title(
         %{view_module: Vae.CertificationView, view_template: "show.html"} = assigns
       ) do
-    case assigns[:profession] do
-      nil -> "Centre VAE – #{assigns[:certification].label}"
-      profession -> "Centre VAE – #{assigns[:certification].label} - #{assigns[:profession]}"
-    end
-  end
-
-  def complete_page_title(%{view_module: Vae.CertificationView} = assigns) do
-    "VAE #{assigns[:profession]}"
+    "VAE #{format_certification_label(assigns[:certification])} à #{assigns[:delegate].name}"
   end
 
   def complete_page_title(%{view_module: Vae.ProfessionView}) do
-    "Choisissez votre métier pour obtenir votre diplôme grâce à la VAE"
+    "VAE métiers"
   end
 
-  def complete_page_title(
-        %{view_module: Vae.CertifierView, page: %Scrivener.Page{total_entries: 0}} = assigns
-      ) do
-    "0 centre VAE pour #{assigns[:certification].label}"
-  end
-
-  def complete_page_title(%{view_module: Vae.CertifierView, view_template: "index.html"}) do
-    "Centres VAE"
-  end
-
-  def complete_page_title(%{view_module: Vae.CertifierView} = assigns) do
-    case assigns[:profession] do
-      nil -> "Centre VAE – #{assigns[:certification].label}"
-      profession -> "Centre VAE – #{assigns[:certification].label} - #{assigns[:profession]}"
+  # TODO: better titles need to fetch category in controllers
+  def complete_page_title(%{view_module: Vae.CertificationView} = assigns) do
+    case Plug.Conn.get_session(assigns[:conn], :search_query) do
+      nil -> "VAE diplômes"
+      query -> "VAE diplômes pour #{query}"
     end
   end
 
-  def complete_page_title(%{view_module: Vae.DelegateView, view_template: "show.html"} = assigns) do
-    "Parcours VAE #{assigns[:delegate].name}"
-  end
-
   def complete_page_title(%{view_module: Vae.DelegateView}) do
-    "Liste des centres de certifications VAE"
+    "VAE certificateurs"
   end
 
   def complete_page_title(_assigns) do
-    "Avril | Comment faire une VAE ?"
+    "Comment faire une VAE ?"
   end
 end

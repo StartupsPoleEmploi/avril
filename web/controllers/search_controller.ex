@@ -2,6 +2,9 @@ defmodule Vae.SearchController do
   require Logger
   use Vae.Web, :controller
 
+  alias Vae.Certification
+  alias Vae.SearchDelegate
+
   def search(conn, params) do
     conn
     |> save_search_to_session(params)
@@ -20,16 +23,26 @@ defmodule Vae.SearchController do
     )
   end
 
-  defp redirect_to_result(conn, %{"search" => %{"rome_code" => "", "certification" => c}}) do
-    redirect(
-      conn,
-      to:
-        process_path(
-          conn,
-          :index,
-          certification: c
-        )
-    )
+  defp redirect_to_result(conn, %{"search" => %{"rome_code" => _r, "certification" => c} = search}) do
+    with certification when not is_nil(certification) <- Certification.get_certification(c),
+         delegate <-
+           SearchDelegate.get_delegate(
+             certification,
+             Map.take(search, ["lat", "lng"]),
+             search["postcode"],
+             search["administrative"]
+           ) do
+      redirect(
+        conn,
+        to:
+          certification_path(
+            conn,
+            :show,
+            certification,
+            certificateur: delegate
+          )
+      )
+    end
   end
 
   defp save_search_to_session(conn, params) do

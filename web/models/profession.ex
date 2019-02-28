@@ -7,21 +7,6 @@ defmodule Vae.Profession do
     timestamps()
   end
 
-  def search(query, nil) do
-    from(p in query,
-      preload: [:rome]
-    )
-  end
-
-  def search(query, label) do
-    from(p in query,
-      join: r in assoc(p, :rome),
-      where: ilike(p.label, ^"%#{label}%") or ilike(r.label, ^"%#{label}%"),
-      order_by: [asc: :label],
-      preload: [:rome]
-    )
-  end
-
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """

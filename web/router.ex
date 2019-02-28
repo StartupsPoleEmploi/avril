@@ -42,6 +42,7 @@ defmodule Vae.Router do
     # Use the default browser stack
     pipe_through(:browser)
 
+    # Landing pages
     get("/", PageController, :index, as: :root)
     get("/vae", PageController, :vae)
     get("/conditions-generales-d-utilisation", PageController, :terms_of_use)
@@ -50,24 +51,16 @@ defmodule Vae.Router do
     get("/point-relais-conseil-vae", PageController, :point_relais_conseil)
     get("/certificateur-vae-definition", PageController, :certificateur_vae_definition)
     get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
-
     get("/stats", PageController, :stats)
 
-    get("/professions", ProfessionController, :index)
+    # Basic navigation
+    resources("/metiers", ProfessionController, only: [:index])
+    resources("/certificateurs", DelegateController, only: [:index])
+    resources("/diplomes", CertificationController, only: [:index, :show])
 
     get("/certifications", CertificationController, :index)
-    get("/certifications/:id/certifiers", CertificationController, :certifiers)
 
-    resources("/certifiers", CertifierController, only: [:index, :show])
-    get("/certifiers/:id/delegates", CertifierController, :delegates)
-
-    resources("/delegates", DelegateController, only: [:index, :show])
-
-    get("/processes", ProcessController, :index)
-    get("/processes/:id", ProcessController, :show)
-    get("/processes/:id/delegates", ProcessController, :delegates)
-    post("/processes/contact", ProcessController, :contact)
-
+    # Search endpoint
     post("/search", SearchController, :search)
   end
 
