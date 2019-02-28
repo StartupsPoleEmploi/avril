@@ -145,9 +145,11 @@ defmodule Vae.ContactChannel do
 
   defp generic_message(body) do
     %{
-      TemplateLanguage: true,
       From: Mailjet.generic_from(),
       CustomID: UUID.uuid5(nil, body["email"]),
+      TemplateLanguage: true,
+      TemplateErrorDeliver: Application.get_env(:vae, :mailjet_template_error_deliver),
+      TemplateErrorReporting: Application.get_env(:vae, :mailjet_template_error_reporting),
       Variables: body
     }
   end

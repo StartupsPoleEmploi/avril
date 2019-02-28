@@ -76,6 +76,8 @@ config :vae,
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailer_extractor_limit: 10_000,
   sender: Vae.Mailer.Sender.Mailjet,
+  mailjet_template_error_reporting: %{Email: "avril@pole-emploi.fr"},
+  mailjet_template_error_deliver: true,
   statistics: %{
     email_from: "from@email.com",
     email_from_name: "From Name",

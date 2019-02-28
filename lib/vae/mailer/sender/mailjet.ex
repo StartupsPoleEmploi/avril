@@ -36,6 +36,8 @@ defmodule Vae.Mailer.Sender.Mailjet do
       %{
         TemplateID: @mailjet_conf.campaign_template_id,
         TemplateLanguage: true,
+        TemplateErrorDeliver: Application.get_env(:vae, :mailjet_template_error_deliver),
+        TemplateErrorReporting: Application.get_env(:vae, :mailjet_template_error_reporting),
         From: generic_from(),
         ReplyTo: avril_email(),
         Variables: %{utm_campaign: utm_campaign, utm_source: utm_source, js_id: job_seeker.id},
