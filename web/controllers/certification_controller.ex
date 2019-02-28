@@ -56,11 +56,11 @@ defmodule Vae.CertificationController do
     delegate =
       Map.take(params, ["certificateur"])
       |> Map.put_new(:geo, %{
-        "lat" => Plug.Conn.get_session(conn, :search_lat),
-        "lng" => Plug.Conn.get_session(conn, :search_lng)
+        "lat" => get_session(conn, :search_lat),
+        "lng" => get_session(conn, :search_lng)
       })
-      |> Map.put_new(:postcode, Plug.Conn.get_session(conn, :search_postcode))
-      |> Map.put_new(:administrative, Plug.Conn.get_session(conn, :search_administrative))
+      |> Map.put_new(:postcode, get_session(conn, :search_postcode))
+      |> Map.put_new(:administrative, get_session(conn, :search_administrative))
       |> get_delegate(certification)
 
     redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
@@ -130,8 +130,8 @@ defmodule Vae.CertificationController do
   end
 
   defp redirections(conn, params) do
-    postcode = Plug.Conn.get_session(conn, :search_postcode)
-    administrative = Plug.Conn.get_session(conn, :search_administrative)
+    postcode = get_session(conn, :search_postcode)
+    administrative = get_session(conn, :search_administrative)
 
     with certification when not is_nil(certification) <- Certification.get_certification(params),
          delegate <- SearchDelegate.get_delegate(certification, params, postcode, administrative) do
