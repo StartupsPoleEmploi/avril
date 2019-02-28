@@ -63,37 +63,41 @@ defmodule Vae.CertificationController do
       |> Map.put_new(:administrative, Plug.Conn.get_session(conn, :search_administrative))
       |> get_delegate(certification)
 
-    if is_nil(delegate) do
-      redirect(
-        conn,
-        to:
-          delegate_path(
-            conn,
-            :index,
-            diplome: certification
-          )
-      )
-    else
-      if is_nil(params["certificateur"]) do
-        redirect(
+    redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
+  end
+
+  defp redirect_or_show(conn, certification, nil, _has_delegate) do
+    redirect(
+      conn,
+      to:
+        delegate_path(
           conn,
-          to:
-            certification_path(
-              conn,
-              :show,
-              certification,
-              certificateur: delegate
-            )
+          :index,
+          diplome: certification
         )
-      else
-        render(
+    )
+  end
+
+  defp redirect_or_show(conn, certification, delegate, true) do
+    redirect(
+      conn,
+      to:
+        certification_path(
           conn,
-          "show.html",
-          certification: certification,
-          delegate: delegate
+          :show,
+          certification,
+          certificateur: delegate
         )
-      end
-    end
+    )
+  end
+
+  defp redirect_or_show(conn, certification, delegate, _has_delegate) do
+    render(
+      conn,
+      "show.html",
+      certification: certification,
+      delegate: delegate
+    )
   end
 
   defp list(conn, params) do
