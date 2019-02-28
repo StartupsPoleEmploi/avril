@@ -3,15 +3,15 @@ defmodule Vae.CertificationView do
   use Scrivener.HTML
 
   def link_certification_to(conn, certification, nil) do
-    if not (is_nil(Plug.Conn.get_session(conn, :search_lat)) ||
-              is_nil(Plug.Conn.get_session(conn, :search_lng))) do
+    if is_nil(Plug.Conn.get_session(conn, :search_lat)) ||
+         is_nil(Plug.Conn.get_session(conn, :search_lng)) do
+      delegate_path(conn, :index, diplome: certification)
+    else
       certification_path(
         conn,
         :show,
         certification
       )
-    else
-      delegate_path(conn, :index, diplome: certification)
     end
   end
 
