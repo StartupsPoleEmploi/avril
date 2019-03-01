@@ -142,26 +142,37 @@ defmodule Vae.ComponentView do
     |> suffix()
   end
 
-  def complete_page_title(
-        %{view_module: Vae.CertificationView, view_template: "show.html"} = assigns
-      ) do
-    "VAE #{format_certification_label(assigns[:certification])} à #{assigns[:delegate].name}"
+  def complete_page_title(%{
+        view_module: Vae.CertificationView,
+        view_template: "show.html",
+        certification: c,
+        delegate: d
+      }) do
+    "Diplôme #{format_certification_label(c)} en VAE à #{d.name}"
   end
 
-  def complete_page_title(%{view_module: Vae.ProfessionView}) do
-    "VAE métiers"
+  def complete_page_title(%{
+        view_module: Vae.CertificationView,
+        view_template: "show.html",
+        certification: c
+      }) do
+    "Diplôme #{format_certification_label(c)} en VAE"
   end
 
-  # TODO: better titles need to fetch category in controllers
-  def complete_page_title(%{view_module: Vae.CertificationView} = assigns) do
-    case Plug.Conn.get_session(assigns[:conn], :search_query) do
-      nil -> "VAE diplômes"
-      query -> "VAE diplômes pour #{query}"
-    end
+  def complete_page_title(%{view_module: Vae.CertificationView, meta: m}) do
+    "Diplômes en VAE#{meta_certification(m)}"
+  end
+
+  def complete_page_title(%{view_module: Vae.DelegateView, meta: m}) do
+    "Certificateurs VAE#{meta_delegate(m)}"
   end
 
   def complete_page_title(%{view_module: Vae.DelegateView}) do
-    "VAE certificateurs"
+    "Certificateurs VAE"
+  end
+
+  def complete_page_title(%{view_module: Vae.ProfessionView}) do
+    "Métiers en VAE"
   end
 
   def complete_page_title(_assigns) do

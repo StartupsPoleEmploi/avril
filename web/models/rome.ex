@@ -2,6 +2,8 @@ defmodule Vae.Rome do
   use Vae.Web, :model
   alias Vae.Repo.NewRelic, as: Repo
 
+  alias __MODULE__
+
   schema "romes" do
     field(:code, :string)
     field(:label, :string)
@@ -27,7 +29,7 @@ defmodule Vae.Rome do
   end
 
   def all do
-    __MODULE__
+    Rome
     |> order_by(:code)
     |> Repo.all()
   end
@@ -37,4 +39,10 @@ defmodule Vae.Rome do
     |> Map.take(__schema__(:fields))
     |> Map.drop([:inserted_at, :updated_at])
   end
+
+  def get(nil), do: nil
+  def get(id), do: Repo.get(Rome, id)
+
+  def get_by_code(nil), do: nil
+  def get_by_code(code), do: Repo.get_by(Rome, code: code)
 end

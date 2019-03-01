@@ -67,8 +67,7 @@ defmodule Vae.ViewHelpers do
     do: "<strong>#{delegates_count}</strong> certificateur trouvé"
 
   def add_delegate_suffix(count, certification) do
-    count <>
-      " pour <strong>#{format_certification_label(certification)}<strong>"
+    count <> " pour <strong>#{format_certification_label(certification)}<strong>"
   end
 
   def not_nil?(map, term), do: Map.get(map, term) != nil
@@ -80,4 +79,24 @@ defmodule Vae.ViewHelpers do
   def format_certification_label(%{acronym: acronym, label: label}) do
     "#{acronym} #{label}"
   end
+
+  def meta_certification(%{rome: r, delegate: d}) when not is_nil(r) and not is_nil(d) do
+    " pour #{r.label} à #{d.name}"
+  end
+
+  def meta_certification(%{delegate: d}) when not is_nil(d) do
+    " à #{d.name}"
+  end
+
+  def meta_certification(%{rome: r}) when not is_nil(r) do
+    " pour #{r.label}"
+  end
+
+  def meta_certification(_), do: ""
+
+  def meta_delegate(%{certification: c}) when not is_nil(c) do
+    " pour #{format_certification_label(c)}"
+  end
+
+  def meta_delegate(_), do: ""
 end

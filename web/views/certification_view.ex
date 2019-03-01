@@ -64,7 +64,7 @@ defmodule Vae.CertificationView do
      <script>
      window.delegate = #{delegate.id}
      window.profession = "#{Plug.Conn.get_session(conn, :search_profession)}"
-     window.certification = "#{certification.acronym} #{String.downcase(certification.label)}"
+     window.certification = "#{format_certification_label(certification)}"
      window.county = "#{Plug.Conn.get_session(conn, :search_county)}"
      </script>
      """}

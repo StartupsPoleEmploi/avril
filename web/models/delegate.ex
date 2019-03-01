@@ -105,6 +105,9 @@ defmodule Vae.Delegate do
     |> add_geolocation(params)
   end
 
+  def get(nil), do: nil
+  def get(id), do: Repo.get(Delegate, id)
+
   def add_certifiers(changeset, %{certifiers: certifiers}) do
     changeset
     |> put_assoc(:certifiers, get_certifiers(certifiers))
