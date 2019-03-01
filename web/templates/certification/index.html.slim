@@ -22,7 +22,7 @@
         .my-4.card.p-0.p-md-2
           .card-body
             h2.h5.card-title
-              = link(format_certification_label(certification), to: link_certification_to(@conn, certification, @conn.params["certificateur"]))
+              = link(format_certification_label(certification), to: to_delegate(@conn, certification, @conn.params["certificateur"]))
             h3.h6.card-subtitle.my-3
               span.font-weight-normal> Niveau obtenu :
               a href="#" #{level_info_by_level(certification.level)}
@@ -31,9 +31,9 @@
                 = raw certification.description
             .d-flex
               .ml-auto
-                = link(to: link_certification_to(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-sm btn-primary d-flex align-items-center") do
+                = link(to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-sm btn-primary d-flex align-items-center") do
                   span.ic-icon.ic-tail-right-2.mr-2
-                  span Les étapes VAE
+                  span #{to_delegate_label(@conn, @conn.params["certificateur"])}
     .col
       h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
       = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
