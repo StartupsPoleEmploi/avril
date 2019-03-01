@@ -50,8 +50,10 @@ config :vae,
     contact_template_id: 539_911,
     from_email: "lol@lol.fr",
     from_name: "Avril",
-    override_to: [%{Email: "lol@gmail.com"}, %{Email: "lil@gmail.com"}]
+    override_to: [%{Email: "lol@mail.com"}, %{Email: "lil@mail.com"}]
   },
+  mailjet_template_error_reporting: %{Email: "reporting@mail.com"},
+  mailjet_template_error_deliver: true,
   statistics: %{
     email_from: "from@email.com",
     email_from_name: "From",
