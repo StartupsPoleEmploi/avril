@@ -6,6 +6,7 @@ defmodule Vae.CertificationController do
   alias Vae.Delegate
   alias Vae.Places
   alias Vae.ViewHelpers
+  alias Vae.Rome
   alias Vae.SearchDelegate
 
   def cast_array(str), do: String.split(str, ",")
@@ -102,7 +103,8 @@ defmodule Vae.CertificationController do
 
   defp list(conn, params) do
     with {:ok, filtered_query, filter_values} <- apply_filters(Certification, conn),
-         page <- Repo.paginate(filtered_query, params) do
+         page <- Repo.paginate(filtered_query, params),
+         meta <- enrich_filter_values(filter_values) do
       render(
         conn,
         Vae.CertificationView,
@@ -110,10 +112,24 @@ defmodule Vae.CertificationController do
         certifications: page.entries,
         no_results: count_without_level_filter(params) == 0,
         page: page,
-        meta: filter_values
+        meta: meta
       )
     end
   end
+
+  defp enrich_filter_values(filter_values) do
+    filter_values
+    |> Map.drop([:rome_code])
+    |> Map.put(:rome, get_rome(filter_values))
+    |> Map.put(:delegate, get_delegate(filter_values))
+  end
+
+  defp get_delegate(%{delegate: d}) when not is_nil(d), do: Delegate.get(d)
+  defp get_delegate(_), do: nil
+
+  defp get_rome(%{rome: r}) when not is_nil(r), do: Rome.get(r)
+  defp get_rome(%{rome_code: rc}) when not is_nil(rc), do: Rome.get_by_code(rc)
+  defp get_rome(_), do: nil
 
   defp count_without_level_filter(params) do
     conn_without_filter_level = %Plug.Conn{

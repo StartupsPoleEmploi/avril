@@ -50,4 +50,4 @@
     = img_tag '/images/step-confirmation.svg', alt: 'confirmation', class: "img-fluid", style: "min-width: 100%;"
     .position-absolute.d-flex.flex-column.justify-content-center.text-truncate.px-lg-3.px-0 style="top: 10%; width: 56%; height: 34%; left: 25%;"
       h5 Mon projet
-      h5 #{@certification.acronym} #{String.downcase(@certification.label)}
+      h5 #{format_certification_label(@certification)}

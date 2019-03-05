@@ -1,6 +1,7 @@
 defmodule Vae.DelegateController do
   use Vae.Web, :controller
 
+  alias Vae.Certification
   alias Vae.Delegate
 
   filterable do
@@ -19,8 +20,20 @@ defmodule Vae.DelegateController do
       |> order_by(asc: :name)
 
     with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
-         page <- Repo.paginate(filtered_query, params) do
-      render(conn, "index.html", delegates: page.entries, page: page, meta: filter_values)
+         page <- Repo.paginate(filtered_query, params),
+         meta <- enrich_filter_values(filter_values) do
+      render(conn, "index.html", delegates: page.entries, page: page, meta: meta)
     end
+  end
+
+  defp enrich_filter_values(filter_values) do
+    with {_get, updated_values} <-
+           Map.get_and_update(filter_values, :certification, &update_certification/1) do
+      updated_values
+    end
+  end
+
+  defp update_certification(certification) do
+    {certification, Certification.get(certification)}
   end
 end

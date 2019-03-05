@@ -61,6 +61,9 @@ defmodule Vae.Certification do
     |> add_delegates(params)
   end
 
+  def get(nil), do: nil
+  def get(id), do: Repo.get(Certification, id)
+
   def get_certification(%{"rncp_id" => rncp_id}), do: Repo.get_by(Certification, rncp_id: rncp_id)
 
   def get_certification(nil), do: nil
