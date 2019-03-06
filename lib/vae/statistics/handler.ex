@@ -18,10 +18,10 @@ defmodule Vae.Statistics.Handler do
     "delegate_name",
     "job",
     "DL_ROME_1",
-    "DL_ROME_1_LABELS",
+    "DL_CERTIFICATIONS_VS_ROME_1",
     "DL_ROME_1_DURATION",
     "DL_ROME_2",
-    "DL_ROME_2_LABELS",
+    "DL_CERTIFICATIONS_VS_ROME_2",
     "DL_ROME_2_DURATION",
     "education_level",
     "certification",
@@ -149,7 +149,7 @@ defmodule Vae.Statistics.Handler do
           acc,
           %{
             "DL_ROME_#{count}" => experience.code,
-            "DL_ROME_#{count}_LABELS" => experience.labels,
+            "DL_CERTIFICATIONS_VS_ROME_#{count}" => experience.labels,
             "DL_ROME_#{count}_DURATION" => experience.duration
           }
         )
