@@ -10,7 +10,7 @@ defmodule Vae.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(Coherence.Authentication.Session)
-    plug(Vae.Tracker)
+    #    plug(Vae.Tracker)
   end
 
   pipeline :protected do
