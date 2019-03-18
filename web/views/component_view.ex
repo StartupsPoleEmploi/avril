@@ -51,6 +51,21 @@ defmodule Vae.ComponentView do
      """}
   end
 
+  def render("crisp", _) do
+    {:safe,
+      """
+      <script type="text/javascript">
+      window.$crisp=[];
+      window.CRISP_WEBSITE_ID='#{Application.get_env(:vae, :crisp_website_id)}';
+      (function(){
+        d=document;s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      })();
+      </script>
+      """}
+  end
+
   def render("searchbar_variables", _) do
     {:safe,
      """
