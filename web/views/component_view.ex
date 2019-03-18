@@ -56,7 +56,7 @@ defmodule Vae.ComponentView do
       """
       <script type="text/javascript">
       window.$crisp=[];
-      window.CRISP_WEBSITE_ID='#{Application.get_env(:vae, :crisp_website_id)}';
+      window.CRISP_WEBSITE_ID='#{System.get_env("CRISP_WEBSITE_ID")}';
       (function(){
         d=document;s=d.createElement("script");
         s.src="https://client.crisp.chat/l.js";s.async=1;
