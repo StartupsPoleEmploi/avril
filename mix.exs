@@ -41,7 +41,8 @@ defmodule Vae.Mixfile do
         :mailjex,
         :persistent_ets,
         :pdf_generator,
-        :observer_cli
+        :observer_cli,
+        :oauth2
       ]
     ]
   end
@@ -68,7 +69,7 @@ defmodule Vae.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.7"},
       {:phoenix_form_awesomplete, "~> 0.1"},
-      {:httpoison, "~> 0.13"},
+      {:httpoison, "~> 1.4"},
       {:poison, "~> 3.0", override: true},
       {:phoenix_slime, "~> 0.8.0"},
       {:ex_admin, github: "nresni/ex_admin", tag: "0.8.5"},
@@ -87,7 +88,8 @@ defmodule Vae.Mixfile do
       {:persistent_ets, "~> 0.1.0"},
       {:pdf_generator, ">=0.4.0"},
       {:observer_cli, "~> 1.4"},
-      {:filterable, "~> 0.7.0"}
+      {:filterable, "~> 0.7.0"},
+      {:oauth2, "~> 0.9"}
     ]
   end
 

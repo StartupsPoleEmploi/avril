@@ -53,6 +53,9 @@ defmodule Vae.Router do
     get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
     get("/stats", PageController, :stats)
 
+    get("/:provider/callback", AuthController, :callback)
+    get("/:provider/redirect", AuthController, :save_session_and_redirect)
+
     # Basic navigation
     resources("/metiers", ProfessionController, only: [:index])
     resources("/certificateurs", DelegateController, only: [:index])
