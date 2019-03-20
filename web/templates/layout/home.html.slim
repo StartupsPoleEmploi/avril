@@ -21,6 +21,7 @@ html{lang="fr"}
     <script>window.userToken = "<%= assigns[:user_token] %>";</script>
   body.home
     main
+      = render ComponentView, "flash.html", conn: @conn
       .sticky-top
         = render "cookies.html", conn: @conn
         = render ComponentView, "navbar.html", conn: @conn

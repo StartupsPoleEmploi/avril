@@ -6,6 +6,20 @@ defmodule Vae.User do
   schema "users" do
     field :name, :string
     field :email, :string
+    field :postal_code, :string
+    field :address1, :string
+    field :address4, :string
+    field :codeINSEE, :string
+    field :codePays, :string
+    field :libelleCommune, :string
+    field :libellePays, :string
+    field :pe_connect_token, :string
+    belongs_to(:job_seeker, Vae.JobSeeker)
+
+    # TODO: plug this
+    # embeds_many(:skills, Skill, on_replace: :delete)
+    # embeds_many(:experiences, Experience, on_replace: :delete)
+
     coherence_schema()
 
     timestamps()

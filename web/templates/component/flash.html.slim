@@ -1,0 +1,11 @@
+= if info = get_flash(@conn, :info) do
+  p.alert.alert-info role="alert"
+    = info
+    button.close aria-label="Close" type="button" data-dismiss="alert"
+      span aria-hidden="true" &times;
+
+= if error = get_flash(@conn, :error) do
+  p.alert.alert-warning role="alert"
+    = error
+    button.close aria-label="Close" type="button" data-dismiss="alert"
+      span aria-hidden="true" &times;

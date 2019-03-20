@@ -19,27 +19,38 @@ defmodule Vae.AuthController do
 
   def callback(conn, %{"code" => code, "state" => state} = _params) do
     client = Clients.get_client(state)
-    client = Authentication.generate_access_token(client, code)
+    client_with_token = Authentication.generate_access_token(client, code)
+
+    IO.inspect(state)
+    IO.puts '===================================='
+    IO.inspect(code)
+    IO.puts '===================================='
+    IO.inspect(client)
+    IO.puts '===================================='
+    IO.inspect(client_with_token)
+    IO.puts '===================================='
 
     resource_1 =
       Authentication.get(
-        client,
+        client_with_token,
         "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees"
       )
 
     resource_2 =
       Authentication.get(
-        client,
+        client_with_token,
         "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences"
       )
 
     resource_3 =
       Authentication.get(
-        client,
+        client_with_token,
         "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences"
       )
 
-    # redirect(conn, external: get_session(conn, :referer))
-    conn
+    IO.inspect(conn)
+
+    redirect(conn, external: get_session(conn, :referer))
+    # conn
   end
 end

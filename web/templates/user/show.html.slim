@@ -1,0 +1,45 @@
+h1.text-center Bienvenue sur la page de profil
+
+hr.invisible
+
+p Voici les infos que nous avons vous concernant.
+
+table.table
+  thead
+    tr
+      th scope="col"  Champ
+      th scope="col"  Valeur
+  tbody
+    tr
+      th scope="row" name
+      td= @user.name
+    tr
+      th scope="row" email
+      td= @user.email
+    tr
+      th scope="row" postal_code
+      td= @user.postal_code
+    tr
+      th scope="row"  address1
+      td= @user.address1
+    tr
+      th scope="row"  address4
+      td= @user.address4
+    tr
+      th scope="row"  codeINSEE
+      td= @user.codeINSEE
+    tr
+      th scope="row"  codePays
+      td= @user.codePays
+    tr
+      th scope="row"  libelleCommune
+      td= @user.libelleCommune
+    tr
+      th scope="row"  libellePays
+      td= @user.libellePays
+    / tr
+    /   th scope="row"  skills
+    /   td= @user.skills
+    / tr
+    /   th scope="row"  experiences
+    /   td= @user.experiences
