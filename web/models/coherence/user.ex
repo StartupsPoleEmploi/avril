@@ -6,19 +6,23 @@ defmodule Vae.User do
   schema "users" do
     field :name, :string
     field :email, :string
+    field :is_admin, :boolean
     field :postal_code, :string
     field :address1, :string
+    field :address2, :string
+    field :address3, :string
     field :address4, :string
     field :insee_code, :string
     field :country_code, :string
     field :city_label, :string
     field :country_label, :string
+    field :pe_id, :string
     field :pe_connect_token, :string
     belongs_to(:job_seeker, Vae.JobSeeker)
 
     # TODO: plug this
-    # embeds_many(:skills, Skill, on_replace: :delete)
-    # embeds_many(:experiences, Experience, on_replace: :delete)
+    embeds_many(:skills, Skill, on_replace: :delete)
+    embeds_many(:experiences, Experience, on_replace: :delete)
 
     coherence_schema()
 
