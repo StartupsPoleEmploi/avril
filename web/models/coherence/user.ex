@@ -9,10 +9,10 @@ defmodule Vae.User do
     field :postal_code, :string
     field :address1, :string
     field :address4, :string
-    field :codeINSEE, :string
-    field :codePays, :string
-    field :libelleCommune, :string
-    field :libellePays, :string
+    field :INSEE_code, :string
+    field :country_code, :string
+    field :city_label, :string
+    field :country_label, :string
     field :pe_connect_token, :string
     belongs_to(:job_seeker, Vae.JobSeeker)
 

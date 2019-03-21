@@ -2,26 +2,20 @@ defmodule Vae.Experience do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Vae.Visit
-
   @primary_key false
   embedded_schema do
-    field(:date, :date)
-
-    embeds_many(:visits, Visit, on_replace: :delete)
+    field(:company, :string)
+    field(:start_date, :date)
+    field(:end_date, :date)
+    field(:is_abroad, :boolean)
+    field(:label, :string)
+    field(:duration, :integer)
   end
 
-  @fields ~w(date)a
+  @fields ~w(company start_date end_date is_abroad label duration)a
 
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @fields)
-    |> cast_embed(:visits)
-  end
-
-  def new() do
-    %__MODULE__{
-      date: Date.utc_today()
-    }
   end
 end
