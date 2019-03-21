@@ -7,7 +7,7 @@ defmodule Vae.Skill do
   embedded_schema do
     field(:code, :integer)
     field(:label, :string)
-    field(:type, :char)
+    field(:type, :string)
     field(:level_code, :integer)
     field(:level_label, :string)
   end

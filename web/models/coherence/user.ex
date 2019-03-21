@@ -9,7 +9,7 @@ defmodule Vae.User do
     field :postal_code, :string
     field :address1, :string
     field :address4, :string
-    field :INSEE_code, :string
+    field :insee_code, :string
     field :country_code, :string
     field :city_label, :string
     field :country_label, :string

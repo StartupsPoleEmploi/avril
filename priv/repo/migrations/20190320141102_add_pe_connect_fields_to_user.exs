@@ -8,7 +8,7 @@ defmodule Vae.Repo.Migrations.AddPEConnectFieldsToUser do
       add(:postal_code, :string)
       add(:address1, :string)
       add(:address4, :string)
-      add(:INSEE_code, :string)
+      add(:insee_code, :string)
       add(:country_code, :string)
       add(:city_label, :string)
       add(:country_label, :string)
