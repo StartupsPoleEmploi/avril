@@ -4,6 +4,7 @@ defmodule Vae.AuthController do
   alias Vae.Authentication
   alias Vae.Authentication.Clients
   alias Vae.User
+  alias Vae.JobSeeker
 
   def save_session_and_redirect(conn, params) do
     referer = hd(get_req_header(conn, "referer"))
@@ -62,15 +63,19 @@ defmodule Vae.AuthController do
     Enum.reduce(api_calls, nil, fn call, user ->
       api_result = Authentication.get(client_with_token, call.url)
 
+      # IO.inspect(api_result.body['idIdentiteExterne'])
+      # IO.inspect(api_result.body["idIdentiteExterne"])
+      # IO.inspect(api_result.body.idIdentiteExterne)
+
       if user == nil do
-        user = case Repo.get_by(User, pe_id: api_result['idIdentiteExterne']) do
+        user = case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
           nil  ->
-            %User{job_seeker: Repo.get_by(JobSeeker, email: api_result['email'])} # Initialize new user
+            %User{job_seeker: Repo.get_by(JobSeeker, email: api_result.body["email"])} # Initialize new user
           user -> user # User exists, let's use it
         end
       end
 
-      db_result = User.changeset(user, call.data_map(api_result))
+      db_result = User.changeset(user, call.data_map(api_result.body))
       |> Repo.insert_or_update
 
       case db_result do
