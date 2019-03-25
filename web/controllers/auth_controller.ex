@@ -27,23 +27,23 @@ defmodule Vae.AuthController do
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo",
         data_map: fn data -> %{
-          email: String.downcase(data['email']),
-          name: "#{String.capitalize(data['given_name'])} #{String.capitalize(data['family_name'])}",
-          pe_id: data['idIdentiteExterne']
+          email: String.downcase(data["email"]),
+          name: "#{String.capitalize(data["given_name"])} #{String.capitalize(data["family_name"])}",
+          pe_id: data["idIdentiteExterne"]
         } end,
       },
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
         data_map: fn data -> %{
-          postal_code: data['codePostal'],
-          address1: data['adresse1'],
-          address2: data['adresse2'],
-          address3: data['adresse3'],
-          address4: data['adresse4'],
-          insee_code: data['codeINSEE'],
-          country_code: data['codePays'],
-          city_label: data['libelleCommune'],
-          country_label: data['libellePays']
+          postal_code: data["codePostal"],
+          address1: data["adresse1"],
+          address2: data["adresse2"],
+          address3: data["adresse3"],
+          address4: data["adresse4"],
+          insee_code: data["codeINSEE"],
+          country_code: data["codePays"],
+          city_label: data["libelleCommune"],
+          country_label: data["libellePays"]
         } end,
       },
       %{
@@ -67,18 +67,20 @@ defmodule Vae.AuthController do
       # IO.inspect(api_result.body["idIdentiteExterne"])
       # IO.inspect(api_result.body.idIdentiteExterne)
 
-      if user == nil do
-        user = case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
+      IO.inspect(user)
+
+      user = case user do
+        nil -> case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
           nil  ->
             %User{job_seeker: Repo.get_by(JobSeeker, email: api_result.body["email"])} # Initialize new user
           user -> user # User exists, let's use it
         end
+        user -> user
       end
 
-      db_result = User.changeset(user, call.data_map(api_result.body))
-      |> Repo.insert_or_update
+      changeset = User.changeset(user, call.data_map.(api_result.body))
 
-      case db_result do
+      case Repo.insert_or_update(changeset) do
         {:ok, user} -> user
         {:error, changeset} -> nil
       end
