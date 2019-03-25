@@ -3,6 +3,8 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
+  alias Vae.{Skill, Experience}
+
   schema "users" do
     field :name, :string
     field :email, :string
@@ -29,9 +31,16 @@ defmodule Vae.User do
     timestamps()
   end
 
+  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_code pe_id pe_connect_token)a
+  @embeds ~w(skills experiences)a
+  @assocs ~w(job_seeker)a
+
   def changeset(model, params \\ %{}) do
+    IO.inspect(params)
     model
-    |> cast(params, [:name, :email] ++ coherence_fields())
+    |> cast(params, @fields ++ coherence_fields())
+    # |> cast_embed(Map.take(params, @embeds), @embeds)
+    # |> cast_assoc(params, @assocs)
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
@@ -43,4 +52,10 @@ defmodule Vae.User do
     |> cast(params, ~w(password password_confirmation reset_password_token reset_password_sent_at))
     |> validate_coherence_password_reset(params)
   end
+
+  # def update_skills_changeset(user, skill_params_array) do
+  #   user
+  #   |> change()
+  #   |> put_embed(:skills, Enum.map(skill_params_array, skill_params -> Skill.changeset(%Skill{}, skill_params) end))
+  # end
 end

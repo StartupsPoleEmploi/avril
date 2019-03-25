@@ -1,9 +1,11 @@
+require IEx;
 defmodule Vae.AuthController do
   use Vae.Web, :controller
 
   alias Vae.Authentication
   alias Vae.Authentication.Clients
   alias Vae.User
+  alias Vae.Skill
   alias Vae.JobSeeker
 
   def save_session_and_redirect(conn, params) do
@@ -49,7 +51,7 @@ defmodule Vae.AuthController do
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
         data_map: fn data -> %{
-          skills: data
+          skills: Enum.map(data, fn skill_params -> Skill.changeset(%Skill{}, skill_params) end)
         } end,
       },
       %{
@@ -62,17 +64,17 @@ defmodule Vae.AuthController do
 
     Enum.reduce(api_calls, nil, fn call, user ->
       api_result = Authentication.get(client_with_token, call.url)
-
-      # IO.inspect(api_result.body['idIdentiteExterne'])
-      # IO.inspect(api_result.body["idIdentiteExterne"])
-      # IO.inspect(api_result.body.idIdentiteExterne)
-
-      IO.inspect(user)
+      IO.puts("Called #{call.url}")
 
       user = case user do
+        # nil -> case Repo.get_by(User, email: String.downcase(api_result.body["email"])) do
         nil -> case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
-          nil  ->
-            %User{job_seeker: Repo.get_by(JobSeeker, email: api_result.body["email"])} # Initialize new user
+          nil  -> # Initialize new user
+            %User{
+              password: "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD",
+              password_confirmation: "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD",
+              job_seeker: Repo.get_by(JobSeeker, email: api_result.body["email"])
+            }
           user -> user # User exists, let's use it
         end
         user -> user
@@ -80,33 +82,18 @@ defmodule Vae.AuthController do
 
       changeset = User.changeset(user, call.data_map.(api_result.body))
 
+      IO.inspect(changeset)
+
+      # IEx.pry
+
       case Repo.insert_or_update(changeset) do
         {:ok, user} -> user
-        {:error, changeset} -> nil
+        {:error, changeset} ->
+          IO.inspect(changeset)
+          nil
       end
     end)
 
-    # resource_1 =
-    #   Authentication.get(
-    #     client_with_token,
-    #     "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees"
-    #   )
-
-    # resource_2 =
-    #   Authentication.get(
-    #     client_with_token,
-    #     "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences"
-    #   )
-
-    # resource_3 =
-    #   Authentication.get(
-    #     client_with_token,
-    #     "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences"
-    #   )
-
-    # IO.inspect(conn)
-
     redirect(conn, external: get_session(conn, :referer))
-    # conn
   end
 end
