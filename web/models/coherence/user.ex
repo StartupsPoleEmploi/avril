@@ -22,7 +22,6 @@ defmodule Vae.User do
     field :pe_connect_token, :string
     belongs_to(:job_seeker, JobSeeker)
 
-    # TODO: plug this
     embeds_many(:skills, Skill, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
 
@@ -53,12 +52,11 @@ defmodule Vae.User do
   end
 
   def userinfo_api_map(api_fields) do
-    tmp_password = "AVRIL_#{api_fields["idIdentiteExterne"]}_TMP_PASSWORD"
     %{
-      email: String.downcase(api_fields["email"]),
-      password: tmp_password,
-      password_confirmation: tmp_password,
       name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
+      email: api_fields["email"],
+      password: api_fields["password"],
+      password_confirmation: api_fields["password_confirmation"],
       pe_id: api_fields["idIdentiteExterne"],
       job_seeker: Repo.get_by(JobSeeker, email: api_fields["email"])
     }

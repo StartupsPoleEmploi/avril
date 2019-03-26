@@ -49,20 +49,26 @@ defmodule Vae.AuthController do
       },
     ]
 
-    Enum.reduce(api_calls, nil, fn call, user ->
+    user = Enum.reduce(api_calls, nil, fn call, user ->
       IO.puts("Calling #{call.url}")
       api_result = Authentication.get(client_with_token, call.url)
 
-      user = if user == nil do
+      {user, extra_params} = if user == nil do
+        tmp_password = "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD"
         case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
-          nil  -> %User{} # Initialize new user
-          user -> user # User exists, let's use it
+          nil  -> {%User{}, %{
+            "email" => String.downcase(api_result.body["email"]),
+            "password" => tmp_password,
+            "password_confirmation" => tmp_password,
+          }}
+          user -> {user, nil} # User exists, let's use it
         end
       else
-        user
+        {user, nil}
       end
 
-      changeset = User.changeset(user, call.changeset.(api_result.body))
+      actual_changeset_params = unless is_nil(extra_params), do: Map.merge(api_result.body, extra_params), else: api_result.body
+      changeset = User.changeset(user, call.changeset.(actual_changeset_params))
 
       case Repo.insert_or_update(changeset) do
         {:ok, user} -> user
@@ -72,6 +78,20 @@ defmodule Vae.AuthController do
       end
     end)
 
-    redirect(conn, external: get_session(conn, :referer))
+    if user == nil do
+      conn
+      |> put_flash(:error, "Une erreur est survenue. Veuillez réessayer plus tard.")
+      |> redirect(external: get_session(conn, :referer))
+
+    else
+
+      IO.inspect(user)
+      IO.inspect(user_path(conn, :show, user))
+
+      conn
+      |> Coherence.Authentication.Session.create_login(user)
+      |> redirect(to: user_path(conn, :show, user))
+    end
+
   end
 end
