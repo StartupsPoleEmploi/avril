@@ -37,6 +37,6 @@ defmodule Vae.Authentication do
 
   def get(client, resource_url) do
     resource = OAuth2.Client.get!(client, resource_url)
-    IO.inspect(resource)
+    # IO.inspect(resource)
   end
 end

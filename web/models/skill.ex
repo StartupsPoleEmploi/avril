@@ -18,4 +18,20 @@ defmodule Vae.Skill do
     struct
     |> cast(params, @fields)
   end
+
+  def competences_api_map(api_fields) do
+    %{
+      code: case Integer.parse(api_fields["code"]) do
+        :error -> nil
+        {int, _} -> int
+      end,
+      label: api_fields["libelle"],
+      type: api_fields["type"],
+      level_code: case Integer.parse(api_fields["niveau"]["code"]) do
+        :error -> nil
+        {int, _} -> int
+      end,
+      level_label: api_fields["niveau"]["libelle"]
+    }
+  end
 end

@@ -3,7 +3,7 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
-  alias Vae.{Skill, Experience}
+  alias Vae.{Skill, Experience, JobSeeker}
 
   schema "users" do
     field :name, :string
@@ -20,7 +20,7 @@ defmodule Vae.User do
     field :country_label, :string
     field :pe_id, :string
     field :pe_connect_token, :string
-    belongs_to(:job_seeker, Vae.JobSeeker)
+    belongs_to(:job_seeker, JobSeeker)
 
     # TODO: plug this
     embeds_many(:skills, Skill, on_replace: :delete)
@@ -36,11 +36,10 @@ defmodule Vae.User do
   @assocs ~w(job_seeker)a
 
   def changeset(model, params \\ %{}) do
-    IO.inspect(params)
     model
     |> cast(params, @fields ++ coherence_fields())
-    # |> cast_embed(Map.take(params, @embeds), @embeds)
-    # |> cast_assoc(params, @assocs)
+    |> cast_embed(:skills)
+    |> cast_embed(:experiences)
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
@@ -53,9 +52,25 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  # def update_skills_changeset(user, skill_params_array) do
-  #   user
-  #   |> change()
-  #   |> put_embed(:skills, Enum.map(skill_params_array, skill_params -> Skill.changeset(%Skill{}, skill_params) end))
-  # end
+  def userinfo_api_map(api_fields) do
+    %{
+      email: String.downcase(api_fields["email"]),
+      name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
+      pe_id: api_fields["idIdentiteExterne"]
+    }
+  end
+
+  def coordonnees_api_map(api_fields) do
+    %{
+      postal_code: api_fields["codePostal"],
+      address1: api_fields["adresse1"],
+      address2: api_fields["adresse2"],
+      address3: api_fields["adresse3"],
+      address4: api_fields["adresse4"],
+      insee_code: api_fields["codeINSEE"],
+      country_code: api_fields["codePays"],
+      city_label: api_fields["libelleCommune"],
+      country_label: api_fields["libellePays"]
+    }
+  end
 end
