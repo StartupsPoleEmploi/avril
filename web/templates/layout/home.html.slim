@@ -23,7 +23,7 @@ html{lang="fr"}
     main
       = render ComponentView, "flash.html", conn: @conn
       .sticky-top
-        = render "cookies.html", conn: @conn
+        = render ComponentView, "cookies.html", conn: @conn
         = render ComponentView, "navbar.html", conn: @conn
       = render @view_module, @view_template, assigns
     = render ComponentView, "footer.html", conn: @conn

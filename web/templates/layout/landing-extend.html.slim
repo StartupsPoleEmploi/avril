@@ -22,7 +22,7 @@ html{lang="fr"}
   body
     main
       .sticky-top
-        = render "cookies.html", conn: @conn
+        = render ComponentView, "cookies.html", conn: @conn
         = render ComponentView, "navbar.html", conn: @conn
       #content.overflow-hidden
         = render @view_module, @view_template, assigns
