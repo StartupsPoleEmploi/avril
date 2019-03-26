@@ -3,7 +3,7 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
-  alias Vae.{Skill, Experience, JobSeeker}
+  alias Vae.{Skill, Experience, JobSeeker, Repo}
 
   schema "users" do
     field :name, :string
@@ -53,10 +53,14 @@ defmodule Vae.User do
   end
 
   def userinfo_api_map(api_fields) do
+    tmp_password = "AVRIL_#{api_fields["idIdentiteExterne"]}_TMP_PASSWORD"
     %{
       email: String.downcase(api_fields["email"]),
+      password: tmp_password,
+      password_confirmation: tmp_password,
       name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
-      pe_id: api_fields["idIdentiteExterne"]
+      pe_id: api_fields["idIdentiteExterne"],
+      job_seeker: Repo.get_by(JobSeeker, email: api_fields["email"])
     }
   end
 

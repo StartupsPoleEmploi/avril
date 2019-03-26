@@ -55,13 +55,7 @@ defmodule Vae.AuthController do
 
       user = if user == nil do
         case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
-          nil  -> # Initialize new user
-            tmp_password = "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD"
-            %User{
-              password: tmp_password,
-              password_confirmation: tmp_password,
-              job_seeker: Repo.get_by(JobSeeker, email: api_result.body["email"])
-            }
+          nil  -> %User{} # Initialize new user
           user -> user # User exists, let's use it
         end
       else
