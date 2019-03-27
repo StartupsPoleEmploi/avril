@@ -106,7 +106,17 @@ defmodule Vae.JobSeeker do
 
   def list_from_events_month(%DateTime{} = current_date) do
     sql = """
-      SELECT * FROM job_seekers, jsonb_array_elements(events) AS e
+      SELECT
+        DISTINCT email,
+        identifier,
+        first_name,
+        last_name,
+        telephone,
+        postal_code,
+        experience,
+        education_level,
+        events
+      FROM job_seekers, jsonb_array_elements(events) AS e
       WHERE (e->>'time')::timestamp BETWEEN $1 AND $2
     """
 
