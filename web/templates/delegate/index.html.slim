@@ -1,9 +1,12 @@
 .container
-  .m-4
-    h1.h4 Certificateurs possibles#{meta_delegate(@meta)}
+  = if length(@delegates) > 0 do
+    .m-4
+      h1.h4 Certificateurs possibles#{meta_delegate(@meta)}
 
   .row
     .col-md-9
+      = if length(@delegates) == 0 do
+        = render("no-results.html")
       = for delegate <- @delegates do
         .my-4.card.p-0.p-md-2
           .card-body

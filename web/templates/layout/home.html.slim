@@ -29,3 +29,4 @@ html{lang="fr"}
     = render ComponentView, "footer.html", conn: @conn
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn
+      = render ComponentView, "crisp", conn: @conn

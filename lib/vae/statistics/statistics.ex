@@ -5,7 +5,11 @@ defmodule Vae.Statistics do
   end
 
   def execute(handler_pid) do
-    GenServer.call(handler_pid, :execute, 60_000)
+    execute(handler_pid, DateTime.utc_now())
+  end
+
+  def execute(handler_pid, datetime) do
+    GenServer.call(handler_pid, {:execute, datetime}, 60_000)
   end
 
   def terminate(handler_pid) do

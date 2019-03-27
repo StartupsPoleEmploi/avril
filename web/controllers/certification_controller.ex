@@ -177,7 +177,8 @@ defmodule Vae.CertificationController do
     end
   end
 
-  defp get_delegate(%{"certificateur" => delegate_id}, _certification) do
+  defp get_delegate(%{"certificateur" => delegate_id}, _certification)
+    when not (is_nil(delegate_id) or delegate_id == "") do
     Delegate
     |> Repo.get(delegate_id)
     |> Repo.preload(:process)
