@@ -11,11 +11,15 @@ nav.navbar.dm-navbar.navbar-expand-md
        = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: page_path(@conn, :certificateur_vae_definition), conn: @conn
       li.nav-item
        = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: page_path(@conn, :pourquoi_une_certification), conn: @conn
-      li.nav-item.pe-connect
-        = if Coherence.current_user(@conn) do
+      = if Coherence.current_user(@conn) do
+        li.nav-item
+          = link(to: user_path(@conn, :show, Coherence.current_user(@conn)), class: "nav-link p-0") do
+            span.text Voir mon profil
+        li.nav-item
           = link(to: session_path(@conn, :delete), method: :delete, class: "nav-link p-0") do
             span.text Se déconnecter
-        - else
+      - else
+        li.nav-item.pe-connect
           = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "button-pe-connect is-white") do
             = img_tag("/images/icon-pe-connect-is-blue.svg", class: "icon-pe-connect", width: 34, height: 31)
             span.text Se connecter avec pôle emploi
