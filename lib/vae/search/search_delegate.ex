@@ -68,6 +68,7 @@ defmodule Vae.SearchDelegate do
 
   defp select_near_delegate({[], [delegate | _delegates]}), do: preload_process(delegate)
   defp select_near_delegate({[delegate | _], _delegates}), do: preload_process(delegate)
+  defp select_near_delegate({[],  []}), do: nil
 
   defp preload_process(delegate), do: Delegate |> Repo.get(delegate.id) |> Repo.preload(:process)
 end
