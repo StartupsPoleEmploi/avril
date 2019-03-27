@@ -39,6 +39,7 @@ defmodule Vae.User do
     |> cast(params, @fields ++ coherence_fields())
     |> cast_embed(:skills)
     |> cast_embed(:experiences)
+    # |> put_assoc(:job_seeker)
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
@@ -54,11 +55,11 @@ defmodule Vae.User do
   def userinfo_api_map(api_fields) do
     %{
       name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
-      email: api_fields["email"],
+      email: String.downcase(api_fields["email"]),
       password: api_fields["password"],
       password_confirmation: api_fields["password_confirmation"],
       pe_id: api_fields["idIdentiteExterne"],
-      job_seeker: Repo.get_by(JobSeeker, email: api_fields["email"])
+      job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"]))
     }
   end
 

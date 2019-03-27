@@ -6,24 +6,18 @@ p Voici les infos que nous avons vous concernant.
 
 h3 Vos coordonnées
 
-table.table
-  tbody
-    tr
-      th scope="row" email
-      td= @user.email
-    tr
-      th scope="row" Adresse
-      td
-        = @user.address1
-        br
-        = @user.address4
-        br
-        = "#{@user.postal_code} #{@user.city_label}"
-        br
-        = @user.country_label
-    tr
-      th scope="row"  insee_code
-      td= @user.insee_code
+ul
+  li Email : #{@user.email}
+  li
+    | Adresse :
+    br
+    = @user.address1
+    br
+    = @user.address4
+    br
+    = "#{@user.postal_code} #{@user.city_label}"
+    br
+    = @user.country_label
 
 h3 Vos expériences
 
