@@ -30,7 +30,7 @@ defmodule Vae.User do
     timestamps()
   end
 
-  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_code pe_id pe_connect_token)a
+  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token)a
   @embeds ~w(skills experiences)a
   @assocs ~w(job_seeker)a
 
@@ -63,6 +63,7 @@ defmodule Vae.User do
   end
 
   def coordonnees_api_map(api_fields) do
+    IO.inspect(api_fields)
     %{
       postal_code: api_fields["codePostal"],
       address1: api_fields["adresse1"],

@@ -1,45 +1,39 @@
-h1.text-center Bienvenue sur la page de profil
+h1 Bonjour #{@user.name}
 
 hr.invisible
 
 p Voici les infos que nous avons vous concernant.
 
+h3 Vos coordonnées
+
 table.table
-  thead
-    tr
-      th scope="col"  Champ
-      th scope="col"  Valeur
   tbody
-    tr
-      th scope="row" name
-      td= @user.name
     tr
       th scope="row" email
       td= @user.email
     tr
-      th scope="row" postal_code
-      td= @user.postal_code
-    tr
-      th scope="row"  address1
-      td= @user.address1
-    tr
-      th scope="row"  address4
-      td= @user.address4
+      th scope="row" Adresse
+      td
+        = @user.address1
+        br
+        = @user.address4
+        br
+        = "#{@user.postal_code} #{@user.city_label}"
+        br
+        = @user.country_label
     tr
       th scope="row"  insee_code
       td= @user.insee_code
-    tr
-      th scope="row"  country_code
-      td= @user.country_code
-    tr
-      th scope="row"  city_label
-      td= @user.city_label
-    tr
-      th scope="row"  country_label
-      td= @user.country_label
-    / tr
-    /   th scope="row"  skills
-    /   td= @user.skills
-    / tr
-    /   th scope="row"  experiences
-    /   td= @user.experiences
+
+h3 Vos expériences
+
+ul
+  = for experience <- Enum.reverse(@user.experiences) do
+    li #{experience.label} pour #{experience.company} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
+
+
+h3 Vos compétences
+
+ul
+  = for skill <- @user.skills do
+    li #{skill.label}
