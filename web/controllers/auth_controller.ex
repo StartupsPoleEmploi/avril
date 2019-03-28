@@ -97,12 +97,14 @@ defmodule Vae.AuthController do
   end
 
   defp get_params_from_referer(referer) do
-    Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer)
-    |> Map.new(fn {k, v} -> {k, case Integer.parse(v) do
+    case Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer) do
+      nil -> %{}
+      map -> Map.new(map, fn {k, v} -> {k, case Integer.parse(v) do
           :error -> nil
           {int, _} -> int
         end} end
       )
+    end
   end
 
 end
