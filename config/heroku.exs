@@ -32,7 +32,7 @@ config :vae, authentication: [
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
     site: "https://authentification-candidat.pole-emploi.fr",
     authorize_url: "/connexion/oauth2/authorize",
-    redirect_uri: "#{Vae.Endpoint.static_url()}/pole-emploi/callback"
+    redirect_uri: "http://#{System.get_env("WHOST")}/pole-emploi/callback"
   ]
 
 # ## SSL Support
