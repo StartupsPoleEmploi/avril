@@ -16,6 +16,8 @@ defmodule Vae.Repo.Migrations.AddPEConnectFieldsToUser do
       add(:pe_id, :string)
       add(:pe_connect_token, :string)
       add(:job_seeker_id, references(:job_seekers))
+      add(:delegate_id, references(:delegates))
+      add(:certification_id, references(:certifications))
       add(:skills, {:array, :jsonb}, default: [])
       add(:experiences, {:array, :jsonb}, default: [])
     end

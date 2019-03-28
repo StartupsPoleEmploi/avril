@@ -1,33 +1,50 @@
-h1 Bonjour #{@user.name}
+.container
+  h2 Bonjour #{@user.name}
 
-hr.invisible
+  hr.invisible
 
-p Voici les infos que nous avons vous concernant.
+  p Votre certificateur
 
-h3 Vos coordonnées
-
-ul
-  li Email : #{@user.email}
-  li
-    | Adresse :
-    br
-    = @user.address1
-    br
-    = @user.address4
-    br
-    = "#{@user.postal_code} #{@user.city_label}"
-    br
-    = @user.country_label
-
-h3 Vos expériences
-
-ul
-  = for experience <- Enum.reverse(@user.experiences) do
-    li #{experience.label} pour #{experience.company} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
+  .jumbotron.text-center
+    h3= @user.delegate.name
+    p= @user.delegate.address
+    a.btn.btn-primary.btn-lg href="#" role="button" Transmettre ma candidature
 
 
-h3 Vos compétences
+  h2 #{@user.certification.acronym} #{@user.certification.label}
 
-ul
-  = for skill <- @user.skills do
-    li #{skill.label}
+  hr.invisible
+  .card
+    h4.card-header Vos coordonnées
+    .card-body
+      ul
+        li #{@user.email}
+        li
+          = @user.address1
+          br
+          = @user.address4
+          br
+          = "#{@user.postal_code} #{@user.city_label}"
+          br
+          = @user.country_label
+
+  hr.invisible
+  .card
+    h4.card-header Vos expériences
+    .card-body
+      ul
+        = for experience <- Enum.reverse(@user.experiences) do
+          li #{experience.label} pour #{experience.company} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
+
+
+  hr.invisible
+  .card
+    h4.card-header Vos compétences
+    .card-body
+      ul
+        = for skill <- @user.skills do
+          li #{skill.label}
+
+
+  hr.invisible
+  a.btn.btn-primary Télécharger mon dossier VAE

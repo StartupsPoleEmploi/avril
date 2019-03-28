@@ -56,11 +56,11 @@ defmodule Vae.AuthController do
       {user, extra_params} = if user == nil do
         tmp_password = "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD"
         case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
-          nil  -> {%User{}, %{
+          nil  -> {%User{}, Map.merge(%{
             "email" => String.downcase(api_result.body["email"]),
             "password" => tmp_password,
             "password_confirmation" => tmp_password,
-          }}
+          }, get_params_from_referer(get_session(conn, :referer)))}
           user -> {user, nil} # User exists, let's use it
         end
       else
@@ -68,6 +68,7 @@ defmodule Vae.AuthController do
       end
 
       actual_changeset_params = unless is_nil(extra_params), do: Map.merge(api_result.body, extra_params), else: api_result.body
+
       changeset = User.changeset(user, call.changeset.(actual_changeset_params))
 
       case Repo.insert_or_update(changeset) do
@@ -94,4 +95,14 @@ defmodule Vae.AuthController do
     end
 
   end
+
+  defp get_params_from_referer(referer) do
+    Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer)
+    |> Map.new(fn {k, v} -> {k, case Integer.parse(v) do
+          :error -> nil
+          {int, _} -> int
+        end} end
+      )
+  end
+
 end

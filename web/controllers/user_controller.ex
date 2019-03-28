@@ -7,6 +7,7 @@ defmodule Vae.UserController do
 
   def show(conn, %{"id" => id}) do
     user = Repo.get(User, id)
+    |> Repo.preload([:delegate, :certification])
     if !is_nil(user) && Coherence.current_user(conn).id == user.id do
      render(conn, "show.html", user: user, layout: {Vae.LayoutView, "home-white.html"})
     else

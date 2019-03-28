@@ -3,7 +3,7 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
-  alias Vae.{Skill, Experience, JobSeeker, Repo}
+  alias Vae.{Skill, Experience, JobSeeker, Delegate, Certification, Repo}
 
   schema "users" do
     field :name, :string
@@ -21,6 +21,8 @@ defmodule Vae.User do
     field :pe_id, :string
     field :pe_connect_token, :string
     belongs_to(:job_seeker, JobSeeker)
+    belongs_to(:delegate, Delegate)
+    belongs_to(:certification, Certification)
 
     embeds_many(:skills, Skill, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
@@ -30,21 +32,21 @@ defmodule Vae.User do
     timestamps()
   end
 
-  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token)a
-  @embeds ~w(skills experiences)a
-  @assocs ~w(job_seeker)a
+  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token delegate_id certification_id)a
 
   def changeset(model, params \\ %{}) do
+    IO.inspect(params)
     model
     |> cast(params, @fields ++ coherence_fields())
     |> cast_embed(:skills)
     |> cast_embed(:experiences)
-    # |> put_assoc(:job_seeker)
+    |> cast_assoc(:delegate)
+    |> cast_assoc(:job_seeker)
+    |> cast_assoc(:certification)
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-    |> validate_coherence(params)
-  end
+    |> validate_coherence(params)  end
 
   def changeset(model, params, :password) do
     model
@@ -53,18 +55,23 @@ defmodule Vae.User do
   end
 
   def userinfo_api_map(api_fields) do
+    IO.inspect(api_fields)
     %{
       name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
       email: String.downcase(api_fields["email"]),
       password: api_fields["password"],
       password_confirmation: api_fields["password_confirmation"],
       pe_id: api_fields["idIdentiteExterne"],
-      job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"]))
-    }
+      delegate_id: api_fields["delegate_id"],
+      certification_id: api_fields["certification_id"],
+      job_seeker_id: case Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"])) do
+        nil -> nil
+        job_seeker -> job_seeker.id
+      end
+    } |> Enum.reject(fn {_, v} -> is_nil(v) end) |> Map.new
   end
 
   def coordonnees_api_map(api_fields) do
-    IO.inspect(api_fields)
     %{
       postal_code: api_fields["codePostal"],
       address1: api_fields["adresse1"],
