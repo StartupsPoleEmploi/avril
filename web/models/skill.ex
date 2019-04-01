@@ -21,19 +21,10 @@ defmodule Vae.Skill do
 
   def competences_api_map(api_fields) do
     %{
-      code: case Integer.parse(api_fields["code"]) do
-        :error -> nil
-        {int, _} -> int
-      end,
+      code: String.to_integer(api_fields["code"]),
       label: api_fields["libelle"],
       type: api_fields["type"],
-      level_code: case api_fields["niveau"] do
-        nil -> nil
-        level -> case Integer.parse(level["code"]) do
-          :error -> nil
-          {int, _} -> int
-        end
-      end,
+      level_code: String.to_integer(api_fields["niveau"]["code"]),
       level_label: api_fields["niveau"]["libelle"]
     }
   end

@@ -29,22 +29,23 @@ defmodule Vae.AuthController do
     api_calls = [
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo",
-        changeset: fn data -> User.userinfo_api_map(data) end
+        changeset: &User.userinfo_api_map/1
+        # changeset: fn data -> User.userinfo_api_map(data) end
       },
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
-        changeset: fn data -> User.coordonnees_api_map(data) end
+        changeset: &User.coordonnees_api_map/1
       },
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
         changeset: fn data -> %{
-          skills: Enum.map(data, fn skill_params -> Skill.competences_api_map(skill_params) end)
+          skills: Enum.map(data, &Skill.competences_api_map/1)
         } end
       },
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences",
         changeset: fn data -> %{
-          experiences: Enum.map(data, fn experience_params -> Experience.experiences_api_map(experience_params) end)
+          experiences: Enum.map(data, &Experience.experiences_api_map/1)
         } end
       },
     ]
@@ -61,7 +62,8 @@ defmodule Vae.AuthController do
             "password" => tmp_password,
             "password_confirmation" => tmp_password,
           }, get_params_from_referer(get_session(conn, :referer)))}
-          user -> {user, nil} # User exists, let's use it
+          user -> {
+            user |> Repo.preload(:job_seeker), nil} # User exists, let's use it
         end
       else
         {user, nil}

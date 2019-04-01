@@ -20,9 +20,9 @@ defmodule Vae.User do
     field :country_label, :string
     field :pe_id, :string
     field :pe_connect_token, :string
-    belongs_to(:job_seeker, JobSeeker)
-    belongs_to(:delegate, Delegate)
-    belongs_to(:certification, Certification)
+    belongs_to(:job_seeker, JobSeeker, on_replace: :update)
+    belongs_to(:delegate, Delegate, on_replace: :update)
+    belongs_to(:certification, Certification, on_replace: :update)
 
     embeds_many(:skills, Skill, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
@@ -35,18 +35,21 @@ defmodule Vae.User do
   @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token delegate_id certification_id)a
 
   def changeset(model, params \\ %{}) do
-    IO.inspect(params)
     model
     |> cast(params, @fields ++ coherence_fields())
     |> cast_embed(:skills)
     |> cast_embed(:experiences)
     |> cast_assoc(:delegate)
-    |> cast_assoc(:job_seeker)
+    |> put_job_seeker(params[:job_seeker])
     |> cast_assoc(:certification)
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-    |> validate_coherence(params)  end
+    |> validate_coherence(params)
+  end
+
+  defp put_job_seeker(changeset, nil), do: changeset
+  defp put_job_seeker(changeset, job_seeker), do: put_assoc(changeset, :job_seeker, job_seeker)
 
   def changeset(model, params, :password) do
     model
@@ -55,7 +58,6 @@ defmodule Vae.User do
   end
 
   def userinfo_api_map(api_fields) do
-    IO.inspect(api_fields)
     %{
       name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
       email: String.downcase(api_fields["email"]),
@@ -64,10 +66,7 @@ defmodule Vae.User do
       pe_id: api_fields["idIdentiteExterne"],
       delegate_id: api_fields["delegate_id"],
       certification_id: api_fields["certification_id"],
-      job_seeker_id: case Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"])) do
-        nil -> nil
-        job_seeker -> job_seeker.id
-      end
+      job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"]))
     } |> Enum.reject(fn {_, v} -> is_nil(v) end) |> Map.new
   end
 
