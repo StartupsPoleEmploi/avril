@@ -27,9 +27,12 @@ defmodule Vae.Skill do
       end,
       label: api_fields["libelle"],
       type: api_fields["type"],
-      level_code: case Integer.parse(api_fields["niveau"]["code"]) do
-        :error -> nil
-        {int, _} -> int
+      level_code: case api_fields["niveau"] do
+        nil -> nil
+        level -> case Integer.parse(level["code"]) do
+          :error -> nil
+          {int, _} -> int
+        end
       end,
       level_label: api_fields["niveau"]["libelle"]
     }
