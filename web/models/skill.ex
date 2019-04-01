@@ -21,10 +21,10 @@ defmodule Vae.Skill do
 
   def competences_api_map(api_fields) do
     %{
-      code: String.to_integer(api_fields["code"]),
+      code: String.to_integer(api_fields["code"] || "0"),
       label: api_fields["libelle"],
       type: api_fields["type"],
-      level_code: String.to_integer(api_fields["niveau"]["code"]),
+      level_code: String.to_integer(api_fields["niveau"]["code"] || "0"),
       level_label: api_fields["niveau"]["libelle"]
     }
   end
