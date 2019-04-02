@@ -7,7 +7,9 @@ defmodule Vae.AuthController do
   alias Vae.User
   alias Vae.Skill
   alias Vae.Experience
+  alias Vae.ProvenExperience
   alias Vae.JobSeeker
+  alias Vae.Application
 
   def save_session_and_redirect(conn, params) do
     referer = hd(get_req_header(conn, "referer"))
@@ -47,7 +49,14 @@ defmodule Vae.AuthController do
         changeset: fn data -> %{
           experiences: Enum.map(data, &Experience.experiences_api_map/1)
         } end
-      },
+      }, %{
+        # TODO: fetch longer periods
+        url: "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=20170401&dateFinPeriode=20190401",
+        changeset: fn data -> %{
+          proven_experiences: Enum.map(data["contrats"], &ProvenExperience.experiencesprofessionellesdeclareesparlemployeur_api_map/1)
+        }
+        end
+      }
     ]
 
     user = Enum.reduce(api_calls, nil, fn call, user ->
@@ -57,13 +66,12 @@ defmodule Vae.AuthController do
       {user, extra_params} = if user == nil do
         tmp_password = "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD"
         case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
-          nil  -> {%User{}, Map.merge(%{
+          nil -> {%User{}, %{
             "email" => String.downcase(api_result.body["email"]),
             "password" => tmp_password,
             "password_confirmation" => tmp_password,
-          }, get_params_from_referer(get_session(conn, :referer)))}
-          user -> {
-            user |> Repo.preload(:job_seeker), nil} # User exists, let's use it
+          }}
+          user -> { user |> Repo.preload(:job_seeker), nil } # User exists, let's use it
         end
       else
         {user, nil}
@@ -73,12 +81,25 @@ defmodule Vae.AuthController do
 
       changeset = User.changeset(user, call.changeset.(actual_changeset_params))
 
-      case Repo.insert_or_update(changeset) do
-        {:ok, user} -> user
-        {:error, changeset} ->
-          IO.inspect(changeset)
-          nil
+      user = case Repo.insert_or_update(changeset) do
+        {:ok, user} ->
+          application_params = Map.merge(get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)), %{
+            user_id: user.id
+            })
+          case existing_application = Repo.get_by(Application, application_params) do
+            nil ->
+              changeset = Application.changeset(%Application{}, application_params)
+              case Repo.insert(changeset) do
+                {:ok, application} -> user
+                {:error, changeset} -> nil
+              end
+            existing_application -> user
+          end
+        {:error, changeset} -> nil
       end
+
+
+
     end)
 
     if user == nil do
@@ -98,15 +119,9 @@ defmodule Vae.AuthController do
 
   end
 
-  defp get_params_from_referer(referer) do
-    case Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer) do
-      nil -> %{}
-      map -> Map.new(map, fn {k, v} -> {k, case Integer.parse(v) do
-          :error -> nil
-          {int, _} -> int
-        end} end
-      )
-    end
+  defp get_certification_id_and_delegate_id_from_referer(referer) do
+    string_key_map = Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer)
+    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
   end
 
 end

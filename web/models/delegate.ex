@@ -5,7 +5,7 @@ defmodule Vae.Delegate do
   alias Ecto.Changeset
 
   alias __MODULE__
-  alias Vae.{Certification, CertificationDelegate, Certifier, Process}
+  alias Vae.{Certification, CertificationDelegate, Certifier, Process, Application}
   alias Vae.Places
 
   schema "delegates" do
@@ -30,6 +30,13 @@ defmodule Vae.Delegate do
     )
 
     has_many(:certifications, through: [:certifications_delegates, :certification])
+
+    has_many(:applications, Application, on_replace: :nilify) # TODO: add many_to_manys
+
+    has_many(
+      :users,
+      through: [:applications, :user]
+    )
 
     many_to_many(
       :certifiers,

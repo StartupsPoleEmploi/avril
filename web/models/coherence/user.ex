@@ -3,7 +3,7 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
-  alias Vae.{Skill, Experience, JobSeeker, Delegate, Certification, Repo}
+  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo}
 
   schema "users" do
     field :name, :string
@@ -21,27 +21,40 @@ defmodule Vae.User do
     field :pe_id, :string
     field :pe_connect_token, :string
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
-    belongs_to(:delegate, Delegate, on_replace: :update)
-    belongs_to(:certification, Certification, on_replace: :update)
+
+    has_many(:applications, Application, on_replace: :nilify)
+
+    has_one(
+      :delegate,
+      through: [:applications, :delegate]
+    )
+
+    has_one(
+      :certification,
+      through: [:applications, :certification]
+    )
 
     embeds_many(:skills, Skill, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
+    embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
 
     coherence_schema()
 
     timestamps()
   end
 
-  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token delegate_id certification_id)a
+  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token)a
 
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @fields ++ coherence_fields())
     |> cast_embed(:skills)
     |> cast_embed(:experiences)
-    |> cast_assoc(:delegate)
+    |> cast_embed(:proven_experiences)
+    # |> cast_assoc(:delegate)
+    # |> cast_assoc(:certification)
+    # |> cast_assoc(:applications, with: Application.changeset_from_users)
     |> put_job_seeker(params[:job_seeker])
-    |> cast_assoc(:certification)
     |> validate_required([:name, :email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
