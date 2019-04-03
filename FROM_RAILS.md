@@ -22,3 +22,4 @@
 
 - `User.find(:id)` -> `Repo.get(User, :id)`
 - `User.find_by(email: 'me@example.com')` -> `Repo.get_by(User, email: "me@example.com")`
+- `user.destroy` -> `Repo.delete(user)`

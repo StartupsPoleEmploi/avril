@@ -22,7 +22,7 @@ defmodule Vae.User do
     field :pe_connect_token, :string
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
-    has_many(:applications, Application, on_replace: :nilify)
+    has_many(:applications, Application, on_replace: :delete)
 
     has_one(
       :delegate,
@@ -86,14 +86,14 @@ defmodule Vae.User do
   def coordonnees_api_map(api_fields) do
     %{
       postal_code: api_fields["codePostal"],
-      address1: api_fields["adresse1"],
-      address2: api_fields["adresse2"],
-      address3: api_fields["adresse3"],
-      address4: api_fields["adresse4"],
+      address1: Vae.String.titleize(api_fields["adresse1"]),
+      address2: Vae.String.titleize(api_fields["adresse2"]),
+      address3: Vae.String.titleize(api_fields["adresse3"]),
+      address4: Vae.String.titleize(api_fields["adresse4"]),
       insee_code: api_fields["codeINSEE"],
       country_code: api_fields["codePays"],
-      city_label: api_fields["libelleCommune"],
-      country_label: api_fields["libellePays"]
+      city_label: Vae.String.titleize(api_fields["libelleCommune"]),
+      country_label: Vae.String.titleize(api_fields["libellePays"])
     }
   end
 end

@@ -10,7 +10,6 @@ defmodule Vae.UserController do
     if !is_nil(user) && Coherence.current_user(conn).id == user.id do
      render(conn, "show.html",
       user: user,
-      body_class: 'home-white'
     )
     else
       conn

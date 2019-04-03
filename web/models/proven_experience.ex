@@ -27,25 +27,18 @@ defmodule Vae.ProvenExperience do
 
   def experiencesprofessionellesdeclareesparlemployeur_api_map(api_fields) do
     %{
-      start_date: format_date(api_fields["dateDebut"]),
-      end_date: format_date(api_fields["dateFin"]),
+      start_date: Vae.Date.format(api_fields["dateDebut"]),
+      end_date: Vae.Date.format(api_fields["dateFin"]),
       duration: api_fields["dureeContrat"],
-      label: api_fields["intitulePoste"],
+      label: Vae.String.titleize(api_fields["intitulePoste"]),
       contract_type: api_fields["natureContrat"],
       is_manager: api_fields["niveauQualification"] == "Cadre",
       duration: api_fields["quantiteTravail"],
       company_ape: api_fields["entreprise"]["codeApe"],
-      company_name: api_fields["entreprise"]["nom"],
+      company_name: Vae.String.titleize(api_fields["entreprise"]["nom"]),
       company_category: api_fields["entreprise"]["regime"],
       company_state_owned: api_fields["entreprise"]["secteur"] == "Public",
       company_uid: api_fields["entreprise"]["siret"]
     }
-  end
-
-  defp format_date(date_string) do
-    case DateTime.from_iso8601("#{String.slice(date_string, 0..3)}-#{String.slice(date_string, 4..5)}-#{String.slice(date_string, 6..7)}") do
-        {:ok, datetime, _} -> datetime
-        {:error, _} -> nil
-      end
   end
 end

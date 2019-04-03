@@ -23,5 +23,6 @@ $fa-font-path: '../fonts';
 @import 'components/pe_connect';
 
 /* page specific */
-@import 'home';
-@import 'delegate';
+@import 'pages/home';
+@import 'pages/delegate';
+@import 'pages/user_profile';

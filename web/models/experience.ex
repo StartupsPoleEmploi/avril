@@ -23,7 +23,7 @@ defmodule Vae.Experience do
 
   def experiences_api_map(api_fields) do
     %{
-      company: api_fields["entreprise"],
+      company: Vae.String.titleize(api_fields["entreprise"]),
       start_date: case DateTime.from_iso8601(api_fields["date"]["debut"]) do
         {:ok, datetime, _} -> datetime
         {:error, _} -> nil
@@ -34,7 +34,7 @@ defmodule Vae.Experience do
       end,
       is_current_job: api_fields["enPoste"],
       is_abroad: api_fields["etranger"],
-      label: api_fields["intitule"],
+      label: Vae.String.titleize(api_fields["intitule"]),
       duration: api_fields["duree"]
     }
   end

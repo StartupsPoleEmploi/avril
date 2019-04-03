@@ -3,9 +3,9 @@ defmodule Vae.Repo.Migrations.CreateApplication do
 
   def change do
     create table(:applications) do
-      add :user_id, references(:users, on_delete: :nothing)
-      add :delegate_id, references(:delegates, on_delete: :nothing)
-      add :certification_id, references(:certifications, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :delete_all)
+      add :delegate_id, references(:delegates, on_delete: :nilify_all)
+      add :certification_id, references(:certifications, on_delete: :nilify_all)
 
       timestamps()
     end

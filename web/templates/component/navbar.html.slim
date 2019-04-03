@@ -5,7 +5,8 @@ nav.navbar.dm-navbar.navbar-expand-md
   button.navbar-toggler.collapsed[type="button", data-toggle="collapse", data-target="#navbarCollapse", aria-controls="navbarCollapse", aria-label="Menu", href="#navbarCollapse"] Menu
   .collapse.navbar-collapse[id="navbarCollapse"]
     ul.navbar-nav.ml-auto.flex-md-row.flex-column.align-items-center.my-md-0.my-5
-      = if String.ends_with?(@conn.private.phoenix_controller |> to_string, "PageController") do
+      / = if String.ends_with?(@conn.private.phoenix_controller |> to_string, "PageController") do
+      = if true do
         li.nav-item.d-md-none.mt-4
           = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
         li.nav-item
@@ -25,10 +26,10 @@ nav.navbar.dm-navbar.navbar-expand-md
               | Voir mon profil
             .dropdown-divider
             = link(to: session_path(@conn, :delete), method: :delete, class: "dropdown-item") do
-              span.text Se déconnecter
+              span.text Me déconnecter
 
       - else
         li.nav-item.pe-connect
           = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "button-pe-connect is-white") do
             = img_tag("/images/icon-pe-connect-is-blue.svg", class: "icon-pe-connect", width: 34, height: 31)
-            span.text Se connecter avec pôle emploi
+            span.text Me connecter avec pôle emploi
