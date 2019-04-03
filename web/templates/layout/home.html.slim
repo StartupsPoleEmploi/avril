@@ -1,9 +1,0 @@
-
-= base_layout @conn do
-  main
-    = render ComponentView, "flash.html", conn: @conn
-    .sticky-top
-      = render ComponentView, "cookies.html", conn: @conn
-      = render ComponentView, "navbar.html", conn: @conn
-    = render @view_module, @view_template, assigns
-  = render ComponentView, "footer.html", conn: @conn

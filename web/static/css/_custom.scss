@@ -209,6 +209,18 @@ body {
       background-position: calc(100% + 400px) 200px, -800px 350px, calc(100% + 600px) 1000px, -800px 2300px, -400px 3850px, calc(100% + 350px) 4600px;
     }
   }
+
+  &.home-white {
+    #content {
+      margin-bottom: 3rem;
+    }
+  }
+
+  &.landing-extend {
+    #content {
+      overflow: hidden;
+    }
+  }
 }
 
 mark {

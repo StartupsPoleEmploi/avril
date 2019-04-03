@@ -3,9 +3,11 @@
   main
     .sticky-top
       = render ComponentView, "cookies.html", conn: @conn
+      = render ComponentView, "flash.html", conn: @conn
       = render ComponentView, "navbar.html", conn: @conn
-    #content.container
-      .mt-4
-        = render ComponentView, "searchbar.html", conn: @conn
+    #content class="#{if assigns[:no_container], do: "", else: "container"}"
+      = unless assigns[:no_search] do
+        .mt-4
+          = render ComponentView, "searchbar.html", conn: @conn
       = render @view_module, @view_template, assigns
   = render ComponentView, "footer.html", conn: @conn
