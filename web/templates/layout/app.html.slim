@@ -6,7 +6,7 @@
       = render ComponentView, "flash.html", conn: @conn
       = render ComponentView, "navbar.html", conn: @conn
     #content.content class="#{if assigns[:no_container], do: "", else: "container"}"
-      = unless assigns[:no_search] do
+      = if assigns[:with_search] do
         .mt-4
           = render ComponentView, "searchbar.html", conn: @conn
       = render @view_module, @view_template, assigns

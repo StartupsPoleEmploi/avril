@@ -108,10 +108,6 @@ defmodule Vae.AuthController do
       |> redirect(external: get_session(conn, :referer))
 
     else
-
-      IO.inspect(user)
-      IO.inspect(user_path(conn, :show, user))
-
       conn
       |> Coherence.Authentication.Session.create_login(user)
       |> redirect(to: user_path(conn, :show, user))
@@ -120,7 +116,7 @@ defmodule Vae.AuthController do
   end
 
   defp get_certification_id_and_delegate_id_from_referer(referer) do
-    string_key_map = Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer)
+    string_key_map = Regex.named_captures(~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/, referer) || %{}
     for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
   end
 
