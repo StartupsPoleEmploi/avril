@@ -15,6 +15,7 @@
 - `rails server` -> `mix phx.server`
 - `rake routes` -> `mix phoenix.routes`
 - `rake generate scaffold Post title:string body:text` -> `mix phoenix.gen.html Post posts title body:text`
+- `rake generate migration AddFieldToModel` -> `mix phoenix.gen.gen.migration add_field_to_model`
 - `rake db:migrate` -> `mix ecto.migrate`
 - `rake db:rollback` -> `mix ecto.rollback`
 

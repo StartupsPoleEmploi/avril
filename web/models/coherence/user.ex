@@ -6,7 +6,8 @@ defmodule Vae.User do
   alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo}
 
   schema "users" do
-    field :name, :string
+    field :first_name, :string
+    field :last_name, :string
     field :email, :string
     field :is_admin, :boolean
     field :postal_code, :string
@@ -43,7 +44,7 @@ defmodule Vae.User do
     timestamps()
   end
 
-  @fields ~w(name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token)a
+  @fields ~w(first_name last_name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token)a
 
   def changeset(model, params \\ %{}) do
     model
@@ -55,7 +56,7 @@ defmodule Vae.User do
     # |> cast_assoc(:certification)
     # |> cast_assoc(:applications, with: Application.changeset_from_users)
     |> put_job_seeker(params[:job_seeker])
-    |> validate_required([:name, :email])
+    |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
     |> validate_coherence(params)
@@ -72,7 +73,8 @@ defmodule Vae.User do
 
   def userinfo_api_map(api_fields) do
     %{
-      name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
+      first_name: String.capitalize(api_fields["given_name"]),
+      last_name: String.capitalize(api_fields["family_name"]),
       email: String.downcase(api_fields["email"]),
       password: api_fields["password"],
       password_confirmation: api_fields["password_confirmation"],
