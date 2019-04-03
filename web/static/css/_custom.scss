@@ -10,25 +10,29 @@ a {
   }
 }
 
-#content {
-  a[target="_blank"] {
-    color: #000;
-    position: relative;
+.content {
+  a {
 
-    &:after {
-      content: "";
-      position: absolute;
-      display: block;
-      width: 100%;
-      height: 4px;
-      left: 0;
-      bottom: -4px;
-      background: #20D7A4;
-      transition: background-color 0.3s ease-in-out;
+    &[target="_blank"] {
+      color: #000;
+      position: relative;
+      &:after {
+        content: "";
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 4px;
+        left: 0;
+        bottom: -4px;
+        background: #20D7A4;
+        transition: background-color 0.3s ease-in-out;
+      }
     }
+
 
     &:hover {
       text-decoration: none;
+      color: initial;
 
       &:after {
         background: #21B087;

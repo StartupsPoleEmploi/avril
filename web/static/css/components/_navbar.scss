@@ -68,6 +68,9 @@ ul.nav.dm-nav, ul.navbar-nav {
       cursor: not-allowed;
       pointer-events: none;
     }
+    &:after {
+      content: none;
+    }
   }
 }
 

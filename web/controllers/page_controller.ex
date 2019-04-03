@@ -11,14 +11,13 @@ defmodule Vae.PageController do
 
   def vae(conn, _params) do
     render(conn, "vae.html",
-      # layout: {Vae.LayoutView, "home-white.html"},
+      no_search: true,
       body_class: 'home-white'
     )
   end
 
   def terms_of_use(conn, _params) do
     render(conn, "terms_of_use.html",
-      # layout: {Vae.LayoutView, "home-white.html"},
       no_search: true,
       body_class: 'home-white'
     )
@@ -26,7 +25,6 @@ defmodule Vae.PageController do
 
   def choose_certification(conn, _params) do
     render(conn, "choose-certification.html",
-      # layout: {Vae.LayoutView, "home-white.html"},
       no_search: true,
       body_class: 'home-white'
     )
@@ -34,7 +32,6 @@ defmodule Vae.PageController do
 
   def accessibility_promess(conn, _params) do
     render(conn, "accessibility-promess.html",
-      # layout: {Vae.LayoutView, "home-white.html"},
       no_search: true,
       body_class: 'home-white'
     )
@@ -42,7 +39,6 @@ defmodule Vae.PageController do
 
   def point_relais_conseil(conn, _params) do
     render(conn, "point-relais-conseil.html",
-      # layout: {Vae.LayoutView, "home-white.html"},
       no_search: true,
       body_class: 'home-white'
     )
@@ -50,7 +46,6 @@ defmodule Vae.PageController do
 
   def certificateur_vae_definition(conn, _params) do
     render(conn, "certificateur-vae-definition.html",
-      # layout: {Vae.LayoutView, "landing-extend.html"},
       no_search: true,
       body_class: 'landing-extend'
     )
@@ -58,7 +53,6 @@ defmodule Vae.PageController do
 
   def pourquoi_une_certification(conn, _params) do
     render(conn, "pourquoi-une-certification.html",
-      # layout: {Vae.LayoutView, "landing-extend.html"},
       no_search: true,
       body_class: 'landing-extend'
     )
