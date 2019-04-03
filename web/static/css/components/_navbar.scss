@@ -68,7 +68,7 @@ ul.nav.dm-nav, ul.navbar-nav {
       cursor: not-allowed;
       pointer-events: none;
     }
-    &:after {
+    &:after:not(.dropdown-toggle) {
       content: none;
     }
   }

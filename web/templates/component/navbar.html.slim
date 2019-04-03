@@ -5,12 +5,15 @@ nav.navbar.dm-navbar.navbar-expand-md
   button.navbar-toggler.collapsed[type="button", data-toggle="collapse", data-target="#navbarCollapse", aria-controls="navbarCollapse", aria-label="Menu", href="#navbarCollapse"] Menu
   .collapse.navbar-collapse[id="navbarCollapse"]
     ul.navbar-nav.ml-auto.flex-md-row.flex-column.align-items-center.my-md-0.my-5
-      li.nav-item
-       = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: page_path(@conn, :vae), conn: @conn
-      li.nav-item
-       = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: page_path(@conn, :certificateur_vae_definition), conn: @conn
-      li.nav-item
-       = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: page_path(@conn, :pourquoi_une_certification), conn: @conn
+      = if String.ends_with?(@conn.private.phoenix_controller |> to_string, "PageController") do
+        li.nav-item.d-md-none.mt-4
+          = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
+        li.nav-item
+         = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: page_path(@conn, :vae), conn: @conn
+        li.nav-item
+         = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: page_path(@conn, :certificateur_vae_definition), conn: @conn
+        li.nav-item
+         = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: page_path(@conn, :pourquoi_une_certification), conn: @conn
       = if Coherence.current_user(@conn) do
         li.nav-item
         li.nav-item
@@ -29,16 +32,3 @@ nav.navbar.dm-navbar.navbar-expand-md
           = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "button-pe-connect is-white") do
             = img_tag("/images/icon-pe-connect-is-blue.svg", class: "icon-pe-connect", width: 34, height: 31)
             span.text Se connecter avec pôle emploi
-
-      / li.nav-item
-      /  = link "Découvrez l'équipe Avril", to: auth_path(@conn, :save_session_and_redirect), class: "nav-link p-0"
-      / li.nav-item
-      /   = link "C'est quoi un certificateur ?", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-      / li.nav-item
-      /   = link "Dîplomes les plus demandés", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-      li.nav-item.d-md-none.mt-4
-        = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
-      li.nav-item.d-md-none
-        = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
-      li.nav-item.d-md-none
-        = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
