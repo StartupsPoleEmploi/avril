@@ -20,13 +20,18 @@
   .row.mb-5
     .col-6
       h3 #{@user.certification.acronym} #{@user.certification.label}
-      p
-        strong
-          = @user.delegate.name
-        br
-        = @user.delegate.address
+      .delegator
+        div style="display: inline-block;font-size: 2rem;vertical-align: super;" 🡪
+        = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
+        p style="display: inline-block"
+          strong
+            = @user.delegate.name
+          br
+          = @user.delegate.address
     .col-6.text-right
-      a.btn.btn-primary href="#" role="button" Transmettre mon dossier
+      a.btn.btn-primary href="#" role="button"
+        = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+        | Transmettre mon dossier
 
 
   .row
