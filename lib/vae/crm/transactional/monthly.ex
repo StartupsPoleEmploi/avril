@@ -6,7 +6,8 @@ defmodule Vae.CRM.Transactional.Monthly do
 
   def execute() do
     get_job_seekers_from(Date.utc_today())
-    |> build_records
+    |> build_records()
+    |> build_emails()
     |> send_email()
 
     # |> handle_errors()
@@ -31,6 +32,19 @@ defmodule Vae.CRM.Transactional.Monthly do
         events ->
           Enum.map(events, &Map.put(acc, &1.email, js))
       end
+    end)
+  end
+
+  def build_emails(emails) do
+    emails
+    |> Enum.reduce([], fn {email, job_seeker}, acc ->
+      [
+        %Email{
+          custom_id: UUID.uuid5(nil, email),
+          job_seeker: job_seeker
+        }
+        | acc
+      ]
     end)
   end
 
