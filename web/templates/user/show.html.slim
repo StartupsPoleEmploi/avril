@@ -4,18 +4,76 @@
       .col-8
         h3 Bonjour #{@user.first_name},
       .col-4
-        p
-          strong= @user.email
-        div
-          = @user.address1
-          br
-          = @user.address4
-          br
-          = "#{@user.postal_code} #{@user.city_label}"
-          br
-          = @user.country_label
-        button.btn.btn-link Modifier mes coordonnées
+        = form_for @changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
+          .row
+            .col
+              .form-group.mb-4
+                = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true
+                = error_tag f, :email
+          .row
+            .col
+              .form-group.address-component.mb-2
+                .input-group
+                  = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: true
+                  .input-group-append
+                    button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
+                = error_tag f, :address4
+              .form-group.address-component.mb-2 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
+                = text_input f, :address3, class: "form-control", placeholder: "Complément de distribution", disabled: true
+                = error_tag f, :address3
+              .form-group.address-component.mb-2 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
+                = text_input f, :address2, class: "form-control", placeholder: "Complément d'adresse", disabled: true
+                = error_tag f, :address2
+              .form-group.address-component.mb-2 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
+                = text_input f, :address1, class: "form-control", placeholder: "Complément destinataire", disabled: true
+                = error_tag f, :address1
+          .row
+            .col-4.pr-0
+              .form-group.mb-2
+                = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: true
+                = error_tag f, :postal_code
+            .col-8
+              .form-group.mb-2
+                = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: true
+                = error_tag f, :city_label
+          .row
+            .col
+              .form-group.mb-4
+                = text_input f, :country_label, class: "form-control", placeholder: "Pays", disabled: true
+                = error_tag f, :country_label
+          .row
+            .col
+              .form-group
+                a.btn.btn-link.btn-sm.edit-button href="#" Modifier mes coordonnées
+                .d-none.save
+                  = submit "Enregistrer", class: "btn btn-primary btn-sm"
+                  = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
+  javascript:
+    $('.profile-edit').on('click', '.edit-button', function(e){
+      $(e.delegateTarget).find('[disabled]').removeAttr('disabled').addClass('disablable')
+      $('.save').removeClass('d-none')
+      $('.edit-button').hide();
+    })
 
+    $('.profile-edit').on('click', '.reset', function(e){
+      $(e.delegateTarget).find('.disablable').attr('disabled', 'disabled').removeClass('disablable')
+      $('.save').addClass('d-none')
+      $('.edit-button').show();
+    });
+
+    $('.profile-edit').on('click', '.toggle-address', function(e){
+      var $target = $(e.target);
+      if ($target.text() === '+') {
+        $(e.target).text('-')
+        $(e.delegateTarget).find('.address-component').removeClass('d-none')
+      } else {
+        $(e.target).text('+')
+        $(e.delegateTarget)
+          .find('.address-component')
+          .filter(function(i, el){ return !$(el).find('input').val() })
+          .addClass('d-none')
+      }
+    });
 
   .row.mb-5
     .col-6

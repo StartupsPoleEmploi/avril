@@ -7,7 +7,7 @@
       = render ComponentView, "navbar.html", conn: @conn
     #content.content class="#{if assigns[:no_container], do: "", else: "container"}"
       = if assigns[:with_search] do
-        .mt-4
+        .mt-5
           = render ComponentView, "searchbar.html", conn: @conn
       = render @view_module, @view_template, assigns
   = render ComponentView, "footer.html", conn: @conn

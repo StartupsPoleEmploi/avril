@@ -8,6 +8,9 @@ $fa-font-path: '../fonts';
 @import 'bootstrap-select';
 
 /* Custom Stuff */
+@import 'layout/layout';
+@import 'layout/footer';
+@import 'layout/buttons';
 @import 'custom';
 
 /* components */
@@ -21,6 +24,8 @@ $fa-font-path: '../fonts';
 @import 'components/card';
 @import 'components/form_control_placeholder';
 @import 'components/pe_connect';
+@import 'components/search_box';
+@import 'components/contact_form';
 
 /* page specific */
 @import 'pages/home';

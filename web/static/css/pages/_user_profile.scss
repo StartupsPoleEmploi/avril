@@ -4,4 +4,27 @@
     background: $white;
   }
 
+
+  .profile-edit {
+    [disabled] {
+      &, &:focus {
+        border-color: $white;
+        background: transparent;
+        box-shadow: none;
+        cursor: default;
+        height: auto;
+        padding: 0;
+      }
+    }
+
+    .input-group-append {
+      .btn-sm {
+        border-top-right-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+        &[disabled] {
+          display: none;
+        }
+      }
+    }
+  }
 }
