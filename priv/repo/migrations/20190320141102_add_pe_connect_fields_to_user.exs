@@ -21,5 +21,7 @@ defmodule Vae.Repo.Migrations.AddPEConnectFieldsToUser do
       add(:skills, {:array, :jsonb}, default: [])
       add(:experiences, {:array, :jsonb}, default: [])
     end
+
+    create unique_index(:users, [:pe_id])
   end
 end

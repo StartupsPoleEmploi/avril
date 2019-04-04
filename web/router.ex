@@ -62,7 +62,8 @@ defmodule Vae.Router do
     resources("/diplomes", CertificationController, only: [:index, :show])
 
     # Loggued in applications
-    resources("/candidatures", ApplicationController, only: [:show])
+    resources("/candidatures", ApplicationController, only: [:show, :update])
+
     resources("/profil", UserController, only: [:update])
 
     get("/certifications", CertificationController, :index)

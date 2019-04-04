@@ -6,6 +6,7 @@ defmodule Vae.Repo.Migrations.CreateApplication do
       add :user_id, references(:users, on_delete: :delete_all)
       add :delegate_id, references(:delegates, on_delete: :nilify_all)
       add :certification_id, references(:certifications, on_delete: :nilify_all)
+      add :submitted_at, :utc_datetime
 
       timestamps()
     end

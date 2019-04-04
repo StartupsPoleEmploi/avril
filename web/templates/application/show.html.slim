@@ -87,10 +87,12 @@
           br
           = @delegate.address
     .col-6.text-right
-      a.btn.btn-primary href="#" role="button"
+      = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: (if @application.submitted_at, do: 'disabled', else: '') do
         = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-        | Transmettre mon dossier
-
+        = if @application.submitted_at do
+          | Dossier Transmis
+        - else
+          | Transmettre mon dossier
 
   .row
     .col
@@ -122,4 +124,9 @@
 
   .row.mb-5
     .col.text-right
-      a.btn.btn-primary href="#" role="button" Transmettre mon dossier
+      = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: (if @application.submitted_at, do: 'disabled', else: '') do
+        = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+        = if @application.submitted_at do
+          | Dossier Transmis
+        - else
+          | Transmettre mon dossier

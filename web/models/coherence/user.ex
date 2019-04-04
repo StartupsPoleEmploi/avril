@@ -86,10 +86,9 @@ defmodule Vae.User do
       }, %{
         # TODO: fetch longer periods
         url: "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=20170401&dateFinPeriode=20190401",
-        changeset: fn data -> %{
+        data_map: fn data -> %{
           proven_experiences: Enum.map(data["contrats"], &ProvenExperience.experiencesprofessionellesdeclareesparlemployeur_api_map/1)
-        }
-        end
+        } end
       }
     ]
 

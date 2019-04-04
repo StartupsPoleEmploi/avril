@@ -31,13 +31,18 @@ defmodule Vae.AuthController do
 
     user = (
       Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) ||
-      User.create_or_associate_with_pe_connect_data(client_with_token, userinfo_api_result)
+      User.create_or_associate_with_pe_connect_data(client_with_token, userinfo_api_result.body)
       ) |> Repo.preload(:current_application)
 
     application =
       user.current_application ||
       Application.create_with_params(
-        get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer))
+        Map.merge(
+          get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)),
+          %{
+            user_id: user.id
+          }
+        )
       )
 
     case user do
