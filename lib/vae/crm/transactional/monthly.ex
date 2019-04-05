@@ -20,9 +20,9 @@ defmodule Vae.CRM.Transactional.Monthly do
   def build_records(job_seekers) do
     job_seekers.rows
     |> Enum.map(&Vae.Repo.load(JobSeeker, {job_seekers.columns, &1}))
-    |> Enum.reduce(%{}, fn js, acc ->
+    |> Enum.reduce(Keyword.new(), fn js, acc ->
       js.events
-      |> filter_by_date(Date.utc_today())
+      |> filter_by_date(Timex.shift(Date.utc_today(), months: -1))
       |> filter_by_empty_event_payload()
       |> filter_by_delegate_contact()
       |> case do
@@ -30,17 +30,19 @@ defmodule Vae.CRM.Transactional.Monthly do
           acc
 
         events ->
-          Enum.map(events, &Map.put(acc, &1.email, js))
+          Enum.flat_map(events, fn event ->
+            Keyword.put(acc, String.to_atom(UUID.uuid5(nil, event.email)), js)
+          end)
       end
     end)
   end
 
   def build_emails(emails) do
     emails
-    |> Enum.reduce([], fn {email, job_seeker}, acc ->
+    |> Enum.reduce([], fn {custom_id, job_seeker}, acc ->
       [
         %Email{
-          custom_id: UUID.uuid5(nil, email),
+          custom_id: Atom.to_string(custom_id),
           job_seeker: job_seeker
         }
         | acc
@@ -65,7 +67,6 @@ defmodule Vae.CRM.Transactional.Monthly do
   defp filter_by_date(events, last_month) do
     Enum.filter(events, fn event ->
       event.time
-      |> Timex.parse!("{ISO:Extended:Z}")
       |> DateTime.to_date()
       |> Date.compare(last_month)
       |> (&(&1 == :eq)).()
@@ -75,7 +76,7 @@ defmodule Vae.CRM.Transactional.Monthly do
   defp filter_by_delegate_contact(events) do
     Enum.filter(events, fn event ->
       {payload, _} = Code.eval_string(event.payload)
-      payload.contact_delegate == "on"
+      payload["contact_delegate"] == "on"
     end)
   end
 end

@@ -127,7 +127,7 @@ defmodule Vae.JobSeeker do
     Ecto.Adapters.SQL.query!(Repo, sql, [start_date, end_date])
   end
 
-  def list_from_last_month(%DateTime{} = end_date) do
+  def list_from_last_month(%Date{} = end_date) do
     sql = """
       SELECT
         DISTINCT email,
@@ -143,7 +143,7 @@ defmodule Vae.JobSeeker do
       WHERE (e->>'time')::timestamp::date = $1
     """
 
-    start_date = get_previous_month(end_date) |> DateTime.to_date()
+    start_date = get_previous_month(end_date)
 
     Ecto.Adapters.SQL.query!(Repo, sql, [start_date])
   end
