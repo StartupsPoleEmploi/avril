@@ -89,12 +89,7 @@
           br
           = @delegate.address
     .col-6.text-right
-      = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: (if @application.submitted_at, do: 'disabled', else: '') do
-        = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-        = if @application.submitted_at do
-          | Dossier Transmis
-        - else
-          | Transmettre mon dossier
+      = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
 
   .row
     .col
@@ -126,9 +121,4 @@
 
   .row.mb-5
     .col.text-right
-      = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: (if @application.submitted_at, do: 'disabled', else: '') do
-        = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-        = if @application.submitted_at do
-          | Dossier Transmis
-        - else
-          | Transmettre mon dossier
+      = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application

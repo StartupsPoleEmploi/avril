@@ -197,6 +197,7 @@ defmodule Vae.User do
         else: %{}
 
     Map.merge(extra_fields, %{
+      name: "#{String.capitalize(api_fields["given_name"])} #{String.capitalize(api_fields["family_name"])}",
       first_name: String.capitalize(api_fields["given_name"]),
       last_name: String.capitalize(api_fields["family_name"]),
       pe_id: api_fields["idIdentiteExterne"],

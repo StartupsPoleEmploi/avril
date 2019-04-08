@@ -3,8 +3,8 @@
   main
     .sticky-top
       = render ComponentView, "cookies.html", conn: @conn
-      = render ComponentView, "flash.html", conn: @conn
       = render ComponentView, "navbar.html", conn: @conn
+      = render ComponentView, "flash.html", conn: @conn
     #content.content class="#{if assigns[:no_container], do: "", else: "container"}"
       = if assigns[:with_search] do
         .mt-5
