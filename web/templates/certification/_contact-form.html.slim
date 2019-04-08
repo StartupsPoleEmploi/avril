@@ -13,9 +13,7 @@
   .contact-toggle.text-center.collapse.show
     h4 Mon Dossier VAE
     p Retrouvez vos expériences et vos compétences.
-    = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "button-pe-connect is-white") do
-      = img_tag("/images/icon-pe-connect-is-blue.svg", class: "icon-pe-connect", width: 34, height: 31)
-      span.text Démarrer en me connectant à mon compte pôle emploi
+    = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
     hr.invisible
     button.btn-link.text-white data-toggle="collapse" data-target=".contact-toggle" role="button" Je n'ai pas de compte Pôle-Emploi ou je souhaite simplement rentrer en contact avec mon certificateur
 

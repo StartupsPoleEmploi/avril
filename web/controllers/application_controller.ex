@@ -1,7 +1,7 @@
 defmodule Vae.ApplicationController do
   require Logger
   use Vae.Web, :controller
-  plug Coherence.Authentication.Session, protected: true
+  # plug Coherence.Authentication.Session, protected: true
 
   alias Vae.User
   alias Vae.Application
@@ -16,6 +16,7 @@ defmodule Vae.ApplicationController do
         delegate: application.delegate,
         certification: application.certification,
         user: application.user,
+        edit_mode: Coherence.current_user(conn).id == application.user.id,
         changeset: User.changeset(application.user, %{})
       )
     else
@@ -32,6 +33,7 @@ defmodule Vae.ApplicationController do
 
     # TODO: refacto check at controller level
     if !is_nil(application) && Coherence.current_user(conn).id == application.user.id do
+      Application.generate_delegate_access(application)
       ##################
       # TODO: send mail
       ##################

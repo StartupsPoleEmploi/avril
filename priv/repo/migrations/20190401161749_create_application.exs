@@ -7,6 +7,8 @@ defmodule Vae.Repo.Migrations.CreateApplication do
       add :delegate_id, references(:delegates, on_delete: :nilify_all)
       add :certification_id, references(:certifications, on_delete: :nilify_all)
       add :submitted_at, :utc_datetime
+      add :delegate_access_hash, :string
+      add :delegate_access_refreshed_at, :utc_datetime
 
       timestamps()
     end

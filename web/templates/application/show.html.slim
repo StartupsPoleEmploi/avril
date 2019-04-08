@@ -41,39 +41,41 @@
               .form-group.mb-4
                 = text_input f, :country_label, class: "form-control", placeholder: "Pays", disabled: true
                 = error_tag f, :country_label
-          .row
-            .col
-              .form-group
-                a.btn.btn-link.btn-sm.edit-button href="#" Modifier mes coordonnées
-                .d-none.save
-                  = submit "Enregistrer", class: "btn btn-primary btn-sm"
-                  = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
-  javascript:
-    $('.profile-edit').on('click', '.edit-button', function(e){
-      $(e.delegateTarget).find('[disabled]').removeAttr('disabled').addClass('disablable')
-      $('.save').removeClass('d-none')
-      $('.edit-button').hide();
-    })
+          = if @edit_mode do
+            .row
+              .col
+                .form-group
+                  a.btn.btn-link.btn-sm.edit-button href="#" Modifier mes coordonnées
+                  .d-none.save
+                    = submit "Enregistrer", class: "btn btn-primary btn-sm"
+                    = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
+  = if @edit_mode do
+    javascript:
+      $('.profile-edit').on('click', '.edit-button', function(e){
+        $(e.delegateTarget).find('[disabled]').removeAttr('disabled').addClass('disablable')
+        $('.save').removeClass('d-none')
+        $('.edit-button').hide();
+      })
 
-    $('.profile-edit').on('click', '.reset', function(e){
-      $(e.delegateTarget).find('.disablable').attr('disabled', 'disabled').removeClass('disablable')
-      $('.save').addClass('d-none')
-      $('.edit-button').show();
-    });
+      $('.profile-edit').on('click', '.reset', function(e){
+        $(e.delegateTarget).find('.disablable').attr('disabled', 'disabled').removeClass('disablable')
+        $('.save').addClass('d-none')
+        $('.edit-button').show();
+      });
 
-    $('.profile-edit').on('click', '.toggle-address', function(e){
-      var $target = $(e.target);
-      if ($target.text() === '+') {
-        $(e.target).text('-')
-        $(e.delegateTarget).find('.address-component').removeClass('d-none')
-      } else {
-        $(e.target).text('+')
-        $(e.delegateTarget)
-          .find('.address-component')
-          .filter(function(i, el){ return !$(el).find('input').val() })
-          .addClass('d-none')
-      }
-    });
+      $('.profile-edit').on('click', '.toggle-address', function(e){
+        var $target = $(e.target);
+        if ($target.text() === '+') {
+          $(e.target).text('-')
+          $(e.delegateTarget).find('.address-component').removeClass('d-none')
+        } else {
+          $(e.target).text('+')
+          $(e.delegateTarget)
+            .find('.address-component')
+            .filter(function(i, el){ return !$(el).find('input').val() })
+            .addClass('d-none')
+        }
+      });
 
   .row.mb-5
     .col-6
