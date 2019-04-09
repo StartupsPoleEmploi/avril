@@ -38,10 +38,10 @@ defmodule Vae.Application do
       delegate_access_refreshed_at: DateTime.utc_now(),
     })) do
       {:ok, application} ->
-        case IO.inspect(Email.send([
+        case Email.send([
           ApplicationEmail.delegate_submission(application),
           ApplicationEmail.user_submission_confirmation(application)
-        ])) do
+        ]) do
           {:ok, message} -> Repo.update(__MODULE__.changeset(application, %{
             submitted_at: DateTime.utc_now()
             }))

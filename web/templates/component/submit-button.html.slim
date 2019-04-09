@@ -2,5 +2,7 @@
   = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
   = if @application.submitted_at do
     | Dossier Transmis
+    br
+    small= Timex.format!(Timex.Timezone.convert(@application.submitted_at, "Europe/Paris"), "le %d/%m/%Y à %H:%M", :strftime)
   - else
     | Transmettre mon dossier

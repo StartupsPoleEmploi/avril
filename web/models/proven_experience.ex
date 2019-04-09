@@ -33,7 +33,7 @@ defmodule Vae.ProvenExperience do
       label: Vae.String.titleize(api_fields["intitulePoste"]),
       contract_type: api_fields["natureContrat"],
       is_manager: api_fields["niveauQualification"] == "Cadre",
-      duration: api_fields["quantiteTravail"],
+      work_duration: api_fields["quantiteTravail"],
       company_ape: api_fields["entreprise"]["codeApe"],
       company_name: Vae.String.titleize(api_fields["entreprise"]["nom"]),
       company_category: api_fields["entreprise"]["regime"],

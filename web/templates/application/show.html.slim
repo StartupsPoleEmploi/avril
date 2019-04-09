@@ -98,7 +98,7 @@
         h3 Mes compétences
     .row.mb-5
       = for skill <- @user.skills do
-        .col-4
+        .col-4.mb-3
           .card
             .card-body= skill.label
 
@@ -116,11 +116,27 @@
     .row
       .col
         h3 Mes expériences attestées
-    .row.mb-5
-      = for experience <- Enum.reverse(@user.proven_experiences) do
-        .col-4
+    .row
+      = for {year, sub_grouped_experiences} <- @grouped_experiences do
+        .col-12.mb-4
           .card
-            .card-body #{experience.label} pour #{experience.company_name} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
+            .card-header= year
+            .card-body
+              ul
+                = for experiences <- sub_grouped_experiences do
+                  - exp = List.first(experiences)
+                  li
+                    p
+                      | #{exp.label} pour #{exp.company_name}
+                      = if length(experiences) == 1 do
+                        |  entre le #{Timex.format!(exp.start_date, "%d/%m", :strftime)} et le #{Timex.format!(exp.end_date, "%d/%m", :strftime)}
+                      - else
+                        |  :
+                        ul
+                          = for exp <- experiences do
+                            li du #{Timex.format!(exp.start_date, "%d/%m", :strftime)} au #{Timex.format!(exp.end_date, "%d/%m", :strftime)}
+
+            / .card-body #{experience.label} pour #{experience.company_name} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
 
 
   .row.mb-5

@@ -19,6 +19,18 @@ defmodule Vae.ApplicationController do
           delegate: application.delegate,
           certification: application.certification,
           user: application.user,
+          grouped_experiences: application.user.proven_experiences
+            |> Enum.group_by(fn exp -> exp.start_date.year end)
+            |> map_values(fn experiences -> Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end) end)
+            # |> map_values(fn experiences -> [experiences] end)
+            |> map_values(fn experiences -> compact_experiences(
+              experiences,
+              fn (exp1, exp2) ->
+                exp1.company_name == exp2.company_name &&
+                exp1.label == exp2.label
+              end)
+            end)
+            |> IO.inspect,
           edit_mode: Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           changeset: User.changeset(application.user, %{})
         )
@@ -74,4 +86,25 @@ defmodule Vae.ApplicationController do
     end
   end
 
+  defp map_values(map, map_func) do
+    Map.new(map, fn {k, v} -> {k, map_func.(v)} end)
+  end
+
+  defp compact_experiences(experiences, equality_fun) do
+    Enum.reduce(experiences, [], fn exp, result -> associate_if_match(exp, result, equality_fun) end)
+      |> Enum.reverse
+      |> Enum.map(fn experiences_group -> Enum.reverse(experiences_group) end)
+  end
+
+  defp associate_if_match(element, already_associated, equality_fun) do
+    case already_associated do
+      [] -> [[element]]
+      [[latest_element | other_elements] = previous_elements | tail] ->
+        if (equality_fun.(element, latest_element)) do
+          [[element | previous_elements] | tail]
+        else
+          [[element] | [previous_elements | tail]]
+        end
+    end
+  end
 end
