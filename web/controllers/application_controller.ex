@@ -19,7 +19,7 @@ defmodule Vae.ApplicationController do
           delegate: application.delegate,
           certification: application.certification,
           user: application.user,
-          edit_mode: Coherence.current_user(conn).id == application.user.id,
+          edit_mode: Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           changeset: User.changeset(application.user, %{})
         )
       {:error, error_msg} ->
@@ -57,7 +57,7 @@ defmodule Vae.ApplicationController do
   end
 
   defp has_access?(conn, application, nil) do
-    if not is_nil(application) && not is_nil(Coherence.current_user(conn)) && Coherence.current_user(conn).id == application.user.id do
+    if not is_nil(application) && Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id do
       {:ok, application}
     else
       {:error, "Vous n'avez pas accès."}

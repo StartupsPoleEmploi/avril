@@ -89,36 +89,41 @@
           br
           = @delegate.address
     .col-6.text-right
-      = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
+      = if @edit_mode do
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
 
-  .row
-    .col
-      h3 Mes compétences
-  .row.mb-5
-    = for skill <- @user.skills do
-      .col-4
-        .card
-          .card-body= skill.label
+  = if length(@user.skills) > 0 do
+    .row
+      .col
+        h3 Mes compétences
+    .row.mb-5
+      = for skill <- @user.skills do
+        .col-4
+          .card
+            .card-body= skill.label
 
+  = if length(@user.experiences) > 0 do
+    .row
+      .col
+        h3 Mes expériences professionnelles
+    .row.mb-5
+      = for experience <- Enum.reverse(@user.experiences) do
+        .col-4
+          .card
+            .card-body #{experience.label} pour #{experience.company} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
 
-  .row
-    .col
-      h3 Mes expériences professionnelles
-  .row.mb-5
-    = for experience <- Enum.reverse(@user.experiences) do
-      .col-4
-        .card
-          .card-body #{experience.label} pour #{experience.company} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
-  .row
-    .col
-      h3 Mes expériences attestées
-  .row.mb-5
-    = for experience <- Enum.reverse(@user.proven_experiences) do
-      .col-4
-        .card
-          .card-body #{experience.label} pour #{experience.company_name} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
+  = if length(@user.proven_experiences) > 0 do
+    .row
+      .col
+        h3 Mes expériences attestées
+    .row.mb-5
+      = for experience <- Enum.reverse(@user.proven_experiences) do
+        .col-4
+          .card
+            .card-body #{experience.label} pour #{experience.company_name} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
 
 
   .row.mb-5
     .col.text-right
-      = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
+      = if @edit_mode do
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
