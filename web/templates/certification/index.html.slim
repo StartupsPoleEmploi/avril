@@ -51,7 +51,7 @@
             | 4 minutes
           = img_tag '/images/play.svg', alt: 'lecture'
 
-= render Vae.ComponentView, "pagination.html", conn: @conn, page: @page
+= render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &certification_path/3
 
 javascript:
   $(document).ready(function (){

@@ -3,6 +3,8 @@ defmodule Vae.Router do
   use ExAdmin.Router
   use Coherence.Router
 
+  # alias Redirector
+
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
@@ -70,6 +72,13 @@ defmodule Vae.Router do
 
     # Search endpoint
     post("/search", SearchController, :search)
+
+    # Old URL redirections
+    get("/delegates/:id", Redirector, to: "/")
+    get("/certifications/:id", Redirector, to: "/")
+    get("/certifiers/:id", Redirector, to: "/")
+    get("/processes/:id", Redirector, to: "/")
+
   end
 
   scope "/admin", ExAdmin do

@@ -14,15 +14,15 @@
               .dropdown-divider
             - else
               - params = Map.merge(@conn.params, %{ page: number })
-              = link("Page #{label}", class: "dropdown-item", to: certification_path(@conn, :index, params), aria_label: "Page #{label}")
+              = link("Page #{label}", class: "dropdown-item", to: @path.(@conn, :index, params), aria_label: "Page #{label}")
 
       nav.ml-auto aria-label="Pages"
         ul.pagination id="pagination"
           = content_tag(:li, class: "page-item" <> class_previous) do
-            = link(class: "page-link", to: certification_path(@conn, :index, params_previous), aria_label: "Précédent") do
+            = link(class: "page-link", to: @path.(@conn, :index, params_previous), aria_label: "Précédent") do
               span.ic-icon.ic-tail-left aria-hidden="true"
               .sr-only Précédent
           = content_tag(:li, class: "page-item" <> class_next) do
-            = link(class: "page-link", to: certification_path(@conn, :index, params_next), aria_label: "Suivant", disabled: @page.page_number == @page.total_pages) do
+            = link(class: "page-link", to: @path.(@conn, :index, params_next), aria_label: "Suivant", disabled: @page.page_number == @page.total_pages) do
               span.ic-icon.ic-tail-right-2 aria-hidden="true"
               .sr-only Suivant
