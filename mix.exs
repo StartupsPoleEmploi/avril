@@ -89,7 +89,8 @@ defmodule Vae.Mixfile do
       {:pdf_generator, ">=0.4.0"},
       {:observer_cli, "~> 1.4"},
       {:filterable, "~> 0.7.0"},
-      {:oauth2, "~> 0.9"}
+      {:oauth2, "~> 0.9"},
+      {:inflex, "~> 1.10.0"}
     ]
   end
 

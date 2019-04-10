@@ -74,6 +74,15 @@ ul.nav.dm-nav, ul.navbar-nav {
       content: none;
     }
   }
+  .dropdown-menu {
+    .dropdown-item {
+      &.active {
+        font-weight: bold;
+        background-color: transparent;
+        color: initial;
+      }
+    }
+  }
 }
 
 li.nav-item > a.nav-link[href^='mailto:']:before {

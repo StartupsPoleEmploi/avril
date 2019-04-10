@@ -81,7 +81,8 @@
     .col-6
       h3 #{@certification.acronym} #{@certification.label}
       .delegator
-        div style="display: inline-block;font-size: 2rem;vertical-align: super;" 🡪
+        div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
+          span.ic-icon.ic-tail-right
         = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
         p style="display: inline-block"
           strong
@@ -117,24 +118,27 @@
       .col
         h3 Mes expériences attestées
     .row
-      = for {year, sub_grouped_experiences} <- @grouped_experiences do
-        .col-12.mb-4
+      = for {{company_name, label}, experiences} <- @grouped_experiences do
+        .col-6.mb-4
           .card
-            .card-header= year
-            .card-body
+            .card-header data-toggle="collapse" data-target="#exp-#{Inflex.parameterize(label)}-#{Inflex.parameterize(company_name)}" style="cursor: pointer;"
+              = "#{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} en tant que #{label} pour #{company_name} "
+              span.ic-icon.ic-small-triangle-down style="vertical-align: middle;"
+            .card-body.collapse id="exp-#{Inflex.parameterize(label)}-#{Inflex.parameterize(company_name)}"
               ul
-                = for experiences <- sub_grouped_experiences do
-                  - exp = List.first(experiences)
+                = for exp <- experiences do
                   li
-                    p
-                      | #{exp.label} pour #{exp.company_name}
-                      = if length(experiences) == 1 do
-                        |  entre le #{Timex.format!(exp.start_date, "%d/%m", :strftime)} et le #{Timex.format!(exp.end_date, "%d/%m", :strftime)}
-                      - else
-                        |  :
-                        ul
-                          = for exp <- experiences do
-                            li du #{Timex.format!(exp.start_date, "%d/%m", :strftime)} au #{Timex.format!(exp.end_date, "%d/%m", :strftime)}
+                    = "#{exp.duration} heures en #{exp.contract_type}, "
+                    = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
+                  / li
+                  /   p
+                  /     | #{exp.label} pour #{exp.company_name}
+                  /     = if length(experiences) == 1 do
+                  /       |  entre le #{Timex.format!(exp.start_date, "%d/%m", :strftime)} et le #{Timex.format!(exp.end_date, "%d/%m", :strftime)}
+                  /     - else
+                  /       |  :
+                  /       ul
+                  /         = for exp <- experiences do
 
             / .card-body #{experience.label} pour #{experience.company_name} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
 
