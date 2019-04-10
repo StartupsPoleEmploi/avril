@@ -55,6 +55,8 @@ config :coherence,
   email_from_email: "yourname@example.com",
   opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token]
 
+config :coherence, :layout, {Vae.LayoutView, :app}
+
 config :coherence, Vae.Coherence.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "your api key here"

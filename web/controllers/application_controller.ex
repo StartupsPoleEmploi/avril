@@ -34,10 +34,10 @@ defmodule Vae.ApplicationController do
           edit_mode: Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           changeset: User.changeset(application.user, %{})
         )
-      {:error, error_msg} ->
+      {:error, %{to: to, msg: msg}} ->
         conn
-        |> put_flash(:error, error_msg)
-        |> redirect(to: root_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: to)
     end
   end
 
@@ -60,19 +60,23 @@ defmodule Vae.ApplicationController do
             |> put_flash(:error, "Une erreur est survenue, n'hésitez pas à nous contacter pour plus d'infos")
             |> redirect(to: application_path(conn, :show, application))
         end
-      {:error, error_msg} ->
+      {:error, %{to: to, msg: msg}} ->
         conn
-        |> put_flash(:error, error_msg)
-        |> redirect(to: root_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: to)
     end
 
   end
 
   defp has_access?(conn, application, nil) do
-    if not is_nil(application) && Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id do
-      {:ok, application}
+    if not is_nil(application) do
+      if Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id do
+        {:ok, application}
+      else
+        {:error, %{to: session_path(conn, :new), msg: "Vous devez vous connecter"}}
+      end
     else
-      {:error, "Vous n'avez pas accès."}
+      {:error, %{to: root_path(conn, :index), msg: "Vous n'avez pas accès."}}
     end
   end
 
@@ -82,7 +86,7 @@ defmodule Vae.ApplicationController do
       Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10)) do
       {:ok, application}
     else
-      {:error, (if application.delegate_access_hash == hash, do: "Accès expiré", else: "Vous n'avez pas accès") }
+      {:error, %{to: root_path(conn, :index), msg: (if application.delegate_access_hash == hash, do: "Accès expiré", else: "Vous n'avez pas accès")} }
     end
   end
 

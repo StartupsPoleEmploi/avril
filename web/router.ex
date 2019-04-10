@@ -24,6 +24,10 @@ defmodule Vae.Router do
     plug(Coherence.Authentication.Session, protected: true)
   end
 
+  pipeline :admin do
+    plug Vae.CheckAdmin
+  end
+
   pipeline :api do
     plug(:accepts, ["json"])
 
@@ -82,7 +86,7 @@ defmodule Vae.Router do
   end
 
   scope "/admin", ExAdmin do
-    pipe_through(:protected)
+    pipe_through([:protected, :admin])
     admin_routes()
   end
 end
