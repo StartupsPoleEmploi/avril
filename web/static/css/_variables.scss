@@ -28,14 +28,16 @@ $theme-colors: (
 // VAE
 $brand-light: #7B81C1;
 $body-bg: #F7F8FA;
-$bg-secondary: #DEE6EB;
 $header-margin: 10rem;
 
 // Bootstrap
 // TODO: exists in bs4 ?
 $brand-primary: theme-color('primary');
+// $brand-secondary: theme-color('secondary');
+$brand-secondary: $dm-primary-blue;
 $brand-info: theme-color('info');
 $gray-light: theme-color('light');
+
 $gray: #292b2c;
 $teal: #05CFA8;
 $white: white;

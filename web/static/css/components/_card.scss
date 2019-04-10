@@ -1,35 +1,35 @@
-.card-group {
-  @include media-breakpoint-down(sm) {
-    flex-flow: column;
-  }
-  > .card {
-    @include media-breakpoint-up(lg) {
-      padding: 20px;
-    }
+// .card-group {
+//   @include media-breakpoint-down(sm) {
+//     flex-flow: column;
+//   }
+//   > .card {
+//     @include media-breakpoint-up(lg) {
+//       padding: 20px;
+//     }
 
-    @include media-breakpoint-down(sm) {
-      border-radius: 0;
-      border: none;
-    }
+//     @include media-breakpoint-down(sm) {
+//       border-radius: 0;
+//       border: none;
+//     }
 
-    @include media-breakpoint-down(xs) {
-      margin-left: -15px;
-      margin-right: -15px;
-      width: 108%;
-    }
+//     @include media-breakpoint-down(xs) {
+//       margin-left: -15px;
+//       margin-right: -15px;
+//       width: 108%;
+//     }
 
-    &.card-step {
-      nav {
-        position: absolute;
-        right: 20px;
+//     &.card-step {
+//       nav {
+//         position: absolute;
+//         right: 20px;
 
-        @include media-breakpoint-up(lg) {
-          right: 40px;
-        }
-      }
-    }
-  }
-}
+//         @include media-breakpoint-up(lg) {
+//           right: 40px;
+//         }
+//       }
+//     }
+//   }
+// }
 
 .pagination {
   margin: 0;
@@ -69,6 +69,10 @@
     &:hover{
       box-shadow: 7px 0 10px rgba(0,0,0,.1);
     }
+  }
+
+  .card-header, .card-body, .card-footer {
+    padding: 2rem;
   }
 
 }

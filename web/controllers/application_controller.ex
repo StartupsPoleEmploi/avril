@@ -23,7 +23,7 @@ defmodule Vae.ApplicationController do
             |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
             |> map_values(fn experiences -> Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2) end)
             |> Map.to_list
-            |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2)
+            |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
           edit_mode: Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           changeset: User.changeset(application.user, %{})
         )

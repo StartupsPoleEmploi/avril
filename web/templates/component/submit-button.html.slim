@@ -1,8 +1,10 @@
-= button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: (if @application.submitted_at, do: 'disabled', else: false) do
-  = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+div.text-center style="display: inline-block"
+  = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: (if @application.submitted_at, do: 'disabled', else: false) do
+    = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+    = if @application.submitted_at do
+      | Dossier Transmis
+    - else
+      | Transmettre mon dossier
   = if @application.submitted_at do
-    | Dossier Transmis
-    br
-    small= Timex.format!(Timex.Timezone.convert(@application.submitted_at, "Europe/Paris"), "le %d/%m/%Y à %Hh%M", :strftime)
-  - else
-    | Transmettre mon dossier
+    p
+      small= Timex.format!(Timex.Timezone.convert(@application.submitted_at, "Europe/Paris"), "le %d/%m/%Y à %Hh%M", :strftime)

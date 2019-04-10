@@ -1,5 +1,5 @@
 a {
-  color: #000;
+  // color: #000;
   position: relative;
 
   .content & {
@@ -48,6 +48,11 @@ a, button {
   font: bold 18px/24px $dm-font-nuito;
 
   &.btn-default {
+    color: $dm-primary-blue;
+  }
+
+  &.btn-light {
+    background-color: $white;
     color: $dm-primary-blue;
   }
 
