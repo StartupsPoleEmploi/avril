@@ -122,8 +122,13 @@
         .col-6.mb-4
           .card
             .card-header data-toggle="collapse" data-target="#exp-#{Inflex.parameterize(label)}-#{Inflex.parameterize(company_name)}" style="cursor: pointer;"
-              = "#{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} en tant que #{label} pour #{company_name} "
-              span.ic-icon.ic-small-triangle-down style="vertical-align: middle;"
+              strong= company_name
+              = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} en tant que #{label} totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
+              = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
+              small
+                = " (détails "
+                span.ic-icon.ic-small-triangle-down style="vertical-align: middle;"
+                | )
             .card-body.collapse id="exp-#{Inflex.parameterize(label)}-#{Inflex.parameterize(company_name)}"
               ul
                 = for exp <- experiences do

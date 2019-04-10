@@ -24,17 +24,6 @@ defmodule Vae.ApplicationController do
             |> map_values(fn experiences -> Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2) end)
             |> Map.to_list
             |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2)
-            # |> Enum.group_by(fn exp -> exp.start_date.year end)
-            # |> map_values(fn experiences -> Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end) end)
-            # # |> map_values(fn experiences -> [experiences] end)
-            # |> map_values(fn experiences -> compact_experiences(
-            #   experiences,
-            #   fn (exp1, exp2) ->
-            #     exp1.company_name == exp2.company_name &&
-            #     exp1.label == exp2.label
-            #   end)
-            # end)
-            |> IO.inspect,
           edit_mode: Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           changeset: User.changeset(application.user, %{})
         )
