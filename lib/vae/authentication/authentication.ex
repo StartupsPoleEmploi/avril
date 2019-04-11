@@ -3,19 +3,13 @@ defmodule Vae.Authentication do
 
   def init_client() do
     OAuth2.Client.new([
-      {
-        :params,
-        %{
+      params: %{
           realm: "/individu",
           scope:
             "application_#{Keyword.get(@authentication_config, :client_id)} api_peconnect-individuv1 openid profile email api_peconnect-formationsv1 pfcformations api_peconnect-experiencesprofessionellesdeclareesparlemployeurv1 passeprofessionnel api_peconnect-experiencesv1 pfcexperiences api_peconnect-coordonneesv1 coordonnees api_peconnect-competencesv2 pfccompetences pfclangues pfccentresinteret",
           state: UUID.uuid4(:hex),
           nonce: UUID.uuid4(:hex)
-        }
-      } | [
-        {:request_opts, [{:recv_timeout, 3000}]} | @authentication_config
-      ]
-      ])
+        }, request_opts: [recv_timeout: 3000]] ++ @authentication_config)
   end
 
   def get_authorize_url!(client) do
@@ -37,7 +31,6 @@ defmodule Vae.Authentication do
   end
 
   def get(client, resource_url) do
-    resource = OAuth2.Client.get!(client, resource_url)
-    # IO.inspect(resource)
+    IO.inspect OAuth2.Client.get!(client, resource_url)
   end
 end

@@ -7,7 +7,7 @@ defmodule Vae.Email do
   end
 
   def generic_fields(template_id, to, variables\\%{}) do
-    IO.inspect(%{
+    %{
       From: Mailjet.generic_from(),
       CustomID: UUID.uuid5(nil, to.email),
       TemplateLanguage: true,
@@ -17,7 +17,7 @@ defmodule Vae.Email do
       TemplateID: @mailjet_conf[template_id],
       ReplyTo: Mailjet.build_to(%{Email: to.email, Name: to.name}),
       To: Mailjet.build_to(%{Email: to.email, Name: to.name})
-    })
+    }
   end
 
 end

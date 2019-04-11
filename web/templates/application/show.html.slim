@@ -45,7 +45,9 @@
             .row
               .col
                 .form-group
-                  a.btn.btn-link.btn-sm.edit-button href="#" Modifier mes coordonnées
+                  a.btn.btn-link.btn-sm.edit-button href="#"
+                    span.fa.fa-edit
+                    |  Modifier mes coordonnées
                   .d-none.save
                     = submit "Enregistrer", class: "btn btn-primary btn-sm"
                     = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
@@ -97,9 +99,9 @@
     .row
       .col
         h3 Mes compétences
-    .row.mb-5
+    .row
       = for skill <- @user.skills do
-        .col-4.mb-3
+        .col-4.mb-4
           .card
             .card-body= skill.label
 
@@ -107,11 +109,15 @@
     .row
       .col
         h3 Mes expériences professionnelles
-    .row.mb-5
+    .row
       = for experience <- Enum.reverse(@user.experiences) do
-        .col-4
+        .col-4.mb-4
           .card
-            .card-body #{experience.label} pour #{experience.company} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
+            .card-body
+              strong= experience.company
+              = " : #{experience.label}"
+              '
+              = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
 
   = if length(@user.proven_experiences) > 0 do
     .row
@@ -135,17 +141,6 @@
                   li
                     = "#{exp.duration} heures en #{exp.contract_type}, "
                     = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
-                  / li
-                  /   p
-                  /     | #{exp.label} pour #{exp.company_name}
-                  /     = if length(experiences) == 1 do
-                  /       |  entre le #{Timex.format!(exp.start_date, "%d/%m", :strftime)} et le #{Timex.format!(exp.end_date, "%d/%m", :strftime)}
-                  /     - else
-                  /       |  :
-                  /       ul
-                  /         = for exp <- experiences do
-
-            / .card-body #{experience.label} pour #{experience.company_name} de #{String.capitalize(Timex.Translator.get_months("fr")[experience.start_date.month])} #{experience.start_date.year} à #{String.capitalize(Timex.Translator.get_months("fr")[experience.end_date.month])} #{experience.end_date.year}
 
 
   .row.mb-5

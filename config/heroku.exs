@@ -30,7 +30,8 @@ config :vae,
     contact_template_id: 539_911,
     from_email: "avril@pole-emploi.fr",
     from_name: "Avril",
-    override_to: Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1})),
+    override_to: Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))
+  },
   mailjet_template_error_reporting: List.first(Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))),
   mailjet_template_error_deliver: true
 

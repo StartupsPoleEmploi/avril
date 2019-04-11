@@ -66,7 +66,7 @@ defmodule Vae.ApplicationController do
       if Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id do
         {:ok, application}
       else
-        {:error, %{to: session_path(conn, :new, %{"only" => "pe-connect"}), msg: "Vous devez vous connecter"}}
+        {:error, %{to: session_path(conn, :new, %{"mode" => "pe-connect"}), msg: "Vous devez vous connecter"}}
       end
     else
       {:error, %{to: root_path(conn, :index), msg: "Vous n'avez pas accès."}}
