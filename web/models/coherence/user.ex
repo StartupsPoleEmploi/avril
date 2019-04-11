@@ -73,69 +73,85 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def create_or_associate_with_pe_connect_data(client_with_token, userinfo_api_result) do
-    api_calls = [
-      %{
-        url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
-        data_map: &__MODULE__.coordonnees_api_map/1
-      },
-      %{
-        url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
-        data_map: fn data ->
-          %{
-            skills: Enum.map(data, &Skill.competences_api_map/1)
-          }
-        end
-      },
-      %{
-        url: "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences",
-        data_map: fn data ->
-          %{
-            experiences: Enum.map(data, &Experience.experiences_api_map/1)
-          }
-        end
-      },
-      %{
-        # TODO: fetch longer periods
-        url:
-          "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=20170401&dateFinPeriode=20190401",
-        data_map: fn data ->
-          %{
-            proven_experiences:
-              Enum.map(
-                data["contrats"],
-                &ProvenExperience.experiencesprofessionellesdeclareesparlemployeur_api_map/1
-              )
-          }
-        end
-      }
-    ]
+  def create_or_associate_with_pe_connect_data(userinfo_api_result) do
+    status = case Repo.get_by(__MODULE__, email: String.downcase(userinfo_api_result["email"])) do
+      nil ->
+        Repo.insert(
+          __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
+        )
 
-    initial_status =
-      case Repo.get_by(__MODULE__, email: String.downcase(userinfo_api_result["email"])) do
-        nil ->
-          Repo.insert(
-            __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
-          )
-
-        user ->
-          Repo.update(
-            __MODULE__.changeset(user, __MODULE__.userinfo_api_map(userinfo_api_result, false))
-          )
-      end
-
-    case Enum.reduce(api_calls, initial_status, fn
-           call, {:ok, user} ->
-             IO.puts("Calling #{call.url}")
-             api_result = Authentication.get(client_with_token, call.url)
-             changeset = __MODULE__.changeset(user, call.data_map.(api_result.body))
-             Repo.update(changeset)
-
-           _call, error ->
-             error
-         end) do
+      user ->
+        Repo.update(
+          __MODULE__.changeset(user, __MODULE__.userinfo_api_map(userinfo_api_result, false))
+        )
+    end
+    case status do
       {:ok, user} -> user
-      {:error, _changeset} -> nil
+      {:error, changeset} -> nil
+    end
+  end
+
+  def fill_with_api_fields(initial_status, client_with_token, left_retries\\0) do
+    try do
+      api_calls = [
+        %{
+          url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
+          is_data_missing: &(is_nil(&1.postal_code)),
+          data_map: &__MODULE__.coordonnees_api_map/1
+        },
+        %{
+          url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
+          is_data_missing: &(length(&1.skills) == 0),
+          data_map: fn data ->
+            %{
+              skills: Enum.map(data, &Skill.competences_api_map/1)
+            }
+          end
+        },
+        %{
+          url: "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences",
+          is_data_missing: &(length(&1.experiences) == 0),
+          data_map: fn data ->
+            %{
+              experiences: Enum.map(data, &Experience.experiences_api_map/1)
+            }
+          end
+        },
+        %{
+          # TODO: fetch longer periods
+          url:
+            "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=20170401&dateFinPeriode=20190401",
+          is_data_missing: &(length(&1.proven_experiences) == 0),
+          data_map: fn data ->
+            %{
+              proven_experiences:
+                Enum.map(
+                  data["contrats"],
+                  &ProvenExperience.experiencesprofessionellesdeclareesparlemployeur_api_map/1
+                )
+            }
+          end
+        }
+      ]
+
+      Enum.reduce(api_calls, initial_status, fn
+        call, {:ok, user} = status ->
+          if call.is_data_missing.(user) do
+            IO.puts("Calling #{call.url}")
+            api_result = Authentication.get(client_with_token, call.url)
+            changeset = __MODULE__.changeset(user, call.data_map.(api_result.body))
+            Repo.update(changeset)
+          else
+            status
+          end
+        _call, error -> error
+      end)
+    rescue
+      error ->
+        case left_retries do
+          0 -> {:error, error}
+          n -> __MODULE__.fill_with_api_fields(initial_status, client_with_token, left_retries - 1)
+        end
     end
   end
 
