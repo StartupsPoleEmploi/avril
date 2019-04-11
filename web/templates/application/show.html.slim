@@ -80,7 +80,7 @@
       });
 
   .row.mb-5
-    .col-6
+    .col-8
       h3 #{@certification.acronym} #{@certification.label}
       .delegate
         div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
@@ -91,7 +91,7 @@
             = @delegate.name
           br
           = @delegate.address
-    .col-6.text-right
+    .col-4
       = if @edit_mode do
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
 
@@ -99,7 +99,7 @@
     .row
       .col
         h3 Mes compétences
-    .row
+    .row.mb-5
       = for skill <- @user.skills do
         .col-4.mb-4
           .card
@@ -109,7 +109,7 @@
     .row
       .col
         h3 Mes expériences professionnelles
-    .row
+    .row.mb-5
       = for experience <- Enum.reverse(@user.experiences) do
         .col-4.mb-4
           .card
@@ -123,7 +123,7 @@
     .row
       .col
         h3 Mes expériences attestées
-    .row
+    .row.mb-5
       = for {{company_name, label}, experiences} <- @grouped_experiences do
         .col-6.mb-4
           .card
@@ -144,6 +144,6 @@
 
 
   .row.mb-5
-    .col.text-right
+    .offset-8.col-4
       = if @edit_mode do
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
