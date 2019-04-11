@@ -137,51 +137,6 @@ defmodule Vae.User do
       {:ok, user} -> user
       {:error, _changeset} -> nil
     end
-
-    # changeset =
-    # case  do
-    #   {:error, changeset} -> nil
-    #   {:ok, user} ->
-    # end
-
-    # Enum.reduce(api_calls, %User{}, fn call, user ->
-
-    # {user, extra_params} = if user == nil do
-    #   tmp_password = "AVRIL_#{api_result.body["idIdentiteExterne"]}_TMP_PASSWORD"
-    #   case Repo.get_by(User, pe_id: api_result.body["idIdentiteExterne"]) do
-    #     nil -> {%User{}, %{
-    #       "email" => String.downcase(api_result.body["email"]),
-    #       "password" => tmp_password,
-    #       "password_confirmation" => tmp_password,
-    #     }}
-    #     user -> { user |> Repo.preload(:job_seeker), nil } # User exists, let's use it
-    #   end
-    # else
-    #   {user, nil}
-    # end
-
-    #   actual_changeset_params = unless is_nil(extra_params), do: Map.merge(api_result.body, extra_params), else: api_result.body
-
-    #   changeset = User.changeset(user, call.changeset.(actual_changeset_params))
-
-    #   application = case Repo.insert_or_update(changeset) do
-    #     {:ok, user} ->
-    #       application_params = Map.merge(get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)), %{
-    #         user_id: user.id
-    #         })
-    #       case existing_application = Repo.get_by(Application, application_params) do
-    #         nil ->
-    #           changeset = Application.changeset(%Application{}, application_params)
-    #           case Repo.insert(changeset) do
-    #             {:ok, application} -> user
-    #             {:error, changeset} -> nil
-    #           end
-    #         existing_application -> existing_application
-    #       end
-    #     {:error, changeset} -> nil
-    #   end
-
-    # end)
   end
 
   def userinfo_api_map(api_fields, include_create_fields \\ true) do

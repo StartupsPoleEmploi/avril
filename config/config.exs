@@ -51,8 +51,8 @@ config :coherence,
   router: Vae.Router,
   messages_backend: Vae.Coherence.Messages,
   logged_out_url: "/",
-  email_from_name: "Your Name",
-  email_from_email: "yourname@example.com",
+  email_from_name: "Avril",
+  email_from_email: "avril@pole-emploi.fr",
   opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token]
 
 config :coherence, :layout, {Vae.LayoutView, :app}

@@ -21,6 +21,19 @@ config :vae, Vae.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :vae,
+  mailjet: %{
+    application_submitted_to_delegate_id: 758_379,
+    application_submitted_to_user_id: 758_389,
+    campaign_template_id: 070_460,
+    vae_recap_template_id: 532_261,
+    contact_template_id: 539_911,
+    from_email: "avril@pole-emploi.fr",
+    from_name: "Avril",
+    override_to: Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1})),
+  mailjet_template_error_reporting: List.first(Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))),
+  mailjet_template_error_deliver: true
+
 config :vae, Vae.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL"),
@@ -34,6 +47,13 @@ config :vae, authentication: [
     authorize_url: "/connexion/oauth2/authorize",
     redirect_uri: "http://#{System.get_env("WHOST")}/pole-emploi/callback"
   ]
+
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3.1",
+  public_api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
+  private_api_key: System.get_env("MAILJET_PRIVATE_API_KEY"),
+  development_mode: false
+
 
 # ## SSL Support
 #
