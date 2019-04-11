@@ -66,7 +66,7 @@ defmodule Vae.ApplicationController do
       if Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id do
         {:ok, application}
       else
-        {:error, %{to: session_path(conn, :new), msg: "Vous devez vous connecter"}}
+        {:error, %{to: session_path(conn, :new, %{"only" => "pe-connect"}), msg: "Vous devez vous connecter"}}
       end
     else
       {:error, %{to: root_path(conn, :index), msg: "Vous n'avez pas accès."}}
@@ -74,9 +74,10 @@ defmodule Vae.ApplicationController do
   end
 
   defp has_access?(conn, application, hash) do
-    if not is_nil(application) &&
-      application.delegate_access_hash == hash &&
-      Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10)) do
+    if not is_nil(application)
+      && application.delegate_access_hash == hash
+      # && Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10))
+      do
       {:ok, application}
     else
       {:error, %{to: root_path(conn, :index), msg: (if application.delegate_access_hash == hash, do: "Accès expiré", else: "Vous n'avez pas accès")} }
