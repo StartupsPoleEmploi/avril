@@ -12,9 +12,10 @@ defmodule Vae.Authentication do
           state: UUID.uuid4(:hex),
           nonce: UUID.uuid4(:hex)
         }
-      }
-      | @authentication_config
-    ])
+      } | [
+        {:request_opts, [{:recv_timeout, 3000}]} | @authentication_config
+      ]
+      ])
   end
 
   def get_authorize_url!(client) do
