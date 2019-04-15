@@ -24,7 +24,7 @@ nav.navbar.dm-navbar.navbar-expand-md
             = if current_user.current_application do
               = render Vae.ComponentView, "active_link.html", text: "Voir ma candidature", class: "dropdown-item", to: application_path(@conn, :show, current_user.current_application), conn: @conn
               .dropdown-divider
-            = link(to: session_path(@conn, :delete), method: :delete, class: "dropdown-item") do
+            = link(to: session_path(@conn, :delete), method: :delete, class: "dropdown-item", data: [analytics: "?button=logout"]) do
               span.text Me déconnecter
 
       - else

@@ -76,7 +76,7 @@ ul.nav.dm-nav, ul.navbar-nav {
   }
   .dropdown-menu {
     .dropdown-item {
-      &.active {
+      &.active, &:focus, &:active {
         font-weight: bold;
         background-color: transparent;
         color: initial;

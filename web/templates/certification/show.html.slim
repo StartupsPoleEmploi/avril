@@ -37,11 +37,11 @@
       .row
         .col-12.text-center
           .pe-connect.pe-connect-toggle
-            = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light") do
+            = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?button=pe-connect"]) do
               = img_tag("/images/conseillere.svg", width: 34, height: 31, style: "margin-right: 1rem;")
               span.text Transmettre mes expériences
             .mt-4.text-right
-              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" Je n'ai pas de compte Pôle-emploi
+              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je n'ai pas de compte Pôle-emploi
           .no-pe-connect.pe-connect-toggle.d-none
             form.row.justify-content-center.contact-form id="contact_form"
               .col-md-6
@@ -75,7 +75,7 @@
                   span Recevoir ma synthèse VAE
               = render_contact_form_data(@conn, @delegate, @certification)
             .text-right.mt-4
-              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" role="button" Utiliser PE-connect
+              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" role="button" data-analytics="Certification#avec pe connect" Utiliser PE-connect
         javascript:
           $('[data-toggle="show"]').on('click', function(e){
             $($(e.target).attr('data-target')).toggleClass('d-none');

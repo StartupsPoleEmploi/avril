@@ -137,6 +137,19 @@ $(function() {
     localStorage.setItem('cookies_choice', 'accept');
     $('.cookies').addClass('d-none');
   })
+
+  $("[data-analytics]").on("click", function(e){
+    var target = $(e.delegateTarget).attr('data-analytics');
+    if (target.indexOf('?') === 0) {
+      var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).join('&');
+      ga('send', 'pageview', window.location.pathname + '?' + queryString);
+    } else if (target.indexOf('/') === 0) {
+      ga('send', 'pageview', target);
+    } else {
+      var cat_event = target.split('#');
+      ga('send', 'event', cat_event[0], cat_event[1]);
+    }
+  });
 })
 
 $(window).scroll(function() {
@@ -158,4 +171,8 @@ function stepLabel(width) {
   } else {
     return "Pour quel métier souhaitez-vous un diplôme ?";
   }
+}
+
+function naiveDeparam(queryString) {
+  return queryString.replace(/^\??/, '').split('&')
 }
