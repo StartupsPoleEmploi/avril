@@ -1,5 +1,5 @@
 = if is_nil(@end_date) do
-  | depuis le #{Timex.lformat!(IO.inspect(@start_date), "%e %B %Y", "fr", :strftime)}
+  | depuis le #{Timex.lformat!(@start_date, "%e %B %Y", "fr", :strftime)}
 - else
   = if @start_date == @end_date do
     | le #{Timex.lformat!(@start_date, "%e %B %Y", "fr", :strftime)}
