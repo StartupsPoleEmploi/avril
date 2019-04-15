@@ -48,9 +48,9 @@ defmodule Vae.ApplicationController do
             conn
             |> put_flash(:success, "Dossier transmis avec succès!")
             |> redirect(to: application_path(conn, :show, application))
-          {:error, changeset} ->
+          {:error, msg} ->
             conn
-            |> put_flash(:error, "Une erreur est survenue, n'hésitez pas à nous contacter pour plus d'infos")
+            |> put_flash(:error, "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos")
             |> redirect(to: application_path(conn, :show, application))
         end
       {:error, %{to: to, msg: msg}} ->

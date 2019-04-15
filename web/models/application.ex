@@ -24,12 +24,13 @@ defmodule Vae.Application do
     |> cast(params, @fields)
   end
 
-  def create_with_params(params) do
-    case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
+  def find_or_create_with_params(%{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params) do
+    Repo.get_by(__MODULE__, params) || case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
       {:ok, application} -> application
-      error -> nil
+      {:error, msg} -> nil
     end
   end
+  def find_or_create_with_params(params), do: nil
 
   def submit(application) do
     case Repo.update(
@@ -49,13 +50,9 @@ defmodule Vae.Application do
                 submitted_at: DateTime.utc_now()
               })
             )
-
-          error ->
-            error
+          error -> error
         end
-
-      error ->
-        error
+      error -> error
     end
   end
 

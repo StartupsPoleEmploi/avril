@@ -140,6 +140,7 @@ $(function() {
 
   $("[data-analytics]").on("click", function(e){
     var target = $(e.delegateTarget).attr('data-analytics');
+    if (!window.ga || !target) return console.log("Analytics not set up");
     if (target.indexOf('?') === 0) {
       var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).join('&');
       ga('send', 'pageview', window.location.pathname + '?' + queryString);

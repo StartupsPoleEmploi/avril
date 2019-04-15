@@ -35,18 +35,15 @@ defmodule Vae.AuthController do
     end
     |> User.fill_with_api_fields(client_with_token, 3)
 
-
-
-
     application_status = case user_status do
       {:ok, user} ->
-        {:ok, {user, user.current_application || Application.create_with_params(
+        {:ok, {user, Application.find_or_create_with_params(
           Map.merge(
             get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)),
             %{user_id: user.id}
           )
-        )}}
-      error -> error
+        ) || user.current_application }}
+      error -> IO.inspect(error)
     end
 
     case application_status do

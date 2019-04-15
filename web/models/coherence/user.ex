@@ -74,7 +74,7 @@ defmodule Vae.User do
   end
 
   def create_or_associate_with_pe_connect_data(userinfo_api_result) do
-    status = case Repo.get_by(__MODULE__, email: String.downcase(userinfo_api_result["email"])) do
+    case Repo.get_by(__MODULE__, email: String.downcase(userinfo_api_result["email"])) do
       nil ->
         Repo.insert(
           __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
@@ -84,10 +84,6 @@ defmodule Vae.User do
         Repo.update(
           __MODULE__.changeset(user, __MODULE__.userinfo_api_map(userinfo_api_result, false))
         )
-    end
-    case status do
-      {:ok, user} -> user
-      {:error, changeset} -> nil
     end
   end
 
