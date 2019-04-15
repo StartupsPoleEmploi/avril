@@ -6,4 +6,13 @@ defmodule Vae.String do
       true                                  -> string
     end
   end
+
+  def parameterize(string) do
+    string
+      |> String.normalize(:nfd)
+      |> String.replace(~r/[^A-z\s]/u, "")
+      |> String.downcase()
+      |> String.trim()
+      |> String.replace(~r/\s+/, "-")
+  end
 end
