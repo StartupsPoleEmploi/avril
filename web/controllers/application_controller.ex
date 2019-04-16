@@ -66,15 +66,22 @@ defmodule Vae.ApplicationController do
       application -> Repo.preload(application, [:user, {:delegate, :process}, :certification])
     end
 
-    case Vae.StepsPdf.create_pdf_file(application.delegate.process) do
-      {:ok, file} ->
+    case has_access?(conn, application, nil) do
+      {:ok, application} ->
+        case Vae.StepsPdf.create_pdf_file(application.delegate.process) do
+          {:ok, file} ->
+            conn
+              |> put_resp_content_type("application/pdf", "utf-8")
+              |> send_file(200, file)
+          {:error, msg} ->
+            conn
+              |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de reéssayer plus tard.")
+              |> redirect(to: application_path(conn, :show, application))
+        end
+      {:error, %{to: to, msg: msg}} ->
         conn
-          |> put_resp_content_type("application/pdf", "utf-8")
-          |> send_file(200, file)
-      {:error, msg} ->
-        conn
-          |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de reéssayer plus tard.")
-          |> redirect(to: application_path(conn, :show, application))
+        |> put_flash(:error, msg)
+        |> redirect(to: to)
     end
   end
 
