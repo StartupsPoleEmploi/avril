@@ -86,7 +86,7 @@ config :vae,
     campaign_template_id: 512_948,
     vae_recap_template_id: 529_420,
     contact_template_id: 543_455,
-    from_email: "avril@pole-emploi.fr",
+    from_email: "contact@avril.pole-emploi.fr",
     from_name: "Avril"
   },
   statistics: %{
