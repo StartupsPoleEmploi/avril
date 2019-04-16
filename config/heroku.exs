@@ -36,7 +36,7 @@ config :vae,
   },
   mailjet_template_error_reporting:
     List.first(
-      Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &%{Email: &1})
+      Enum.map(String.split(System.get_env("MAILJET_EMAIL_OVERRIDE"), ","), &%{Email: &1})
     ),
   mailjet_template_error_deliver: true
 
