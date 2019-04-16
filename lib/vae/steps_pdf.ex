@@ -10,6 +10,12 @@ defmodule Vae.StepsPdf do
     )
   end
 
+  def create_pdf_file(process) do
+    process
+    |> html()
+    |> PdfGenerator.generate(shell_params: ["--encoding", "UTF8"])
+  end
+
   def create_pdf_file!(process) do
     process
     |> html()
