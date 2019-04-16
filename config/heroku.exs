@@ -23,10 +23,10 @@ config :vae, Vae.Endpoint,
 config :logger, level: :info
 
 config :vae,
-  mailjet: %{
+  mailjet: [
     override_to:
       Enum.map(String.split(System.get_env("MAILJET_EMAIL_OVERRIDE"), ","), &%{Email: &1})
-  },
+  ],
   mailjet_template_error_reporting:
     List.first(
       Enum.map(String.split(System.get_env("MAILJET_EMAIL_OVERRIDE"), ","), &%{Email: &1})
