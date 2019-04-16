@@ -40,7 +40,8 @@ defmodule Vae.Certification do
       through: [:certifications_delegates, :delegate]
     )
 
-    has_many(:applications, Application, on_replace: :nilify) # TODO: add many_to_manys
+    # TODO: add many_to_manys
+    has_many(:applications, Application, on_replace: :nilify)
 
     has_many(
       :users,

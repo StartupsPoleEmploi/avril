@@ -87,13 +87,13 @@ $(function() {
       var c = content.substr(0, showChar);
       var h = content;
       var html =
-        '<div class="truncate-text" style="display:block">' +
-        c +
-        '<span class="moreellipses">' +
-        ellipsestext +
-        '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
-        h +
-        '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
+          '<div class="truncate-text" style="display:block">' +
+          c +
+          '<span class="moreellipses">' +
+          ellipsestext +
+          '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
+          h +
+          '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
 
       $(this).html(html);
     }

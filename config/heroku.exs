@@ -14,7 +14,8 @@ use Mix.Config
 
 config :vae, Vae.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [scheme: "http", host: System.get_env("WHOST"), port: 80],
+  url: [scheme: "https", host: System.get_env("WHOST"), port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
@@ -24,15 +25,19 @@ config :logger, level: :info
 config :vae,
   mailjet: %{
     application_submitted_to_delegate_id: 758_379,
-    application_submitted_to_user_id: 758_389,
+    application_submitted_to_user_id: 764_589,
     campaign_template_id: 070_460,
     vae_recap_template_id: 532_261,
     contact_template_id: 539_911,
     from_email: "avril@pole-emploi.fr",
     from_name: "Avril",
-    override_to: Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))
+    override_to:
+      Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &%{Email: &1})
   },
-  mailjet_template_error_reporting: List.first(Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))),
+  mailjet_template_error_reporting:
+    List.first(
+      Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &%{Email: &1})
+    ),
   mailjet_template_error_deliver: true
 
 config :vae, Vae.Repo,
@@ -41,7 +46,8 @@ config :vae, Vae.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
-config :vae, authentication: [
+config :vae,
+  authentication: [
     client_id: System.get_env("PE_CONNECT_CLIENT_ID"),
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
     site: "https://authentification-candidat.pole-emploi.fr",
@@ -54,7 +60,6 @@ config :mailjex,
   public_api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
   private_api_key: System.get_env("MAILJET_PRIVATE_API_KEY"),
   development_mode: false
-
 
 # ## SSL Support
 #
