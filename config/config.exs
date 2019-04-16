@@ -80,7 +80,7 @@ config :vae,
   sender: Vae.Mailer.Sender.Mailjet,
   mailjet_template_error_reporting: %{Email: System.get_env("MAILJET_TPL_ERR_REPORTING_EMAIL")},
   mailjet_template_error_deliver: true,
-  mailjet: %{
+  mailjet: [
     application_submitted_to_delegate_id: 758_379,
     application_submitted_to_user_id: 764_589,
     campaign_template_id: 512_948,
@@ -88,7 +88,7 @@ config :vae,
     contact_template_id: 543_455,
     from_email: "contact@avril.pole-emploi.fr",
     from_name: "Avril"
-  },
+  ],
   statistics: %{
     email_from: "from@email.com",
     email_from_name: "From Name",
