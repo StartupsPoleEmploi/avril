@@ -30,9 +30,13 @@ config :vae,
     contact_template_id: 539_911,
     from_email: "avril@pole-emploi.fr",
     from_name: "Avril",
-    override_to: Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))
+    override_to:
+      Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &%{Email: &1})
   },
-  mailjet_template_error_reporting: List.first(Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &(%{Email: &1}))),
+  mailjet_template_error_reporting:
+    List.first(
+      Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &%{Email: &1})
+    ),
   mailjet_template_error_deliver: true
 
 config :vae, Vae.Repo,
@@ -41,7 +45,8 @@ config :vae, Vae.Repo,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
 
-config :vae, authentication: [
+config :vae,
+  authentication: [
     client_id: System.get_env("PE_CONNECT_CLIENT_ID"),
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
     site: "https://authentification-candidat.pole-emploi.fr",
@@ -54,7 +59,6 @@ config :mailjex,
   public_api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
   private_api_key: System.get_env("MAILJET_PRIVATE_API_KEY"),
   development_mode: false
-
 
 # ## SSL Support
 #

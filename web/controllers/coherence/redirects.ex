@@ -1,4 +1,6 @@
 defmodule Coherence.Redirects do
+  import Vae.Router.Helpers
+
   @moduledoc """
   Define controller action redirection functions.
 
@@ -49,6 +51,20 @@ defmodule Coherence.Redirects do
 
   # Example usage
   # Uncomment the following line to return the user to the login form after logging out
-  # def session_delete(conn, _), do: redirect(conn, to: session_path(conn, :new))
+  def session_delete(conn, _) do
+    case get_session(conn, :pe_access_token) do
+      nil ->
+        redirect(conn, to: root_path(conn, :index))
 
+      _ ->
+        token = get_session(conn, :pe_access_token)
+
+        url =
+          "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
+            token
+          }&redirect_uri=#{root_url(conn, :index)}"
+
+        redirect(conn, external: url)
+    end
+  end
 end

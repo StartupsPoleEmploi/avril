@@ -25,7 +25,7 @@ defmodule Vae.Router do
   end
 
   pipeline :admin do
-    plug Vae.CheckAdmin
+    plug(Vae.CheckAdmin)
   end
 
   pipeline :api do
@@ -69,7 +69,7 @@ defmodule Vae.Router do
 
     # Loggued in applications
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
-      get "/telecharger", ApplicationController, :download, as: :download
+      get("/telecharger", ApplicationController, :download, as: :download)
     end
 
     resources("/profil", UserController, only: [:update])
@@ -84,7 +84,6 @@ defmodule Vae.Router do
     get("/certifications/:id", Redirector, to: "/")
     get("/certifiers/:id", Redirector, to: "/")
     get("/processes/:id", Redirector, to: "/")
-
   end
 
   scope "/admin", ExAdmin do
