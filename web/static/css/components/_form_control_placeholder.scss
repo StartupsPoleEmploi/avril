@@ -67,10 +67,12 @@
 
   input:focus + label,
   input:not(:placeholder-shown) + label {
+    align-items: flex-end;
     @include media-breakpoint-down(sm) {
       font-size: 11px;
       transform: translate3d(0, -25%, 0);
       opacity: 1;
+      height: -moz-fit-content;
       height: fit-content;
 
       &.form-control-lg-placeholder {
@@ -81,6 +83,7 @@
       font-size: 11px;
       transform: translate3d(0, -25%, 0);
       opacity: 1;
+      height: -moz-fit-content;
       height: fit-content;
 
       &.form-control-lg-placeholder {

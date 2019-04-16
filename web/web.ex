@@ -30,6 +30,7 @@ defmodule Vae.Web do
   def controller do
     quote do
       use Phoenix.Controller
+      use Filterable.Phoenix.Controller
 
       alias Vae.Repo.NewRelic, as: Repo
       import Ecto
@@ -50,6 +51,9 @@ defmodule Vae.Web do
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
+
+      # Used in navbar.html.slim to preload association in the view
+      alias Vae.Repo
 
       import Vae.Router.Helpers
       import Vae.ErrorHelpers

@@ -1,4 +1,6 @@
 defmodule Vae.StepsPdf do
+  alias Vae.CertificationView
+
   def create_pdf(process) do
     process
     |> html()
@@ -15,7 +17,7 @@ defmodule Vae.StepsPdf do
   end
 
   defp html(process) do
-    render_steps = Vae.ProcessView.render_steps(process, step_class: "")
+    render_steps = CertificationView.render_steps(process, step_class: "")
 
     """
       <head>

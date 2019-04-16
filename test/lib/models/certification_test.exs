@@ -3,46 +3,53 @@ defmodule Vae.CertificationTest do
 
   import Vae.Factory
 
-  alias Vae.{Certification, Certifier, Delegate}
+  alias Vae.Certification
 
   test "Add a certifier on a certification, attach certifier's delegates on certification" do
     certifier = insert!(:certifier_with_delegates) |> Repo.preload(:delegates)
 
-    changeset =
+    delegates =
       Certification.changeset(%Certification{}, %{
         label: "certification",
-        certifier_id: certifier.id
+        certifiers: [certifier.id]
       })
+      |> Repo.insert!()
+      |> Ecto.assoc(:delegates)
+      |> Repo.all()
+      |> Repo.preload(:process)
 
-    certification =
-      Repo.insert!(changeset)
-      |> Repo.preload(:delegates)
-
-    assert certification.delegates == certifier.delegates
+    assert delegates == certifier.delegates
   end
 
   test "Update certifier with more than one delegate on a certification, replace all certification's delegates" do
     certifier_1 = insert!(:certifier_with_delegates) |> Repo.preload(:delegates)
     certifier_2 = insert!(:certifier_with_delegates) |> Repo.preload(:delegates)
 
-    changeset =
+    certification =
       Certification.changeset(%Certification{}, %{
         label: "certification",
-        certifier_id: certifier_1.id
+        certifiers: [certifier_1.id]
       })
+      |> Repo.insert!()
 
-    certification =
-      Repo.insert!(changeset)
-      |> Repo.preload(:delegates)
+    delegates =
+      certification
+      |> Ecto.assoc(:delegates)
+      |> Repo.all()
+      |> Repo.preload(:process)
 
-    assert certification.delegates == certifier_1.delegates
-
-    update_changeset = Certification.changeset(certification, %{certifier_id: certifier_2.id})
+    assert delegates == certifier_1.delegates
 
     updated_certification =
-      Repo.update!(update_changeset)
-      |> Repo.preload(:delegates)
+      Certification.changeset(certification, %{certifiers: [certifier_2.id]})
+      |> Repo.update!()
 
-    assert updated_certification.delegates == certifier_2.delegates
+    updated_delegates =
+      updated_certification
+      |> Ecto.assoc(:delegates)
+      |> Repo.all()
+      |> Repo.preload(:process)
+
+    assert updated_delegates == certifier_2.delegates
   end
 end

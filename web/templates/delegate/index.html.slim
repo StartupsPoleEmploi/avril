@@ -1,9 +1,37 @@
 .container
-  h1.m-5 Liste des délégataires
-  .results-container
-    .results
+  = if length(@delegates) > 0 do
+    .m-4
+      h1.h4 Certificateurs possibles#{meta_delegate(@meta)}
+
+  .row
+    .col-md-9
+      = if length(@delegates) == 0 do
+        = render("_no-results.html")
       = for delegate <- @delegates do
-        .result-item
-          h3= link delegate.name, to: delegate_path(@conn, :show, delegate.id), class: 'main-link'
-    = if assigns[:page] && @page.total_entries > @page.page_size do
-      = pagination_links @conn, @page
+        .my-4.card.p-0.p-md-2
+          .card-body
+            h2.h5.card-title
+              = link(delegate.name, to: to_certification(@conn, delegate, @conn.params["diplome"]))
+            .d-flex
+              .ml-auto
+                = link(to: to_certification(@conn, delegate, @conn.params["diplome"]), aria_label: "Les diplômes à #{delegate.name}", class: "btn btn-sm btn-primary d-flex align-items-center") do
+                  span.ic-icon.ic-tail-right-2.mr-2
+                  span #{to_certification_label(@conn.params["diplome"])}
+    .col
+      h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
+      = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
+        h5.mb-5 Comment bien choisir son diplôme ?
+        div.d-flex
+          div.mr-4
+            span.ic-icon.ic-time-clock.mr-2
+            | 4 minutes
+          = img_tag '/images/play.svg', alt: 'lecture'
+      = link to: page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
+        h5.mb-5 Les Points Relais Conseil
+        div.d-flex
+          div.mr-4
+            span.ic-icon.ic-time-clock.mr-2
+            | 4 minutes
+          = img_tag '/images/play.svg', alt: 'lecture'
+
+= render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &delegate_path/3

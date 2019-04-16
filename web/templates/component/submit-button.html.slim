@@ -1,0 +1,10 @@
+div.text-center style="display: inline-block"
+  = if @application.submitted_at do
+    p
+      strong Dossier Transmis le #{Timex.format!(Timex.Timezone.convert(@application.submitted_at, "Europe/Paris"), "le %d/%m/%Y", :strftime)}
+    .mt-3
+      = link("Télécharger mon dossier", to: application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profile#Telecharger recap"])
+  - else
+    = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary" do
+      = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+      | Transmettre mon dossier

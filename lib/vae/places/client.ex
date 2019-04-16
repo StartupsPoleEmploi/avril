@@ -7,4 +7,7 @@ defmodule Vae.Places.Client do
 
   @doc "Retrieve geolocation from address"
   @callback get_geoloc_from_address(String.t()) :: Map.t()
+
+  @doc "Retrieve geolocation from geocode"
+  @callback get_geoloc_from_address(Map.t()) :: Map.t()
 end

@@ -51,9 +51,11 @@ config :coherence,
   router: Vae.Router,
   messages_backend: Vae.Coherence.Messages,
   logged_out_url: "/",
-  email_from_name: "Your Name",
-  email_from_email: "yourname@example.com",
+  email_from_name: "Avril",
+  email_from_email: "avril@pole-emploi.fr",
   opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token]
+
+config :coherence, :layout, {Vae.LayoutView, :app}
 
 config :coherence, Vae.Coherence.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
@@ -65,13 +67,25 @@ config :new_relixir,
 
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
-  api_key: System.get_env("ALGOLIA_API_KEY")
+  api_key: System.get_env("ALGOLIA_API_KEY"),
+  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
 
 config :vae,
   places_client: Vae.Places.Client.Algolia,
+  search_client: Vae.Search.Client.Algolia,
+  algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
+  algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailer_extractor_limit: 10_000,
-  sender: Vae.Mailer.Sender.Mailjet
+  sender: Vae.Mailer.Sender.Mailjet,
+  mailjet_template_error_reporting: %{Email: System.get_env("MAILJET_TPL_ERR_REPORTING_EMAIL")},
+  mailjet_template_error_deliver: true,
+  statistics: %{
+    email_from: "from@email.com",
+    email_from_name: "From Name",
+    email_to: "to@email.com",
+    email_to_name: "To Name"
+  }
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom

@@ -1,0 +1,40 @@
+.algolia-autocomplete,
+.algolia-places {
+  width: 100%;
+  background-color: white;
+
+  a::after {
+    content: none !important;
+  }
+}
+
+.ap-hint,
+.ap-input {
+  height: inherit;
+  width: 100%;
+}
+
+.ap-hint {
+  opacity: .3 !important;
+}
+
+.ap-input-icon {
+  display: none;
+}
+
+.ap-suggestion {
+  > em {
+    font-size: inherit;
+  }
+
+  .administrative {
+    font-size: 12px;
+  }
+}
+
+.ap-suggestions-category {
+  height: 46px;
+  padding-left: 18px;
+  line-height: 46px;
+  background: $dm-primary-light-grey;
+}

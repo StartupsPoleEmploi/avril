@@ -41,8 +41,6 @@ config :vae, Vae.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :vae, Vae.Scheduler, jobs: []
-
 config :vae,
   places_client: Vae.Places.Client.Algolia,
   places_ets_table_name: :places_dev,
@@ -52,7 +50,15 @@ config :vae,
     contact_template_id: 539_911,
     from_email: "lol@lol.fr",
     from_name: "Avril",
-    override_to: [%{Email: "lol@gmail.com"}, %{Email: "lil@gmail.com"}]
+    override_to: [%{Email: "lol@mail.com"}, %{Email: "lil@mail.com"}]
+  },
+  mailjet_template_error_reporting: %{Email: "reporting@mail.com"},
+  mailjet_template_error_deliver: true,
+  statistics: %{
+    email_from: "from@email.com",
+    email_from_name: "From",
+    email_to: "to@email.com",
+    email_to_name: "To"
   }
 
 config :mailjex,
@@ -67,9 +73,19 @@ config :vae, Vae.Scheduler,
     # campaign_task: [
     #  timezone: "Europe/Paris",
     #  schedule: "00 10 * * 1",
-    #  task: fn ->
-    #    Vae.Mailer.extract("priv/fixtures/test_emails_2.csv")
-    #    |> Vae.Mailer.send()
-    #  end
-    # ]
+    #  task: &Vae.Mailer.execute/0
+    # ],
+    #    statistics_task: [
+    #      timezone: "Europe/Paris",
+    #      schedule: "0 8 14 2 *",
+    #      task: fn ->
+    #        with pid <- Vae.Statistics.init(),
+    #             :ok <- Vae.Statistics.execute(pid),
+    #             :ok <- Vae.Statistics.terminate(pid) do
+    #          Logger.info("Statistics exported successfully !")
+    #        else
+    #          err -> Logger.error(fn -> inspect(err) end)
+    #        end
+    #      end
+    #    ]
   ]

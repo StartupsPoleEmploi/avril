@@ -7,7 +7,7 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
 
   @limit Application.get_env(:vae, :mailer_extractor_limit)
 
-  @fields ~w(KN_INDIVIDU_NATIONAL PRENOM NOM COURRIEL TELEPHONE CODE_POSTAL NIV_EN_FORMATION1_NUM ROME1V3 NROM1EXP ROME2V3 NROM2EXP)
+  @fields ~w(KN_INDIVIDU_NATIONAL CODE_POSTAL TELEPHONE COURRIEL DATE_EFF_INS DC_LBLNIVEAUFORMATIONMAX NOM PRENOM DC_REFERENCEGMS DC_ROMEORE DN_DUREEEXPERIENCE DC_LISTEROMEMETIERRECH ANC AGE)
 
   @allowed_administratives [
     "Bretagne",
@@ -19,29 +19,39 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     "Corse",
     "Hauts-de-France",
     "Auvergne-Rhône-Alpes",
-    "Nouvelle-Aquitaine"
+    "Nouvelle-Aquitaine",
+    "Grand-Est",
+    "Pays-de-la-Loire",
+    "Normandie"
   ]
 
-  def extract(path) do
-    job_seekers_flow =
-      File.stream!(path, read_ahead: 100_000)
-      |> CSV.decode(separator: ?;, headers: true)
-      |> Flow.from_enumerable()
-      |> Flow.map(fn
-        {:ok, line} -> Map.take(line, @fields)
-        {:error, error} -> Logger.error(error)
-      end)
-      |> Flow.map(&build_job_seeker/1)
-      |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-        located_job_seeker = build_geolocation(job_seeker)
-        [located_job_seeker | acc]
-      end)
-      |> Flow.filter(&is_allowed_administrative?/1)
+  def build_enumerable(path) do
+    File.stream!(path)
+    |> CSV.decode(separator: ?;, headers: true)
+  end
 
-    case @limit do
-      :all -> Enum.to_list(job_seekers_flow)
-      limit -> Enum.take(job_seekers_flow, limit)
-    end
+  def extract_lines_flow(flow) do
+    flow
+    |> Flow.map(fn
+      {:ok, line} -> Map.take(line, @fields)
+      {:error, error} -> Logger.error(error)
+    end)
+  end
+
+  def build_job_seeker_flow(flow) do
+    flow |> Flow.map(&build_job_seeker/1)
+  end
+
+  def add_geolocation_flow(flow) do
+    flow
+    |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
+      build_geolocation(job_seeker)
+      |> is_allowed_administrative?()
+      |> case do
+        {:allowed, located_job_seeker} -> [located_job_seeker | acc]
+        _ -> acc
+      end
+    end)
   end
 
   defp build_geolocation(job_seeker) do
@@ -57,13 +67,13 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
       email: line["COURRIEL"],
       telephone: line["TELEPHONE"],
       postal_code: line["CODE_POSTAL"],
-      education_level: line["NIV_EN_FORMATION1_NUM"],
+      education_level: line["DC_LBLNIVEAUFORMATIONMAX"],
       experience:
-        %{
-          line["ROME1V3"] => map_xp_to_level(line["NROM1EXP"]),
-          line["ROME2V3"] => map_xp_to_level(line["NROM2EXP"])
-        }
-        |> Map.delete("")
+        line["DC_LISTEROMEMETIERRECH"]
+        |> String.split(";")
+        |> Enum.reduce(%{}, fn rome, acc ->
+          Map.put_new(acc, rome, nil)
+        end)
     }
   end
 
@@ -82,6 +92,10 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
       |> get_in([:geolocation])
       |> Places.get_administrative()
 
-    Enum.member?(@allowed_administratives, administrative)
+    if Enum.member?(@allowed_administratives, administrative) do
+      {:allowed, job_seeker}
+    else
+      {:not_allowed, job_seeker}
+    end
   end
 end

@@ -1,0 +1,108 @@
+a {
+  // color: #000;
+  position: relative;
+
+  .content & {
+    &[target="_blank"], &[download] {
+      color: #000;
+      position: relative;
+      &:after {
+        content: "";
+        position: absolute;
+        display: block;
+        width: 100%;
+        height: 4px;
+        left: 0;
+        bottom: -4px;
+        background: #20D7A4;
+        transition: background-color 0.3s ease-in-out;
+      }
+    }
+    &:hover {
+      text-decoration: none;
+      color: initial;
+
+      &:after {
+        background: #21B087;
+      }
+    }
+
+    // on annule le soulignement pour les liens de type 'button'
+    &.btn, &.reading-link {
+      &:after {
+        display: none;
+      }
+    }
+  }
+}
+
+a, button {
+  &:focus {
+    outline: 1px solid #4D90FE;
+    -webkit-box-shadow: 0 0 5px #4D90FE;
+    box-shadow: 0 0 5px #4D90FE;
+  }
+}
+
+.btn {
+  font: bold 18px/24px $dm-font-nuito;
+
+  &.btn-default {
+    color: $dm-primary-blue;
+  }
+
+  &.btn-light {
+    background-color: $white;
+    color: $dm-primary-blue;
+  }
+
+  &.btn-sm {
+    border-radius: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  &.btn-lg {
+    font: bold 28px/38px $dm-font-nuito;
+
+    &.btn-link {
+      font-weight: normal;
+      padding-bottom: 0;
+      border-bottom: 6px solid transparent;
+
+      &:hover {
+        border-bottom-color: transparent;
+        font-weight: bold;
+      }
+
+      &.active {
+        border-bottom-color: $dm-primary-green;
+        font-weight: bold;
+      }
+    }
+  }
+
+  &.btn-link {
+    color: $dm-primary-blue;
+    border-radius: 0;
+    border-bottom: 3px solid transparent;
+    padding-bottom: 8px;
+    padding-left: 0;
+    padding-right: 0;
+    text-decoration: none;
+
+    &:hover {
+      border-bottom-color: $dm-primary-green;
+    }
+  }
+
+  &.btn-danger.dm-btn-danger {
+    color: #FFFFFF;
+    background-color: $dm-primary-pink;
+    font: bold 24px/32px $dm-font-nuito;
+    padding: 12px 50px;
+    text-align: center;
+    border-radius: 38.5px;
+    box-shadow: 0 8px 24px 0 rgba(250,56,119,0.38);
+  }
+}

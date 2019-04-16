@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="61px" height="40px" viewBox="0 0 61 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>check-validation-vae</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#20D7A4" offset="0%"></stop>
+            <stop stop-color="#0072CF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="WebDesign" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Pourquoi-une-certification-?" transform="translate(-267.000000, -893.000000)" fill="url(#linearGradient-1)">
+            <g id="Group-2" transform="translate(267.000000, 877.000000)">
+                <g id="check-validation-vae">
+                    <g id="Group" transform="translate(35.000000, 30.500000) rotate(-30.000000) translate(-35.000000, -30.500000) translate(5.000000, 13.000000)">
+                        <polygon id="Rectangle-16" points="0.0491644882 0.0801270189 8.57766207 4.86391119 10.7536765 34.1064453 1.51260504 30.0009766"></polygon>
+                        <polygon id="Rectangle-16" points="49.8854386 12.4082031 59.7833508 18.0146484 10.8994223 34.8427734 1.51260504 29.7895508"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

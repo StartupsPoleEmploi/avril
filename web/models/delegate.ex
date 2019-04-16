@@ -1,9 +1,11 @@
 defmodule Vae.Delegate do
   use Vae.Web, :model
+  alias Vae.Repo.NewRelic, as: Repo
 
   alias Ecto.Changeset
 
-  alias Vae.Certification
+  alias __MODULE__
+  alias Vae.{Certification, CertificationDelegate, Certifier, Process, Application}
   alias Vae.Places
 
   schema "delegates" do
@@ -18,23 +20,30 @@ defmodule Vae.Delegate do
     field(:city, :string)
     field(:administrative, :string)
 
-    belongs_to(:certifier, Vae.Certifier)
-    belongs_to(:process, Vae.Process)
+    belongs_to(:process, Process)
 
     has_many(
       :certifications_delegates,
-      Vae.CertificationDelegate,
+      CertificationDelegate,
       on_delete: :delete_all,
       on_replace: :delete
     )
 
     has_many(:certifications, through: [:certifications_delegates, :certification])
 
+    has_many(:applications, Application, on_replace: :nilify) # TODO: add many_to_manys
+
+    has_many(
+      :users,
+      through: [:applications, :user]
+    )
+
     many_to_many(
-      :steps,
-      Vae.Step,
-      join_through: "delegate_steps",
-      on_delete: :delete_all
+      :certifiers,
+      Certifier,
+      join_through: "certifiers_delegates",
+      on_delete: :delete_all,
+      on_replace: :delete
     )
 
     timestamps()
@@ -45,7 +54,11 @@ defmodule Vae.Delegate do
   end
 
   def from_certifier(certifier_id) do
-    from d in Vae.Delegate, where: [certifier_id: ^certifier_id]
+    from(d in Delegate,
+      join: cd in "certifiers_delegates",
+      on: d.id == cd.delegate_id and cd.certifier_id == ^certifier_id,
+      select: d
+    )
   end
 
   @doc """
@@ -66,6 +79,7 @@ defmodule Vae.Delegate do
       :administrative
     ])
     |> validate_required([:name])
+    |> add_certifiers(params)
   end
 
   def changeset_update(struct, params) do
@@ -78,36 +92,66 @@ defmodule Vae.Delegate do
         end
       )
 
-    # TODO: index after putting it to DB (not a changeset)
     struct
-    |> change(params)
+    |> Repo.preload([:certifiers, :certifications_delegates])
+    |> cast(params, [
+      :name,
+      :website,
+      :address,
+      :telephone,
+      :email,
+      :person_name,
+      :is_active,
+      :geolocation,
+      :city,
+      :administrative,
+      :process_id
+    ])
+    |> add_certifiers(params)
     |> link_certifications()
-    |> geocode_address()
+    |> add_geolocation(params)
   end
 
-  defp geocode_address(changeset) do
-    case changeset do
-      %{changes: %{address: address}} ->
-        geolocation = Places.get_geoloc_from_address(address)
+  def get(nil), do: nil
+  def get(id), do: Repo.get(Delegate, id)
 
-        changeset
-        |> put_change(:city, Places.get_city(geolocation))
-        |> put_change(:administrative, Places.get_administrative(geolocation))
-        |> put_change(:geolocation, geolocation)
-
-      _ ->
-        changeset
-    end
-  end
-
-  def link_certifications(%Changeset{changes: %{certifier_id: certifier_id}} = changeset) do
-    certifications_delegates =
-      certifier_id
-      |> Certification.get_certifications_by_certifier()
-      |> Enum.map(&%{certification_id: &1.id})
-
+  def add_certifiers(changeset, %{certifiers: certifiers}) do
     changeset
-    |> put_assoc(:certifications_delegates, certifications_delegates)
+    |> put_assoc(:certifiers, get_certifiers(certifiers))
+  end
+
+  def add_certifiers(changeset, _no_certifiers), do: changeset
+
+  def get_certifiers(certifiers) do
+    Certifier
+    |> where([c], c.id in ^certifiers)
+    |> Repo.all()
+  end
+
+  def link_certifications(%Changeset{changes: %{certifiers: certifiers}} = changeset) do
+    certifications_delegates =
+      Enum.reduce(certifiers, [], fn
+        %{action: :update, data: data}, acc ->
+          [
+            Certification.from_certifier(data.id)
+            |> Repo.all()
+            |> Enum.map(fn certification ->
+              Ecto.build_assoc(changeset.data, :certifications_delegates,
+                certification_id: certification.id
+              )
+            end)
+            | acc
+          ]
+
+        _, acc ->
+          acc
+      end)
+
+    put_assoc(
+      changeset,
+      :certifications_delegates,
+      List.flatten(certifications_delegates)
+    )
   end
 
   def link_certifications(changeset), do: changeset
@@ -122,5 +166,33 @@ defmodule Vae.Delegate do
     delegate
     |> change
     |> put_assoc(:certifications, certifications)
+  end
+
+  defp add_geolocation(%{changes: %{address: _}} = changeset, %{geo: encoded})
+       when not is_nil(encoded) do
+    geolocation = Poison.decode!(encoded)
+
+    changeset
+    |> put_change(:city, Places.get_city(geolocation))
+    |> put_change(:administrative, Places.get_administrative(geolocation))
+    |> put_change(:geolocation, geolocation)
+  end
+
+  defp add_geolocation(changeset, _params), do: changeset
+
+  def format_for_index(nil), do: nil
+
+  def format_for_index(delegate) do
+    delegate = delegate |> Repo.preload(:certifiers)
+
+    certifiers =
+      Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
+        [certifier.id | acc]
+      end)
+
+    delegate
+    |> Map.take(Delegate.__schema__(:fields))
+    |> Map.put(:certifiers, certifiers)
+    |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
 end

@@ -1,154 +1,6 @@
-@import 'variables';
-
 .dm-logo {
   color: $dm-logo;
   font: 18px/30px $dm-font-lato;
-}
-
-.btn {
-  font: bold 18px/24px $dm-font-nuito;
-}
-
-.btn.btn-sm {
-  border-radius: 16px;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-.btn.btn-lg {
-  font: bold 28px/38px $dm-font-nuito;
-  &.btn-link {
-    font-weight: normal;
-    padding-bottom: 0;
-    border-bottom: 6px solid transparent;
-    &:hover {
-      border-bottom-color: transparent;
-      font-weight: bold;
-    }
-    &.active {
-      border-bottom-color: $dm-primary-green;
-      font-weight: bold;
-    }
-  }
-}
-
-.btn.btn-link {
-  color: $dm-primary-blue;
-  border-radius: 0;
-  border-bottom: 3px solid transparent;
-  padding-bottom: 8px;
-  text-decoration: none;
-  &:hover {
-    border-bottom-color: $dm-primary-green;
-  }
-}
-
-.btn.btn-danger.dm-btn-danger {
-  color: #FFFFFF;
-  background-color: $dm-primary-pink;
-  font: bold 24px/32px $dm-font-nuito;
-  padding: 12px 50px;
-  text-align: center;
-  border-radius: 38.5px;
-  box-shadow: 0 8px 24px 0 rgba(250,56,119,0.38);
-}
-
-form.dm-search-box {
-  @include media-breakpoint-down(sm) {
-    border-bottom: 1px solid #E0E0E0;
-  }
-
-  @include media-breakpoint-up(md) {
-    border: none;
-  }
-
-  margin-top: 2em;
-  .input-group.suggest .form-control {
-    @include media-breakpoint-down(sm) {
-      border-bottom: 0;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-  }
-  .input-group.geolocation {
-    @include media-breakpoint-up(md) {
-      width: 50%;
-    }
-    .form-control {
-      @include media-breakpoint-up(md) {
-        border-left: none;
-        border-radius: 0;
-      }
-      @include media-breakpoint-down(sm) {
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-      }
-    }
-  }
-  .input-group .form-control {
-    border: none;
-    border: 1px solid #E0E0E0;
-    border-radius: 4px;
-    min-height: 80px;
-    padding-top: 28px;
-    padding-bottom: 28px;
-    @include media-breakpoint-up(md) {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
-      padding-left: 25px;
-      padding-right: 25px;
-    }
-    @include media-breakpoint-down(sm) {
-      box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
-      padding-left: 15px;
-      padding-right: 15px;
-    }
-  }
-  .btn {
-    border: none;
-    border-radius: 4px;
-    @include media-breakpoint-up(md) {
-      border: 1px solid #E0E0E0;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left: none;
-      box-shadow: 0 4px 4px 0 rgba(0,0,0,0.07);
-      background-color: #FFFFFF;
-    }
-    @include media-breakpoint-down(sm) {
-      background-color: transparent;
-    }
-    color: $dm-primary-blue;
-    font-size: 40px;
-  }
-}
-
-body {
-  background-color: #FFFFFF;
-  &.app {
-    background: $dm-primary-light-grey;
-  }
-  &.home {
-    @include media-breakpoint-up(md) {
-      height: 40px;
-      background-repeat: no-repeat;
-      background-image:
-        url("/images/dm-deco-green-medium.svg"),
-        url("/images/dm-deco-green-large.svg"),
-        url("/images/dm-deco-gray-large.svg"),
-        url("/images/dm-deco-green-large.svg"),
-        url("/images/dm-deco-green-medium.svg"),
-        url("/images/dm-deco-violet-tiny.svg");
-      background-position:
-        calc(100% + 400px) 200px,
-        -800px 350px,
-        calc(100% + 600px) 1000px,
-        -800px 2300px,
-        -400px 3850px,
-        calc(100% + 350px) 4600px;
-    }
-  }
 }
 
 mark {
@@ -159,47 +11,9 @@ mark {
   background: linear-gradient(180deg, transparent calc(100% - 6px), $dm-primary-green calc(100% - 6px));
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-main {
-  flex-grow: 1;
-  display: flex;
-    flex-direction: column;
-}
-
-header, main, footer {
-  flex-shrink: 0;
-}
-
-footer {
-  text-align: center;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  background-color: $dm-primary-grey;
-  img.logo {
-    height: 40px;
-  }
-}
-
-html, body {
-  position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 /* Delegator #show*/
 $header-height: 5rem;
+
 .step-title:before {
   display: block;
   content: " ";
@@ -208,7 +22,9 @@ $header-height: 5rem;
   visibility: hidden;
 }
 
-.alert:empty { display: none; }
+.alert:empty {
+  display: none;
+}
 
 .brand-icon {
   width: 2rem;
@@ -226,8 +42,8 @@ $header-height: 5rem;
   border-radius: 2px;
 }
 
-
-a[target="_blank"]:before, a[href^="mailto:"]:before {
+a[target="_blank"]:before,
+a[href^="mailto:"]:before {
   font-family: FontAwesome;
   font-weight: normal;
   font-style: normal;
@@ -239,7 +55,6 @@ a[target="_blank"]:before, a[href^="mailto:"]:before {
 a[href^="mailto:"]:before {
   content: "\f003";
 }
-
 /* Utils */
 .no-border {
   border-style: none;
@@ -256,16 +71,6 @@ a[href^="mailto:"]:before {
     margin-top: 2rem;
     margin-bottom: 2rem;
   }
-}
-
-.btn.btn-default {
-  color: $dm-primary-blue;
-}
-
-input.form-control {
-  font-size: 18px;
-  color: $dm-primary-blue;
-  border-color: transparent;
 }
 
 .dropdown-toggle.btn.btn-link {
@@ -285,4 +90,22 @@ input.form-control {
   width: inherit;
   vertical-align: 0;
   margin-left: 1rem;
+}
+// illustration landing page "certificateur definition"
+.illustration-grand-diplome {
+  top: -3rem;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance:none;
+}
+
+.bg-primary {
+  .btn-link {
+    border: none;
+    cursor: pointer;
+  }
 }

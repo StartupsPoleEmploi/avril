@@ -3,6 +3,9 @@ defmodule Vae.ContactChannel do
 
   alias Vae.Event
   alias Vae.Mailer.Sender.Mailjet
+  alias Vae.Repo
+  alias Vae.Delegate
+  alias Vae.Places
 
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
@@ -11,12 +14,33 @@ defmodule Vae.ContactChannel do
   end
 
   def handle_in("contact_request", %{"body" => body}, socket) do
+    delegate_info = get_delegate_info(body)
+
     body
+    |> Map.merge(delegate_info)
     |> Map.put_new("contact_delegate", "off")
+    |> Map.put_new("booklet_1", "off")
     |> add_contact_event()
     |> send_messages()
 
     {:reply, {:ok, %{}}, socket}
+  end
+
+  defp get_delegate_info(body) do
+    delegate = Repo.get(Delegate, body["delegate"])
+
+    %{
+      "delegate_city" => Places.get_city(delegate.geolocation),
+      "delegate_name" => delegate.name,
+      "delegate_email" => delegate.email,
+      "delegate_address" => delegate.address,
+      "delegate_phone_number" => delegate.telephone,
+      "delegate_website" => delegate.website,
+      "delegate_person_name" => delegate.person_name,
+      "process" => delegate.process_id
+    }
+    |> Enum.filter(fn {_, v} -> v != nil end)
+    |> Enum.into(%{})
   end
 
   defp add_contact_event(body) do
@@ -40,14 +64,12 @@ defmodule Vae.ContactChannel do
         &is_nil/1
       )
 
-    Mailjex.Delivery.send(%{
-      Messages: messages
-    })
+    Mailjex.Delivery.send(%{Messages: messages})
   end
 
   defp vae_recap_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
     body
-    |> Map.merge(%{"contact_delegate" => "off"})
+    |> Map.put("contact_delegate", "off")
     |> vae_recap_message()
   end
 
@@ -57,12 +79,14 @@ defmodule Vae.ContactChannel do
     |> Map.merge(%{
       TemplateID: @mailjet_conf.vae_recap_template_id,
       ReplyTo: Mailjet.avril_email(),
-      To: Mailjet.build_to(%{Email: body["email"], Name: body["name"]}),
-      Attachments: vae_recap(body)
+      To: Mailjet.build_to(%{Email: body["email"], Name: get_name(body)}),
+      Attachments:
+        vae_recap_attachments(body)
+        |> add_booklet_1(body)
     })
   end
 
-  defp vae_recap(%{"process" => id}) do
+  defp vae_recap_attachments(%{"process" => id}) do
     with process when not is_nil(process) <- Vae.Repo.get(Vae.Process, id),
          {:ok, file} <- Vae.StepsPdf.create_pdf(process) do
       [
@@ -77,12 +101,32 @@ defmodule Vae.ContactChannel do
     end
   end
 
+  defp add_booklet_1(attachments, %{"booklet_1" => "on"}) do
+    attachments ++
+      [
+        %{
+          ContentType: "application/pdf",
+          Filename: "dossier_inscription.pdf",
+          Base64Content: Base.encode64(File.read!("priv/cerfa_12818-02.pdf"))
+        },
+        %{
+          ContentType: "application/pdf",
+          Filename: "notice.pdf",
+          Base64Content: Base.encode64(File.read!("priv/notice_51260#02.pdf"))
+        }
+      ]
+  end
+
+  defp add_booklet_1(attachments, _body) do
+    attachments
+  end
+
   defp delegate_message(%{"contact_delegate" => "on", "delegate_email" => ""} = body) do
     body
     |> generic_message()
     |> Map.merge(%{
       TemplateID: @mailjet_conf.contact_template_id,
-      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      ReplyTo: %{Email: body["email"], Name: get_name(body)},
       To: Mailjet.build_to(Mailjet.avril_email())
     })
   end
@@ -92,7 +136,7 @@ defmodule Vae.ContactChannel do
     |> generic_message()
     |> Map.merge(%{
       TemplateID: @mailjet_conf.contact_template_id,
-      ReplyTo: %{Email: body["email"], Name: body["name"]},
+      ReplyTo: %{Email: body["email"], Name: get_name(body)},
       To: Mailjet.build_to(%{Email: body["delegate_email"], Name: body["delegate_name"]})
     })
   end
@@ -101,10 +145,14 @@ defmodule Vae.ContactChannel do
 
   defp generic_message(body) do
     %{
-      TemplateLanguage: true,
       From: Mailjet.generic_from(),
       CustomID: UUID.uuid5(nil, body["email"]),
+      TemplateLanguage: true,
+      TemplateErrorDeliver: Application.get_env(:vae, :mailjet_template_error_deliver),
+      TemplateErrorReporting: Application.get_env(:vae, :mailjet_template_error_reporting),
       Variables: body
     }
   end
+
+  defp get_name(body), do: "#{body["first_name"]} #{body["last_name"]}"
 end

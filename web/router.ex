@@ -3,6 +3,8 @@ defmodule Vae.Router do
   use ExAdmin.Router
   use Coherence.Router
 
+  # alias Redirector
+
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
@@ -10,8 +12,7 @@ defmodule Vae.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(Coherence.Authentication.Session)
-    plug(NavigationHistory.Tracker, excluded_paths: [~r(/professions/_suggest*)])
-    plug(Vae.Tracker)
+    #    plug(Vae.Tracker)
   end
 
   pipeline :protected do
@@ -21,6 +22,10 @@ defmodule Vae.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(Coherence.Authentication.Session, protected: true)
+  end
+
+  pipeline :admin do
+    plug Vae.CheckAdmin
   end
 
   pipeline :api do
@@ -43,35 +48,47 @@ defmodule Vae.Router do
     # Use the default browser stack
     pipe_through(:browser)
 
+    # Landing pages
     get("/", PageController, :index, as: :root)
     get("/vae", PageController, :vae)
     get("/conditions-generales-d-utilisation", PageController, :terms_of_use)
     get("/bien-choisir-son-diplome-vae", PageController, :choose_certification)
+    get("/avril-aime-tous-ses-utilisateurs", PageController, :accessibility_promess)
+    get("/point-relais-conseil-vae", PageController, :point_relais_conseil)
+    get("/certificateur-vae-definition", PageController, :certificateur_vae_definition)
+    get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
+    get("/stats", PageController, :stats)
 
-    get("/professions", ProfessionController, :index)
-    get("/professions/_suggest", ProfessionController, :suggest)
+    get("/:provider/callback", AuthController, :callback)
+    get("/:provider/redirect", AuthController, :save_session_and_redirect)
 
-    resources("/romes", RomeController, only: [:index, :show])
-    get("/romes/:id/certifications", RomeController, :certifications)
+    # Basic navigation
+    resources("/metiers", ProfessionController, only: [:index])
+    resources("/certificateurs", DelegateController, only: [:index])
+    resources("/diplomes", CertificationController, only: [:index, :show])
+
+    # Loggued in applications
+    resources("/candidatures", ApplicationController, only: [:show, :update]) do
+      get "/telecharger", ApplicationController, :download, as: :download
+    end
+
+    resources("/profil", UserController, only: [:update])
 
     get("/certifications", CertificationController, :index)
-    get("/certifications/:id", CertificationController, :show)
-    get("/certifications/:id/certifiers", CertificationController, :certifiers)
 
-    resources("/certifiers", CertifierController, only: [:index, :show])
-    get("/certifiers/:id/delegates", CertifierController, :delegates)
+    # Search endpoint
+    post("/search", SearchController, :search)
 
-    resources("/delegates", DelegateController, only: [:index, :show])
+    # Old URL redirections
+    get("/delegates/:id", Redirector, to: "/")
+    get("/certifications/:id", Redirector, to: "/")
+    get("/certifiers/:id", Redirector, to: "/")
+    get("/processes/:id", Redirector, to: "/")
 
-    get("/processes", ProcessController, :index)
-    get("/processes/:id", ProcessController, :show)
-    get("/processes/:id/delegates", ProcessController, :delegates)
-    post("/processes", ProcessController, :search)
-    post("/processes/contact", ProcessController, :contact)
   end
 
   scope "/admin", ExAdmin do
-    pipe_through(:protected)
+    pipe_through([:protected, :admin])
     admin_routes()
   end
 end

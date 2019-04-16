@@ -12,7 +12,7 @@ defmodule Mix.Tasks.UpdateCertificationContent do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:poison)
 
-    Path.wildcard("/home/nresni/Downloads/export_fiches_cncp_2018-09-19/*.xml")
+    Path.wildcard("priv/fixtures/export_fiches_cncp_2018-09-19/*.xml")
     |> Enum.each(fn file ->
       Mix.shell().info("Fichier #{Path.basename(file)}")
 

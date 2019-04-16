@@ -8,9 +8,10 @@ defmodule Vae do
       supervisor(Vae.Repo, []),
       supervisor(Vae.Endpoint, []),
       supervisor(Vae.Event.EventSupervisor, []),
+      supervisor(Vae.Statistics.StatisticsSupervisor, []),
       worker(Vae.Scheduler, []),
-      worker(Vae.Mailer.Worker, []),
-      worker(Vae.Places.Cache, [])
+      worker(Vae.Places.Cache, []),
+      Vae.Authentication.Clients
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

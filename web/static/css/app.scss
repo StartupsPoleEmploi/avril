@@ -5,23 +5,31 @@ $fa-font-path: '../fonts';
 @import 'icons/nucleo';
 
 @import 'bootstrap'; // imports node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss
+@import 'bootstrap-select';
 
-/* Custom Stuff */
+/* Rules that apply everywhere */
+@import 'layout/typo';
+@import 'layout/layout';
+@import 'layout/backgrounds';
+@import 'layout/alert';
+@import 'layout/helpers';
+@import 'layout/footer';
+@import 'layout/buttons';
+@import 'layout/forms';
 @import 'custom';
 
-/* components */
-@import 'components/backgrounds';
-@import 'components/helpers';
+/* Component-specific rules */
 @import 'components/navbar';
-@import 'components/results';
 @import 'components/badge';
-@import 'components/typo';
 @import 'components/error_page';
-@import 'components/awesomplete';
-@import 'components/algolia_places';
+@import 'components/algolia';
 @import 'components/card';
 @import 'components/form_control_placeholder';
+@import 'components/pe_connect';
+@import 'components/search_box';
+@import 'components/contact_form';
 
-/* page specific */
-@import 'home';
-@import 'delegate';
+/* Page specific rules */
+@import 'pages/home';
+@import 'pages/delegate';
+@import 'pages/user_profile';

@@ -23,10 +23,6 @@
                     '
                     = @delegate.telephone
 
-                = if @delegate.email && @delegate.email do
-                  li
-                    = link @delegate.email, to: "mailto:#{@delegate.email}"
-
                 = if @delegate.website && @delegate.website do
                   li= link @delegate.website, to: @delegate.website, target: '_blank'
                 li

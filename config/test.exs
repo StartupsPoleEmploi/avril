@@ -29,6 +29,7 @@ config :vae, Vae.Repo,
 
 config :vae,
   places_client: Vae.Places.Client.InMemory,
+  search_client: Vae.Search.Client.InMemory,
   places_ets_table_name: :places_test,
   mailjet: %{
     campaign_template_id: 465_443,
@@ -37,10 +38,6 @@ config :vae,
     # from_email: "contact@avril.pole-emploi.fr"
     override_to: [%{Email: "x@gmail.com"}]
   }
-
-config :vae,
-  extractor: Vae.Mailer.FileExtractor.Mock,
-  sender: Vae.Mailer.Sender.Mock
 
 config :mailjex,
   api_base: "https://api.mailjet.com/v3.1",
