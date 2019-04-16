@@ -25,7 +25,7 @@ config :logger, level: :info
 config :vae,
   mailjet: %{
     application_submitted_to_delegate_id: 758_379,
-    application_submitted_to_user_id: 758_389,
+    application_submitted_to_user_id: 764_589,
     campaign_template_id: 070_460,
     vae_recap_template_id: 532_261,
     contact_template_id: 539_911,
