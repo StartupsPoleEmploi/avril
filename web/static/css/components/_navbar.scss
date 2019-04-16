@@ -6,16 +6,18 @@
   }
 }
 
-.sticky-top.--not-top {
-  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
-  nav.navbar.dm-navbar {
-    @extend .bg-white;
-  }
-}
+// .sticky-top.--not-top {
+//   box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
+//   nav.navbar.dm-navbar {
+//     @extend .bg-white;
+//   }
+// }
 
 nav.navbar.dm-navbar {
   border: none;
   padding: 1rem;
+  background-color: $white;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.17);
   .navbar-toggler {
     font: normal 18px/30px $dm-font-lato;
     color: $dm-primary-blue;
@@ -67,6 +69,18 @@ ul.nav.dm-nav, ul.navbar-nav {
       color: $dm-primary-grey;
       cursor: not-allowed;
       pointer-events: none;
+    }
+    &:not(.dropdown-toggle):after {
+      content: none;
+    }
+  }
+  .dropdown-menu {
+    .dropdown-item {
+      &.active, &:focus, &:active {
+        font-weight: bold;
+        background-color: transparent;
+        color: initial;
+      }
     }
   }
 }

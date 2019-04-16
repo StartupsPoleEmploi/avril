@@ -1,58 +1,119 @@
-#content.container
-  .my-5.d-flex.flex-row.align-items-center style="margin-left: -5px;"
-    button.btn.btn-link.p-0.mr-3.btn-history-back
-      span.ic-icon.ic-tail-left
-    .d-flex.flex-column
-      h1.h2.m-0 #{format_certification_label(@certification)}
-      / TODO: dropdown
-      / = link to: NavigationHistory.last_path(@conn, 2, default: "/"), class: "btn btn-link p-0" do
-      /   p.m-0 Changer de diplôme
+.my-5.d-flex.flex-row.align-items-center
+  button.btn-history-back style="background: no-repeat;border: none;margin-right: 1rem;line-height: 1rem;color: inherit;font-size: 1rem;cursor: pointer;"
+    span.ic-icon.ic-tail-left
+  .d-flex.flex-column
+    h1.h2.m-0 #{format_certification_label(@certification)}
+    / TODO: dropdown
+    / = link to: NavigationHistory.last_path(@conn, 2, default: "/"), class: "btn btn-link p-0" do
+    /   p.m-0 Changer de diplôme
 
-  .my-5
-    .card-group
-      .col-md.order-2.order-md-1.card.card-step.mb-0
-        .card-body
-          = render("pagination.html")
-          div id="steps"
-            = render_steps(@delegate.process)
-      .col-md.order-1.order-md-2.card.bg-primary.text-secondary.mb-0
-        .card-body
-          = render("contact-form.html", conn: @conn, delegate: @delegate, certification: @certification, form: "contact")
+.my-5
+  .card
+    .card-header.bg-secondary.text-white
+      .row.align-items-center
+        .col-md-6
+          h3 Ma Synthèse VAE
+        .col-md-6.delegate
+          div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
+            span.ic-icon.ic-tail-right
+          = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
+          div style="display: inline-block"
+            strong
+              = @delegate.name
+            br
+            = @delegate.address
+    .card-body.bg-primary.text-secondary
+      .row.mb-3
+        .col-md-6
+          p
+            | Nous pouvons transmettre vos expériences professionnelles et compétences directement à votre conseiller
+            '
+            strong
+              = @delegate.name
+              |  (Nécessite un compte Pôle-emploi)
+            |  afin de vous aider à confirmer votre choix.
+        .col-md-6
+          p Cela ne vous engage pas dans la VAE. Votre conseiller aura simplement toutes les informations pour prendre la bonne décision.
+      .row
+        .col-12.text-center
+          .pe-connect.pe-connect-toggle
+            = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?button=pe-connect"]) do
+              = img_tag("/images/conseillere.svg", width: 34, height: 31, style: "margin-right: 1rem;")
+              span.text Transmettre mes expériences
+            .mt-4.text-right
+              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je n'ai pas de compte Pôle-emploi
+          .no-pe-connect.pe-connect-toggle.d-none
+            form.row.justify-content-center.contact-form id="contact_form"
+              .col-md-6
+                fieldset.mb-4
+                  legend.d-none Vos informations
+                  .row
+                    .col-lg
+                      .form-group.form-label-group
+                        input.form-control.px-3.py-3 id="contact_first_name" name="first_name" placeholder="ex: Georges" required="true"
+                        label.form-control-placeholder for="contact_first_name" Votre prénom
+                    .col-lg
+                      .form-group.form-label-group
+                        input.form-control.px-3.py-3 id="contact_last_name" name="last_name" placeholder="ex: Abitbol" required="true"
+                        label.form-control-placeholder for="contact_last_name" Votre nom
+                  .form-group.form-label-group
+                    input.form-control.px-3.py-3 id="contact_email" name="email" placeholder="ex: la.classe@americaine.com" required="true" type="email"
+                    label.form-control-placeholder for="contact_email" Votre email
+                  .form-group
+                    .form-label-group
+                      input.form-control.px-3.py-3 id="contact_phone_number" name="phone_number" placeholder="ex: 0606060606" type="tel" pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
+                      label.form-control-placeholder for="contact_phone_number" Votre numéro de téléphone *
+                    small.form-text.text-muted.text-white * facultatif
+                  .form-check
+                    input.form-check-input id="contact_contact_delegate" name="contact_delegate" type="checkbox" value=""
+                    label.form-check-label for="contact_contact_delegate" Transmettre mes coordonnées à mon centre certificateur
+                  .form-check
+                    input.form-check-input id="contact_booklet_1" name="booklet_1" type="checkbox" value=""
+                    label.form-check-label for="contact_booklet_1" Recevoir mon dossier d'inscription
+                button.btn.btn-light
+                  = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;", alt: "Votre conseillère VAE"
+                  span Recevoir ma synthèse VAE
+              = render_contact_form_data(@conn, @delegate, @certification)
+            .text-right.mt-4
+              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" role="button" data-analytics="Certification#avec pe connect" Utiliser PE-connect
+        javascript:
+          $('[data-toggle="show"]').on('click', function(e){
+            $($(e.target).attr('data-target')).toggleClass('d-none');
+          });
+    .card-footer.bg-white
+      = render("_pagination.html")
+      div id="steps"
+        = render_steps(@delegate.process)
 
-  button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="javascript:window.print()"]
-    = img_tag '/images/printer.svg', alt: 'imprimer'
-    |  Imprimer
+button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="javascript:window.print()"]
+  = img_tag '/images/printer.svg', alt: 'imprimer'
+  |  Imprimer
 
-  .my-5
-    .row.my-5.align-items-center
-      .col-md
-        = img_tag '/images/step1-recevabilite.svg', alt: 'recevabilite', class: 'img-fluid my-4'
-      .col-md
-        h2.h2 Dossier de recevabilité
-        p Vous allez préparer votre dossier de candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
-        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
-    .row.my-5.align-items-center
-      .col-md.order-2.order-md-1
-        h2.h2 Dossier VAE
-        p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
-        p Durant cette étape, un expert pourra vous accompagner et vous préparer au jury.
-        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
-      .col-md.order-1.order-md-2
-        = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
-    .row.my-5.align-items-center
-      .col-md
-        = img_tag '/images/step3-jury.svg', alt: 'jury', class: 'img-fluid my-4'
-      .col-md
-        h2.h2 Entretien avec un jury
-        p Un jury composé de professionnels du métier du diplôme visé, évaluera avec vous, lors d’un entretien, si vos compétences correspondent aux compétences attendues.
-        / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
-    .row.my-5
-      .col-md-6.offset-md-3.text-center
-        h2.h2 Félicitations pour votre nouveau diplôme !
-        = img_tag '/images/step4-diplome-ok.svg', alt: 'diplome-ok', class: 'img-fluid my-4'
-        h2.h2 Et vous ?
-.bg-primary.text-secondary
-  .container.py-5
-    .row
-      .col-md-6.offset-md-3
-        = render("contact-form.html", conn: @conn, delegate: @delegate, certification: @certification, form: "footer")
+.my-5
+  .row.my-5.align-items-center
+    .col-md
+      = img_tag '/images/step1-recevabilite.svg', alt: 'recevabilite', class: 'img-fluid my-4'
+    .col-md
+      h2.h2 Dossier de recevabilité
+      p Vous allez préparer votre dossier de candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
+      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+  .row.my-5.align-items-center
+    .col-md.order-2.order-md-1
+      h2.h2 Dossier VAE
+      p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
+      p Durant cette étape, un expert pourra vous accompagner et vous préparer au jury.
+      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+    .col-md.order-1.order-md-2
+      = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
+  .row.my-5.align-items-center
+    .col-md
+      = img_tag '/images/step3-jury.svg', alt: 'jury', class: 'img-fluid my-4'
+    .col-md
+      h2.h2 Entretien avec un jury
+      p Un jury composé de professionnels du métier du diplôme visé, évaluera avec vous, lors d’un entretien, si vos compétences correspondent aux compétences attendues.
+      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+  .row.my-5
+    .col-md-6.offset-md-3.text-center
+      h2.h2 Félicitations pour votre nouveau diplôme !
+      = img_tag '/images/step4-diplome-ok.svg', alt: 'diplome-ok', class: 'img-fluid my-4'
+      h2.h2 Et vous ?

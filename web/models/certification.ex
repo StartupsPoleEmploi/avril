@@ -3,7 +3,7 @@ defmodule Vae.Certification do
   alias Vae.Repo.NewRelic, as: Repo
 
   alias __MODULE__
-  alias Vae.{CertificationDelegate, Certifier, Delegate, Rome}
+  alias Vae.{CertificationDelegate, Certifier, Delegate, Rome, Application}
 
   schema "certifications" do
     field(:label, :string)
@@ -38,6 +38,14 @@ defmodule Vae.Certification do
     has_many(
       :delegates,
       through: [:certifications_delegates, :delegate]
+    )
+
+    # TODO: add many_to_manys
+    has_many(:applications, Application, on_replace: :nilify)
+
+    has_many(
+      :users,
+      through: [:applications, :user]
     )
 
     timestamps()

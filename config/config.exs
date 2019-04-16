@@ -51,9 +51,11 @@ config :coherence,
   router: Vae.Router,
   messages_backend: Vae.Coherence.Messages,
   logged_out_url: "/",
-  email_from_name: "Your Name",
-  email_from_email: "yourname@example.com",
+  email_from_name: "Avril",
+  email_from_email: "avril@pole-emploi.fr",
   opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token]
+
+config :coherence, :layout, {Vae.LayoutView, :app}
 
 config :coherence, Vae.Coherence.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
@@ -78,6 +80,15 @@ config :vae,
   sender: Vae.Mailer.Sender.Mailjet,
   mailjet_template_error_reporting: %{Email: System.get_env("MAILJET_TPL_ERR_REPORTING_EMAIL")},
   mailjet_template_error_deliver: true,
+  mailjet: [
+    application_submitted_to_delegate_id: 758_379,
+    application_submitted_to_user_id: 764_589,
+    campaign_template_id: 512_948,
+    vae_recap_template_id: 529_420,
+    contact_template_id: 543_455,
+    from_email: "contact@avril.pole-emploi.fr",
+    from_name: "Avril"
+  ],
   statistics: %{
     email_from: "from@email.com",
     email_from_name: "From Name",

@@ -3,9 +3,9 @@ body {
   font: normal 18px/30px $dm-font-lato;
 }
 
-h1, h2, h3, h4, h5, h6, .dm-sub-title {
-  color: $dm-primary-blue;
-}
+// h1, h2, h3, h4, h5, h6, .dm-sub-title {
+//   color: $dm-primary-blue;
+// }
 
 h1, h2, h3, h4, h5 {
   a {
@@ -63,7 +63,7 @@ em {
 .dm-step {
   font: bold 64px/60px $dm-font-nuito;
   // accessibility broken
-  // color: $dm-primary-green;
+  color: $dm-primary-green;
 }
 
 .dm-step-sub {

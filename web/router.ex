@@ -24,6 +24,10 @@ defmodule Vae.Router do
     plug(Coherence.Authentication.Session, protected: true)
   end
 
+  pipeline :admin do
+    plug(Vae.CheckAdmin)
+  end
+
   pipeline :api do
     plug(:accepts, ["json"])
 
@@ -55,10 +59,20 @@ defmodule Vae.Router do
     get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
     get("/stats", PageController, :stats)
 
+    get("/:provider/callback", AuthController, :callback)
+    get("/:provider/redirect", AuthController, :save_session_and_redirect)
+
     # Basic navigation
     resources("/metiers", ProfessionController, only: [:index])
     resources("/certificateurs", DelegateController, only: [:index])
     resources("/diplomes", CertificationController, only: [:index, :show])
+
+    # Loggued in applications
+    resources("/candidatures", ApplicationController, only: [:show, :update]) do
+      get("/telecharger", ApplicationController, :download, as: :download)
+    end
+
+    resources("/profil", UserController, only: [:update])
 
     get("/certifications", CertificationController, :index)
 
@@ -70,11 +84,10 @@ defmodule Vae.Router do
     get("/certifications/:id", Redirector, to: "/")
     get("/certifiers/:id", Redirector, to: "/")
     get("/processes/:id", Redirector, to: "/")
-
   end
 
   scope "/admin", ExAdmin do
-    pipe_through(:protected)
+    pipe_through([:protected, :admin])
     admin_routes()
   end
 end

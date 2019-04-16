@@ -1,0 +1,61 @@
+﻿/*============================================
+== PE Connect
+=============================================*/
+@import url("https://fonts.googleapis.com/css?family=Lato:400,700");
+
+.button-pe-connect {
+  font-size: 14px;
+  font-family: "Lato", sans-serif !important;
+  display: inline-block;
+  padding: 6px 10px 5px 13px;
+  border-radius: 100px;
+  border: 2px #1b2e57 solid;
+  font-weight: bold;
+  text-decoration: none;
+
+  &:after {
+    content: none;
+  }
+
+  &:hover, &:focus {
+    text-decoration: none;
+  }
+  &:hover {
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  }
+  &:focus {
+    opacity: 0.7;
+  }
+  &.is-blue {
+    background-color: #1b2e57;
+
+    &, & > * {
+      color: #fff;
+    }
+  }
+  &.is-white {
+    background-color: #fff;
+    color: #1b2e57;
+  }
+  .icon-pe-connect, .text {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .text {
+    padding: 5px 10px;
+    // margin-top: 5px;
+  }
+  .tooltip {
+    .tooltip-arrow {
+      border-bottom-color: #1B2E57;
+    }
+    .tooltip-inner {
+      background: #fff;
+      color: #1b2e57;
+      padding: 15px;
+      border: 1px #1B2E57 solid;
+      text-align: left;
+      border-radius: 3px;
+    }
+  }
+}

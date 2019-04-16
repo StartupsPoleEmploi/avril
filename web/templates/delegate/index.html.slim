@@ -6,7 +6,7 @@
   .row
     .col-md-9
       = if length(@delegates) == 0 do
-        = render("no-results.html")
+        = render("_no-results.html")
       = for delegate <- @delegates do
         .my-4.card.p-0.p-md-2
           .card-body

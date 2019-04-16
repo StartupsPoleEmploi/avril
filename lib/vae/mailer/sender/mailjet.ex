@@ -34,7 +34,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
          last_name <- get_last_name(job_seeker),
          utm_source <- build_utm_source(job_seeker) do
       %{
-        TemplateID: @mailjet_conf.campaign_template_id,
+        TemplateID: @mailjet_conf[:campaign_template_id],
         TemplateLanguage: true,
         TemplateErrorDeliver: Application.get_env(:vae, :mailjet_template_error_deliver),
         TemplateErrorReporting: Application.get_env(:vae, :mailjet_template_error_reporting),
@@ -61,8 +61,8 @@ defmodule Vae.Mailer.Sender.Mailjet do
 
   def generic_from() do
     %{
-      Email: @mailjet_conf.from_email,
-      Name: @mailjet_conf.from_name
+      Email: @mailjet_conf[:from_email],
+      Name: @mailjet_conf[:from_name]
     }
   end
 
@@ -74,7 +74,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
   end
 
   defp override_to(to) do
-    Map.get(@mailjet_conf, :override_to, to)
+    Keyword.get(@mailjet_conf, :override_to, to)
   end
 
   def build_to(nil, _name) do

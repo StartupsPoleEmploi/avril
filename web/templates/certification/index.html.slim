@@ -14,7 +14,7 @@
   .row
     .col-md-9
       = if assigns[:no_results] && @no_results do
-        = render("no-results.html")
+        = render("_no-results.html")
       - else
         = if @page.total_entries == 0 do
           p Aucun résultat pour le niveau sélectionné
