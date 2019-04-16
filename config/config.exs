@@ -80,12 +80,22 @@ config :vae,
   sender: Vae.Mailer.Sender.Mailjet,
   mailjet_template_error_reporting: %{Email: System.get_env("MAILJET_TPL_ERR_REPORTING_EMAIL")},
   mailjet_template_error_deliver: true,
+  mailjet: %{
+    application_submitted_to_delegate_id: 753_488,
+    application_submitted_to_user_id: 753_382,
+    campaign_template_id: 512_948,
+    vae_recap_template_id: 529_420,
+    contact_template_id: 543_455,
+    from_email: "avril@pole-emploi.fr",
+    from_name: "Avril"
+  },
   statistics: %{
     email_from: "from@email.com",
     email_from_name: "From Name",
     email_to: "to@email.com",
     email_to_name: "To Name"
   }
+
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom
