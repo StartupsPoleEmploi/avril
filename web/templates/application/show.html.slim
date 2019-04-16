@@ -97,7 +97,7 @@
           = @delegate.address
     .col-4
       = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
 
   = if length(@user.skills) > 0 do
     .row
@@ -150,4 +150,4 @@
   .row.mb-5
     .offset-8.col-4
       = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
