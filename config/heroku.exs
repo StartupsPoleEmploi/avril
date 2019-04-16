@@ -32,7 +32,7 @@ config :vae,
     from_email: "avril@pole-emploi.fr",
     from_name: "Avril",
     override_to:
-      Enum.map(String.split(System.get_env("MAILJET_PUBLIC_API_KEY"), ","), &%{Email: &1})
+      Enum.map(String.split(System.get_env("MAILJET_EMAIL_OVERRIDE"), ","), &%{Email: &1})
   },
   mailjet_template_error_reporting:
     List.first(
