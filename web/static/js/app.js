@@ -138,9 +138,10 @@ $(function() {
     $('.cookies').addClass('d-none');
   })
 
-  $("[data-analytics]").on("click", function(e){
+  var handleEvent = function(e) {
     var target = $(e.delegateTarget).attr('data-analytics');
-    if (!window.ga || !target) return console.log("Analytics not set up");
+    if (!window.ga) return console.warn("Analytics not set up:", target);
+    if (!target) return console.warn("Target not correctly set");
     if (target.indexOf('?') === 0) {
       var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).join('&');
       ga('send', 'pageview', window.location.pathname + '?' + queryString);
@@ -150,6 +151,17 @@ $(function() {
       var cat_event = target.split('#');
       ga('send', 'event', cat_event[0], cat_event[1]);
     }
+  }
+
+  $("[data-analytics]").each(function(i, el){
+    if ($(el).is("form")) {
+      $(el).on("submit", handleEvent)
+    } else {
+      $(el).on("click", handleEvent)
+    }
+  })
+
+  $("[data-analytics]").on("click", function(e){
   });
 })
 
