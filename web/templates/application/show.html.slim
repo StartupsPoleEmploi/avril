@@ -2,7 +2,11 @@
   .jumbotron
     .row
       .col-8
-        h3 Bonjour #{@user.first_name},
+        h3
+          = if @edit_mode do
+            | Bonjour #{@user.first_name},
+          - else
+            | Bonjour,
       .col-4
         = form_for @changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
