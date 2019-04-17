@@ -46,6 +46,7 @@ a, button {
 
 .btn {
   font: bold 18px/24px $dm-font-nuito;
+  white-space: normal;
 
   &.btn-default {
     color: $dm-primary-blue;
