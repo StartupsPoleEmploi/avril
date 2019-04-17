@@ -1,13 +1,13 @@
 .user-profile
   .jumbotron
     .row
-      .col-8
+      .col-md-8
         h3
           = if @edit_mode do
             | Bonjour #{@user.first_name},
           - else
             | Bonjour,
-      .col-4
+      .col-md-4
         = form_for @changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
             .col
@@ -84,9 +84,9 @@
       });
 
   .row.mb-5
-    .col-8
+    .col-md-8
       h3 #{@certification.acronym} #{@certification.label}
-      .delegate
+      .delegate.my-4
         div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
           span.ic-icon.ic-tail-right
         = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
@@ -95,7 +95,7 @@
             = @delegate.name
           br
           = @delegate.address
-    .col-4
+    .col-md-4.text-center
       = if @edit_mode do
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
 
@@ -105,7 +105,7 @@
         h3 Mes compétences
     .row.mb-5
       = for skill <- @user.skills do
-        .col-4.mb-4
+        .col-sm-4.mb-4
           .card
             .card-body= skill.label
 
@@ -115,7 +115,7 @@
         h3 Mes expériences professionnelles
     .row.mb-5
       = for experience <- Enum.reverse(@user.experiences) do
-        .col-4.mb-4
+        .col-md-4.mb-4
           .card
             .card-body
               strong= experience.company
@@ -129,7 +129,7 @@
         h3 Mes expériences attestées des 2 dernières années
     .row.mb-5
       = for {{company_name, label}, experiences} <- @grouped_experiences do
-        .col-6.mb-4
+        .col-md-6.mb-4
           .card
             .card-header data-toggle="collapse" data-target="#exp-#{Vae.String.parameterize(label)}-#{Vae.String.parameterize(company_name)}" style="cursor: pointer;"
               strong= company_name
@@ -148,6 +148,6 @@
 
 
   .row.mb-5
-    .offset-8.col-4
+    .offset-md-8.col-md-4.text-center
       = if @edit_mode do
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
