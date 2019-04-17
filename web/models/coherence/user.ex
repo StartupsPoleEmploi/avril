@@ -109,23 +109,23 @@ defmodule Vae.User do
       data_map: &__MODULE__.coordonnees_api_map/1
     }, %{
       url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
-      is_data_missing: &(length(&1.skills) == 0),
+      is_data_missing: &(Enum.empty?(&1.skills)),
       data_map: fn data -> %{skills: Enum.map(data, &Skill.competences_api_map/1)}
       end
     }, %{
       url: "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences",
-      is_data_missing: &(length(&1.experiences) == 0),
+      is_data_missing: &(Enum.empty?(&1.experiences)),
       data_map: fn data -> %{experiences: Enum.map(data, &Experience.experiences_api_map/1)}
       end
     }] ++ Enum.map(1..5, fn i ->
       # Since API called is limited to a 2 years interval, we need to fetch it 5 times to get 10 years
-      start_date = Timex.shift(Timex.today, years: -2 * i, days: 1)
-      end_date = Timex.shift(Timex.today, years: -2 * (i-1))
+      start_date = Timex.shift(Timex.today, years: -2*i, days: 1)
+      end_date = Timex.shift(Timex.today, years: -2*(i-1))
 
       %{
         url:
           "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=#{Timex.format!(start_date, "{YYYY}{0M}{0D}")}&dateFinPeriode=#{Timex.format!(end_date, "{YYYY}{0M}{0D}")}",
-        is_data_missing: fn user -> length(Enum.filter(user.proven_experiences, fn exp -> Timex.between?(exp.start_date, start_date, end_date) end)) == 0 end,
+        is_data_missing: fn user -> Enum.empty?(Enum.filter(user.proven_experiences, fn exp -> Timex.between?(exp.start_date, start_date, end_date) end)) end,
         data_map: fn data ->
           %{
             proven_experiences:
