@@ -38,7 +38,7 @@ defmodule Vae.Authentication do
     OAuth2.Client.get!(client, resource_url)
   end
 
-  def get(client, resource_url, retry\\3) do
+  def get(client, resource_url, retry \\ 3) do
     case OAuth2.Client.get(client, resource_url) do
       {:ok, response} -> response
       {:error, response} ->
