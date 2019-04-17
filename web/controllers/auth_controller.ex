@@ -81,6 +81,10 @@ defmodule Vae.AuthController do
     end
   end
 
+  def callback(conn, params) do
+    redirect(conn, external: get_session(conn, :referer))
+  end
+
   defp get_certification_id_and_delegate_id_from_referer(referer) do
     string_key_map =
       Regex.named_captures(
