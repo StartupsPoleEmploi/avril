@@ -75,8 +75,8 @@ javascript:
     defaultValue = (params.get('levels') || "1,2,3,4,5").split(',')
     $('#level-selector').selectpicker('val', defaultValue);
   })
-  $('#level-selector').on('loaded.bs.select', function () {
-    $('.dropdown-menu').append('<div class="bs-actionsbox"><div class="btn-group btn-group-sm btn-block"><button type="button" class="btn btn-primary">Filtrer</button></div></div>')
+  $('#level-selector').on('loaded.bs.select', function (e) {
+    $(e.target).parent().find('.dropdown-menu').append('<div class="bs-actionsbox"><div class="btn-group btn-group-sm btn-block"><button type="button" class="btn btn-primary">Filtrer</button></div></div>')
   })
   $('#level-selector').on('hide.bs.select', function (e, clickedIndex, isSelected, previousValue) {
     arrayOptions = $.map(e.target.selectedOptions, function(obj) {
