@@ -81,9 +81,10 @@ defmodule Vae.User do
         )
 
       user ->
-        Repo.update(
-          __MODULE__.changeset(user, __MODULE__.userinfo_api_map(userinfo_api_result, false))
-        )
+        user
+        |> Repo.preload(:job_seeker)
+        |> __MODULE__.changeset(__MODULE__.userinfo_api_map(userinfo_api_result, false))
+        |> Repo.update()
     end
   end
 
