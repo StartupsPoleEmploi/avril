@@ -34,7 +34,28 @@ defmodule Vae.Authentication do
     |> OAuth2.Client.get_token!(code: code)
   end
 
-  def get(client, resource_url) do
+  def get!(client, resource_url) do
     OAuth2.Client.get!(client, resource_url)
+  end
+
+  def get(client, resource_url, retry\\3) do
+    case OAuth2.Client.get(client, resource_url) do
+      {:ok, response} -> response
+      {:error, response} ->
+        if retry > 0 do
+          if response.status_code == 429 do
+            case Enum.find(response.headers, fn {k, v} -> k == "retry-after" end) do
+              {k, v} ->
+                nb_seconds = String.to_integer(v)
+                IO.puts("Retrying after #{nb_seconds}s : #{resource_url}")
+                :timer.sleep(1000 * nb_seconds)
+              nil -> nil
+            end
+          end
+          get(client, resource_url, retry - 1)
+        else
+          response
+        end
+    end
   end
 end

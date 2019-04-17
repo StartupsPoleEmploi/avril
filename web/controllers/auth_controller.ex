@@ -52,8 +52,7 @@ defmodule Vae.AuthController do
               )
             ) || user.current_application}}
 
-        error ->
-          error
+        error -> error
       end
 
     case application_status do
@@ -76,7 +75,7 @@ defmodule Vae.AuthController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, msg || "Une erreur est survenue. Veuillez réessayer plus tard.")
+        |> put_flash(:error, inspect(msg) || "Une erreur est survenue. Veuillez réessayer plus tard.")
         |> redirect(external: get_session(conn, :referer))
     end
   end
