@@ -12,8 +12,11 @@
           .row
             .col
               .form-group.mb-4
-                = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
-                = error_tag f, :email
+                = if @edit_mode do
+                  = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
+                  = error_tag f, :email
+                - else
+                  = link(@user.email, to: "mailto:#{@user.email}")
           .row
             .col
               .form-group.address-component.mb-2
@@ -97,7 +100,7 @@
           = @delegate.address
     .col-md-4.text-center
       = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode, is_asp: @is_asp
 
   = if length(@user.skills) > 0 do
     .row
@@ -150,4 +153,4 @@
   .row.mb-5
     .offset-md-8.col-md-4.text-center
       = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode, is_asp: @is_asp

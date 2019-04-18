@@ -195,4 +195,9 @@ defmodule Vae.Delegate do
     |> Map.put(:certifiers, certifiers)
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
+
+  def is_asp(delegate) do
+    String.starts_with?(delegate.name, "ASP")
+  end
+
 end
