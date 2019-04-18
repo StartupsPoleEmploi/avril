@@ -3,7 +3,7 @@ defmodule Vae.Repo.Migrations.AddPeRomeUrl do
 
   def change do
     alter table(:romes) do
-      add :url, :string
+      add(:url, :string)
     end
   end
 end

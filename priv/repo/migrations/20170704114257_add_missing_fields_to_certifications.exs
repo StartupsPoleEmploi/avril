@@ -3,8 +3,8 @@ defmodule Vae.Repo.Migrations.AddMissingFieldsToCertifications do
 
   def change do
     alter table(:certifications) do
-      add :acronym, :string
-      add :level, :integer
+      add(:acronym, :string)
+      add(:level, :integer)
     end
   end
 end

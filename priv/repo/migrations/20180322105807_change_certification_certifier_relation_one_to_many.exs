@@ -6,10 +6,10 @@ defmodule Vae.Repo.Migrations.ChangeCertificationCertifierRelationOneToMany do
 
   def change do
     alter table(:certifications) do
-      add :certifier_id, references(:certifiers, on_delete: :nilify_all)
+      add(:certifier_id, references(:certifiers, on_delete: :nilify_all))
     end
 
-    create index(:certifications, [:certifier_id])
+    create(index(:certifications, [:certifier_id]))
 
     flush()
 
@@ -33,26 +33,28 @@ defmodule Vae.Repo.Migrations.ChangeCertificationCertifierRelationOneToMany do
     update!(social_ministry, certification)
   end
 
-  defp migrate(certifier, certification) when has_one_certifier(certifier) , do: update!(hd(certifier), certification)
+  defp migrate(certifier, certification) when has_one_certifier(certifier),
+    do: update!(hd(certifier), certification)
 
   defp migrate(certifiers, certification) do
     certifiers
     |> Enum.uniq()
     |> case do
-         certifier when has_one_certifier(certifier) -> migrate(certifier, certification)
-         certifiers ->
-           certifiers
-           |> Enum.find(Enum.at(certifiers, 0), &(&1.id == 2))
-           |> update!(certification)
-       end
-  end
+      certifier when has_one_certifier(certifier) ->
+        migrate(certifier, certification)
 
+      certifiers ->
+        certifiers
+        |> Enum.find(Enum.at(certifiers, 0), &(&1.id == 2))
+        |> update!(certification)
+    end
+  end
 
   defp update!(certifier, certification) do
     certification
     |> Repo.preload(:certifier)
-    |> Changeset.change
+    |> Changeset.change()
     |> Changeset.put_assoc(:certifier, certifier)
-    |> Repo.update
+    |> Repo.update()
   end
 end

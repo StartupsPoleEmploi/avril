@@ -8,7 +8,9 @@ defmodule Vae.DeployCallbacks do
   end
 
   def before_start_service(env) do
-    bash("mix", ~w[run priv/repo/seeds.exs], cd: env.build_dir, env: [{"PORT", to_string(env.available_port)}])
+    bash("mix", ~w[run priv/repo/seeds.exs],
+      cd: env.build_dir,
+      env: [{"PORT", to_string(env.available_port)}]
+    )
   end
-
 end

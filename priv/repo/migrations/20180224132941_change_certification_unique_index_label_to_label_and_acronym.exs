@@ -2,7 +2,7 @@ defmodule Vae.Repo.Migrations.ChangeCertificationUniqueIndexLabelToLabelAndAcron
   use Ecto.Migration
 
   def change do
-    drop index(:certifications, [:label])
-    create unique_index(:certifications, [:acronym, :label])
+    drop(index(:certifications, [:label]))
+    create(unique_index(:certifications, [:acronym, :label]))
   end
 end

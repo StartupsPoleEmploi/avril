@@ -3,11 +3,10 @@ defmodule Vae.Repo.Migrations.CreateRome do
 
   def change do
     create table(:romes) do
-      add :code, :string
-      add :label, :string
+      add(:code, :string)
+      add(:label, :string)
 
       timestamps()
     end
-
   end
 end

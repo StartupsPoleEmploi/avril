@@ -60,9 +60,9 @@ defmodule Vae.OAuth do
       {_header, retry_after} ->
         seconds_to_sleep = Strint.to_integer(retry_after)
         :timer.sleep(1000 * seconds_to_sleep)
+
       _ ->
         nil
     end
   end
-
 end

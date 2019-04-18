@@ -3,8 +3,8 @@ defmodule Vae.Repo.Migrations.CreateRomeCertificationsTable do
 
   def change do
     create table(:rome_certifications, primary_key: false) do
-      add :rome_id, references(:romes)
-      add :certification_id, references(:certifications)
+      add(:rome_id, references(:romes))
+      add(:certification_id, references(:certifications))
     end
   end
 end

@@ -3,10 +3,9 @@ defmodule Vae.Repo.Migrations.CreateProfession do
 
   def change do
     create table(:professions) do
-      add :label, :string
+      add(:label, :string)
 
       timestamps()
     end
-
   end
 end

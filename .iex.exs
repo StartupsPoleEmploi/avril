@@ -1,0 +1,23 @@
+alias Vae.{
+  Repo,
+  User,
+  Analytic,
+  Application,
+  Attachment,
+  Certification,
+  Certifier,
+  Delegate,
+  Event,
+  Experience,
+  JobSeeker,
+  Meta,
+  Process,
+  ProcessStep,
+  Profession,
+  ProvenExperience,
+  Rome,
+  Search,
+  Skill,
+  Step,
+  Visit
+}

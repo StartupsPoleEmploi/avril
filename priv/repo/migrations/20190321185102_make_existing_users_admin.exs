@@ -10,6 +10,5 @@ defmodule Vae.Repo.Migrations.MakeExistingUsersAdmin do
   end
 
   def down do
-
   end
 end

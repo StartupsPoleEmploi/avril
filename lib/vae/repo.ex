@@ -51,8 +51,11 @@ defmodule Vae.Repo do
 
     def update!(struct, opts) do
       case Repo.update!(struct, opts) do
-        %type{} = updated when type in [Certification, Delegate, Profession, Rome] -> save_object_index!(updated)
-        t -> t
+        %type{} = updated when type in [Certification, Delegate, Profession, Rome] ->
+          save_object_index!(updated)
+
+        t ->
+          t
       end
     end
 

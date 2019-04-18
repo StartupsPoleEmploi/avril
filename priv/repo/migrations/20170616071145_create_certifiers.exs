@@ -3,7 +3,7 @@ defmodule Vae.Repo.Migrations.CreateCertifiers do
 
   def change do
     create table(:certifiers) do
-      add :name, :string, null: false
+      add(:name, :string, null: false)
 
       timestamps()
     end
