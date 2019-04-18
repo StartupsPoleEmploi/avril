@@ -32,7 +32,6 @@ config :vae,
   search_client: Vae.Search.Client.InMemory,
   places_ets_table_name: :places_test,
   mailjet: %{
-    campaign_template_id: 465_443,
     from_email: "x@gmail.com",
     # campaign_template_id: 475_460,
     # from_email: "contact@avril.pole-emploi.fr"

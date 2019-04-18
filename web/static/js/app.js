@@ -87,13 +87,13 @@ $(function() {
       var c = content.substr(0, showChar);
       var h = content;
       var html =
-        '<div class="truncate-text" style="display:block">' +
-        c +
-        '<span class="moreellipses">' +
-        ellipsestext +
-        '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
-        h +
-        '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
+          '<div class="truncate-text" style="display:block">' +
+          c +
+          '<span class="moreellipses">' +
+          ellipsestext +
+          '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
+          h +
+          '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
 
       $(this).html(html);
     }
@@ -137,6 +137,32 @@ $(function() {
     localStorage.setItem('cookies_choice', 'accept');
     $('.cookies').addClass('d-none');
   })
+
+  var handleEvent = function(e) {
+    var target = $(e.delegateTarget).attr('data-analytics');
+    if (!window.ga) return console.warn("Analytics not set up:", target);
+    if (!target) return console.warn("Target not correctly set");
+    if (target.indexOf('?') === 0) {
+      var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).join('&');
+      ga('send', 'pageview', window.location.pathname + '?' + queryString);
+    } else if (target.indexOf('/') === 0) {
+      ga('send', 'pageview', target);
+    } else {
+      var cat_event = target.split('#');
+      ga('send', 'event', cat_event[0], cat_event[1]);
+    }
+  }
+
+  $("[data-analytics]").each(function(i, el){
+    if ($(el).is("form")) {
+      $(el).on("submit", handleEvent)
+    } else {
+      $(el).on("click", handleEvent)
+    }
+  })
+
+  $("[data-analytics]").on("click", function(e){
+  });
 })
 
 $(window).scroll(function() {
@@ -158,4 +184,8 @@ function stepLabel(width) {
   } else {
     return "Pour quel métier souhaitez-vous un diplôme ?";
   }
+}
+
+function naiveDeparam(queryString) {
+  return queryString.replace(/^\??/, '').split('&')
 }

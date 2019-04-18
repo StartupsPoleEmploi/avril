@@ -1,0 +1,13 @@
+= if is_nil(@end_date) do
+  | depuis le #{Timex.lformat!(@start_date, "%e %B %Y", "fr", :strftime)}
+- else
+  = if @start_date == @end_date do
+    | le #{Timex.lformat!(@start_date, "%e %B %Y", "fr", :strftime)}
+  - else
+    = if @start_date.year == @end_date.year do
+      = if @start_date.month == @end_date.month do
+        | du #{Timex.lformat!(@start_date, "%e", "fr", :strftime)} au #{Timex.lformat!(@end_date, "%e %B %Y", "fr", :strftime)}
+      - else
+        | du #{Timex.lformat!(@start_date, "%e %B", "fr", :strftime)} au #{Timex.lformat!(@end_date, "%e %B %Y", "fr", :strftime)}
+    - else
+      | du #{Timex.lformat!(@start_date, "%e %B %Y", "fr", :strftime)} au #{Timex.lformat!(@end_date, "%e %B %Y", "fr", :strftime)}

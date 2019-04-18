@@ -11,21 +11,24 @@
   }
 }
 
-.bg-secondary {
-  background-color: $bg-secondary !important;
-  color: theme-color('info');
-  a {
-    color: theme-color('info');
-  }
-}
+// .bg-primary {
+//   background-color: $brand-primary;
+//   color: #fff;
+//   // a {
+//   //   color: #fff;
+//   // }
+// }
 
-.bg-primary {
-  background-color: $brand-primary;
-  color: #fff;
-  a {
-    color: #fff;
-  }
-}
+// .bg-secondary {
+//   background-color: $brand-secondary;
+//   color: $white;
+//   // & > * {
+//   //   color: $white;
+//   // }
+//   // a {
+//   //   color: theme-color('info');
+//   // }
+// }
 
 .bg-img {
   margin: 0;

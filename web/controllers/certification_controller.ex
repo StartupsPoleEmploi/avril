@@ -97,7 +97,9 @@ defmodule Vae.CertificationController do
       conn,
       "show.html",
       certification: certification,
-      delegate: delegate
+      delegate: delegate,
+      is_asp: Delegate.is_asp(delegate),
+      with_search: true
     )
   end
 
@@ -112,7 +114,8 @@ defmodule Vae.CertificationController do
         certifications: page.entries,
         no_results: count_without_level_filter(params) == 0,
         page: page,
-        meta: meta
+        meta: meta,
+        with_search: true
       )
     end
   end

@@ -10,7 +10,8 @@ defmodule Vae do
       supervisor(Vae.Event.EventSupervisor, []),
       supervisor(Vae.Statistics.StatisticsSupervisor, []),
       worker(Vae.Scheduler, []),
-      worker(Vae.Places.Cache, [])
+      worker(Vae.Places.Cache, []),
+      Vae.OAuth.Clients
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

@@ -44,14 +44,9 @@ config :vae, Vae.Repo,
 config :vae,
   places_client: Vae.Places.Client.Algolia,
   places_ets_table_name: :places_dev,
-  mailjet: %{
-    campaign_template_id: 070_460,
-    vae_recap_template_id: 532_261,
-    contact_template_id: 539_911,
-    from_email: "lol@lol.fr",
-    from_name: "Avril",
+  mailjet: [
     override_to: [%{Email: "lol@mail.com"}, %{Email: "lil@mail.com"}]
-  },
+  ],
   mailjet_template_error_reporting: %{Email: "reporting@mail.com"},
   mailjet_template_error_deliver: true,
   statistics: %{

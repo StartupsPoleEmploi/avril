@@ -1,0 +1,71 @@
+
+version: "3.6"
+
+services:
+  postgres:
+    env_file:
+      - ".env"
+    image: "postgres:11.0-alpine"
+    volumes:
+#      - "postgres:/var/lib/postgresql/data"
+      - ".:/app"
+      - "/var/run/postgresql:/var/run/postgresql"
+  admin:
+    image: dpage/pgadmin4
+    ports:
+      - "80:80"
+    env_file:
+      - ".env"
+    links:
+      - postgres
+
+  # webpack:
+  #   build:
+  #     context: "."
+  #     dockerfile: "Dockerfile.webpack"
+  #   command: yarn run watch
+  #   volumes:
+  #     - ".:/app"
+  #     - "static:/app/priv/static"
+
+  app:
+    build: "."
+    working_dir: /app
+    depends_on:
+      - "postgres"
+      # - "webpack"
+    env_file:
+      - ".env"
+    ports:
+      - "4000:4000"
+    stdin_open: true
+    tty: true
+    command: iex -S mix phx.server
+    volumes:
+      - ".:/app"
+      - "static:/app/priv/static"
+      - /tmp/.X11-unix:/tmp/.X11-unix
+volumes:
+  postgres: {}
+  static:
+    driver_opts:
+      device: "tmpfs"
+      type: "tmpfs"
+
+# app:
+#   build: .
+#   command: mix phoenix.server
+#   working_dir: /avril
+#   volumes:
+#     - .:/avril
+#   ports:
+#     - "4000:4000"
+#   links:
+#     - db
+# db:
+#   image: postgres:latest
+#   ports:
+#     - "5432"
+#   # volumes:
+#   #   - ./db/docker:/var/lib/postgresql/data
+
