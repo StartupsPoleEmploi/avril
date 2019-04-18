@@ -1,19 +1,19 @@
 defmodule Vae.AuthController do
   use Vae.Web, :controller
 
-  alias Vae.Authentication
-  alias Vae.Authentication.Clients
+  alias Vae.OAuth
+  alias Vae.OAuth.Clients
   alias Vae.User
   alias Vae.Application
 
   def save_session_and_redirect(conn, _params) do
     referer = hd(get_req_header(conn, "referer"))
 
-    client = Authentication.init_client()
+    client = OAuth.init_client()
 
     {:ok, client} = Clients.add_client(client, client.params[:state], client.params[:nonce])
 
-    url = Authentication.get_authorize_url!(client)
+    url = OAuth.get_authorize_url!(client)
 
     put_session(conn, :referer, referer)
     |> redirect(external: url)
@@ -21,14 +21,14 @@ defmodule Vae.AuthController do
 
   def callback(conn, %{"code" => code, "state" => state} = _params) do
     client = Clients.get_client(state)
-    client_with_token = Authentication.generate_access_token(client, code)
+    client_with_token = OAuth.generate_access_token(client, code)
 
     conn =
       conn
       |> put_session(:pe_access_token, client_with_token.token.access_token)
 
     userinfo_api_result =
-      Authentication.get(
+      OAuth.get(
         client_with_token,
         "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
       )

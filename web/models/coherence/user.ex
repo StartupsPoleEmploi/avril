@@ -3,7 +3,7 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
-  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, Authentication}
+  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, OAuth}
 
   schema "users" do
     field(:name, :string)
@@ -54,19 +54,19 @@ defmodule Vae.User do
     |> put_embed(:skills,
       Enum.uniq_by(
         model.skills ++
-        Enum.wrap(params[:skills]),
+        List.wrap(params[:skills]),
         &Skill.unique_key/1
       ))
     |> put_embed(:experiences,
       Enum.uniq_by(
         model.experiences ++
-        Enum.wrap(params[:experiences]),
+        List.wrap(params[:experiences]),
         &Experience.unique_key/1
       ))
     |> put_embed(:proven_experiences,
       Enum.uniq_by(
         model.proven_experiences ++
-        Enum.wrap(params[:proven_experiences]),
+        List.wrap(params[:proven_experiences]),
         &ProvenExperience.unique_key/1
       ))
     |> put_job_seeker(params[:job_seeker])
@@ -150,7 +150,7 @@ defmodule Vae.User do
         call, {:ok, user} = status ->
           if call.is_data_missing.(user) do
             IO.puts("Calling #{call.url}")
-            api_result = Authentication.get(client_with_token, call.url)
+            api_result = OAuth.get(client_with_token, call.url)
             changeset = __MODULE__.changeset(user, call.data_map.(api_result.body))
             Repo.update(changeset)
           else

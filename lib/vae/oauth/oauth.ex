@@ -1,4 +1,6 @@
-defmodule Vae.Authentication do
+defmodule Vae.OAuth do
+  require Logger
+
   @authentication_config Application.get_env(:vae, :authentication)
 
   def init_client() do
