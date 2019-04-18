@@ -12,8 +12,11 @@
           .row
             .col
               .form-group.mb-4
-                = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
-                = error_tag f, :email
+                = if @edit_mode do
+                  = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
+                  = error_tag f, :email
+                - else
+                  = link(@user.email, to: "mailto:#{@user.email}")
           .row
             .col
               .form-group.address-component.mb-2
