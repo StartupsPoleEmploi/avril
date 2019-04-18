@@ -26,20 +26,31 @@
       .row.mb-3
         .col-md-6
           p
-            | Nous pouvons transmettre vos expériences professionnelles et compétences directement à votre conseiller
-            '
-            strong
-              = @delegate.name
-              |  (Nécessite un compte Pôle-emploi)
-            |  afin de vous aider à confirmer votre choix.
+            = if @is_asp do
+              | L'ASP, organisme chargé de la recevabilité de ce diplôme propose un espace en ligne pour déposer votre demande de VAE. Des informations déjà connues de Pôle emploi vous seront indispensables pour remplir cette demande.
+            - else
+              | Nous pouvons transmettre vos expériences professionnelles et compétences directement à votre conseiller
+              '
+              strong
+                = @delegate.name
+                |  (Nécessite un compte Pôle-emploi)
+              |  afin de vous aider à confirmer votre choix.
         .col-md-6
-          p Cela ne vous engage pas dans la VAE. Votre conseiller aura simplement toutes les informations pour prendre la bonne décision.
+          p
+            = if @is_asp do
+              | Pour compléter plus facilement votre dossier VAE: consultez et téléchargez maintenant votre synthèse de carrière.
+            - else
+              | Cela ne vous engage pas dans la VAE. Votre conseiller aura simplement toutes les informations pour prendre la bonne décision.
       .row
         .col-12.text-center
           .pe-connect.pe-connect-toggle
             = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?bouton=pe-connect"]) do
               = img_tag("/images/conseillere.svg", width: 34, height: 31, style: "margin-right: 1rem;")
-              span.text Transmettre mes expériences
+              span.text
+                = if @is_asp do
+                  | Voir ma synthèse
+                - else
+                  | Transmettre mes expériences
             .mt-4.text-right
               button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je n'ai pas de compte Pôle-emploi
           .no-pe-connect.pe-connect-toggle.d-none

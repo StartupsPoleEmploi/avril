@@ -5,6 +5,7 @@ defmodule Vae.ApplicationController do
 
   alias Vae.User
   alias Vae.Application
+  alias Vae.Delegate
 
   def show(conn, %{"id" => id} = params) do
     application = case Repo.get(Application, id) do
@@ -17,6 +18,7 @@ defmodule Vae.ApplicationController do
         render(conn, "show.html",
           application: application,
           delegate: application.delegate,
+          is_asp: Delegate.is_asp(application.delegate),
           certification: application.certification,
           user: application.user,
           grouped_experiences: application.user.proven_experiences

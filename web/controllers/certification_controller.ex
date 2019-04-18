@@ -98,6 +98,7 @@ defmodule Vae.CertificationController do
       "show.html",
       certification: certification,
       delegate: delegate,
+      is_asp: Delegate.is_asp(delegate),
       with_search: true
     )
   end
