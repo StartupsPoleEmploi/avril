@@ -40,22 +40,27 @@ defmodule Vae.Authentication do
 
   def get(client, resource_url, retry \\ 3) do
     case OAuth2.Client.get(client, resource_url) do
-      {:ok, response} -> response
-      {:error, response} ->
-        if retry > 0 do
-          if response.status_code == 429 do
-            case Enum.find(response.headers, fn {k, v} -> k == "retry-after" end) do
-              {k, v} ->
-                nb_seconds = String.to_integer(v)
-                IO.puts("Retrying after #{nb_seconds}s : #{resource_url}")
-                :timer.sleep(1000 * nb_seconds)
-              nil -> nil
-            end
-          end
+      {:ok, response} ->
+        response
+
+      {:error, %OAuth2.Response{status_code: 429, headers: headers}} when retry > 0 ->
+        with _retry? <- retry_after?(headers) do
           get(client, resource_url, retry - 1)
-        else
-          response
         end
+
+      {:error, error} ->
+        Logger.error(fn -> inspect(error) end)
     end
   end
+
+  defp retry_after?(headers) do
+    case Enum.find(headers, fn {header, _value} -> header == "retry-after" end) do
+      {_header, retry_after} ->
+        seconds_to_sleep = Strint.to_integer(retry_after)
+        :timer.sleep(1000 * seconds_to_sleep)
+      _ ->
+        nil
+    end
+  end
+
 end

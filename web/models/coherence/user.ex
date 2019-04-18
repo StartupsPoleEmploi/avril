@@ -52,21 +52,21 @@ defmodule Vae.User do
     model
     |> cast(params, @fields ++ coherence_fields())
     |> put_embed(:skills,
-      Vae.List.uniq_concat(
-        model.skills,
-        params[:skills],
+      Enum.uniq_by(
+        model.skills ++
+        Enum.wrap(params[:skills]),
         &Skill.unique_key/1
       ))
     |> put_embed(:experiences,
-      Vae.List.uniq_concat(
-        model.experiences,
-        params[:experiences],
+      Enum.uniq_by(
+        model.experiences ++
+        Enum.wrap(params[:experiences]),
         &Experience.unique_key/1
       ))
     |> put_embed(:proven_experiences,
-      Vae.List.uniq_concat(
-        model.proven_experiences,
-        params[:proven_experiences],
+      Enum.uniq_by(
+        model.proven_experiences ++
+        Enum.wrap(params[:proven_experiences]),
         &ProvenExperience.unique_key/1
       ))
     |> put_job_seeker(params[:job_seeker])
