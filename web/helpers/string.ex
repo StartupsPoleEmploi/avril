@@ -1,4 +1,8 @@
 defmodule Vae.String do
+  @moduledoc """
+  `String` method helpers
+  """
+
   def titleize(string) do
     cond do
       String.upcase(string || "") == string ->

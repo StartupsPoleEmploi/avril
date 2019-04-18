@@ -1,4 +1,6 @@
-defmodule Vae.Authentication do
+defmodule Vae.OAuth do
+  require Logger
+
   @authentication_config Application.get_env(:vae, :authentication)
 
   def init_client() do
@@ -34,7 +36,33 @@ defmodule Vae.Authentication do
     |> OAuth2.Client.get_token!(code: code)
   end
 
-  def get(client, resource_url) do
+  def get!(client, resource_url) do
     OAuth2.Client.get!(client, resource_url)
   end
+
+  def get(client, resource_url, retry \\ 3) do
+    case OAuth2.Client.get(client, resource_url) do
+      {:ok, response} ->
+        response
+
+      {:error, %OAuth2.Response{status_code: 429, headers: headers}} when retry > 0 ->
+        with _retry? <- retry_after?(headers) do
+          get(client, resource_url, retry - 1)
+        end
+
+      {:error, error} ->
+        Logger.error(fn -> inspect(error) end)
+    end
+  end
+
+  defp retry_after?(headers) do
+    case Enum.find(headers, fn {header, _value} -> header == "retry-after" end) do
+      {_header, retry_after} ->
+        seconds_to_sleep = Strint.to_integer(retry_after)
+        :timer.sleep(1000 * seconds_to_sleep)
+      _ ->
+        nil
+    end
+  end
+
 end

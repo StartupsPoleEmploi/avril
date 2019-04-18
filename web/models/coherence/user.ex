@@ -3,7 +3,7 @@ defmodule Vae.User do
   use Ecto.Schema
   use Coherence.Schema
 
-  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, Authentication}
+  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, OAuth}
 
   schema "users" do
     field(:name, :string)
@@ -51,9 +51,24 @@ defmodule Vae.User do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @fields ++ coherence_fields())
-    |> cast_embed(:skills)
-    |> cast_embed(:experiences)
-    |> cast_embed(:proven_experiences)
+    |> put_embed(:skills,
+      Enum.uniq_by(
+        model.skills ++
+        List.wrap(params[:skills]),
+        &Skill.unique_key/1
+      ))
+    |> put_embed(:experiences,
+      Enum.uniq_by(
+        model.experiences ++
+        List.wrap(params[:experiences]),
+        &Experience.unique_key/1
+      ))
+    |> put_embed(:proven_experiences,
+      Enum.uniq_by(
+        model.proven_experiences ++
+        List.wrap(params[:proven_experiences]),
+        &ProvenExperience.unique_key/1
+      ))
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -79,7 +94,6 @@ defmodule Vae.User do
         Repo.insert(
           __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
         )
-
       user ->
         user
         |> Repo.preload(:job_seeker)
@@ -88,54 +102,55 @@ defmodule Vae.User do
     end
   end
 
+  def build_api_calls do
+    [%{
+      url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
+      is_data_missing: &(is_nil(&1.postal_code)),
+      data_map: &__MODULE__.coordonnees_api_map/1
+    }, %{
+      url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
+      is_data_missing: &(Enum.empty?(&1.skills)),
+      data_map: fn data -> %{skills: Enum.map(data, &Skill.competences_api_map/1)}
+      end
+    }, %{
+      url: "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences",
+      is_data_missing: &(Enum.empty?(&1.experiences)),
+      data_map: fn data -> %{experiences: Enum.map(data, &Experience.experiences_api_map/1)}
+      end
+    }] ++ Enum.map(1..5, fn i ->
+      # Since API called is limited to a 2 years interval, we need to fetch it 5 times to get 10 years
+      start_date = Timex.shift(Timex.today, years: -2*i, days: 1)
+      end_date = Timex.shift(Timex.today, years: -2*(i-1))
+
+      %{
+        url:
+          "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=#{Timex.format!(start_date, "{YYYY}{0M}{0D}")}&dateFinPeriode=#{Timex.format!(end_date, "{YYYY}{0M}{0D}")}",
+        is_data_missing: fn user -> Enum.empty?(Enum.filter(user.proven_experiences, fn exp -> Timex.between?(exp.start_date, start_date, end_date) end)) end,
+        data_map: fn data ->
+          %{
+            proven_experiences:
+              Enum.filter(Enum.map(
+                data["contrats"],
+                &ProvenExperience.experiencesprofessionellesdeclareesparlemployeur_api_map/1
+                # To make sure `is_data_missing` works properly,
+                # we need to make sure that proven experiences match only one query, instead of
+                # multiple in the API behavior.
+                # Hence the filtering over the results
+              ), fn exp -> Timex.between?(exp.start_date, start_date, end_date) end)
+          }
+        end
+      }
+    end)
+
+  end
+
   def fill_with_api_fields(initial_status, client_with_token, left_retries\\0) do
     try do
-      api_calls = [
-        %{
-          url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
-          is_data_missing: &(is_nil(&1.postal_code)),
-          data_map: &__MODULE__.coordonnees_api_map/1
-        },
-        %{
-          url: "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences",
-          is_data_missing: &(length(&1.skills) == 0),
-          data_map: fn data ->
-            %{
-              skills: Enum.map(data, &Skill.competences_api_map/1)
-            }
-          end
-        },
-        %{
-          url: "https://api.emploi-store.fr/partenaire/peconnect-experiences/v1/experiences",
-          is_data_missing: &(length(&1.experiences) == 0),
-          data_map: fn data ->
-            %{
-              experiences: Enum.map(data, &Experience.experiences_api_map/1)
-            }
-          end
-        },
-        %{
-          # TODO: fetch longer periods
-          url:
-            "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats?dateDebutPeriode=20170401&dateFinPeriode=20190401",
-          is_data_missing: &(length(&1.proven_experiences) == 0),
-          data_map: fn data ->
-            %{
-              proven_experiences:
-                Enum.map(
-                  data["contrats"],
-                  &ProvenExperience.experiencesprofessionellesdeclareesparlemployeur_api_map/1
-                )
-            }
-          end
-        }
-      ]
-
-      Enum.reduce(api_calls, initial_status, fn
+      Enum.reduce(build_api_calls, initial_status, fn
         call, {:ok, user} = status ->
           if call.is_data_missing.(user) do
             IO.puts("Calling #{call.url}")
-            api_result = Authentication.get(client_with_token, call.url)
+            api_result = OAuth.get(client_with_token, call.url)
             changeset = __MODULE__.changeset(user, call.data_map.(api_result.body))
             Repo.update(changeset)
           else

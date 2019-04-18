@@ -11,7 +11,7 @@ defmodule Vae do
       supervisor(Vae.Statistics.StatisticsSupervisor, []),
       worker(Vae.Scheduler, []),
       worker(Vae.Places.Cache, []),
-      Vae.Authentication.Clients
+      Vae.OAuth.Clients
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

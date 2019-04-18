@@ -14,6 +14,7 @@ defmodule Vae.ProvenExperience do
     field(:duration, :integer)
     field(:company_ape, :string)
     field(:company_name, :string)
+    field(:company_category, :string)
     field(:company_state_owned, :boolean)
     field(:company_uid, :string)
   end
@@ -25,8 +26,12 @@ defmodule Vae.ProvenExperience do
     |> cast(params, @fields)
   end
 
+  def unique_key(experience) do
+    "#{experience.company_uid}-#{experience.label}-#{Timex.format!(experience.start_date, "{YYYY}{0M}{0D}")}-#{if experience.end_date, do: Timex.format!(experience.end_date, "{YYYY}{0M}{0D}"), else: ""}"
+  end
+
   def experiencesprofessionellesdeclareesparlemployeur_api_map(api_fields) do
-    %{
+    %__MODULE__{
       start_date: Vae.Date.format(api_fields["dateDebut"]),
       end_date: Vae.Date.format(api_fields["dateFin"]),
       duration: api_fields["dureeContrat"],

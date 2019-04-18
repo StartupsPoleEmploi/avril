@@ -1,4 +1,7 @@
 defmodule Vae.Date do
+  @moduledoc """
+  `Date` method helpers
+  """
   def format(nil), do: nil
 
   def format(date_string) do
