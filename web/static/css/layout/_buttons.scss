@@ -27,6 +27,10 @@ a {
       }
     }
 
+    &.reading-link {
+      color: $black;
+    }
+
     // on annule le soulignement pour les liens de type 'button'
     &.btn, &.reading-link {
       &:after {
