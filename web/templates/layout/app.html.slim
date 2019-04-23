@@ -1,5 +1,5 @@
 
-= base_layout @conn do
+= base_layout @conn, assigns do
   main
     .sticky-top
       = render ComponentView, "cookies.html", conn: @conn
