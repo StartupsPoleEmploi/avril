@@ -152,8 +152,8 @@ defmodule Vae.ComponentView do
     title <> @title_suffix
   end
 
-  def page_title(assigns) do
-    complete_page_title(assigns)
+  def page_title(static_title, assigns) do
+    (static_title || complete_page_title(assigns))
     |> suffix()
   end
 
