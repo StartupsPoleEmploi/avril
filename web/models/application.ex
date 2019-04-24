@@ -26,7 +26,7 @@ defmodule Vae.Application do
 
   def find_or_create_with_params(%{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params) do
     Repo.get_by(__MODULE__, params) || case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
-      {:ok, application} -> application
+      {:ok, application} -> application |> __MODULE__.submit_if_asp()
       {:error, msg} -> nil
     end
   end
@@ -53,6 +53,18 @@ defmodule Vae.Application do
           error -> error
         end
       error -> error
+    end
+  end
+
+  def submit_if_asp(application) do
+    application = Repo.preload(application, :delegate)
+    if Delegate.is_asp(application.delegate) do
+      case __MODULE__.submit(application) do
+        {:ok, application} -> application
+        {:error, msg} -> nil
+      end
+    else
+      application
     end
   end
 

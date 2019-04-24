@@ -1,5 +1,5 @@
 div.text-center style="display: inline-block"
-  = if @application.submitted_at || @is_asp do
+  = if @application.submitted_at do
     = if @application.submitted_at do
       p
         strong Dossier Transmis le #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
