@@ -101,7 +101,6 @@
     .col-md-4.text-center
       = if @edit_mode do
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
-
   = if length(@user.skills) > 0 do
     .row
       .col

@@ -7,6 +7,7 @@ defmodule Vae.Application do
   alias Vae.ApplicationEmail
 
   schema "applications" do
+    field(:has_just_been_auto_submitted, :boolean, virtual: true) # Triggers an analytics event at the front
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
@@ -17,7 +18,7 @@ defmodule Vae.Application do
     timestamps()
   end
 
-  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash)a
+  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash has_just_been_auto_submitted)a
 
   def changeset(struct, params \\ %{}) do
     struct
@@ -32,7 +33,7 @@ defmodule Vae.Application do
   end
   def find_or_create_with_params(params), do: nil
 
-  def submit(application) do
+  def submit(application, auto_submitted\\false) do
     case Repo.update(
            __MODULE__.changeset(application, %{
              delegate_access_hash: generate_hash(64),
@@ -47,6 +48,7 @@ defmodule Vae.Application do
           {:ok, message} ->
             Repo.update(
               __MODULE__.changeset(application, %{
+                has_just_been_auto_submitted: auto_submitted,
                 submitted_at: DateTime.utc_now()
               })
             )
@@ -57,15 +59,19 @@ defmodule Vae.Application do
   end
 
   def submit_if_asp(application) do
-    application = Repo.preload(application, :delegate)
-    if Delegate.is_asp(application.delegate) do
-      case __MODULE__.submit(application) do
+    if __MODULE__.is_asp(application) do
+      case __MODULE__.submit(application, true) do
         {:ok, application} -> application
         {:error, msg} -> nil
       end
     else
       application
     end
+  end
+
+  def is_asp(application) do
+    application = Repo.preload(application, :delegate)
+    Vae.Delegate.is_asp(application.delegate)
   end
 
   defp generate_hash(length) do
