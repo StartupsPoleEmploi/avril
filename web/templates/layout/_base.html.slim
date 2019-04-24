@@ -27,5 +27,6 @@ html{lang="fr"}
       javascript:
         window.disableGa = function() {
           window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;
+          window['ga-disable-<%= System.get_env("GA_PE_API_KEY") %>'] = true;
         };
       script src=static_path(@conn,"/js/analytics.js")

@@ -26,6 +26,7 @@ defmodule Vae.ComponentView do
      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
      ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
+     ga('create', '#{System.get_env("GA_PE_API_KEY")}', 'auto');
      ga('require', '#{System.get_env("GO_TEST_KEY")}');
      ga('set', 'dimension1', '#{dimension1}');
      ga('send', 'pageview');
