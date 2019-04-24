@@ -3,8 +3,10 @@ defmodule Vae.ApplicationEmail do
   alias Vae.Email
   alias Vae.Router.Helpers
   alias Vae.Endpoint
+  alias Vae.Repo
 
   def delegate_submission(application) do
+    application = Repo.preload(application, [:user, :delegate, :certification])
     Email.generic_fields(
       :application_submitted_to_delegate_id,
       application.delegate,
@@ -22,6 +24,7 @@ defmodule Vae.ApplicationEmail do
   end
 
   def user_submission_confirmation(application) do
+    application = Repo.preload(application, [:user, :delegate, :certification])
     Email.generic_fields(
       :application_submitted_to_user_id,
       application.user,

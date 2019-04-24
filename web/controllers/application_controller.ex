@@ -18,7 +18,6 @@ defmodule Vae.ApplicationController do
         render(conn, "show.html",
           application: application,
           delegate: application.delegate,
-          is_asp: Delegate.is_asp(application.delegate),
           certification: application.certification,
           user: application.user,
           grouped_experiences: application.user.proven_experiences

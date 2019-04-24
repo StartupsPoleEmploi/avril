@@ -100,8 +100,7 @@
           = @delegate.address
     .col-md-4.text-center
       = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode, is_asp: @is_asp
-
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
   = if length(@user.skills) > 0 do
     .row
       .col
@@ -153,4 +152,4 @@
   .row.mb-5
     .offset-md-8.col-md-4.text-center
       = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode, is_asp: @is_asp
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode

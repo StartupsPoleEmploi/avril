@@ -5,6 +5,7 @@ defmodule Vae.AuthController do
   alias Vae.OAuth.Clients
   alias Vae.User
   alias Vae.Application
+  alias Vae.Delegate
 
   def save_session_and_redirect(conn, _params) do
     referer = hd(get_req_header(conn, "referer"))
@@ -71,7 +72,7 @@ defmodule Vae.AuthController do
 
         Coherence.Authentication.Session.create_login(conn, user)
         |> put_flash(:success, message)
-        |> redirect(to: application_path(conn, :show, application))
+        |> redirect(to: "#{application_path(conn, :show, application)}#{if application.has_just_been_auto_submitted, do: "#ga=?bouton=soumettre-candidature", else: nil}")
 
       {:error, msg} ->
         conn
