@@ -27,7 +27,7 @@ defmodule Vae.Application do
 
   def find_or_create_with_params(%{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params) do
     Repo.get_by(__MODULE__, params) || case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
-      {:ok, application} -> application |> __MODULE__.submit_if_asp()
+      {:ok, application} -> application |> __MODULE__.maybe_autosubmit()
       {:error, msg} -> nil
     end
   end
@@ -58,8 +58,8 @@ defmodule Vae.Application do
     end
   end
 
-  def submit_if_asp(application) do
-    if __MODULE__.is_asp(application) do
+  def maybe_autosubmit(application) do
+    if __MODULE__.autosubmit?(application) do
       case __MODULE__.submit(application, true) do
         {:ok, application} -> application
         {:error, msg} -> nil
@@ -67,6 +67,10 @@ defmodule Vae.Application do
     else
       application
     end
+  end
+
+  def autosubmit?(application) do
+    __MODULE__.is_asp(application)
   end
 
   def is_asp(application) do
