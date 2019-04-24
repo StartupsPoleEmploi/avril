@@ -16,6 +16,7 @@
                   = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
                   = error_tag f, :email
                 - else
+                  h4= @user.name
                   = link(@user.email, to: "mailto:#{@user.email}")
           .row
             .col
