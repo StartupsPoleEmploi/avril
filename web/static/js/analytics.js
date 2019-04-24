@@ -1,16 +1,16 @@
-/*global ga, $ */
+/*global $ */
 
 var handleAnalyticsEvent = function(target) {
   if (!window.ga) return console.warn('Analytics not set up:', target);
   if (!target) return console.warn('Target not correctly set');
   if (target.indexOf('?') === 0) {
     var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).join('&');
-    ga('send', 'pageview', window.location.pathname + '?' + queryString);
+    window.ga('send', 'pageview', window.location.pathname + '?' + queryString);
   } else if (target.indexOf('/') === 0) {
-    ga('send', 'pageview', target);
+    window.ga('send', 'pageview', target);
   } else {
     var categoryEvent = target.split('#');
-    ga('send', 'event', categoryEvent[0], categoryEvent[1]);
+    window.ga('send', 'event', categoryEvent[0], categoryEvent[1]);
   }
 }
 
@@ -41,7 +41,7 @@ $(function() {
   });
 
   // $(".delegate-details a[href]:not([href^='mailto:'])").on("click", function() {
-  //   ga('send', 'event', 'Delegates', 'website');
+  //   window.ga('send', 'event', 'Delegates', 'website');
   // });
 
   $("#steps :contains('réunion') a").on('click', function() {
