@@ -26,5 +26,5 @@
 
 .container
   .row
-    .col-12.text-center
-      <a href="http://www.vae.gouv.fr/" target="_blank" class="btn btn-primary mt-4 mb-6">Trouver le vôtre</a>
+    .col-12.text-center.mb-5
+      = link "Trouver le votre", to: root_path(@conn, :index), class: "btn btn-primary ml-auto"
