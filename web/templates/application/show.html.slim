@@ -2,7 +2,7 @@
   .jumbotron
     .row
       .col-md-8
-        h3
+        h3.mb-4
           = if @edit_mode do
             | Bonjour #{@user.first_name},
           - else
@@ -150,7 +150,7 @@
                     = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
 
 
-  .row.mb-5
-    .offset-md-8.col-md-4.text-center
-      = if @edit_mode do
+  = if @edit_mode && (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
+    .row.mb-5
+      .offset-md-8.col-md-4.text-center
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
