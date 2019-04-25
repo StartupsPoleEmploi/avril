@@ -45,4 +45,46 @@ defmodule Vae.Rome do
 
   def get_by_code(nil), do: nil
   def get_by_code(code), do: Repo.get_by(Rome, code: code)
+
+  def code_parts(rome) do
+    %{
+      category: String.slice(rome.code, 0..0),
+      subcategory: String.slice(rome.code, 0..2),
+      code: String.slice(rome.code, 0..5),
+    }
+  end
+
+  def is_category?(rome) do
+    Regex.match?(~r/^[A-Z]$/, rome.code)
+  end
+
+  def is_subcategory?(rome) do
+    Regex.match?(~r/^[A-Z]\d\d$/, rome.code)
+  end
+
+  def category(rome) do
+    %{category: category} = __MODULE__.code_parts(rome)
+    if category != rome.code do
+      Repo.get_by(__MODULE__, code: category)
+    end
+  end
+
+  def subcategory(rome) do
+    %{subcategory: subcategory} = __MODULE__.code_parts(rome)
+    if subcategory != rome.code do
+      Repo.get_by(__MODULE__, code: subcategory)
+    end
+  end
+
+  def subcategories(rome) do
+    %{subcategory: subcategory} = __MODULE__.code_parts(rome)
+    query = from m in __MODULE__, where: like(m.code, ^subcategory)
+    Repo.all(query)
+  end
+
+  def romes(rome) do
+    query = from m in __MODULE__, where: like(m.code, ^rome.code)
+    Repo.all(query)
+  end
+
 end
