@@ -25,7 +25,12 @@ import "./smooth_scroll"
 import "bootstrap-select"
 import "url-search-params"
 
+import { Analytics } from "./analytics"
+
 $(function() {
+
+  new Analytics().init()
+
   // Search labels
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_query");
   $("#search_query").parent().addClass('form-label-group');
