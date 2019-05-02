@@ -7,6 +7,7 @@ defmodule Vae.Application do
   alias Vae.ApplicationEmail
 
   schema "applications" do
+    field(:has_just_been_auto_submitted, :boolean, virtual: true) # Triggers an analytics event at the front
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
@@ -17,7 +18,7 @@ defmodule Vae.Application do
     timestamps()
   end
 
-  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash)a
+  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash has_just_been_auto_submitted)a
 
   def changeset(struct, params \\ %{}) do
     struct
@@ -32,27 +33,32 @@ defmodule Vae.Application do
   end
   def find_or_create_with_params(params), do: nil
 
-  def submit(application) do
-    case Repo.update(
-           __MODULE__.changeset(application, %{
-             delegate_access_hash: generate_hash(64),
-             delegate_access_refreshed_at: DateTime.utc_now()
-           })
-         ) do
-      {:ok, application} ->
-        case Email.send([
-               ApplicationEmail.delegate_submission(application),
-               ApplicationEmail.user_submission_confirmation(application)
-             ]) do
-          {:ok, message} ->
-            Repo.update(
-              __MODULE__.changeset(application, %{
-                submitted_at: DateTime.utc_now()
-              })
-            )
+  def submit(application, auto_submitted\\false) do
+    case application.submitted_at do
+      nil ->
+        case Repo.update(
+               __MODULE__.changeset(application, %{
+                 delegate_access_hash: generate_hash(64),
+                 delegate_access_refreshed_at: DateTime.utc_now()
+               })
+             ) do
+          {:ok, application} ->
+            case Email.send([
+                   ApplicationEmail.delegate_submission(application),
+                   ApplicationEmail.user_submission_confirmation(application)
+                 ]) do
+              {:ok, message} ->
+                Repo.update(
+                  __MODULE__.changeset(application, %{
+                    has_just_been_auto_submitted: auto_submitted,
+                    submitted_at: DateTime.utc_now()
+                  })
+                )
+              error -> error
+            end
           error -> error
         end
-      error -> error
+      _ -> {:ok, application}
     end
   end
 

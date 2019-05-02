@@ -5,6 +5,7 @@ defmodule Vae.AuthController do
   alias Vae.OAuth.Clients
   alias Vae.User
   alias Vae.Application
+  alias Vae.Delegate
 
   def save_session_and_redirect(conn, _params) do
     referer = hd(get_req_header(conn, "referer"))

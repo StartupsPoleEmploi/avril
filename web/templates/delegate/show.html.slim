@@ -24,7 +24,7 @@
                     = @delegate.telephone
 
                 = if @delegate.website && @delegate.website do
-                  li= link @delegate.website, to: @delegate.website, target: '_blank'
+                  li= link @delegate.website, to: @delegate.website, target: '_blank', data: [analytics: "Delegates#website"]
                 li
                   i.fa.fa-map-marker
                   '

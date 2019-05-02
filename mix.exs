@@ -86,7 +86,7 @@ defmodule Vae.Mixfile do
       {:plug, "1.5.0"},
       {:uuid, "~> 1.1"},
       {:persistent_ets, "~> 0.1.0"},
-      {:pdf_generator, ">=0.4.0"},
+      {:pdf_generator, ">=0.5.0"},
       {:observer_cli, "~> 1.4"},
       {:filterable, "~> 0.7.0"},
       {:oauth2, "~> 0.9"},

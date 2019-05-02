@@ -58,7 +58,7 @@ defmodule Vae.OAuth do
   defp retry_after?(headers) do
     case Enum.find(headers, fn {header, _value} -> header == "retry-after" end) do
       {_header, retry_after} ->
-        seconds_to_sleep = Strint.to_integer(retry_after)
+        seconds_to_sleep = String.to_integer(retry_after)
         :timer.sleep(1000 * seconds_to_sleep)
       _ ->
         nil
