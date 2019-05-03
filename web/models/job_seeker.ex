@@ -127,25 +127,8 @@ defmodule Vae.JobSeeker do
     Ecto.Adapters.SQL.query!(Repo, sql, [start_date, end_date])
   end
 
-  def list_from_last_month(%Date{} = end_date) do
-    sql = """
-      SELECT
-        DISTINCT email,
-        identifier,
-        first_name,
-        last_name,
-        telephone,
-        postal_code,
-        experience,
-        education_level,
-        events
-      FROM job_seekers, jsonb_array_elements(events) AS e
-      WHERE (e->>'time')::timestamp::date = $1
-    """
-
-    start_date = get_previous_month(end_date)
-
-    Ecto.Adapters.SQL.query!(Repo, sql, [start_date])
+  def get_previous_month(date) do
+    Timex.shift(date, months: -1)
   end
 
   defp get_first_day_of_previous_month(date) do
@@ -154,10 +137,6 @@ defmodule Vae.JobSeeker do
 
   defp get_last_day_of_previous_month(date) do
     get_previous_month(date) |> Timex.end_of_month()
-  end
-
-  defp get_previous_month(date) do
-    Timex.shift(date, months: -1)
   end
 
   defp put_event(changeset, event, events) do
