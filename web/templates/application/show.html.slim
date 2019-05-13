@@ -136,7 +136,10 @@
           .card
             .card-header data-toggle="collapse" data-target="#exp-#{Vae.String.parameterize(label)}-#{Vae.String.parameterize(company_name)}" style="cursor: pointer;"
               strong= company_name
-              = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} en tant que #{label} totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
+              = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
+              = if label != "Métier indéterminé" do
+                = "en tant que #{label} "
+              = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
               = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
               small
                 = " (détails "
