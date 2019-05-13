@@ -80,7 +80,7 @@
                     .form-check
                       input.form-check-input id="contact_booklet_1" name="booklet_1" type="checkbox" value=""
                       label.form-check-label for="contact_booklet_1" Recevoir mon dossier d'inscription
-                  button.btn.btn-light
+                  button.btn.btn-light type="submit"
                     = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;", alt: "Votre conseillère VAE"
                     span Recevoir ma synthèse VAE
                 = render_contact_form_data(@conn, @delegate, @certification)
