@@ -12,6 +12,8 @@ defmodule Vae.Application do
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
+    field(:admissible_at, :utc_datetime)
+
     belongs_to(:user, Vae.User, foreign_key: :user_id)
     belongs_to(:delegate, Vae.Delegate, foreign_key: :delegate_id)
     belongs_to(:certification, Vae.Certification, foreign_key: :certification_id)

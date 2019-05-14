@@ -28,7 +28,7 @@ defmodule Vae.CRM.Transactional.Monthly do
       [
         %Email{
           custom_id: Atom.to_string(custom_id),
-          job_seeker: application.user.job_seeker,
+          to: %{Email: application.user.email, Name: "#{application.user.name}"},
           vars: %{
             application_id: application.id
           },

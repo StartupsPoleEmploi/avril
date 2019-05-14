@@ -6,30 +6,6 @@ defmodule Vae.ApplicationController do
   alias Vae.{Application, Delegate, User}
   alias Vae.CRM.Polls
 
-  def show(conn, %{"id" => id, "admissible" => bool} = params) when bool in [true, false] do
-    Repo.get(Application, id)
-    |> case do
-      nil ->
-        redirect(conn, to: root_path(conn, :index))
-
-      application ->
-        if bool == true do
-          application
-          |> Ecto.Changeset.change(admissible: true)
-          |> Repo.update!()
-
-          conn
-          |> put_flash(:info, "Merci pour votre réponse")
-          |> redirect(to: root_path(conn, :index))
-        else
-          url_form = Polls.define_form_url_from_application(application)
-
-          conn
-          |> redirect(external: url_form)
-        end
-    end
-  end
-
   def show(conn, %{"id" => id} = params) do
     application =
       case Repo.get(Application, id) do
@@ -121,6 +97,38 @@ defmodule Vae.ApplicationController do
         conn
         |> put_flash(:error, msg)
         |> redirect(to: to)
+    end
+  end
+
+  def eligible(conn, %{"id" => id}) do
+    Repo.get(Application, id)
+    |> case do
+      nil ->
+        redirect(conn, to: root_path(conn, :index))
+
+      application ->
+        application
+        |> Ecto.Changeset.change(admissible_at: DateTime.utc_now())
+        |> Repo.update!()
+
+        conn
+        |> put_flash(:success, "Merci pour votre réponse")
+        |> redirect(to: root_path(conn, :index))
+    end
+  end
+
+  def ineligible(conn, %{"id" => id}) do
+    Repo.get(Application, id)
+    |> Repo.preload(delegate: :certifiers)
+    |> case do
+      nil ->
+        redirect(conn, to: root_path(conn, :index))
+
+      application ->
+        url_form = Polls.define_form_url_from_application(application)
+
+        conn
+        |> redirect(external: url_form)
     end
   end
 
