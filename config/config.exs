@@ -85,6 +85,7 @@ config :vae,
     application_submitted_to_user_id: 764_589,
     campaign_template_id: 512_948,
     vae_recap_template_id: 529_420,
+    asp_vae_recap_template_id: 833_668,
     contact_template_id: 543_455,
     from_email: "contact@avril.pole-emploi.fr",
     from_name: "Avril"
