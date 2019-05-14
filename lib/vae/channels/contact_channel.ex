@@ -30,6 +30,7 @@ defmodule Vae.ContactChannel do
     delegate = Repo.get(Delegate, body["delegate"])
 
     %{
+      "job" => body["certification"],
       "delegate_city" => Places.get_city(delegate.geolocation),
       "delegate_name" => delegate.name,
       "delegate_email" => delegate.email,
