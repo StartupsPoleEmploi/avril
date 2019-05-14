@@ -77,13 +77,14 @@ defmodule Vae.Rome do
   end
 
   def subcategories(rome) do
-    %{subcategory: subcategory} = __MODULE__.code_parts(rome)
-    query = from m in __MODULE__, where: like(m.code, ^subcategory)
+    %{category: category} = __MODULE__.code_parts(rome)
+    query = from m in __MODULE__, where: like(m.code, ^("#{category}__"))
     Repo.all(query)
   end
 
   def romes(rome) do
-    query = from m in __MODULE__, where: like(m.code, ^rome.code)
+    %{subcategory: subcategory} = __MODULE__.code_parts(rome)
+    query = from m in __MODULE__, where: like(m.code, ^("#{String.pad_trailing(subcategory, 5, "_")}"))
     Repo.all(query)
   end
 
