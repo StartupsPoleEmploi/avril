@@ -7,10 +7,6 @@ defmodule Vae.CRM.CrmSupervisor do
     DynamicSupervisor.start_link(__MODULE__, :no_args, name: @name)
   end
 
-  def start_link(_arg) do
-    start_link()
-  end
-
   def init(:no_args) do
     DynamicSupervisor.init(strategy: :one_for_one)
   end

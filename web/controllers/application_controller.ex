@@ -100,7 +100,7 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def eligible(conn, %{"id" => id}) do
+  def admissible(conn, %{"id" => id}) do
     Repo.get(Application, id)
     |> case do
       nil ->
@@ -117,7 +117,7 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def ineligible(conn, %{"id" => id}) do
+  def inadmissible(conn, %{"id" => id}) do
     Repo.get(Application, id)
     |> Repo.preload(delegate: :certifiers)
     |> case do
