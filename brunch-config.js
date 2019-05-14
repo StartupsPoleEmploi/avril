@@ -5,7 +5,6 @@ exports.config = {
       joinTo: {
         "js/app.js": ["web/static/js/*.js", /node_modules/],
         "js/vendor.js": ["web/static/vendor/awesomplete-util.min.js"],
-        "js/analytics.js": ["web/static/js/analytics.js"],
         "js/ex_admin_common.js": ["web/static/vendor/ex_admin_common.js"],
         "js/admin_lte2.js": ["web/static/vendor/admin_lte2.js"],
         // TODO: we need jquery minified for prod...
