@@ -30,6 +30,7 @@ defmodule Vae.ContactChannel do
     delegate = Repo.get(Delegate, body["delegate"])
 
     %{
+      "job" => body["certification"],
       "delegate_city" => Places.get_city(delegate.geolocation),
       "delegate_name" => delegate.name,
       "delegate_email" => delegate.email,
@@ -37,6 +38,7 @@ defmodule Vae.ContactChannel do
       "delegate_phone_number" => delegate.telephone,
       "delegate_website" => delegate.website,
       "delegate_person_name" => delegate.person_name,
+      "delegate_is_asp" => Delegate.is_asp?(delegate),
       "process" => delegate.process_id
     }
     |> Enum.filter(fn {_, v} -> v != nil end)
@@ -77,7 +79,7 @@ defmodule Vae.ContactChannel do
     body
     |> generic_message()
     |> Map.merge(%{
-      TemplateID: @mailjet_conf[:vae_recap_template_id],
+      TemplateID: if body["delegate_is_asp"], do: @mailjet_conf[:asp_vae_recap_template_id], else: @mailjet_conf[:vae_recap_template_id],
       ReplyTo: Mailjet.avril_email(),
       To: Mailjet.build_to(%{Email: body["email"], Name: get_name(body)}),
       Attachments:

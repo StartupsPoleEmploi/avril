@@ -66,8 +66,8 @@ function contact(event) {
   // Now that you are connected, you can join channels with a topic:
   let channel = socket.channel("contact:send", {})
   channel.join()
-  $('.request-contact button').prop('disabled', true)
-  const contactData = $(this).serializeJSON()
+  $(event.target).find('button[type=submit]').prop('disabled', true)
+  var contactData = $(event.target).serializeJSON()
   event.preventDefault()
   channel.push("contact_request", {
       body: Object.assign({}, contactData, {
@@ -77,7 +77,7 @@ function contact(event) {
         county: window.county
       })
     })
-    .receive("ok", () => {
+    .receive("ok", function() {
       $('.request-contact').addClass('d-none')
       $('.result-contact').removeClass('d-none')
       channel.leave()
@@ -85,7 +85,7 @@ function contact(event) {
 };
 
 $(function() {
-  $('.request-contact form').submit(contact)
+  $('form.contact-form').submit(contact)
 });
 
 export default socket
