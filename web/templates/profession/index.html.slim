@@ -1,34 +1,33 @@
-.container
-  .m-4
-    h1.h4 Métiers possibles
+.m-4
+  h1.h4 Métiers possibles
 
-  .row
-    .col-md-9
-      = for profession <- @professions do
-        .my-4.card.p-0.p-md-2
-          .card-body
-            h2.h5.card-title
-              = link(profession.label, to: certification_path(@conn, :index, rome: profession.rome))
-            .d-flex
-              .ml-auto
-                = link(to: certification_path(@conn, :index, rome: profession.rome), aria_label: "Les diplômes pour #{profession.label}", class: "btn btn-sm btn-primary d-flex align-items-center") do
-                  span.ic-icon.ic-tail-right-2.mr-2
-                  span Les diplômes
-    .col
-      h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
-      = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Comment bien choisir son diplôme ?
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Les Points Relais Conseil
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
+.row
+  .col-md-9
+    = for profession <- @professions do
+      .my-4.card.p-0.p-md-2
+        .card-body
+          h2.h5.card-title
+            = link(profession.label, to: certification_path(@conn, :index, rome: profession.rome))
+          .d-flex
+            .ml-auto
+              = link(to: certification_path(@conn, :index, rome: profession.rome), aria_label: "Les diplômes pour #{profession.label}", class: "btn btn-sm btn-primary d-flex align-items-center") do
+                span.ic-icon.ic-tail-right-2.mr-2
+                span Les diplômes
+  .col
+    h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
+    = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
+      h5.mb-5 Comment bien choisir son diplôme ?
+      div.d-flex
+        div.mr-4
+          span.ic-icon.ic-time-clock.mr-2
+          | 4 minutes
+        = img_tag '/images/play.svg', alt: 'lecture'
+    = link to: page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
+      h5.mb-5 Les Points Relais Conseil
+      div.d-flex
+        div.mr-4
+          span.ic-icon.ic-time-clock.mr-2
+          | 4 minutes
+        = img_tag '/images/play.svg', alt: 'lecture'
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &profession_path/3

@@ -14,7 +14,7 @@ defmodule Vae.ProfessionController do
     render(conn, "index.html",
       professions: page.entries,
       page: page,
-      with_search: true
+      with_search: false
     )
   end
 end
