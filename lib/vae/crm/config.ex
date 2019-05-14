@@ -1,4 +1,4 @@
-defmodule Vae.CRM.Config do
+defmodule Vae.Crm.Config do
   def get_monthly_template_id do
     get_monthly_config()
     |> get_template_id()

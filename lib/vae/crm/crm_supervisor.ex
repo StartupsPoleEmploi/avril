@@ -1,4 +1,4 @@
-defmodule Vae.CRM.CrmSupervisor do
+defmodule Vae.Crm.CrmSupervisor do
   use DynamicSupervisor
 
   @name CrmSupervisor
@@ -12,7 +12,7 @@ defmodule Vae.CRM.CrmSupervisor do
   end
 
   def add_email_handler(type) do
-    DynamicSupervisor.start_child(@name, {Vae.CRM.Handler, type})
+    DynamicSupervisor.start_child(@name, {Vae.Crm.Handler, type})
   end
 
   def terminate(handler_pid) do

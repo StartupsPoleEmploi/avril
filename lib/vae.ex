@@ -9,7 +9,7 @@ defmodule Vae do
       supervisor(Vae.Endpoint, []),
       supervisor(Vae.Event.EventSupervisor, []),
       supervisor(Vae.Statistics.StatisticsSupervisor, []),
-      supervisor(Vae.CRM.CrmSupervisor, []),
+      supervisor(Vae.Crm.CrmSupervisor, []),
       worker(Vae.Scheduler, []),
       worker(Vae.Places.Cache, []),
       Vae.OAuth.Clients

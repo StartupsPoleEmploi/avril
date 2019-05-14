@@ -1,8 +1,8 @@
-defmodule Vae.CRM.Handler do
+defmodule Vae.Crm.Handler do
   require Logger
   use GenServer
 
-  alias Vae.CRM.Transactional.Monthly
+  alias Vae.Crm.Transactional.Monthly
 
   def child_spec(type) do
     %{
@@ -23,11 +23,11 @@ defmodule Vae.CRM.Handler do
 
   def handle_call({:execute, from_date}, _from, :monthly = state) do
     Monthly.execute(from_date)
-    {:reply, [], state}
+    {:reply, :ok, state}
   end
 
   def handle_call({:execute, _args}, _from, state) do
     Logger.error(fn -> inspect("Unable to execute #{state}, the type #{state} is unknown") end)
-    {:reply, [], state}
+    {:reply, :ok, state}
   end
 end

@@ -1,8 +1,8 @@
-defmodule Vae.CRM.Transactional.Monthly do
+defmodule Vae.Crm.Transactional.Monthly do
   alias Vae.Application, as: JsApplication
 
   alias Vae.Mailer.Email
-  alias Vae.CRM.Config
+  alias Vae.Crm.Config
 
   @sender Application.get_env(:vae, :sender)
 
