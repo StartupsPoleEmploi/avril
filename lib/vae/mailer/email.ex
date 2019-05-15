@@ -1,8 +1,11 @@
 defmodule Vae.Mailer.Email do
   defstruct(
+    to: %{},
     custom_id: nil,
     job_seeker: nil,
     state: :pending,
+    template_id: nil,
+    vars: %{},
     errors: []
   )
 

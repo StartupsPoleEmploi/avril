@@ -25,9 +25,34 @@ defmodule Vae.Mailer.Sender.Mailjet do
     job_seeker.geolocation["administrative"] |> List.first()
   end
 
+  defp build_message(email, utm_campaign \\ "mj-#{Date.utc_today() |> to_string()}")
+
+  defp build_message(
+         %Email{
+           custom_id: custom_id,
+           job_seeker: nil,
+           template_id: template_id,
+           to: to,
+           vars: vars
+         },
+         _utm_campaign
+       ) do
+    %{
+      TemplateID: template_id,
+      TemplateLanguage: true,
+      TemplateErrorDeliver: Application.get_env(:vae, :mailjet_template_error_deliver),
+      TemplateErrorReporting: Application.get_env(:vae, :mailjet_template_error_reporting),
+      From: generic_from(),
+      ReplyTo: avril_email(),
+      Variables: vars,
+      To: build_to(to),
+      CustomID: custom_id
+    }
+  end
+
   defp build_message(
          %Email{custom_id: custom_id, job_seeker: job_seeker},
-         utm_campaign \\ "mj-#{Date.utc_today() |> to_string()}"
+         utm_campaign
        ) do
     with email when not is_nil(email) <- get_email(job_seeker),
          first_name <- get_first_name(job_seeker),
@@ -53,6 +78,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
     Mailjex.Delivery.send(%{
       Messages: [message]
     })
+    |> IO.inspect()
   end
 
   defp get_email(job_seeker), do: get_in(job_seeker, [Access.key(:email)])

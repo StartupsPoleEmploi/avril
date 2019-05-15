@@ -68,6 +68,9 @@ defmodule Vae.Router do
     resources("/diplomes", CertificationController, only: [:index, :show])
 
     # Loggued in applications
+    get("/candidatures/:id/admissible", ApplicationController, :admissible)
+    get("/candidatures/:id/inadmissible", ApplicationController, :inadmissible)
+
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
       get("/telecharger", ApplicationController, :download, as: :download)
     end

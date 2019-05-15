@@ -127,16 +127,16 @@ defmodule Vae.JobSeeker do
     Ecto.Adapters.SQL.query!(Repo, sql, [start_date, end_date])
   end
 
+  def get_previous_month(date) do
+    Timex.shift(date, months: -1)
+  end
+
   defp get_first_day_of_previous_month(date) do
     get_previous_month(date) |> Timex.beginning_of_month()
   end
 
   defp get_last_day_of_previous_month(date) do
     get_previous_month(date) |> Timex.end_of_month()
-  end
-
-  defp get_previous_month(date) do
-    Timex.shift(date, months: -1)
   end
 
   defp put_event(changeset, event, events) do
