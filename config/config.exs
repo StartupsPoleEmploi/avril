@@ -34,6 +34,7 @@ config :ex_admin,
   repo: Vae.Repo.NewRelic,
   module: Vae,
   modules: [
+    Vae.ExAdmin.Application,
     Vae.ExAdmin.Dashboard,
     Vae.ExAdmin.Certification,
     Vae.ExAdmin.Delegate,
