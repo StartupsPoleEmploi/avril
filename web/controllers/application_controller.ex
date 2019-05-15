@@ -134,7 +134,7 @@ defmodule Vae.ApplicationController do
 
   defp has_access?(conn, application, nil) do
     if not is_nil(application) do
-      if Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id do
+      if Coherence.logged_in?(conn) && ((Coherence.current_user(conn).id == application.user.id) || Coherence.current_user(conn).is_admin) do
         {:ok, application}
       else
         {:error,

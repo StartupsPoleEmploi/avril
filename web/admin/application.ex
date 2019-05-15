@@ -23,6 +23,26 @@ defmodule Vae.ExAdmin.Application do
       actions()
     end
 
+    action_item :show, fn id ->
+      application = Vae.Repo.get(Vae.Application, id)
+      href = Vae.Router.Helpers.application_path(Vae.Endpoint, :show, application,
+        hash: application.delegate_access_hash
+      )
+      action_item_link "View Delegate Application", href: href, target: "_blank"
+    end
+
+    action_item :show, fn id ->
+      application = Vae.Repo.get(Vae.Application, id)
+      href = Vae.Router.Helpers.application_path(Vae.Endpoint, :update, application)
+      action_item_link "Submit Application", href: href, "data-method": :put
+    end
+
+    action_item :show, fn id ->
+      application = Vae.Repo.get(Vae.Application, id)
+      href = Vae.Router.Helpers.application_download_path(Vae.Endpoint, :download, application)
+      action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
+    end
+
     show application do
       attributes_table do
         row :user
@@ -40,10 +60,6 @@ defmodule Vae.ExAdmin.Application do
         input application, :delegate, collection: Repo.all(Delegate)
       end
     end
-
-    member_action :submit_application, &__MODULE__.submit_application/2
-
-
     query do
       %{
         all: [
@@ -51,11 +67,5 @@ defmodule Vae.ExAdmin.Application do
         ]
       }
     end
-  end
-
-  def submit_application(conn, params) do
-    application = Repo.get(Application, params[:id])
-    Application.submit(application)
-    Controller.redirect(to: ExAdmin.Utils.admin_application_path(conn, :show, params[:id]))
   end
 end
