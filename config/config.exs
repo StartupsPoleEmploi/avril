@@ -39,7 +39,8 @@ config :ex_admin,
     Vae.ExAdmin.Certification,
     Vae.ExAdmin.Delegate,
     Vae.ExAdmin.Certifier,
-    Vae.ExAdmin.Process
+    Vae.ExAdmin.Process,
+    Vae.ExAdmin.User
   ]
 
 config :xain, :after_callback, {Phoenix.HTML, :raw}
@@ -54,7 +55,10 @@ config :coherence,
   logged_out_url: "/",
   email_from_name: "Avril",
   email_from_email: "avril@pole-emploi.fr",
-  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token]
+  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
+  session_model: Vae.Session,
+  session_repo: Vae.Repo,
+  schema_key: :id
 
 config :coherence, :layout, {Vae.LayoutView, :app}
 
