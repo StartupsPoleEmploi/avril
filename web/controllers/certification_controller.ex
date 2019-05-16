@@ -124,11 +124,8 @@ defmodule Vae.CertificationController do
     filter_values
     |> Map.drop([:rome_code])
     |> Map.put(:rome, get_rome(filter_values))
-    |> Map.put(:delegate, get_delegate(filter_values))
+    |> Map.put(:delegate, get_delegate(filter_values, nil))
   end
-
-  defp get_delegate(%{delegate: d}) when not is_nil(d), do: Delegate.get(d)
-  defp get_delegate(_), do: nil
 
   defp get_rome(%{rome: r}) when not is_nil(r), do: Rome.get(r)
   defp get_rome(%{rome_code: rc}) when not is_nil(rc), do: Rome.get_by_code(rc)
@@ -180,8 +177,10 @@ defmodule Vae.CertificationController do
     end
   end
 
+  defp get_delegate(%{delegate: d}, nil) when not is_nil(d), do: Delegate.get(d)
+
   defp get_delegate(%{"certificateur" => delegate_id}, _certification)
-    when not (is_nil(delegate_id) or delegate_id == "") do
+       when not (is_nil(delegate_id) or delegate_id == "") do
     Delegate
     |> Repo.get(delegate_id)
     |> Repo.preload(:process)
@@ -192,8 +191,8 @@ defmodule Vae.CertificationController do
     SearchDelegate.get_delegate(
       certification,
       geo,
-      params["postcode"],
-      params["administrative"]
+      params[:postcode],
+      params[:administrative]
     )
   end
 
