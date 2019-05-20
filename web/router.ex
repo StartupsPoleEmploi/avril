@@ -5,13 +5,20 @@ defmodule Vae.Router do
 
   # alias Redirector
 
+  @user_schema Application.get_env(:coherence, :user_schema)
+  @id_key Application.get_env(:coherence, :schema_key)
+
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug(Coherence.Authentication.Session)
+    plug(Coherence.Authentication.Session,
+      store: Coherence.CredentialStore.Session,
+      db_model: @user_schema,
+      id_key: @id_key
+    )
     #    plug(Vae.Tracker)
   end
 
@@ -21,7 +28,12 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug(Coherence.Authentication.Session, protected: true)
+    plug(Coherence.Authentication.Session,
+      protected: true,
+      store: Coherence.CredentialStore.Session,
+      db_model: @user_schema,
+      id_key: @id_key
+    )
   end
 
   pipeline :admin do
@@ -68,6 +80,9 @@ defmodule Vae.Router do
     resources("/diplomes", CertificationController, only: [:index, :show])
 
     # Loggued in applications
+    get("/candidatures/:id/admissible", ApplicationController, :admissible)
+    get("/candidatures/:id/inadmissible", ApplicationController, :inadmissible)
+
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
       get("/telecharger", ApplicationController, :download, as: :download)
     end

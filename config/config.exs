@@ -34,11 +34,13 @@ config :ex_admin,
   repo: Vae.Repo.NewRelic,
   module: Vae,
   modules: [
+    Vae.ExAdmin.Application,
     Vae.ExAdmin.Dashboard,
     Vae.ExAdmin.Certification,
     Vae.ExAdmin.Delegate,
     Vae.ExAdmin.Certifier,
-    Vae.ExAdmin.Process
+    Vae.ExAdmin.Process,
+    Vae.ExAdmin.User
   ]
 
 config :xain, :after_callback, {Phoenix.HTML, :raw}
@@ -53,7 +55,10 @@ config :coherence,
   logged_out_url: "/",
   email_from_name: "Avril",
   email_from_email: "avril@pole-emploi.fr",
-  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token]
+  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
+  session_model: Vae.Session,
+  session_repo: Vae.Repo,
+  schema_key: :id
 
 config :coherence, :layout, {Vae.LayoutView, :app}
 
@@ -85,6 +90,7 @@ config :vae,
     application_submitted_to_user_id: 764_589,
     campaign_template_id: 512_948,
     vae_recap_template_id: 529_420,
+    asp_vae_recap_template_id: 833_668,
     contact_template_id: 543_455,
     from_email: "contact@avril.pole-emploi.fr",
     from_name: "Avril"

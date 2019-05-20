@@ -7,10 +7,13 @@ defmodule Vae.Application do
   alias Vae.ApplicationEmail
 
   schema "applications" do
-    field(:has_just_been_auto_submitted, :boolean, virtual: true) # Triggers an analytics event at the front
+    # Triggers an analytics event at the front
+    field(:has_just_been_auto_submitted, :boolean, virtual: true)
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
+    field(:admissible_at, :utc_datetime)
+
     belongs_to(:user, Vae.User, foreign_key: :user_id)
     belongs_to(:delegate, Vae.Delegate, foreign_key: :delegate_id)
     belongs_to(:certification, Vae.Certification, foreign_key: :certification_id)
@@ -25,15 +28,19 @@ defmodule Vae.Application do
     |> cast(params, @fields)
   end
 
-  def find_or_create_with_params(%{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params) do
-    Repo.get_by(__MODULE__, params) || case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
-      {:ok, application} -> application
-      {:error, msg} -> nil
-    end
+  def find_or_create_with_params(
+        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params
+      ) do
+    Repo.get_by(__MODULE__, params) ||
+      case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
+        {:ok, application} -> application
+        {:error, msg} -> nil
+      end
   end
+
   def find_or_create_with_params(params), do: nil
 
-  def submit(application, auto_submitted\\false) do
+  def submit(application, auto_submitted \\ false) do
     case application.submitted_at do
       nil ->
         case Repo.update(
@@ -54,12 +61,28 @@ defmodule Vae.Application do
                     submitted_at: DateTime.utc_now()
                   })
                 )
-              error -> error
+
+              error ->
+                error
             end
-          error -> error
+
+          error ->
+            error
         end
-      _ -> {:ok, application}
+
+      _ ->
+        {:ok, application}
     end
+  end
+
+  def list_from_last_month(%Date{} = end_date) do
+    start_date = Vae.JobSeeker.get_previous_month(end_date)
+
+    from(a in __MODULE__,
+      where: fragment("(?)::timestamp::date", a.submitted_at) == ^start_date,
+      preload: [user: [:job_seeker], delegate: [:certifiers]]
+    )
+    |> Repo.all()
   end
 
   defp generate_hash(length) do

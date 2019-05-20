@@ -82,6 +82,14 @@ function contact(event) {
       $('.result-contact').removeClass('d-none')
       channel.leave()
     })
+    // Not working.
+    // TODO: plug this
+    // .receive("timeout", () => console.log("Networking issue...") )
+    // .receive("phx_error", function() {
+    //   $(event.target).find('button[type=submit]').prop('disabled', false)
+    //   $(event.target).append('<p class="alert alert-error">Une erreur est survenue, merci de réessayer plus tard.</p>')
+    // })
+
 };
 
 $(function() {

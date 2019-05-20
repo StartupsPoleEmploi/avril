@@ -70,17 +70,30 @@ config :vae, Vae.Scheduler,
     #  schedule: "00 10 * * 1",
     #  task: &Vae.Mailer.execute/0
     # ],
-    #    statistics_task: [
-    #      timezone: "Europe/Paris",
-    #      schedule: "0 8 14 2 *",
-    #      task: fn ->
-    #        with pid <- Vae.Statistics.init(),
-    #             :ok <- Vae.Statistics.execute(pid),
-    #             :ok <- Vae.Statistics.terminate(pid) do
-    #          Logger.info("Statistics exported successfully !")
-    #        else
-    #          err -> Logger.error(fn -> inspect(err) end)
-    #        end
-    #      end
-    #    ]
+    # statistics_task: [
+    #   timezone: "Europe/Paris",
+    #   schedule: "0 8 14 2 *",
+    #   task: fn ->
+    #     with pid <- Vae.Statistics.init(),
+    #          :ok <- Vae.Statistics.execute(pid),
+    #          :ok <- Vae.Statistics.terminate(pid) do
+    #       Logger.info("Statistics exported successfully !")
+    #     else
+    #       err -> Logger.error(fn -> inspect(err) end)
+    #     end
+    #   end
+    # ],
+    # crm_monthly_task: [
+    #   timezone: "Europe/Paris",
+    #   schedule: "30 10 * * *",
+    #   task: fn ->
+    #     with pid <- Vae.Crm.init(),
+    #          :ok <- Vae.Crm.execute(pid, DateTime.utc_today()),
+    #          :ok <- Vae.Crm.terminate(pid) do
+    #       Logger.info("Monthly emails sent successfuly !")
+    #     else
+    #       err -> Logger.error(fn -> inspect(err) end)
+    #     end
+    #   end
+    # ]
   ]

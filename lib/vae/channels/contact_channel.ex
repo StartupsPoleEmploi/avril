@@ -10,26 +10,36 @@ defmodule Vae.ContactChannel do
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
   def join("contact:send", _message, socket) do
-    {:ok, socket}
+    try do
+      {:ok, socket}
+    rescue
+      e ->
+        {:error, "Une erreur est survenue."}
+    end
   end
 
   def handle_in("contact_request", %{"body" => body}, socket) do
-    delegate_info = get_delegate_info(body)
+    try do
+      delegate_info = get_delegate_info(body)
 
-    body
-    |> Map.merge(delegate_info)
-    |> Map.put_new("contact_delegate", "off")
-    |> Map.put_new("booklet_1", "off")
-    |> add_contact_event()
-    |> send_messages()
+      body
+      |> Map.merge(delegate_info)
+      |> Map.put_new("contact_delegate", "off")
+      |> Map.put_new("booklet_1", "off")
+      |> add_contact_event()
+      |> send_messages()
 
-    {:reply, {:ok, %{}}, socket}
+      {:reply, {:ok, %{}}, socket}
+    rescue
+      e ->
+        {:reply, {:error, "Une erreur est survenue, merci de réessayer plus tard."}}
+    end
   end
 
   defp get_delegate_info(body) do
     delegate = Repo.get(Delegate, body["delegate"])
 
-    %{
+    Map.merge(body, %{
       "delegate_city" => Places.get_city(delegate.geolocation),
       "delegate_name" => delegate.name,
       "delegate_email" => delegate.email,
@@ -37,8 +47,9 @@ defmodule Vae.ContactChannel do
       "delegate_phone_number" => delegate.telephone,
       "delegate_website" => delegate.website,
       "delegate_person_name" => delegate.person_name,
+      "delegate_is_asp" => Delegate.is_asp?(delegate),
       "process" => delegate.process_id
-    }
+    })
     |> Enum.filter(fn {_, v} -> v != nil end)
     |> Enum.into(%{})
   end
@@ -77,7 +88,7 @@ defmodule Vae.ContactChannel do
     body
     |> generic_message()
     |> Map.merge(%{
-      TemplateID: @mailjet_conf[:vae_recap_template_id],
+      TemplateID: (if body["delegate_is_asp"], do: @mailjet_conf[:asp_vae_recap_template_id], else: @mailjet_conf[:vae_recap_template_id]),
       ReplyTo: Mailjet.avril_email(),
       To: Mailjet.build_to(%{Email: body["email"], Name: get_name(body)}),
       Attachments:

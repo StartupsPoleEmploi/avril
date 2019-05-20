@@ -11,7 +11,7 @@ defmodule Vae.CheckAdmin do
       conn
     else
       conn
-      |> put_flash(:error, "Vous n'avez pas accès. Connectez-vous.")
+      |> put_flash(:error, "Vous n'avez pas accès.")
       # |> put_status(:not_found)
       |> halt
     end
