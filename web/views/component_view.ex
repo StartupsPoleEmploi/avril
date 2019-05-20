@@ -176,7 +176,7 @@ defmodule Vae.ComponentView do
   end
 
   def complete_page_title(%{view_module: Vae.CertificationView, meta: m}) do
-    "Diplômes en VAE#{meta_certification(m)}"
+    "Diplômes compatibles avec la VAE#{meta_certification(m)}"
   end
 
   def complete_page_title(%{view_module: Vae.DelegateView, meta: m}) do

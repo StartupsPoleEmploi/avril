@@ -2,23 +2,32 @@ defmodule Vae.Redirector do
   import Phoenix.Controller, only: [put_flash: 3, redirect: 2]
 
   @spec init(Keyword.t) :: Keyword.t
-  def init([to: _] = opts), do: opts
-  def init([external: _] = opts), do: opts
-  def init(_default), do: raise("Missing required to: / external: option in redirect")
+  def init(options) do
+    unless Keyword.get(options, :to) do
+      raise("Missing required to: / external: option in redirect")
+    else
+      options
+    end
+  end
 
   @spec call(Plug.Conn.t, Keyword.t) :: Plug.Conn.t
   def call(conn, options) do
-    %{to: to, flash: flash} = Enum.into(options, %{flash: %{level: :info, msg: "La page demandée n'existe plus. Veuillez démarrer une nouvelle recherche."}})
-    conn
-    |> put_flash(flash[:level], flash[:msg])
-    |> redirect(to: to)
-  end
-  def call(conn, [external: url]) do
-    external = url
-    |> URI.parse
-    |> URI.to_string
+    to = Keyword.get(options, :to)
+    if String.starts_with?(to, "http") do
+      external = to
+      |> URI.parse
+      |> URI.to_string
 
-    redirect(conn, external: external)
+      redirect(conn, external: external)
+    else
+      msg = IO.inspect(Keyword.get(options, :msg))
+      if is_nil(msg), do: conn, else: put_flash(conn, :info, msg)
+      |> redirect(to: reinject_params(to, conn.path_params))
+    end
+  end
+
+  defp reinject_params(to, params) do
+    Regex.replace(~r/:([a-z_-]+)/, to, fn _, x -> params[x] end)
   end
 end
 
