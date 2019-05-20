@@ -52,19 +52,24 @@ defmodule Vae.CertificationController do
   end
 
   def show(conn, params) do
-    certification = Certification.get_certification(params["id"])
+    certification = Certification.get_certification(params["id"] || params["certification_id"])
+    slug = Certification.slug(certification)
+    if slug != params["slug"] do
+      redirect(conn, to: certification_show_path(conn, :show, certification, slug, conn.query_params))
+    else
+      delegate =
+        Map.take(params, ["certificateur"])
+        |> Map.put_new(:geo, %{
+          "lat" => get_session(conn, :search_lat),
+          "lng" => get_session(conn, :search_lng)
+        })
+        |> Map.put_new(:postcode, get_session(conn, :search_postcode))
+        |> Map.put_new(:administrative, get_session(conn, :search_administrative))
+        |> get_delegate(certification)
 
-    delegate =
-      Map.take(params, ["certificateur"])
-      |> Map.put_new(:geo, %{
-        "lat" => get_session(conn, :search_lat),
-        "lng" => get_session(conn, :search_lng)
-      })
-      |> Map.put_new(:postcode, get_session(conn, :search_postcode))
-      |> Map.put_new(:administrative, get_session(conn, :search_administrative))
-      |> get_delegate(certification)
+      redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
+    end
 
-    redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
   end
 
   defp redirect_or_show(conn, certification, nil, _has_delegate) do

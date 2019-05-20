@@ -14,6 +14,7 @@ defmodule Vae.String do
   def parameterize(string, option\\"-") do
     string
       |> String.normalize(:nfd)
+      |> String.replace(~r/[\'’\"]/u, " ")
       |> String.replace(~r/[^A-z\s]/u, "")
       |> String.downcase()
       |> String.trim()

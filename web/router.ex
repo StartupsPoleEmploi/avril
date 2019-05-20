@@ -77,7 +77,9 @@ defmodule Vae.Router do
     # Basic navigation
     resources("/metiers", ProfessionController, only: [:index])
     resources("/certificateurs", DelegateController, only: [:index])
-    resources("/diplomes", CertificationController, only: [:index, :show])
+    resources("/diplomes", CertificationController, only: [:index, :show]) do
+      get("/:slug", CertificationController, :show, as: :show)
+    end
 
     # Loggued in applications
     get("/candidatures/:id/admissible", ApplicationController, :admissible)

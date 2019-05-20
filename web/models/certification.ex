@@ -185,4 +185,9 @@ defmodule Vae.Certification do
     |> Map.take(__schema__(:fields))
     |> Map.drop([:inserted_at, :updated_at, :description])
   end
+
+  # TODO: consider making virtual field? Or even actual DB field
+  def slug(certification) do
+    Vae.String.parameterize("#{certification.acronym} #{certification.label}")
+  end
 end
