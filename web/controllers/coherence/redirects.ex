@@ -52,12 +52,11 @@ defmodule Coherence.Redirects do
   # Example usage
   # Uncomment the following line to return the user to the login form after logging out
   def session_delete(conn, _) do
-    case get_session(conn, :pe_access_token) do
+    case Coherence.current_user(conn).pe_id do
       nil ->
         redirect(conn, to: root_path(conn, :index))
 
-      _ ->
-        token = get_session(conn, :pe_access_token)
+      token ->
 
         url =
           "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
