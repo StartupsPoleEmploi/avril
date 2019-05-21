@@ -9,7 +9,7 @@ defmodule Vae.DelegateController do
     filter certification(query, value, _conn) do
       query
       |> join(:inner, [c], d in assoc(c, :certifications))
-      |> where([d, c], c.id == ^value)
+      |> where([d, c], c.id == ^Vae.String.to_id(value))
     end
   end
 

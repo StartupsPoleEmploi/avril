@@ -26,7 +26,7 @@ defmodule Vae.CertificationController do
       |> where([c, d], d.id == ^Vae.String.to_id(value))
     end
 
-    @options param: :rome
+    @options param: :metier
     filter rome(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
