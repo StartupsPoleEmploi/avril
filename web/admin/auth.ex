@@ -16,7 +16,7 @@ defmodule Vae.CheckAdmin do
         |> redirect(to: "/")
       end
     else
-      halt
+      halt(conn)
     end
   end
 end
