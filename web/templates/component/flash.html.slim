@@ -11,7 +11,7 @@
       span aria-hidden="true" &times;
 
 = if error = get_flash(@conn, :error) do
-  p.alert.alert-warning.m2 role="alert"
+  p.alert.alert-danger.m2 role="alert"
     = error
     button.close aria-label="Close" type="button" data-dismiss="alert"
       span aria-hidden="true" &times;
