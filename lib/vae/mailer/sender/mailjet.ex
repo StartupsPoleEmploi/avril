@@ -78,7 +78,6 @@ defmodule Vae.Mailer.Sender.Mailjet do
     Mailjex.Delivery.send(%{
       Messages: [message]
     })
-    |> IO.inspect()
   end
 
   defp get_email(job_seeker), do: get_in(job_seeker, [Access.key(:email)])
