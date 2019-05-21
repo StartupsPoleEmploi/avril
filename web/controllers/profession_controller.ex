@@ -5,16 +5,23 @@ defmodule Vae.ProfessionController do
 
   alias Vae.Profession
 
-  def index(conn, params) do
-    page =
-      Profession
-      |> preload(:rome)
-      |> Repo.paginate(params)
+  filterable do
+    @options param: [:sort, :order], default: [sort: :label, order: :asc]
+    filter search(query, %{sort: field, order: order}, _conn) do
+      query |> order_by([{^order, ^field}])
+    end
+  end
 
-    render(conn, "index.html",
-      professions: page.entries,
-      page: page,
-      with_search: false
-    )
+  def index(conn, params) do
+    with {:ok, query, filter_values} <- apply_filters(Profession, conn),
+      page <- Repo.paginate(query, params),
+     do:
+
+      render(conn, "index.html",
+        professions: page.entries |> Repo.preload(:rome),
+        meta: filter_values,
+        page: page,
+        with_search: false
+      )
   end
 end

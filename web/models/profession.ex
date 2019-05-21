@@ -15,10 +15,10 @@ defmodule Vae.Profession do
     struct
     |> cast(params, [:label])
     |> cast_assoc(:rome, required: true)
-    |> validate_required([:label])
+    |> slugify()
+    |> validate_required([:label, :slug])
     |> unique_constraint(:label)
     |> assoc_constraint(:rome)
-    |> slugify()
   end
 
   def format_for_index(struct) do
@@ -33,6 +33,6 @@ defmodule Vae.Profession do
   end
 
   def slugify(changeset) do
-    put_change(changeset, :slug, to_slug(changeset.data))
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 end

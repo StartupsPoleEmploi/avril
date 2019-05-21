@@ -93,6 +93,7 @@ defmodule Vae.Router do
     post("/search", SearchController, :search)
 
     # Old URL redirections
+    get("/professions", Redirector, to: "/metiers")
     get("/delegates/:id", Redirector, to: "/diplomes?certificateur=:id")
     get("/certifications", Redirector, to: "/diplomes")
     get("/certifications/:id", Redirector, to: "/diplomes/:id")

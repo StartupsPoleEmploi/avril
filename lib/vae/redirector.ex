@@ -4,7 +4,7 @@ defmodule Vae.Redirector do
   @spec init(Keyword.t) :: Keyword.t
   def init(options) do
     unless Keyword.get(options, :to) do
-      raise("Missing required to: / external: option in redirect")
+      raise("Missing required to: option in redirect")
     else
       options
     end
@@ -20,8 +20,8 @@ defmodule Vae.Redirector do
 
       redirect(conn, external: external)
     else
-      msg = IO.inspect(Keyword.get(options, :msg))
-      if is_nil(msg), do: conn, else: put_flash(conn, :info, msg)
+      msg = Keyword.get(options, :msg)
+      (if msg, do: put_flash(conn, :info, msg), else: conn)
       |> redirect(to: reinject_params(to, conn.path_params))
     end
   end

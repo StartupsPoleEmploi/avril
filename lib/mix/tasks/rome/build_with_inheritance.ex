@@ -19,11 +19,13 @@ defmodule Mix.Tasks.Rome.BuildWithInheritance do
         "label" => label
       } ->
         case Repo.get_by(Rome, code: "#{letter}#{category}#{subcategory}") do
-          nil -> Repo.insert(Rome.changeset(%Rome{}, %{
+
+          nil ->
+            Repo.insert(Rome.changeset(%Rome{}, %{
               code: "#{letter}#{category}#{subcategory}",
               label: label
             }))
-          rome -> IO.inspect("rome exists")
+          rome -> IO.write("rome exists")
         end
     end)
   end

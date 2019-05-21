@@ -207,7 +207,7 @@ defmodule Vae.Delegate do
   end
 
   def slugify(changeset) do
-    put_change(changeset, :slug, to_slug(changeset.data))
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
   defimpl Phoenix.Param, for: Vae.Delegate do

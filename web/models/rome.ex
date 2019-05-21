@@ -26,8 +26,8 @@ defmodule Vae.Rome do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:code, :label, :url])
-    |> validate_required([:code, :label])
     |> slugify
+    |> validate_required([:code, :label, :slug])
   end
 
   def all do
@@ -95,7 +95,7 @@ defmodule Vae.Rome do
   end
 
   def slugify(changeset) do
-    put_change(changeset, :slug, to_slug(changeset.data))
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
   defimpl Phoenix.Param, for: Vae.Rome do

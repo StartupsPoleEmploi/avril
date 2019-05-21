@@ -31,8 +31,8 @@ defmodule Vae.Certifier do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name])
-    |> validate_required([:name])
     |> slugify
+    |> validate_required([:name, :slug])
   end
 
   def to_slug(certifier) do
@@ -40,7 +40,7 @@ defmodule Vae.Certifier do
   end
 
   def slugify(changeset) do
-    put_change(changeset, :slug, to_slug(changeset.data))
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
   defimpl Phoenix.Param, for: Vae.Certifier do

@@ -64,11 +64,11 @@ defmodule Vae.Certification do
       :rncp_id,
       :description
     ])
-    |> validate_required([:label])
+    |> slugify()
+    |> validate_required([:label, :slug])
     |> add_romes(params)
     |> add_certifiers(params)
     |> add_delegates(params)
-    |> slugify()
   end
 
   def get(nil), do: nil
@@ -193,7 +193,7 @@ defmodule Vae.Certification do
   end
 
   def slugify(changeset) do
-    put_change(changeset, :slug, to_slug(changeset.data))
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
   defimpl Phoenix.Param, for: Vae.Certification do
