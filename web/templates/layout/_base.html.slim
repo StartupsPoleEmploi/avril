@@ -7,6 +7,13 @@ html{lang="fr"}
 
     title = ComponentView.page_title(@assigns[:title], @assigns)
 
+    = if Mix.env == :prod do
+      = render ComponentView, "analytics", conn: @conn
+      javascript:
+        window.disableGa = function() {
+          window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;
+          window['ga-disable-<%= System.get_env("GA_PE_API_KEY") %>'] = true;
+        };
     link rel="icon" type="image/x-icon" href=static_path(@conn,"/favicon.ico")
     link href=static_path(@conn,"/css/app.css") rel="stylesheet"
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
@@ -23,9 +30,3 @@ html{lang="fr"}
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn
       = render ComponentView, "crisp", conn: @conn
-      = render ComponentView, "analytics", conn: @conn
-      javascript:
-        window.disableGa = function() {
-          window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;
-          window['ga-disable-<%= System.get_env("GA_PE_API_KEY") %>'] = true;
-        };
