@@ -21,7 +21,7 @@ defmodule Vae.DelegateController do
 
     with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
          page <- Repo.paginate(filtered_query, params),
-         meta <- enrich_filter_values(filter_values) do
+         meta <- enrich_filter_values(Vae.Map.params_with_ids(filter_values)) do
       render(conn, "index.html",
         delegates: page.entries,
         page: page, meta: meta,

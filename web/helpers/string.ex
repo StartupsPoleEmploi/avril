@@ -20,4 +20,10 @@ defmodule Vae.String do
       |> String.trim()
       |> String.replace(~r/\s+/, option)
   end
+
+  def to_id(param) when is_binary(param) do
+    if Regex.match?(~r/^\d+\-.*/, param), do: String.to_integer(List.first(String.split(param, "-"))), else: param
+  end
+  def to_id(v), do: v
+
 end

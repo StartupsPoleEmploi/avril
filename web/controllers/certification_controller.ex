@@ -23,21 +23,21 @@ defmodule Vae.CertificationController do
     filter delegate(query, value, _conn) do
       query
       |> join(:inner, [d], d in assoc(d, :delegates))
-      |> where([c, d], d.id == ^value)
+      |> where([c, d], d.id == ^Vae.String.to_id(value))
     end
 
     @options param: :rome
     filter rome(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.id == ^List.first(String.split(value, "-")))
+      |> where([c, r], r.id == ^Vae.String.to_id(value))
     end
 
     @options param: :rome_code
     filter rome_code(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.code == ^value)
+      |> where([c, r], r.code == ^Vae.String.to_id(value))
     end
   end
 
@@ -53,20 +53,20 @@ defmodule Vae.CertificationController do
 
   def show(conn, params) do
     [id | [slug | _rest]] = String.split(params["id"], "-", parts: 2)
-    IO.inspect(slug)
     certification = Certification.get_certification(id)
     if certification.slug != slug do
       redirect(conn, to: certification_path(conn, :show, certification, conn.query_params))
     else
       delegate =
-        Map.take(params, ["certificateur"])
-        |> Map.put_new(:geo, %{
-          "lat" => get_session(conn, :search_lat),
-          "lng" => get_session(conn, :search_lng)
-        })
-        |> Map.put_new(:postcode, get_session(conn, :search_postcode))
-        |> Map.put_new(:administrative, get_session(conn, :search_administrative))
-        |> get_delegate(certification)
+       get_delegate(%{
+          "certificateur" => Vae.String.to_id(params["certificateur"]),
+          geo: %{
+            "lat" => get_session(conn, :search_lat),
+            "lng" => get_session(conn, :search_lng)
+          },
+          postcode: get_session(conn, :search_postcode),
+          administrative: get_session(conn, :search_administrative)
+        }, certification)
 
       redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
     end
@@ -112,7 +112,7 @@ defmodule Vae.CertificationController do
   defp list(conn, params) do
     with {:ok, filtered_query, filter_values} <- apply_filters(Certification, conn),
          page <- Repo.paginate(filtered_query, params),
-         meta <- enrich_filter_values(filter_values) do
+         meta <- enrich_filter_values(Vae.Map.params_with_ids(filter_values)) do
       render(
         conn,
         Vae.CertificationView,
