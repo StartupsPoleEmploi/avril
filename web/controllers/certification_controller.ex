@@ -30,7 +30,7 @@ defmodule Vae.CertificationController do
     filter rome(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.id == ^value)
+      |> where([c, r], r.id == ^List.first(String.split(value, "-")))
     end
 
     @options param: :rome_code
@@ -52,10 +52,11 @@ defmodule Vae.CertificationController do
   end
 
   def show(conn, params) do
-    certification = Certification.get_certification(params["id"] || params["certification_id"])
-    slug = Certification.slug(certification)
-    if slug != params["slug"] do
-      redirect(conn, to: certification_show_path(conn, :show, certification, slug, conn.query_params))
+    [id | [slug | _rest]] = String.split(params["id"], "-", parts: 2)
+    IO.inspect(slug)
+    certification = Certification.get_certification(id)
+    if certification.slug != slug do
+      redirect(conn, to: certification_path(conn, :show, certification, conn.query_params))
     else
       delegate =
         Map.take(params, ["certificateur"])

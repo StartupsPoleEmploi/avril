@@ -5,6 +5,7 @@ defmodule Vae.Rome do
   alias __MODULE__
 
   schema "romes" do
+    field(:slug, :string)
     field(:code, :string)
     field(:label, :string)
     field(:url, :string)
@@ -26,6 +27,7 @@ defmodule Vae.Rome do
     struct
     |> cast(params, [:code, :label, :url])
     |> validate_required([:code, :label])
+    |> slugify
   end
 
   def all do
@@ -88,4 +90,17 @@ defmodule Vae.Rome do
     Repo.all(query)
   end
 
+  def to_slug(rome) do
+    Vae.String.parameterize(rome.label)
+  end
+
+  def slugify(changeset) do
+    put_change(changeset, :slug, to_slug(changeset.data))
+  end
+
+  defimpl Phoenix.Param, for: Vae.Rome do
+    def to_param(%{id: id, slug: slug}) do
+      "#{id}-#{slug}"
+    end
+  end
 end

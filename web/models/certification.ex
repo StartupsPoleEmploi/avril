@@ -6,6 +6,7 @@ defmodule Vae.Certification do
   alias Vae.{CertificationDelegate, Certifier, Delegate, Rome, Application}
 
   schema "certifications" do
+    field(:slug, :string)
     field(:label, :string)
     field(:acronym, :string)
     field(:level, :integer)
@@ -67,6 +68,7 @@ defmodule Vae.Certification do
     |> add_romes(params)
     |> add_certifiers(params)
     |> add_delegates(params)
+    |> slugify()
   end
 
   def get(nil), do: nil
@@ -186,8 +188,17 @@ defmodule Vae.Certification do
     |> Map.drop([:inserted_at, :updated_at, :description])
   end
 
-  # TODO: consider making virtual field? Or even actual DB field
-  def slug(certification) do
+  def to_slug(certification) do
     Vae.String.parameterize("#{certification.acronym} #{certification.label}")
+  end
+
+  def slugify(changeset) do
+    put_change(changeset, :slug, to_slug(changeset.data))
+  end
+
+  defimpl Phoenix.Param, for: Vae.Certification do
+    def to_param(%{id: id, slug: slug}) do
+      "#{id}-#{slug}"
+    end
   end
 end
