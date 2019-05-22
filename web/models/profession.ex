@@ -23,6 +23,7 @@ defmodule Vae.Profession do
     struct
     |> Map.take(__schema__(:fields))
     |> Map.put_new(:rome_code, struct.rome.code)
+    |> Map.put_new(:length, String.length(struct.label))
     |> Map.drop([:inserted_at, :updated_at])
   end
 end
