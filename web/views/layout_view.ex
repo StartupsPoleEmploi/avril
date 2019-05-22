@@ -46,17 +46,17 @@ defmodule Vae.LayoutView do
     }
   end
 
-  defp dynamic_meta(%{view_module: Vae.CertificationView, meta: m}) do
+  defp dynamic_meta(%{view_module: Vae.CertificationView} = assigns) do
     %{
-      title: "Diplômes compatibles avec la VAE#{meta_certification(m)}",
-      description: "Découvrez l'ensemble des diplômes compatibles avec la VAE#{meta_certification(m)} pour vous lancer sans hésiter."
+      title: "Diplômes compatibles avec la VAE#{meta_certification(Map.get(assigns, :meta))}",
+      description: "Découvrez l'ensemble des diplômes compatibles avec la VAE#{meta_certification(Map.get(assigns, :meta))} pour vous lancer sans hésiter."
     }
   end
 
   defp dynamic_meta(%{view_module: Vae.DelegateView} = assigns) do
     %{
-      title: "Certificateurs VAE#{meta_delegate(assigns.m)}",
-      description: "Trouvez le certificateur qui pourra vous faire obtenir votre diplôme VAE#{meta_delegate(assigns.m)} selon votre situation géographique."
+      title: "Certificateurs VAE#{meta_delegate(Map.get(assigns, :meta))}",
+      description: "Trouvez le certificateur qui pourra vous faire obtenir votre diplôme VAE#{meta_certification(Map.get(assigns, :meta))} selon votre situation géographique."
     }
   end
 

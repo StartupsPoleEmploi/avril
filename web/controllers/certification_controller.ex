@@ -42,12 +42,18 @@ defmodule Vae.CertificationController do
   end
 
   def index(conn, params) do
-    conn_with_geo = save_geo_to_session(conn, params)
-
-    if is_nil(params["rncp_id"]) do
-      list(conn_with_geo, params)
+    if Map.has_key?(IO.inspect(conn.query_params), "rome") do
+      # using the old ?rome=ID instead of ?metier=ID
+      redirect(conn, to: certification_path(conn, :index, Map.put_new(Map.delete(conn.query_params, "rome"), "metier", conn.query_params["rome"])))
     else
-      redirections(conn_with_geo, params)
+
+      conn_with_geo = save_geo_to_session(conn, params)
+
+      if is_nil(params["rncp_id"]) do
+        list(conn_with_geo, params)
+      else
+        redirections(conn_with_geo, params)
+      end
     end
   end
 
@@ -55,6 +61,7 @@ defmodule Vae.CertificationController do
     [id | [slug | _rest]] = String.split(params["id"], "-", parts: 2)
     certification = Certification.get_certification(id)
     if certification.slug != slug do
+      # Slug is not up-to-date
       redirect(conn, to: certification_path(conn, :show, certification, conn.query_params))
     else
       delegate =
@@ -70,7 +77,6 @@ defmodule Vae.CertificationController do
 
       redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
     end
-
   end
 
   defp redirect_or_show(conn, certification, nil, _has_delegate) do

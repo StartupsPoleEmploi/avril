@@ -6,7 +6,7 @@ defmodule Vae.Rome do
 
   schema "romes" do
     field(:slug, :string)
-    field(:code, :string)
+    field(:code, :string) # TODO: make sure this column is indexed so that category navigation is fast
     field(:label, :string)
     field(:url, :string)
 
