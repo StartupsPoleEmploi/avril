@@ -42,8 +42,7 @@ defmodule Vae.Mixfile do
         :persistent_ets,
         :pdf_generator,
         :observer_cli,
-        :oauth2,
-        :swoosh
+        :oauth2
       ]
     ]
   end
@@ -91,8 +90,7 @@ defmodule Vae.Mixfile do
       {:observer_cli, "~> 1.4"},
       {:filterable, "~> 0.7.0"},
       {:oauth2, "~> 0.9"},
-      {:inflex, "~> 1.10.0"},
-      {:swoosh, "~> 0.23"}
+      {:inflex, "~> 1.10.0"}
     ]
   end
 
