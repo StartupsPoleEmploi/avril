@@ -7,7 +7,7 @@ defmodule Mix.Tasks.AddSlugsToModels do
   import Ecto.Query
 
   alias Vae.Repo
-  alias Vae.{Certifier, Delegate, Certification, Profession, Rome}
+  alias Vae.{Certification, Certifier, Delegate, Profession, Rome}
 
   @shortdoc "Add Slugs to Models"
   def run(_args) do

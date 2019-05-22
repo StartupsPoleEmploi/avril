@@ -8,7 +8,7 @@ defmodule Vae.ProfessionController do
   filterable do
     @options param: [:sort, :order], default: [sort: :label, order: :asc]
     filter search(query, %{sort: field, order: order}, _conn) do
-      query |> order_by([{^order, ^field}])
+      order_by(query, [{^order, ^field}])
     end
   end
 
@@ -18,7 +18,7 @@ defmodule Vae.ProfessionController do
      do:
 
       render(conn, "index.html",
-        professions: page.entries |> Repo.preload(:rome),
+        professions: Repo.preload(page.entries, :rome),
         meta: filter_values,
         page: page,
         with_search: false

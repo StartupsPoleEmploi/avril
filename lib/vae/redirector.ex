@@ -3,10 +3,10 @@ defmodule Vae.Redirector do
 
   @spec init(Keyword.t) :: Keyword.t
   def init(options) do
-    unless Keyword.get(options, :to) do
-      raise("Missing required to: option in redirect")
-    else
+    if Keyword.get(options, :to) do
       options
+    else
+      raise("Missing required to: option in redirect")
     end
   end
 
