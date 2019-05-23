@@ -37,9 +37,10 @@ config :ex_admin,
     Vae.ExAdmin.Application,
     Vae.ExAdmin.Dashboard,
     Vae.ExAdmin.Certification,
-    Vae.ExAdmin.Delegate,
     Vae.ExAdmin.Certifier,
+    Vae.ExAdmin.Delegate,
     Vae.ExAdmin.Process,
+    Vae.ExAdmin.Profession,
     Vae.ExAdmin.User
   ]
 
