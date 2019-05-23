@@ -10,7 +10,7 @@ defmodule Mix.Tasks.Rome.BuildWithInheritance do
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
 
-    File.stream!("./priv/fixtures/csv/rome_codes.csv")
+    File.stream!("./priv/rome_codes.csv")
     |> CSV.decode!(headers: true, num_workers: 1)
     |> Enum.each(fn %{
         "letter" => letter,
