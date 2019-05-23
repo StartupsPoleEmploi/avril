@@ -4,6 +4,7 @@ defmodule Vae.Certifier do
   alias Vae.{Certification, Delegate}
 
   schema "certifiers" do
+    field(:slug, :string)
     field(:name, :string)
 
     many_to_many(
@@ -30,6 +31,21 @@ defmodule Vae.Certifier do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name])
-    |> validate_required([:name])
+    |> slugify
+    |> validate_required([:name, :slug])
+  end
+
+  def to_slug(certifier) do
+    Vae.String.parameterize(certifier.name)
+  end
+
+  def slugify(changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
+  end
+
+  defimpl Phoenix.Param, for: Vae.Certifier do
+    def to_param(%{id: id, slug: slug}) do
+      "#{id}-#{slug}"
+    end
   end
 end

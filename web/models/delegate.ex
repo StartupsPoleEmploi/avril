@@ -9,6 +9,7 @@ defmodule Vae.Delegate do
   alias Vae.Places
 
   schema "delegates" do
+    field(:slug, :string)
     field(:name, :string)
     field(:website, :string)
     field(:address, :string)
@@ -78,7 +79,8 @@ defmodule Vae.Delegate do
       :city,
       :administrative
     ])
-    |> validate_required([:name])
+    |> slugify
+    |> validate_required([:name, :slug])
     |> add_certifiers(params)
   end
 
@@ -200,4 +202,17 @@ defmodule Vae.Delegate do
     String.starts_with?(delegate.name, "ASP")
   end
 
+  def to_slug(delegate) do
+    Vae.String.parameterize("#{delegate.name} #{if delegate.name =~ delegate.city, do: "", else: delegate.city} #{if delegate.name =~ delegate.administrative, do: "", else: delegate.administrative}")
+  end
+
+  def slugify(changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
+  end
+
+  defimpl Phoenix.Param, for: Vae.Delegate do
+    def to_param(%{id: id, slug: slug}) do
+      "#{id}-#{slug}"
+    end
+  end
 end

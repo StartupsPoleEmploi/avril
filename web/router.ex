@@ -89,16 +89,16 @@ defmodule Vae.Router do
 
     resources("/profil", UserController, only: [:update])
 
-    get("/certifications", CertificationController, :index)
-
     # Search endpoint
     post("/search", SearchController, :search)
 
     # Old URL redirections
-    get("/delegates/:id", Redirector, to: "/")
-    get("/certifications/:id", Redirector, to: "/")
-    get("/certifiers/:id", Redirector, to: "/")
-    get("/processes/:id", Redirector, to: "/")
+    get("/professions", Redirector, to: "/metiers")
+    get("/delegates/:id", Redirector, to: "/diplomes?certificateur=:id")
+    get("/certifications", Redirector, to: "/diplomes")
+    get("/certifications/:id", Redirector, to: "/diplomes/:id")
+    get("/certifiers/:id", Redirector, to: "/certificateurs?organisme=:id")
+    get("/processes/:id", Redirector, [to: "/", msg: "La page demandée n'existe plus."])
   end
 
   scope "/admin", ExAdmin do

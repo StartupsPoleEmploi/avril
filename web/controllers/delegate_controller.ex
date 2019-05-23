@@ -9,7 +9,7 @@ defmodule Vae.DelegateController do
     filter certification(query, value, _conn) do
       query
       |> join(:inner, [c], d in assoc(c, :certifications))
-      |> where([d, c], c.id == ^value)
+      |> where([d, c], c.id == ^Vae.String.to_id(value))
     end
   end
 
@@ -21,7 +21,7 @@ defmodule Vae.DelegateController do
 
     with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
          page <- Repo.paginate(filtered_query, params),
-         meta <- enrich_filter_values(filter_values) do
+         meta <- enrich_filter_values(Vae.Map.params_with_ids(filter_values)) do
       render(conn, "index.html",
         delegates: page.entries,
         page: page, meta: meta,
