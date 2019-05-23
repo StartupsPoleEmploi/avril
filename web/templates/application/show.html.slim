@@ -8,7 +8,7 @@
           - else
             | Bonjour,
       .col-md-4
-        = form_for @changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
+        = form_for @user_changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
             .col
               .form-group.mb-4
@@ -59,6 +59,22 @@
                   .d-none.save
                     = submit "Enregistrer", class: "btn btn-primary btn-sm"
                     = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
+        .row
+          .col
+            = if @edit_mode && is_nil(@application.resume) do
+              = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
+                .form-group
+                  label for="resume" Uploader mon CV
+                  = file_input f, :file, class: "form-control-file", id: "resume"
+                .form-group
+                  = submit "Envoyer", class: "btn btn-primary btn-sm"
+            - else
+              = link "Télécharger #{if @edit_mode, do: "mon", else: "son"} CV", to: Vae.Resume.web_path(@application.resume), download: "CV #{@application.user.name}#{Path.extname(@application.resume.filename)}"
+              = link to: application_resume_path(@conn, :delete, @application, @application.resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", style: "margin-left: 1rem; color: initial;" do
+                span.fa.fa-remove
+    .row
+      .col
+
   = if @edit_mode do
     javascript:
       $('.profile-edit').on('click', '.edit-button', function(e){
@@ -105,7 +121,7 @@
   = if length(@user.skills) > 0 do
     .row
       .col
-        h3 Mes compétences
+        h3 #{if @edit_mode, do: "Mes", else: "Ses"} compétences
     .row.mb-5
       = for skill <- @user.skills do
         .col-sm-4.mb-4
@@ -115,7 +131,7 @@
   = if length(@user.experiences) > 0 do
     .row
       .col
-        h3 Mes expériences professionnelles
+        h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences professionnelles
     .row.mb-5
       = for experience <- Enum.reverse(@user.experiences) do
         .col-md-4.mb-4
@@ -129,7 +145,7 @@
   = if length(@user.proven_experiences) > 0 do
     .row
       .col
-        h3 Mes expériences attestées des 10 dernières années
+        h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences attestées des 10 dernières années
     .row.mb-5
       = for {{company_name, label}, experiences} <- @grouped_experiences do
         .col-md-6.mb-4

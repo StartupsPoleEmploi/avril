@@ -18,6 +18,8 @@ defmodule Vae.Application do
     belongs_to(:delegate, Vae.Delegate, foreign_key: :delegate_id)
     belongs_to(:certification, Vae.Certification, foreign_key: :certification_id)
 
+    has_one(:resume, Vae.Resume)
+
     timestamps()
   end
 
