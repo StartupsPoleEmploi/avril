@@ -14,11 +14,13 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+
     plug(Coherence.Authentication.Session,
       store: Coherence.CredentialStore.Session,
       db_model: @user_schema,
       id_key: @id_key
     )
+
     #    plug(Vae.Tracker)
   end
 
@@ -28,6 +30,7 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+
     plug(Coherence.Authentication.Session,
       protected: true,
       store: Coherence.CredentialStore.Session,
@@ -82,6 +85,9 @@ defmodule Vae.Router do
     # Loggued in applications
     get("/candidatures/:id/admissible", ApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", ApplicationController, :inadmissible)
+
+    get("/candidats/:id/admissible", JobSeekerController, :admissible)
+    get("/candidats/:id/inadmissible", JobSeekerController, :inadmissible)
 
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
       get("/telecharger", ApplicationController, :download, as: :download)
