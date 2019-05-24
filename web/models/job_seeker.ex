@@ -63,6 +63,30 @@ defmodule Vae.JobSeeker do
     |> put_event(event, job_seeker.events)
   end
 
+  def admissible(job_seeker) do
+    update_event_changeset(
+      job_seeker,
+      %{
+        type: "answer",
+        event: "admissible",
+        email: job_seeker.email,
+        time: DateTime.utc_now() |> DateTime.to_unix()
+      }
+    )
+  end
+
+  def inadmissible(job_seeker) do
+    update_event_changeset(
+      job_seeker,
+      %{
+        type: "answer",
+        event: "inadmissible",
+        email: job_seeker.email,
+        time: DateTime.utc_now() |> DateTime.to_unix()
+      }
+    )
+  end
+
   def update_analytics_changeset(job_seeker, :new, analytic) do
     job_seeker
     |> change()
