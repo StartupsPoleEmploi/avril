@@ -202,9 +202,8 @@ defmodule Vae.Delegate do
     String.starts_with?(delegate.name, "ASP")
   end
 
-  def to_slug(%Delegate{name: nil}), do: ""
   def to_slug(delegate) do
-    Vae.String.parameterize("#{delegate.name} #{if delegate.name =~ delegate.city, do: "", else: delegate.city} #{if delegate.name =~ delegate.administrative, do: "", else: delegate.administrative}")
+    Vae.String.parameterize("#{delegate.name} #{if (delegate.city && delegate.name =~ delegate.city), do: "", else: delegate.city} #{if (delegate.administrative && delegate.name =~ delegate.administrative), do: "", else: delegate.administrative}")
   end
 
   def slugify(changeset) do
