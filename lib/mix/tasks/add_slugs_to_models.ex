@@ -14,7 +14,7 @@ defmodule Mix.Tasks.AddSlugsToModels do
     ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
-    Enum.each([Certification, Profession, Certifier, Rome], fn klass ->
+    Enum.each([Certification, Delegate, Profession, Certifier, Rome], fn klass ->
       from(p in klass, where: is_nil(p.slug))
       |> Repo.all
       |> Enum.each(fn elem ->
