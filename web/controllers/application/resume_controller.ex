@@ -34,7 +34,7 @@ defmodule Vae.ResumeController do
                   |> put_flash(:error, msg)
                   |> redirect(to: application_path(conn, :show, application))
               end
-            :error ->
+            {:error, :enoent} ->
               conn
               |> put_flash(:error, "Le fichier n'a pas pu être enregistrer. Merci de réessayer plus tard ou de nous contacter.")
               |> redirect(to: application_path(conn, :show, application))
