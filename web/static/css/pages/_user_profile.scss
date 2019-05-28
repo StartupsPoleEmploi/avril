@@ -1,7 +1,12 @@
 .user-profile {
 
+  h3 {
+    margin-bottom: 1rem;
+  }
+
   .jumbotron {
     background: $white;
+    border: thin solid $dm-primary-grey;
   }
 
 
@@ -26,5 +31,9 @@
         }
       }
     }
+  }
+
+  .card-header {
+    background: $white;
   }
 }

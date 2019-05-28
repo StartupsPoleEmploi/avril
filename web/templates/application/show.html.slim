@@ -1,13 +1,20 @@
 .user-profile
+  .row.my-4
+    .col-md-6.my-auto
+      h3.my-4 #{@certification.acronym} #{@certification.label}
+    .col-md-6.my-auto
+      .delegate
+        div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
+          span.ic-icon.ic-tail-right
+        = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
+        p style="display: inline-block"
+          strong
+            = @delegate.name
+          br
+          = @delegate.address
   .jumbotron
-    .row
-      .col-md-8
-        h3.mb-4
-          = if @edit_mode do
-            | Bonjour #{@user.first_name},
-          - else
-            | Bonjour,
-      .col-md-4
+    .row.mb-5
+      .col-md-6
         = form_for @user_changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
             .col
@@ -20,28 +27,28 @@
                   = link(@user.email, to: "mailto:#{@user.email}")
           .row
             .col
-              .form-group.address-component.mb-2
+              .form-group.address-component.mb-0
                 .input-group
                   = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: true
                   .input-group-append
                     button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
                 = error_tag f, :address4
-              .form-group.address-component.mb-2 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
+              .form-group.address-component.mb-0 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
                 = text_input f, :address3, class: "form-control", placeholder: "Complément de distribution", disabled: true
                 = error_tag f, :address3
-              .form-group.address-component.mb-2 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
+              .form-group.address-component.mb-0 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
                 = text_input f, :address2, class: "form-control", placeholder: "Complément d'adresse", disabled: true
                 = error_tag f, :address2
-              .form-group.address-component.mb-2 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
+              .form-group.address-component.mb-0 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
                 = text_input f, :address1, class: "form-control", placeholder: "Complément destinataire", disabled: true
                 = error_tag f, :address1
           .row
-            .col-4.pr-0
-              .form-group.mb-2
+            .col-3.pr-0
+              .form-group.mb-0
                 = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: true
                 = error_tag f, :postal_code
-            .col-8
-              .form-group.mb-2
+            .col-9
+              .form-group.mb-0
                 = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: true
                 = error_tag f, :city_label
           .row
@@ -61,19 +68,80 @@
                     = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
         .row
           .col
-            = if @edit_mode && is_nil(@application.resume) do
-              = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
-                .form-group
-                  label for="resume" Uploader mon CV
-                  = file_input f, :file, class: "form-control-file", id: "resume"
-                .form-group
-                  = submit "Envoyer", class: "btn btn-primary btn-sm"
-            - else
-              = link "Télécharger #{if @edit_mode, do: "mon", else: "son"} CV", to: Vae.Resume.web_path(@application.resume), download: "CV #{@application.user.name}#{Path.extname(@application.resume.filename)}"
-              = link to: application_resume_path(@conn, :delete, @application, @application.resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", style: "margin-left: 1rem; color: initial;" do
-                span.fa.fa-remove
-    .row
-      .col
+      .col-md-6.text-right
+        = if @edit_mode do
+          = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
+
+    .row.mb-5
+      .col-md-12
+        h3 Mon CV
+      .col-md-12
+        = if @edit_mode && is_nil(@application.resume) do
+          = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
+            .form-group
+              label for="resume" Uploader mon CV
+              = file_input f, :file, class: "form-control-file", id: "resume"
+            .form-group
+              = submit "Envoyer", class: "btn btn-primary btn-sm"
+        - else
+          = link "Télécharger #{if @edit_mode, do: "mon", else: "son"} CV", to: Vae.Resume.web_path(@application.resume), download: "CV #{@application.user.name}#{Path.extname(@application.resume.filename)}"
+          = link to: application_resume_path(@conn, :delete, @application, @application.resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", style: "margin-left: 1rem; color: initial;" do
+            span.fa.fa-remove
+
+
+    = if length(@user.experiences) > 0 do
+      .row
+        .col
+          h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences professionnelles
+      .row.mb-5
+        = for experience <- Enum.reverse(@user.experiences) do
+          .col-md-4.mb-4
+            .card
+              .card-body
+                strong= experience.company
+                = " : #{experience.label}"
+                '
+                = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
+
+    = if length(@user.proven_experiences) > 0 do
+      .row
+        .col
+          h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences attestées des 10 dernières années
+      .row.mb-5
+        = for {{company_name, label}, experiences} <- @grouped_experiences do
+          .col-md-6.mb-4
+            .card
+              .card-header data-toggle="collapse" data-target="#exp-#{Vae.String.parameterize(label)}-#{Vae.String.parameterize(company_name)}" style="cursor: pointer;"
+                strong= company_name
+                = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
+                = if label != "Métier indéterminé" do
+                  = "en tant que #{label} "
+                = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
+                = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
+                small
+                  = " (détails "
+                  span.ic-icon.ic-small-triangle-down style="vertical-align: middle;"
+                  | )
+              .card-body.collapse id="exp-#{Vae.String.parameterize(label)}-#{Vae.String.parameterize(company_name)}"
+                ul
+                  = for exp <- experiences do
+                    li
+                      = "#{exp.duration} heures en #{exp.contract_type}, "
+                      = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
+
+    = if length(@user.skills) > 0 do
+      .row
+        .col
+          h3 #{if @edit_mode, do: "Mes", else: "Ses"} compétences
+      .row.mb-5
+        = for skill <- @user.skills do
+          .col-sm-4.mb-4
+            .card
+              .card-body= skill.label
+
+    = if @edit_mode && (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
+      .row.mb-5.text-center
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
 
   = if @edit_mode do
     javascript:
@@ -102,74 +170,3 @@
             .addClass('d-none')
         }
       });
-
-  .row.mb-5
-    .col-md-8
-      h3 #{@certification.acronym} #{@certification.label}
-      .delegate.my-4
-        div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
-          span.ic-icon.ic-tail-right
-        = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
-        p style="display: inline-block"
-          strong
-            = @delegate.name
-          br
-          = @delegate.address
-    .col-md-4.text-center
-      = if @edit_mode do
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
-  = if length(@user.skills) > 0 do
-    .row
-      .col
-        h3 #{if @edit_mode, do: "Mes", else: "Ses"} compétences
-    .row.mb-5
-      = for skill <- @user.skills do
-        .col-sm-4.mb-4
-          .card
-            .card-body= skill.label
-
-  = if length(@user.experiences) > 0 do
-    .row
-      .col
-        h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences professionnelles
-    .row.mb-5
-      = for experience <- Enum.reverse(@user.experiences) do
-        .col-md-4.mb-4
-          .card
-            .card-body
-              strong= experience.company
-              = " : #{experience.label}"
-              '
-              = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
-
-  = if length(@user.proven_experiences) > 0 do
-    .row
-      .col
-        h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences attestées des 10 dernières années
-    .row.mb-5
-      = for {{company_name, label}, experiences} <- @grouped_experiences do
-        .col-md-6.mb-4
-          .card
-            .card-header data-toggle="collapse" data-target="#exp-#{Vae.String.parameterize(label)}-#{Vae.String.parameterize(company_name)}" style="cursor: pointer;"
-              strong= company_name
-              = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
-              = if label != "Métier indéterminé" do
-                = "en tant que #{label} "
-              = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
-              = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
-              small
-                = " (détails "
-                span.ic-icon.ic-small-triangle-down style="vertical-align: middle;"
-                | )
-            .card-body.collapse id="exp-#{Vae.String.parameterize(label)}-#{Vae.String.parameterize(company_name)}"
-              ul
-                = for exp <- experiences do
-                  li
-                    = "#{exp.duration} heures en #{exp.contract_type}, "
-                    = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
-
-
-  = if @edit_mode && (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
-    .row.mb-5
-      .offset-md-8.col-md-4.text-center
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
