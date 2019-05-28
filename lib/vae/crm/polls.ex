@@ -23,7 +23,11 @@ defmodule Vae.Crm.Polls do
     end
   end
 
-  defp get_default_form_url() do
+  def get_default_form_url() do
     get_in(Config.get_monthly_form_urls(), [:certifiers, :other, :url])
+  end
+
+  def get_default_stock_form_url() do
+    get_in(Config.get_stock_form_urls(), [:certifiers, :default, :url])
   end
 end

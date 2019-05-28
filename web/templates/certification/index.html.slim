@@ -1,9 +1,7 @@
-.container
+div
   = if !(assigns[:no_results] && @no_results) do
-    .m-4
-      h1.h4 Diplômes possibles#{meta_certification(@meta)}
-      / = render Vae.ComponentView, "active_link.html", text: "Diplômes possibles", class: "btn btn-lg btn-link px-0", to: certification_path(@conn, :index), conn: @conn
-      / = render Vae.ComponentView, "active_link.html", text: "Emplois proches", class: "btn btn-lg btn-link px-0 mx-3", to: certification_path(@conn, ?), conn: @conn
+    .my-5
+      h1.h3 Diplômes compatibles avec la VAE #{meta_certification(@meta)}
 
     .m-4.d-flex.flex-column
       select.selectpicker id="level-selector" multiple="multiple"

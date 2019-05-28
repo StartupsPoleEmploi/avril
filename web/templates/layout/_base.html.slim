@@ -5,7 +5,9 @@ html{lang="fr"}
     meta content="IE=edge" http-equiv="X-UA-Compatible"
     meta content="width=device-width, initial-scale=1" name="viewport"
 
-    title = ComponentView.page_title(@assigns[:title], @assigns)
+    - %{title: title, description: description} = meta_data(@assigns)
+    meta name="description" content=description
+    title= title
 
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
