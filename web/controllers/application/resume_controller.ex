@@ -17,6 +17,7 @@ defmodule Vae.ResumeController do
       {:ok, application} ->
         if file = resume_params["file"] do
           new_filename = "#{application.id}-resume-#{Vae.String.parameterize(application.user.name)}#{Path.extname(file.filename)}"
+          File.mkdir_p("/media/vae")
           case File.cp(file.path, "/media/vae/#{new_filename}") do
             :ok ->
               changeset = Resume.changeset(%Resume{}, %{
