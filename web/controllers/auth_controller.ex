@@ -89,7 +89,7 @@ defmodule Vae.AuthController do
   defp get_certification_id_and_delegate_id_from_referer(referer) do
     string_key_map =
       Regex.named_captures(
-        ~r/\/diplomes\/(?<certification_id>\d+)\?certificateur=(?<delegate_id>\d+)/,
+        ~r/\/diplomes\/(?<certification_id>\d+)[0-9a-z\-]*\?certificateur=(?<delegate_id>\d+)[0-9a-z\-]*/,
         referer
       ) || %{}
 
