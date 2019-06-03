@@ -37,13 +37,14 @@ defmodule Vae.AuthController do
     user_status =
       case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
         nil -> User.create_or_associate_with_pe_connect_data(userinfo_api_result.body)
-        user -> {:ok, user |> Repo.preload(:current_application)}
+        user -> {:ok, user}
       end
       |> User.fill_with_api_fields(client_with_token, 3)
 
     application_status =
       case user_status do
         {:ok, user} ->
+          user = Repo.preload(user, :current_application)
           {:ok,
            {user,
             Application.find_or_create_with_params(
