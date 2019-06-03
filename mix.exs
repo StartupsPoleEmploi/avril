@@ -43,7 +43,10 @@ defmodule Vae.Mixfile do
         :pdf_generator,
         :observer_cli,
         :oauth2,
-        :swoosh
+        :swoosh,
+        :ex_aws,
+        :hackney,
+        :poison
       ]
     ]
   end
@@ -92,7 +95,10 @@ defmodule Vae.Mixfile do
       {:filterable, "~> 0.7.0"},
       {:oauth2, "~> 0.9"},
       {:inflex, "~> 1.10.0"},
-      {:swoosh, "~> 0.23"}
+      {:swoosh, "~> 0.23"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:hackney, "~> 1.9"},
     ]
   end
 

@@ -5,6 +5,7 @@ defmodule Vae.Repo.Migrations.CreateResumes do
     create table(:resumes) do
       add :filename, :string
       add :content_type, :string
+      add :url, :string
       add :application_id, references(:applications, on_delete: :nothing)
 
       timestamps()

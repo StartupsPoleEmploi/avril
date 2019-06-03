@@ -16,6 +16,7 @@ defmodule Vae.ApplicationController do
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
         render(conn, "show.html",
+          title: "Candidature VAE de #{application.user.name} pour un diplôme de #{application.certification.label}",
           application: application,
           delegate: application.delegate,
           certification: application.certification,

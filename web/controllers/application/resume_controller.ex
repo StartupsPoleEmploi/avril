@@ -15,29 +15,15 @@ defmodule Vae.ResumeController do
 
     case Vae.ApplicationController.has_access?(conn, application, nil) do
       {:ok, application} ->
-        if file = resume_params["file"] do
-          new_filename = "#{application.id}-resume-#{Vae.String.parameterize(application.user.name)}#{Path.extname(file.filename)}"
-          File.mkdir_p("/media/vae")
-          case File.cp(file.path, "/media/vae/#{new_filename}") do
-            :ok ->
-              changeset = Resume.changeset(%Resume{}, %{
-                content_type: file.content_type,
-                filename: new_filename,
-                application: application,
-              })
-              case Repo.insert(changeset) do
-                {:ok, resume} ->
-                  conn
-                  |> put_flash(:success, "CV uploadé avec succès.")
-                  |> redirect(to: application_path(conn, :show, application))
-                {:error, msg} ->
-                  conn
-                  |> put_flash(:error, msg)
-                  |> redirect(to: application_path(conn, :show, application))
-              end
-            {:error, :enoent} ->
+        if params = resume_params["file"] do
+          case Resume.create(application, params) do
+            {:ok, resume} ->
               conn
-              |> put_flash(:error, "Le fichier n'a pas pu être enregistrer. Merci de réessayer plus tard ou de nous contacter.")
+              |> put_flash(:success, "CV uploadé avec succès.")
+              |> redirect(to: application_path(conn, :show, application))
+            {:error, msg} ->
+              conn
+              |> put_flash(:error, msg)
               |> redirect(to: application_path(conn, :show, application))
           end
         end
@@ -59,7 +45,7 @@ defmodule Vae.ResumeController do
     case Vae.ApplicationController.has_access?(conn, application, nil) do
       {:ok, application} ->
         resume = Repo.get(Resume, id)
-        case Repo.delete(resume) do
+        case Resume.delete(resume) do
           {:ok, _resume} ->
             conn
             |> put_flash(:success, "CV supprimé avec succès.")
