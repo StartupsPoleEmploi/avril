@@ -58,7 +58,8 @@ defmodule Vae.CertificationController do
   end
 
   def show(conn, params) do
-    [id | [slug | _rest]] = String.split(params["id"], "-", parts: 2)
+    [id | rest] = String.split(params["id"], "-", parts: 2)
+    slug = List.first(rest)
     certification = Certification.get_certification(id)
     if certification.slug != slug do
       # Slug is not up-to-date
