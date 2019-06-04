@@ -7,6 +7,7 @@
   .jumbotron {
     background: $white;
     border: thin solid $dm-primary-grey;
+    padding: 1rem;
   }
 
 
@@ -35,6 +36,10 @@
 
   .card-header {
     background: $white;
+  }
+
+  ul.list-inline {
+    margin: 0;
   }
 
   .resume-block {
