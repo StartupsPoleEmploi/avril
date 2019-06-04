@@ -18,6 +18,9 @@
         .col-md-12
           h3.my-4 Le Candidat
       .col-md-6
+        = unless false && @edit_mode do
+          p
+            strong #{@user.first_name} #{@user.last_name}
         = form_for @user_changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
             .col
@@ -77,7 +80,7 @@
 
     .row.mb-5
       .col-md-12
-        h3.my-4 #{if @edit_mode, do: "Mon", else: "Son"} CV
+        h3.my-4 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
       .col-md-12
         .jumbotron.bg-light
           ul.list-inline
