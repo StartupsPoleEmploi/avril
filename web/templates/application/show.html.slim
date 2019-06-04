@@ -74,20 +74,36 @@
 
     .row.mb-5
       .col-md-12
-        h3 Mon CV
+        h3.my-4 #{if @edit_mode, do: "Mon", else: "Son"} CV
       .col-md-12
-        = if @edit_mode && is_nil(@application.resume) do
-          = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
-            .form-group
-              label for="resume" Uploader mon CV
-              = file_input f, :file, class: "form-control-file", id: "resume"
-            .form-group
-              = submit "Envoyer", class: "btn btn-primary btn-sm"
-        - else
-          = link "Télécharger #{if @edit_mode, do: "mon", else: "son"} CV", to: @application.resume.url, download: "CV #{@application.user.name}#{Path.extname(@application.resume.filename)}"
-          = link to: application_resume_path(@conn, :delete, @application, @application.resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", style: "margin-left: 1rem; color: initial;" do
-            span.fa.fa-remove
-
+        ul.list-inline
+          = for resume <- @application.resumes do
+            li.list-inline-item.rounded.resume-block
+              = link to: resume.url, class: "download" do
+                .content
+                  span.fa.fa-download.fa-2x
+                  p= resume.filename
+              = link to: application_resume_path(@conn, :delete, @application, resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", class: "remove" do
+                span.fa.fa-trash
+          = if @edit_mode do
+            li.list-inline-item.rounded.resume-block.download-block
+              = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
+                label.file-upload-zone for="resume"
+                  div
+                    span.fa.fa-upload.fa-2x
+                    p.label Ajouter un CV
+                  = file_input f, :file, class: "form-control-file", id: "resume"
+                = submit "Envoyer", class: "btn btn-primary btn-sm d-none"
+            javascript:
+              $('input[type="file"').on('change', function(e){
+                var $form = $(e.target).parents('form');
+                if (e.target.files.length) {
+                  $form.find('.label').text(e.target.files[0].name);
+                  $form.find('button[type=submit]').removeClass('d-none');
+                } else {
+                  $form.find('button[type=submit]').addClass('d-none');
+                }
+              });
 
     = if length(@user.experiences) > 0 do
       .row

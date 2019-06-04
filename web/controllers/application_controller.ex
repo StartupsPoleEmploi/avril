@@ -10,7 +10,7 @@ defmodule Vae.ApplicationController do
     application =
       case Repo.get(Application, id) do
         nil -> nil
-        application -> Repo.preload(application, [:user, :delegate, :certification, :resume])
+        application -> Repo.preload(application, [:user, :delegate, :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
