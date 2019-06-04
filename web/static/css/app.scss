@@ -1,7 +1,8 @@
 @import 'variables';
 
-$fa-font-path: '../fonts';
-@import 'font-awesome';
+$fa-font-path: '/fonts';
+// @import 'font-awesome';
+@import '~font-awesome/scss/font-awesome.scss';
 @import 'icons/nucleo';
 
 @import 'bootstrap'; // imports node_modules/bootstrap-sass/assets/stylesheets/_bootstrap.scss
