@@ -84,7 +84,7 @@
             .form-group
               = submit "Envoyer", class: "btn btn-primary btn-sm"
         - else
-          = link "Télécharger #{if @edit_mode, do: "mon", else: "son"} CV", to: Vae.Resume.web_path(@application.resume), download: "CV #{@application.user.name}#{Path.extname(@application.resume.filename)}"
+          = link "Télécharger #{if @edit_mode, do: "mon", else: "son"} CV", to: @application.resume.url, download: "CV #{@application.user.name}#{Path.extname(@application.resume.filename)}"
           = link to: application_resume_path(@conn, :delete, @application, @application.resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", style: "margin-left: 1rem; color: initial;" do
             span.fa.fa-remove
 
