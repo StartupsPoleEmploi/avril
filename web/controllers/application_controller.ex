@@ -3,19 +3,20 @@ defmodule Vae.ApplicationController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, Delegate, User}
+  alias Vae.{Application, Delegate, User, Resume}
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
     application =
       case Repo.get(Application, id) do
         nil -> nil
-        application -> Repo.preload(application, [:user, :delegate, :certification])
+        application -> Repo.preload(application, [:user, :delegate, :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
         render(conn, "show.html",
+          title: "Candidature VAE de #{application.user.name} pour un diplôme de #{application.certification.label}",
           application: application,
           delegate: application.delegate,
           certification: application.certification,
@@ -30,7 +31,8 @@ defmodule Vae.ApplicationController do
             |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
           edit_mode:
             Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
-          changeset: User.changeset(application.user, %{})
+          user_changeset: User.changeset(application.user, %{}),
+          resume_changeset: Resume.changeset(%Resume{}, %{})
         )
 
       {:error, %{to: to, msg: msg}} ->
@@ -132,7 +134,7 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  defp has_access?(conn, application, nil) do
+  def has_access?(conn, application, nil) do
     if not is_nil(application) do
       if Coherence.logged_in?(conn) && ((Coherence.current_user(conn).id == application.user.id) || Coherence.current_user(conn).is_admin) do
         {:ok, application}
@@ -148,7 +150,7 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  defp has_access?(conn, application, hash) do
+  def has_access?(conn, application, hash) do
     # && Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10))
     if not is_nil(application) &&
          application.delegate_access_hash == hash do

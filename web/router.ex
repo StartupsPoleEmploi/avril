@@ -90,6 +90,7 @@ defmodule Vae.Router do
     get("/candidats/:id/inadmissible", JobSeekerController, :inadmissible)
 
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
+      resources("/resume", ResumeController, only: [:create, :delete])
       get("/telecharger", ApplicationController, :download, as: :download)
     end
 

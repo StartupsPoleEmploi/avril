@@ -23,15 +23,15 @@ exports.config = {
     },
     stylesheets: {
       joinTo: {
-        "css/app.css": /^(web\/static\/css)/,
+        "css/app.css": "web/static/css/app.scss",
         "css/admin_lte2.css": ["web/static/vendor/admin_lte2.css"],
         "css/active_admin.css.css": ["web/static/vendor/active_admin.css.css"],
         "css/simditor.css": ["web/static/vendor/simditor/simditor.css"],
         "css/multi-select.dist.css": ["web/static/vendor/multiselect/multi-select.dist.css"],
       },
-      order: {
-        after: ["web/static/css/app.scss"] // concat app.css last
-      }
+      // order: {
+      //   after: ["web/static/css/app.scss"] // concat app.css last
+      // }
     },
     templates: {
       joinTo: "js/app.js"
