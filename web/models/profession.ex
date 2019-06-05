@@ -4,6 +4,7 @@ defmodule Vae.Profession do
   schema "professions" do
     field(:slug, :string)
     field(:label, :string)
+    field(:priority, :integer)
     belongs_to(:rome, Vae.Rome)
     timestamps()
   end
@@ -26,6 +27,7 @@ defmodule Vae.Profession do
     |> Map.take(__schema__(:fields))
     |> Map.put_new(:rome_code, struct.rome.code)
     |> Map.put_new(:length, String.length(struct.label))
+    |> Map.put_new(:priority, struct.priority)
     |> Map.drop([:inserted_at, :updated_at])
   end
 
