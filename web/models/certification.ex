@@ -6,6 +6,7 @@ defmodule Vae.Certification do
   alias Vae.{CertificationDelegate, Certifier, Delegate, Rome, Application}
 
   schema "certifications" do
+    field(:slug, :string)
     field(:label, :string)
     field(:acronym, :string)
     field(:level, :integer)
@@ -63,7 +64,8 @@ defmodule Vae.Certification do
       :rncp_id,
       :description
     ])
-    |> validate_required([:label])
+    |> slugify()
+    |> validate_required([:label, :slug])
     |> add_romes(params)
     |> add_certifiers(params)
     |> add_delegates(params)
@@ -184,5 +186,19 @@ defmodule Vae.Certification do
     struct
     |> Map.take(__schema__(:fields))
     |> Map.drop([:inserted_at, :updated_at, :description])
+  end
+
+  def to_slug(certification) do
+    Vae.String.parameterize("#{certification.acronym} #{certification.label}")
+  end
+
+  def slugify(changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
+  end
+
+  defimpl Phoenix.Param, for: Vae.Certification do
+    def to_param(%{id: id, slug: slug}) do
+      "#{id}-#{slug}"
+    end
   end
 end

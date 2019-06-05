@@ -2,6 +2,7 @@ defmodule Vae.Profession do
   use Vae.Web, :model
 
   schema "professions" do
+    field(:slug, :string)
     field(:label, :string)
     field(:priority, :integer)
     belongs_to(:rome, Vae.Rome)
@@ -15,7 +16,8 @@ defmodule Vae.Profession do
     struct
     |> cast(params, [:label])
     |> cast_assoc(:rome, required: true)
-    |> validate_required([:label])
+    |> slugify()
+    |> validate_required([:label, :slug])
     |> unique_constraint(:label)
     |> assoc_constraint(:rome)
   end
@@ -27,5 +29,13 @@ defmodule Vae.Profession do
     |> Map.put_new(:length, String.length(struct.label))
     |> Map.put_new(:priority, struct.priority)
     |> Map.drop([:inserted_at, :updated_at])
+  end
+
+  def to_slug(profession) do
+    Vae.String.parameterize(profession.label)
+  end
+
+  def slugify(changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 end

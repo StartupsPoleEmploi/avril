@@ -14,11 +14,13 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+
     plug(Coherence.Authentication.Session,
       store: Coherence.CredentialStore.Session,
       db_model: @user_schema,
       id_key: @id_key
     )
+
     #    plug(Vae.Tracker)
   end
 
@@ -28,6 +30,7 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+
     plug(Coherence.Authentication.Session,
       protected: true,
       store: Coherence.CredentialStore.Session,
@@ -83,22 +86,26 @@ defmodule Vae.Router do
     get("/candidatures/:id/admissible", ApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", ApplicationController, :inadmissible)
 
+    get("/candidats/:id/admissible", JobSeekerController, :admissible)
+    get("/candidats/:id/inadmissible", JobSeekerController, :inadmissible)
+
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
+      resources("/resume", ResumeController, only: [:create, :delete])
       get("/telecharger", ApplicationController, :download, as: :download)
     end
 
     resources("/profil", UserController, only: [:update])
 
-    get("/certifications", CertificationController, :index)
-
     # Search endpoint
     post("/search", SearchController, :search)
 
     # Old URL redirections
-    get("/delegates/:id", Redirector, to: "/")
-    get("/certifications/:id", Redirector, to: "/")
-    get("/certifiers/:id", Redirector, to: "/")
-    get("/processes/:id", Redirector, to: "/")
+    get("/professions", Redirector, to: "/metiers")
+    get("/delegates/:id", Redirector, to: "/diplomes?certificateur=:id")
+    get("/certifications", Redirector, to: "/diplomes")
+    get("/certifications/:id", Redirector, to: "/diplomes/:id")
+    get("/certifiers/:id", Redirector, to: "/certificateurs?organisme=:id")
+    get("/processes/:id", Redirector, [to: "/", msg: "La page demandée n'existe plus."])
   end
 
   scope "/admin", ExAdmin do
