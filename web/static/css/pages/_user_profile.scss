@@ -128,4 +128,36 @@
       }
     }
   }
+  .resume-section {
+    @media print {
+      display: none;
+
+    }
+  }
+
+  @media print {
+    .jumbotron {
+      border: none;
+      padding: 0;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+    }
+
+    .row {
+      display: block;
+      position: relative;
+      [class^="col"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+        position: relative;
+        display: block;
+      }
+      .card {
+        page-break-inside: avoid;
+        position: relative;
+      }
+    }
+  }
 }

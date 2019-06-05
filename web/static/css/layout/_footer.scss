@@ -8,4 +8,16 @@ footer {
   img.logo {
     height: 40px;
   }
+
+  @media print {
+    .container {
+      justify-content: center;
+    }
+    .dm-nav {
+      display: none;
+    }
+    img.logo {
+      height: 60px;
+    }
+  }
 }
