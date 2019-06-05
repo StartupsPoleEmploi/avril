@@ -41,6 +41,7 @@ config :ex_admin,
     Vae.ExAdmin.Delegate,
     Vae.ExAdmin.Process,
     Vae.ExAdmin.Profession,
+    Vae.ExAdmin.Rome,
     Vae.ExAdmin.User
   ]
 
