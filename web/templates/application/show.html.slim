@@ -84,8 +84,7 @@
         .row
           .col
       .col-md-6.text-right
-        = if @edit_mode do
-          = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
+        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
 
     .row.mb-5.resume-section
       .col-md-12
@@ -171,8 +170,8 @@
             .card
               .card-body= skill.label
 
-    = if @edit_mode && (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
-      .row.mb-5.text-center
+    = if (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
+      .text-center
         = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
 
   = if @edit_mode do

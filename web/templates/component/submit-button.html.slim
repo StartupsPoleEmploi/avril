@@ -1,10 +1,15 @@
-div style="margin: auto;"
-  = if @application.submitted_at do
-    p
-      strong Dossier Transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
-    .mt-3
-      = link((if @edit_mode, do: "Télécharger mon dossier", else: "Télécharger le dossier du candidat"), to: application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profil#Telecharger recap #{if @edit_mode, do: "DE", else: "certificateur"}"], download: "Synthese VAE #{@application.user.name}.pdf")
-  - else
-    = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", data: [analytics: "?bouton=soumettre-candidature"] do
-      = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-      | Transmettre mon dossier
+= if @edit_mode do
+  div style="margin: auto;"
+    = if @application.submitted_at do
+      p
+        strong Dossier Transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
+      .mt-3
+        = link((if @edit_mode, do: "Télécharger mon dossier", else: "Télécharger le dossier du candidat"), to: application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profil#Telecharger recap #{if @edit_mode, do: "DE", else: "certificateur"}"], download: "Synthese VAE #{@application.user.name}.pdf")
+    - else
+      = button to: application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", data: [analytics: "?bouton=soumettre-candidature"] do
+        = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+        | Transmettre mon dossier
+- else
+  button.btn.btn-primary.print-button onclick="window.print();"
+    span.fa.fa-print
+    = " Imprimer la candidature"
