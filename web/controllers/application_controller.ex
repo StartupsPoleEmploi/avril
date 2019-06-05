@@ -29,7 +29,7 @@ defmodule Vae.ApplicationController do
             end)
             |> Map.to_list()
             |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
-          edit_mode:
+          edit_mode: params["mode"] != "certificateur" &&
             Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{})
