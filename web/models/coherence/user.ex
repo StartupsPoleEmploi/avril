@@ -10,6 +10,7 @@ defmodule Vae.User do
     field(:first_name, :string)
     field(:last_name, :string)
     field(:email, :string)
+    field(:phone_number, :string)
     field(:is_admin, :boolean)
     field(:postal_code, :string)
     field(:address1, :string)
@@ -46,7 +47,7 @@ defmodule Vae.User do
     timestamps()
   end
 
-  @fields ~w(name first_name last_name email postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token is_admin)a
+  @fields ~w(name first_name last_name email phone_number postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token is_admin)a
 
   def changeset(model, params \\ %{}) do
     model

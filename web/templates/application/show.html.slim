@@ -19,42 +19,50 @@
           h3.my-4 Le Candidat
       .col-md-6
         = unless false && @edit_mode do
-          p
+          p.h4.mb-3
             strong #{@user.first_name} #{@user.last_name}
         = form_for @user_changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
             .col
-              .form-group.mb-4
+              .form-group
                 = if @edit_mode do
                   = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
                   = error_tag f, :email
                 - else
-                  h4= @user.name
                   = link(@user.email, to: "mailto:#{@user.email}")
           .row
             .col
-              .form-group.address-component.mb-0
+              .form-group
+                = if @edit_mode do
+                  = text_input f, :phone_number, class: "form-control font-weight-bold", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), required: true
+                  = error_tag f, :phone_number
+                - else
+                  = if @user.phone_number do
+                    = link(@user.phone_number, to: "tel:#{@user.phone_number}")
+          .row
+            .col
+              .form-group.address-component.mb-1
                 .input-group
                   = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: true
                   .input-group-append
                     button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
                 = error_tag f, :address4
-              .form-group.address-component.mb-0 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
+              .form-group.address-component.mb-1 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
                 = text_input f, :address3, class: "form-control", placeholder: "Complément de distribution", disabled: true
                 = error_tag f, :address3
-              .form-group.address-component.mb-0 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
+              .form-group.address-component.mb-1 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
                 = text_input f, :address2, class: "form-control", placeholder: "Complément d'adresse", disabled: true
                 = error_tag f, :address2
-              .form-group.address-component.mb-0 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
+              .form-group.address-component.mb-1 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
                 = text_input f, :address1, class: "form-control", placeholder: "Complément destinataire", disabled: true
                 = error_tag f, :address1
           .row
             .col-3.pr-0
-              .form-group.mb-0
+              .form-group.mb-1
                 = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: true
                 = error_tag f, :postal_code
             .col-9
-              .form-group.mb-0
+              .form-group.mb-1
                 = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: true
                 = error_tag f, :city_label
           .row
@@ -82,35 +90,38 @@
       .col-md-12
         h3.my-4 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
       .col-md-12
-        .jumbotron.bg-light
-          ul.list-inline
-            = for resume <- @application.resumes do
-              li.list-inline-item.rounded.resume-block
-                = link to: resume.url, class: "download" do
-                  .content
-                    span.fa.fa-download
-                    p= resume.filename
-                = link to: application_resume_path(@conn, :delete, @application, resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", class: "remove" do
-                  span.fa.fa-trash
-            = if @edit_mode do
-              li.list-inline-item.rounded.resume-block.upload-block
-                = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
-                  label.file-upload-zone for="resume"
-                    div
-                      span.fa.fa-upload
-                      p.label Ajouter un CV
-                    = file_input f, :file, class: "form-control-file", id: "resume"
-                  = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled'
-              javascript:
-                $('input[type="file"').on('change', function(e){
-                  var $form = $(e.target).parents('form');
-                  if (e.target.files.length) {
-                    $form.find('.label').text(e.target.files[0].name);
-                    $form.find('button[type=submit]').removeAttr('disabled');
-                  } else {
-                    $form.find('button[type=submit]').addClass('disabled');
-                  }
-                });
+        = if @edit_mode || length(@application.resumes) > 0 do
+          .jumbotron.bg-light
+            ul.list-inline
+              = for resume <- @application.resumes do
+                li.list-inline-item.rounded.resume-block
+                  = link to: resume.url, class: "download" do
+                    .content
+                      span.fa.fa-download
+                      p= resume.filename
+                  = link to: application_resume_path(@conn, :delete, @application, resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", class: "remove" do
+                    span.fa.fa-trash
+              = if @edit_mode do
+                li.list-inline-item.rounded.resume-block.upload-block
+                  = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
+                    label.file-upload-zone for="resume"
+                      div
+                        span.fa.fa-upload
+                        p.label Ajouter un CV
+                      = file_input f, :file, class: "form-control-file", id: "resume"
+                    = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled'
+                javascript:
+                  $('input[type="file"').on('change', function(e){
+                    var $form = $(e.target).parents('form');
+                    if (e.target.files.length) {
+                      $form.find('.label').text(e.target.files[0].name);
+                      $form.find('button[type=submit]').removeAttr('disabled');
+                    } else {
+                      $form.find('button[type=submit]').addClass('disabled');
+                    }
+                  });
+        - else
+          p Le candidat n'a pas encore déposé de CV.
 
     = if length(@user.experiences) > 0 do
       .row
@@ -173,6 +184,13 @@
         $('.save').removeClass('d-none')
         $('.edit-button').hide();
       })
+
+      $('.profile-edit').on('keyup', 'input', function(e){
+        if ($(e.target).val()) {
+          $('.save').removeClass('d-none')
+          $('.edit-button').hide();
+        }
+      });
 
       $('.profile-edit').on('click', '.reset', function(e){
         $(e.delegateTarget).find('.disablable').attr('disabled', 'disabled').removeClass('disablable')

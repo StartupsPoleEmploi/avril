@@ -64,15 +64,7 @@ defmodule Vae.AuthController do
         |> redirect(to: root_path(conn, :index))
 
       {:ok, {user, application}} ->
-        message =
-          if is_nil(application.submitted_at) do
-            "Bienvenue sur votre page de candidat. Vous pouvez consulter vos informations avant de les soumettre au certificateur."
-          else
-            "Bienvenue sur votre page de candidat."
-          end
-
         Coherence.Authentication.Session.create_login(conn, user)
-        |> put_flash(:success, message)
         |> redirect(to: application_path(conn, :show, application))
 
       {:error, msg} ->
