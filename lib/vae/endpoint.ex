@@ -17,7 +17,6 @@ defmodule Vae.Endpoint do
     only: ~w(css fonts images js robots.txt),
     only_matching: ~w(favicon)
   )
-  plug Plug.Static, at: "/uploads", from: "/media/vae"
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
