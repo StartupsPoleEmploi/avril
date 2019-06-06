@@ -43,7 +43,7 @@ defmodule Mix.Tasks.Certification.AddMissingCertifications do
         end
       end)
     else
-      msg -> IO.inspect(msg)
+      msg -> msg
     end
   end
 

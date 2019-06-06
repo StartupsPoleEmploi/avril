@@ -42,7 +42,7 @@ defmodule Vae.CertificationController do
   end
 
   def index(conn, params) do
-    if Map.has_key?(IO.inspect(conn.query_params), "rome") do
+    if Map.has_key?(conn.query_params, "rome") do
       # using the old ?rome=ID instead of ?metier=ID
       redirect(conn, to: certification_path(conn, :index, Map.put_new(Map.delete(conn.query_params, "rome"), "metier", conn.query_params["rome"])))
     else
