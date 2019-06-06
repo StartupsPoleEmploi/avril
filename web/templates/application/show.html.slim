@@ -95,15 +95,15 @@
             ul.list-inline
               = for resume <- @application.resumes do
                 li.list-inline-item.rounded.resume-block
-                  = link to: resume.url, class: "download" do
+                  = link to: resume.url, class: "download", data: [analytics: "CV#download"] do
                     .content
                       span.fa.fa-download
                       p= resume.filename
-                  = link to: application_resume_path(@conn, :delete, @application, resume), method: :delete, "data-confirm": "Confirmez-vous la suppression du CV ?", class: "remove" do
+                  = link to: application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
                     span.fa.fa-trash
               = if @edit_mode do
                 li.list-inline-item.rounded.resume-block.upload-block
-                  = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post], fn f ->
+                  = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post, data: [analytics: "CV#upload"]], fn f ->
                     label.file-upload-zone for="resume"
                       div
                         span.fa.fa-upload
