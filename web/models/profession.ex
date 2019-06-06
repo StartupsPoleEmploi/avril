@@ -14,10 +14,10 @@ defmodule Vae.Profession do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:label])
-    |> cast_assoc(:rome, required: true)
+    |> cast(params, [:label, :priority])
+    |> cast_assoc(:rome)
     |> slugify()
-    |> validate_required([:label, :slug])
+    |> validate_required([:label, :slug, :priority])
     |> unique_constraint(:label)
     |> assoc_constraint(:rome)
   end
