@@ -37,7 +37,7 @@ defmodule Vae.CertificationController do
     filter rome_code(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.code == ^Vae.String.to_id(value))
+      |> where([c, r], r.code == ^value)
     end
   end
 
