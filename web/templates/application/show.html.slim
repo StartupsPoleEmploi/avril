@@ -2,7 +2,7 @@
   .row.my-4
     .col-md-6.my-auto
       p Diplôme demandé :
-      h3.mb-4 #{@certification.acronym} #{@certification.label}
+      h3.mb-4= Vae.Certification.name(@application.certification)
     .col-md-6.my-auto
       .delegate
         div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
