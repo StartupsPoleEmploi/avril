@@ -16,6 +16,11 @@ defmodule Vae.ExAdmin.Application do
       column(:id)
       column(:user)
       column(:certification)
+      column(:certifier, [], fn a ->
+        Enum.join(Enum.map(a.certification.certifiers, fn c ->
+          "<a href=\"/admin/certifiers/#{c.id}\">#{c.name}</a>"
+        end), ",")
+      end)
       column(:delegate)
       column(:submitted_at)
       column(:admissible_at)
@@ -63,7 +68,7 @@ defmodule Vae.ExAdmin.Application do
     query do
       %{
         all: [
-          preload: [ :delegate, :user, :certification]
+          preload: [ :delegate, :user, certification: :certifiers]
         ],
         index: [
           default_sort: [asc: :inserted_at]

@@ -19,6 +19,10 @@ defmodule Vae.Application do
     belongs_to(:certification, Vae.Certification, foreign_key: :certification_id)
 
     has_many(:resumes, Vae.Resume)
+    has_many(
+      :certifiers,
+      through: [:certification, :certifiers]
+    )
 
     timestamps()
   end
