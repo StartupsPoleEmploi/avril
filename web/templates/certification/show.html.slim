@@ -109,10 +109,11 @@
           $('[data-toggle="show"]').on('click', function(e){
             $($(e.target).attr('data-target')).toggleClass('d-none');
           });
-    .card-footer.bg-white
-      = render("_pagination.html")
-      div id="steps"
-        = render_steps(@delegate.process)
+    = if @delegate.process do
+      .card-footer.bg-white
+        = render("_pagination.html")
+        div id="steps"
+          = render_steps(@delegate.process)
 
 button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="javascript:window.print()" data-analytics="Steps#print"]
   = img_tag '/images/printer.svg', alt: 'imprimer'

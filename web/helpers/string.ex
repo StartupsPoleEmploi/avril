@@ -22,7 +22,7 @@ defmodule Vae.String do
   end
 
   def to_id(param) when is_binary(param) do
-    if Regex.match?(~r/^\d+\-.*/, param), do: String.to_integer(List.first(String.split(param, "-"))), else: param
+    if Regex.match?(~r/^\d+\-.*/, param), do: String.to_integer(List.first(String.split(param, "-"))), else: String.to_integer(param)
   end
   def to_id(v), do: v
 
