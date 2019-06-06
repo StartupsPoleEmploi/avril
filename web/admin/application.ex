@@ -65,6 +65,21 @@ defmodule Vae.ExAdmin.Application do
         input application, :delegate, collection: Repo.all(Delegate)
       end
     end
+
+    csv do
+      column(:id)
+      column(:user, fn a -> a.user.name end)
+      column(:certification, fn a -> Certification.name(a.certification) end)
+      column(:certifier, fn a ->
+        Enum.join(Enum.map(a.certification.certifiers, fn c -> c.name end), ",")
+      end)
+      column(:delegate, fn a -> a.delegate.name end)
+      column(:submitted_at)
+      column(:admissible_at)
+      column(:inserted_at)
+      column(:updated_at)
+    end
+
     query do
       %{
         all: [
