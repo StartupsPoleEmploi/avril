@@ -20,7 +20,7 @@
           h3.my-4 Le candidat
         p
           strong #{@user.first_name} #{@user.last_name}
-        = form_for @user_changeset, user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
+        = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
           .row
             .col
               .form-group
@@ -99,11 +99,11 @@
                     .content
                       span.fa.fa-download
                       p= resume.filename
-                  = link to: application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
+                  = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
                     span.fa.fa-trash
               = if @edit_mode do
                 li.list-inline-item.rounded.resume-block.upload-block
-                  = form_for @resume_changeset, application_resume_path(@conn, :create, @application), [multipart: true, method: :post, data: [analytics: "CV#upload"]], fn f ->
+                  = form_for @resume_changeset, Routes.application_resume_path(@conn, :create, @application), [multipart: true, method: :post, data: [analytics: "CV#upload"]], fn f ->
                     label.file-upload-zone for="resume"
                       div
                         span.fa.fa-upload

@@ -56,7 +56,7 @@ defmodule Vae.ApplicationController do
           {:ok, application} ->
             conn
             |> put_flash(:success, "Dossier transmis avec succès!")
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
 
           {:error, msg} ->
             conn
@@ -64,7 +64,7 @@ defmodule Vae.ApplicationController do
               :error,
               "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
             )
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
 
       {:error, %{to: to, msg: msg}} ->
@@ -92,7 +92,7 @@ defmodule Vae.ApplicationController do
           {:error, msg} ->
             conn
             |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de reéssayer plus tard.")
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
 
       {:error, %{to: to, msg: msg}} ->
@@ -106,7 +106,7 @@ defmodule Vae.ApplicationController do
     Repo.get(Application, id)
     |> case do
       nil ->
-        redirect(conn, to: root_path(conn, :index))
+        redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
         application
@@ -115,7 +115,7 @@ defmodule Vae.ApplicationController do
 
         conn
         |> put_flash(:success, "Merci pour votre réponse")
-        |> redirect(to: root_path(conn, :index))
+        |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 
@@ -124,7 +124,7 @@ defmodule Vae.ApplicationController do
     |> Repo.preload(delegate: :certifiers)
     |> case do
       nil ->
-        redirect(conn, to: root_path(conn, :index))
+        redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
         url_form = Polls.define_form_url_from_application(application)
@@ -141,12 +141,12 @@ defmodule Vae.ApplicationController do
       else
         {:error,
          %{
-           to: session_path(conn, :new, %{"mode" => "pe-connect"}),
+           to: Routes.session_path(conn, :new, %{"mode" => "pe-connect"}),
            msg: "Vous devez vous connecter"
          }}
       end
     else
-      {:error, %{to: root_path(conn, :index), msg: "Vous n'avez pas accès."}}
+      {:error, %{to: Routes.root_path(conn, :index), msg: "Vous n'avez pas accès."}}
     end
   end
 
@@ -158,7 +158,7 @@ defmodule Vae.ApplicationController do
     else
       {:error,
        %{
-         to: root_path(conn, :index),
+         to: Routes.root_path(conn, :index),
          msg:
            if(application.delegate_access_hash == hash,
              do: "Accès expiré",

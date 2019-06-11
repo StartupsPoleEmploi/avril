@@ -19,14 +19,14 @@ div
                   span #{to_certification_label(@conn.params["diplome"])}
     .col
       h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
-      = link to: page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
+      = link to: Routes.page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
         h5.mb-5 Comment bien choisir son diplôme ?
         div.d-flex
           div.mr-4
             span.ic-icon.ic-time-clock.mr-2
             | 4 minutes
           = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
+      = link to: Routes.page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
         h5.mb-5 Les Points Relais Conseil
         div.d-flex
           div.mr-4
@@ -34,4 +34,4 @@ div
             | 4 minutes
           = img_tag '/images/play.svg', alt: 'lecture'
 
-= render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &delegate_path/3
+= render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.delegate_path/3

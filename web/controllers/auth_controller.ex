@@ -61,11 +61,11 @@ defmodule Vae.AuthController do
       {:ok, {user, nil}} ->
         Coherence.Authentication.Session.create_login(conn, user)
         |> put_flash(:info, "Sélectionnez un diplôme pour poursuivre.")
-        |> redirect(to: root_path(conn, :index))
+        |> redirect(to: Routes.root_path(conn, :index))
 
       {:ok, {user, application}} ->
         Coherence.Authentication.Session.create_login(conn, user)
-        |> redirect(to: application_path(conn, :show, application))
+        |> redirect(to: Routes.application_path(conn, :show, application))
 
       {:error, msg} ->
         conn

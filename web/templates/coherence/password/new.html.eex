@@ -2,7 +2,7 @@
   <div class="col-6">
     <h1 class="text-center mb-4"><%= dgettext "coherence", "Send reset password link" %></h1>
 
-    <%= form_for @changeset, password_path(@conn, :create), [as: :password], fn f  -> %>
+    <%= form_for @changeset, Routes.password_path(@conn, :create), [as: :password], fn f  -> %>
 
       <div class="form-group">
         <%= required_label f, :email, class: "control-label" %>

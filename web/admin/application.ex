@@ -31,7 +31,7 @@ defmodule Vae.ExAdmin.Application do
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae.Application, id)
-      href = Vae.Router.Helpers.application_path(Vae.Endpoint, :show, application,
+      href = Routes.application_path(Vae.Endpoint, :show, application,
         hash: application.delegate_access_hash
       )
       action_item_link "View Delegate Application", href: href, target: "_blank"
@@ -39,13 +39,13 @@ defmodule Vae.ExAdmin.Application do
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae.Application, id)
-      href = Vae.Router.Helpers.application_path(Vae.Endpoint, :update, application)
+      href = Routes.application_path(Vae.Endpoint, :update, application)
       action_item_link "Submit Application", href: href, "data-method": :put
     end
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae.Application, id)
-      href = Vae.Router.Helpers.application_download_path(Vae.Endpoint, :download, application)
+      href = Routes.application_download_path(Vae.Endpoint, :download, application)
       action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
     end
 

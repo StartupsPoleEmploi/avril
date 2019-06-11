@@ -14,11 +14,11 @@ defmodule Vae.UserController do
         conn
         |> put_flash(:success, "Enregistré")
         |> Coherence.Authentication.Session.update_login(user)
-        |> redirect(to: application_path(conn, :show, Coherence.current_user(conn).current_application))
+        |> redirect(to: Routes.application_path(conn, :show, Coherence.current_user(conn).current_application))
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Une erreur est survenue")
-        |> redirect(to: application_path(conn, :show, Coherence.current_user(conn).current_application))
+        |> redirect(to: Routes.application_path(conn, :show, Coherence.current_user(conn).current_application))
     end
   end
 end

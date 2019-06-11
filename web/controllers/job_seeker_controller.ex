@@ -11,7 +11,7 @@ defmodule Vae.JobSeekerController do
 
     conn
     |> put_flash(:success, "Merci pour votre réponse")
-    |> redirect(to: root_path(conn, :index))
+    |> redirect(to: Routes.root_path(conn, :index))
   end
 
   def inadmissible(conn, %{"id" => id} = params) do

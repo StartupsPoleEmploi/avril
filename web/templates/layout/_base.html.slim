@@ -16,11 +16,11 @@ html{lang="fr"}
           window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;
           window['ga-disable-<%= System.get_env("GA_PE_API_KEY") %>'] = true;
         };
-    link rel="icon" type="image/x-icon" href=static_path(@conn,"/favicon.ico")
-    link href=static_path(@conn,"/css/app.css") rel="stylesheet"
+    link rel="icon" type="image/x-icon" href=Routes.static_path(@conn,"/favicon.ico")
+    link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
-    script src=static_path(@conn,"/js/app.js")
-    script src=static_path(@conn,"/js/vendor.js")
+    script src=Routes.static_path(@conn,"/js/app.js")
+    script src=Routes.static_path(@conn,"/js/vendor.js")
     script src="https://cdn.jsdelivr.net/npm/places.js@1.14.0"
     script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"
     script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"

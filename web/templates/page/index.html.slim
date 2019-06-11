@@ -21,22 +21,22 @@
       .col-md-6
         h2 La VAE est une démarche de certification diplômante reconnue
         p C’est un véritable diplôme que vous propose la VAE. Pas de formation, simplement un diplôme en lien avec vos compétences acquises. <br />C'est le 3ème moyen en France pour obtenir un diplôme !
-        = render Vae.ComponentView, "reading-time.html", title: "C’est quoi une VAE ?", duration: "3 minutes", color: "#20D7A4", to: page_path(@conn, :vae)
+        = render Vae.ComponentView, "reading-time.html", title: "C’est quoi une VAE ?", duration: "3 minutes", color: "#20D7A4", to: Routes.page_path(@conn, :vae)
     .row.my-md-6.my-5
       .col-md-6
         h2 Obtenir un diplôme, se repositionner sur le marché de l’emploi…
         p Il y a de nombreuses raisons de se lancer dans une démarche VAE. Avec Avril, découvrez les perspectives que vous offre la Validation des Acquis de l'Expérience.
-        = render Vae.ComponentView, "reading-time.html", title: "Pourquoi une certification ?", duration: "1 minute", color: "#DF286E", to: page_path(@conn, :pourquoi_une_certification)
+        = render Vae.ComponentView, "reading-time.html", title: "Pourquoi une certification ?", duration: "1 minute", color: "#DF286E", to: Routes.page_path(@conn, :pourquoi_une_certification)
     .row.my-md-6.my-5
       .col-md-6.bg-best-way
       .col-md-6
         h2 En seulement 3 étapes, Avril vous aide à identifier votre parcours VAE pas à pas.
         p.dm-sub-title Chez le <strong>certificateur</strong> le plus proche de chez vous !
         p Renseignez le métier pour lequel vous avez au moins 1 an d'expérience et pour lequel vous souhaitez obtenir un diplôme. <br />Nous vous indiquerons le certificateur le plus proche !
-        = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "1 minute", color: "#443C77", to: page_path(@conn, :certificateur_vae_definition)
+        = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "1 minute", color: "#443C77", to: Routes.page_path(@conn, :certificateur_vae_definition)
     / .row.my-md-6.my-5
     /   .col-md-12.text-center
-    /     = link to: root_path(@conn, :index), class: 'btn btn-danger dm-btn-danger' do
+    /     = link to: Routes.root_path(@conn, :index), class: 'btn btn-danger dm-btn-danger' do
     /       span Je suis prêt.e <span class="d-none d-md-inline">à faire valider mon expérience</span>
 
   .my-md-6.my-5.dm-testimonials
@@ -89,7 +89,7 @@
               = img_tag '/images/logo-pole-emploi.svg', alt: 'Logo de Pôle emploi', class: 'img-fluid', style: 'min-width: 8rem'
       .col-md-6.mt-md-0.mt-5
         h3.mb-5 Avril est né d’une idée de Pôle emploi et bénéficie du soutien du Fonds Social Européen. Avril, c’est aussi une équipe engagée à faciliter le recours à la VAE.
-        / = render Vae.ComponentView, "reading-time.html", title: "Découvrez l’équipe Avril", duration: "4 minutes", color: "#20D7A4", to: page_path(@conn, :vae)
+        / = render Vae.ComponentView, "reading-time.html", title: "Découvrez l’équipe Avril", duration: "4 minutes", color: "#20D7A4", to: Routes.page_path(@conn, :vae)
 
 .container.mt-md-7.my-5
   .row
@@ -97,9 +97,9 @@
       h3.my-4 Avril
       ul.nav.dm-nav.flex-column
         li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: root_path(@conn, :index), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: Routes.root_path(@conn, :index), conn: @conn
         / li.nav-item
-        /   = link "Découvrez l'équipe Avril", to: root_path(@conn, :index), class: "nav-link p-0 disabled"
+        /   = link "Découvrez l'équipe Avril", to: Routes.root_path(@conn, :index), class: "nav-link p-0 disabled"
         li.nav-item
           = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
 
@@ -117,14 +117,14 @@
       h3.my-4 Pages du site
       ul.nav.dm-nav.flex-column
         li.nav-item
-          = link "C’est quoi une VAE ?", to: page_path(@conn, :vae), class: "nav-link p-0"
+          = link "C’est quoi une VAE ?", to: Routes.page_path(@conn, :vae), class: "nav-link p-0"
         li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Bien choisir son diplôme", class: "nav-link p-0", to: page_path(@conn, :choose_certification), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Bien choisir son diplôme", class: "nav-link p-0", to: Routes.page_path(@conn, :choose_certification), conn: @conn
         li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: page_path(@conn, :accessibility_promess), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: Routes.page_path(@conn, :accessibility_promess), conn: @conn
         li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Points Relais Conseil", class: "nav-link p-0", to: page_path(@conn, :point_relais_conseil), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Points Relais Conseil", class: "nav-link p-0", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
         li.nav-item
-         = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: page_path(@conn, :certificateur_vae_definition), conn: @conn
+         = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
         li.nav-item
-         = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: page_path(@conn, :pourquoi_une_certification), conn: @conn
+         = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn

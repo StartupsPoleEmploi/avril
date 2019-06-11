@@ -34,13 +34,13 @@ defmodule Coherence.Redirects do
       import Vae.Router.Helpers
 
       # override the log out action back to the log in page
-      def session_delete(conn, _), do: redirect(conn, to: session_path(conn, :new))
+      def session_delete(conn, _), do: redirect(conn, to: Routes.session_path(conn, :new))
 
       # redirect the user to the login page after registering
-      def registration_create(conn, _), do: redirect(conn, to: session_path(conn, :new))
+      def registration_create(conn, _), do: redirect(conn, to: Routes.session_path(conn, :new))
 
       # disable the user_return_to feature on login
-      def session_create(conn, _), do: redirect(conn, to: landing_path(conn, :index))
+      def session_create(conn, _), do: redirect(conn, to: Routes.landing_path(conn, :index))
 
   """
   use Redirects
@@ -54,14 +54,14 @@ defmodule Coherence.Redirects do
   def session_delete(conn, _) do
     case Coherence.current_user(conn).pe_id do
       nil ->
-        redirect(conn, to: root_path(conn, :index))
+        redirect(conn, to: Routes.root_path(conn, :index))
 
       token ->
 
         url =
           "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
             token
-          }&redirect_uri=#{root_url(conn, :index)}"
+          }&redirect_uri=#{Routes.root_url(conn, :index)}"
 
         redirect(conn, external: url)
     end

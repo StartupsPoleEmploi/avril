@@ -38,7 +38,7 @@
       .row
         .col-12.text-center
           .pe-connect.pe-connect-toggle class="#{if @is_asp, do: "d-none", else: ""}"
-            = link(to: auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?bouton=pe-connect"]) do
+            = link(to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?bouton=pe-connect"]) do
               = img_tag("/images/conseillere.svg", width: 34, height: 31, style: "margin-right: 1rem;")
               span.text
                 = if @is_asp do
@@ -126,13 +126,13 @@ button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="
     .col-md
       h2.h2 Dossier de recevabilité
       p Vous allez préparer votre dossier de candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
-      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: Routes.page_path(@conn, :vae)
   .row.my-5.align-items-center
     .col-md.order-2.order-md-1
       h2.h2 Dossier VAE
       p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
       p Durant cette étape, un expert pourra vous accompagner et vous préparer au jury.
-      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: Routes.page_path(@conn, :vae)
     .col-md.order-1.order-md-2
       = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
   .row.my-5.align-items-center
@@ -141,7 +141,7 @@ button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button[onclick="
     .col-md
       h2.h2 Entretien avec un jury
       p Un jury composé de professionnels du métier du diplôme visé, évaluera avec vous, lors d’un entretien, si vos compétences correspondent aux compétences attendues.
-      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: page_path(@conn, :vae)
+      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: Routes.page_path(@conn, :vae)
   .row.my-5
     .col-md-6.offset-md-3.text-center
       h2.h2 Félicitations pour votre nouveau diplôme !

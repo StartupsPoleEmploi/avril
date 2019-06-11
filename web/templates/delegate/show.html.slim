@@ -13,13 +13,13 @@
               ul.delegate-details.list-unstyled.pl-0
                 = if @delegate.person_name && @delegate.person_name != "" do
                   li
-                    i.fa.fa-user[aria-hidden: "true"]
+                    i.fa.fa-user aria-hidden="true"
                     '
                     = @delegate.person_name
 
                 = if @delegate.telephone && @delegate.telephone != "" do
                   li
-                    i.fa.fa-phone[aria-hidden: "true"]
+                    i.fa.fa-phone aria-hidden="true"
                     '
                     = @delegate.telephone
 
@@ -29,7 +29,7 @@
                   i.fa.fa-map-marker
                   '
                   = @delegate.address
-            button.btn.btn-outline-secondary.no-print[onclick="javascript:window.print()"]
+            button.btn.btn-outline-secondary.no-print onclick="javascript:window.print()"
               ' Imprimer
               .fa.fa-print
 
