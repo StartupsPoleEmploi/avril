@@ -1,6 +1,4 @@
 defmodule Coherence.Redirects do
-  import Vae.Router.Helpers
-
   @moduledoc """
   Define controller action redirection functions.
 
@@ -45,7 +43,7 @@ defmodule Coherence.Redirects do
   """
   use Redirects
   # Uncomment the import below if adding overrides
-  # import Vae.Router.Helpers
+  import Vae.Router.Helpers
 
   # Add function overrides below
 
@@ -54,14 +52,14 @@ defmodule Coherence.Redirects do
   def session_delete(conn, _) do
     case Coherence.current_user(conn).pe_id do
       nil ->
-        redirect(conn, to: Routes.root_path(conn, :index))
+        redirect(conn, to: root_path(conn, :index))
 
       token ->
 
         url =
           "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
             token
-          }&redirect_uri=#{Routes.root_url(conn, :index)}"
+          }&redirect_uri=#{root_url(conn, :index)}"
 
         redirect(conn, external: url)
     end

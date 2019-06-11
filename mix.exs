@@ -62,13 +62,9 @@ defmodule Vae.Mixfile do
     [
       {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.0"},
-      # {:phoenix_ecto, "~> 4.0"},
       {:phoenix_ecto, "~> 3.3.0"},
-      # {:ecto_sql, "~> 3.0"},
-      # {:postgrex, "~> 0.14.0"},
-      {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.6"},
-      # {:gettext, "0.13.1"},
+      {:postgrex, "~> 0.13.0"},
+      {:phoenix_html, "~> 2.13.3"},
       {:plug_cowboy, "~> 2.0"},
       {:distillery, "~> 1.4"},
       {:sweet_xml, "~> 0.6.5"},
@@ -80,9 +76,8 @@ defmodule Vae.Mixfile do
       {:httpoison, "~> 1.4"}, # TODO: remove dependency: not needed anymore
       {:poison, "~> 3.0", override: true}, # TODO: remove dependency: not needed anymore
       {:phoenix_slime, "~> 0.12.0"},
-      # {:ex_admin, path: "/ex_admin", in_umbrella: true},
-      # {:ex_admin, github: "augnustin/ex_admin", branch: "upgrade-phoenix-1.4"},
-      {:ex_admin, github: "sublimecoder/ex_admin"},
+      # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
+      {:ex_admin, github: "augnustin/ex_admin"},
       {:coherence, "~> 0.5.2"},
       {:new_relixir, "~> 0.4.1"},
       {:floki, "~> 0.19.0", only: :dev},

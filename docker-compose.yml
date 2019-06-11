@@ -31,6 +31,7 @@ services:
     command: iex -S mix phx.server
     volumes:
       - ".:/app"
+      # - "../ex_admin:/ex_admin"
       - "static:/app/priv/static"
       - /tmp/.X11-unix:/tmp/.X11-unix
 
