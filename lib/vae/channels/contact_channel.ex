@@ -1,11 +1,14 @@
 defmodule Vae.ContactChannel do
+  require Logger
   use Phoenix.Channel
 
+  alias Vae.Application, as: JsApplication
+  alias Vae.Certification
+  alias Vae.Delegate
   alias Vae.Event
   alias Vae.Mailer.Sender.Mailjet
-  alias Vae.Repo
-  alias Vae.Delegate
   alias Vae.Places
+  alias Vae.Repo
 
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
@@ -14,6 +17,7 @@ defmodule Vae.ContactChannel do
       {:ok, socket}
     rescue
       e ->
+        Logger.error(fn -> inspect(e) end)
         {:error, "Une erreur est survenue."}
     end
   end
@@ -32,6 +36,7 @@ defmodule Vae.ContactChannel do
       {:reply, {:ok, %{}}, socket}
     rescue
       e ->
+        Logger.error(fn -> inspect(e) end)
         {:reply, {:error, "Une erreur est survenue, merci de réessayer plus tard."}}
     end
   end
@@ -61,8 +66,48 @@ defmodule Vae.ContactChannel do
       email: body["email"],
       payload: Kernel.inspect(body)
     })
+    |> maybe_create_application(body)
+  end
+
+  defp maybe_create_application(job_seeker, %{"contact_delegate" => "on"} = body) do
+    with user <- get_or_create_user_for_application(job_seeker, body),
+         certification <- find_certification(body["certification"]) do
+      create_or_update_application(user, certification, body["delegate"])
+    end
 
     body
+  end
+
+  defp maybe_create_application(_job_seeker, body), do: body
+
+  defp get_or_create_user_for_application(job_seeker, body) do
+    tmp_password = "AVRIL_#{UUID.uuid5(nil, body["email"])}_TMP_PASSWORD"
+
+    params =
+      Map.take(body, ["first_name", "last_name", "email", "phone_number"])
+      |> Map.merge(%{
+        "job_seeker" => job_seeker,
+        "password" => tmp_password,
+        "password_confirmation" => tmp_password
+      })
+
+    Repo.get_by(Vae.User, email: body["email"]) ||
+      %Vae.User{}
+      |> Vae.User.changeset(params)
+      |> Repo.insert!()
+  end
+
+  defp find_certification(certification_label) do
+    Certification.find_by_acronym_and_label(certification_label)
+  end
+
+  defp create_or_update_application(user, certification, delegate) do
+    JsApplication.find_or_create_with_params(%{
+      user_id: user.id,
+      delegate_id: delegate,
+      certification_id: certification.id
+    })
+    |> JsApplication.submitted_now()
   end
 
   defp send_messages(body) do
@@ -88,7 +133,11 @@ defmodule Vae.ContactChannel do
     body
     |> generic_message()
     |> Map.merge(%{
-      TemplateID: (if body["delegate_is_asp"], do: @mailjet_conf[:asp_vae_recap_template_id], else: @mailjet_conf[:vae_recap_template_id]),
+      TemplateID:
+        if(body["delegate_is_asp"],
+          do: @mailjet_conf[:asp_vae_recap_template_id],
+          else: @mailjet_conf[:vae_recap_template_id]
+        ),
       ReplyTo: Mailjet.avril_email(),
       To: Mailjet.build_to(%{Email: body["email"], Name: get_name(body)}),
       Attachments:
