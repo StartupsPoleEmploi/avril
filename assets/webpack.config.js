@@ -13,8 +13,8 @@ module.exports = (env, options) => ({
     ]
   },
   entry: {
-      app: ['./js/app.js'], //.concat(glob.sync('./vendor/**/*.js'))
-      admin: ['./js/admin.js'] //.concat(glob.sync('./vendor/**/*.js'))
+    app: ['./js/app.js'],
+    admin: ['./js/admin.js'],
   },
   output: {
     filename: '[name].js',
@@ -42,11 +42,18 @@ module.exports = (env, options) => ({
             options: {}
           }
         ]
+      },
+      {
+        test: /\.css$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       }
     ]
   },
   plugins: [
-    new MiniCssExtractPlugin({ filename: '../css/app.css' }),
+    new MiniCssExtractPlugin({
+      filename: '../css/[name].css',
+      chunkFilename: '[id].css',
+    }),
     new CopyWebpackPlugin([{ from: 'static/', to: '../' }])
   ]
 });

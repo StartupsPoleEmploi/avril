@@ -14,6 +14,7 @@ html lang="fr"
       = render ComponentView, "analytics", conn: @conn
 
     link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
+
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
 
     script src=Routes.static_path(@conn,"/js/app.js") async=true

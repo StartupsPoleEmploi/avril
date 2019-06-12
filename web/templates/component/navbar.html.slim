@@ -2,7 +2,7 @@ nav.navbar.dm-navbar.navbar-expand-md
   = link "Aller au contenu principal", to: "#content", class: "screen-accessibility-helper"
   = link to: Routes.root_path(@conn, :index), class: "navbar-brand", title: "Retour à la page d'accueil" do
     = img_tag '/images/avril-beta.svg', alt: "Retour à la page d\'accueil", class: "logo"
-  button.navbar-toggler.collapsed type="button", data-toggle="collapse", data-target="#navbarCollapse", aria-controls="navbarCollapse", aria-label="Menu", href="#navbarCollapse" Menu
+  button.navbar-toggler.collapsed type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-label="Menu" href="#navbarCollapse" Menu
   .collapse.navbar-collapse[id="navbarCollapse"]
     ul.navbar-nav.ml-auto.flex-md-row.flex-column.align-items-center.my-md-0.my-5
       = if true do

@@ -2,7 +2,6 @@ import $ from 'jquery';
 
 $(() => {
   const $levelSelector = $('#level-selector');
-  console.log('hi')
   if ($levelSelector.length) {
 
     $levelSelector.on('loaded.bs.select', e => {

@@ -1,8 +1,13 @@
 import '../css/admin.scss';
 
-import '../vendor/admin_lte2.js';
-import '../vendor/simditor.js';
-import 'jquery.multi-select.js';
+import 'admin-lte';
+// import '../vendor/admin_lte2.js';
+import '../vendor/multiselect/jquery.multi-select.js';
+
+// import '../vendor/simditor/module.min.js';
+// import '../vendor/simditor/hotkeys.min.js';
+// import '../vendor/simditor/simditor.min.js';
+// import '../vendor/simditor/uploader.min.js';
 
 $(document).ready(function() {
   if(document.querySelector('#delegate_address')) {

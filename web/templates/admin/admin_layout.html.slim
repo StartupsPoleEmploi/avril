@@ -1,4 +1,5 @@
-script src=Routes.static_path(@conn, "/js/admin.js") async=true
-link rel="stylesheet" href=Routes.static_path(@conn, "/css/admin.css")
-
-script src="https://cdn.jsdelivr.net/npm/places.js@1.14.0"
+/ Simditor can't be loaded using webpack: :( https://stackoverflow.com/questions/53640034/simditor-with-webpack
+/ script src="https://cdnjs.cloudflare.com/ajax/libs/simditor/2.3.25/lib/simditor.min.js"
+/ link href="https://cdnjs.cloudflare.com/ajax/libs/simditor/2.3.25/styles/simditor.min.css" rel="stylesheet"
+link href=Routes.static_path(@conn, "/css/admin.css") rel="stylesheet"
+script src=Routes.static_path(@conn, "/js/admin.js")
