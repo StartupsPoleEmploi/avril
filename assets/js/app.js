@@ -7,6 +7,7 @@ import 'bootstrap-select';
 import 'url-search-params';
 
 import './socket';
+import './components/searchbar';
 import { Analytics } from "./analytics"
 
 

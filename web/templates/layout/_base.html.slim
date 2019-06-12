@@ -1,9 +1,10 @@
 doctype html
-html{lang="fr"}
+html lang="fr"
   head
     meta charset="UTF-8"
     meta content="IE=edge" http-equiv="X-UA-Compatible"
     meta content="width=device-width, initial-scale=1" name="viewport"
+    link rel="icon" type="image/x-icon" href=Routes.static_path(@conn,"/favicon.ico")
 
     - %{title: title, description: description} = meta_data(@assigns)
     meta name="description" content=description
@@ -11,24 +12,19 @@ html{lang="fr"}
 
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
-      javascript:
-        window.disableGa = function() {
-          window['ga-disable-<%= System.get_env("GA_API_KEY") %>'] = true;
-          window['ga-disable-<%= System.get_env("GA_PE_API_KEY") %>'] = true;
-        };
-    link rel="icon" type="image/x-icon" href=Routes.static_path(@conn,"/favicon.ico")
+
     link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
-    script src=Routes.static_path(@conn,"/js/app.js")
-    / script src=Routes.static_path(@conn,"/js/vendor.js")
-    script src="https://cdn.jsdelivr.net/npm/places.js@1.14.0"
-    script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"
-    script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"
+
+    script src=Routes.static_path(@conn,"/js/app.js") async=true
+
+    = render Vae.ComponentView, "user_token", conn: @conn
     = if @assigns[:user_token] do
       javascript:
         window.userToken = "<%= @assigns[:user_token] %>";
   body class="#{@assigns[:body_class] || 'app'}"
     = @contents
+    = render Vae.ComponentView, "algolia_credentials", conn: @conn
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn
       = render ComponentView, "crisp", conn: @conn
