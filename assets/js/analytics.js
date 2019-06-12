@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 class Analytics {
   init() {
     let self = this;
@@ -67,7 +69,7 @@ class Analytics {
       window.ga('send', 'event', categoryEvent[0], categoryEvent[1]);
     }
   }
-  
+
   naiveDeparam(queryString) {
     return queryString.replace(/^\??/, '').split('&')
   }

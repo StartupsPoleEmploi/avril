@@ -61,7 +61,7 @@ defmodule Vae.Web do
       import Vae.ErrorHelpers
       import Vae.ViewHelpers
       import Vae.Gettext
-      import PhoenixFormAwesomplete
+      # import PhoenixFormAwesomplete
     end
   end
 

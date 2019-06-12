@@ -33,7 +33,6 @@ defmodule Vae.Mixfile do
         :phoenix_slime,
         :scrivener_ecto,
         :scrivener_html,
-        :phoenix_form_awesomplete,
         :httpoison,
         :coherence,
         :new_relixir,
@@ -71,7 +70,6 @@ defmodule Vae.Mixfile do
       {:csv, "~> 2.0.0"},
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.8"},
-      {:phoenix_form_awesomplete, "~> 0.1"},
       {:jason, "~> 1.0"},
       {:httpoison, "~> 1.4"}, # TODO: remove dependency: not needed anymore
       {:poison, "~> 3.0", override: true}, # TODO: remove dependency: not needed anymore

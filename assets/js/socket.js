@@ -1,6 +1,7 @@
 // NOTE: The contents of this file will only be executed if
 // you uncomment its entry in "web/static/js/app.js".
 
+import $ from "jquery";
 import 'jquery-serializejson'
 
 // To use Phoenix channels, the first step is to import Socket
