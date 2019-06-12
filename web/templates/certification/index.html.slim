@@ -51,37 +51,3 @@ div
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
 
-javascript:
-  $(document).ready(function (){
-    $('#level-selector').selectpicker({
-      countSelectedText: function(number, total) {
-        if(number === total) {
-          return 'Tous les niveaux'
-        } else {
-          return number + ' niveaux sélectionnés'
-        }
-      },
-      actionsBox: true,
-      title: "Sélectionnez un niveau",
-      dropupAuto: false,
-      style: 'btn-link px-0',
-      selectedTextFormat: 'count > 1',
-      selectAllText: 'Tout sélectionner',
-      deselectAllText: 'Tout désélectionner'
-    });
-    params = new URLSearchParams(window.location.search)
-    defaultValue = (params.get('levels') || "1,2,3,4,5").split(',')
-    $('#level-selector').selectpicker('val', defaultValue);
-  })
-  $('#level-selector').on('loaded.bs.select', function (e) {
-    $(e.target).parent().find('.dropdown-menu').append('<div class="bs-actionsbox"><div class="btn-group btn-group-sm btn-block"><button type="button" class="btn btn-primary">Filtrer</button></div></div>')
-  })
-  $('#level-selector').on('hide.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-    arrayOptions = $.map(e.target.selectedOptions, function(obj) {
-      return obj.value;
-    });
-    params = new URLSearchParams(window.location.search)
-    params.set('levels', arrayOptions)
-    window.location.search = params.toString()
-
-  });

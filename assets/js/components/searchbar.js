@@ -135,9 +135,9 @@ const setupPlaces = (type, prefix, tag) => {
   });
 }
 
-(() => {
+$(() => {
   if ($('.dm-search-box').length) {
     setupSearchBar();
     setupPlaces('city', 'search', 'geolocation_text');
   }
-})();
+});

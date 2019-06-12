@@ -8,6 +8,9 @@ import 'url-search-params';
 
 import './socket';
 import './components/searchbar';
+import './components/pagination';
+import './components/level-selector';
+import './pages/application';
 import { Analytics } from "./analytics"
 
 
@@ -18,39 +21,16 @@ $(function() {
 
   new Analytics().init()
 
+  // Bootstrap extend
+  $('[data-toggle="show"]').on('click', function(e){
+    $($(e.target).attr('data-target')).toggleClass('d-none');
+  });
+
   // Search labels
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_query");
   $("#search_query").parent().addClass('form-label-group');
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
   $("#search_geolocation_text").parent().addClass('form-label-group');
-
-  // Steps navigation
-  var currentStep = 1;
-
-  function prev_next(currentStep) {
-    if ($('#step_' + (currentStep - 1)).length == 0) {
-      $('#previous-step').parent().addClass('disabled');
-    } else {
-      $('#previous-step').parent().removeClass('disabled');
-    }
-    if ($('#step_' + (currentStep + 1)).length == 0) {
-      $('#next-step').parent().addClass('disabled');
-    } else {
-      $('#next-step').parent().removeClass('disabled');
-    }
-  }
-  $('#previous-step').click(function() {
-    $('#step_' + currentStep).addClass("d-none");
-    currentStep--;
-    $('#step_' + currentStep).removeClass("d-none");
-    prev_next(currentStep);
-  });
-  $('#next-step').click(function() {
-    $('#step_' + currentStep).addClass("d-none");
-    currentStep++;
-    $('#step_' + currentStep).removeClass("d-none");
-    prev_next(currentStep);
-  });
 
   // accessibility
   setTimeout(function() {
