@@ -5,24 +5,23 @@ $(() => {
   if ($levelSelector.length) {
 
     $levelSelector.on('loaded.bs.select', e => {
-      console.log(e.target)
       $(e.target).parent().find('.dropdown-menu').append(`
         <div class="bs-actionsbox">
           <div class="btn-group btn-group-sm btn-block">
             <button type="button" class="btn btn-primary">Filtrer</button>
           </div>
         </div>
-      `)
-    })
+      `);
+    });
 
     $levelSelector.on('hide.bs.select', (e, clickedIndex, isSelected, previousValue) => {
       const arrayOptions = Array.from(e.target.selectedOptions).map(o => o.value);
-      let params = new URLSearchParams(window.location.search)
-      params.set('levels', arrayOptions)
-      window.location.search = params.toString()
+      let params = new URLSearchParams(window.location.search);
+      params.set('levels', arrayOptions);
+      window.location.search = params.toString();
     });
 
-    const result = $levelSelector.selectpicker({
+    $levelSelector.selectpicker({
       countSelectedText: function(number, total) {
         if(number === total) {
           return 'Tous les niveaux'
@@ -38,8 +37,6 @@ $(() => {
       selectAllText: 'Tout sélectionner',
       deselectAllText: 'Tout désélectionner'
     });
-
-    console.log(result)
 
     let params = new URLSearchParams(window.location.search);
     let defaultValue = (params.get('levels') || "1,2,3,4,5").split(',');

@@ -13,21 +13,21 @@ import $ from 'jquery';
 
   if ($('.profile-edit .edit-button').length) {
     $('.profile-edit').on('click', '.edit-button', e => {
-      $(e.delegateTarget).find('[disabled]').removeAttr('disabled').addClass('disablable')
+      $(e.delegateTarget).find('[disabled]').removeAttr('disabled').addClass('disablable');
       $('.save').removeClass('d-none')
       $('.edit-button').hide();
     })
 
     $('.profile-edit').on('keyup', 'input', e => {
       if ($(e.target).val()) {
-        $('.save').removeClass('d-none')
+        $('.save').removeClass('d-none');
         $('.edit-button').hide();
       }
     });
 
     $('.profile-edit').on('click', '.reset', e => {
-      $(e.delegateTarget).find('.disablable').attr('disabled', 'disabled').removeClass('disablable')
-      $('.save').addClass('d-none')
+      $(e.delegateTarget).find('.disablable').attr('disabled', 'disabled').removeClass('disablable');
+      $('.save').addClass('d-none');
       $('.edit-button').show();
     });
 
@@ -35,13 +35,13 @@ import $ from 'jquery';
       var $target = $(e.target);
       if ($target.text() === '+') {
         $(e.target).text('-')
-        $(e.delegateTarget).find('.address-component').removeClass('d-none')
+        $(e.delegateTarget).find('.address-component').removeClass('d-none');
       } else {
-        $(e.target).text('+')
+        $(e.target).text('+');
         $(e.delegateTarget)
           .find('.address-component')
           .filter(function(i, el){ return !$(el).find('input').val() })
-          .addClass('d-none')
+          .addClass('d-none');
       }
     });
   }

@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
   width: 100%;
   height: 100%;
   position: relative;
@@ -21,7 +22,7 @@ body {
     @include media-breakpoint-up(md) {
       height: 40px;
       background-repeat: no-repeat;
-      background-image: url("/images/dm-deco-green-medium.svg"), url("/images/dm-deco-green-large.svg"), url("/images/dm-deco-gray-large.svg"), url("/images/dm-deco-green-large.svg"), url("/images/dm-deco-green-medium.svg"), url("/images/dm-deco-violet-tiny.svg");
+      background-image: url('/images/dm-deco-green-medium.svg'), url('/images/dm-deco-green-large.svg'), url('/images/dm-deco-gray-large.svg'), url('/images/dm-deco-green-large.svg'), url('/images/dm-deco-green-medium.svg'), url('/images/dm-deco-violet-tiny.svg');
       background-position: calc(100% + 400px) 200px, -800px 350px, calc(100% + 600px) 1000px, -800px 2300px, -400px 3850px, calc(100% + 350px) 4600px;
     }
   }

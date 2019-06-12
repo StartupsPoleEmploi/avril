@@ -7,11 +7,11 @@
     font-size: 20px;
   }
 
-  &:after {
-    content: "\ea0c";
-    font-family: "avril";
+  &::after {
+    content: '\ea0c';
+    font-family: 'avril';
     font-size: 14px;
-    border: none;
+    border: 0;
     height: inherit;
     width: auto;
     vertical-align: 0;
