@@ -33,7 +33,6 @@ div
                   span.ic-icon.ic-tail-right-2.mr-2
                   span #{to_delegate_label(@conn, @conn.params["certificateur"])}
     .col
-      h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
       = link to: Routes.page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
         h5.mb-5 Comment bien choisir son diplôme ?
         div.d-flex
