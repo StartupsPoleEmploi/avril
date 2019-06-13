@@ -55,8 +55,10 @@ module.exports = (env, options) => ({
       chunkFilename: '[id].css',
     }),
     new CopyWebpackPlugin([
+      { from: 'vendor/simditor', to: '../' },
+      { from: 'vendor/multiselect', to: '../' },
+      { from: 'vendor/ex_admin', to: '../' },
       { from: 'static/', to: '../' },
-      { from: 'vendor/simditor', to: '../vendor/simditor' },
     ])
   ]
 });

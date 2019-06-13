@@ -1,11 +1,8 @@
 import '../css/admin.scss';
 
-// import 'admin-lte';
-// import '../vendor/multiselect/jquery.multi-select.js';
-
 import he from 'he';
 
-$(document).ready(function() {
+$(document).ready(() => {
   if(document.querySelector('#delegate_address')) {
     var placesAutocomplete = places({
       appId: window.algolia_places_app_id,
@@ -29,7 +26,7 @@ $(document).ready(function() {
 
   Simditor.locale = 'fr-FR';
 
-  $("input[id^=process_step_]").each((i, $el) => {
+  $("textarea[id^=process_step_]").each((i, $el) => {
     $($el).val(he.decode($($el).val()))
     new Simditor({
       textarea: $($el),

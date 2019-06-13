@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 (function() {
   'use strict';
 
@@ -656,7 +654,7 @@ if(e.trigger(f),b.trigger(g),!g.isDefaultPrevented()&&!f.isDefaultPrevented()){v
 
             this.updateCalendars();
         },
-
+        
         keydown: function (e) {
             //hide on tab or enter
         	if ((e.keyCode === 9) || (e.keyCode === 13)) {
@@ -680,7 +678,7 @@ if(e.trigger(f),b.trigger(g),!g.isDefaultPrevented()&&!f.isDefaultPrevented()){v
                 };
                 parentRightEdge = this.parentEl[0].clientWidth + this.parentEl.offset().left;
             }
-
+            
             if (this.drops == 'up')
             	containerTop = this.element.offset().top - this.container.outerHeight() - parentOffset.top;
             else
