@@ -1,7 +1,9 @@
 import '../css/admin.scss';
 
-import 'admin-lte';
-import '../vendor/multiselect/jquery.multi-select.js';
+// import 'admin-lte';
+// import '../vendor/multiselect/jquery.multi-select.js';
+
+import he from 'he';
 
 $(document).ready(function() {
   if(document.querySelector('#delegate_address')) {
@@ -25,15 +27,13 @@ $(document).ready(function() {
     });
   }
 
-  Simditor.locale = 'en-US';
+  Simditor.locale = 'fr-FR';
 
-  if ($("[id^=process_step_]").length) {
-
-    var i;
-    for (i = 1; i < 9; i++) {
-      var editor = new Simditor({
-        textarea: $('#process_step_' + i),
-        toolbar: [
+  $("input[id^=process_step_]").each((i, $el) => {
+    $($el).val(he.decode($($el).val()))
+    new Simditor({
+      textarea: $($el),
+      toolbar: [
         'title',
         'bold',
         'italic',
@@ -48,12 +48,11 @@ $(document).ready(function() {
         'indent',
         'outdent',
         'alignment'
-        ],
-        toolbarFloat: false,
-        defaultImage: 'http://temp.im/150x150'
-      });
-    }
-  }
+      ],
+      toolbarFloat: false,
+      defaultImage: 'http://temp.im/150x150'
+    });
+  });
 })
 
 const $filters = document.querySelector('form.filter_form');
