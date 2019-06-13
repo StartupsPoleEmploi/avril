@@ -1,4 +1,6 @@
 defmodule Vae.Application do
+  require Logger
+
   use Vae.Web, :model
 
   alias Vae.Repo
@@ -19,6 +21,7 @@ defmodule Vae.Application do
     belongs_to(:certification, Vae.Certification, foreign_key: :certification_id)
 
     has_many(:resumes, Vae.Resume)
+
     has_many(
       :certifiers,
       through: [:certification, :certifiers]
@@ -39,8 +42,12 @@ defmodule Vae.Application do
       ) do
     Repo.get_by(__MODULE__, params) ||
       case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
-        {:ok, application} -> application
-        {:error, msg} -> nil
+        {:ok, application} ->
+          application
+
+        {:error, msg} ->
+          Logger.error(fn -> inspect(msg) end)
+          nil
       end
   end
 
@@ -89,6 +96,12 @@ defmodule Vae.Application do
       preload: [user: [:job_seeker], delegate: [:certifiers]]
     )
     |> Repo.all()
+  end
+
+  def submitted_now(application) do
+    application
+    |> change(%{submitted_at: DateTime.utc_now()})
+    |> Repo.update!()
   end
 
   defp generate_hash(length) do

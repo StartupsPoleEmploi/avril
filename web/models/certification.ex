@@ -80,6 +80,14 @@ defmodule Vae.Certification do
 
   def get_certification(certification_id), do: Repo.get(Certification, certification_id)
 
+  def find_by_acronym_and_label(certification_label) do
+    from(
+      c in Certification,
+      where: fragment("lower(acronym || ' ' || label)") == ^String.downcase(certification_label)
+    )
+    |> Repo.one()
+  end
+
   def add_romes(changeset, %{romes: romes}) do
     changeset
     |> put_assoc(:romes, get_romes(romes))
