@@ -53,17 +53,17 @@ defmodule Vae.ExAdmin.Process do
       end
 
       inputs "Delegates" do
-        # has_many(process, :delegates, fn d ->
-        #   input(
-        #     d,
-        #     :id,
-        #     collection:
-        #       Delegate
-        #       |> Query.order_by(:name)
-        #       |> Repo.all()
-        #       |> Enum.map(&{&1.id, &1.name})
-        #   )
-        # end)
+        has_many(process, :delegates, fn d ->
+          input(
+            d,
+            :id,
+            collection:
+              Delegate
+              |> Query.order_by(:name)
+              |> Repo.all()
+              |> Enum.map(&{&1.id, &1.name})
+          )
+        end)
       end
     end
 
