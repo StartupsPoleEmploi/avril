@@ -86,7 +86,7 @@ defmodule Vae.Mixfile do
       {:quantum, "~> 2.2"},
       {:timex, "~> 3.0"},
       {:mailjex, "~> 0.1.4"},
-      {:uuid, "~> 1.1"},
+      {:elixir_uuid, "~> 1.2"},
       {:persistent_ets, "~> 0.1.0"},
       {:pdf_generator, ">=0.5.0"},
       {:observer_cli, "~> 1.4"},
