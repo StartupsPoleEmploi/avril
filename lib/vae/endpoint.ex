@@ -17,7 +17,7 @@ defmodule Vae.Endpoint do
     at: "/",
     from: :vae,
     gzip: true,
-    only: ~w(css fonts images js robots.txt),
+    only: ~w(css fonts images js vendor robots.txt),
     only_matching: ~w(favicon)
   )
 

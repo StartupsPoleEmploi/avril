@@ -1,13 +1,7 @@
 import '../css/admin.scss';
 
 import 'admin-lte';
-// import '../vendor/admin_lte2.js';
 import '../vendor/multiselect/jquery.multi-select.js';
-
-// import '../vendor/simditor/module.min.js';
-// import '../vendor/simditor/hotkeys.min.js';
-// import '../vendor/simditor/simditor.min.js';
-// import '../vendor/simditor/uploader.min.js';
 
 $(document).ready(function() {
   if(document.querySelector('#delegate_address')) {
@@ -34,6 +28,7 @@ $(document).ready(function() {
   Simditor.locale = 'en-US';
 
   if ($("[id^=process_step_]").length) {
+
     var i;
     for (i = 1; i < 9; i++) {
       var editor = new Simditor({
@@ -63,7 +58,9 @@ $(document).ready(function() {
 
 const $filters = document.querySelector('form.filter_form');
 
-$filters.addEventListener('paste', (event) => {
-  let paste = (event.clipboardData || window.clipboardData).getData('text');
-  paste = paste.trim();
-});
+if ($filters) {
+  $filters.addEventListener('paste', (event) => {
+    let paste = (event.clipboardData || window.clipboardData).getData('text');
+    paste = paste.trim();
+  });
+}
