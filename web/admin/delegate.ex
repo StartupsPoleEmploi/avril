@@ -23,7 +23,7 @@ defmodule Vae.ExAdmin.Delegate do
       actions()
     end
 
-    show delegate do
+    show _delegate do
       attributes_table(
         only: [
           :id,

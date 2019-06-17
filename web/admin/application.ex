@@ -6,7 +6,6 @@ defmodule Vae.ExAdmin.Application do
   alias Vae.Certification
   alias Vae.Delegate
 
-  alias Ecto.Query
   require Ecto.Query
 
   register_resource Vae.Application do
@@ -49,7 +48,7 @@ defmodule Vae.ExAdmin.Application do
       action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
     end
 
-    show application do
+    show _application do
       attributes_table do
         row :user
         row :certification
