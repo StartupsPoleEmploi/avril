@@ -84,7 +84,7 @@
         .row
           .col
       .col-md-6.text-right
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
+        = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, external_subscription_link: @external_subscription_link
 
     .row.mb-5.resume-section
       .col-md-12
@@ -166,4 +166,4 @@
 
     = if (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
       .text-center
-        = render Vae.ComponentView, "submit-button.html", conn: @conn, application: @application, edit_mode: @edit_mode
+        = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, external_subscription_link: @external_subscription_link

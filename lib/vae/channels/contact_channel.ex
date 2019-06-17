@@ -53,6 +53,7 @@ defmodule Vae.ContactChannel do
       "delegate_website" => delegate.website,
       "delegate_person_name" => delegate.person_name,
       "delegate_is_asp" => Delegate.is_asp?(delegate),
+      "delegate_external_subscription_link" => Delegate.external_subscription_link(delegate),
       "process" => delegate.process_id
     })
     |> Enum.filter(fn {_, v} -> v != nil end)

@@ -3,14 +3,14 @@ defmodule Vae.ApplicationController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, User, Resume}
+  alias Vae.{Application, Delegate, User, Resume}
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
     application =
       case Repo.get(Application, id) do
         nil -> nil
-        application -> Repo.preload(application, [:user, :delegate, :certification, :resumes])
+        application -> Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
@@ -31,6 +31,7 @@ defmodule Vae.ApplicationController do
             |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
           edit_mode: params["mode"] != "certificateur" &&
             Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
+          external_subscription_link: Delegate.external_subscription_link(application.delegate),
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{})
         )

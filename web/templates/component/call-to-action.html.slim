@@ -1,6 +1,9 @@
 = if @edit_mode do
   div style="margin: auto;"
     = if @application.submitted_at do
+      = if @external_subscription_link do
+        .mb-4
+          a.btn.btn-primary href=@external_subscription_link target="_blank" Rencontrer un expert VAE
       p
         strong Dossier Transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
       .mt-3

@@ -184,7 +184,7 @@ defmodule Vae.Delegate do
 
   def format_for_index(nil), do: nil
 
-  def format_for_index(delegate) do
+  def format_for_index(%__MODULE__{} = delegate) do
     delegate = delegate |> Repo.preload(:certifiers)
 
     certifiers =
@@ -198,17 +198,34 @@ defmodule Vae.Delegate do
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
 
-  def is_asp?(delegate) do
+  def is_asp?(%__MODULE__{} = delegate) do
     String.starts_with?(delegate.name, "ASP")
   end
 
-  def to_slug(delegate) do
+  def is_educ_nat?(%__MODULE__{} = delegate) do
+    delegate
+    |> Repo.preload(:certifiers)
+    |> Map.get(:certifiers)
+    |> Enum.reduce(false, fn certifier, result -> result || Certifier.is_educ_nat?(certifier) end)
+  end
+
+  def is_corse?(%__MODULE__{} = delegate) do
+    delegate.administrative == "Corse"
+  end
+
+  def external_subscription_link(%__MODULE__{} = delegate) do
+    delegate = Repo.preload(delegate, :process)
+    if __MODULE__.is_educ_nat?(delegate) && !__MODULE__.is_corse?(delegate), do: delegate.process.booklet_1
+  end
+
+  def to_slug(%__MODULE__{} = delegate) do
     Vae.String.parameterize("#{delegate.name} #{if (delegate.city && delegate.name =~ delegate.city), do: "", else: delegate.city} #{if (delegate.administrative && delegate.name =~ delegate.administrative), do: "", else: delegate.administrative}")
   end
 
   def slugify(changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
+
 
   defimpl Phoenix.Param, for: Vae.Delegate do
     def to_param(%{id: id, slug: slug}) do
