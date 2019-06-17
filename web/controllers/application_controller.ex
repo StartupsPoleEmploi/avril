@@ -3,7 +3,7 @@ defmodule Vae.ApplicationController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, Delegate, User, Resume}
+  alias Vae.{Application, User, Resume}
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
@@ -28,7 +28,7 @@ defmodule Vae.ApplicationController do
               Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
             end)
             |> Map.to_list()
-            |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
+            |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
           edit_mode: params["mode"] != "certificateur" &&
             Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           user_changeset: User.changeset(application.user, %{}),
@@ -168,25 +168,25 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  defp compact_experiences(experiences, equality_fun) do
-    Enum.reduce(experiences, [], fn exp, result ->
-      associate_if_match(exp, result, equality_fun)
-    end)
-    |> Enum.reverse()
-    |> Enum.map(fn experiences_group -> Enum.reverse(experiences_group) end)
-  end
+  # defp compact_experiences(experiences, equality_fun) do
+  #   Enum.reduce(experiences, [], fn exp, result ->
+  #     associate_if_match(exp, result, equality_fun)
+  #   end)
+  #   |> Enum.reverse()
+  #   |> Enum.map(fn experiences_group -> Enum.reverse(experiences_group) end)
+  # end
 
-  defp associate_if_match(element, already_associated, equality_fun) do
-    case already_associated do
-      [] ->
-        [[element]]
+  # defp associate_if_match(element, already_associated, equality_fun) do
+  #   case already_associated do
+  #     [] ->
+  #       [[element]]
 
-      [[latest_element | other_elements] = previous_elements | tail] ->
-        if equality_fun.(element, latest_element) do
-          [[element | previous_elements] | tail]
-        else
-          [[element] | [previous_elements | tail]]
-        end
-    end
-  end
+  #     [[latest_element | other_elements] = previous_elements | tail] ->
+  #       if equality_fun.(element, latest_element) do
+  #         [[element | previous_elements] | tail]
+  #       else
+  #         [[element] | [previous_elements | tail]]
+  #       end
+  #   end
+  # end
 end

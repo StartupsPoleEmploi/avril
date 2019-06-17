@@ -1,11 +1,8 @@
 defmodule Vae.AuthController do
   use Vae.Web, :controller
 
-  alias Vae.OAuth
+  alias Vae.{OAuth, User, Application}
   alias Vae.OAuth.Clients
-  alias Vae.User
-  alias Vae.Application
-  alias Vae.Delegate
 
   def save_session_and_redirect(conn, _params) do
     referer = hd(get_req_header(conn, "referer"))
@@ -74,7 +71,7 @@ defmodule Vae.AuthController do
     end
   end
 
-  def callback(conn, params) do
+  def callback(conn, _params) do
     redirect(conn, external: get_session(conn, :referer))
   end
 

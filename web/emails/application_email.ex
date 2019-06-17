@@ -1,9 +1,7 @@
 defmodule Vae.ApplicationEmail do
-  alias Vae.Mailer.Sender.Mailjet
-  alias Vae.Email
+
+  alias Vae.{Email, Endpoint, Repo}
   alias Vae.Router.Helpers
-  alias Vae.Endpoint
-  alias Vae.Repo
 
   def delegate_submission(application) do
     application = Repo.preload(application, [:user, :delegate, :certification])
