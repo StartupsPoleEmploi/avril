@@ -20,9 +20,6 @@ html lang="fr"
     script src=Routes.static_path(@conn,"/js/app.js") async=true
 
     = render Vae.ComponentView, "user_token", conn: @conn
-    = if @assigns[:user_token] do
-      javascript:
-        window.userToken = "<%= @assigns[:user_token] %>";
   body class="#{@assigns[:body_class] || 'app'}"
     = @contents
     = render Vae.ComponentView, "algolia_credentials", conn: @conn

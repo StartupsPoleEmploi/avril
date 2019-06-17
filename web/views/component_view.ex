@@ -2,11 +2,15 @@ defmodule Vae.ComponentView do
   use Vae.Web, :view
 
   def render("user_token", %{conn: conn}) do
-    {:safe, """
-      <script>
-      window.userToken2 = "<%= conn.assigns[:user_token] %>";
-      </script>
-    """}
+    if is_nil(conn.assigns[:user_token]) do
+      {:safe, ""}
+    else
+      {:safe, """
+        <script>
+        window.userToken = "#{conn.assigns[:user_token]}";
+        </script>
+      """}
+    end
   end
 
   def render("analytics", %{conn: conn}) do
@@ -48,33 +52,41 @@ defmodule Vae.ComponentView do
   end
 
   def render("hotjar", _) do
-    {:safe, """
-     <!-- Hotjar Tracking Code for http://avril.pole-emploi.fr -->
-     <script>
-     (function(h,o,t,j,a,r){
-     h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-     h._hjSettings={hjid:#{System.get_env("HOTJAR_ID")},hjsv:5};
-     a=o.getElementsByTagName('head')[0];
-     r=o.createElement('script');r.async=1;
-     r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-     a.appendChild(r);
-     })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
-     </script>
-    """}
+    if is_nil(System.get_env("HOTJAR_ID")) do
+      {:safe, ""}
+    else
+      {:safe, """
+       <!-- Hotjar Tracking Code for http://avril.pole-emploi.fr -->
+       <script>
+       (function(h,o,t,j,a,r){
+       h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+       h._hjSettings={hjid:#{System.get_env("HOTJAR_ID")},hjsv:5};
+       a=o.getElementsByTagName('head')[0];
+       r=o.createElement('script');r.async=1;
+       r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+       a.appendChild(r);
+       })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+       </script>
+      """}
+    end
   end
 
   def render("crisp", _) do
-    {:safe, """
-      <script type="text/javascript">
-      window.$crisp=[];
-      window.CRISP_WEBSITE_ID='#{System.get_env("CRISP_WEBSITE_ID")}';
-      (function(){
-        d=document;s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";s.async=1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-      })();
-      </script>
-    """}
+    if is_nil(System.get_env("HOTJAR_ID")) do
+      {:safe, ""}
+    else
+      {:safe, """
+        <script type="text/javascript">
+        window.$crisp=[];
+        window.CRISP_WEBSITE_ID='#{System.get_env("CRISP_WEBSITE_ID")}';
+        (function(){
+          d=document;s=d.createElement("script");
+          s.src="https://client.crisp.chat/l.js";s.async=1;
+          d.getElementsByTagName("head")[0].appendChild(s);
+        })();
+        </script>
+      """}
+    end
   end
 
   def render("algolia_credentials", _) do
