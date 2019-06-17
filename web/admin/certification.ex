@@ -8,7 +8,7 @@ defmodule Vae.ExAdmin.Certification do
 
   register_resource Vae.Certification do
     show certification do
-      attributes_table
+      attributes_table()
 
       panel "Romes" do
         table_for certification.romes do

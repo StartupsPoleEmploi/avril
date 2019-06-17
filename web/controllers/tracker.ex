@@ -57,11 +57,11 @@ defmodule Vae.Tracker do
     end
   end
 
-  def track({%Plug.Conn{request_path: path, path_info: path_info} = conn, {func, analytic}})
+  def track({%Plug.Conn{request_path: path, path_info: _path_info} = _conn, {_func, analytic}})
       when path == "/",
       do: {:ok, analytic}
 
-  def track({%Plug.Conn{request_path: "/"} = conn, {func, analytic}}),
+  def track({%Plug.Conn{request_path: "/"} = _conn, {_func, analytic}}),
     do: {:ok, analytic}
 
   def track({%Plug.Conn{query_params: query_params} = conn, {func, analytic}})

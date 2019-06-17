@@ -15,7 +15,7 @@ defmodule Vae.SearchController do
     redirect(
       conn,
       to:
-        certification_path(
+        Routes.certification_path(
           conn,
           :index,
           rome_code: r
@@ -35,7 +35,7 @@ defmodule Vae.SearchController do
       redirect(
         conn,
         to:
-          certification_path(
+          Routes.certification_path(
             conn,
             :show,
             certification,

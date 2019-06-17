@@ -18,7 +18,11 @@ config :vae, Vae.Endpoint,
 
 config :phoenix, :template_engines,
   slim: PhoenixSlime.Engine,
-  slime: PhoenixSlime.Engine
+  slime: PhoenixSlime.Engine,
+  slimleex: PhoenixSlime.LiveViewEngine # If you want to use LiveView
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
 
 # Configures Elixir's Logger
 config :logger, :console,

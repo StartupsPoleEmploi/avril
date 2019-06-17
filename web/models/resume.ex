@@ -38,7 +38,7 @@ defmodule Vae.Resume do
       ) |> ExAws.request
 
     case result do
-      {:ok, body} ->
+      {:ok, _body} ->
         Repo.insert(__MODULE__.changeset(%__MODULE__{}, %{
           application: application,
           content_type: params.content_type,
@@ -55,7 +55,7 @@ defmodule Vae.Resume do
       |> ExAws.request
 
     case result do
-      {:ok, body} ->
+      {:ok, _body} ->
         Repo.delete(resume)
       error -> error
     end

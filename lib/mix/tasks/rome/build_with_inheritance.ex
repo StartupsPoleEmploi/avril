@@ -1,11 +1,7 @@
 defmodule Mix.Tasks.Rome.BuildWithInheritance do
   use Mix.Task
 
-  import Mix.Ecto
-  import Ecto.Query
-
-  alias Vae.Repo
-  alias Vae.Rome
+  alias Vae.{Repo, Rome}
 
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
@@ -25,7 +21,7 @@ defmodule Mix.Tasks.Rome.BuildWithInheritance do
               code: "#{letter}#{category}#{subcategory}",
               label: label
             }))
-          rome -> IO.write("rome exists")
+          _rome -> IO.write("rome exists")
         end
     end)
   end

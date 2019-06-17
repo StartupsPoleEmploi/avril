@@ -30,7 +30,7 @@ defmodule Vae.Rome do
     |> validate_required([:code, :label, :slug])
   end
 
-  def all do
+  def all() do
     Rome
     |> order_by(:code)
     |> Repo.all()

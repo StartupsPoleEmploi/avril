@@ -5,7 +5,7 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
 
   @behaviour Vae.Mailer.FileExtractor
 
-  @limit Application.get_env(:vae, :mailer_extractor_limit)
+  # @limit Application.get_env(:vae, :mailer_extractor_limit)
 
   @fields ~w(KN_INDIVIDU_NATIONAL CODE_POSTAL TELEPHONE COURRIEL DATE_EFF_INS DC_LBLNIVEAUFORMATIONMAX NOM PRENOM DC_REFERENCEGMS DC_ROMEORE DN_DUREEEXPERIENCE DC_LISTEROMEMETIERRECH ANC AGE)
 
@@ -24,6 +24,10 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
     "Pays-de-la-Loire",
     "Normandie"
   ]
+
+  def extract(_) do
+    # To implement
+  end
 
   def build_enumerable(path) do
     File.stream!(path)
@@ -75,15 +79,6 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
           Map.put_new(acc, rome, nil)
         end)
     }
-  end
-
-  defp map_xp_to_level(xp) do
-    xp
-    |> Float.parse()
-    |> case do
-      :error -> 0
-      {level, _} -> level
-    end
   end
 
   defp is_allowed_administrative?(job_seeker) do

@@ -147,7 +147,7 @@ defmodule Vae.User do
 
   def fill_with_api_fields(initial_status, client_with_token, left_retries\\0) do
     try do
-      Enum.reduce(build_api_calls, initial_status, fn
+      Enum.reduce(build_api_calls(), initial_status, fn
         call, {:ok, user} = status ->
           if call.is_data_missing.(user) do
             IO.puts("Calling #{call.url}")
@@ -163,7 +163,7 @@ defmodule Vae.User do
       error ->
         case left_retries do
           0 -> {:error, error}
-          n -> __MODULE__.fill_with_api_fields(initial_status, client_with_token, left_retries - 1)
+          _n -> __MODULE__.fill_with_api_fields(initial_status, client_with_token, left_retries - 1)
         end
     end
   end

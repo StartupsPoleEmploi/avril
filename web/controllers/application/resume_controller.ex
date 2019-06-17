@@ -3,8 +3,7 @@ defmodule Vae.ResumeController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, Delegate, User, Resume}
-  alias Vae.Crm.Polls
+  alias Vae.{Application, Resume}
 
   def create(conn, %{"application_id" => id, "resume" => resume_params}) do
     application =
@@ -17,14 +16,14 @@ defmodule Vae.ResumeController do
       {:ok, application} ->
         if params = resume_params["file"] do
           case Resume.create(application, params) do
-            {:ok, resume} ->
+            {:ok, _resume} ->
               conn
               |> put_flash(:success, "CV uploadé avec succès.")
-              |> redirect(to: application_path(conn, :show, application))
+              |> redirect(to: Routes.application_path(conn, :show, application))
             {:error, msg} ->
               conn
               |> put_flash(:error, msg)
-              |> redirect(to: application_path(conn, :show, application))
+              |> redirect(to: Routes.application_path(conn, :show, application))
           end
         end
 
@@ -49,11 +48,11 @@ defmodule Vae.ResumeController do
           {:ok, _resume} ->
             conn
             |> put_flash(:success, "CV supprimé avec succès.")
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
           {:error, _msg} ->
             conn
             |> put_flash(:error, "Le CV n'a pas pu être supprimé, merci de réessayer plus tard.")
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
 
       {:error, %{to: to, msg: msg}} ->

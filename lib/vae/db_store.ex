@@ -10,4 +10,7 @@ defimpl Coherence.DbStore, for: Vae.User do
 
   def delete_credentials(user, creds),
     do: EctoDbSession.delete_credentials(user, creds)
+
+  def delete_user_logins(user),
+    do: EctoDbSession.delete_user_logins(user)
 end

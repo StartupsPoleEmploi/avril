@@ -6,7 +6,6 @@ defmodule Vae.ExAdmin.Application do
   alias Vae.Certification
   alias Vae.Delegate
 
-  alias Ecto.Query
   require Ecto.Query
 
   register_resource Vae.Application do
@@ -16,10 +15,10 @@ defmodule Vae.ExAdmin.Application do
       column(:id)
       column(:user)
       column(:certification)
-      column(:certifier, [], fn a ->
-        Enum.join(Enum.map(a.certification.certifiers, fn c ->
-          "<a href=\"/admin/certifiers/#{c.id}\">#{c.name}</a>"
-        end), ",")
+      column(:certifier, fn a ->
+        Enum.map(a.certification.certifiers, fn c ->
+          Phoenix.HTML.Link.link(c.name, to: "/admin/certifiers/#{c.id}")
+        end)
       end)
       column(:delegate)
       column(:administrative, [], fn a -> a.delegate.administrative end)
@@ -49,7 +48,7 @@ defmodule Vae.ExAdmin.Application do
       action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
     end
 
-    show application do
+    show _application do
       attributes_table do
         row :user
         row :certification
@@ -81,6 +80,8 @@ defmodule Vae.ExAdmin.Application do
       column(:inserted_at)
       column(:updated_at)
     end
+
+    filter [:id, :submitted_at, :admissible_at, :inserted_at, :updated_at]
 
     query do
       %{

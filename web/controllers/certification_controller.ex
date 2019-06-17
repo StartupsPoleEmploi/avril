@@ -44,7 +44,7 @@ defmodule Vae.CertificationController do
   def index(conn, params) do
     if Map.has_key?(conn.query_params, "rome") do
       # using the old ?rome=ID instead of ?metier=ID
-      redirect(conn, to: certification_path(conn, :index, Map.put_new(Map.delete(conn.query_params, "rome"), "metier", conn.query_params["rome"])))
+      redirect(conn, to: Routes.certification_path(conn, :index, Map.put_new(Map.delete(conn.query_params, "rome"), "metier", conn.query_params["rome"])))
     else
 
       conn_with_geo = save_geo_to_session(conn, params)
@@ -63,7 +63,7 @@ defmodule Vae.CertificationController do
     certification = Certification.get_certification(id)
     if certification.slug != slug do
       # Slug is not up-to-date
-      redirect(conn, to: certification_path(conn, :show, certification, conn.query_params))
+      redirect(conn, to: Routes.certification_path(conn, :show, certification, conn.query_params))
     else
       delegate =
        get_delegate(%{
@@ -84,7 +84,7 @@ defmodule Vae.CertificationController do
     redirect(
       conn,
       to:
-        delegate_path(
+        Routes.delegate_path(
           conn,
           :index,
           diplome: certification
@@ -96,7 +96,7 @@ defmodule Vae.CertificationController do
     redirect(
       conn,
       to:
-        certification_path(
+        Routes.certification_path(
           conn,
           :show,
           certification,
@@ -168,7 +168,7 @@ defmodule Vae.CertificationController do
       |> save_certification_to_session(certification)
       |> redirect(
         to:
-          certification_path(
+          Routes.certification_path(
             conn,
             :show,
             certification,
@@ -181,7 +181,7 @@ defmodule Vae.CertificationController do
         |> save_rome_to_session(params)
         |> redirect(
           to:
-            certification_path(
+            Routes.certification_path(
               conn,
               :index,
               rome_code: params["rome_code"]

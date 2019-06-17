@@ -7,7 +7,7 @@ defmodule Vae.Session do
     field :token, :string
     field :user_type, :string
     field :user_id, :string
-    timestamps
+    timestamps()
   end
 
   @fields ~w(token user_type user_id)a

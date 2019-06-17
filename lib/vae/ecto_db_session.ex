@@ -52,6 +52,10 @@ defmodule Vae.EctoDbSession do
     end
   end
 
+  def delete_user_logins(_user) do
+    from(p in @session_model) |> @session_repo.delete_all
+  end
+
   # handle converting the users id into correct model type
   defp get_id(user, id_key, user_id) do
     case user.__struct__.__schema__(:type, id_key) do

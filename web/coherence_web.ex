@@ -11,7 +11,8 @@ defmodule Vae.Coherence.Web do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import Vae.Router.Helpers
+      # import Vae.Router.Helpers
+      alias Vae.Router.Helpers, as: Routes
       import Vae.ErrorHelpers
       import Vae.Gettext
       import Vae.Coherence.ViewHelpers
@@ -27,7 +28,8 @@ defmodule Vae.Coherence.Web do
       import Ecto
       import Ecto.Query
       import Plug.Conn
-      import Vae.Router.Helpers
+      # import Vae.Router.Helpers
+      alias Vae.Router.Helpers, as: Routes
       import Vae.Gettext
       import Coherence.ControllerHelpers
 

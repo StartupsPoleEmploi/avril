@@ -4,7 +4,6 @@ defmodule Vae.Application do
   use Vae.Web, :model
 
   alias Vae.Repo
-  alias Vae.Mailer.Sender.Mailjet
   alias Vae.Email
   alias Vae.ApplicationEmail
 
@@ -38,7 +37,7 @@ defmodule Vae.Application do
   end
 
   def find_or_create_with_params(
-        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params
+        %{user_id: _user_id, delegate_id: _delegate_id, certification_id: _certification_id} = params
       ) do
     Repo.get_by(__MODULE__, params) ||
       case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
@@ -51,7 +50,7 @@ defmodule Vae.Application do
       end
   end
 
-  def find_or_create_with_params(params), do: nil
+  def find_or_create_with_params(_params), do: nil
 
   def submit(application, auto_submitted \\ false) do
     case application.submitted_at do
@@ -67,7 +66,7 @@ defmodule Vae.Application do
                    ApplicationEmail.delegate_submission(application),
                    ApplicationEmail.user_submission_confirmation(application)
                  ]) do
-              {:ok, message} ->
+              {:ok, _message} ->
                 Repo.update(
                   __MODULE__.changeset(application, %{
                     has_just_been_auto_submitted: auto_submitted,

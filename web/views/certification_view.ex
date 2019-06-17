@@ -5,9 +5,9 @@ defmodule Vae.CertificationView do
   def to_delegate(conn, certification, nil) do
     if is_nil(Plug.Conn.get_session(conn, :search_lat)) ||
          is_nil(Plug.Conn.get_session(conn, :search_lng)) do
-      delegate_path(conn, :index, diplome: certification)
+      Routes.delegate_path(conn, :index, diplome: certification)
     else
-      certification_path(
+      Routes.certification_path(
         conn,
         :show,
         certification
@@ -16,7 +16,7 @@ defmodule Vae.CertificationView do
   end
 
   def to_delegate(conn, certification, delegate) do
-    certification_path(
+    Routes.certification_path(
       conn,
       :show,
       certification,

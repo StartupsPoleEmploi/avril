@@ -1,6 +1,4 @@
 defmodule Coherence.Redirects do
-  import Vae.Router.Helpers
-
   @moduledoc """
   Define controller action redirection functions.
 
@@ -34,18 +32,18 @@ defmodule Coherence.Redirects do
       import Vae.Router.Helpers
 
       # override the log out action back to the log in page
-      def session_delete(conn, _), do: redirect(conn, to: session_path(conn, :new))
+      def session_delete(conn, _), do: redirect(conn, to: Routes.session_path(conn, :new))
 
       # redirect the user to the login page after registering
-      def registration_create(conn, _), do: redirect(conn, to: session_path(conn, :new))
+      def registration_create(conn, _), do: redirect(conn, to: Routes.session_path(conn, :new))
 
       # disable the user_return_to feature on login
-      def session_create(conn, _), do: redirect(conn, to: landing_path(conn, :index))
+      def session_create(conn, _), do: redirect(conn, to: Routes.landing_path(conn, :index))
 
   """
   use Redirects
   # Uncomment the import below if adding overrides
-  # import Vae.Router.Helpers
+  import Vae.Router.Helpers
 
   # Add function overrides below
 

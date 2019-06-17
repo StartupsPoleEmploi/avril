@@ -3,7 +3,7 @@ defmodule Vae.ApplicationController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, Delegate, User, Resume}
+  alias Vae.{Application, User, Resume}
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
@@ -28,7 +28,7 @@ defmodule Vae.ApplicationController do
               Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
             end)
             |> Map.to_list()
-            |> Enum.sort_by(fn {k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
+            |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
           edit_mode: params["mode"] != "certificateur" &&
             Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           user_changeset: User.changeset(application.user, %{}),
@@ -56,7 +56,7 @@ defmodule Vae.ApplicationController do
           {:ok, application} ->
             conn
             |> put_flash(:success, "Dossier transmis avec succès!")
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
 
           {:error, msg} ->
             conn
@@ -64,7 +64,7 @@ defmodule Vae.ApplicationController do
               :error,
               "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
             )
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
 
       {:error, %{to: to, msg: msg}} ->
@@ -92,7 +92,7 @@ defmodule Vae.ApplicationController do
           {:error, msg} ->
             conn
             |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de reéssayer plus tard.")
-            |> redirect(to: application_path(conn, :show, application))
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
 
       {:error, %{to: to, msg: msg}} ->
@@ -106,7 +106,7 @@ defmodule Vae.ApplicationController do
     Repo.get(Application, id)
     |> case do
       nil ->
-        redirect(conn, to: root_path(conn, :index))
+        redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
         application
@@ -115,7 +115,7 @@ defmodule Vae.ApplicationController do
 
         conn
         |> put_flash(:success, "Merci pour votre réponse")
-        |> redirect(to: root_path(conn, :index))
+        |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 
@@ -124,7 +124,7 @@ defmodule Vae.ApplicationController do
     |> Repo.preload(delegate: :certifiers)
     |> case do
       nil ->
-        redirect(conn, to: root_path(conn, :index))
+        redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
         url_form = Polls.define_form_url_from_application(application)
@@ -141,12 +141,12 @@ defmodule Vae.ApplicationController do
       else
         {:error,
          %{
-           to: session_path(conn, :new, %{"mode" => "pe-connect"}),
+           to: Routes.session_path(conn, :new, %{"mode" => "pe-connect"}),
            msg: "Vous devez vous connecter"
          }}
       end
     else
-      {:error, %{to: root_path(conn, :index), msg: "Vous n'avez pas accès."}}
+      {:error, %{to: Routes.root_path(conn, :index), msg: "Vous n'avez pas accès."}}
     end
   end
 
@@ -158,7 +158,7 @@ defmodule Vae.ApplicationController do
     else
       {:error,
        %{
-         to: root_path(conn, :index),
+         to: Routes.root_path(conn, :index),
          msg:
            if(application.delegate_access_hash == hash,
              do: "Accès expiré",
@@ -168,25 +168,25 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  defp compact_experiences(experiences, equality_fun) do
-    Enum.reduce(experiences, [], fn exp, result ->
-      associate_if_match(exp, result, equality_fun)
-    end)
-    |> Enum.reverse()
-    |> Enum.map(fn experiences_group -> Enum.reverse(experiences_group) end)
-  end
+  # defp compact_experiences(experiences, equality_fun) do
+  #   Enum.reduce(experiences, [], fn exp, result ->
+  #     associate_if_match(exp, result, equality_fun)
+  #   end)
+  #   |> Enum.reverse()
+  #   |> Enum.map(fn experiences_group -> Enum.reverse(experiences_group) end)
+  # end
 
-  defp associate_if_match(element, already_associated, equality_fun) do
-    case already_associated do
-      [] ->
-        [[element]]
+  # defp associate_if_match(element, already_associated, equality_fun) do
+  #   case already_associated do
+  #     [] ->
+  #       [[element]]
 
-      [[latest_element | other_elements] = previous_elements | tail] ->
-        if equality_fun.(element, latest_element) do
-          [[element | previous_elements] | tail]
-        else
-          [[element] | [previous_elements | tail]]
-        end
-    end
-  end
+  #     [[latest_element | other_elements] = previous_elements | tail] ->
+  #       if equality_fun.(element, latest_element) do
+  #         [[element | previous_elements] | tail]
+  #       else
+  #         [[element] | [previous_elements | tail]]
+  #       end
+  #   end
+  # end
 end

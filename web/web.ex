@@ -36,7 +36,8 @@ defmodule Vae.Web do
       import Ecto
       import Ecto.Query
 
-      import Vae.Router.Helpers
+      # import Vae.Router.Helpers
+      alias Vae.Router.Helpers, as: Routes
       import Vae.Gettext
     end
   end
@@ -55,11 +56,12 @@ defmodule Vae.Web do
       # Used in navbar.html.slim to preload association in the view
       alias Vae.Repo
 
-      import Vae.Router.Helpers
+      # import Vae.Router.Helpers
+      alias Vae.Router.Helpers, as: Routes
       import Vae.ErrorHelpers
       import Vae.ViewHelpers
       import Vae.Gettext
-      import PhoenixFormAwesomplete
+      # import PhoenixFormAwesomplete
     end
   end
 
