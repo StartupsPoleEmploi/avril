@@ -2,7 +2,7 @@ defmodule Vae.Mailer.Worker do
   alias Ecto.Changeset
   alias Vae.JobSeeker
   alias Vae.Mailer.Email
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   require Logger
 

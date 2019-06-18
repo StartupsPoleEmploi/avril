@@ -1,6 +1,7 @@
 defmodule Vae.Router do
   use Vae.Web, :router
-  use NewRelixir.Plug.Exception
+  # use NewRelixir.Plug.Exception
+  # use NewRelic.Transaction
   use ExAdmin.Router
   use Coherence.Router
 

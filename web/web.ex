@@ -32,7 +32,7 @@ defmodule Vae.Web do
       use Phoenix.Controller
       use Filterable.Phoenix.Controller
 
-      alias Vae.Repo.NewRelic, as: Repo
+      alias Vae.Repo
       import Ecto
       import Ecto.Query
 
@@ -75,7 +75,7 @@ defmodule Vae.Web do
     quote do
       use Phoenix.Channel
 
-      alias Vae.Repo.NewRelic, as: Repo
+      alias Vae.Repo
       import Ecto
       import Ecto.Query
       import Vae.Gettext

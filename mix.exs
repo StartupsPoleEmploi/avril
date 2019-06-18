@@ -35,7 +35,7 @@ defmodule Vae.Mixfile do
         :scrivener_html,
         :httpoison,
         :coherence,
-        :new_relixir,
+        # :new_relixir,
         :algolia,
         :mailjex,
         :persistent_ets,
@@ -74,10 +74,14 @@ defmodule Vae.Mixfile do
       {:httpoison, "~> 1.4"}, # TODO: remove dependency: not needed anymore
       {:poison, "~> 3.0", override: true}, # TODO: remove dependency: not needed anymore
       {:phoenix_slime, "~> 0.12.0"},
-      # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
-      {:ex_admin, github: "augnustin/ex_admin"},
+      {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
+      # {:ex_admin, github: "augnustin/ex_admin"},
       {:coherence, "~> 0.5.2"},
-      {:new_relixir, "~> 0.4.1"},
+      # {:new_relixir, "~> 0.4.1"},
+      {:new_relic_agent, "~> 1.0"},
+      {:new_relic_phoenix, "~> 0.1"},
+      # {:new_relic_agent, "~> 1.0", only: :prod},
+      # {:new_relic_phoenix, "~> 0.1", only: :prod},
       {:floki, "~> 0.19.0", only: :dev},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},

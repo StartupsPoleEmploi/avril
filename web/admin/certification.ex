@@ -1,6 +1,6 @@
 defmodule Vae.ExAdmin.Certification do
   use ExAdmin.Register
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
   alias Vae.{Certifier, Delegate, Rome}
 
   alias Ecto.Query

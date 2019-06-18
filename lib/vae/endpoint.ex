@@ -1,5 +1,6 @@
 defmodule Vae.Endpoint do
   use Phoenix.Endpoint, otp_app: :vae
+  use NewRelic.Phoenix.Transaction
 
   plug(RemoteIp)
 
