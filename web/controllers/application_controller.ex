@@ -110,9 +110,7 @@ defmodule Vae.ApplicationController do
         redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
-        application
-        |> Ecto.Changeset.change(admissible_at: DateTime.utc_now())
-        |> Repo.update!()
+        Application.admissible_now(application)
 
         conn
         |> put_flash(:success, "Merci pour votre réponse")
@@ -128,6 +126,8 @@ defmodule Vae.ApplicationController do
         redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
+        Application.inadmissible_now(application)
+
         url_form = Polls.define_form_url_from_application(application)
 
         conn

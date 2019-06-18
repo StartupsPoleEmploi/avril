@@ -14,6 +14,7 @@ defmodule Vae.Application do
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
     field(:admissible_at, :utc_datetime)
+    field(:inadmissible_at, :utc_datetime)
 
     belongs_to(:user, Vae.User, foreign_key: :user_id)
     belongs_to(:delegate, Vae.Delegate, foreign_key: :delegate_id)
@@ -100,6 +101,18 @@ defmodule Vae.Application do
   def submitted_now(application) do
     application
     |> change(%{submitted_at: DateTime.utc_now()})
+    |> Repo.update!()
+  end
+
+  def admissible_now(application) do
+    application
+    |> change(admissible_at: DateTime.utc_now())
+    |> Repo.update!()
+  end
+
+  def inadmissible_now(application) do
+    application
+    |> change(inadmissible_at: DateTime.utc_now())
     |> Repo.update!()
   end
 
