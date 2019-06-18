@@ -38,13 +38,8 @@
       .row
         .col-12.text-center
           .pe-connect.pe-connect-toggle class="#{if @is_asp, do: "d-none", else: ""}"
-            = link(to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?bouton=pe-connect"]) do
-              = img_tag("/images/conseillere.svg", width: 34, height: 31, style: "margin-right: 1rem;")
-              span.text
-                = if @is_asp do
-                  | Voir ma synthèse
-                - else
-                  | Transmettre mes expériences
+            h5.mb-3 Transmettre mes expériences
+            = render Vae.ComponentView, "pe-connect-button.html", to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi")
             .mt-4.text-right
               button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je n'ai pas de compte Pôle emploi
           .no-pe-connect.pe-connect-toggle class="#{if @is_asp, do: "", else: "d-none"}"
