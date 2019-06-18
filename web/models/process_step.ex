@@ -1,3 +1,6 @@
+# Note: this model/table is not used (anymore)
+# Steps are statically stored in the Process model.
+
 defmodule Vae.ProcessStep do
   use Vae.Web, :model
 

@@ -53,6 +53,7 @@ defmodule Vae.ContactChannel do
       "delegate_website" => delegate.website,
       "delegate_person_name" => delegate.person_name,
       "delegate_is_asp" => Delegate.is_asp?(delegate),
+      "delegate_external_subscription_link" => Delegate.external_subscription_link(delegate),
       "process" => delegate.process_id
     })
     |> Enum.filter(fn {_, v} -> v != nil end)
@@ -134,10 +135,11 @@ defmodule Vae.ContactChannel do
     |> generic_message()
     |> Map.merge(%{
       TemplateID:
-        if(body["delegate_is_asp"],
-          do: @mailjet_conf[:asp_vae_recap_template_id],
-          else: @mailjet_conf[:vae_recap_template_id]
-        ),
+        cond do
+          body["delegate_is_asp"] -> @mailjet_conf[:asp_vae_recap_template_id]
+          body["delegate_external_subscription_link"] -> @mailjet_conf[:dava_vae_recap_template_id]
+          true -> @mailjet_conf[:vae_recap_template_id]
+        end,
       ReplyTo: Mailjet.avril_email(),
       To: Mailjet.build_to(%{Email: body["email"], Name: get_name(body)}),
       Attachments:

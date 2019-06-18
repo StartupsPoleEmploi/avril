@@ -1,3 +1,4 @@
+
 defmodule Vae.Certifier do
   use Vae.Web, :model
 
@@ -25,6 +26,8 @@ defmodule Vae.Certifier do
     timestamps()
   end
 
+  @educ_nat_id 2
+
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
@@ -42,6 +45,8 @@ defmodule Vae.Certifier do
   def slugify(changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
+
+  def is_educ_nat?(%__MODULE__{} = certifier), do: certifier.id == @educ_nat_id
 
   defimpl Phoenix.Param, for: Vae.Certifier do
     def to_param(%{id: id, slug: slug}) do
