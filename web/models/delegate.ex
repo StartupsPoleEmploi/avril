@@ -226,7 +226,6 @@ defmodule Vae.Delegate do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
-
   defimpl Phoenix.Param, for: Vae.Delegate do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"

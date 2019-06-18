@@ -3,7 +3,7 @@ defmodule Vae.ApplicationController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, Delegate, User, Resume}
+  alias Vae.{Application, Delegate, Resume, User}
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
