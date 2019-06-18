@@ -66,10 +66,10 @@ defmodule Vae.ContactChannel do
       email: body["email"],
       payload: Kernel.inspect(body)
     })
-    |> maybe_create_application(body)
+    |> create_application(body)
   end
 
-  defp maybe_create_application(job_seeker, %{"contact_delegate" => "on"} = body) do
+  defp create_application(job_seeker, body) do
     with user <- get_or_create_user_for_application(job_seeker, body),
          certification <- find_certification(body["certification"]) do
       create_or_update_application(user, certification, body["delegate"])
@@ -77,8 +77,6 @@ defmodule Vae.ContactChannel do
 
     body
   end
-
-  defp maybe_create_application(_job_seeker, body), do: body
 
   defp get_or_create_user_for_application(job_seeker, body) do
     tmp_password = "AVRIL_#{UUID.uuid5(nil, body["email"])}_TMP_PASSWORD"
