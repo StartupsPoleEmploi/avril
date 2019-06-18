@@ -215,7 +215,7 @@ defmodule Vae.Delegate do
 
   def external_subscription_link(%__MODULE__{} = delegate) do
     delegate = Repo.preload(delegate, :process)
-    if __MODULE__.is_educ_nat?(delegate) && !__MODULE__.is_corse?(delegate), do: delegate.process.booklet_1
+    if __MODULE__.is_educ_nat?(delegate) && !__MODULE__.is_corse?(delegate), do: delegate.process.booklet_1 || "https://www.francevae.fr"
   end
 
   def to_slug(%__MODULE__{} = delegate) do
