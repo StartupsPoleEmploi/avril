@@ -26,6 +26,7 @@ defmodule Vae.User do
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
     has_many(:applications, Application, on_replace: :delete)
+    # Deprecated
     has_one(:current_application, Application, on_replace: :delete)
 
     has_one(

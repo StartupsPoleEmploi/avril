@@ -39,6 +39,7 @@ defmodule Vae.Web do
       # import Vae.Router.Helpers
       alias Vae.Router.Helpers, as: Routes
       import Vae.Gettext
+      import Vae.Controllers.Helpers, only: [redirect_back: 2]
     end
   end
 

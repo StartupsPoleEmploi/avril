@@ -21,6 +21,7 @@ defmodule Vae.Router do
     )
 
     plug :put_user_token
+    plug NavigationHistory.Tracker
     #    plug(Vae.Tracker)
   end
 

@@ -20,7 +20,7 @@
           h3.my-4 Le candidat
         p
           strong #{@user.first_name} #{@user.last_name}
-        = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit"], fn f ->
+        = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit", data: [analytics: "Profil#modifier coordonnees"]], fn f ->
           .row
             .col
               .form-group
@@ -33,7 +33,7 @@
             .col
               .form-group
                 = if @edit_mode do
-                  = text_input f, :phone_number, class: "form-control font-weight-bold", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), required: true
+                  = text_input f, :phone_number, class: "form-control font-weight-bold", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), required: true, data: [analytics: "Profil#ajouter tel"]
                   = error_tag f, :phone_number
                 - else
                   = if @user.phone_number do
@@ -75,7 +75,7 @@
             .row
               .col
                 .form-group
-                  a.btn.btn-link.btn-sm.edit-button href="#" data-analytics="Profil#modifier coordonnees"
+                  a.btn.btn-link.btn-sm.edit-button href="#"
                     span.fa.fa-edit
                     |  Modifier mes coordonnées
                   .d-none.save

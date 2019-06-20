@@ -12,17 +12,15 @@ html lang="fr"
 
     = if Mix.env == :prod do
       = render ComponentView, "analytics", conn: @conn
-
     link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
-
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
-
-    script src=Routes.static_path(@conn,"/js/app.js") async=true
-
     = render Vae.ComponentView, "user_token", conn: @conn
+
   body class="#{@assigns[:body_class] || 'app'}"
     = @contents
+
     = render Vae.ComponentView, "algolia_credentials", conn: @conn
+    script src=Routes.static_path(@conn,"/js/app.js") async=true
     = if Mix.env == :prod do
       = render ComponentView, "hotjar", conn: @conn
       = render ComponentView, "crisp", conn: @conn
