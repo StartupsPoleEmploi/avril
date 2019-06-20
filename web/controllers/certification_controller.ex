@@ -2,12 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.Certification
-  alias Vae.Delegate
-  alias Vae.Places
-  alias Vae.ViewHelpers
-  alias Vae.Rome
-  alias Vae.SearchDelegate
+  alias Vae.{Certification, Delegate, Places, Rome, SearchDelegate, ViewHelpers}
 
   def cast_array(str), do: String.split(str, ",")
 

@@ -22,9 +22,16 @@ defmodule Vae.Redirector do
     else
       msg = Keyword.get(options, :msg)
       (if msg, do: put_flash(conn, :info, msg), else: conn)
-      |> redirect(to: reinject_params(to, conn.path_params))
+      |> redirect(to: to
+        |> reinject_params(conn.path_params)
+        |> append_query_string(conn.query_string)
+      )
     end
   end
+
+  defp append_query_string(path, nil), do: path
+  defp append_query_string(path, ""), do: path
+  defp append_query_string(path, query_string), do: "#{path}#{if String.contains?(path, "?"), do: "&", else: "?"}#{query_string}"
 
   defp reinject_params(to, params) do
     Regex.replace(~r/:([a-z_-]+)/, to, fn _, x -> params[x] end)
