@@ -24,6 +24,7 @@ defmodule Vae.ExAdmin.Application do
       column(:administrative, [], fn a -> a.delegate.administrative end)
       column(:submitted_at)
       column(:admissible_at)
+      column(:inadmissible_at)
 
       actions()
     end
