@@ -7,7 +7,7 @@ defmodule Vae.UserController do
 
   def update(conn, %{"id" => _id, "user" => user_params}) do
     current_user = Coherence.current_user(conn) |> Vae.Repo.preload(:applications)
-    current_application = List.first(Coherence.current_user(conn).applications)
+    current_application = List.first(current_user.applications)
     default_route = Routes.application_path(conn, :show, current_application)
 
     current_user
