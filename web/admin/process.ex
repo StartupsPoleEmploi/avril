@@ -4,7 +4,7 @@ defmodule Vae.ExAdmin.Process do
   alias Vae.Process
   alias Vae.Delegate
 
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   alias Ecto.Query
   require Ecto.Query

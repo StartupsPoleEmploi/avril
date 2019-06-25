@@ -10,7 +10,6 @@ config :vae, ecto_repos: [Vae.Repo]
 
 # Configures the endpoint
 config :vae, Vae.Endpoint,
-  instrumenters: [NewRelixir.Instrumenters.Phoenix],
   url: [host: "localhost"],
   secret_key_base: "akyL4W53VWMOrzMxWNJP9Y1ofAIkm9dpvp1KLHJhWQUolRUVlCbOdRrr/0UmcjZx",
   render_errors: [view: Vae.ErrorView, accepts: ~w(html json)],
@@ -35,7 +34,7 @@ config :scrivener_html,
 
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},
-  repo: Vae.Repo.NewRelic,
+  repo: Vae.Repo,
   module: Vae,
   modules: [
     Vae.ExAdmin.Application,
@@ -54,7 +53,7 @@ config :xain, :after_callback, {Phoenix.HTML, :raw}
 # %% Coherence Configuration %%   Don't remove this line
 config :coherence,
   user_schema: Vae.User,
-  repo: Vae.Repo.NewRelic,
+  repo: Vae.Repo,
   module: Vae,
   router: Vae.Router,
   messages_backend: Vae.Coherence.Messages,
@@ -71,10 +70,6 @@ config :coherence, :layout, {Vae.LayoutView, :app}
 config :coherence, Vae.Coherence.Mailer,
   adapter: Swoosh.Adapters.Sendgrid,
   api_key: "your api key here"
-
-config :new_relixir,
-  application_name: System.get_env("NEWRELIC_APP_NAME"),
-  license_key: System.get_env("NEWRELIC_LICENSE_KEY")
 
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),

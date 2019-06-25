@@ -2,8 +2,8 @@ defmodule Vae.Repo do
   use Ecto.Repo, otp_app: :vae
   require Logger
 
-  defmodule NewRelic do
-    use NewRelixir.Plug.Repo, repo: Vae.Repo
+  # defmodule NewRelic do
+    # use NewRelixir.Plug.Repo, repo: Vae.Repo
     use Scrivener, page_size: 20
 
     alias Vae.Certification
@@ -104,5 +104,5 @@ defmodule Vae.Repo do
 
       struct
     end
-  end
+  # end
 end

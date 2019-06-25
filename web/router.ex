@@ -1,6 +1,5 @@
 defmodule Vae.Router do
   use Vae.Web, :router
-  use NewRelixir.Plug.Exception
   use Plug.ErrorHandler
   use Sentry.Plug
   use ExAdmin.Router

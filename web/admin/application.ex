@@ -1,6 +1,6 @@
 defmodule Vae.ExAdmin.Application do
   use ExAdmin.Register
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   alias Vae.User
   alias Vae.Certification

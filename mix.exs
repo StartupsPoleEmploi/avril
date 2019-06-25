@@ -35,8 +35,7 @@ defmodule Vae.Mixfile do
         :scrivener_html,
         :httpoison,
         :coherence,
-        :new_relixir,
-        [:sentry, :logger],
+        :sentry,
         :algolia,
         :mailjex,
         :persistent_ets,
@@ -78,7 +77,6 @@ defmodule Vae.Mixfile do
       # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
       {:ex_admin, github: "augnustin/ex_admin"},
       {:coherence, "~> 0.5.2"},
-      {:new_relixir, "~> 0.4.1"},
       {:floki, "~> 0.19.0", only: :dev},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},

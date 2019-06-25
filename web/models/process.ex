@@ -5,7 +5,7 @@ defmodule Vae.Process do
 
   alias Vae.Delegate
   alias Vae.Process
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   schema "processes" do
     field(:name, :string)

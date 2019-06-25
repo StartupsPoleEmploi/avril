@@ -3,7 +3,7 @@ defmodule Vae.Tracker do
   import Plug.Conn
 
   alias Vae.{Analytic, JobSeeker, Search, Visit}
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   def init(opts), do: opts
 
