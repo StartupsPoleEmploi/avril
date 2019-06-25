@@ -1,6 +1,6 @@
 defmodule Vae.Delegate do
   use Vae.Web, :model
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   alias Ecto.Changeset
 

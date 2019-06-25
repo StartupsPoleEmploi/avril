@@ -1,6 +1,6 @@
 defmodule Vae.ExAdmin.Delegate do
   use ExAdmin.Register
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
   alias Vae.Certifier
   alias Vae.Process
 

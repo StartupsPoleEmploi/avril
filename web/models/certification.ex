@@ -1,6 +1,6 @@
 defmodule Vae.Certification do
   use Vae.Web, :model
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.Repo
 
   alias __MODULE__
   alias Vae.{CertificationDelegate, Certifier, Delegate, Rome, Application}
