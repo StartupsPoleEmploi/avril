@@ -3,7 +3,7 @@ defmodule Vae.Repo do
   use Scrivener, page_size: 20
   require Logger
 
-  alias Vae.{Certification, Delegate, Rome, Profession}
+  alias Vae.{Certification, Delegate, Profession, Rome}
 
   @search_client Application.get_env(:vae, :search_client)
   @entities [Certification, Delegate, Profession, Rome]

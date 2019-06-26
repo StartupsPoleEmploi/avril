@@ -2,7 +2,7 @@ defmodule Vae.Certification do
   use Vae.Web, :model
 
   alias __MODULE__
-  alias Vae.{CertificationDelegate, Certifier, Delegate, Repo, Rome, Application}
+  alias Vae.{Application, CertificationDelegate, Certifier, Delegate, Repo, Rome}
 
   schema "certifications" do
     field(:slug, :string)
