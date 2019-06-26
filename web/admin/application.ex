@@ -1,10 +1,7 @@
 defmodule Vae.ExAdmin.Application do
   use ExAdmin.Register
-  alias Vae.Repo
 
-  alias Vae.User
-  alias Vae.Certification
-  alias Vae.Delegate
+  alias Vae.{Certification, Delegate, Repo, User}
 
   require Ecto.Query
 

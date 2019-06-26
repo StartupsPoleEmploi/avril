@@ -1,12 +1,10 @@
 defmodule Vae.Delegate do
   use Vae.Web, :model
-  alias Vae.Repo
 
   alias Ecto.Changeset
 
   alias __MODULE__
-  alias Vae.{Certification, CertificationDelegate, Certifier, Process, Application}
-  alias Vae.Places
+  alias Vae.{Application, Certification, CertificationDelegate, Certifier, Places, Process, Repo}
 
   schema "delegates" do
     field(:slug, :string)

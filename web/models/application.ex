@@ -3,9 +3,7 @@ defmodule Vae.Application do
 
   use Vae.Web, :model
 
-  alias Vae.Repo
-  alias Vae.Email
-  alias Vae.ApplicationEmail
+  alias Vae.{ApplicationEmail, Certification, Delegate, Email, Repo, Resume, User}
 
   schema "applications" do
     # Triggers an analytics event at the front
@@ -16,11 +14,11 @@ defmodule Vae.Application do
     field(:admissible_at, :utc_datetime)
     field(:inadmissible_at, :utc_datetime)
 
-    belongs_to(:user, Vae.User, foreign_key: :user_id)
-    belongs_to(:delegate, Vae.Delegate, foreign_key: :delegate_id)
-    belongs_to(:certification, Vae.Certification, foreign_key: :certification_id)
+    belongs_to(:user, User, foreign_key: :user_id)
+    belongs_to(:delegate, Delegate, foreign_key: :delegate_id)
+    belongs_to(:certification, Certification, foreign_key: :certification_id)
 
-    has_many(:resumes, Vae.Resume)
+    has_many(:resumes, Resume)
 
     has_many(
       :certifiers,
