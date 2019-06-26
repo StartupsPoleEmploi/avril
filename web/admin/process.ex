@@ -1,10 +1,8 @@
 defmodule Vae.ExAdmin.Process do
   use ExAdmin.Register
 
-  alias Vae.Process
-  alias Vae.Delegate
+  alias Vae.{Delegate, Process, Repo}
 
-  alias Vae.Repo
 
   alias Ecto.Query
   require Ecto.Query

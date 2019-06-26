@@ -22,6 +22,7 @@ defmodule Vae.Web do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      alias Vae.Repo
 
       def all, do: Vae.Repo.all(__MODULE__)
     end

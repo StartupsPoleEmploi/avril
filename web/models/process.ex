@@ -3,9 +3,7 @@ defmodule Vae.Process do
 
   alias __MODULE__
 
-  alias Vae.Delegate
-  alias Vae.Process
-  alias Vae.Repo
+  alias Vae.{Delegate, Process, ProcessStep, Repo}
 
   schema "processes" do
     field(:name, :string)
@@ -21,9 +19,9 @@ defmodule Vae.Process do
     field(:step_7, :string)
     field(:step_8, :string)
 
-    has_many(:delegates, Vae.Delegate, on_replace: :nilify, on_delete: :nilify_all)
+    has_many(:delegates, Delegate, on_replace: :nilify, on_delete: :nilify_all)
 
-    has_many(:processes_steps, Vae.ProcessStep, on_delete: :delete_all)
+    has_many(:processes_steps, ProcessStep, on_delete: :delete_all)
     has_many(:steps, through: [:processes_steps, :step])
   end
 
