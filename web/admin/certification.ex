@@ -94,7 +94,7 @@ defmodule Vae.ExAdmin.Certification do
   end
 
   defp form_select_tag(id, label, options) do
-    content_tag(
+    Phoenix.HTML.safe_to_string(content_tag(
       :div,
       [
         content_tag(
@@ -115,7 +115,7 @@ defmodule Vae.ExAdmin.Certification do
         )
       ],
       class: "form-group"
-    )
+    ))
   end
 
   defp option_tag(id, label, collection) do
