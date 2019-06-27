@@ -11,14 +11,16 @@ defmodule Vae.String do
     end
   end
 
-  def parameterize(string, option\\"-") do
+  def parameterize(string, separator\\"-")
+  def parameterize(nil, _), do: nil
+  def parameterize(string, separator) do
     string
       |> :unicode.characters_to_nfd_binary()
       |> String.replace(~r/[\'’\"\-]/u, " ")
       |> String.replace(~r/[^A-z\s0-9]/u, "")
       |> String.downcase()
       |> String.trim()
-      |> String.replace(~r/\s+/, option)
+      |> String.replace(~r/\s+/, separator)
   end
 
   def to_id(param) when is_binary(param) do
