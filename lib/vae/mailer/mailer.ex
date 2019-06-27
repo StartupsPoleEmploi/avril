@@ -9,6 +9,15 @@ defmodule Vae.Mailer do
     )
   end
 
+  def execute(path) do
+    {:ok, pid} = Vae.Mailer.Worker.start_link()
+
+    send(
+      pid,
+      {:execute, path}
+    )
+  end
+
   def get_pending_emails() do
     {:ok, pid} = Vae.Mailer.Worker.start_link()
     send(pid, {:get_pending_emails, self()})
