@@ -11,6 +11,8 @@ defmodule Vae.Delegates.Client.FranceVae do
     ]
 
     {:ok, response} = HTTPoison.get("https://www.francevae.fr/api/academies", headers)
+    {:ok, academies} = response.body |> Jason.decode()
+    academies
   end
 
   def get_meeting_informations(academy) do
@@ -21,6 +23,8 @@ defmodule Vae.Delegates.Client.FranceVae do
     ]
 
     {:ok, response} = HTTPoison.get("https://www.francevae.fr/api/reunions/1", headers)
+    {:ok, meetings} = response.body |> Jason.decode()
+    meetings
   end
 
   def get_token() do

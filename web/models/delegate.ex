@@ -11,6 +11,7 @@ defmodule Vae.Delegate do
   schema "delegates" do
     field(:slug, :string)
     field(:name, :string)
+    field(:academy_id, :string)
     field(:website, :string)
     field(:address, :string)
     field(:telephone, :string)
@@ -32,7 +33,8 @@ defmodule Vae.Delegate do
 
     has_many(:certifications, through: [:certifications_delegates, :certification])
 
-    has_many(:applications, Application, on_replace: :nilify) # TODO: add many_to_manys
+    # TODO: add many_to_manys
+    has_many(:applications, Application, on_replace: :nilify)
 
     has_many(
       :users,
@@ -77,7 +79,8 @@ defmodule Vae.Delegate do
       :is_active,
       :geolocation,
       :city,
-      :administrative
+      :administrative,
+      :academy_id
     ])
     |> slugify
     |> validate_required([:name, :slug])
@@ -91,6 +94,12 @@ defmodule Vae.Delegate do
         case params[:is_active] do
           "true" -> %{is_active: true}
           _ -> %{is_active: false}
+        end
+      )
+      |> Map.merge(
+        case params[:academy_id] do
+          nil -> nil
+          id -> %{academy_id: Integer.to_string(id)}
         end
       )
 
@@ -107,7 +116,8 @@ defmodule Vae.Delegate do
       :geolocation,
       :city,
       :administrative,
-      :process_id
+      :process_id,
+      :academy_id
     ])
     |> add_certifiers(params)
     |> link_certifications()
@@ -215,11 +225,21 @@ defmodule Vae.Delegate do
 
   def external_subscription_link(%__MODULE__{} = delegate) do
     delegate = Repo.preload(delegate, :process)
-    if __MODULE__.is_educ_nat?(delegate) && !__MODULE__.is_corse?(delegate), do: delegate.process.booklet_1 || "https://www.francevae.fr"
+
+    if __MODULE__.is_educ_nat?(delegate) && !__MODULE__.is_corse?(delegate),
+      do: delegate.process.booklet_1 || "https://www.francevae.fr"
   end
 
   def to_slug(%__MODULE__{} = delegate) do
-    Vae.String.parameterize("#{delegate.name} #{if (delegate.city && delegate.name =~ delegate.city), do: "", else: delegate.city} #{if (delegate.administrative && delegate.name =~ delegate.administrative), do: "", else: delegate.administrative}")
+    Vae.String.parameterize(
+      "#{delegate.name} #{
+        if delegate.city && delegate.name =~ delegate.city, do: "", else: delegate.city
+      } #{
+        if delegate.administrative && delegate.name =~ delegate.administrative,
+          do: "",
+          else: delegate.administrative
+      }"
+    )
   end
 
   def slugify(changeset) do

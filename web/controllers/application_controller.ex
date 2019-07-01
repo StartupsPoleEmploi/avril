@@ -4,19 +4,26 @@ defmodule Vae.ApplicationController do
   # plug Coherence.Authentication.Session, protected: true
 
   alias Vae.{Application, Delegate, Resume, User}
+  alias Vae.Delegates.Client.FranceVae
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
     application =
       case Repo.get(Application, id) do
-        nil -> nil
-        application -> Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
+        nil ->
+          nil
+
+        application ->
+          Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
         render(conn, "show.html",
-          title: "Candidature VAE de #{application.user.name} pour un diplôme de #{application.certification.label}",
+          title:
+            "Candidature VAE de #{application.user.name} pour un diplôme de #{
+              application.certification.label
+            }",
           application: application,
           delegate: application.delegate,
           certification: application.certification,
@@ -29,8 +36,9 @@ defmodule Vae.ApplicationController do
             end)
             |> Map.to_list()
             |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
-          edit_mode: params["mode"] != "certificateur" &&
-            Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
+          edit_mode:
+            params["mode"] != "certificateur" &&
+              Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
           external_subscription_link: Delegate.external_subscription_link(application.delegate),
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{})
@@ -137,7 +145,9 @@ defmodule Vae.ApplicationController do
 
   def has_access?(conn, application, nil) do
     if not is_nil(application) do
-      if Coherence.logged_in?(conn) && ((Coherence.current_user(conn).id == application.user.id) || Coherence.current_user(conn).is_admin) do
+      if Coherence.logged_in?(conn) &&
+           (Coherence.current_user(conn).id == application.user.id ||
+              Coherence.current_user(conn).is_admin) do
         {:ok, application}
       else
         {:error,
