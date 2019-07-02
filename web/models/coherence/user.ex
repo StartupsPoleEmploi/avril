@@ -92,7 +92,7 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def create_or_associate_with_pe_connect_data(%{"email" => email} = userinfo_api_result) do
+  def create_or_associate_with_pe_connect_data(%{"email" => email} = userinfo_api_result) when is_binary(email) do
     case Repo.get_by(__MODULE__, email: String.downcase(email)) do
       nil ->
         Repo.insert(
