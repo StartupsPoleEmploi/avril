@@ -21,10 +21,6 @@ defmodule Vae.AuthController do
     client = Clients.get_client(state)
     client_with_token = OAuth.generate_access_token(client, code)
 
-    conn =
-      conn
-      |> put_session(:pe_access_token, client_with_token.token.access_token)
-
     userinfo_api_result =
       OAuth.get(
         client_with_token,
