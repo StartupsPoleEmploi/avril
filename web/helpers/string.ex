@@ -23,9 +23,15 @@ defmodule Vae.String do
       |> String.replace(~r/\s+/, separator)
   end
 
-  def to_id(param) when is_binary(param) do
-    if Regex.match?(~r/^\d+\-.*/, param), do: String.to_integer(List.first(String.split(param, "-"))), else: param
+  def to_id(param) do
+    if is_binary(param) && Regex.match?(~r/^\d+\-.*/, param) do
+      case Integer.parse(param) do
+        {int, _rest} -> int
+        :error -> nil
+      end
+    else
+      nil
+    end
   end
-  def to_id(v), do: v
 
 end

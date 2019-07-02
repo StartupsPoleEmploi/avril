@@ -115,9 +115,13 @@ config :ex_aws,
    region: "eu-west-3"
 ]
 
-config :sentry, dsn: System.get_env("SENTRY_DSN"),
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
+  release: System.get_env("FLYNN_RELEASE_ID"),
   included_environments: [:prod],
-  environment_name: Mix.env
+  environment_name: Mix.env,
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!
 
 # %% End Coherence Configuration %%
 # Import environment specific config. This must remain at the bottom
