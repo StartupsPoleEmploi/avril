@@ -26,7 +26,7 @@ ADD mix.exs /app/mix.exs
 WORKDIR /app
 
 # Install dependencies
-RUN cd assets npm install
+RUN cd assets && npm install
 RUN mix local.hex --force
 RUN mix deps.get # TODO: make it non interactive
 
