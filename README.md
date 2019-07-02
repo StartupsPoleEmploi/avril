@@ -22,7 +22,7 @@ Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des dif
 
 ## Installer le dump de la BDD
 
-Télécharger un dump de la BDD (probablement via [flynn](https://flynn.io/) si accès à la prod : `flynn pg dump -c -f db/latest.dump`).
+Télécharger un dump de la BDD (probablement via [flynn](https://flynn.io/) si accès à la prod : `flynn pg dump -f db/latest.dump`).
 
 Copier le dump dans `db` pour qu'il soit accessible dans un docker.
 

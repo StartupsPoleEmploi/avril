@@ -19,14 +19,14 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
 RUN apt-get install -y nodejs
 RUN npm install -g npm
 
-ADD package.json /app/package.json
-ADD package-lock.json /app/package-lock.json
+ADD assets/package.json /app/assets/package.json
+ADD assets/package-lock.json /app/assets/package-lock.json
 ADD mix.exs /app/mix.exs
 
 WORKDIR /app
 
 # Install dependencies
-RUN npm install
+RUN cd assets npm install
 RUN mix local.hex --force
 RUN mix deps.get # TODO: make it non interactive
 

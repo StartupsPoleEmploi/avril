@@ -18,7 +18,7 @@ defmodule Vae.Application do
     belongs_to(:delegate, Delegate, foreign_key: :delegate_id)
     belongs_to(:certification, Certification, foreign_key: :certification_id)
 
-    has_many(:resumes, Resume)
+    has_many(:resumes, Resume, on_delete: :delete_all)
 
     has_many(
       :certifiers,

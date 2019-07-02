@@ -25,18 +25,20 @@ defmodule Vae.User do
     field(:pe_connect_token, :string)
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
-    has_many(:applications, Application, on_replace: :delete)
+    has_many(:applications, Application, on_replace: :delete, on_delete: :delete_all)
     # Deprecated
-    has_one(:current_application, Application, on_replace: :delete)
+    has_one(:current_application, Application, on_replace: :delete, on_delete: :delete_all)
 
     has_one(
       :current_delegate,
-      through: [:current_application, :delegate]
+      through: [:current_application, :delegate],
+      on_delete: :nilify
     )
 
     has_one(
       :current_certification,
-      through: [:current_application, :certification]
+      through: [:current_application, :certification],
+      on_delete: :nilify
     )
 
     embeds_many(:skills, Skill, on_replace: :delete)
@@ -90,8 +92,8 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def create_or_associate_with_pe_connect_data(userinfo_api_result) do
-    case Repo.get_by(__MODULE__, email: String.downcase(userinfo_api_result["email"])) do
+  def create_or_associate_with_pe_connect_data(%{"email" => email} = userinfo_api_result) do
+    case Repo.get_by(__MODULE__, email: String.downcase(email)) do
       nil ->
         Repo.insert(
           __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
@@ -103,6 +105,7 @@ defmodule Vae.User do
         |> Repo.update()
     end
   end
+  def create_or_associate_with_pe_connect_data(_userinfo_api_result), do: {:error, "No email in API results"}
 
   def build_api_calls do
     [%{
