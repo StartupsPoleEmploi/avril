@@ -33,7 +33,7 @@ defmodule Vae.OAuth do
           client_secret: client_secret
         }
     }
-    |> OAuth2.Client.get_token!(code: code)
+    |> OAuth2.Client.get_token(code: code)
   end
 
   def get!(client, resource_url) do
