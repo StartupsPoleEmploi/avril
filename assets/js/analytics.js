@@ -33,7 +33,7 @@ import $ from 'jquery';
             $(el).elementAnalyticsEvent()
           }
         });
-      } else if ($(el).is(':input')) {
+      } else if ($(el).is(':input') && $(el).parents('form').length) {
         $(el).attr('data-original-value', $(el).val())
         const $form = $(el).parents('form');
         $form.on('submit', e => {
