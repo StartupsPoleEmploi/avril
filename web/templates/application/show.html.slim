@@ -133,7 +133,8 @@
         .col-sm-12.mb-3
           h3
             | #{if @edit_mode, do: "Mes", else: "Ses"} expériences attestées
-            = img_tag "/images/pole_emploi.svg", style: "height: 3rem; margin: 0 20px; position: relative; top: 1px;"
+            = unless @edit_mode do
+              = img_tag "/images/pole_emploi.svg", style: "height: 3rem; margin: 0 20px; position: relative; top: 1px;"
             | des 10 dernières années
           = unless @edit_mode do
             p Il s'agit des expériences professionnelles enregistrées dans le dossier informatique Pôle emploi du candidat, relative aux 10 dernières années. Ces expériences ont fait l'objet d'un contrôle et peuvent dons avoir valeur de preuve pour le traitement de la recevabilité
