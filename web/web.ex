@@ -25,6 +25,14 @@ defmodule Vae.Web do
       alias Vae.Repo
 
       def all, do: Vae.Repo.all(__MODULE__)
+
+      def count_by_week(query, date_field) do
+        query
+        |> group_by([r], (fragment("date_part('week', ?)", (field(r, ^date_field)))))
+        |> select([r], [(fragment("date_part('week', ?)", (field(r, ^date_field)))), count("*")])
+        # TODO: sort by week number
+        # TODO: add a year key
+      end
     end
   end
 
