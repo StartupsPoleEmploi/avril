@@ -29,6 +29,6 @@ defmodule Vae.String do
       :error -> nil
     end
   end
-  def to_id(param), do: nil
+  def to_id(_param), do: nil
 
 end

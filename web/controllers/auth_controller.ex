@@ -62,7 +62,7 @@ defmodule Vae.AuthController do
 
           {:error, msg} -> handle_error(conn, msg)
         end
-      {:error, error} -> handle_error(conn)
+      {:error, _error} -> handle_error(conn)
     end
 
   end
