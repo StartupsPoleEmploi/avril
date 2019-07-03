@@ -88,7 +88,7 @@ defmodule Vae.ExAdmin.Application do
           preload: [ :delegate, :user, certification: :certifiers]
         ],
         index: [
-          default_sort: [asc: :inserted_at]
+          default_sort: [desc: :inserted_at]
         ]
       }
     end
