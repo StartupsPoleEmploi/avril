@@ -18,25 +18,28 @@ defmodule Vae.ExAdmin.Dashboard do
         |> (&(Map.put(&1, :inadmissibles_ratio, :erlang.float_to_binary(100 * &1.inadmissibles / (&1.admissibles + &1.inadmissibles), [decimals: 2])))).()
         |> (&(Map.put(&1, :submitted_ratio, :erlang.float_to_binary(100 * &1.submitted / (&1.total), [decimals: 2])))).()
 
-
       p ".text-center Citation du jour:"
       h1 "La Team Avril, elle est pas fragile !"
       hr
       div ".section" do
-        h2 "Candidatures"
-        ul do
-          li "#{applications.total} candidatures"
-          li "#{applications.submitted} soumises (#{applications.submitted_ratio}%)"
-          li "#{applications.admissibles} admissibles (#{applications.admissibles_ratio}%)"
-          li "#{applications.inadmissibles} rejetées (#{applications.inadmissibles_ratio}%)"
-        end
+        h2 "Candidatures par certificateurs"
+        div "#delegates-table", ["data-url": "/admin/sql?query=delegates"]
+      end
+      div ".section" do
+        h2 "Candidatures par certifications"
+        div "#certifications-table", ["data-url": "/admin/sql?query=certifications"]
+      end
+      hr
+      div ".section" do
+        h2 "Candidatures dans le temps"
+        p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
         div "#applications-plot.plot-container" do
           pre do
-            Poison.encode!(%{
-              unknown: applications.unknown_week_array,
-              submitted: applications.submitted_week_array,
-              admissible: applications.admissible_week_array,
-              inadmissible: applications.inadmissible_week_array
+            Jason.encode!(%{
+              _1_created: applications.unknown_week_array,
+              _2_submitted: applications.submitted_week_array,
+              _3_admissible: applications.admissible_week_array,
+              _4_inadmissible: applications.inadmissible_week_array
             }, pretty: true)
           end
           div ".plot"

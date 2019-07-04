@@ -6,11 +6,6 @@ import {
 } from 'recharts';
 import ColorHash from 'color-hash';
 
-// const logger = el => {
-//   console.log(el);
-//   return el
-// };
-
 const INADMISSIBLE_START = '2019-06-18';
 
 const formatData = data => {
@@ -37,9 +32,9 @@ const chart = data => {
         <YAxis />
         <ReferenceLine x={moment(INADMISSIBLE_START).add(-30, 'days').format('w')} stroke="blue" label="inadmissible" />
         <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red" label="-30j" />
-        <Tooltip content={() => <p>Coucou</p>} />
+        <Tooltip />
         <Legend />
-        { Object.keys(data).map(key =>
+        { Object.keys(data).sort().map(key =>
           <Bar key={key} dataKey={key} stackId="a" fill={colorHash.hex(key)} />
         )}
       </BarChart>
@@ -49,12 +44,10 @@ const chart = data => {
 
 const renderChart = name => {
   const $container = document.querySelector(`#${name}-plot`);
-  const data2 = JSON.parse($container.querySelector('pre').innerHTML);
+  if (!$container) return;
 
-  // console.log(data2);
-  // console.log(formatData(data2));
-
-  ReactDOM.render(chart(data2), $container.querySelector('.plot'));
+  const data = JSON.parse($container.querySelector('pre').innerHTML);
+  ReactDOM.render(chart(data), $container.querySelector('.plot'));
 }
 
 document.addEventListener('DOMContentLoaded', e => {
