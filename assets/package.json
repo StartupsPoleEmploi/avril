@@ -23,6 +23,7 @@
     "popper.js": "^1.14.3",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-table": "^6.10.0",
     "recharts": "^1.6.2",
     "url-search-params": "^1.1.0"
   },

@@ -22,11 +22,16 @@ defmodule Vae.ExAdmin.Dashboard do
       h1 "La Team Avril, elle est pas fragile !"
       hr
       div ".section" do
-        h2 "Certificateurs"
+        h2 "Candidatures par certificateurs"
+        div "#delegates-table", ["data-url": "/admin/sql?query=delegates"]
+      end
+      div ".section" do
+        h2 "Candidatures par certifications"
+        div "#certifications-table", ["data-url": "/admin/sql?query=certifications"]
       end
       hr
       div ".section" do
-        h2 "Candidatures"
+        h2 "Candidatures dans le temps"
         p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
         div "#applications-plot.plot-container" do
           pre do
