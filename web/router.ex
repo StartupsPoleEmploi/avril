@@ -112,6 +112,7 @@ defmodule Vae.Router do
 
   scope "/admin", ExAdmin do
     pipe_through([:protected, :admin])
+    get("/sql", ApiController, :sql)
     admin_routes()
   end
 
