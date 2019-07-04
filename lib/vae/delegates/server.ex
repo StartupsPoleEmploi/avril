@@ -17,7 +17,7 @@ defmodule Vae.Delegates do
 
     state = %{
       name: delegate,
-      data: %{}
+      data: []
     }
 
     {:ok, state, {:continue, :get_data}}
@@ -32,20 +32,17 @@ defmodule Vae.Delegates do
   end
 
   def handle_call(:get_academies, from, state) do
-    IO.inspect(from, label: "FROM from handle_call")
     {:reply, FranceVae.get_academies(), state}
   end
 
-  # Todo: Move to API #
-  def get_france_vae_academies() do
-    FranceVae.get_academies()
+  def handle_call({:get_meetings, academy_id}, from, state) do
+    {:reply, FranceVae.get_meetings(academy_id), state}
   end
 
   defp get_data(:france_vae) do
     FranceVae.get_academies()
-    |> Enum.reduce(%{}, fn %{"id" => id, "nom" => name}, acc ->
-      meetings = FranceVae.get_meeting_informations(id)
-      Map.put(acc, id, meetings["reunions"])
+    |> Enum.reduce([], fn %{"id" => id, "nom" => name}, acc ->
+      [%{id: id, name: name} | acc]
     end)
   end
 end

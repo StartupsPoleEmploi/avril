@@ -15,16 +15,21 @@ defmodule Vae.Delegates.Client.FranceVae do
     academies
   end
 
-  def get_meeting_informations(academy) do
+  def get_meetings(academy) do
     token = get_token()
 
     headers = [
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("https://www.francevae.fr/api/reunions/1", headers)
-    {:ok, meetings} = response.body |> Jason.decode()
-    meetings
+    {:ok, response} = HTTPoison.get("https://www.francevae.fr/api/reunions/#{academy}", headers)
+
+    response.body
+    |> Jason.decode!()
+    |> Map.get("reunions")
+    |> Enum.filter(fn meeting ->
+      Map.get(meeting, "cible") == "CAP au BTS"
+    end)
   end
 
   def get_token() do
