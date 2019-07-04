@@ -42,7 +42,19 @@ defmodule Vae.ExAdmin.Delegate do
     form delegate do
       inputs do
         input(delegate, :is_active)
+
+        academies_options_tags =
+          Vae.Delegates.Api.get_france_vae_academies()
+          |> Enum.sort_by(& &1["nom"])
+          |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
+
+        input(delegate, :academy_id,
+          label: "Académies",
+          collection: academies_options_tags
+        )
+
         input(delegate, :name)
+
         input(delegate, :website)
         input(delegate, :address)
         input(delegate, :geo, type: :hidden)
@@ -50,13 +62,6 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :email)
         input(delegate, :person_name)
         input(delegate, :process, collection: processes())
-
-        academies_options_tags =
-          Vae.Delegates.Api.get_france_vae_academies()
-          |> Enum.sort_by(& &1["nom"])
-          |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
-
-        input(delegate, :academy_id, collection: academies_options_tags)
 
         certifiers_options_tags =
           Certifier
