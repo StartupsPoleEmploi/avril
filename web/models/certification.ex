@@ -1,9 +1,8 @@
 defmodule Vae.Certification do
   use Vae.Web, :model
-  alias Vae.Repo.NewRelic, as: Repo
 
   alias __MODULE__
-  alias Vae.{CertificationDelegate, Certifier, Delegate, Rome, Application}
+  alias Vae.{Application, CertificationDelegate, Certifier, Delegate, Repo, Rome}
 
   schema "certifications" do
     field(:slug, :string)

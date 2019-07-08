@@ -2,12 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.Certification
-  alias Vae.Delegate
-  alias Vae.Places
-  alias Vae.ViewHelpers
-  alias Vae.Rome
-  alias Vae.SearchDelegate
+  alias Vae.{Certification, Delegate, Places, Rome, SearchDelegate, ViewHelpers}
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -58,25 +53,29 @@ defmodule Vae.CertificationController do
   end
 
   def show(conn, params) do
-    [id | rest] = String.split(params["id"], "-", parts: 2)
-    slug = List.first(rest)
-    certification = Certification.get_certification(id)
-    if certification.slug != slug do
-      # Slug is not up-to-date
-      redirect(conn, to: Routes.certification_path(conn, :show, certification, conn.query_params))
-    else
-      delegate =
-       get_delegate(%{
-          "certificateur" => Vae.String.to_id(params["certificateur"]),
-          geo: %{
-            "lat" => get_session(conn, :search_lat),
-            "lng" => get_session(conn, :search_lng)
-          },
-          postcode: get_session(conn, :search_postcode),
-          administrative: get_session(conn, :search_administrative)
-        }, certification)
+    case Integer.parse(params["id"]) do
+      {id, rest} ->
+        slug = Regex.replace(~r/^\-/, rest, "")
+        certification = Certification.get_certification(id)
+        if certification.slug != slug do
+          # Slug is not up-to-date
+          redirect(conn, to: Routes.certification_path(conn, :show, certification, conn.query_params))
+        else
+          delegate =
+           get_delegate(%{
+              "certificateur" => Vae.String.to_id(params["certificateur"]),
+              geo: %{
+                "lat" => get_session(conn, :search_lat),
+                "lng" => get_session(conn, :search_lng)
+              },
+              postcode: get_session(conn, :search_postcode),
+              administrative: get_session(conn, :search_administrative)
+            }, certification)
 
-      redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
+          redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
+        end
+      :error ->
+        raise Ecto.NoResultsError, queryable: Certification
     end
   end
 

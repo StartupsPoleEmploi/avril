@@ -1,6 +1,10 @@
 import '../css/admin.scss';
 
 import he from 'he';
+import places from 'places.js';
+import './admin/tables';
+import './admin/charts';
+
 
 $(document).ready(() => {
   if(document.querySelector('#delegate_address')) {

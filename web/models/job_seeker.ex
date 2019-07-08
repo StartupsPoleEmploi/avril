@@ -1,8 +1,7 @@
 defmodule Vae.JobSeeker do
   use Vae.Web, :model
 
-  alias Vae.{Analytic, Event, JobSeeker}
-  alias Vae.Repo
+  alias Vae.{Analytic, Event, JobSeeker, Repo}
 
   schema "job_seekers" do
     field(:identifier, :string)

@@ -6,20 +6,17 @@ import 'bootstrap';
 import 'bootstrap-select';
 import 'url-search-params';
 
+import './analytics';
 import './socket';
 import './components/searchbar';
 import './components/pagination';
 import './components/level-selector';
 import './pages/application';
-import { Analytics } from "./analytics"
-
 
 window.jQuery = jQuery;
 window.$ = jQuery;
 
-$(function() {
-
-  new Analytics().init()
+$(() => {
 
   // Bootstrap extend
   $('[data-toggle="show"]').on('click', function(e){
@@ -131,8 +128,4 @@ function stepLabel(width) {
   } else {
     return "Pour quel métier souhaitez-vous un diplôme ?";
   }
-}
-
-function naiveDeparam(queryString) {
-  return queryString.replace(/^\??/, '').split('&')
 }

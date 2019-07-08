@@ -1,6 +1,7 @@
 defmodule Vae.Router do
   use Vae.Web, :router
-  use NewRelixir.Plug.Exception
+  use Plug.ErrorHandler
+  use Sentry.Plug
   use ExAdmin.Router
   use Coherence.Router
 
@@ -21,6 +22,7 @@ defmodule Vae.Router do
     )
 
     plug :put_user_token
+    plug NavigationHistory.Tracker
     #    plug(Vae.Tracker)
   end
 
@@ -110,6 +112,7 @@ defmodule Vae.Router do
 
   scope "/admin", ExAdmin do
     pipe_through([:protected, :admin])
+    get("/sql", ApiController, :sql)
     admin_routes()
   end
 

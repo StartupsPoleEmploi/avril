@@ -6,7 +6,11 @@ defmodule Vae.UserController do
   alias Vae.User
 
   def update(conn, %{"id" => _id, "user" => user_params}) do
-    Coherence.current_user(conn)
+    current_user = Coherence.current_user(conn) |> Vae.Repo.preload(:applications)
+    current_application = List.first(current_user.applications)
+    default_route = Routes.application_path(conn, :show, current_application)
+
+    current_user
     |> User.changeset(user_params)
     |> Repo.update()
     |> case do
@@ -14,11 +18,15 @@ defmodule Vae.UserController do
         conn
         |> put_flash(:success, "Enregistré")
         |> Coherence.Authentication.Session.update_login(user)
-        |> redirect(to: Routes.application_path(conn, :show, Coherence.current_user(conn).current_application))
+        |> redirect_back(
+          default: default_route
+        )
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Une erreur est survenue")
-        |> redirect(to: Routes.application_path(conn, :show, Coherence.current_user(conn).current_application))
+        |> redirect_back(
+          default: default_route
+        )
     end
   end
 end

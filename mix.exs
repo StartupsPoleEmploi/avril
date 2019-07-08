@@ -35,7 +35,7 @@ defmodule Vae.Mixfile do
         :scrivener_html,
         :httpoison,
         :coherence,
-        :new_relixir,
+        :sentry,
         :algolia,
         :mailjex,
         :persistent_ets,
@@ -77,7 +77,6 @@ defmodule Vae.Mixfile do
       # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
       {:ex_admin, github: "augnustin/ex_admin"},
       {:coherence, "~> 0.5.2"},
-      {:new_relixir, "~> 0.4.1"},
       {:floki, "~> 0.19.0", only: :dev},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},
@@ -97,6 +96,8 @@ defmodule Vae.Mixfile do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
+      {:navigation_history, "~> 0.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 
@@ -108,6 +109,7 @@ defmodule Vae.Mixfile do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      sentry_recompile: ["deps.compile sentry --force", "compile"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"]
       # test: ["ecto.create --quiet", "ecto.migrate", "test"]

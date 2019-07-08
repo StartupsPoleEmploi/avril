@@ -22,8 +22,17 @@ defmodule Vae.Web do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      alias Vae.Repo
 
       def all, do: Vae.Repo.all(__MODULE__)
+
+      def count_by_week(query, date_field) do
+        query
+        |> group_by([r], (fragment("date_part('week', ?)", (field(r, ^date_field)))))
+        |> select([r], [(fragment("date_part('week', ?)", (field(r, ^date_field)))), count("*")])
+        # TODO: sort by week number
+        # TODO: add a year key
+      end
     end
   end
 
@@ -32,13 +41,14 @@ defmodule Vae.Web do
       use Phoenix.Controller
       use Filterable.Phoenix.Controller
 
-      alias Vae.Repo.NewRelic, as: Repo
+      alias Vae.Repo
       import Ecto
       import Ecto.Query
 
       # import Vae.Router.Helpers
       alias Vae.Router.Helpers, as: Routes
       import Vae.Gettext
+      import Vae.Controllers.Helpers, only: [redirect_back: 2]
     end
   end
 
@@ -75,7 +85,7 @@ defmodule Vae.Web do
     quote do
       use Phoenix.Channel
 
-      alias Vae.Repo.NewRelic, as: Repo
+      alias Vae.Repo
       import Ecto
       import Ecto.Query
       import Vae.Gettext

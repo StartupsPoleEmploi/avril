@@ -5,6 +5,7 @@ html {
   position: relative;
   display: flex;
   flex-direction: column;
+  @include firefox-printable()
 }
 
 body {
@@ -45,6 +46,11 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  @include firefox-printable()
+}
+
+.row {
+  @include firefox-printable()
 }
 
 footer,

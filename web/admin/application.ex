@@ -1,10 +1,7 @@
 defmodule Vae.ExAdmin.Application do
   use ExAdmin.Register
-  alias Vae.Repo.NewRelic, as: Repo
 
-  alias Vae.User
-  alias Vae.Certification
-  alias Vae.Delegate
+  alias Vae.{Certification, Delegate, Repo, User}
 
   require Ecto.Query
 
@@ -24,6 +21,7 @@ defmodule Vae.ExAdmin.Application do
       column(:administrative, [], fn a -> a.delegate.administrative end)
       column(:submitted_at)
       column(:admissible_at)
+      column(:inadmissible_at)
 
       actions()
     end
@@ -77,6 +75,7 @@ defmodule Vae.ExAdmin.Application do
       column(:administrative, fn a -> a.delegate.administrative end)
       column(:submitted_at)
       column(:admissible_at)
+      column(:inadmissible_at)
       column(:inserted_at)
       column(:updated_at)
     end
@@ -89,7 +88,7 @@ defmodule Vae.ExAdmin.Application do
           preload: [ :delegate, :user, certification: :certifiers]
         ],
         index: [
-          default_sort: [asc: :inserted_at]
+          default_sort: [desc: :inserted_at]
         ]
       }
     end

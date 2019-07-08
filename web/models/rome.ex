@@ -1,6 +1,6 @@
 defmodule Vae.Rome do
   use Vae.Web, :model
-  alias Vae.Repo.NewRelic, as: Repo
+  alias Vae.{Certification, Profession, Repo}
 
   alias __MODULE__
 
@@ -10,9 +10,9 @@ defmodule Vae.Rome do
     field(:label, :string)
     field(:url, :string)
 
-    has_many(:professions, Vae.Profession)
+    has_many(:professions, Profession)
 
-    many_to_many(:certifications, Vae.Certification,
+    many_to_many(:certifications, Certification,
       join_through: "rome_certifications",
       on_delete: :delete_all
     )

@@ -1,0 +1,27 @@
+@import './variables';
+@import './mixins';
+
+.admin_statistiques {
+
+  h1 {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+
+  .section {
+    padding: 2rem;
+    text-align: center;
+    background: rgba(white, 0.2);
+    box-shadow: 0 0 10px darken(#ecf0f5, 40%);
+
+    ul {
+      list-style: none;
+    }
+  }
+
+  .plot-container {
+    pre {
+      display: none;
+    }
+  }
+}

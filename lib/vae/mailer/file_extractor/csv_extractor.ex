@@ -7,7 +7,7 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
 
   # @limit Application.get_env(:vae, :mailer_extractor_limit)
 
-  @fields ~w(KN_INDIVIDU_NATIONAL CODE_POSTAL TELEPHONE COURRIEL DATE_EFF_INS DC_LBLNIVEAUFORMATIONMAX NOM PRENOM DC_REFERENCEGMS DC_ROMEORE DN_DUREEEXPERIENCE DC_LISTEROMEMETIERRECH ANC AGE)
+  @fields ~w(kn_individu_national code_postal telephone courriel date_eff_ins listeformation nom prenom dc_referencegms dc_romeore dc_listeromemetierrech age)
 
   @allowed_administratives [
     "Bretagne",
@@ -65,18 +65,26 @@ defmodule Vae.Mailer.FileExtractor.CsvExtractor do
 
   defp build_job_seeker(line) do
     %{
-      identifier: line["KN_INDIVIDU_NATIONAL"],
-      first_name: String.capitalize(line["PRENOM"]),
-      last_name: String.capitalize(line["NOM"]),
-      email: line["COURRIEL"],
-      telephone: line["TELEPHONE"],
-      postal_code: line["CODE_POSTAL"],
-      education_level: line["DC_LBLNIVEAUFORMATIONMAX"],
+      identifier: line["kn_individu_national"],
+      first_name: line["prenom"] |> String.trim() |> String.capitalize(),
+      last_name: line["nom"] |> String.trim() |> String.capitalize(),
+      email: String.trim(line["courriel"]),
+      telephone: line["telephone"] |> String.trim(),
+      postal_code: line["code_postal"] |> String.trim(),
+      education_level: line["listeformation"],
       experience:
-        line["DC_LISTEROMEMETIERRECH"]
-        |> String.split(";")
-        |> Enum.reduce(%{}, fn rome, acc ->
-          Map.put_new(acc, rome, nil)
+        line["dc_listeromemetierrech"]
+        |> String.split("|")
+        |> Enum.reduce(%{}, fn
+          "", acc ->
+            acc
+
+          nil, acc ->
+            acc
+
+          rome, acc ->
+            exp = String.split(rome, "-")
+            Map.put_new(acc, List.first(exp), List.last(exp))
         end)
     }
   end

@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 /*
 * MultiSelect v0.9.12
 * Copyright (c) 2012 Louis Cuny

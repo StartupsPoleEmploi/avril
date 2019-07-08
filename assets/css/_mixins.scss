@@ -5,3 +5,9 @@
     box-shadow: 0px 0px 5px  #4D90FE;
   }
 }
+
+@mixin firefox-printable() {
+  @media print {
+    display: block !important;
+  }
+}

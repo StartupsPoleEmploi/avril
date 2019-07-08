@@ -19,56 +19,52 @@ defmodule Vae.AuthController do
 
   def callback(conn, %{"code" => code, "state" => state} = _params) do
     client = Clients.get_client(state)
-    client_with_token = OAuth.generate_access_token(client, code)
+    case OAuth.generate_access_token(client, code) do
+      {:ok, client_with_token} ->
+        userinfo_api_result =
+          OAuth.get(
+            client_with_token,
+            "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
+          )
 
-    conn =
-      conn
-      |> put_session(:pe_access_token, client_with_token.token.access_token)
+        user_status =
+          case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
+            nil -> User.create_or_associate_with_pe_connect_data(userinfo_api_result.body)
+            user -> {:ok, user}
+          end
+          |> User.fill_with_api_fields(client_with_token, 3)
 
-    userinfo_api_result =
-      OAuth.get(
-        client_with_token,
-        "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
-      )
+        application_status =
+          case user_status do
+            {:ok, user} ->
+              user = Repo.preload(user, :current_application)
+              {:ok,
+               {user,
+                Application.find_or_create_with_params(
+                  Map.merge(
+                    get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)),
+                    %{user_id: user.id}
+                  )
+                ) || user.current_application}}
 
-    user_status =
-      case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
-        nil -> User.create_or_associate_with_pe_connect_data(userinfo_api_result.body)
-        user -> {:ok, user}
-      end
-      |> User.fill_with_api_fields(client_with_token, 3)
+            error -> error
+          end
 
-    application_status =
-      case user_status do
-        {:ok, user} ->
-          user = Repo.preload(user, :current_application)
-          {:ok,
-           {user,
-            Application.find_or_create_with_params(
-              Map.merge(
-                get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)),
-                %{user_id: user.id}
-              )
-            ) || user.current_application}}
+        case application_status do
+          {:ok, {user, nil}} ->
+            Coherence.Authentication.Session.create_login(conn, user)
+            |> put_flash(:info, "Sélectionnez un diplôme pour poursuivre.")
+            |> redirect(to: Routes.root_path(conn, :index))
 
-        error -> error
-      end
+          {:ok, {user, application}} ->
+            Coherence.Authentication.Session.create_login(conn, user)
+            |> redirect(to: Routes.application_path(conn, :show, application))
 
-    case application_status do
-      {:ok, {user, nil}} ->
-        Coherence.Authentication.Session.create_login(conn, user)
-        |> put_flash(:info, "Sélectionnez un diplôme pour poursuivre.")
-        |> redirect(to: Routes.root_path(conn, :index))
-
-      {:ok, {user, application}} ->
-        Coherence.Authentication.Session.create_login(conn, user)
-        |> redirect(to: Routes.application_path(conn, :show, application))
-
-      {:error, msg} ->
-        conn
-        |> put_flash(:error, inspect(msg) || "Une erreur est survenue. Veuillez réessayer plus tard.")
-        |> redirect(external: get_session(conn, :referer))
+          {:error, msg} -> handle_error(conn, msg)
+        end
+      {:error, _error} -> handle_error(conn)
     end
+
   end
 
   def callback(conn, _params) do
@@ -83,5 +79,11 @@ defmodule Vae.AuthController do
       ) || %{}
 
     for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
+  end
+
+  defp handle_error(conn, msg\\"Une erreur est survenue. Veuillez réessayer plus tard.") do
+    conn
+      |> put_flash(:error, (if is_binary(msg), do: msg, else: inspect(msg)))
+      |> redirect(external: get_session(conn, :referer))
   end
 end
