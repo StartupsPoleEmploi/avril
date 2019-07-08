@@ -1,5 +1,6 @@
 defmodule Vae.Delegates.FranceVae do
   alias Vae.Delegates.Cache
+  alias Vae.Delegates.FranceVae.Config
 
   @name FranceVae
 
@@ -10,7 +11,7 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("https://www.francevae.fr/api/academies", headers)
+    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/academies", headers)
     {:ok, academies} = response.body |> Jason.decode()
     academies
   end
@@ -22,7 +23,7 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("https://www.francevae.fr/api/reunions/#{academy}", headers)
+    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy}", headers)
 
     response.body
     |> Jason.decode!()
@@ -41,9 +42,7 @@ defmodule Vae.Delegates.FranceVae do
 
     {:ok, response} =
       HTTPoison.post(
-        "https://applications.ac-strasbourg.fr/test-francevae/academie/inscription-rdv/#{
-          academy_id
-        }/#{meeting_id}",
+        "https://#{Config.get_base_url()}/academie/inscription-rdv/#{academy_id}/#{meeting_id}",
         Vae.Delegates.FranceVae.UserRegistration.from_user(user),
         headers
       )
@@ -61,10 +60,8 @@ defmodule Vae.Delegates.FranceVae do
 
         {:ok, response} =
           HTTPoison.post(
-            "https://www.francevae.fr/api/oauth/v2/token",
-            "client_id=#{System.get_env("FRANCE_VAE_CLIENT_ID")}&client_secret=#{
-              System.get_env("FRANCE_VAE_CLIENT_SECRET")
-            }&grant_type=client_credentials",
+            Config.get_oauth_url(),
+            "client_id=#{Config.get_client_id()}&client_secret=#{Config.get_client_secret()}&grant_type=client_credentials",
             headers
           )
 
