@@ -29,7 +29,7 @@ import $ from 'jquery';
       if ($(el).is('form')) {
         $(el).on('submit', e => {
           const $form = $(e.delegateTarget);
-          if ($form.find('input[type=text]:not([data-analytics]):enabled').length) {
+          if ($form.find('input[name]:not([data-analytics]):enabled').length) {
             $(el).elementAnalyticsEvent()
           }
         });
