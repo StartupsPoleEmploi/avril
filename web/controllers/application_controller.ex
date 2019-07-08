@@ -44,7 +44,7 @@ defmodule Vae.ApplicationController do
           resume_changeset: Resume.changeset(%Resume{}, %{}),
           meetings:
             Vae.Delegate.is_educ_nat?(application.delegate) &&
-              Vae.Delegates.Api.get_france_vae_meetings(application.delegate.academy_id)
+              Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
         )
 
       {:error, %{to: to, msg: msg}} ->
@@ -146,6 +146,38 @@ defmodule Vae.ApplicationController do
     end
   end
 
+  def register_to_meeting(conn, %{
+        "academy_id" => academy_id,
+        "meeting_id" => meeting_id,
+        "id" => id
+      }) do
+    application =
+      case Repo.get(Application, id) do
+        nil -> nil
+        application -> Repo.preload(application, [:user, {:delegate, :process}, :certification])
+      end
+
+    case has_access?(conn, application, nil) do
+      {:ok, application} ->
+        case Vae.Delegates.Api.post_meeting_registration(academy_id, meeting_id, application.user) do
+          :ok ->
+            Application.set_registered_meeting(application, academy_id, meeting_id)
+
+          {:error, message} ->
+            Logger.error(fn -> inspect(message) end)
+
+            conn
+            |> put_flash(:error, "Une erreur est survenue")
+            |> redirect(to: Routes.application_path(conn, :show, application))
+        end
+
+      {:error, %{to: to, msg: msg}} ->
+        conn
+        |> put_flash(:error, msg)
+        |> redirect(to: to)
+    end
+  end
+
   def has_access?(conn, application, nil) do
     if not is_nil(application) do
       if Coherence.logged_in?(conn) &&
@@ -181,26 +213,4 @@ defmodule Vae.ApplicationController do
        }}
     end
   end
-
-  # defp compact_experiences(experiences, equality_fun) do
-  #   Enum.reduce(experiences, [], fn exp, result ->
-  #     associate_if_match(exp, result, equality_fun)
-  #   end)
-  #   |> Enum.reverse()
-  #   |> Enum.map(fn experiences_group -> Enum.reverse(experiences_group) end)
-  # end
-
-  # defp associate_if_match(element, already_associated, equality_fun) do
-  #   case already_associated do
-  #     [] ->
-  #       [[element]]
-
-  #     [[latest_element | other_elements] = previous_elements | tail] ->
-  #       if equality_fun.(element, latest_element) do
-  #         [[element | previous_elements] | tail]
-  #       else
-  #         [[element] | [previous_elements | tail]]
-  #       end
-  #   end
-  # end
 end

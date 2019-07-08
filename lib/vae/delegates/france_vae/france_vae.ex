@@ -1,4 +1,4 @@
-defmodule Vae.Delegates.Client.FranceVae do
+defmodule Vae.Delegates.FranceVae do
   alias Vae.Delegates.Cache
 
   @name FranceVae
@@ -30,6 +30,23 @@ defmodule Vae.Delegates.Client.FranceVae do
     |> Enum.filter(fn meeting ->
       Map.get(meeting, "cible") == "CAP au BTS"
     end)
+  end
+
+  def post_meeting_registration(academy_id, meeting_id, user) do
+    token = get_token()
+
+    headers = [
+      {"Authorization", "Bearer #{token}"}
+    ]
+
+    {:ok, response} =
+      HTTPoison.post(
+        "https://applications.ac-strasbourg.fr/test-francevae/academie/inscription-rdv/#{
+          academy_id
+        }/#{meeting_id}",
+        Vae.Delegates.FranceVae.UserRegistration.from_user(user),
+        headers
+      )
   end
 
   def get_token() do

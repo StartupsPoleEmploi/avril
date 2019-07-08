@@ -1,8 +1,8 @@
-defmodule Vae.Delegates do
+defmodule Vae.Delegates.FranceVae.Server do
   require Logger
   use GenServer
 
-  alias Vae.Delegates.Client.FranceVae
+  alias Vae.Delegates.FranceVae
 
   @name Delegates
 
@@ -31,12 +31,16 @@ defmodule Vae.Delegates do
     {:noreply, updated_state}
   end
 
-  def handle_call(:get_academies, from, state) do
+  def handle_call(:get_academies, _from, state) do
     {:reply, FranceVae.get_academies(), state}
   end
 
-  def handle_call({:get_meetings, academy_id}, from, state) do
+  def handle_call({:get_meetings, academy_id}, _from, state) do
     {:reply, FranceVae.get_meetings(academy_id), state}
+  end
+
+  def handle_call({:post_meeting_registration, academy_id, meeting_id, user}, _from, state) do
+    {:reply, FranceVae.post_meeting_registration(academy_id, meeting_id, user), state}
   end
 
   defp get_data(:france_vae) do

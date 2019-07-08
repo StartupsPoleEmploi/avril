@@ -14,7 +14,7 @@ defmodule Vae do
       worker(Vae.Places.Cache, []),
       Vae.OAuth.Clients,
       Vae.Delegates.Cache,
-      worker(Vae.Delegates, [:france_vae])
+      worker(Vae.Delegates.FranceVae.Server, [:france_vae])
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

@@ -3,9 +3,10 @@ defmodule Vae.Application do
 
   use Vae.Web, :model
 
-  alias Vae.Repo
-  alias Vae.Email
   alias Vae.ApplicationEmail
+  alias Vae.Delegates.FranceVae.Meeting
+  alias Vae.Email
+  alias Vae.Repo
 
   schema "applications" do
     # Triggers an analytics event at the front
@@ -27,6 +28,8 @@ defmodule Vae.Application do
       through: [:certification, :certifiers]
     )
 
+    embeds_one(:meeting, Meeting, on_replace: :delete)
+
     timestamps()
   end
 
@@ -38,7 +41,8 @@ defmodule Vae.Application do
   end
 
   def find_or_create_with_params(
-        %{user_id: _user_id, delegate_id: _delegate_id, certification_id: _certification_id} = params
+        %{user_id: _user_id, delegate_id: _delegate_id, certification_id: _certification_id} =
+          params
       ) do
     Repo.get_by(__MODULE__, params) ||
       case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
@@ -114,6 +118,19 @@ defmodule Vae.Application do
     application
     |> change(inadmissible_at: DateTime.utc_now())
     |> Repo.update!()
+  end
+
+  def set_registered_meeting(application, academy_id, meeting) do
+    application
+    |> change()
+    |> put_meeting(academy_id, meeting)
+  end
+
+  defp put_meeting(changeset, academy_id, meeting) do
+    meeting_changeset = Meeting.changeset(%Meeting{}, %{meeting: meeting, academy_id: academy_id})
+
+    changeset
+    |> put_embed(:meeting, meeting_changeset)
   end
 
   defp generate_hash(length) do
