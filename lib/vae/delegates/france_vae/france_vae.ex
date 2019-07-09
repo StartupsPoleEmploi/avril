@@ -16,7 +16,7 @@ defmodule Vae.Delegates.FranceVae do
     academies
   end
 
-  def get_meetings(academy) do
+  def get_meetings(academy, delegate_city) do
     token = get_token()
 
     headers = [
@@ -30,6 +30,13 @@ defmodule Vae.Delegates.FranceVae do
     |> Map.get("reunions")
     |> Enum.filter(fn meeting ->
       Map.get(meeting, "cible") == "CAP au BTS"
+    end)
+    |> Enum.filter(fn meeting ->
+      [_name, city] = Map.get(meeting, "lieu") |> String.split(", ")
+
+      city
+      |> String.trim()
+      |> String.downcase() == String.downcase(delegate_city)
     end)
     |> Enum.map(&to_meeting/1)
   end

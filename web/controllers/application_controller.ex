@@ -42,7 +42,11 @@ defmodule Vae.ApplicationController do
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{}),
           application_changeset: Application.changeset(application, %{}),
-          meetings: Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
+          meetings:
+            Vae.Delegates.get_france_vae_meetings(
+              application.delegate.academy_id,
+              application.delegate.city
+            )
         })
 
       {:error, %{to: to, msg: msg}} ->
