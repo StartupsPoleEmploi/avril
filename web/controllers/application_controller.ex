@@ -53,7 +53,7 @@ defmodule Vae.ApplicationController do
   end
 
   # TODO: change to submit
-  def update(conn, %{"id" => id}) do
+  def update(conn, %{"id" => id} = params) do
     application =
       case Repo.get(Application, id) do
         nil -> nil
@@ -62,6 +62,7 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, nil) do
       {:ok, application} ->
+        # data available at params["application"]["meeting"] and params["book"]["on"]
         case Application.submit(application) do
           {:ok, application} ->
             conn
