@@ -5,7 +5,7 @@ defmodule Vae.Delegates.FranceVae.Meeting do
   @primary_key false
   embedded_schema do
     field(:academy_id, :string)
-    field(:meeting_id, :string)
+    field(:meeting_id, :integer)
     field(:place, :string)
     field(:address, :string)
     field(:target, :string)

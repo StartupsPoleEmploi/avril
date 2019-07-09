@@ -90,7 +90,7 @@ defmodule Vae.Delegates.FranceVae do
   defp to_meeting(params) do
     %{
       academy_id: params["academy_id"],
-      meeting_id: params["meeting_id"],
+      meeting_id: params["id"],
       place: params["lieu"],
       address: params["addresse"],
       target: params["cible"],

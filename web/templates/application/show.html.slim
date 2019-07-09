@@ -189,15 +189,15 @@
                   label.card.meeting-card.mb-4
                     .card-body
                       .input
-                        = radio_button(f, :meeting, meeting["id"])
+                        = radio_button(f, :meeting, meeting.meeting_id)
                       .date
                         h5
-                          = "#{String.capitalize(Timex.lformat!(Timex.parse!("10/07/2019", "%d/%m/%Y", :strftime), "%A %e %B ", "fr", :strftime))}"
+                          = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"
                           br
-                          = "de #{(meeting["heure_debut"])} à #{(meeting["heure_fin"])}"
+                          = "de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
                       .place
-                        h6.strong= meeting["lieu"]
-                        p= meeting["addresse"]
+                        h6.strong= meeting.place
+                        p= meeting.address
             .row
               .col-sm-10.offset-sm-1
                 p.mb-5 C'est l'occasion de rencontrer un conseiller et un groupe de candidats qui comme vous ont choisi la VAE. Le conseiller vous expliquera le parcours VAE pour votre diplôme et vous donnera des conseils qui seront la clé de votre réussite.
