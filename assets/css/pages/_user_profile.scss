@@ -128,6 +128,59 @@
       }
     }
   }
+
+
+  nav {
+    margin-top: -2rem;
+    margin-left: -2rem;
+    margin-right: -2rem;
+    .nav {
+      height: 4rem;
+      align-items: stretch;
+      .nav-item {
+        border-radius: 0;
+        border: thin solid $dm-primary-grey;
+        border-bottom: 0.5rem solid $dm-primary-green;
+        color: $dm-primary-blue;
+        &:first-of-type {
+          border-right: none;
+        }
+        &.active {
+          background: initial;
+        }
+
+        h6 {
+          margin: 0;
+          line-height: 4rem;
+        }
+      }
+      .nav-item.active ~ .nav-item:not(.active) {
+        border-bottom: thin solid $dm-primary-grey;
+      }
+    }
+  }
+
+  .meeting-card {
+    .card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .input {
+        input {
+          transform: scale(2);
+        }
+      }
+      .date {
+        flex: 2;
+        padding: 2rem;
+      }
+      .place {
+        flex: 4;
+      }
+
+    }
+  }
+
   .resume-section {
     @media print {
       display: none;

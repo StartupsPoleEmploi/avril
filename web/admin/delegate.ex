@@ -32,6 +32,7 @@ defmodule Vae.ExAdmin.Delegate do
           :telephone,
           :email,
           :person_name,
+          :academy_id,
           :process
         ]
       )
@@ -42,7 +43,7 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :is_active)
 
         academies_options_tags =
-          Vae.Delegates.Api.get_france_vae_academies()
+          Vae.Delegates.get_france_vae_academies()
           |> Enum.sort_by(& &1["nom"])
           |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
 

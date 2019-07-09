@@ -44,5 +44,14 @@ import $ from 'jquery';
           .addClass('d-none');
       }
     });
+
+    $('form.select-meeting').on('change', e => {
+      const $input = $(e.target);
+      const $form = $(e.delegateTarget);
+      if ($form.find(`[name="${$input.attr('name')}"]:checked`).length) {
+        $form.find('button[disabled]').removeAttr('disabled');
+      }
+    });
+
   }
 })();

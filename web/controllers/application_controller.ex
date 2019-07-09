@@ -19,7 +19,7 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
-        render(conn, "show.html",
+        render(conn, "show.html", %{
           title:
             "Candidature VAE de #{application.user.name} pour un diplôme de #{
               application.certification.label
@@ -39,13 +39,11 @@ defmodule Vae.ApplicationController do
           edit_mode:
             params["mode"] != "certificateur" &&
               Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
-          external_subscription_link: Delegate.external_subscription_link(application.delegate),
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{}),
-          meetings:
-            Vae.Delegate.is_educ_nat?(application.delegate) &&
-              Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
-        )
+          application_changeset: Application.changeset(application, %{}),
+          meetings: Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
+        })
 
       {:error, %{to: to, msg: msg}} ->
         conn
