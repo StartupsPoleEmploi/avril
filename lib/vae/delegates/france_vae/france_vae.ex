@@ -31,6 +31,7 @@ defmodule Vae.Delegates.FranceVae do
     |> Enum.filter(fn meeting ->
       Map.get(meeting, "cible") == "CAP au BTS"
     end)
+    |> Enum.map(&to_meeting/1)
   end
 
   def post_meeting_registration(academy_id, meeting_id, user) do
@@ -83,6 +84,29 @@ defmodule Vae.Delegates.FranceVae do
 
       {:ok, access_token} ->
         access_token
+    end
+  end
+
+  defp to_meeting(params) do
+    %{
+      academy_id: params["academy_id"],
+      meeting_id: params["meeting_id"],
+      place: params["lieu"],
+      address: params["addresse"],
+      target: params["cible"],
+      start_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_debut"]),
+      end_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_fin"])
+    }
+  end
+
+  defp cast_fr_date_and_time_to_naive(date, time) do
+    with {:ok, datetime} <- Timex.parse(date, "%d/%m/%Y", :strftime),
+         {:ok, formatted_time} <- Time.from_iso8601(time),
+         duration <- Timex.Duration.from_time(formatted_time) do
+      NaiveDateTime.add(datetime, duration.seconds, :second)
+    else
+      # Todo: find a better way
+      _ -> nil
     end
   end
 end
