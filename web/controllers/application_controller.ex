@@ -19,6 +19,13 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
+        meetings = if application.meeting, do: [], else:
+          Vae.Delegates.get_france_vae_meetings(
+            application.delegate.academy_id,
+            application.delegate.city
+          ) |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end) |> Map.to_list
+
+
         render(conn, "show.html", %{
           title:
             "Candidature VAE de #{application.user.name} pour un diplôme de #{
@@ -42,11 +49,7 @@ defmodule Vae.ApplicationController do
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{}),
           application_changeset: Application.changeset(application, %{}),
-          meetings:
-            Vae.Delegates.get_france_vae_meetings(
-              application.delegate.academy_id,
-              application.delegate.city
-            ) |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end) |> Map.to_list
+          meetings: meetings
         })
 
       {:error, %{to: to, msg: msg}} ->
@@ -69,10 +72,24 @@ defmodule Vae.ApplicationController do
         # data available at params["application"]["meeting"] and params["book"]["on"]
         case Application.submit(application) do
           {:ok, application} ->
-            conn
-            |> put_flash(:success, "Dossier transmis avec succès!")
-            |> redirect(to: Routes.application_path(conn, :show, application))
+            if params["book"]["on"] do
+              case Application.set_registered_meeting(application, application.delegate.academy_id, params["application"]["meeting"]) do
+                {:ok, application} ->
+                  Vae.Delegates.Api.post_meeting_registration(academy_id, meeting_id, application.user)
+                {:error, msg} ->
+                  conn
+                    |> put_flash(
+                      :error,
+                      "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
+                    )
+                    |> redirect(to: Routes.application_path(conn, :show, application))
 
+                      end
+                    else
+                      conn
+                      |> put_flash(:success, "Dossier transmis avec succès!")
+                      |> redirect(to: Routes.application_path(conn, :show, application))
+                    end
           {:error, msg} ->
             conn
             |> put_flash(

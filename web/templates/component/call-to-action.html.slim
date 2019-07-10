@@ -5,6 +5,13 @@
         strong Dossier Transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
       .mt-3
         = link((if @edit_mode, do: "Télécharger mon dossier", else: "Télécharger le dossier du candidat"), to: Routes.application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profil#Telecharger recap #{if @edit_mode, do: "DE", else: "certificateur"}"], download: "Synthese VAE #{@application.user.name}.pdf")
+      = if @application.meeting do
+        p
+          | Vous avez sélectionné l'atelier collectif du
+          = "#{String.capitalize(Timex.lformat!(@application.meeting.start_date, "%A %e %B ", "fr", :strftime))}"
+          = " de #{Timex.lformat!(@application.meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(@application.meeting.end_date, "%H:%M", "fr", :strftime)} qui aura lieu à :"
+        p= @application.meeting.place
+        p= @application.meeting.address
     - else
       = if length(@meetings) > 0 do
         button.btn.btn-primary onclick="; $('body, html').animate({scrollTop: 0}, function(){$('#transmission-tab').trigger('click')});"

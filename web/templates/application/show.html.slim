@@ -16,7 +16,7 @@
                 h6
                   span.fa.fa-user
                   = " 1 - Expériences Pro"
-              a#transmission-tab.nav-item.nav-link href="#transmission" data-toggle="tab" aria-controls="tranmission" aria-selected="false"
+              a#transmission-tab.nav-item.nav-link href="#transmission" data-toggle="tab" aria-controls="tranmission" aria-selected="false" data-analytics="Profil#Transmission tab"
                 h6
                   span.fa.fa-users
                   = " 2 - Transmission"
@@ -91,7 +91,7 @@
                         = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
             .row
               .col
-          = unless length(@meetings) > 0 do
+          = if length(@meetings) == 0 do
             .col-md-6.text-right
               = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, meetings: @meetings
 
@@ -212,11 +212,11 @@
                               = " de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
             .row
               .col-sm-12.text-center.my-5
-                button.btn.btn-primary type="submit" name="book" value="on" disabled="true"
+                button.btn.btn-primary type="submit" name="book" value="on" disabled="true" data-analytics="Profil#Avec Reunion information"
                   span.fa.fa-plus-circle
-                  = " Réserver ma place et transmettre mon dossier"
-
-            .row
-              .col-sm-12
-                .pull-right
-                  button.btn.btn-link type="submit" name="book" value="off" Non merci, je veux juste transmettre mon dossier VAE
+                  = if @application.submitted_at, do: " Réserver ma place", else: " Réserver ma place et transmettre mon dossier"
+            = unless @application.submitted_at do
+              .row
+                .col-sm-12
+                  .pull-right
+                    button.btn.btn-link type="submit" name="book" value="off" Non merci, je veux juste transmettre mon dossier VAE
