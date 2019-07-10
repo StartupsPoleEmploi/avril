@@ -27,18 +27,26 @@ defmodule Vae.Delegates.FranceVae do
 
     response.body
     |> Jason.decode!()
+    |> IO.inspect()
     |> Map.get("reunions")
-    |> Enum.filter(fn meeting ->
-      Map.get(meeting, "cible") == "CAP au BTS"
-    end)
-    |> Enum.filter(fn meeting ->
-      [_name, city] = Map.get(meeting, "lieu") |> String.split(", ")
+    |> case do
+      nil ->
+        []
 
-      city
-      |> String.trim()
-      |> String.downcase() == String.downcase(delegate_city)
-    end)
-    |> Enum.map(&to_meeting/1)
+      meetings ->
+        meetings
+        |> Enum.filter(fn meeting ->
+          Map.get(meeting, "cible") == "CAP au BTS"
+        end)
+        |> Enum.filter(fn meeting ->
+          [_name, city] = Map.get(meeting, "lieu") |> String.split(", ")
+
+          city
+          |> String.trim()
+          |> String.downcase() == String.downcase(delegate_city)
+        end)
+        |> Enum.map(&to_meeting/1)
+    end
   end
 
   def post_meeting_registration(academy_id, meeting_id, user) do
