@@ -2,7 +2,6 @@ defmodule Vae.ExAdmin.User do
   use ExAdmin.Register
 
   register_resource Vae.User do
-
     index do
       selectable_column()
       column(:id)
@@ -37,66 +36,80 @@ defmodule Vae.ExAdmin.User do
       end
     end
 
-    filter [:name, :email, :postal_code, :address1, :address2, :address3, :address4, :city_label, :country_label]
+    filter([
+      :name,
+      :email,
+      :postal_code,
+      :address1,
+      :address2,
+      :address3,
+      :address4,
+      :city_label,
+      :country_label
+    ])
 
     show user do
-      attributes_table only: [
-        :name,
-        :first_name,
-        :last_name,
-        :email,
-        :is_admin,
-        :postal_code,
-        :address1,
-        :address2,
-        :address3,
-        :address4,
-        :insee_code,
-        :country_code,
-        :city_label,
-        :country_label,
-        :pe_id,
-        :pe_connect_token
-      ]
+      attributes_table(
+        only: [
+          :name,
+          :first_name,
+          :last_name,
+          :email,
+          :is_admin,
+          :postal_code,
+          :address1,
+          :address2,
+          :address3,
+          :address4,
+          :insee_code,
+          :country_code,
+          :city_label,
+          :country_label,
+          :pe_id,
+          :pe_connect_token
+        ]
+      )
 
       panel "Skills" do
         table_for user.skills do
-          column :code
-          column :label
-          column :type
-          column :level_code
-          column :level_label
+          column(:code)
+          column(:label)
+          column(:type)
+          column(:level_code)
+          column(:level_label)
         end
       end
 
       panel "Experiences" do
         table_for user.experiences do
-          column :company
-          column :start_date
-          column :end_date
-          column :is_current_job
-          column :is_abroad
-          column :label
-          column :duration
+          column(:company)
+          column(:start_date)
+          column(:end_date)
+          column(:is_current_job)
+          column(:is_abroad)
+          column(:label)
+          column(:duration)
         end
       end
+
       panel "Proven Experiences" do
         table_for user.proven_experiences do
-          column :start_date
-          column :end_date
-          column :label
-          column :contract_type
-          column :is_manager
-          column :work_duration
-          column :duration
-          column :company_ape
-          column :company_name
-          column :company_category
-          column :company_state_owned
-          column :company_uid
+          column(:start_date)
+          column(:end_date)
+          column(:label)
+          column(:contract_type)
+          column(:is_manager)
+          column(:work_duration)
+          column(:duration)
+          column(:company_ape)
+          column(:company_name)
+          column(:company_category)
+          column(:company_state_owned)
+          column(:company_uid)
         end
       end
     end
+
     query do
       %{index: [default_sort: [asc: :inserted_at]]}
     end
