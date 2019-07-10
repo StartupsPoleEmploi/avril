@@ -27,7 +27,6 @@ defmodule Vae.Delegates.FranceVae do
 
     response.body
     |> Jason.decode!()
-    |> IO.inspect()
     |> Map.get("reunions")
     |> case do
       nil ->
@@ -39,11 +38,12 @@ defmodule Vae.Delegates.FranceVae do
           Map.get(meeting, "cible") == "CAP au BTS"
         end)
         |> Enum.filter(fn meeting ->
-          [_name, city] = Map.get(meeting, "lieu") |> String.split(", ")
-
-          city
+          Map.get(meeting, "lieu")
+          |> String.split(", ")
+          |> List.last()
           |> String.trim()
-          |> String.downcase() == String.downcase(delegate_city)
+          |> String.downcase()
+          |> String.contains?(String.downcase(delegate_city))
         end)
         |> Enum.map(&to_meeting/1)
     end
