@@ -181,32 +181,42 @@
           .row
             .col-sm-8.offset-sm-2.text-center.my-5
               h3 Nous avons trouvé plusieurs ateliers collectifs près de chez vous !
-              p Choisissez celui auquel vous souhaitez participer
           = form_for @application_changeset, Routes.application_path(@conn, :update, @application), [class: "select-meeting", data: [analytics: "?bouton=soumettre-candidature"]], fn f ->
             .row
-              .col-sm-12
-                = for meeting <- @meetings do
-                  label.card.meeting-card.mb-4
-                    .card-body
-                      .input
-                        = radio_button(f, :meeting, meeting.meeting_id)
-                      .date
-                        h5
-                          = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"
-                          br
-                          = "de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
-                      .place
-                        h6.strong= meeting.place
-                        p= meeting.address
-            .row
-              .col-sm-10.offset-sm-1
+              .col-sm-8.offset-sm-2
                 p.mb-5 C'est l'occasion de rencontrer un conseiller et un groupe de candidats qui comme vous ont choisi la VAE. Le conseiller vous expliquera le parcours VAE pour votre diplôme et vous donnera des conseils qui seront la clé de votre réussite.
-
+                p.text-center.mb-5 Choisissez celui auquel vous souhaitez participer :
             .row
-              .col-sm-12.text-center
-                button.btn.btn-primary.mb-5 type="submit" name="book" value="on" disabled="true"
+              .col-sm-12
+                h3.text-center Où ?
+                ul.nav.flex-column
+                  = for {{place, address}, _meetings} <- @meetings do
+                    - place_slug = Vae.String.parameterize(place)
+                    li.card.meeting-card.place.nav-item
+                      .card-body.nav-link data-target="#place-#{place_slug}" data-toggle="tab" aria-controls="place-#{place_slug}" id="tab-#{place_slug}"
+                        div
+                          h5.strong= place
+                          p= address
+
+                .tab-content
+                  h3.text-center Quand ?
+                  = for {{place, address}, meetings} <- @meetings do
+                    - place_slug = Vae.String.parameterize(place)
+                    div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{place_slug}" id="place-#{place_slug}"
+                      = for meeting <- meetings do
+                        label.card.meeting-card.date
+                          = radio_button(f, :meeting, meeting.meeting_id)
+                          .card-body
+                            h5
+                              = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"
+                              = " de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
+            .row
+              .col-sm-12.text-center.my-5
+                button.btn.btn-primary type="submit" name="book" value="on" disabled="true"
                   span.fa.fa-plus-circle
                   = " Réserver ma place et transmettre mon dossier"
 
+            .row
+              .col-sm-12
                 .pull-right
                   button.btn.btn-link type="submit" name="book" value="off" Non merci, je veux juste transmettre mon dossier VAE

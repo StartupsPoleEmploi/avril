@@ -135,7 +135,9 @@
     margin-left: -2rem;
     margin-right: -2rem;
     .nav {
-      height: 4rem;
+      @media(min-width: $grid-breakpoints('sm')) {
+        height: 4rem;
+      }
       align-items: stretch;
       .nav-item {
         border-radius: 0;
@@ -161,23 +163,46 @@
   }
 
   .meeting-card {
-    .card-body {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      .input {
-        input {
-          transform: scale(2);
+    margin-bottom: 2rem;
+    input {
+      visibility: hidden;
+      display: none;
+
+      &:checked + .card-body {
+        background: lighten(theme-color('success'), 50%);
+        &:after {
+          content: '✓ Date sélectionnée';
         }
       }
-      .date {
-        flex: 2;
-        padding: 2rem;
-      }
-      .place {
-        flex: 4;
+    }
+
+    .card-body {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+
+
+      h5, p {
+        margin: 0;
       }
 
+      &:after {
+        cursor: pointer;
+        padding-left: 1rem;
+        content: 'Choisir cette date ?';
+      }
+
+    }
+    &.place .card-body {
+      &:after {
+        content: 'Choisir ce lieu ?';
+      }
+      &.active {
+        background: lighten(theme-color('success'), 50%);
+        &:after {
+          content: '✓ Lieu sélectionné';
+        }
+      }
     }
   }
 

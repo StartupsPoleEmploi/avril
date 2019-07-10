@@ -46,7 +46,7 @@ defmodule Vae.ApplicationController do
             Vae.Delegates.get_france_vae_meetings(
               application.delegate.academy_id,
               application.delegate.city
-            )
+            ) |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end) |> Map.to_list
         })
 
       {:error, %{to: to, msg: msg}} ->
