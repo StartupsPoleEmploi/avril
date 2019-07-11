@@ -205,7 +205,7 @@
                     div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{place_slug}" id="place-#{place_slug}"
                       = for meeting <- meetings do
                         label.card.meeting-card.date
-                          = radio_button(f, :meeting, meeting.meeting_id)
+                          = radio_button(f, :meeting_id, meeting.meeting_id)
                           .card-body
                             h5
                               = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"

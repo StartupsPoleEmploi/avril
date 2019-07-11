@@ -94,6 +94,7 @@ defmodule Vae.Router do
     resources("/candidatures", ApplicationController, only: [:show, :update]) do
       resources("/resume", ResumeController, only: [:create, :delete])
       get("/telecharger", ApplicationController, :download, as: :download)
+      get("/france-vae-redirect", ApplicationController, :france_vae_redirect, as: :france_vae_redirect)
     end
 
     resources("/profil", UserController, only: [:update])

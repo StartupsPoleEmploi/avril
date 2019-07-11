@@ -18,5 +18,6 @@ defmodule Vae.Delegates.FranceVae.Meeting do
   def changeset(module, params) do
     module
     |> cast(params, @fields)
+    |> validate_required([:academy_id, :meeting_id, :place, :address, :start_date, :end_date])
   end
 end

@@ -19,13 +19,6 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
-        meetings = if application.meeting, do: [], else:
-          Vae.Delegates.get_france_vae_meetings(
-            application.delegate.academy_id,
-            application.delegate.city
-          ) |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end) |> Map.to_list
-
-
         render(conn, "show.html", %{
           title:
             "Candidature VAE de #{application.user.name} pour un diplôme de #{
@@ -49,7 +42,10 @@ defmodule Vae.ApplicationController do
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{}),
           application_changeset: Application.changeset(application, %{}),
-          meetings: meetings
+          meetings: (if application.meeting, do: [], else:
+            Vae.Delegates.get_france_vae_meetings(
+              application.delegate.academy_id
+            ) |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end) |> Map.to_list)
         })
 
       {:error, %{to: to, msg: msg}} ->
@@ -69,13 +65,13 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, nil) do
       {:ok, application} ->
-        # data available at params["application"]["meeting"] and params["book"]["on"]
         case Application.submit(application) do
           {:ok, application} ->
             if params["book"] == "on" do
-              case Application.set_registered_meeting(application, application.delegate.academy_id, params["application"]["meeting"]) do
+              meeting_id = params["application"]["meeting_id"]
+              case Application.set_registered_meeting(application, application.delegate.academy_id, meeting_id) do
                 {:ok, application} ->
-                  conn
+                  redirect(conn, to: Routes.application_france_vae_redirect_path(conn, :france_vae_redirect, application, %{academy_id: application.delegate.academy_id, meeting_id: meeting_id}))
                 {:error, msg} ->
                   conn
                     |> put_flash(
@@ -166,11 +162,11 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def register_to_meeting(conn, %{
-        "academy_id" => academy_id,
-        "meeting_id" => meeting_id,
-        "id" => id
-      }) do
+  def france_vae_redirect(conn, %{
+    "application_id" => id,
+    "academy_id" => academy_id,
+    "meeting_id" => meeting_id
+  } = params) do
     application =
       case Repo.get(Application, id) do
         nil -> nil
@@ -179,17 +175,16 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, nil) do
       {:ok, application} ->
-        case Vae.Delegates.Api.post_meeting_registration(academy_id, meeting_id, application.user) do
-          :ok ->
-            Application.set_registered_meeting(application, academy_id, meeting_id)
-
-          {:error, message} ->
-            Logger.error(fn -> inspect(message) end)
-
-            conn
-            |> put_flash(:error, "Une erreur est survenue")
-            |> redirect(to: Routes.application_path(conn, :show, application))
-        end
+        render(conn, "france-vae-redirect.html", %{
+          container_class: "d-flex flex-grow-1",
+          application: application,
+          delegate: application.delegate,
+          certification: application.certification,
+          user: application.user,
+          academy_id: academy_id,
+          meeting_id: meeting_id,
+          form_url: Vae.Delegates.FranceVae.Config.get_meeting_form_url(academy_id, meeting_id)
+        })
 
       {:error, %{to: to, msg: msg}} ->
         conn
@@ -197,6 +192,38 @@ defmodule Vae.ApplicationController do
         |> redirect(to: to)
     end
   end
+
+  # def register_to_meeting(conn, %{
+  #       "academy_id" => academy_id,
+  #       "meeting_id" => meeting_id,
+  #       "id" => id
+  #     }) do
+  #   application =
+  #     case Repo.get(Application, id) do
+  #       nil -> nil
+  #       application -> Repo.preload(application, [:user, {:delegate, :process}, :certification])
+  #     end
+
+  #   case has_access?(conn, application, nil) do
+  #     {:ok, application} ->
+  #       case Vae.Delegates.Api.post_meeting_registration(academy_id, meeting_id, application.user) do
+  #         :ok ->
+  #           Application.set_registered_meeting(application, academy_id, meeting_id)
+
+  #         {:error, message} ->
+  #           Logger.error(fn -> inspect(message) end)
+
+  #           conn
+  #           |> put_flash(:error, "Une erreur est survenue")
+  #           |> redirect(to: Routes.application_path(conn, :show, application))
+  #       end
+
+  #     {:error, %{to: to, msg: msg}} ->
+  #       conn
+  #       |> put_flash(:error, msg)
+  #       |> redirect(to: to)
+  #   end
+  # end
 
   def has_access?(conn, application, nil) do
     if not is_nil(application) do

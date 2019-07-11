@@ -117,17 +117,19 @@ defmodule Vae.Application do
     |> Repo.update!()
   end
 
-  def set_registered_meeting(application, academy_id, meeting) do
+  def set_registered_meeting(application, academy_id, meeting_id) do
+    meeting = Vae.Delegates.get_france_vae_meetings(
+      application.delegate.academy_id
+    ) |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
     application
     |> change()
-    |> put_meeting(academy_id, meeting)
+    |> put_embed(:meeting, meeting)
+    |> Repo.update()
   end
 
-  defp put_meeting(changeset, academy_id, meeting) do
-    meeting_changeset = Meeting.changeset(%Meeting{}, %{meeting: meeting, academy_id: academy_id})
-
+  defp put_meeting(changeset, meeting) do
     changeset
-    |> put_embed(:meeting, meeting_changeset)
+    |> put_embed(:meeting, Meeting.changeset(meeting, %{}))
   end
 
   defp generate_hash(length) do

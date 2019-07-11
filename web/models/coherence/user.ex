@@ -241,4 +241,21 @@ defmodule Vae.User do
       country_label: Vae.String.titleize(api_fields["libellePays"])
     }
   end
+
+  def fullname(user) do
+    user.name || "#{user.first_name} #{user.last_name}"
+  end
+
+  def address(user) do
+    [
+      [user.address1, user.address2, user.address3, user.address4],
+      ["#{user.postal_code} #{user.city_label}", user.country_label]
+    ] |> Enum.map(fn list ->
+        list
+          |> Enum.filter(fn el -> el end)
+          |> Enum.join(", ")
+      end)
+      |> Enum.join("\n")
+  end
+
 end

@@ -1,0 +1,35 @@
+main.text-center.justify-content-center role="main"
+  .container
+
+    h4.mb-4
+      | Nous ne sommes malheureusement pas encore en mesure de terminer votre inscription sur le site d'Avril : vous êtes actuellement redirigé vers le site France VAE.
+
+    .img-container
+      = img_tag "/images/france-vae.png", alt: "Logo France VAE", class: "mb-4"
+
+    form action=@form_url method="post"
+      input type="hidden" name="demande_internaute[civilite]" value=""
+      input type="hidden" name="demande_internaute[nom]" value=@user.last_name
+      input type="hidden" name="demande_internaute[nomNaiss]" value=""
+      input type="hidden" name="demande_internaute[prenom]" value=@user.first_name
+      input type="hidden" name="demande_internaute[dateNaissance]" value=""
+      input type="hidden" name="demande_internaute[lieuNaissance]" value=""
+      input type="hidden" name="demande_internaute[adresse]" value=(@user.address1 || @user.address2 || @user.address3 || @user.address4)
+      input type="hidden" name="demande_internaute[adresseBis]" value=""
+      input type="hidden" name="demande_internaute[cp]" value=@user.postal_code
+      input type="hidden" name="demande_internaute[commune]" value=@user.city_label
+      input type="hidden" name="demande_internaute[courrier]" value=@user.email
+      input type="hidden" name="demande_internaute[origine]" value="19"
+      p
+        = "Si rien ne se passe après 10 secondes, "
+        button.btn.btn-primary type="submit" cliquez ici
+        = " pour continuer."
+
+= unless Mix.env() == :dev do
+  javascript:
+    document.addEventListener('DOMContentLoaded', function(e){
+      setTimeout(function(){
+        document.getElementsByTagName('form')[0].submit();
+      }, 5000);
+    });
+

@@ -1,6 +1,7 @@
 defmodule Vae.Delegates.FranceVae do
   alias Vae.Delegates.Cache
   alias Vae.Delegates.FranceVae.Config
+  alias Vae.Delegates.FranceVae.Meeting
 
   @name FranceVae
 
@@ -16,14 +17,14 @@ defmodule Vae.Delegates.FranceVae do
     academies
   end
 
-  def get_meetings(academy, delegate_city) do
+  def get_meetings(academy_id) do
     token = get_token()
 
     headers = [
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy}", headers)
+    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers)
 
     response.body
     |> Jason.decode!()
@@ -37,15 +38,7 @@ defmodule Vae.Delegates.FranceVae do
         |> Enum.filter(fn meeting ->
           Map.get(meeting, "cible") == "CAP au BTS"
         end)
-        # |> Enum.filter(fn meeting ->
-        #   Map.get(meeting, "lieu")
-        #   |> String.split(", ")
-        #   |> List.last()
-        #   |> String.trim()
-        #   |> String.downcase()
-        #   |> String.contains?(String.downcase(delegate_city))
-        # end)
-        |> Enum.map(&to_meeting/1)
+        |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
     end
   end
 
@@ -102,9 +95,9 @@ defmodule Vae.Delegates.FranceVae do
     end
   end
 
-  defp to_meeting(params) do
-    %{
-      academy_id: params["academy_id"],
+  defp to_meeting(params, academy_id) do
+    %Meeting{
+      academy_id: academy_id,
       meeting_id: params["id"],
       place: params["lieu"],
       address: params["addresse"],
@@ -119,6 +112,7 @@ defmodule Vae.Delegates.FranceVae do
          {:ok, formatted_time} <- Time.from_iso8601(time),
          duration <- Timex.Duration.from_time(formatted_time) do
       NaiveDateTime.add(datetime, duration.seconds, :second)
+      |> Timex.to_datetime("Europe/Paris")
     else
       # Todo: find a better way
       _ -> nil
