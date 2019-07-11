@@ -37,14 +37,14 @@ defmodule Vae.Delegates.FranceVae do
         |> Enum.filter(fn meeting ->
           Map.get(meeting, "cible") == "CAP au BTS"
         end)
-        |> Enum.filter(fn meeting ->
-          Map.get(meeting, "lieu")
-          |> String.split(", ")
-          |> List.last()
-          |> String.trim()
-          |> String.downcase()
-          |> String.contains?(String.downcase(delegate_city))
-        end)
+        # |> Enum.filter(fn meeting ->
+        #   Map.get(meeting, "lieu")
+        #   |> String.split(", ")
+        #   |> List.last()
+        #   |> String.trim()
+        #   |> String.downcase()
+        #   |> String.contains?(String.downcase(delegate_city))
+        # end)
         |> Enum.map(&to_meeting/1)
     end
   end

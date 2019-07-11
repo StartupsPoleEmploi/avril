@@ -72,10 +72,10 @@ defmodule Vae.ApplicationController do
         # data available at params["application"]["meeting"] and params["book"]["on"]
         case Application.submit(application) do
           {:ok, application} ->
-            if params["book"]["on"] do
+            if params["book"] == "on" do
               case Application.set_registered_meeting(application, application.delegate.academy_id, params["application"]["meeting"]) do
                 {:ok, application} ->
-                  Vae.Delegates.Api.post_meeting_registration(academy_id, meeting_id, application.user)
+                  conn
                 {:error, msg} ->
                   conn
                     |> put_flash(
