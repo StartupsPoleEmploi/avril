@@ -4,21 +4,17 @@ import moment from 'moment';
 import {
   BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
-import ColorHash from 'color-hash';
-
-const INADMISSIBLE_START = '2019-06-18';
 
 const formatData = data => {
   return [...Array(52).keys()].map(week_number =>
-    Object.keys(data).reduce((obj, key) =>
-      Object.assign(obj, {[key]: (data[key].find(([_week_number, value]) => _week_number === week_number) || [])[1] || 0})
+    data.reduce((obj, entry) =>
+      Object.assign(obj, {[entry.name]: (entry.data.find(([_week_number, value]) => _week_number === week_number) || [])[1] || 0})
     , {semaine: week_number})
-  ).filter(datum => Object.keys(data).reduce((result, key) => (result || datum[key] !== 0), false))
+  ).filter(datum => data.reduce((result, entry) => (result || datum[entry.name] !== 0), false))
 }
 
 
 const chart = data => {
-  const colorHash = new ColorHash
   return (
     <ResponsiveContainer height={500}>
       <BarChart
@@ -30,12 +26,11 @@ const chart = data => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="semaine" label="N° Semaine" />
         <YAxis />
-        <ReferenceLine x={moment(INADMISSIBLE_START).add(-30, 'days').format('w')} stroke="blue" label="inadmissible" />
         <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red" label="-30j" />
         <Tooltip />
         <Legend />
-        { Object.keys(data).sort().map(key =>
-          <Bar key={key} dataKey={key} stackId="a" fill={colorHash.hex(key)} />
+        { data.map(entry =>
+          <Bar key={entry.name} dataKey={entry.name} stackId="a" fill={entry.color} />
         )}
       </BarChart>
     </ResponsiveContainer>

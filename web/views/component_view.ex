@@ -20,35 +20,78 @@ defmodule Vae.ComponentView do
         _ -> "false"
       end
 
-    {:safe, """
-      <!-- Google Optimize -->
-      <style>.async-hide { opacity: 0 !important} </style>
-      <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
-      h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
-      (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
-      })(window,document.documentElement,'async-hide','dataLayer',4000,
-      {'#{System.get_env("GO_TEST_KEY")}':true});</script>
-      <!-- End Google Optimize -->
-      <!-- Google Analytics -->
-      <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    has_analytics = System.get_env("GA_API_KEY")
+    has_optimize = System.get_env("GO_TEST_KEY")
 
-      ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
-      ga('create', '#{System.get_env("GA_PE_API_KEY")}', 'auto');
-      ga('require', '#{System.get_env("GO_TEST_KEY")}');
-      ga('set', 'dimension1', '#{dimension1}');
-      ga('send', 'pageview');
+    List.wrap(if has_optimize, do: [
+      """
+        <!-- Google Optimize -->
+        <style>.async-hide { opacity: 0 !important} </style>
+        <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
+        h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
+        (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
+        })(window,document.documentElement,'async-hide','dataLayer',4000,
+        {'#{System.get_env("GO_TEST_KEY")}':true});</script>
+        <!-- End Google Optimize -->
+      """
+    ]) ++ List.wrap(if has_analytics, do: [
+      """
+        <!-- Google Analytics -->
+        <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics#{if Mix.env == :dev, do: "_debug"}.js','ga');
 
-      window.disableGa = function() {
-       window['ga-disable-#{System.get_env("GA_API_KEY")}'] = true;
-       window['ga-disable-#{System.get_env("GA_PE_API_KEY")}'] = true;
-      };
-      </script>
-      <!-- End Google Analytics -->
-    """}
+        ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
+      """,
+      (if System.get_env("GA_PE_API_KEY"), do: "ga('create', '#{System.get_env("GA_PE_API_KEY")}', 'auto');"),
+      (if System.get_env("GO_TEST_KEY"), do: "ga('require', '#{System.get_env("GO_TEST_KEY")}');"),
+      """
+        ga('set', 'dimension1', '#{dimension1}');
+        ga('send', 'pageview');
+
+        window.disableGa = function() {
+          window['ga-disable-#{System.get_env("GA_API_KEY")}'] = true;
+      """,
+      (if System.get_env("GA_PE_API_KEY"), do: "window['ga-disable-#{System.get_env("GA_PE_API_KEY")}'] = true;"),
+      """
+        };
+        </script>
+        <!-- End Google Analytics -->
+      """
+      ]) |> Enum.filter(fn el -> el end) |> Enum.join("\n") |> Phoenix.HTML.raw
+
+
+    # {:safe, """
+    #   <!-- Google Optimize -->
+    #   <style>.async-hide { opacity: 0 !important} </style>
+    #   <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
+    #   h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
+    #   (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
+    #   })(window,document.documentElement,'async-hide','dataLayer',4000,
+    #   {'#{System.get_env("GO_TEST_KEY")}':true});</script>
+    #   <!-- End Google Optimize -->
+    #   <!-- Google Analytics -->
+    #   <script>
+    #   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    #   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    #   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    #   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    #   ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
+    #   ga('create', '#{System.get_env("GA_PE_API_KEY")}', 'auto');
+    #   ga('require', '#{System.get_env("GO_TEST_KEY")}');
+    #   ga('set', 'dimension1', '#{dimension1}');
+    #   ga('send', 'pageview');
+
+    #   window.disableGa = function() {
+    #    window['ga-disable-#{System.get_env("GA_API_KEY")}'] = true;
+    #    window['ga-disable-#{System.get_env("GA_PE_API_KEY")}'] = true;
+    #   };
+    #   </script>
+    #   <!-- End Google Analytics -->
+    # """}
   end
 
   def render("hotjar", _) do
