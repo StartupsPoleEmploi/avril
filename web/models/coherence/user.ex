@@ -42,13 +42,10 @@ defmodule Vae.User do
     )
 
     embeds_many(:skills, Skill, on_replace: :delete)
-    embeds_many(:skills_2, Skill, on_replace: :delete)
 
     embeds_many(:experiences, Experience, on_replace: :delete)
-    embeds_many(:experiences_2, Experience, on_replace: :delete)
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
-    embeds_many(:proven_experiences_2, ProvenExperience, on_replace: :delete)
 
     coherence_schema()
 
@@ -69,14 +66,6 @@ defmodule Vae.User do
       )
     )
     |> put_embed(
-      :skills_2,
-      Enum.uniq_by(
-        model.skills_2 ++
-          List.wrap(params[:skills]),
-        &Skill.unique_key/1
-      )
-    )
-    |> put_embed(
       :experiences,
       Enum.uniq_by(
         model.experiences ++
@@ -85,25 +74,9 @@ defmodule Vae.User do
       )
     )
     |> put_embed(
-      :experiences_2,
-      Enum.uniq_by(
-        model.experiences_2 ++
-          List.wrap(params[:experiences]),
-        &Experience.unique_key/1
-      )
-    )
-    |> put_embed(
       :proven_experiences,
       Enum.uniq_by(
         model.proven_experiences ++
-          List.wrap(params[:proven_experiences]),
-        &ProvenExperience.unique_key/1
-      )
-    )
-    |> put_embed(
-      :proven_experiences_2,
-      Enum.uniq_by(
-        model.proven_experiences_2 ++
           List.wrap(params[:proven_experiences]),
         &ProvenExperience.unique_key/1
       )
