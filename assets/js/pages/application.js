@@ -60,5 +60,9 @@ import $ from 'jquery';
       e.preventDefault();
     })
 
+    $('.meeting-card').on('click', e => {
+      document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'})
+    });
+
   }
 })();

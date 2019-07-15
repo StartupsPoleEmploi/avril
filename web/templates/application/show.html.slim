@@ -188,7 +188,8 @@
                 p.text-center.mb-5 Choisissez celui auquel vous souhaitez participer :
             .row
               .col-sm-12
-                h3.text-center Où ?
+                .text-center
+                  h3 Où ?
                 ul.nav.flex-column
                   = for {{place, address, slug} = place_infos, meetings} <- @meetings do
                     li.card.meeting-card.place.nav-item class="#{if @preselected_place && @preselected_place != place_infos, do: "d-none"}"
@@ -202,7 +203,7 @@
                   .text-right
                     a.btn.btn-link.show-hidden-meetings href="#" Voir les #{length(@meetings)} autres lieux disponibles
 
-            .row
+            .row id="when"
               .col-sm-12
                 .tab-content
                   h3.text-center Quand ?
