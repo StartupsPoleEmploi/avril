@@ -21,7 +21,7 @@ main.text-center.justify-content-center role="main"
       input type="hidden" name="demande_internaute[courrier]" value=@user.email
       input type="hidden" name="demande_internaute[origine]" value="19"
       p
-        = "Si rien ne se passe après 10 secondes, "
+        = "Si rien ne se passe après 30 secondes, "
         button.btn.btn-primary type="submit" cliquez ici
         = " pour continuer."
 
@@ -30,6 +30,6 @@ main.text-center.justify-content-center role="main"
     document.addEventListener('DOMContentLoaded', function(e){
       setTimeout(function(){
         document.getElementsByTagName('form')[0].submit();
-      }, 5000);
+      }, 20 * 1000);
     });
 
