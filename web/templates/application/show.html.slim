@@ -190,19 +190,24 @@
               .col-sm-12
                 h3.text-center Où ?
                 ul.nav.flex-column
-                  = for {{place, address}, _meetings} <- @meetings do
-                    - place_slug = Vae.String.parameterize(place)
-                    li.card.meeting-card.place.nav-item
-                      .card-body.nav-link data-target="#place-#{place_slug}" data-toggle="tab" aria-controls="place-#{place_slug}" id="tab-#{place_slug}"
+                  = for {{place, address, slug} = place_infos, meetings} <- @meetings do
+                    li.card.meeting-card.place.nav-item class="#{if @preselected_place && @preselected_place != place_infos, do: "d-none"}"
+                      .card-body.nav-link data-target="#place-#{slug}" data-toggle="tab" aria-controls="place-#{slug}" id="tab-#{slug}" class="#{if place_infos == @preselected_place, do: "active"}"
                         div
-                          h5.strong= place
+                          h5.strong
+                            = place
+                            small= " (#{length(meetings)} dates disponibles)"
                           p= address
+                = if @preselected_place do
+                  .text-right
+                    a.btn.btn-link.show-hidden-meetings href="#" Voir les #{length(@meetings)} autres lieux disponibles
 
+            .row
+              .col-sm-12
                 .tab-content
                   h3.text-center Quand ?
-                  = for {{place, address}, meetings} <- @meetings do
-                    - place_slug = Vae.String.parameterize(place)
-                    div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{place_slug}" id="place-#{place_slug}"
+                  = for {{place, address, slug} = place_infos, meetings} <- @meetings do
+                    div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{slug}" id="place-#{slug}" class="#{if place_infos == @preselected_place, do: "show active"}"
                       = for meeting <- meetings do
                         label.card.meeting-card.date
                           = radio_button(f, :meeting_id, meeting.meeting_id)

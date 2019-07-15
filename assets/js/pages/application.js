@@ -54,5 +54,11 @@ import $ from 'jquery';
       }
     });
 
+    $('a.show-hidden-meetings').on('click', e => {
+      $('.meeting-card').removeClass('d-none');
+      $(e.target).hide();
+      e.preventDefault();
+    })
+
   }
 })();

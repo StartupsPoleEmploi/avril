@@ -19,6 +19,18 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, application} ->
+
+        meetings = if application.meeting, do: [], else:
+          Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
+          |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end)
+          |> Map.to_list
+          |> Enum.map(fn {{place, _address}, _meetings} -> {{place, _address, Vae.String.parameterize(place)}, _meetings} end)
+
+        preselected_place =
+          Enum.find(meetings, {nil, []}, fn {{place, _address, slug}, _meetings} ->
+            (place |> String.split(",") |> List.last() |> String.trim()) == application.delegate.city
+          end) |> (fn {infos, _m} -> infos end).()
+
         render(conn, "show.html", %{
           title:
             "Candidature VAE de #{application.user.name} pour un diplôme de #{
@@ -42,10 +54,8 @@ defmodule Vae.ApplicationController do
           user_changeset: User.changeset(application.user, %{}),
           resume_changeset: Resume.changeset(%Resume{}, %{}),
           application_changeset: Application.changeset(application, %{}),
-          meetings: (if application.meeting, do: [], else:
-            Vae.Delegates.get_france_vae_meetings(
-              application.delegate.academy_id
-            ) |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end) |> Map.to_list)
+          preselected_place: preselected_place,
+          meetings: meetings
         })
 
       {:error, %{to: to, msg: msg}} ->

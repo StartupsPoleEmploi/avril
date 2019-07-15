@@ -164,6 +164,9 @@
 
   .meeting-card {
     margin-bottom: 2rem;
+    .card-body {
+      padding: 1.2rem;
+    }
     input {
       visibility: hidden;
       display: none;
