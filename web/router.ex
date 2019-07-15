@@ -27,11 +27,11 @@ defmodule Vae.Router do
   end
 
   pipeline :protected do
-    plug(:accepts, ["html"])
-    plug(:fetch_session)
-    plug(:fetch_flash)
-    plug(:protect_from_forgery)
-    plug(:put_secure_browser_headers)
+    # plug(:accepts, ["html"])
+    # plug(:fetch_session)
+    # plug(:fetch_flash)
+    # plug(:protect_from_forgery)
+    # plug(:put_secure_browser_headers)
 
     plug(Coherence.Authentication.Session,
       protected: true,
@@ -51,67 +51,68 @@ defmodule Vae.Router do
     post("/mail_events", Vae.MailEventsController, :new_event)
   end
 
+  # Public Pages
   scope "/" do
     pipe_through(:browser)
+
+    # Sessions routes
     coherence_routes()
+
+    # Landing pages
+    get("/", Vae.PageController, :index, as: :root)
+    get("/vae", Vae.PageController, :vae)
+    get("/conditions-generales-d-utilisation", Vae.PageController, :terms_of_use)
+    get("/bien-choisir-son-diplome-vae", Vae.PageController, :choose_certification)
+    get("/avril-aime-tous-ses-utilisateurs", Vae.PageController, :accessibility_promess)
+    get("/point-relais-conseil-vae", Vae.PageController, :point_relais_conseil)
+    get("/certificateur-vae-definition", Vae.PageController, :certificateur_vae_definition)
+    get("/pourquoi-une-certification", Vae.PageController, :pourquoi_une_certification)
+    get("/stats", Vae.PageController, :stats)
+
+    # Basic navigation
+    resources("/metiers", Vae.ProfessionController, only: [:index])
+    resources("/certificateurs", Vae.DelegateController, only: [:index])
+    resources("/diplomes", Vae.CertificationController, only: [:index, :show])
+
+    # Search endpoint
+    post("/search", Vae.SearchController, :search)
+
+    # OAuth
+    get("/:provider/callback", Vae.AuthController, :callback)
+    get("/:provider/redirect", Vae.AuthController, :save_session_and_redirect)
+
+    # Loggued in applications
+    resources("/candidatures", Vae.ApplicationController, only: [:show, :update]) do
+      get("/telecharger", Vae.ApplicationController, :download, as: :download)
+      resources("/resume", Vae.ResumeController, only: [:create, :delete])
+    end
+    get("/candidatures/:id/admissible", Vae.ApplicationController, :admissible)
+    get("/candidatures/:id/inadmissible", Vae.ApplicationController, :inadmissible)
+
+    # Mailing link redirection
+    get("/candidats/:id/admissible", Vae.JobSeekerController, :admissible)
+    get("/candidats/:id/inadmissible", Vae.JobSeekerController, :inadmissible)
+
+    resources("/profil", Vae.UserController, only: [:update])
+
+    # Old URL redirections
+    get("/professions", Vae.Redirector, to: "/metiers")
+    get("/delegates/:id", Vae.Redirector, to: "/diplomes?certificateur=:id")
+    get("/certifications", Vae.Redirector, to: "/diplomes")
+    get("/certifications/:id", Vae.Redirector, to: "/diplomes/:id")
+    get("/certifiers/:id", Vae.Redirector, to: "/certificateurs?organisme=:id")
+    get("/processes/:id", Vae.Redirector, [to: "/", msg: "La page demandée n'existe plus."])
   end
 
+  # Private pages
   scope "/" do
-    pipe_through(:protected)
+    pipe_through([:browser, :protected])
     coherence_routes(:protected)
   end
 
-  scope "/", Vae do
-    # Use the default browser stack
-    pipe_through(:browser)
-
-    # Landing pages
-    get("/", PageController, :index, as: :root)
-    get("/vae", PageController, :vae)
-    get("/conditions-generales-d-utilisation", PageController, :terms_of_use)
-    get("/bien-choisir-son-diplome-vae", PageController, :choose_certification)
-    get("/avril-aime-tous-ses-utilisateurs", PageController, :accessibility_promess)
-    get("/point-relais-conseil-vae", PageController, :point_relais_conseil)
-    get("/certificateur-vae-definition", PageController, :certificateur_vae_definition)
-    get("/pourquoi-une-certification", PageController, :pourquoi_une_certification)
-    get("/stats", PageController, :stats)
-
-    get("/:provider/callback", AuthController, :callback)
-    get("/:provider/redirect", AuthController, :save_session_and_redirect)
-
-    # Basic navigation
-    resources("/metiers", ProfessionController, only: [:index])
-    resources("/certificateurs", DelegateController, only: [:index])
-    resources("/diplomes", CertificationController, only: [:index, :show])
-
-    # Loggued in applications
-    get("/candidatures/:id/admissible", ApplicationController, :admissible)
-    get("/candidatures/:id/inadmissible", ApplicationController, :inadmissible)
-
-    get("/candidats/:id/admissible", JobSeekerController, :admissible)
-    get("/candidats/:id/inadmissible", JobSeekerController, :inadmissible)
-
-    resources("/candidatures", ApplicationController, only: [:show, :update]) do
-      resources("/resume", ResumeController, only: [:create, :delete])
-      get("/telecharger", ApplicationController, :download, as: :download)
-    end
-
-    resources("/profil", UserController, only: [:update])
-
-    # Search endpoint
-    post("/search", SearchController, :search)
-
-    # Old URL redirections
-    get("/professions", Redirector, to: "/metiers")
-    get("/delegates/:id", Redirector, to: "/diplomes?certificateur=:id")
-    get("/certifications", Redirector, to: "/diplomes")
-    get("/certifications/:id", Redirector, to: "/diplomes/:id")
-    get("/certifiers/:id", Redirector, to: "/certificateurs?organisme=:id")
-    get("/processes/:id", Redirector, [to: "/", msg: "La page demandée n'existe plus."])
-  end
-
+  # Admin
   scope "/admin", ExAdmin do
-    pipe_through([:protected, :admin])
+    pipe_through([:browser, :protected, :admin])
     get("/sql", ApiController, :sql)
     admin_routes()
   end

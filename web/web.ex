@@ -66,12 +66,10 @@ defmodule Vae.Web do
       # Used in navbar.html.slim to preload association in the view
       alias Vae.Repo
 
-      # import Vae.Router.Helpers
       alias Vae.Router.Helpers, as: Routes
       import Vae.ErrorHelpers
       import Vae.ViewHelpers
       import Vae.Gettext
-      # import PhoenixFormAwesomplete
     end
   end
 

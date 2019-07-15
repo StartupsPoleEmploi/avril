@@ -52,12 +52,11 @@ config :xain, :after_callback, {Phoenix.HTML, :raw}
 
 # %% Coherence Configuration %%   Don't remove this line
 config :coherence,
+  web_module: Vae,
   user_schema: Vae.User,
   repo: Vae.Repo,
-  module: Vae,
   router: Vae.Router,
   messages_backend: Vae.Coherence.Messages,
-  logged_out_url: "/",
   email_from_name: "Avril",
   email_from_email: "avril@pole-emploi.fr",
   opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
