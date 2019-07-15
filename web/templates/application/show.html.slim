@@ -7,7 +7,7 @@
       .pull-right
         = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
   .jumbotron
-    = if length(@meetings) > 0 do
+    = if @edit_mode && length(@meetings) > 0 do
       .row
         .col-md-12
           nav
@@ -173,10 +173,10 @@
                 = for skill <- @user.skills do
                   li= skill.label
 
-        = if (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
+        = if (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) + length(@meetings) > 0 do
           .text-center
             = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, meetings: @meetings
-      = if length(@meetings) > 0 do
+      = if @edit_mode && length(@meetings) > 0 do
         #transmission.tab-pane.fade role="tabpanel" aria-labelledby="transmission-tab"
           .row
             .col-sm-8.offset-sm-2.text-center.my-5
