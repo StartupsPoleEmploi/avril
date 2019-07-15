@@ -2,3 +2,10 @@
 .form-check-input {
   margin-top: 0.6rem;
 }
+
+.form-control {
+  &.form-highlight {
+    background-color: rgba($yellow, 0.2);
+  }
+
+}

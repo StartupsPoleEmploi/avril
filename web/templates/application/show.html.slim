@@ -41,7 +41,7 @@
                 .col
                   .form-group
                     = if @edit_mode do
-                      = text_input f, :phone_number, class: "form-control font-weight-bold", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), required: true, data: [analytics: "Profil#ajouter tel"]
+                      = text_input f, :phone_number, class: "form-control font-weight-bold form-highlight", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), autofocus: !is_nil(@user.phone_number), required: true, data: [analytics: "Profil#ajouter tel"]
                       = error_tag f, :phone_number
                     - else
                       = if @user.phone_number do

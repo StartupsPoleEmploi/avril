@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 (() => {
+
   $('form.resume-upload input[type="file"]').on('change', e => {
     var $form = $(e.target).parents('form');
     if (e.target.files.length) {
