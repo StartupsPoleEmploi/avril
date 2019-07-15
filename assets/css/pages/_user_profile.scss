@@ -135,24 +135,36 @@
     margin-left: -2rem;
     margin-right: -2rem;
     .nav {
-      @media(min-width: $grid-breakpoints('sm')) {
+      @include media-breakpoint-up(sm) {
         height: 4rem;
       }
       align-items: stretch;
       .nav-item {
-        border-radius: 0;
-        border: thin solid $dm-primary-grey;
-        border-bottom: 0.5rem solid $dm-primary-green;
-        color: $dm-primary-blue;
-        &:first-of-type {
-          border-right: none;
-        }
+        background-color: initial;
+        color: $dm-primary-green;
         &.active {
-          background: initial;
+        background-color: $dm-primary-green;
+        color: $white;
         }
-
+      }
+      h6 {
+        margin: 0;
+      }
+      @include media-breakpoint-up(sm) {
+        .nav-item {
+          border-radius: 0;
+          border: thin solid $dm-primary-grey;
+          border-bottom: 0.5rem solid $dm-primary-green;
+          color: $dm-primary-blue;
+          &:first-of-type {
+            border-right: none;
+          }
+          &.active {
+            color: $dm-primary-blue;
+            background-color: $white;
+          }
+        }
         h6 {
-          margin: 0;
           line-height: 4rem;
         }
       }
@@ -193,6 +205,17 @@
         cursor: pointer;
         padding-left: 1rem;
         content: 'Choisir cette date ?';
+      }
+      @include media-breakpoint-down(sm) {
+        display: block;
+
+        &:after {
+          padding-top: 1rem;
+          text-align: center;
+          width: 100%;
+          display: block;
+          padding-left: 0;
+        }
       }
 
     }
