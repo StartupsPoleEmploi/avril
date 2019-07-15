@@ -2,7 +2,7 @@ main.text-center.justify-content-center role="main"
   .container
 
     h4.mb-4
-      | Nous ne sommes malheureusement pas encore en mesure de terminer votre inscription sur le site d'Avril : vous êtes actuellement redirigé vers le site France VAE.
+      | Bravo ! Votre inscription est presque terminée! Nous allons vous rediriger vers le site France VAE pour finaliser votre inscription.
 
     .img-container
       = img_tag "/images/france-vae.png", alt: "Logo France VAE", class: "mb-4"
@@ -14,8 +14,9 @@ main.text-center.justify-content-center role="main"
       input type="hidden" name="demande_internaute[prenom]" value=@user.first_name
       input type="hidden" name="demande_internaute[dateNaissance]" value=""
       input type="hidden" name="demande_internaute[lieuNaissance]" value=""
-      input type="hidden" name="demande_internaute[adresse]" value=(@user.address1 || @user.address2 || @user.address3 || @user.address4)
-      input type="hidden" name="demande_internaute[adresseBis]" value=""
+      - {adresse, adresseBis} = Vae.User.france_vae_address(@user)
+      input type="hidden" name="demande_internaute[adresse]" value=adresse
+      input type="hidden" name="demande_internaute[adresseBis]" value=adresseBis
       input type="hidden" name="demande_internaute[cp]" value=@user.postal_code
       input type="hidden" name="demande_internaute[commune]" value=@user.city_label
       input type="hidden" name="demande_internaute[courrier]" value=@user.email
