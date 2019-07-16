@@ -117,6 +117,7 @@ defmodule Vae.Application do
     |> Repo.update!()
   end
 
+  def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
   def set_registered_meeting(application, academy_id, meeting_id) do
     meeting = Vae.Delegates.get_france_vae_meetings(
       application.delegate.academy_id

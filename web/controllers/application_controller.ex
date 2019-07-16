@@ -58,7 +58,7 @@ defmodule Vae.ApplicationController do
           meetings: meetings
         })
 
-      {:error, %{to: to, msg: msg}} ->
+      {:error, %{to: to, msg: msg}} -> send_error(conn, application, msg)
         conn
         |> put_flash(:error, msg)
         |> redirect(to: to)
@@ -77,38 +77,29 @@ defmodule Vae.ApplicationController do
       {:ok, application} ->
         case Application.submit(application) do
           {:ok, application} ->
-            if params["book"] == "on" do
-              meeting_id = params["application"]["meeting_id"]
+            if application.delegate.academy_id do
+              meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
               case Application.set_registered_meeting(application, application.delegate.academy_id, meeting_id) do
                 {:ok, application} ->
-                  redirect(conn, to: Routes.application_france_vae_redirect_path(conn, :france_vae_redirect, application, %{academy_id: application.delegate.academy_id, meeting_id: meeting_id}))
-                {:error, msg} ->
-                  conn
-                    |> put_flash(
-                      :error,
-                      "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
+                  redirect(conn, to:
+                    Routes.application_france_vae_redirect_path(conn, :france_vae_redirect, application,
+                      %{academy_id: application.delegate.academy_id} |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
                     )
-                    |> redirect(to: Routes.application_path(conn, :show, application))
-
-                      end
-                    else
-                      conn
-                      |> put_flash(:success, "Dossier transmis avec succès!")
-                      |> redirect(to: Routes.application_path(conn, :show, application))
-                    end
-          {:error, msg} ->
-            conn
-            |> put_flash(
-              :error,
-              "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
-            )
-            |> redirect(to: Routes.application_path(conn, :show, application))
+                  )
+                {:error, msg} -> send_error(conn, application, msg)
+              end
+            else
+              conn
+                |> put_flash(:success, "Dossier transmis avec succès!")
+                |> redirect(to: Routes.application_path(conn, :show, application))
+            end
+          {:error, msg} -> send_error(conn, application, msg)
         end
 
       {:error, %{to: to, msg: msg}} ->
         conn
-        |> put_flash(:error, msg)
-        |> redirect(to: to)
+          |> put_flash(:error, msg)
+          |> redirect(to: to)
     end
   end
 
@@ -174,8 +165,7 @@ defmodule Vae.ApplicationController do
 
   def france_vae_redirect(conn, %{
     "application_id" => id,
-    "academy_id" => academy_id,
-    "meeting_id" => meeting_id
+    "academy_id" => academy_id
   } = params) do
     application =
       case Repo.get(Application, id) do
@@ -185,6 +175,8 @@ defmodule Vae.ApplicationController do
 
     case has_access?(conn, application, nil) do
       {:ok, application} ->
+        meeting_id = params["meeting_id"]
+
         render(conn, "france-vae-redirect.html", %{
           container_class: "d-flex flex-grow-1",
           application: application,
@@ -193,7 +185,7 @@ defmodule Vae.ApplicationController do
           user: application.user,
           academy_id: academy_id,
           meeting_id: meeting_id,
-          form_url: Vae.Delegates.FranceVae.Config.get_meeting_form_url(academy_id, meeting_id)
+          form_url: Vae.Delegates.FranceVae.Config.get_france_vae_form_url(academy_id, meeting_id)
         })
 
       {:error, %{to: to, msg: msg}} ->
@@ -269,5 +261,14 @@ defmodule Vae.ApplicationController do
            )
        }}
     end
+  end
+
+  defp send_error(conn, application, msg) do
+    conn
+    |> put_flash(
+      :error,
+      "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
+    )
+    |> redirect(to: Routes.application_path(conn, :show, application))
   end
 end

@@ -19,7 +19,15 @@ defmodule Vae.Delegates.FranceVae.Config do
     System.get_env("FRANCE_VAE_CLIENT_SECRET")
   end
 
-  def get_meeting_form_url(academy_id, meeting_id) do
-    "#{__MODULE__.get_domain_name}/academie/inscription-rdv/#{academy_id}/#{meeting_id}"
+  def get_france_vae_form_url(academy_id) do
+    "#{__MODULE__.get_domain_name()}/academie/demande-information/#{academy_id}"
+  end
+
+  def get_france_vae_form_url(academy_id, meeting_id) when is_nil(meeting_id) or meeting_id == "" do
+    __MODULE__.get_france_vae_form_url(academy_id)
+  end
+  # def get_france_vae_form_url(academy_id, "") do: __MODULE__.get_france_vae_form_url(academy_id)
+  def get_france_vae_form_url(academy_id, meeting_id) do
+    "#{__MODULE__.get_domain_name()}/academie/inscription-rdv/#{academy_id}/#{meeting_id}"
   end
 end
