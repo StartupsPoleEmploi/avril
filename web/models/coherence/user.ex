@@ -250,20 +250,20 @@ defmodule Vae.User do
     [
       [user.address1, user.address2, user.address3, user.address4],
       ["#{user.postal_code} #{user.city_label}", user.country_label]
-    ] |> Enum.map(fn list ->
-        list
-          |> Enum.filter(fn el -> el end)
-          |> Enum.join(", ")
-      end)
-      |> Enum.join("\n")
+    ]
+    |> Enum.map(fn list ->
+      list
+      |> Enum.filter(fn el -> el end)
+      |> Enum.join(", ")
+    end)
+    |> Enum.join("\n")
   end
 
   def france_vae_address(user) do
-    Enum.reduce([@user.address1, @user.address2, @user.address3, @user.address4], {nil, nil}, fn
+    Enum.reduce([user.address1, user.address2, user.address3, user.address4], {nil, nil}, fn
       address_part, {nil, part2} -> {address_part, part2}
       address_part, {part1, nil} -> {part1, address_part}
       address_part, {part1, part2} -> {part1, Enum.join([part2, address_part], ", ")}
     end)
   end
-
 end
