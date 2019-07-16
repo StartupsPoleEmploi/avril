@@ -29,8 +29,8 @@ defmodule Vae.AuthController do
 
         user_status =
           case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
-            nil -> User.create_or_associate_with_pe_connect_data(userinfo_api_result.body)
-            user -> {:ok, user}
+            nil -> User.create_or_update_with_pe_connect_data(userinfo_api_result.body)
+            user -> if is_nil(user.gender), do: User.update_with_pe_connect_data(user, userinfo_api_result.body), else: {:ok, user}
           end
           |> User.fill_with_api_fields(client_with_token, 3)
 
