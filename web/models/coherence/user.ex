@@ -123,7 +123,7 @@ defmodule Vae.User do
   def build_api_calls do
     [
       %{
-        url: "https://api.emploi-store.fr/partenaire/peconnect-datenaissance/v1/etat-cvil",
+        url: "https://api.emploi-store.fr/partenaire/peconnect-datenaissance/v1/etat-civil",
         is_data_missing: &is_nil(&1.birthday),
         data_map: fn data -> %{birthday: Timex.parse!(data["dateDeNaissance"], "{ISO:Extended}")} end
       },
