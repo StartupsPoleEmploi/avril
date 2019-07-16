@@ -36,7 +36,10 @@ defmodule Vae.Delegates.FranceVae do
       meetings ->
         meetings
         |> Enum.filter(fn meeting ->
-          Map.get(meeting, "cible") == "CAP au BTS"
+          meeting
+          |> Map.get("cible")
+          |> String.trim()
+          |> Kernel.in(["CAP au BTS", ""])
         end)
         |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
     end
