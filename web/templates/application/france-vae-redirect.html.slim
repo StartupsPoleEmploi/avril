@@ -8,19 +8,23 @@ main.text-center.justify-content-center role="main"
       = img_tag "/images/france-vae.png", alt: "Logo France VAE", class: "mb-4"
 
     form action=@form_url method="post"
-      input type="hidden" name="demande_internaute[civilite]" value=""
-      input type="hidden" name="demande_internaute[nom]" value=@user.last_name
-      input type="hidden" name="demande_internaute[nomNaiss]" value=""
-      input type="hidden" name="demande_internaute[prenom]" value=@user.first_name
-      input type="hidden" name="demande_internaute[dateNaissance]" value=""
-      input type="hidden" name="demande_internaute[lieuNaissance]" value=""
-      - {adresse, adresseBis} = Vae.User.france_vae_address(@user)
-      input type="hidden" name="demande_internaute[adresse]" value=adresse
-      input type="hidden" name="demande_internaute[adresseBis]" value=adresseBis
-      input type="hidden" name="demande_internaute[cp]" value=@user.postal_code
-      input type="hidden" name="demande_internaute[commune]" value=@user.city_label
-      input type="hidden" name="demande_internaute[courrier]" value=@user.email
-      input type="hidden" name="demande_internaute[origine]" value="19"
+      = for {key, value} <- Map.from_struct(@user_registration) do
+        input type="hidden" name="demande_internaute[#{key}]" value=value
+      / input type="hidden" name="demande_internaute[civilite]" value=Vae.User.france_vae_gender(@user)
+      / input type="hidden" name="demande_internaute[nom]" value=@user.last_name
+      / input type="hidden" name="demande_internaute[nomNaiss]" value=""
+      / input type="hidden" name="demande_internaute[prenom]" value=@user.first_name
+      / input type="hidden" name="demande_internaute[dateNaissance]" value=""
+      / input type="hidden" name="demande_internaute[lieuNaissance]" value=""
+      / - {adresse, adresseBis} = Vae.User.france_vae_address(@user)
+      / input type="hidden" name="demande_internaute[adresse]" value=adresse
+      / input type="hidden" name="demande_internaute[adresseBis]" value=adresseBis
+      / input type="hidden" name="demande_internaute[cp]" value=@user.postal_code
+      / input type="hidden" name="demande_internaute[commune]" value=@user.city_label
+      / input type="hidden" name="demande_internaute[courrier]" value=@user.email
+      / input type="hidden" name="demande_internaute[telephonePortable]" value=@user.phone_number
+      / input type="hidden" name="demande_internaute[diplome]" value="1"
+      / input type="hidden" name="demande_internaute[origine]" value="19"
       p
         = "Si rien ne se passe après 30 secondes, "
         button.btn.btn-primary type="submit" cliquez ici

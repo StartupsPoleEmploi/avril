@@ -179,12 +179,7 @@ defmodule Vae.ApplicationController do
 
         render(conn, "france-vae-redirect.html", %{
           container_class: "d-flex flex-grow-1",
-          application: application,
-          delegate: application.delegate,
-          certification: application.certification,
-          user: application.user,
-          academy_id: academy_id,
-          meeting_id: meeting_id,
+          user_registration: Vae.Delegates.FranceVae.UserRegistration.from_application(application),
           form_url: Vae.Delegates.FranceVae.Config.get_france_vae_form_url(academy_id, meeting_id)
         })
 

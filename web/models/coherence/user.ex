@@ -263,12 +263,4 @@ defmodule Vae.User do
     end)
     |> Enum.join("\n")
   end
-
-  def france_vae_address(user) do
-    Enum.reduce([user.address1, user.address2, user.address3, user.address4], {nil, nil}, fn
-      address_part, {nil, part2} -> {address_part, part2}
-      address_part, {part1, nil} -> {part1, address_part}
-      address_part, {part1, part2} -> {part1, Enum.join([part2, address_part], ", ")}
-    end)
-  end
 end
