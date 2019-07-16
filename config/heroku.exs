@@ -45,7 +45,7 @@ config :vae,
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
     site: "https://authentification-candidat.pole-emploi.fr",
     authorize_url: "/connexion/oauth2/authorize",
-    redirect_uri: "http://#{System.get_env("WHOST")}/pole-emploi/callback"
+    redirect_uri: "https://#{System.get_env("WHOST")}/pole-emploi/callback"
   ]
 
 config :mailjex,
