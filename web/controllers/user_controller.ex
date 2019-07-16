@@ -18,15 +18,11 @@ defmodule Vae.UserController do
         conn
         |> put_flash(:success, "Enregistré")
         |> Coherence.Authentication.Session.update_login(user)
-        |> redirect_back(
-          default: default_route
-        )
+        |> redirect_back(default: default_route)
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Une erreur est survenue")
-        |> redirect_back(
-          default: default_route
-        )
+        |> redirect_back(default: default_route)
     end
   end
 end

@@ -6,6 +6,7 @@ defmodule Vae.User do
   alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, OAuth}
 
   schema "users" do
+    field(:gender, :string)
     field(:name, :string)
     field(:first_name, :string)
     field(:last_name, :string)
@@ -53,7 +54,27 @@ defmodule Vae.User do
     timestamps()
   end
 
-  @fields ~w(name first_name last_name email phone_number postal_code address1 address2 address3 address4 insee_code country_code city_label country_label birthday pe_id pe_connect_token is_admin)a
+  @fields ~w(
+    gender
+    name
+    first_name
+    last_name
+    email
+    phone_number
+    postal_code
+    address1
+    address2
+    address3
+    address4
+    insee_code
+    country_code
+    city_label
+    country_label
+    birthday
+    pe_id
+    pe_connect_token
+    is_admin
+  )a
 
   def changeset(model, params \\ %{}) do
     model
@@ -101,7 +122,7 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def create_or_associate_with_pe_connect_data(%{"email" => email} = userinfo_api_result)
+  def create_or_update_with_pe_connect_data(%{"email" => email} = userinfo_api_result)
       when is_binary(email) do
     case Repo.get_by(__MODULE__, email: String.downcase(email)) do
       nil ->
@@ -109,16 +130,19 @@ defmodule Vae.User do
           __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
         )
 
-      user ->
-        user
-        |> Repo.preload(:job_seeker)
-        |> __MODULE__.changeset(__MODULE__.userinfo_api_map(userinfo_api_result, false))
-        |> Repo.update()
+      user -> __MODULE__.update_with_pe_connect_data(user, userinfo_api_result)
     end
   end
 
-  def create_or_associate_with_pe_connect_data(_userinfo_api_result),
+  def create_or_update_with_pe_connect_data(_userinfo_api_result),
     do: {:error, "No email in API results"}
+
+  def update_with_pe_connect_data(user, userinfo_api_result) do
+    user
+    |> Repo.preload(:job_seeker)
+    |> __MODULE__.changeset(__MODULE__.userinfo_api_map(userinfo_api_result, false))
+    |> Repo.update()
+  end
 
   def build_api_calls do
     [
@@ -225,6 +249,7 @@ defmodule Vae.User do
         "#{String.capitalize(api_fields["given_name"])} #{
           String.capitalize(api_fields["family_name"])
         }",
+      gender: api_fields["gender"],
       first_name: String.capitalize(api_fields["given_name"]),
       last_name: String.capitalize(api_fields["family_name"]),
       pe_id: api_fields["idIdentiteExterne"],
