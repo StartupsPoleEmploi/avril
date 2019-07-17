@@ -1,12 +1,15 @@
 use Mix.Config
 
+config :vae,
+  mailjet: [
+    override_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> Enum.map(&%{Email: &1})
+  ]
+
 config :vae, Vae.Endpoint,
   http: [port: {:system, "PORT"}],
   url: [scheme: "https", host: System.get_env("WHOST"), port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json",
 
-# Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :debug
 
-config :vae, Vae.Scheduler, jobs: []
