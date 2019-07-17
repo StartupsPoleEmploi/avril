@@ -5,11 +5,6 @@
 # is restricted to this project.
 use Mix.Config
 
-# HTTP_SCHEME = if Mix.env() == :dev, do: "http", else: "https"
-# WHOST = System.get_env("WHOST") || "localhost:4000"
-# AVRIL_EMAIL = System.get_env("AVRIL_EMAIL") || "avril@pole-emploi.fr"
-# ERROR_EMAILS = System.get_env("DEV_EMAILS") || AVRIL_EMAIL
-
 # General application configuration
 config :vae,
   ecto_repos: [Vae.Repo],
