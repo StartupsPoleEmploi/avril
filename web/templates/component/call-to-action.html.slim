@@ -23,7 +23,9 @@
       = if length(@meetings) > 0 do
         button.btn.btn-primary onclick="; $('body, html').animate({scrollTop: 0}, function(){$('#transmission-tab').trigger('click')});"
           = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-          | Transmettre mon dossier
+          | Prendre rendez-vous
+          = unless @application.submitted_at do
+            = " et transmettre mon dossier"
       - else
         = button to: Routes.application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", data: [analytics: "?bouton=soumettre-candidature"] do
           = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"

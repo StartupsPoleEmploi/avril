@@ -154,7 +154,6 @@
         .nav-item {
           border-radius: 0;
           border: thin solid $dm-primary-grey;
-          border-bottom: 0.5rem solid $dm-primary-green;
           color: $dm-primary-blue;
           &:first-of-type {
             border-right: none;
@@ -162,15 +161,16 @@
           &.active {
             color: $dm-primary-blue;
             background-color: $white;
+            border-bottom: 0.5rem solid $dm-primary-green;
           }
         }
         h6 {
           line-height: 4rem;
         }
       }
-      .nav-item.active ~ .nav-item:not(.active) {
-        border-bottom: thin solid $dm-primary-grey;
-      }
+      // .nav-item.active ~ .nav-item:not(.active) {
+      //   border-bottom: thin solid $dm-primary-grey;
+      // }
     }
   }
 

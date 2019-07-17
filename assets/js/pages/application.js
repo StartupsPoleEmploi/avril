@@ -2,6 +2,13 @@ import $ from 'jquery';
 
 (() => {
 
+  $('input[type="tel"]').on('keyup', e => {
+    const numbers = e.target.value.split("").filter(char => char.match(/[0-9]/))
+    e.target.value = numbers.reduce((string, number, i) => {
+      return `${string}${number}${(i % 2 && i < 9) ? ' ' : ''}`
+    }, "");
+  });
+
   $('form.resume-upload input[type="file"]').on('change', e => {
     var $form = $(e.target).parents('form');
     if (e.target.files.length) {
@@ -63,6 +70,5 @@ import $ from 'jquery';
     $('.meeting-card').on('click', e => {
       document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'})
     });
-
   }
 })();
