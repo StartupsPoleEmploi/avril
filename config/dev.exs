@@ -3,7 +3,9 @@ require Logger
 
 config :vae,
   mailjet: [
-    override_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> Enum.map(&%{Email: &1})
+    override_to:
+      System.get_env("DEV_EMAILS") ||
+        "avril@pole-emploi.fr" |> String.split(",") |> Enum.map(&%{Email: &1})
   ]
 
 config :vae, Vae.Endpoint,
@@ -41,18 +43,14 @@ config :vae, Vae.Endpoint,
 #   pool_size: 10,
 #   timeout: 60_000
 
-
 # Unused?
 config :vae, Vae.Scheduler,
   timeout: :infinity,
   jobs: [
     campaign_task: [
       timezone: "Europe/Paris",
-      schedule: "36 20 * * 5",
-      task: fn ->
-        Vae.Mailer.extract("priv/fixtures/test_emails_2.csv")
-        |> Vae.Mailer.send()
-      end
+      schedule: "30 14 17 7 *",
+      task: &Vae.Mailer.execute/0
     ],
     statistics_task: [
       timezone: "Europe/Paris",
@@ -75,5 +73,3 @@ config :logger, :console, format: "[$level] $message\n"
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
-
-
