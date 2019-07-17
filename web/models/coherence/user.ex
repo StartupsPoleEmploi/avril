@@ -22,6 +22,7 @@ defmodule Vae.User do
     field(:country_code, :string)
     field(:city_label, :string)
     field(:country_label, :string)
+    field(:birthday, :date)
     field(:pe_id, :string)
     field(:pe_connect_token, :string)
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
@@ -53,7 +54,27 @@ defmodule Vae.User do
     timestamps()
   end
 
-  @fields ~w(gender name first_name last_name email phone_number postal_code address1 address2 address3 address4 insee_code country_code city_label country_label pe_id pe_connect_token is_admin)a
+  @fields ~w(
+    gender
+    name
+    first_name
+    last_name
+    email
+    phone_number
+    postal_code
+    address1
+    address2
+    address3
+    address4
+    insee_code
+    country_code
+    city_label
+    country_label
+    birthday
+    pe_id
+    pe_connect_token
+    is_admin
+  )a
 
   def changeset(model, params \\ %{}) do
     model
@@ -125,6 +146,11 @@ defmodule Vae.User do
 
   def build_api_calls do
     [
+      %{
+        url: "https://api.emploi-store.fr/partenaire/peconnect-datenaissance/v1/etat-civil",
+        is_data_missing: &is_nil(&1.birthday),
+        data_map: fn data -> %{birthday: Timex.parse!(data["dateDeNaissance"], "{ISO:Extended}")} end
+      },
       %{
         url: "https://api.emploi-store.fr/partenaire/peconnect-coordonnees/v1/coordonnees",
         is_data_missing: &is_nil(&1.postal_code),

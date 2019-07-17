@@ -9,7 +9,7 @@ defmodule Vae.OAuth do
         params: %{
           realm: "/individu",
           scope:
-            "application_#{Keyword.get(@authentication_config, :client_id)} api_peconnect-individuv1 openid profile email api_peconnect-formationsv1 pfcformations api_peconnect-experiencesprofessionellesdeclareesparlemployeurv1 passeprofessionnel api_peconnect-experiencesv1 pfcexperiences api_peconnect-coordonneesv1 coordonnees api_peconnect-competencesv2 pfccompetences pfclangues pfccentresinteret",
+            "application_#{Keyword.get(@authentication_config, :client_id)} api_peconnect-individuv1 openid profile email api_peconnect-datenaissancev1 datenaissance api_peconnect-formationsv1 pfcformations api_peconnect-experiencesprofessionellesdeclareesparlemployeurv1 passeprofessionnel api_peconnect-experiencesv1 pfcexperiences api_peconnect-coordonneesv1 coordonnees api_peconnect-competencesv2 pfccompetences pfclangues pfccentresinteret",
           state: UUID.uuid4(:hex),
           nonce: UUID.uuid4(:hex)
         },
