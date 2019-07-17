@@ -222,10 +222,14 @@ defmodule Vae.Delegate do
   end
 
   def external_subscription_link(%__MODULE__{} = delegate) do
-    if is_educ_nat?(delegate) && !is_corse?(delegate) do
-      Vae.Delegates.FranceVae.Config.get_france_vae_form_url(delegate.academy_id) ||
-      Repo.preload(delegate, :process).process.booklet_1 ||
-      Vae.Delegates.FranceVae.Config.get_domain_name()
+    if delegate.academy_id do
+        Vae.Delegates.FranceVae.Config.get_france_vae_academy_page(delegate.academy_id)
+    else
+      # This case should not happen after academy_ids are set
+      if is_educ_nat?(delegate) && !is_corse?(delegate) do
+        Repo.preload(delegate, :process).process.booklet_1 ||
+        Vae.Delegates.FranceVae.Config.get_domain_name()
+      end
     end
   end
 
