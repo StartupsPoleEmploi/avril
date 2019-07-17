@@ -57,7 +57,11 @@ defmodule Vae.SearchDelegate do
        ) do
     filtered_delegates =
       Enum.filter(delegates, fn delegate ->
-        get_in(delegate, [:geolocation, "administrative"]) == administrative
+        get_in(delegate, [:geolocation, "administrative"])
+        |> case do
+          [admin | []] -> admin == administrative
+          _ -> false
+        end
       end)
 
     {filtered_delegates, delegates}
