@@ -22,7 +22,7 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
       nom: user.last_name,
       nomNaiss: nil,
       prenom: user.first_name,
-      dateNaissance: nil,
+      dateNaissance: format_birthday(user.birthday),
       lieuNaissance: nil,
       cp: user.postal_code,
       commune: user.city_label,
@@ -31,6 +31,9 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
       diplomeVise: format_diplome_vise(application.certification.acronym)
     }, format_address(user))
   end
+
+  defp format_birthday(nil), do: nil
+  defp format_birthday(birthday), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
 
   defp format_address(user) do
     Enum.reduce([user.address1, user.address2, user.address3, user.address4], %{adresse: nil, adresseBis: nil}, fn
