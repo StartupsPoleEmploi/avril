@@ -152,3 +152,11 @@ input[type="search"]::-webkit-search-results-decoration {
     cursor: pointer;
   }
 }
+
+// Bootstrap fixes
+
+select.custom-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}

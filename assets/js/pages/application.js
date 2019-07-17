@@ -53,14 +53,6 @@ import $ from 'jquery';
       }
     });
 
-    $('form.select-meeting').on('change', e => {
-      const $input = $(e.target);
-      const $form = $(e.delegateTarget);
-      if ($form.find(`[name="${$input.attr('name')}"]:checked`).length) {
-        $form.find('button[disabled]').removeAttr('disabled');
-      }
-    });
-
     $('a.show-hidden-meetings').on('click', e => {
       $('.meeting-card').removeClass('d-none');
       $(e.target).hide();
@@ -68,7 +60,10 @@ import $ from 'jquery';
     })
 
     $('.meeting-card').on('click', e => {
-      document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'})
+      document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'});
+      $('.date-select').attr('disabled', true);
+      $(`#${$(e.currentTarget).attr('id').replace('tab-', 'select-')}`).removeAttr('disabled');
+      $(e.currentTarget).parents('form.select-meeting').find('button[disabled]').removeAttr('disabled');
     });
   }
 })();

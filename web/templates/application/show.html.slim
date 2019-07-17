@@ -200,16 +200,20 @@
                   h3 Où ?
                 ul.nav.flex-column
                   = for {{place, address, slug} = place_infos, meetings} <- @meetings do
-                    li.card.meeting-card.place.nav-item class="#{if @preselected_place && @preselected_place != place_infos, do: "d-none"}"
-                      .card-body.nav-link data-target="#place-#{slug}" data-toggle="tab" aria-controls="place-#{slug}" id="tab-#{slug}" class="#{if place_infos == @preselected_place, do: "active"}"
+                    li.card.meeting-card.place.nav-item id="tab-#{slug}" class="#{if @preselected_place && @preselected_place != place_infos, do: "d-none"}"
+                      .card-body.nav-link data-target="#place-#{slug}" data-toggle="tab" aria-controls="place-#{slug}" class="#{if place_infos == @preselected_place, do: "active"}"
                         div
                           h5.strong
                             = place
-                            small= " (#{length(meetings)} dates disponibles)"
+                            small= " (#{length(meetings)} #{Inflex.inflect("date", length(meetings))} #{Inflex.inflect("disponible", length(meetings))})"
                           p= address
-                = if @preselected_place do
+                = if @preselected_place && (length(@meetings) - 1 > 0) do
                   .text-right
-                    a.btn.btn-link.show-hidden-meetings href="#" Voir les #{length(@meetings)} autres lieux disponibles
+                    a.btn.btn-link.show-hidden-meetings href="#"
+                      = if length(@meetings) - 1 == 1 do
+                        = "Voir l'autre lieu disponible"
+                      - else
+                        = "Voir les #{length(@meetings) - 1} autres lieux disponibles"
 
             .row id="when"
               .col-sm-12
@@ -217,13 +221,14 @@
                   h3.text-center Quand ?
                   = for {{place, address, slug} = place_infos, meetings} <- @meetings do
                     div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{slug}" id="place-#{slug}" class="#{if place_infos == @preselected_place, do: "show active"}"
-                      = for meeting <- meetings do
-                        label.card.meeting-card.date
-                          = radio_button(f, :meeting_id, meeting.meeting_id)
-                          .card-body
-                            h5
-                              = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"
-                              = " de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
+                      = select(f, :meeting_id, Enum.map(meetings, fn meeting -> [value: meeting.meeting_id, key: "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))} de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}" ] end), class: "custom-select custom-select-lg date-select", id: "select-#{slug}")
+                      / = for meeting <- meetings do
+                      /   label.card.meeting-card.date
+                      /     = radio_button(f, :meeting_id, meeting.meeting_id)
+                      /     .card-body
+                      /       h5
+                      /         = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"
+                      /         = " de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
             .row
               .col-sm-12.text-center.my-5
                 button.btn.btn-primary type="submit" name="book" value="on" disabled="true" data-analytics="Profil#Avec Reunion information"
