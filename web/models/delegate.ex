@@ -222,10 +222,11 @@ defmodule Vae.Delegate do
   end
 
   def external_subscription_link(%__MODULE__{} = delegate) do
-    delegate = Repo.preload(delegate, :process)
-
-    if __MODULE__.is_educ_nat?(delegate) && !__MODULE__.is_corse?(delegate),
-      do: delegate.process.booklet_1 || "https://www.francevae.fr"
+    if is_educ_nat?(delegate) && !is_corse?(delegate) do
+      Vae.Delegates.FranceVae.Config.get_france_vae_form_url(delegate.academy_id) ||
+      Repo.preload(delegate, :process).process.booklet_1 ||
+      Vae.Delegates.FranceVae.Config.get_domain_name()
+    end
   end
 
   def to_slug(%__MODULE__{} = delegate) do
