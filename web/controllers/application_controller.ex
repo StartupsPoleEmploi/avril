@@ -12,12 +12,17 @@ defmodule Vae.ApplicationController do
       case Repo.get(Application, id) do
         nil ->
           nil
-
         application ->
           Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
+      {:ok, nil} ->
+          conn
+            |> put_status(:not_found)
+            |> put_view(Vae.ErrorView)
+            |> render("404.html", layout: false)
+            |> halt()
       {:ok, application} ->
 
         meetings = if application.meeting, do: [], else:
@@ -221,6 +226,8 @@ defmodule Vae.ApplicationController do
   #       |> redirect(to: to)
   #   end
   # end
+
+  def has_access?(conn, nil, _hash), do: {:ok, nil}
 
   def has_access?(conn, application, nil) do
     if not is_nil(application) do
