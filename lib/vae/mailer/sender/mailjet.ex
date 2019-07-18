@@ -98,15 +98,23 @@ defmodule Vae.Mailer.Sender.Mailjet do
     }
   end
 
-  defp override_to(to) do
-    Keyword.get(@mailjet_conf, :override_to, to)
-  end
-
-  def build_to(nil, _name) do
-    override_to([%{Email: "avril@pole-emploi.fr", Name: "Avril"}])
-  end
-
   def build_to(to) do
-    override_to([to])
+    format_receiver(Keyword.get(@mailjet_conf, :override_to, to))
+  end
+
+  # Accepted formats:
+  # "email@example.com"
+  # ["email@example.com", "other-email@example.com"]
+  # "Full Name <email@example.com>"
+  # ["Full Name <email@example.com>", "Other Name <other-email@example.com>"]
+  # %{Email: "email@example.com"}
+  # [%{Email: "email@example.com"}, %{Email: "other-email@example.com"}]
+  defp format_receiver(%{Email: email} = params), do: List.wrap(params)
+  defp format_receiver(email) when is_binary(email), do: email |> String.split(",") |> Enum.map(&format_string_email/1)
+  defp format_receiver(emails) when is_list(emails), do: Enum.flat_map(emails, &format_receiver/1)
+
+  defp format_string_email(string_email) do
+    (Regex.named_captures(~r/(?<Name>.*) ?\<(?<Email>.*)\>/U, string_email) || %{Email: string_email})
+      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
   end
 end

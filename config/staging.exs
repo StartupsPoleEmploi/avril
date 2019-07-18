@@ -3,7 +3,7 @@ require Logger
 
 config :vae,
   mailjet: [
-    override_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> Enum.map(&%{Email: &1})
+    override_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr"
   ]
 
 config :vae, Vae.Endpoint,
