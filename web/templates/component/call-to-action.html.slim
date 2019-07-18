@@ -4,8 +4,7 @@
       p
         strong Dossier Transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
       = if @application.meeting do
-        p
-          | Vous avez souhaité vous inscrire à l'atelier collectif du :
+        p Bravo pour ce premier pas dans votre projet! Nous vous confirmons que vous avez choisi l'atelier collectif du
         p
           strong
             = " #{String.capitalize(Timex.lformat!(@application.meeting.start_date, "%A %e %B ", "fr", :strftime))}"

@@ -7,6 +7,10 @@
     margin-bottom: 1rem;
   }
 
+  .disabled {
+    opacity: 0.7;
+  }
+
   .jumbotron {
     background: $white;
     border: thin solid $dm-primary-grey;

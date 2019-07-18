@@ -101,7 +101,9 @@
         .row.mb-5.resume-section
           .col-md-12
             h3.my-4 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
-            p Profitez de cet espace pour transmettre votre CV au certificateur. Cette étape est facultative et pourra être réalisée ultérieurement.
+            p
+              | Profitez de cet espace pour transmettre votre CV au certificateur pour qu'il vous connaisse mieux.
+              span.disabled= " (Cette étape est facultative.)"
           .col-md-12
             = if @edit_mode || length(@application.resumes) > 0 do
               .jumbotron.bg-light
