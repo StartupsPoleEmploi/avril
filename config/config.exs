@@ -6,31 +6,126 @@
 use Mix.Config
 
 # General application configuration
-config :vae, ecto_repos: [Vae.Repo]
+config :vae,
+  ecto_repos: [Vae.Repo],
+  places_client: Vae.Places.Client.Algolia,
+  search_client: Vae.Search.Client.Algolia,
+  places_ets_table_name: :places_dev,
+  algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
+  algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
+  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
+  mailer_extractor_limit: (if Mix.env() == :prod, do: :all, else: 10_000),
+  sender: Vae.Mailer.Sender.Mailjet,
+  mailjet_template_error_reporting: %{Email: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first()},
+  mailjet_template_error_deliver: true,
+  mailjet: [
+    application_submitted_to_delegate_id: 758_379,
+    application_submitted_to_user_id: 764_589,
+    campaign_template_id: 512_948,
+    vae_recap_template_id: 529_420,
+    dava_vae_recap_template_id: 878_833,
+    asp_vae_recap_template_id: 833_668,
+    contact_template_id: 543_455,
+    from_email: "avril@pole-emploi.fr",
+    from_name: "Avril"
+  ],
+  authentication: [
+    client_id: System.get_env("PE_CONNECT_CLIENT_ID"),
+    client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
+    site: "https://authentification-candidat.pole-emploi.fr",
+    authorize_url: "/connexion/oauth2/authorize",
+    redirect_uri: "#{if Mix.env() == :dev, do: "http", else: "https"}://#{System.get_env("WHOST") || "localhost:4000"}/pole-emploi/callback"
+  ],
+  tracking: [
+    analytics: System.get_env("GA_API_KEY"),
+    analytics_bis: System.get_env("GA_PE_API_KEY"),
+    crisp: System.get_env("CRISP_WEBSITE_ID"),
+    hotjar: System.get_env("HOTJAR_ID"),
+    optimize: System.get_env("GO_TEST_KEY")
+  ],
+  reminders: [
+    stock: [
+      users: [
+        template_id: 848_006,
+        form_urls: [
+          certifiers: [
+            default: %{
+              url: System.get_env("TYPEFORM_STOCK_REMINDER")
+            }
+          ]
+        ]
+      ]
+    ],
+    monthly: [
+      users: [
+        template_id: 768_365,
+        form_urls: [
+          certifiers: [
+            asp: %{
+              ids: [1, 3],
+              url: System.get_env("TYPEFORM_MONTH_BACK_ASP")
+            },
+            educ_nat: %{
+              ids: [2],
+              url: System.get_env("TYPEFORM_MONTH_BACK_EDUC_NAT")
+            },
+            labour_ministry: %{
+              ids: [4],
+              url: System.get_env("TYPEFORM_MONTH_BACK_MINISTRY")
+            },
+            other: %{
+              ids: [],
+              url: System.get_env("TYPEFORM_MONTH_BACK_OTHER")
+            }
+          ]
+        ]
+      ]
+    ]
+  ],
+  # Unused?
+  statistics: %{
+    email_from: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first(),
+    email_from_name: "Avril",
+    email_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first(),
+    email_to_name: "Statisticien"
+  }
 
-# Configures the endpoint
 config :vae, Vae.Endpoint,
-  url: [host: "localhost"],
-  secret_key_base: "akyL4W53VWMOrzMxWNJP9Y1ofAIkm9dpvp1KLHJhWQUolRUVlCbOdRrr/0UmcjZx",
+  secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: Vae.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Vae.PubSub, adapter: Phoenix.PubSub.PG2]
 
-config :phoenix, :template_engines,
-  slim: PhoenixSlime.Engine,
-  slime: PhoenixSlime.Engine,
-  slimleex: PhoenixSlime.LiveViewEngine # If you want to use LiveView
+config :vae, Vae.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("DATABASE_URL") || "postgres://#{System.get_env("POSTGRES_USER")}:#{System.get_env("POSTGRES_PASSWORD")}@#{System.get_env("POSTGRES_HOST")}/#{System.get_env("POSTGRES_DB")}",
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  ssl: Mix.env() == :staging,
+  timeout: 60_000
 
-# Use Jason for JSON parsing in Phoenix
-config :phoenix, :json_library, Jason
+config :algolia,
+  application_id: System.get_env("ALGOLIA_APP_ID"),
+  api_key: System.get_env("ALGOLIA_API_KEY"),
+  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
 
-# Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+config :coherence,
+  web_module: Vae,
+  user_schema: Vae.User,
+  repo: Vae.Repo,
+  router: Vae.Router,
+  messages_backend: Vae.Coherence.Messages,
+  email_from_name: "Avril",
+  email_from_email: "avril@pole-emploi.fr",
+  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
+  session_model: Vae.Session,
+  session_repo: Vae.Repo,
+  schema_key: :id
 
-config :scrivener_html,
-  routes_helper: Vae.Router.Helpers,
-  view_style: :bootstrap_v4
+config :coherence, :layout, {Vae.LayoutView, :app}
+
+config :coherence, Vae.Coherence.Mailer,
+  adapter: Swoosh.Adapters.Mailjet,
+  api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
+  secret: System.get_env("MAILJET_PRIVATE_API_KEY")
 
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},
@@ -48,61 +143,6 @@ config :ex_admin,
     Vae.ExAdmin.User
   ]
 
-config :xain, :after_callback, {Phoenix.HTML, :raw}
-
-# %% Coherence Configuration %%   Don't remove this line
-config :coherence,
-  web_module: Vae,
-  user_schema: Vae.User,
-  repo: Vae.Repo,
-  router: Vae.Router,
-  messages_backend: Vae.Coherence.Messages,
-  email_from_name: "Avril",
-  email_from_email: "avril@pole-emploi.fr",
-  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
-  session_model: Vae.Session,
-  session_repo: Vae.Repo,
-  schema_key: :id
-
-config :coherence, :layout, {Vae.LayoutView, :app}
-
-config :coherence, Vae.Coherence.Mailer,
-  adapter: Swoosh.Adapters.Sendgrid,
-  api_key: "your api key here"
-
-config :algolia,
-  application_id: System.get_env("ALGOLIA_APP_ID"),
-  api_key: System.get_env("ALGOLIA_API_KEY"),
-  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
-
-config :vae,
-  places_client: Vae.Places.Client.Algolia,
-  search_client: Vae.Search.Client.Algolia,
-  algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
-  algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
-  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
-  mailer_extractor_limit: 10_000,
-  sender: Vae.Mailer.Sender.Mailjet,
-  mailjet_template_error_reporting: %{Email: System.get_env("MAILJET_TPL_ERR_REPORTING_EMAIL")},
-  mailjet_template_error_deliver: true,
-  mailjet: [
-    application_submitted_to_delegate_id: 758_379,
-    application_submitted_to_user_id: 764_589,
-    campaign_template_id: 512_948,
-    vae_recap_template_id: 529_420,
-    dava_vae_recap_template_id: 878_833,
-    asp_vae_recap_template_id: 833_668,
-    contact_template_id: 543_455,
-    from_email: "contact@avril.pole-emploi.fr",
-    from_name: "Avril"
-  ],
-  statistics: %{
-    email_from: "from@email.com",
-    email_from_name: "From Name",
-    email_to: "to@email.com",
-    email_to_name: "To Name"
-  }
-
 config :ex_aws,
   access_key_id: [System.get_env("AWS_ACCESS_KEY_ID"), :instance_role],
   secret_access_key: [System.get_env("AWS_SECRET_ACCESS_KEY"), :instance_role],
@@ -114,6 +154,27 @@ config :ex_aws,
    region: "eu-west-3"
 ]
 
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+config :mailjex,
+  api_base: "https://api.mailjet.com/v3.1",
+  public_api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
+  private_api_key: System.get_env("MAILJET_PRIVATE_API_KEY"),
+  development_mode: false
+
+config :phoenix, :json_library, Jason
+
+config :phoenix, :template_engines,
+  slim: PhoenixSlime.Engine,
+  slime: PhoenixSlime.Engine,
+  slimleex: PhoenixSlime.LiveViewEngine # If you want to use LiveView
+
+config :scrivener_html,
+  routes_helper: Vae.Router.Helpers,
+  view_style: :bootstrap_v4
+
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
   release: System.get_env("FLYNN_RELEASE_ID"),
@@ -122,7 +183,6 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_path: File.cwd!
 
-# %% End Coherence Configuration %%
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
+config :xain, :after_callback, {Phoenix.HTML, :raw}
+
 import_config "#{Mix.env()}.exs"

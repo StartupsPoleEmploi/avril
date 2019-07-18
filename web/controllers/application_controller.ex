@@ -159,7 +159,7 @@ defmodule Vae.ApplicationController do
         url_form = Polls.define_form_url_from_application(application)
 
         conn
-        |> redirect(external: url_form)
+        |> redirect(external: url_form || Routes.root_path(conn, :index))
     end
   end
 

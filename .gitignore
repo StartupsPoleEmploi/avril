@@ -28,4 +28,4 @@ erl_crash.dump
 .env
 yarn.lock
 
-/config/dev.exs
+# /config/dev.exs

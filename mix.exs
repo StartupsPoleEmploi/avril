@@ -83,7 +83,7 @@ defmodule Vae.Mixfile do
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.14.0"},
       {:quantum, "~> 2.2"},
-      {:timex, "~> 3.0"},
+      {:timex, "~> 3.6.1"},
       {:mailjex, "~> 0.1.4"},
       {:elixir_uuid, "~> 1.2"},
       {:persistent_ets, "~> 0.1.0"},

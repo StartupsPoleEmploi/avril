@@ -1,6 +1,8 @@
 defmodule Vae.ComponentView do
   use Vae.Web, :view
 
+  @tracking_config Application.get_env(:vae, :tracking)
+
   def render("user_token", %{conn: conn}) do
     if is_nil(conn.assigns[:user_token]) do
       {:safe, ""}
@@ -20,8 +22,8 @@ defmodule Vae.ComponentView do
         _ -> "false"
       end
 
-    has_analytics = System.get_env("GA_API_KEY")
-    has_optimize = System.get_env("GO_TEST_KEY")
+    has_analytics = @tracking_config[:analytics]
+    has_optimize = @tracking_config[:optimize]
 
     List.wrap(if has_optimize, do: [
       """
@@ -31,7 +33,7 @@ defmodule Vae.ComponentView do
         h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
         (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
         })(window,document.documentElement,'async-hide','dataLayer',4000,
-        {'#{System.get_env("GO_TEST_KEY")}':true});</script>
+        {'#{@tracking_config[:optimize]}':true});</script>
         <!-- End Google Optimize -->
       """
     ]) ++ List.wrap(if has_analytics, do: [
@@ -43,67 +45,34 @@ defmodule Vae.ComponentView do
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','https://www.google-analytics.com/analytics#{if Mix.env == :dev, do: "_debug"}.js','ga');
 
-        ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
+        ga('create', '#{@tracking_config[:analytics]}', 'auto');
       """,
-      (if System.get_env("GA_PE_API_KEY"), do: "ga('create', '#{System.get_env("GA_PE_API_KEY")}', 'auto');"),
-      (if System.get_env("GO_TEST_KEY"), do: "ga('require', '#{System.get_env("GO_TEST_KEY")}');"),
+      (if @tracking_config[:analytics_bis], do: "ga('create', '#{@tracking_config[:analytics_bis]}', 'auto');"),
+      (if @tracking_config[:optimize], do: "ga('require', '#{@tracking_config[:optimize]}');"),
       """
         ga('set', 'dimension1', '#{dimension1}');
         ga('send', 'pageview');
 
         window.disableGa = function() {
-          window['ga-disable-#{System.get_env("GA_API_KEY")}'] = true;
+          window['ga-disable-#{@tracking_config[:analytics]}'] = true;
       """,
-      (if System.get_env("GA_PE_API_KEY"), do: "window['ga-disable-#{System.get_env("GA_PE_API_KEY")}'] = true;"),
+      (if @tracking_config[:analytics_bis], do: "window['ga-disable-#{@tracking_config[:analytics_bis]}'] = true;"),
       """
         };
         </script>
         <!-- End Google Analytics -->
       """
       ]) |> Enum.filter(fn el -> el end) |> Enum.join("\n") |> Phoenix.HTML.raw
-
-
-    # {:safe, """
-    #   <!-- Google Optimize -->
-    #   <style>.async-hide { opacity: 0 !important} </style>
-    #   <script>(function(a,s,y,n,c,h,i,d,e){s.className+=' '+y;h.start=1*new Date;
-    #   h.end=i=function(){s.className=s.className.replace(RegExp(' ?'+y),'')};
-    #   (a[n]=a[n]||[]).hide=h;setTimeout(function(){i();h.end=null},c);h.timeout=c;
-    #   })(window,document.documentElement,'async-hide','dataLayer',4000,
-    #   {'#{System.get_env("GO_TEST_KEY")}':true});</script>
-    #   <!-- End Google Optimize -->
-    #   <!-- Google Analytics -->
-    #   <script>
-    #   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    #   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    #   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    #   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    #   ga('create', '#{System.get_env("GA_API_KEY")}', 'auto');
-    #   ga('create', '#{System.get_env("GA_PE_API_KEY")}', 'auto');
-    #   ga('require', '#{System.get_env("GO_TEST_KEY")}');
-    #   ga('set', 'dimension1', '#{dimension1}');
-    #   ga('send', 'pageview');
-
-    #   window.disableGa = function() {
-    #    window['ga-disable-#{System.get_env("GA_API_KEY")}'] = true;
-    #    window['ga-disable-#{System.get_env("GA_PE_API_KEY")}'] = true;
-    #   };
-    #   </script>
-    #   <!-- End Google Analytics -->
-    # """}
   end
 
   def render("hotjar", _) do
-    if is_nil(System.get_env("HOTJAR_ID")) do
-      {:safe, ""}
-    else
+    if @tracking_config[:hotjar] do
       {:safe, """
        <!-- Hotjar Tracking Code for http://avril.pole-emploi.fr -->
        <script>
        (function(h,o,t,j,a,r){
        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-       h._hjSettings={hjid:#{System.get_env("HOTJAR_ID")},hjsv:5};
+       h._hjSettings={hjid:#{@tracking_config[:hotjar]},hjsv:5};
        a=o.getElementsByTagName('head')[0];
        r=o.createElement('script');r.async=1;
        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
@@ -115,13 +84,11 @@ defmodule Vae.ComponentView do
   end
 
   def render("crisp", _) do
-    if is_nil(System.get_env("HOTJAR_ID")) do
-      {:safe, ""}
-    else
+    if @tracking_config[:crisp] do
       {:safe, """
         <script type="text/javascript">
         window.$crisp=[];
-        window.CRISP_WEBSITE_ID='#{System.get_env("CRISP_WEBSITE_ID")}';
+        window.CRISP_WEBSITE_ID='#{@tracking_config[:crisp]}';
         (function(){
           d=document;s=d.createElement("script");
           s.src="https://client.crisp.chat/l.js";s.async=1;
