@@ -5,7 +5,7 @@ defmodule Vae.Event.Api do
   end
 
   def handle_email_event(handler_pid, events) do
-    GenServer.call(handler_pid, {:handle_email_event, events})
+    GenServer.call(handler_pid, {:handle_email_event, events}, 10_000)
   end
 
   def terminate(handler_pid) do
