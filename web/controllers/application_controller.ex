@@ -262,7 +262,7 @@ defmodule Vae.ApplicationController do
     conn
     |> put_flash(
       :error,
-      "Une erreur est survenue: \"#{msg}\". N'hésitez pas à nous contacter pour plus d'infos."
+      Phoenix.HTML.raw("Une erreur est survenue: <br />\"#{inspect(msg)}\"<br />N'hésitez pas à nous contacter pour plus d'infos.")
     )
     |> redirect(to: Routes.application_path(conn, :show, application))
   end

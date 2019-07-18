@@ -10,7 +10,7 @@
     = if @edit_mode && length(@meetings) > 0 do
       .row
         .col-md-12
-          nav
+          nav.mb-5
             .nav.nav-pills.nav-fill role="tablist"
               a#experience-pro-tab.nav-item.nav-link.active href="#experience-pro" data-toggle="tab" aria-controls="experience-pro" aria-selected="true"
                 h6
@@ -23,7 +23,7 @@
                     = " 2 - Transmission"
                   - else
                     = " 2 - Réunion d'information"
-    .tab-content.mt-5
+    .tab-content
       #experience-pro.tab-pane.fade.show.active role="tabpanel" aria-labelledby="experience-pro-tab"
         .row
           .col-md-6
