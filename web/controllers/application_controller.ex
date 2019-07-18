@@ -10,10 +10,17 @@ defmodule Vae.ApplicationController do
     application =
       case Repo.get(Application, id) do
         nil -> nil
-        application -> Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
+        application ->
+          Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
+      {:ok, nil} ->
+          conn
+            |> put_status(:not_found)
+            |> put_view(Vae.ErrorView)
+            |> render("404.html", layout: false)
+            |> halt()
       {:ok, application} ->
         render(conn, "show.html",
           title: "Candidature VAE de #{application.user.name} pour un diplôme de #{application.certification.label}",
@@ -134,6 +141,8 @@ defmodule Vae.ApplicationController do
         |> redirect(external: url_form || Routes.root_path(conn, :index))
     end
   end
+
+  def has_access?(conn, nil, _hash), do: {:ok, nil}
 
   def has_access?(conn, application, nil) do
     if not is_nil(application) do
