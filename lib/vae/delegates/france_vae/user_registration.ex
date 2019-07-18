@@ -51,6 +51,7 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
     end
   end
 
+  defp format_phone_number(nil), do: nil
   defp format_phone_number(phone_number) do
     String.replace(phone_number, ~r/(\s|\.)+/, "")
   end
