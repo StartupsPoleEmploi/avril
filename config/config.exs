@@ -16,7 +16,7 @@ config :vae,
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
   mailer_extractor_limit: (if Mix.env() == :prod, do: :all, else: 10_000),
   sender: Vae.Mailer.Sender.Mailjet,
-  mailjet_template_error_reporting: %{Email: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first()},
+  mailjet_template_error_reporting: %{Email: (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr") |> String.split(",") |> List.first()},
   mailjet_template_error_deliver: true,
   mailjet: [
     application_submitted_to_delegate_id: 758_379,
@@ -84,9 +84,9 @@ config :vae,
   ],
   # Unused?
   statistics: %{
-    email_from: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first(),
+    email_from: (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr") |> String.split(",") |> List.first(),
     email_from_name: "Avril",
-    email_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first(),
+    email_to: (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr") |> String.split(",") |> List.first(),
     email_to_name: "Statisticien"
   }
 
