@@ -36,6 +36,13 @@ config :vae,
     authorize_url: "/connexion/oauth2/authorize",
     redirect_uri: "#{if Mix.env() == :dev, do: "http", else: "https"}://#{System.get_env("WHOST") || "localhost:4000"}/pole-emploi/callback"
   ],
+  tracking: [
+    analytics: System.get_env("GA_API_KEY"),
+    analytics_bis: System.get_env("GA_PE_API_KEY"),
+    crisp: System.get_env("CRISP_WEBSITE_ID"),
+    hotjar: System.get_env("HOTJAR_ID"),
+    optimize: System.get_env("GO_TEST_KEY")
+  ],
   # Unused?
   statistics: %{
     email_from: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first(),
