@@ -14,7 +14,7 @@ config :vae,
   algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
   algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
-  mailer_extractor_limit: 10_000,
+  mailer_extractor_limit: (if Mix.env() == :prod, do: :all, else: 10_000),
   sender: Vae.Mailer.Sender.Mailjet,
   mailjet_template_error_reporting: %{Email: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr" |> String.split(",") |> List.first()},
   mailjet_template_error_deliver: true,
@@ -42,6 +42,45 @@ config :vae,
     crisp: System.get_env("CRISP_WEBSITE_ID"),
     hotjar: System.get_env("HOTJAR_ID"),
     optimize: System.get_env("GO_TEST_KEY")
+  ],
+  reminders: [
+    stock: [
+      users: [
+        template_id: 848_006,
+        form_urls: [
+          certifiers: [
+            default: %{
+              url: System.get_env("TYPEFORM_STOCK_REMINDER")
+            }
+          ]
+        ]
+      ]
+    ],
+    monthly: [
+      users: [
+        template_id: 768_365,
+        form_urls: [
+          certifiers: [
+            asp: %{
+              ids: [1, 3],
+              url: System.get_env("TYPEFORM_MONTH_BACK_ASP")
+            },
+            educ_nat: %{
+              ids: [2],
+              url: System.get_env("TYPEFORM_MONTH_BACK_EDUC_NAT")
+            },
+            labour_ministry: %{
+              ids: [4],
+              url: System.get_env("TYPEFORM_MONTH_BACK_MINISTRY")
+            },
+            other: %{
+              ids: [],
+              url: System.get_env("TYPEFORM_MONTH_BACK_OTHER")
+            }
+          ]
+        ]
+      ]
+    ]
   ],
   # Unused?
   statistics: %{

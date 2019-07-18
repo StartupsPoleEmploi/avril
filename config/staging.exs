@@ -1,4 +1,5 @@
 use Mix.Config
+require Logger
 
 config :vae,
   mailjet: [

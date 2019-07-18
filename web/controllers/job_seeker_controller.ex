@@ -20,6 +20,6 @@ defmodule Vae.JobSeekerController do
     |> Repo.update!()
 
     conn
-    |> redirect(external: Polls.get_default_stock_form_url())
+    |> redirect(external: Polls.get_default_stock_form_url() || Routes.root_path(conn, :index))
   end
 end
