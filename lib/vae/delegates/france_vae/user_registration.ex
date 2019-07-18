@@ -11,36 +11,51 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
             commune: nil,
             courrier: nil,
             telephonePortable: nil,
-            origine: 19, # Avril
-            diplome: 1, # Chosen diplome
+            # Avril
+            origine: 19,
+            # Chosen diplome
+            diplome: 1,
             diplomeVise: nil
 
   def from_application(application = %Vae.Application{}) do
     user = application.user
-    Map.merge(%__MODULE__{
-      civilite: format_gender(user.gender),
-      nom: user.last_name,
-      nomNaiss: nil,
-      prenom: user.first_name,
-      dateNaissance: format_birthday(user.birthday),
-      lieuNaissance: nil,
-      cp: user.postal_code,
-      commune: user.city_label,
-      courrier: user.email,
-      telephonePortable: format_phone_number(user.phone_number),
-      diplomeVise: format_diplome_vise(application.certification.acronym)
-    }, format_address(user))
+
+    Map.merge(
+      %__MODULE__{
+        civilite: format_gender(user.gender),
+        nom: user.last_name,
+        nomNaiss: nil,
+        prenom: user.first_name,
+        dateNaissance: format_birthday(user.birthday),
+        lieuNaissance: nil,
+        cp: user.postal_code,
+        commune: user.city_label,
+        courrier: user.email,
+        telephonePortable: format_phone_number(user.phone_number),
+        diplomeVise: format_diplome_vise(application.certification.acronym)
+      },
+      format_address(user)
+    )
   end
 
   defp format_birthday(nil), do: nil
   defp format_birthday(birthday), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
 
   defp format_address(user) do
-    Enum.reduce([user.address1, user.address2, user.address3, user.address4], %{adresse: nil, adresseBis: nil}, fn
-      address_part, %{adresse: nil, adresseBis: part2} -> %{adresse: address_part, adresseBis: part2}
-      address_part, %{adresse: part1, adresseBis: nil} -> %{adresse: part1, adresseBis: address_part}
-      address_part, %{adresse: part1, adresseBis: part2} -> %{adresse: part1, adresseBis: Enum.join([part2, address_part], ", ")}
-    end)
+    Enum.reduce(
+      [user.address1, user.address2, user.address3, user.address4],
+      %{adresse: nil, adresseBis: nil},
+      fn
+        address_part, %{adresse: nil, adresseBis: part2} ->
+          %{adresse: address_part, adresseBis: part2}
+
+        address_part, %{adresse: part1, adresseBis: nil} ->
+          %{adresse: part1, adresseBis: address_part}
+
+        address_part, %{adresse: part1, adresseBis: part2} ->
+          %{adresse: part1, adresseBis: Enum.join([part2, address_part], ", ")}
+      end
+    )
   end
 
   defp format_gender(gender) do
@@ -50,6 +65,8 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
       _other -> nil
     end
   end
+
+  defp format_phone_number(nil), do: nil
 
   defp format_phone_number(phone_number) do
     String.replace(phone_number, ~r/(\s|\.)+/, "")
