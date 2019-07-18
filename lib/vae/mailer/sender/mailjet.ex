@@ -114,7 +114,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
   defp format_receiver(emails) when is_list(emails), do: Enum.flat_map(emails, &format_receiver/1)
 
   defp format_string_email(string_email) do
-    (Regex.named_captures(~r/(?<Name>.*) ?\<(?<Email>.*)\>/U, string_email) || %{Email: string_email})
-      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
+    (Regex.named_captures(~r/(?<Name>.*) ?\<(?<Email>.*)\>/U, string_email) || %{"Email" => string_email})
+    |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
   end
 end
