@@ -1,0 +1,9 @@
+.delegate
+  .arrow
+    span.ic-icon.ic-tail-right
+  = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
+  p
+    strong
+      = @delegate.name
+    br
+    = @delegate.address

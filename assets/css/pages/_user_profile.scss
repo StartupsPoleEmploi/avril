@@ -7,6 +7,10 @@
     margin-bottom: 1rem;
   }
 
+  .disabled {
+    opacity: 0.7;
+  }
+
   .jumbotron {
     background: $white;
     border: thin solid $dm-primary-grey;
@@ -128,6 +132,110 @@
       }
     }
   }
+
+
+  nav {
+    margin-top: -2rem;
+    margin-left: -2rem;
+    margin-right: -2rem;
+    .nav {
+      @include media-breakpoint-up(sm) {
+        height: 4rem;
+      }
+      align-items: stretch;
+      .nav-item {
+        background-color: initial;
+        color: $dm-primary-green;
+        &.active {
+        background-color: $dm-primary-green;
+        color: $white;
+        }
+      }
+      h6 {
+        margin: 0;
+      }
+      @include media-breakpoint-up(sm) {
+        .nav-item {
+          border-radius: 0;
+          border: thin solid $dm-primary-grey;
+          color: $dm-primary-blue;
+          &:first-of-type {
+            border-right: none;
+          }
+          &.active {
+            color: $dm-primary-blue;
+            background-color: $white;
+            border-bottom: 0.5rem solid $dm-primary-green;
+          }
+        }
+        h6 {
+          line-height: 4rem;
+        }
+      }
+      // .nav-item.active ~ .nav-item:not(.active) {
+      //   border-bottom: thin solid $dm-primary-grey;
+      // }
+    }
+  }
+
+  .meeting-card {
+    margin-bottom: 2rem;
+    .card-body {
+      padding: 1.2rem;
+    }
+    input {
+      visibility: hidden;
+      display: none;
+
+      &:checked + .card-body {
+        background: lighten(theme-color('success'), 50%);
+        &:after {
+          content: '✓ Date sélectionnée';
+        }
+      }
+    }
+
+    .card-body {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+
+
+      h5, p {
+        margin: 0;
+      }
+
+      &:after {
+        cursor: pointer;
+        padding-left: 1rem;
+        content: 'Choisir cette date ?';
+      }
+      @include media-breakpoint-down(sm) {
+        display: block;
+
+        &:after {
+          padding-top: 1rem;
+          text-align: center;
+          width: 100%;
+          display: block;
+          padding-left: 0;
+        }
+      }
+
+    }
+    &.place .card-body {
+      &:after {
+        content: 'Choisir ce lieu ?';
+      }
+      &.active {
+        background: lighten(theme-color('success'), 50%);
+        &:after {
+          content: '✓ Lieu sélectionné';
+        }
+      }
+    }
+  }
+
   .resume-section {
     @media print {
       display: none;

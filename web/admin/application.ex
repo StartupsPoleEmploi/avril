@@ -52,7 +52,11 @@ defmodule Vae.ExAdmin.Application do
         row :certification
         row :delegate
         row :submitted_at
+        # row :meeting
         row :admissible_at
+        row :inadmissible_at
+        row :inserted_at
+        row :updated_at
       end
     end
 
@@ -61,6 +65,8 @@ defmodule Vae.ExAdmin.Application do
         input application, :user, collection: Repo.all(User)
         input application, :certification, collection: Repo.all(Certification)
         input application, :delegate, collection: Repo.all(Delegate)
+        input application, :submitted_at
+        input application, :meeting
       end
     end
 

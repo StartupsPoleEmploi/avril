@@ -1,5 +1,4 @@
 defmodule Vae.UserController do
-  require Logger
   use Vae.Web, :controller
   plug Coherence.Authentication.Session, protected: true
 

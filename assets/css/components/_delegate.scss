@@ -1,0 +1,13 @@
+.delegate {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .arrow {
+    margin-right: 1rem;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}

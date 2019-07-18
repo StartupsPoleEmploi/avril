@@ -83,6 +83,7 @@ defmodule Vae.Router do
     # Loggued in applications
     resources("/candidatures", Vae.ApplicationController, only: [:show, :update]) do
       get("/telecharger", Vae.ApplicationController, :download, as: :download)
+      get("/france-vae-redirect", Vae.ApplicationController, :france_vae_redirect, as: :france_vae_redirect)
       resources("/resume", Vae.ResumeController, only: [:create, :delete])
     end
     get("/candidatures/:id/admissible", Vae.ApplicationController, :admissible)

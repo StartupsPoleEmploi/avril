@@ -1,3 +1,5 @@
+@import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
+
 $spacers: (
   6: 8rem,
   7: 16rem
@@ -44,7 +46,7 @@ $white: white;
 $black: black;
 
 $jumbotron-bg: #F5F3F5;
-$jumbotron-color: $brand-primary;
+// $jumbotron-color: $brand-primary;
 
 //buttons
 $btn-info-color: $brand-primary;

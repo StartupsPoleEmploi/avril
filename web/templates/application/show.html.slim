@@ -2,170 +2,242 @@
   .row.my-4
     .col-md-6.my-auto
       p Diplôme demandé :
-      h3.mb-4= Vae.Certification.name(@application.certification)
+      h3.mb-4= Vae.Certification.name(@certification)
     .col-md-6.my-auto
-      .delegate
-        div.mr-3 style="display: inline-block;font-size: 2rem;vertical-align: super;"
-          span.ic-icon.ic-tail-right
-        = img_tag "/images/conseillere.svg", style: "width: 2.5em; vertical-align: initial;margin-right: 5px; margin-right: 15px", alt: "Votre conseillère VAE"
-        p style="display: inline-block"
-          strong
-            = @delegate.name
-          br
-          = @delegate.address
+      .pull-right
+        = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
   .jumbotron
-    .row
-      .col-md-6
-        = unless @edit_mode do
-          h3.my-4 Le candidat
-        p
-          strong #{@user.first_name} #{@user.last_name}
-        = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit", data: [analytics: "Profil#modifier coordonnees"]], fn f ->
-          .row
-            .col
-              .form-group
-                = if @edit_mode do
-                  = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
-                  = error_tag f, :email
-                - else
-                  = link(@user.email, to: "mailto:#{@user.email}")
-          .row
-            .col
-              .form-group
-                = if @edit_mode do
-                  = text_input f, :phone_number, class: "form-control font-weight-bold", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), required: true, data: [analytics: "Profil#ajouter tel"]
-                  = error_tag f, :phone_number
-                - else
-                  = if @user.phone_number do
-                    = link(@user.phone_number, to: "tel:#{@user.phone_number}")
+    = if @edit_mode && length(@meetings) > 0 do
+      .row
+        .col-md-12
+          nav.mb-5
+            .nav.nav-pills.nav-fill role="tablist"
+              a#experience-pro-tab.nav-item.nav-link.active href="#experience-pro" data-toggle="tab" aria-controls="experience-pro" aria-selected="true"
+                h6
+                  span.fa.fa-user
+                  = " 1 - Expériences Pro"
+              a#transmission-tab.nav-item.nav-link href="#transmission" data-toggle="tab" aria-controls="tranmission" aria-selected="false" data-analytics="Profil#Transmission tab"
+                h6
+                  span.fa.fa-users
+                  = if is_nil(@application.submitted_at) do
+                    = " 2 - Transmission"
                   - else
-                    p Téléphone non renseigné par le candidat
-          .row
-            .col
-              .form-group.address-component.mb-1
-                .input-group
-                  = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: true
-                  .input-group-append
-                    button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
-                = error_tag f, :address4
-              .form-group.address-component.mb-1 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
-                = text_input f, :address3, class: "form-control", placeholder: "Complément de distribution", disabled: true
-                = error_tag f, :address3
-              .form-group.address-component.mb-1 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
-                = text_input f, :address2, class: "form-control", placeholder: "Complément d'adresse", disabled: true
-                = error_tag f, :address2
-              .form-group.address-component.mb-1 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
-                = text_input f, :address1, class: "form-control", placeholder: "Complément destinataire", disabled: true
-                = error_tag f, :address1
-          .row
-            .col-3.pr-0
-              .form-group.mb-1
-                = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: true
-                = error_tag f, :postal_code
-            .col-9
-              .form-group.mb-1
-                = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: true
-                = error_tag f, :city_label
-          .row
-            .col
-              .form-group.mb-4
-                = text_input f, :country_label, class: "form-control", placeholder: "Pays", disabled: true
-                = error_tag f, :country_label
-          = if @edit_mode do
+                    = " 2 - Réunion d'information"
+    .tab-content
+      #experience-pro.tab-pane.fade.show.active role="tabpanel" aria-labelledby="experience-pro-tab"
+        .row
+          .col-md-6
+            = unless @edit_mode do
+              h3.my-4 Le candidat
+            p
+              strong #{@user.first_name} #{@user.last_name}
+            = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit", data: [analytics: "Profil#modifier coordonnees"]], fn f ->
+              .row
+                .col
+                  .form-group
+                    = if @edit_mode do
+                      = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
+                      = error_tag f, :email
+                    - else
+                      = link(@user.email, to: "mailto:#{@user.email}")
+              .row
+                .col
+                  .form-group
+                    = if @edit_mode do
+                      = telephone_input f, :phone_number, class: "form-control font-weight-bold #{if !@user.phone_number, do: "form-highlight"}", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), autofocus: is_nil(@user.phone_number), required: true, pattern: "[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}", data: [analytics: "Profil#ajouter tel"]
+                      = error_tag f, :phone_number
+                    - else
+                      = if @user.phone_number do
+                        = link(@user.phone_number, to: "tel:#{@user.phone_number}")
+                      - else
+                        p Téléphone non renseigné par le candidat
+              .row
+                .col
+                  .form-group.address-component.mb-1
+                    .input-group
+                      = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: true
+                      .input-group-append
+                        button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
+                    = error_tag f, :address4
+                  .form-group.address-component.mb-1 class="#{if is_nil(@user.address3), do: "d-none", else: ""}"
+                    = text_input f, :address3, class: "form-control", placeholder: "Complément de distribution", disabled: true
+                    = error_tag f, :address3
+                  .form-group.address-component.mb-1 class="#{if is_nil(@user.address2), do: "d-none", else: ""}"
+                    = text_input f, :address2, class: "form-control", placeholder: "Complément d'adresse", disabled: true
+                    = error_tag f, :address2
+                  .form-group.address-component.mb-1 class="#{if is_nil(@user.address1), do: "d-none", else: ""}"
+                    = text_input f, :address1, class: "form-control", placeholder: "Complément destinataire", disabled: true
+                    = error_tag f, :address1
+              .row
+                .col-3.pr-0
+                  .form-group.mb-1
+                    = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: true
+                    = error_tag f, :postal_code
+                .col-9
+                  .form-group.mb-1
+                    = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: true
+                    = error_tag f, :city_label
+              .row
+                .col
+                  .form-group.mb-4
+                    = text_input f, :country_label, class: "form-control", placeholder: "Pays", disabled: true
+                    = error_tag f, :country_label
+              = if @edit_mode do
+                .row
+                  .col
+                    .form-group
+                      a.btn.btn-link.btn-sm.edit-button href="#"
+                        span.fa.fa-edit
+                        |  Modifier mes coordonnées
+                      .d-none.save
+                        = submit "Enregistrer", class: "btn btn-primary btn-sm"
+                        = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
             .row
               .col
-                .form-group
-                  a.btn.btn-link.btn-sm.edit-button href="#"
-                    span.fa.fa-edit
-                    |  Modifier mes coordonnées
-                  .d-none.save
-                    = submit "Enregistrer", class: "btn btn-primary btn-sm"
-                    = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
-        .row
-          .col
-      .col-md-6.text-right
-        = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, external_subscription_link: @external_subscription_link
+          = if length(@meetings) == 0 || @application.submitted_at do
+            .col-md-6.text-right
+              = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, meetings: @meetings
 
-    .row.mb-5.resume-section
-      .col-md-12.my-4
-        h3 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
-        p Profitez de cet espace pour transmettre votre CV au certificateur. Cette étape est facultative et pourra être réalisée ultérieurement.
-      .col-md-12
-        = if @edit_mode || length(@application.resumes) > 0 do
-          .jumbotron.bg-light
-            ul.list-inline
-              = for resume <- @application.resumes do
-                li.list-inline-item.rounded.resume-block
-                  = link to: resume.url, class: "download", data: [analytics: (if @edit_mode, do: "CV#download candidat", else: "CV#download certificateur")] do
-                    .content
-                      span.fa.fa-download
-                      p= resume.filename
-                  = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
-                    span.fa.fa-trash
-              = if @edit_mode do
-                li.list-inline-item.rounded.resume-block.upload-block
-                  = form_for @resume_changeset, Routes.application_resume_path(@conn, :create, @application), [multipart: true, method: :post, class: "resume-upload", data: [analytics: "CV#upload"]], fn f ->
-                    label.file-upload-zone for="resume"
-                      div
-                        span.fa.fa-upload
-                        p.label Ajouter un CV
-                      = file_input f, :file, class: "form-control-file", id: "resume"
-                    = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled'
-        - else
-          p Le candidat n'a pas encore déposé de CV.
+        .row.mb-5.resume-section
+          .col-md-12
+            h3.my-4 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
+            p
+              | Profitez de cet espace pour transmettre votre CV au certificateur pour qu'il vous connaisse mieux.
+              span.disabled= " (Cette étape est facultative.)"
+          .col-md-12
+            = if @edit_mode || length(@application.resumes) > 0 do
+              .jumbotron.bg-light
+                ul.list-inline
+                  = for resume <- @application.resumes do
+                    li.list-inline-item.rounded.resume-block
+                      = link to: resume.url, class: "download", data: [analytics: (if @edit_mode, do: "CV#download candidat", else: "CV#download certificateur")] do
+                        .content
+                          span.fa.fa-download
+                          p= resume.filename
+                      = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
+                        span.fa.fa-trash
+                  = if @edit_mode do
+                    li.list-inline-item.rounded.resume-block.upload-block
+                      = form_for @resume_changeset, Routes.application_resume_path(@conn, :create, @application), [multipart: true, method: :post, class: "resume-upload", data: [analytics: "CV#upload"]], fn f ->
+                        label.file-upload-zone for="resume"
+                          div
+                            span.fa.fa-upload
+                            p.label Ajouter un CV
+                          = file_input f, :file, class: "form-control-file", id: "resume"
+                        = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled'
+            - else
+              p Le candidat n'a pas encore déposé de CV.
 
-    = if length(@user.experiences) > 0 do
-      .row.mb-5
-        .col-sm-12.mb-3
-          h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences professionnelles
-          = unless @edit_mode do
-            p Il s'agit des expériences que le candidat a déclarées dans son espace personnel Pôle emploi. Elles ont donc une valeur indicative.
-        = for experience <- Enum.reverse(@user.experiences) do
-          .col-md-4.mb-4
-            .card
-              .card-body
-                strong= experience.company
-                = " : #{experience.label}"
-                '
-                = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
 
-    = if length(@user.proven_experiences) > 0 do
-      .row.mb-5
-        .col-sm-12.mb-3
-          h3
-            | #{if @edit_mode, do: "Mes", else: "Ses"} expériences attestées
-            = unless @edit_mode do
-              = img_tag "/images/pole_emploi.svg", style: "height: 3rem; margin: 0 20px; position: relative; top: 1px;"
-            | des 10 dernières années
-          = unless @edit_mode do
-            p Il s'agit des expériences professionnelles enregistrées dans le dossier informatique Pôle emploi du candidat, relative aux 10 dernières années. Ces expériences ont fait l'objet d'un contrôle et peuvent dons avoir valeur de preuve pour le traitement de la recevabilité
-        = for {{company_name, label}, experiences} <- @grouped_experiences do
-          .col-md-6.mb-4
-            .card
-              .card-body
-                strong= company_name
-                = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
-                = if label != "Métier indéterminé" do
-                  = "en tant que #{label} "
-                = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
-                = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
-                = " : "
-                ul
-                  = for exp <- experiences do
-                    li
-                      = "#{exp.duration} heures en #{exp.contract_type}, "
-                      = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
+        = if length(@user.experiences) > 0 do
+          .row.mb-5
+            .col-sm-12.mb-3
+              h3 #{if @edit_mode, do: "Mes", else: "Ses"} expériences professionnelles
+              = unless @edit_mode do
+                p Il s'agit des expériences que le candidat a déclarées dans son espace personnel Pôle emploi. Elles ont donc une valeur indicative.
+            = for experience <- Enum.reverse(@user.experiences) do
+              .col-md-4.mb-4
+                .card
+                  .card-body
+                    strong= experience.company
+                    = " : #{experience.label}"
+                    '
+                    = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
 
-    = if length(@user.skills) > 0 do
-      .row.mb-5
-        .col-sm-12
-          h3 #{if @edit_mode, do: "Mes", else: "Ses"} compétences
+        = if length(@user.proven_experiences) > 0 do
+          .row.mb-5
+            .col-sm-12.mb-3
+              h3
+                | #{if @edit_mode, do: "Mes", else: "Ses"} expériences attestées
+                = unless @edit_mode do
+                  = img_tag "/images/pole_emploi.svg", style: "height: 3rem; margin: 0 20px; position: relative; top: 1px;"
+                | des 10 dernières années
+              = unless @edit_mode do
+                p Il s'agit des expériences professionnelles enregistrées dans le dossier informatique Pôle emploi du candidat, relative aux 10 dernières années. Ces expériences ont fait l'objet d'un contrôle et peuvent dons avoir valeur de preuve pour le traitement de la recevabilité
+            = for {{company_name, label}, experiences} <- @grouped_experiences do
+              .col-md-6.mb-4
+                .card
+                  .card-body
+                    strong= company_name
+                    = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
+                    = if label != "Métier indéterminé" do
+                      = "en tant que #{label} "
+                    = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
+                    = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
+                    = " : "
+                    ul
+                      = for exp <- experiences do
+                        li
+                          = "#{exp.duration} heures en #{exp.contract_type}, "
+                          = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
 
-        = for skill <- @user.skills do
-          .col-sm-4.mb-4
-            .card
-              .card-body= skill.label
+        = if length(@user.skills) > 0 do
+          .row.mb-5
+            .col-sm-12
+              h3 #{if @edit_mode, do: "Mes", else: "Ses"} compétences
 
-    = if (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) > 0 do
-      .text-center
-        = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, external_subscription_link: @external_subscription_link
+              ul
+                = for skill <- @user.skills do
+                  li= skill.label
+
+        = if (length(@user.skills) + length(@user.experiences) + length(@user.proven_experiences)) + length(@meetings) > 0 do
+          .text-center.mb-4
+            = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, meetings: @meetings
+        = if length(@meetings) > 0 && is_nil(@application.submitted_at) do
+          .text-right
+            = button "Non merci, je veux juste transmettre mon dossier VAE", to: Routes.application_path(@conn, :update, @application), method: "put", class: "btn btn-link"
+      = if @edit_mode && length(@meetings) > 0 do
+        #transmission.tab-pane.fade role="tabpanel" aria-labelledby="transmission-tab"
+          .row
+            .col-sm-8.offset-sm-2.text-center.my-5
+              h3 Nous avons trouvé plusieurs ateliers collectifs près de chez vous !
+          = form_for @application_changeset, Routes.application_path(@conn, :update, @application), [class: "select-meeting", data: [analytics: "?bouton=soumettre-candidature"]], fn f ->
+            .row
+              .col-sm-8.offset-sm-2
+                p.mb-5 C'est l'occasion de rencontrer un conseiller et un groupe de candidats qui comme vous ont choisi la VAE. Le conseiller vous expliquera le parcours VAE pour votre diplôme et vous donnera des conseils qui seront la clé de votre réussite.
+                p.text-center.mb-5 Choisissez celui auquel vous souhaitez participer :
+            .row
+              .col-sm-12
+                .text-center
+                  h3 Où ?
+                ul.nav.flex-column
+                  = for {{place, address, slug} = place_infos, meetings} <- @meetings do
+                    li.card.meeting-card.place.nav-item id="tab-#{slug}" class="#{if @preselected_place && @preselected_place != place_infos, do: "d-none"}"
+                      .card-body.nav-link data-target="#place-#{slug}" data-toggle="tab" aria-controls="place-#{slug}" class="#{if place_infos == @preselected_place, do: "active"}"
+                        div
+                          h5.strong
+                            = place
+                            small= " (#{length(meetings)} #{Inflex.inflect("date", length(meetings))} #{Inflex.inflect("disponible", length(meetings))})"
+                          p= address
+                = if @preselected_place && (length(@meetings) - 1 > 0) do
+                  .text-right
+                    a.btn.btn-link.show-hidden-meetings href="#"
+                      = if length(@meetings) - 1 == 1 do
+                        = "Voir l'autre lieu disponible"
+                      - else
+                        = "Voir les #{length(@meetings) - 1} autres lieux disponibles"
+
+            .row id="when"
+              .col-sm-12
+                .tab-content
+                  h3.text-center Quand ?
+                  = for {{place, address, slug} = place_infos, meetings} <- @meetings do
+                    div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{slug}" id="place-#{slug}" class="#{if place_infos == @preselected_place, do: "show active"}"
+                      = select(f, :meeting_id, Enum.map(meetings, fn meeting -> [value: meeting.meeting_id, key: "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))} de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}" ] end), class: "custom-select custom-select-lg date-select", id: "select-#{slug}")
+                      / = for meeting <- meetings do
+                      /   label.card.meeting-card.date
+                      /     = radio_button(f, :meeting_id, meeting.meeting_id)
+                      /     .card-body
+                      /       h5
+                      /         = "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))}"
+                      /         = " de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)}"
+            .row
+              .col-sm-12.text-center.my-5
+                button.btn.btn-primary type="submit" name="book" value="on" disabled="true" data-analytics="Profil#Avec Reunion information"
+                  span.fa.fa-plus-circle
+                  = if @application.submitted_at, do: " Réserver ma place", else: " Réserver ma place et transmettre mon dossier"
+            = unless @application.submitted_at do
+              .row
+                .col-sm-12
+                  .pull-right
+                    button.btn.btn-link type="submit" name="book" value="off" Non merci, je veux juste transmettre mon dossier VAE
