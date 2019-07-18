@@ -59,11 +59,20 @@ import $ from 'jquery';
       e.preventDefault();
     })
 
+    const activateSubmitButton = () => {
+      if ($('.meeting-card .card-body.active').length) {
+        $('form.select-meeting').find('button[name="book"]').removeAttr('disabled');
+      } else {
+        $('form.select-meeting').find('button[name="book"]').attr('disabled', 'disabled');
+      }
+    }
+    activateSubmitButton();
+
     $('.meeting-card').on('click', e => {
       document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'});
       $('.date-select').attr('disabled', true);
       $(`#${$(e.currentTarget).attr('id').replace('tab-', 'select-')}`).removeAttr('disabled');
-      $(e.currentTarget).parents('form.select-meeting').find('button[disabled]').removeAttr('disabled');
+      activateSubmitButton();
     });
   }
 })();
