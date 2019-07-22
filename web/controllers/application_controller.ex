@@ -12,29 +12,37 @@ defmodule Vae.ApplicationController do
       case Repo.get(Application, id) do
         nil ->
           nil
+
         application ->
           Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
       end
 
     case has_access?(conn, application, params["hash"]) do
       {:ok, nil} ->
-          conn
-            |> put_status(:not_found)
-            |> put_view(Vae.ErrorView)
-            |> render("404.html", layout: false)
-            |> halt()
-      {:ok, application} ->
+        conn
+        |> put_status(:not_found)
+        |> put_view(Vae.ErrorView)
+        |> render("404.html", layout: false)
+        |> halt()
 
-        meetings = if application.meeting, do: [], else:
-          Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
-          |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end)
-          |> Map.to_list
-          |> Enum.map(fn {{place, _address}, _meetings} -> {{place, _address, Vae.String.parameterize(place)}, _meetings} end)
+      {:ok, application} ->
+        meetings =
+          if application.meeting,
+            do: [],
+            else:
+              Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
+              |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end)
+              |> Map.to_list()
+              |> Enum.map(fn {{place, _address}, _meetings} ->
+                {{place, _address, Vae.String.parameterize(place)}, _meetings}
+              end)
 
         preselected_place =
           Enum.find(meetings, {nil, []}, fn {{place, _address, slug}, _meetings} ->
-            (place |> String.split(",") |> List.last() |> String.trim()) == application.delegate.city
-          end) |> (fn {infos, _m} -> infos end).()
+            place |> String.split(",") |> List.last() |> String.trim() ==
+              application.delegate.city
+          end)
+          |> (fn {infos, _m} -> infos end).()
 
         render(conn, "show.html", %{
           title:
@@ -63,7 +71,9 @@ defmodule Vae.ApplicationController do
           meetings: meetings
         })
 
-      {:error, %{to: to, msg: msg}} -> send_error(conn, application, msg)
+      {:error, %{to: to, msg: msg}} ->
+        send_error(conn, application, msg)
+
         conn
         |> put_flash(:error, msg)
         |> redirect(to: to)
@@ -84,27 +94,41 @@ defmodule Vae.ApplicationController do
           {:ok, application} ->
             if application.delegate.academy_id do
               meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
-              case Application.set_registered_meeting(application, application.delegate.academy_id, meeting_id) do
+
+              case Application.set_registered_meeting(
+                     application,
+                     application.delegate.academy_id,
+                     meeting_id
+                   ) do
                 {:ok, application} ->
-                  redirect(conn, to:
-                    Routes.application_france_vae_redirect_path(conn, :france_vae_redirect, application,
-                      %{academy_id: application.delegate.academy_id} |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
-                    )
+                  redirect(conn,
+                    to:
+                      Routes.application_france_vae_redirect_path(
+                        conn,
+                        :france_vae_redirect,
+                        application,
+                        %{academy_id: application.delegate.academy_id}
+                        |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
+                      )
                   )
-                {:error, msg} -> send_error(conn, application, msg)
+
+                {:error, msg} ->
+                  send_error(conn, application, msg)
               end
             else
               conn
-                |> put_flash(:success, "Dossier transmis avec succès!")
-                |> redirect(to: Routes.application_path(conn, :show, application))
+              |> put_flash(:success, "Dossier transmis avec succès!")
+              |> redirect(to: Routes.application_path(conn, :show, application))
             end
-          {:error, msg} -> send_error(conn, application, msg)
+
+          {:error, msg} ->
+            send_error(conn, application, msg)
         end
 
       {:error, %{to: to, msg: msg}} ->
         conn
-          |> put_flash(:error, msg)
-          |> redirect(to: to)
+        |> put_flash(:error, msg)
+        |> redirect(to: to)
     end
   end
 
@@ -168,10 +192,13 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def france_vae_redirect(conn, %{
-    "application_id" => id,
-    "academy_id" => academy_id
-  } = params) do
+  def france_vae_redirect(
+        conn,
+        %{
+          "application_id" => id,
+          "academy_id" => academy_id
+        } = params
+      ) do
     application =
       case Repo.get(Application, id) do
         nil -> nil
@@ -184,7 +211,8 @@ defmodule Vae.ApplicationController do
 
         render(conn, "france-vae-redirect.html", %{
           container_class: "d-flex flex-grow-1",
-          user_registration: Vae.Delegates.FranceVae.UserRegistration.from_application(application),
+          user_registration:
+            Vae.Delegates.FranceVae.UserRegistration.from_application(application),
           form_url: Vae.Delegates.FranceVae.Config.get_france_vae_form_url(academy_id, meeting_id)
         })
 
@@ -269,7 +297,9 @@ defmodule Vae.ApplicationController do
     conn
     |> put_flash(
       :error,
-      Phoenix.HTML.raw("Une erreur est survenue: <br />\"#{inspect(msg)}\"<br />N'hésitez pas à nous contacter pour plus d'infos.")
+      Phoenix.HTML.raw(
+        "Une erreur est survenue: <br />\"#{inspect(msg)}\"<br />N'hésitez pas à nous contacter pour plus d'infos."
+      )
     )
     |> redirect(to: Routes.application_path(conn, :show, application))
   end

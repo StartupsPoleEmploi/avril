@@ -9,6 +9,7 @@ defmodule Vae.Delegates.FranceVae.Meeting do
     field(:place, :string)
     field(:address, :string)
     field(:target, :string)
+    field(:remaining_places, :integer)
     field(:start_date, :naive_datetime)
     field(:end_date, :naive_datetime)
   end

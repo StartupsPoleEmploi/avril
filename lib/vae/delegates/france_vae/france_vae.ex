@@ -106,7 +106,8 @@ defmodule Vae.Delegates.FranceVae do
       address: params["addresse"],
       target: params["cible"],
       start_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_debut"]),
-      end_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_fin"])
+      end_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_fin"]),
+      remaining_places: params["nb_places"]
     }
   end
 
