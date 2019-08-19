@@ -96,7 +96,7 @@ defmodule Vae.Delegate do
       )
       |> Map.merge(
         case params[:academy_id] do
-          nil -> nil
+          nil -> %{}
           id -> %{academy_id: Integer.to_string(id)}
         end
       )
@@ -223,12 +223,12 @@ defmodule Vae.Delegate do
 
   def external_subscription_link(%__MODULE__{} = delegate) do
     if delegate.academy_id do
-        Vae.Delegates.FranceVae.Config.get_france_vae_academy_page(delegate.academy_id)
+      Vae.Delegates.FranceVae.Config.get_france_vae_academy_page(delegate.academy_id)
     else
       # This case should not happen after academy_ids are set
       if is_educ_nat?(delegate) && !is_corse?(delegate) do
         Repo.preload(delegate, :process).process.booklet_1 ||
-        Vae.Delegates.FranceVae.Config.get_domain_name()
+          Vae.Delegates.FranceVae.Config.get_domain_name()
       end
     end
   end

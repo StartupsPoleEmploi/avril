@@ -9,6 +9,8 @@
     .row.my-5
       .col-lg-10.offset-lg-1
         = render Vae.ComponentView, "searchbar.html", conn: @conn
+        .text-left.pt-2
+          = link("Je ne trouve pas mon métier", to: "https://avril_la_vae_facile.typeform.com/to/ZMi91e", class: "nav-link")
     .row
       .col-md-12
         p.dm-logo Avril est une initiative Pôle emploi

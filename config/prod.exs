@@ -14,7 +14,7 @@ config :vae, Vae.Scheduler,
   jobs: [
     campaign_task: [
       timezone: "Europe/Paris",
-      schedule: "30 14 17 7 *",
+      schedule: "30 14 23 7 *",
       task: &Vae.Mailer.execute/0
     ],
     crm_monthly_task: [

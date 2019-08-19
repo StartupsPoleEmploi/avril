@@ -94,4 +94,20 @@ defmodule Vae.Search.Client.Algolia do
     |> List.last()
     |> String.downcase()
   end
+
+  def clear_index(index) do
+    index
+    |> get_index_name()
+    |> Algolia.clear_index()
+  end
+
+  def index(entries, model) do
+    objects = Enum.map(entries, &model.format_for_index/1)
+    Algolia.save_objects(get_index_name(model), objects, id_attribute: :id)
+  end
+
+  @spec set_settings(String.t(), Map.t()) :: {:ok, Map.t()} | {:error, String.t(), String.t()}
+  def set_settings(index, settings) do
+    Algolia.set_settings(index, settings)
+  end
 end
