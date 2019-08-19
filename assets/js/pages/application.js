@@ -60,7 +60,7 @@ import $ from 'jquery';
     })
 
     const activateSubmitButton = () => {
-      if ($('.meeting-card .card-body.active').length) {
+      if ($('select.date-select:not(:disabled)').length) {
         $('form.select-meeting').find('button[name="book"]').removeAttr('disabled');
       } else {
         $('form.select-meeting').find('button[name="book"]').attr('disabled', 'disabled');

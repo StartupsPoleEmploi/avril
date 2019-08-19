@@ -234,7 +234,7 @@
                       /         = " (#{meeting.remaining_places} places restantes)"
             .row
               .col-sm-12.text-center.my-5
-                button.btn.btn-primary type="submit" name="book" value="on" disabled="true" data-analytics="Profil#Avec Reunion information"
+                button.btn.btn-primary type="submit" name="book" value="on" disabled=!@preselected_place data-analytics="Profil#Avec Reunion information"
                   span.fa.fa-plus-circle
                   = if @application.submitted_at, do: " Réserver ma place", else: " Réserver ma place et transmettre mon dossier"
             = unless @application.submitted_at do
