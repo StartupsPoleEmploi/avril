@@ -52,7 +52,7 @@ defmodule Vae.ExAdmin.Application do
         row :certification
         row :delegate
         row :submitted_at
-        # row :meeting
+        row :meeting
         row :admissible_at
         row :inadmissible_at
         row :inserted_at
