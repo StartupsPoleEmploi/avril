@@ -21,9 +21,7 @@ defmodule Vae.Delegates.Afpa.Server do
       # read_concurrency: true,
       # write_concurrency: true
     ])
-    if length(get_meetings()) == 0 do
-      do_refresh()
-    end
+    do_refresh(true)
     {:ok, nil}
   end
 
@@ -51,8 +49,10 @@ defmodule Vae.Delegates.Afpa.Server do
     end
   end
 
-  defp do_refresh() do
-    :ets.insert(@ets_table, {@ets_key, Vae.Delegates.Afpa.Scraper.scrape_all_events()})
+  defp do_refresh(only_if_empty\\false) do
+    if (length(get_meetings()) == 0) || !only_if_empty do
+      :ets.insert(@ets_table, {@ets_key, Vae.Delegates.Afpa.Scraper.scrape_all_events()})
+    end
     schedule_refresh()
   end
 
