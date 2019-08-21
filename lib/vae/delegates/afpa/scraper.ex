@@ -1,5 +1,6 @@
 defmodule Vae.Delegates.Afpa.Scraper do
   require Logger
+  import Ecto.Query
 
   def scrape_all_events(page\\0) do
     case scrape_page_events(page) do
@@ -74,7 +75,7 @@ defmodule Vae.Delegates.Afpa.Scraper do
             address: address,
             postal_code: String.to_integer(postal_code),
             city: city
-          } |> Map.merge(%{geolocation: Vae.Places.Client.Algolia.get_geoloc_from_postal_code(String.to_integer(postal_code))})
+          } |> Map.merge(%{geolocation: Vae.Places.Client.Algolia.get_geoloc_from_address("#{address} #{postal_code} #{city}")})
         end
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
@@ -110,4 +111,30 @@ defmodule Vae.Delegates.Afpa.Scraper do
     |> Integer.to_string
     |> String.pad_leading(2, "0")
   end
+
+  def match_events_with_delegates(meetings) do
+    afpas = Vae.Repo.all(from d in Vae.Delegate, where: like(d.slug, ^"%afpa%"))
+    Enum.map(meetings, fn meeting -> Map.merge(meeting, %{
+      afpas: Enum.filter(afpas, fn afpa -> calc_distance_from_coords(
+        meeting.geolocation["_geoloc"]["lat"],
+        meeting.geolocation["_geoloc"]["lng"],
+        afpa.geolocation["_geoloc"]["lat"],
+        afpa.geolocation["_geoloc"]["lng"]
+      ) < 50 end)
+    }) end)
+  end
+
+  defp calc_distance_from_coords(lat1, lng1, lat2, lng2) do
+    dLat = deg2rad(lat2-lat1)
+    dLon = deg2rad(lng2-lng1)
+    a =
+      :math.sin(dLat/2) * :math.sin(dLat/2) +
+      :math.cos(deg2rad(lat1)) * :math.cos(deg2rad(lat2)) *
+      :math.sin(dLon/2) * :math.sin(dLon/2)
+      ;
+    2 * :math.atan2(:math.sqrt(a), :math.sqrt(1-a)) * 6_371 # Radius of the earth in km
+  end
+
+  defp deg2rad(deg), do: deg * (:math.pi/180)
+
 end
