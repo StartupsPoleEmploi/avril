@@ -4,8 +4,6 @@ defmodule Vae.Delegates.FranceVae.Server do
 
   alias Vae.Delegates.FranceVae
 
-  @name Delegates
-
   @doc false
   def start_link(delegate) do
     GenServer.start_link(__MODULE__, delegate, name: delegate)
@@ -31,16 +29,25 @@ defmodule Vae.Delegates.FranceVae.Server do
     {:noreply, updated_state}
   end
 
+  @impl true
   def handle_call(:get_academies, _from, state) do
     {:reply, FranceVae.get_academies(), state}
   end
 
+  @impl true
   def handle_call({:get_meetings, academy_id}, _from, state) do
     {:reply, FranceVae.get_meetings(academy_id), state}
   end
 
-  def handle_call({:post_meeting_registration, academy_id, meeting_id, user}, _from, state) do
-    {:reply, FranceVae.post_meeting_registration(academy_id, meeting_id, user), state}
+  @impl true
+  def handle_call({:register_to_meeting, academy_id, meeting_id, user}, _from, state) do
+    {:reply, FranceVae.register(academy_id, meeting_id, user), state}
+  end
+
+  @impl true
+  def handle_info(msg, state) do
+    Logger.error(fn -> inspect("Incoming unknown msg: #{msg}") end)
+    {:no_reply, state}
   end
 
   defp get_data(:france_vae) do

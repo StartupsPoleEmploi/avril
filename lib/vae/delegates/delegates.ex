@@ -9,7 +9,7 @@ defmodule Vae.Delegates do
     GenServer.call(:france_vae, {:get_meetings, academy_id})
   end
 
-  def post_meeting_registration(academy_id, meeting_id, user) do
-    GenServer.call(:france_vae, {:post_meeting_registration, academy_id, meeting_id, user})
+  def register_to_france_vae_meeting(academy_id, meeting_id, application) do
+    GenServer.call(:france_vae, {:register_to_meeting, academy_id, meeting_id, application})
   end
 end

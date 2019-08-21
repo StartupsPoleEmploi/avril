@@ -3,7 +3,16 @@ defmodule Vae.Application do
 
   use Vae.Web, :model
 
-  alias Vae.{ApplicationEmail, Certification, Delegate, Delegates.FranceVae.Meeting, Email, Repo, Resume, User}
+  alias Vae.{
+    ApplicationEmail,
+    Certification,
+    Delegate,
+    Delegates.FranceVae.Meeting,
+    Email,
+    Repo,
+    Resume,
+    User
+  }
 
   schema "applications" do
     # Triggers an analytics event at the front
@@ -118,10 +127,12 @@ defmodule Vae.Application do
   end
 
   def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
+
   def set_registered_meeting(application, academy_id, meeting_id) do
-    meeting = Vae.Delegates.get_france_vae_meetings(
-      application.delegate.academy_id
-    ) |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
+    meeting =
+      Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
+      |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
+
     application
     |> change()
     |> put_embed(:meeting, meeting)
@@ -136,5 +147,4 @@ defmodule Vae.Application do
   defp generate_hash(length) do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end
-
 end

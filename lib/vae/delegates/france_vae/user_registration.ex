@@ -1,4 +1,5 @@
 defmodule Vae.Delegates.FranceVae.UserRegistration do
+  @derive Jason.Encoder
   defstruct civilite: nil,
             nom: nil,
             nomNaiss: nil,
@@ -15,7 +16,11 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
             origine: 19,
             # Chosen diplome
             diplome: 1,
-            diplomeVise: nil
+            diplomeVise: nil,
+            # 1 => Réunion, 2 => Demande d'infos
+            type: 2,
+            # meeting_id
+            reunion: nil
 
   def from_application(application = %Vae.Application{}) do
     user = application.user
@@ -38,8 +43,20 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
     )
   end
 
-  defp format_birthday(nil), do: nil
-  defp format_birthday(birthday), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
+  def new_meeting_registration(application, meeting_id) do
+    application
+    |> from_application()
+    |> Map.merge(%{
+      reunion: meeting_id,
+      type: 1,
+      dateNaissance: format_birthday(application.user.birthday, :api)
+    })
+  end
+
+  defp format_birthday(birthday, for \\ :form)
+  defp format_birthday(nil, _for), do: nil
+  defp format_birthday(birthday, :api), do: Timex.format!(birthday, "%Y-%m-%d", :strftime)
+  defp format_birthday(birthday, _for), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
 
   defp format_address(user) do
     Enum.reduce(
@@ -67,6 +84,7 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
   end
 
   defp format_phone_number(nil), do: nil
+
   defp format_phone_number(phone_number) do
     String.replace(phone_number, ~r/(\s|\.)+/, "")
   end

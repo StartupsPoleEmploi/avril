@@ -1,7 +1,10 @@
 defmodule Vae.Delegates.FranceVae do
+  require Logger
+
   alias Vae.Delegates.Cache
   alias Vae.Delegates.FranceVae.Config
   alias Vae.Delegates.FranceVae.Meeting
+  alias Vae.Delegates.FranceVae.UserRegistration
 
   @name FranceVae
 
@@ -45,19 +48,35 @@ defmodule Vae.Delegates.FranceVae do
     end
   end
 
-  def post_meeting_registration(academy_id, meeting_id, user) do
+  def register(academy_id, meeting_id, application) do
     token = get_token()
 
     headers = [
-      {"Authorization", "Bearer #{token}"}
+      {"Authorization", "Bearer #{token}"},
+      {"Content-Type", "application/json"}
     ]
 
-    {:ok, response} =
-      HTTPoison.post(
-        "https://#{Config.get_base_url()}/academie/inscription-rdv/#{academy_id}/#{meeting_id}",
-        Vae.Delegates.FranceVae.UserRegistration.from_user(user),
-        headers
-      )
+    user_registration =
+      application
+      |> UserRegistration.new_meeting_registration(meeting_id)
+      |> Jason.encode!()
+
+    with {:ok, response} <-
+           HTTPoison.post(
+             "#{Config.get_base_url()}/formulaires/#{academy_id}",
+             user_registration,
+             headers
+           ),
+         {:ok, body} <- response.body |> Jason.decode() do
+      case response.status_code do
+        200 -> {:ok, body}
+        _ -> {:error, body["error"]}
+      end
+    else
+      {:error, msg} = error ->
+        Logger.error(fn -> inspect(msg) end)
+        error
+    end
   end
 
   def get_token() do

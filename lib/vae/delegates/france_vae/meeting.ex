@@ -26,9 +26,8 @@ defmodule Vae.Delegates.FranceVae.Meeting do
   defimpl ExAdmin.Render, for: __MODULE__ do
     def to_string(data) do
       markup do
-        pre Jason.encode!(Map.from_struct(data), pretty: true)
+        pre(Jason.encode!(Map.from_struct(data), pretty: true))
       end
     end
   end
 end
-
