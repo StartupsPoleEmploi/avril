@@ -14,7 +14,6 @@ body {
   flex-direction: column;
   align-items: stretch;
   background-color: $white;
-
   &.app {
     background: $dm-primary-light-grey;
   }
@@ -160,3 +159,14 @@ select.custom-select {
   -moz-appearance: none;
   appearance: none;
 }
+
+.container {
+  position: relative;
+  .uncontainer {
+    position: absolute;
+    width: 100vw;
+    min-height: 10px;
+    @include make-uncontainer-responsive();
+  }
+}
+

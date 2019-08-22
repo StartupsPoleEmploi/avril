@@ -65,6 +65,15 @@ defmodule Vae.PageController do
     )
   end
 
+  def financement(conn, _params) do
+    render(conn, "financement.html",
+      title: "Comment financer ma VAE ?",
+      description: "Il existe de nombreuses solutions de financement pour votre projet de VAE. Decouvrez comment cela fonctionne.",
+      body_class: 'home-white'
+      # no_container: true
+    )
+  end
+
   def stats(conn, _params) do
     redirect(conn, external: "https://datastudio.google.com/u/0/reporting/1t7iUT7wGQn9U7ODZeDyXIvIRlK-BJAZs/page/1M")
   end
