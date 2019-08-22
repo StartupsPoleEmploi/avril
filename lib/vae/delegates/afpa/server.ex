@@ -21,7 +21,9 @@ defmodule Vae.Delegates.Afpa.Server do
       # read_concurrency: true,
       # write_concurrency: true
     ])
-    do_refresh()
+    if length(get_meetings()) == 0 do
+      do_refresh()
+    end
     {:ok, nil}
   end
 
@@ -32,13 +34,13 @@ defmodule Vae.Delegates.Afpa.Server do
 
   @impl true
   def handle_info(:refresh, state) do
-    do_refresh(true)
+    do_refresh()
     {:noreply, state}
   end
 
   @impl true
   def handle_cast(:refresh, state) do
-    do_refresh(true)
+    do_refresh()
     {:noreply, state}
   end
 
@@ -49,17 +51,9 @@ defmodule Vae.Delegates.Afpa.Server do
     end
   end
 
-  defp do_refresh(override_existing_data\\false) do
-    if (length(get_meetings()) == 0) || override_existing_data do
-      :ets.insert(@ets_table, {@ets_key, Vae.Delegates.Afpa.Scraper.scrape_all_events()})
+  defp do_refresh() do
+    if :ets.insert(@ets_table, {@ets_key, Vae.Delegates.Afpa.Scraper.scrape_all_events()}) do
+      :ets.insert(@ets_table, {:lastUpdatedAt, Timex.now()})
     end
-    schedule_refresh()
-  end
-
-  defp schedule_refresh() do
-    next_day_5_am = Timex.now() |> Timex.end_of_day() |> Timex.shift(hours: 5)
-    next_run_seconds_delay = Timex.diff(next_day_5_am, Timex.now(), :millisecond)
-    Logger.info("Process will run in #{next_run_seconds_delay} seconds")
-    Process.send_after(self(), :refresh, next_run_seconds_delay)
   end
 end
