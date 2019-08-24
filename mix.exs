@@ -71,13 +71,13 @@ defmodule Vae.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.8"},
       {:jason, "~> 1.0"},
-      {:httpoison, "~> 1.4"}, # TODO: remove dependency: not needed anymore
+      {:httpoison, "~> 1.5"},
+      {:floki, "~> 0.21.0"},
       {:poison, "~> 3.0", override: true}, # TODO: remove dependency: not needed anymore
       {:phoenix_slime, "~> 0.12.0"},
       # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
       {:ex_admin, github: "augnustin/ex_admin"},
       {:coherence, "~> 0.5.2"},
-      {:floki, "~> 0.19.0", only: :dev},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},
