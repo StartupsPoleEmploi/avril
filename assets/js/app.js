@@ -126,6 +126,6 @@ function stepLabel(width) {
   if (width < 768) {
     return "Votre métier";
   } else {
-    return "Pour quel métier souhaitez-vous un diplôme ?";
+    return "Tapez le métier pour lequel vous souhaitez obtenir un diplôme";
   }
 }
