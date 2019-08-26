@@ -1,80 +1,81 @@
-.uncontainer
-  .d-flex.justify-content-end
-    = img_tag "/images/Madame.png", style: "z-index: 100;"
-section.row
-  .col.col-md-8.offset-md-1.mb-5
-      button.btn.btn-link.btn-history-back
-        span.ic-icon.ic-tail-left.mr-3
-        | Retour
-section.row
-  .col.col-md-8.offset-md-1.pb-5
-      h1.my-5 Financer sa VAE
-      h2.mb-4 Nous allons vous aider à vous y retrouver !
-      p.mb-4 Selon votre situation, le financement peut être pris en charge par Pôle emploi, la Région, les OPCO, le compte personnel de formation (CPF) ... il y a toujours une solution !
+.financement
+  .uncontainer
+    .d-flex.justify-content-end
+      = img_tag "/images/Madame.png", style: "z-index: 100;"
+  section.row
+    .col.col-md-8.offset-md-1.mb-5
+        button.btn.btn-link.btn-history-back
+          span.ic-icon.ic-tail-left.mr-3
+          | Retour
+  section.row
+    .col.col-md-8.offset-md-1.pb-5
+        h1.my-5 Financer sa VAE
+        h2.mb-4 Nous allons vous aider à vous y retrouver !
+        p.mb-4 Selon votre situation, le financement peut être pris en charge par Pôle emploi, la Région, les OPCO, le compte personnel de formation (CPF) ... il y a toujours une solution !
 
-      = link to: "#", class: "btn btn-link" do
+        = link to: "#", class: "btn btn-link" do
+          span.ic-icon.ic-tail-right.mr-3
+          | Trouver mon financement
+
+  section.row
+    .col.col-md-10.offset-md-1.bg-primary.p-5.with-arrow
+
+      h2 Le financement ne doit pas être un frein : des solutions existent pour chaque candidat
+
+  section.row
+    .col.col-md-4.offset-md-1.py-5
+      h4 En résumé
+
+      p Le financement d'une VAE dépend de votre situation actuelle : salariée, demandeur d'emploi, travailleurs handicapés ...
+      p Soyez rassuré, il existe des solutions et des organismes dans la majorité des cas. Il suffit juste de contacter les bonnes personnes et les bons sites !
+
+    .col.col-md-4.bg-secondary.d-flex.align-items-center.justify-content-center.move-up
+      = link to: "#", class: "btn btn-primary" do
         span.ic-icon.ic-tail-right.mr-3
         | Trouver mon financement
 
-section.row
-  .col.col-md-10.offset-md-1.bg-primary.p-5
+  section.row
+    .col.col-md-5 style="background-image: url('/images/reunion-financement.jpg'); background-size: cover;"
+    .col.col-md-5.py-6.px-5
+      h3 Un parcours humain
 
-    h2 Le financement ne doit pas être un frein : des solutions existent pour chaque candidat
+      p La VAE est avant tout un parcours de coordination humaine. La VAE vous concerne vous mais aussi le certificateur (celui qui vous délivre le diplôme), l'accompagnateur (celui qui vous conseille) et le jury (qui évalue votre dossier).
 
-section.row
-  .col.col-md-4.offset-md-1.py-5
-    h4 En résumé
+      p Comme vous allez prendre du temps pour rédiger votre dossier, il en faudra tout autant pour le lire. Vous allez sans doute avoir besoin d'un accompagnement pour vous aider à obtenir de meilleurs résultats plus rapidement. C'est le temps que toutes ces personnes vont mettre à votre disposition qu'il faut financer, ainsi que des frais d'inscription, de déplacement éventuels, de jury etc. Pour cela, nous allons vous expliquer comment solliciter l'aide des différents financeurs possibles (Pôle emploi, le conseil régional, les OPCO ...)
 
-    p Le financement d'une VAE dépend de votre situation actuelle : salariée, demandeur d'emploi, travailleurs handicapés ...
-    p Soyez rassuré, il existe des solutions et des organismes dans la majorité des cas. Il suffit juste de contacter les bonnes personnes et les bons sites !
+  section.row
+    .col.col-md-8.offset-md-2.p-5
+      bloquote.h2
+        strong « Avril et les différents organismes sont là pour vous aider et vous fournir le soutien nécessaire à la réussite de votre projet »
+      .author.text-center.my-4
+        p.name
+          strong Marie
+        .role CEO d'Avril
 
-  .col.col-md-4.bg-secondary.d-flex.align-items-center.justify-content-center
-    = link to: "#", class: "btn btn-primary" do
-      span.ic-icon.ic-tail-right.mr-3
-      | Trouver mon financement
+  section.row
+    .col.col-md-4.offset-md-1.p-5
+      h3 Le financement dépend de votre situation actuelle
 
-section.row
-  .col.col-md-6 style="background-image: url('/images/reunion-financement.jpg'); background-size: cover;"
-  .col.col-md-6.py-6.px-5
-    h3 Un parcours humain
-
-    p La VAE est avant tout un parcours de coordination humaine. La VAE vous concerne vous mais aussi le certificateur (celui qui vous délivre le diplôme), l'accompagnateur (celui qui vous conseille) et le jury (qui évalue votre dossier).
-
-    p Comme vous allez prendre du temps pour rédiger votre dossier, il en faudra tout autant pour le lire. Vous allez sans doute avoir besoin d'un accompagnement pour vous aider à obtenir de meilleurs résultats plus rapidement. C'est le temps que toutes ces personnes vont mettre à votre disposition qu'il faut financer, ainsi que des frais d'inscription, de déplacement éventuels, de jury etc. Pour cela, nous allons vous expliquer comment solliciter l'aide des différents financeurs possibles (Pôle emploi, le conseil régional, les OPCO ...)
-
-section.row
-  .col.col-md-8.offset-md-2.p-5
-    bloquote.h2
-      strong « Avril et les différents organismes sont là pour vous aider et vous fournir le soutien nécessaire à la réussite de votre projet »
-    .author.text-center.my-4
-      p.name
-        strong Marie
-      .role CEO d'Avril
-
-section.row
-  .col.col-md-4.offset-md-1.p-5
-    h3 Le financement dépend de votre situation actuelle
-
-    p Soyez tranquille, il y a toutes les chances que vous soyez financé ! Dans le cas des demandeurs d'emploi, 95% des dossiers sont financés dans leur totalité par exemple.
-    p Nous vous avons résumé les différentes situations et les différentes possibilités dans des fiches de renseignement.
+      p Soyez tranquille, il y a toutes les chances que vous soyez financé ! Dans le cas des demandeurs d'emploi, 95% des dossiers sont financés dans leur totalité par exemple.
+      p Nous vous avons résumé les différentes situations et les différentes possibilités dans des fiches de renseignement.
 
 
-  .col.col-md-7.p-5.bg-secondary
-    h6 Vous êtes :
-    select
-      option Demandeur d'emploi
+    .col.col-md-7.p-5.bg-secondary.with-arrow.left
+      h6 Vous êtes :
+      select
+        option Demandeur d'emploi
 
-    h6 Votre financement :
+      h6 Votre financement :
 
-    p La prise en charge se fait par Pôle emploi et / ou le conseil régional, dont chaque directeur régional fixe les barèmes de prise en charge de la VAE.
+      p La prise en charge se fait par Pôle emploi et / ou le conseil régional, dont chaque directeur régional fixe les barèmes de prise en charge de la VAE.
 
-    p Le candidat doit formuler sa demande de prise en charge dès réception de se recevabilité à son conseiller référent à Pôle emploi.
+      p Le candidat doit formuler sa demande de prise en charge dès réception de se recevabilité à son conseiller référent à Pôle emploi.
 
-section.row
-  .col.col-md-6.offset-md-3.p-5.my-4
-    h3.my-5.text-center Et ensuite ?
+  section.row
+    .col.col-md-6.offset-md-3.p-5.my-4
+      h3.my-5.text-center Et ensuite ?
 
-    p Poursuivez votre démarche de VAE sans plus attendre ! Transmettez votre demande et votre dossier Pôle emploi d'expériences et compétences ! Le certificateur du diplôme que vous avez choisi pourra ainsi vous contacter rapidement grâce à Avril !
+      p Poursuivez votre démarche de VAE sans plus attendre ! Transmettez votre demande et votre dossier Pôle emploi d'expériences et compétences ! Le certificateur du diplôme que vous avez choisi pourra ainsi vous contacter rapidement grâce à Avril !
 
-    .text-center.my-5
-      = link "Trouver ma VAE", to: "#", class: "btn btn-primary"
+      .text-center.my-5
+        = link "Trouver ma VAE", to: "#", class: "btn btn-primary"
