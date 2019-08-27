@@ -1,5 +1,4 @@
 a {
-  // color: #000;
   position: relative;
 
   .content & {
@@ -38,6 +37,10 @@ a {
       }
     }
   }
+}
+
+.bg-secondary a[target="_blank"] {
+  color: $white;
 }
 
 a, button {
