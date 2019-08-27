@@ -123,10 +123,12 @@
         li.nav-item
           = render Vae.ComponentView, "active_link.html", text: "Bien choisir son diplôme", class: "nav-link p-0", to: Routes.page_path(@conn, :choose_certification), conn: @conn
         li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: Routes.page_path(@conn, :accessibility_promess), conn: @conn
-        li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Points Relais Conseil", class: "nav-link p-0", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :financement), conn: @conn
         li.nav-item
          = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
         li.nav-item
          = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Points Relais Conseil", class: "nav-link p-0", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: Routes.page_path(@conn, :accessibility_promess), conn: @conn

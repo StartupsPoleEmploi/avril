@@ -1,4 +1,5 @@
 .financement {
+  // font-size: 1.1em;
   .with-arrow {
     position: relative;
     &:before {
@@ -14,16 +15,19 @@
       border-top: 1rem solid white;
     }
 
-    &.left {
-      &:before {
-        top: 5rem;
-        left: 0;
-        border-top: 3rem solid transparent;
-        border-bottom: 3rem solid transparent;
-        border-left: 3rem solid white;
-        border-right: none;
+    @include media-breakpoint-up(lg) {
+      &.left {
+        &:before {
+          top: 5rem;
+          left: 0;
+          border-top: 3rem solid transparent;
+          border-bottom: 3rem solid transparent;
+          border-left: 3rem solid white;
+          border-right: none;
+        }
       }
     }
+
   }
 
   .move-up {

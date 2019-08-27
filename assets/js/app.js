@@ -12,6 +12,7 @@ import './components/searchbar';
 import './components/pagination';
 import './components/level-selector';
 import './pages/application';
+import './pages/financement';
 
 window.jQuery = jQuery;
 window.$ = jQuery;
