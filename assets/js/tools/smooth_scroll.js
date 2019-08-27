@@ -19,8 +19,9 @@ $('a[href*="#"]')
       if (target.length) {
         // Only prevent default if animation is actually gonna happen
         event.preventDefault();
+        const navbarHeight = $('nav.navbar').outerHeight() || 0;
         $('html, body').animate({
-          scrollTop: target.offset().top
+          scrollTop: target.offset().top - navbarHeight
         }, 1000, function() {
           // Callback after animation
           // Must change focus!
