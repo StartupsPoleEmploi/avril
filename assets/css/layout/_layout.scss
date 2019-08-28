@@ -5,7 +5,7 @@ html {
   position: relative;
   display: flex;
   flex-direction: column;
-  @include firefox-printable()
+  @include firefox-printable();
 }
 
 body {
@@ -13,32 +13,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background-color: $white;
+  background: $dm-primary-light-grey;
 
-  &.app {
-    background: $dm-primary-light-grey;
-  }
-
-  &.home {
-    @include media-breakpoint-up(md) {
-      height: 40px;
-      background-repeat: no-repeat;
-      background-image: url('/images/dm-deco-green-medium.svg'), url('/images/dm-deco-green-large.svg'), url('/images/dm-deco-gray-large.svg'), url('/images/dm-deco-green-large.svg'), url('/images/dm-deco-green-medium.svg'), url('/images/dm-deco-violet-tiny.svg');
-      background-position: calc(100% + 400px) 200px, -800px 350px, calc(100% + 600px) 1000px, -800px 2300px, -400px 3850px, calc(100% + 350px) 4600px;
-    }
-  }
-
-  &.home-white {
-    .content {
-      margin-top: 3rem;
-      margin-bottom: 3rem;
-    }
-  }
-
-  &.landing-extend {
-    .content {
-      overflow: hidden;
-    }
+  .content {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
   }
 }
 
@@ -46,11 +25,11 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  @include firefox-printable()
+  @include firefox-printable();
 }
 
 .row {
-  @include firefox-printable()
+  @include firefox-printable();
 }
 
 footer,
@@ -59,99 +38,40 @@ main {
   flex-shrink: 0;
 }
 
-.dm-logo {
-  color: $dm-logo;
-  font: 18px/30px $dm-font-lato;
-}
+// mark {
+//   color: inherit;
+//   position: relative;
+//   padding: 0;
+//   text-decoration: none;
+//   background: linear-gradient(180deg, transparent calc(100% - 6px), $dm-primary-green calc(100% - 6px));
+// }
 
-mark {
-  color: inherit;
-  position: relative;
-  padding: 0;
-  text-decoration: none;
-  background: linear-gradient(180deg, transparent calc(100% - 6px), $dm-primary-green calc(100% - 6px));
-}
+// /* Delegator #show*/
+// $header-height: 5rem;
 
-/* Delegator #show*/
-$header-height: 5rem;
+// .step-title:before {
+//   display: block;
+//   content: " ";
+//   margin-top: -$header-height;
+//   height: $header-height;
+//   visibility: hidden;
+// }
 
-.step-title:before {
-  display: block;
-  content: " ";
-  margin-top: -$header-height;
-  height: $header-height;
-  visibility: hidden;
-}
+// .brand-icon {
+//   width: 2rem;
+//   height: 2rem;
+//   background-color: $brand-primary;
+//   fill: white;
+//   border-radius: 50%;
+// }
 
-.alert:empty {
-  display: none;
-}
-
-.brand-icon {
-  width: 2rem;
-  height: 2rem;
-  background-color: $brand-primary;
-  fill: white;
-  border-radius: 50%;
-}
-
-.autopromo {
-  margin: 3rem;
-  padding: 2rem;
-  text-align: center;
-  border: 1px solid $brand-primary;
-  border-radius: 2px;
-}
-
-a[target="_blank"]:before,
-a[href^="mailto:"]:before {
-  font-family: FontAwesome;
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  text-decoration: inherit;
-  margin-right: 0.3rem;
-}
-
-a[href^="mailto:"]:before {
-  content: "\f003";
-}
-/* Utils */
-.no-border {
-  border-style: none;
-}
-
-.line {
-  height: 6px;
-  width: 80%;
-  margin-bottom: 0.5rem;
-}
-
-#steps {
-  h3 {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-}
-
-// illustration landing page "certificateur definition"
-.illustration-grand-diplome {
-  top: -3rem;
-}
-
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
-  -webkit-appearance:none;
-}
-
-.bg-primary {
-  .btn-link {
-    border: none;
-    cursor: pointer;
-  }
-}
+// .autopromo {
+//   margin: 3rem;
+//   padding: 2rem;
+//   text-align: center;
+//   border: 1px solid $brand-primary;
+//   border-radius: 2px;
+// }
 
 // Bootstrap fixes
 
@@ -159,4 +79,8 @@ select.custom-select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+}
+
+.alert:empty {
+  display: none;
 }

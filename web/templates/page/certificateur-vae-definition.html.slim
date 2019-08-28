@@ -1,30 +1,19 @@
-.container.py-3.py-md-5
-  .d-flex.align-items-center
-    button.btn.btn-link.d-flex.align-items-center.px-0.btn-history-back
-      span.ic-icon.ic-tail-left.mr-3
-      | Retour
-    = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary ml-auto"
+h1.text-center C'est quoi un certificateur ?
+.row.my-5.align-items-center
+  .col.col-md-6.col-12
+    p
+      strong Le certificateur est l’organisme qui détient l’autorité pour délivrer les certifications.
 
-.container
-  h1.my-5.text-center C'est quoi un certificateur ?
-  .row.my-5.align-items-center
-    .col.col-md-6.col-12
-      p <strong>Le certificateur est l’organisme qui détient l’autorité pour délivrer les certifications.</strong>
-      p Le certificateur définit le contenu des certifications et la procédure  VAE de celles-ci.  Il est aussi celui qui étudiera votre demande de VAE en évaluant la proximité des compétences que vous avez acquises et celles du diplôme, titre ou certificat visé.
-    .col.col-md-6.col-12.text-center
-      = img_tag '/images/certificateur.svg', class: 'my-5 img-fluid', alt: "Représentation symbolique d\'un certificateur sous la forme d\'une maison."
-.d-lg-flex.position-relative
-  .container
-    h2.my-5.text-center 330000 diplômes délivrés
-    figure.illustration-grand-diplome.position-absolute.my-5.left-0.col-lg-12.col-xl-12.d-none.d-lg-block.pr-0
-      = img_tag '/images/grand-diplome.svg', class: 'w-45', alt: "Représentation symbolique d\'un diplôme."
-      .clear-both
-    .row.my-5
-      .col.col-lg-6.offset-lg-6.col-12
-        p.my-6 Le certificateur peut être un ministère (Education Nationale, Emploi, Agriculture, Santé….), une chambre consulaire (CCI, CMA…), un organisme de formation privé ou public, une université, le CNAM, une branche professionnelle …..
-        p.mt-5 Et, toute demande de VAE doit être adressée à l’autorité qui délivre le titre, diplôme ou certificat de qualification professionnelle selon des procédures et des délais déterminés par cette autorité.
+    p Le certificateur définit le contenu des certifications et la procédure  VAE de celles-ci.  Il est aussi celui qui étudiera votre demande de VAE en évaluant la proximité des compétences que vous avez acquises et celles du diplôme, titre ou certificat visé.
+  .col.col-md-6.col-12.text-center
+    = img_tag '/images/certificateur.svg', class: 'my-5 img-fluid', alt: "Représentation symbolique d\'un certificateur sous la forme d\'une maison."
+h2.text-center 330000 diplômes délivrés
+.row
+  .col.col-lg-6 style="background-image: url('/images/grand-diplome.svg'); background-size: cover;"
+  .col.col-lg-6
+    p.my-5 Le certificateur peut être un ministère (Education Nationale, Emploi, Agriculture, Santé….), une chambre consulaire (CCI, CMA…), un organisme de formation privé ou public, une université, le CNAM, une branche professionnelle …..
+    p.my-5 Et, toute demande de VAE doit être adressée à l’autorité qui délivre le titre, diplôme ou certificat de qualification professionnelle selon des procédures et des délais déterminés par cette autorité.
 
-.container
-  .row
-    .col-12.text-center.mb-5
-      = link "Trouver le vôtre", to: Routes.root_path(@conn, :index), class: "btn btn-primary ml-auto"
+.row
+  .col-12.text-center.my-5
+    = link "Trouver le vôtre", to: Routes.root_path(@conn, :index), class: "btn btn-primary"

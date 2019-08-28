@@ -6,8 +6,21 @@
       = render ComponentView, "navbar.html", conn: @conn
       = render ComponentView, "flash.html", conn: @conn
     #content.content class="#{unless assigns[:no_container], do: "container"} #{assigns[:container_class]}"
-      = if assigns[:with_search] do
-        .mt-5
-          = render ComponentView, "searchbar.html", conn: @conn
-      = render @view_module, @view_template, assigns
+      = if assigns[:is_landing] do
+        .back-and-cta
+          button.btn.btn-link.btn-history-back
+            span.ic-icon.ic-tail-left.mr-3
+            | Retour
+          = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary"
+        = if assigns[:no_wrapper] do
+          = render @view_module, @view_template, assigns
+        - else
+          .row
+            .col-lg-8.offset-lg-2.col-md-10.offset-md-1
+              = render @view_module, @view_template, assigns
+      - else
+        = if assigns[:with_search] do
+          .mt-5
+            = render ComponentView, "searchbar.html", conn: @conn
+        = render @view_module, @view_template, assigns
   = render ComponentView, "footer.html", conn: @conn
