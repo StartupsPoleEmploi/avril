@@ -3,8 +3,7 @@ defmodule Vae.ApplicationController do
   use Vae.Web, :controller
   # plug Coherence.Authentication.Session, protected: true
 
-  alias Vae.{Application, Delegate, Resume, User}
-  alias Vae.Delegates.Client.FranceVae
+  alias Vae.{Application, Resume, User}
   alias Vae.Crm.Polls
 
   def show(conn, %{"id" => id} = params) do
@@ -33,12 +32,12 @@ defmodule Vae.ApplicationController do
               Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
               |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end)
               |> Map.to_list()
-              |> Enum.map(fn {{place, _address}, _meetings} ->
-                {{place, _address, Vae.String.parameterize(place)}, _meetings}
+              |> Enum.map(fn {{place, address}, meetings} ->
+                {{place, address, Vae.String.parameterize(place)}, meetings}
               end)
 
         preselected_place =
-          Enum.find(meetings, {nil, []}, fn {{place, _address, slug}, _meetings} ->
+          Enum.find(meetings, {nil, []}, fn {{place, _address, _slug}, _meetings} ->
             place |> String.split(",") |> List.last() |> String.trim() ==
               application.delegate.city
           end)
@@ -253,7 +252,7 @@ defmodule Vae.ApplicationController do
   #   end
   # end
 
-  def has_access?(conn, nil, _hash), do: {:ok, nil}
+  def has_access?(_conn, nil, _hash), do: {:ok, nil}
 
   def has_access?(conn, application, nil) do
     if not is_nil(application) do

@@ -83,12 +83,7 @@ defmodule Vae.PageController do
   end
 
   def submit_contact(conn, %{
-    "contact_form" => %{
-      "name" => name,
-      "email" => email,
-      "object" => object,
-      "body" => body
-    } = variables
+    "contact_form" => %{} = variables
   }) do
 
     case Vae.Email.send(Vae.Email.contact_fields(variables)) do
@@ -96,7 +91,7 @@ defmodule Vae.PageController do
         json(conn, %{status: :ok, msg: "Votre message a bien été envoyé."})
       error ->
         conn
-        |> send_resp(500, Poison.encode!(%{status: :error, msg: "Votre message n'a pas pu être envoyé : \n\n #{inspect("error")} \n\n Merci de réessayer plus tard."}, pretty: true))
+        |> send_resp(500, Poison.encode!(%{status: :error, msg: "Votre message n'a pas pu être envoyé : \n\n #{inspect(error)} \n\n Merci de réessayer plus tard."}, pretty: true))
     end
 
   end
