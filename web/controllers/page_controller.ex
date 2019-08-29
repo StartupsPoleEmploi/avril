@@ -70,7 +70,7 @@ defmodule Vae.PageController do
     render(conn, "financement.html",
       title: "Comment financer ma VAE ?",
       description: "Il existe de nombreuses solutions de financement pour votre projet de VAE. Decouvrez comment cela fonctionne.",
-      is_landing: true
+      body_class: "bg-white"
     )
   end
 
