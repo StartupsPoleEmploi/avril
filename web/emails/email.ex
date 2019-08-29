@@ -46,7 +46,10 @@ defmodule Vae.Email do
       },
       Subject: "[Contact Avril] #{object}",
       TemplateID: @mailjet_conf[:avril_contact_template_id],
-      To: Mailjet.build_to(%{Email: "contact@avril.pole-emploi.fr", Name: "Avril"})
+      To: Mailjet.build_to(%{
+        Email: "avril@pole-emploi.fr",
+        Name: "Avril"
+      })
     }, %{
       ReplyTo: %{
         Email: "contact@avril.pole-emploi.fr",
