@@ -1,5 +1,29 @@
 .financement {
   // font-size: 1.1em;
+
+  .h2 {
+    line-height: 1.4;
+  }
+
+  .bg-secondary {
+    color: $dm-primary-green-light;
+
+    .btn.btn-primary {
+      background: $dm-primary-green-light;
+      border-color: $dm-primary-green-light;
+    }
+
+    select {
+      background-color: $dm-primary-green-light;
+      border: none;
+    }
+
+    a[target="_blank"] {
+      color: $dm-primary-green-light;
+    }
+  }
+
+
   .with-arrow {
     position: relative;
     &:before {

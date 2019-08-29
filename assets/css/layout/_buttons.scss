@@ -39,10 +39,6 @@ a {
   }
 }
 
-.bg-secondary a[target="_blank"] {
-  color: $white;
-}
-
 a, button {
   &:focus {
     outline: 1px solid #4D90FE;

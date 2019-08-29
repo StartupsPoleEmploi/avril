@@ -1,7 +1,7 @@
 .financement
   .uncontainer.d-none.d-xl-block
     .d-flex.justify-content-end
-      = img_tag "/images/Madame.png", style: "z-index: 100; max-width: 25vw;"
+      = img_tag "/images/Madame.png", style: "z-index: 100; max-width: 25vw; height: auto;"
   section.row
     .col.col-md-8.offset-md-1.mb-5
         button.btn.btn-link.btn-history-back
@@ -31,7 +31,7 @@
 
     .col-md-4.col-sm-6.bg-secondary.d-flex.align-items-center.justify-content-center.move-up
       = link to: "#situation", class: "btn btn-primary" do
-        span.ic-icon.ic-tail-right.mr-3
+        span.ic-icon.ic-tail-right.mr-3 style="position: relative; top: 0.15rem;"
         | Trouver mon financement
 
   section.row.mb-5
@@ -60,7 +60,7 @@
       p Nous vous avons résumé les différentes situations et les différentes possibilités dans des fiches de renseignement.
 
 
-    #situation.col-lg-7.p-5.bg-secondary.text-white.with-arrow.left
+    #situation.col-lg-7.p-5.bg-secondary.with-arrow.left
       .col-md-8.offset-md-2
         h6 Vous êtes :
         select.situation-select.form-control
@@ -109,4 +109,4 @@
       p Poursuivez votre démarche de VAE sans plus attendre ! Transmettez votre demande et votre dossier Pôle emploi d'expériences et compétences ! Le certificateur du diplôme que vous avez choisi pourra ainsi vous contacter rapidement grâce à Avril !
 
       .text-center.my-5
-        = link "Trouver ma VAE", to: "#", class: "btn btn-primary"
+        = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary"
