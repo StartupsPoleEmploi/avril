@@ -8,11 +8,13 @@ import 'url-search-params';
 
 import './analytics';
 import './socket';
+import './tools/smooth_scroll';
 import './components/searchbar';
 import './components/pagination';
 import './components/level-selector';
 import './pages/application';
 import './pages/contact';
+import './pages/financement';
 
 window.jQuery = jQuery;
 window.$ = jQuery;

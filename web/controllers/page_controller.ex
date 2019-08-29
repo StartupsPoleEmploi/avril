@@ -66,6 +66,14 @@ defmodule Vae.PageController do
     )
   end
 
+  def financement(conn, _params) do
+    render(conn, "financement.html",
+      title: "Comment financer ma VAE ?",
+      description: "Il existe de nombreuses solutions de financement pour votre projet de VAE. Decouvrez comment cela fonctionne.",
+      is_landing: true
+    )
+  end
+
   def contact(conn, _params) do
     render(conn, "contact.html",
       title: "Contacter l'équipe Avril",

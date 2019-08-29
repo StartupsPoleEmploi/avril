@@ -68,6 +68,7 @@ defmodule Vae.Router do
     get("/pourquoi-une-certification", Vae.PageController, :pourquoi_une_certification)
     get("/contact", Vae.PageController, :contact)
     post("/contact", Vae.PageController, :submit_contact)
+    get("/financement-vae", Vae.PageController, :financement)
     get("/stats", Vae.PageController, :stats)
 
     # Basic navigation

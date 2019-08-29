@@ -11,7 +11,7 @@ nav.navbar.dm-navbar.navbar-expand-md
         li.nav-item
          = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :vae), conn: @conn
         li.nav-item
-         = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
+         = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :financement), conn: @conn
         li.nav-item
          = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
       = if Coherence.current_user(@conn) do

@@ -81,6 +81,12 @@ select.custom-select {
   appearance: none;
 }
 
-.alert:empty {
-  display: none;
+.container {
+  position: relative;
+  .uncontainer {
+    position: absolute;
+    width: 100vw;
+    min-height: 10px;
+    @include make-uncontainer-responsive();
+  }
 }
