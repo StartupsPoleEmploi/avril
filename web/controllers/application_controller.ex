@@ -72,8 +72,6 @@ defmodule Vae.ApplicationController do
         })
 
       {:error, %{to: to, msg: msg}} ->
-        send_error(conn, application, msg)
-
         conn
         |> put_flash(:error, msg)
         |> redirect(to: to)
