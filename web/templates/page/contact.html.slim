@@ -1,0 +1,31 @@
+.row
+  .col-lg-8.offset-lg-2.col-md-10.offset-md-1
+
+    h1.text-center.mb-5 Contactez-nous
+
+    .message.infos.collapse.show
+      = render "_contact.html", assigns
+
+      .text-center.mt-5
+        button.btn.btn-primary data-toggle="collapse" data-target=".message" J'ai compris, mon message concerne un problème technique
+
+    .message.form.collapse
+      = form_for @contact_changeset, Routes.page_path(@conn, :submit_contact), [id: "contact-form"], fn f ->
+        .row
+          .col-md-6
+            .form-group
+              = label f, :name, "Votre nom :"
+              = text_input f, :name, class: "form-control", placeholder: "Nom", required: true
+          .col-md-6
+            .form-group
+              = label f, :email, "Votre adresse e-mail :"
+              = email_input f, :email, class: "form-control", placeholder: "Email", required: true
+        .form-group
+          = label f, :object, "Votre message :"
+          = text_input f, :object, class: "form-control", placeholder: "Objet", required: true
+        .form-group
+          = textarea f, :body, class: "form-control", placeholder: "Contenu", required: true, rows: 5
+        .form-group
+          = submit class: "btn btn-primary" do
+            span.fa.fa-envelope
+            |  Envoyer

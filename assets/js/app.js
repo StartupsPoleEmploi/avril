@@ -8,15 +8,25 @@ import 'url-search-params';
 
 import './analytics';
 import './socket';
+import './tools/smooth_scroll';
 import './components/searchbar';
 import './components/pagination';
 import './components/level-selector';
 import './pages/application';
+import './pages/contact';
+import './pages/financement';
 
 window.jQuery = jQuery;
 window.$ = jQuery;
 
 $(() => {
+  // Target blank on external links
+
+  Array.from(document.getElementsByTagName('a')).forEach($link => {
+    if ($link.hostname !== window.location.hostname && !$link.classList.contains('target-self')) {
+      $link.setAttribute('target', '_blank');
+    }
+  });
 
   // Bootstrap extend
   $('[data-toggle="show"]').on('click', function(e){

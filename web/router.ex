@@ -66,6 +66,9 @@ defmodule Vae.Router do
     get("/point-relais-conseil-vae", Vae.PageController, :point_relais_conseil)
     get("/certificateur-vae-definition", Vae.PageController, :certificateur_vae_definition)
     get("/pourquoi-une-certification", Vae.PageController, :pourquoi_une_certification)
+    get("/contact", Vae.PageController, :contact)
+    post("/contact", Vae.PageController, :submit_contact)
+    get("/financement-vae", Vae.PageController, :financement)
     get("/stats", Vae.PageController, :stats)
 
     # Basic navigation

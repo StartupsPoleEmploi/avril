@@ -25,7 +25,8 @@ config :vae,
     vae_recap_template_id: 529_420,
     dava_vae_recap_template_id: 878_833,
     asp_vae_recap_template_id: 833_668,
-    contact_template_id: 543_455,
+    delegate_contact_template_id: 543_455,
+    avril_contact_template_id: 977_749,
     from_email: "avril@pole-emploi.fr",
     from_name: "Avril"
   ],
@@ -169,7 +170,15 @@ config :phoenix, :json_library, Jason
 config :phoenix, :template_engines,
   slim: PhoenixSlime.Engine,
   slime: PhoenixSlime.Engine,
-  slimleex: PhoenixSlime.LiveViewEngine # If you want to use LiveView
+  slimleex: PhoenixSlime.LiveViewEngine, # If you want to use LiveView
+  md: PhoenixMarkdown.Engine
+
+config :phoenix_markdown, :earmark, %{
+  gfm: true,
+  breaks: true,
+  pure_links: true
+}
+config :phoenix_markdown, :server_tags, :all
 
 config :scrivener_html,
   routes_helper: Vae.Router.Helpers,

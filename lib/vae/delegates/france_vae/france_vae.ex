@@ -1,4 +1,6 @@
 defmodule Vae.Delegates.FranceVae do
+  require Logger
+
   alias Vae.Delegates.Cache
   alias Vae.Delegates.FranceVae.Config
   alias Vae.Delegates.FranceVae.Meeting
@@ -52,7 +54,7 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} =
+    {:ok, _response} =
       HTTPoison.post(
         "https://#{Config.get_base_url()}/academie/inscription-rdv/#{academy_id}/#{meeting_id}",
         Vae.Delegates.FranceVae.UserRegistration.from_user(user),
@@ -85,7 +87,7 @@ defmodule Vae.Delegates.FranceVae do
               access_token
             else
               e ->
-                Log.error(fn -> inspect(e) end)
+                Logger.error(fn -> inspect(e) end)
                 {:error, nil}
             end
 

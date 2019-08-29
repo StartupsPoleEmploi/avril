@@ -16,7 +16,7 @@ html lang="fr"
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
     = render Vae.ComponentView, "user_token", conn: @conn
 
-  body class="#{@assigns[:body_class] || 'app'}"
+  body class="#{if @assigns[:is_landing], do: "landing-page"} #{@assigns[:body_class]}"
     = @contents
 
     = render Vae.ComponentView, "algolia_credentials", conn: @conn

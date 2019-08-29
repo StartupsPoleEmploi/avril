@@ -2,9 +2,6 @@ defmodule Mix.Tasks.Profession.CompleteProfession do
   require Logger
   use Mix.Task
 
-  import Mix.Ecto
-  import Ecto.Query
-
   alias Ecto.Multi
 
   alias Vae.Search.Client.Algolia
