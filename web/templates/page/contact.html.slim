@@ -7,7 +7,7 @@
       = render "_contact.html", assigns
 
       .text-center.mt-5
-        button.btn.btn-primary data-toggle="collapse" data-target=".message" J'ai compris, mon message concerne Avril
+        button.btn.btn-primary data-toggle="collapse" data-target=".message" J'ai compris, mon message concerne un problème technique
 
     .message.form.collapse
       = form_for @contact_changeset, Routes.page_path(@conn, :submit_contact), [id: "contact-form"], fn f ->
