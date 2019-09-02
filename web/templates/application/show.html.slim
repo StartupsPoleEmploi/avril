@@ -185,7 +185,7 @@
             = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, meetings: @meetings
         = if length(@meetings) > 0 && is_nil(@application.submitted_at) do
           .text-right
-            = button "Non merci, je veux juste transmettre mon dossier VAE", to: Routes.application_path(@conn, :update, @application), method: "put", class: "btn btn-link"
+            = button "Non merci, je veux juste transmettre mon dossier VAE", to: Routes.application_path(@conn, :update, @application), method: "put", class: "btn btn-link", data: [analytics: "Profil#Sans Reunion information"], name: "book", value: "off"
       = if @edit_mode && length(@meetings) > 0 do
         #transmission.tab-pane.fade role="tabpanel" aria-labelledby="transmission-tab"
           .row
@@ -241,4 +241,4 @@
               .row
                 .col-sm-12
                   .pull-right
-                    button.btn.btn-link type="submit" name="book" value="off" Non merci, je veux juste transmettre mon dossier VAE
+                    button.btn.btn-link type="submit" name="book" value="off" data-analytics="Profil#Sans Reunion information" Non merci, je veux juste transmettre mon dossier VAE
