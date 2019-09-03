@@ -1,4 +1,8 @@
-# Conditions d’utilisation
+<div class="alert alert-warning">
+Notre service a évolué aussi une mise à jour de nos CGU est en cours avec notre service juridique. En attendant, cette actualisation, si vous avez des questions sur le service Avril et ses conditions d'utilisation, vous pouvez vous adresser à notre équipe via <a href="/contact" class="text-warning"><strong>notre page de contact<strong></a>.
+</div>
+
+# Conditions générales d’utilisation
 
 ## 1. Informations légales
 
