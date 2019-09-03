@@ -27,8 +27,9 @@ WORKDIR /app
 
 # Install dependencies
 RUN cd assets && npm install
-RUN mix local.hex --force
 RUN mix deps.get # TODO: make it non interactive
+RUN mix local.hex --force
+RUN mix local.rebar --force
 
 # Setup DB
 # RUN mix ecto.create && mix ecto.migrate # Note: run once the db is connected
