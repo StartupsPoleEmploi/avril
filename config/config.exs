@@ -100,7 +100,7 @@ config :vae, Vae.Repo,
   adapter: Ecto.Adapters.Postgres,
   url: System.get_env("DATABASE_URL") || "postgres://#{System.get_env("POSTGRES_USER")}:#{System.get_env("POSTGRES_PASSWORD")}@#{System.get_env("POSTGRES_HOST")}/#{System.get_env("POSTGRES_DB")}",
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-  ssl: Mix.env() == :staging,
+  ssl: false,
   timeout: 60_000
 
 config :algolia,
