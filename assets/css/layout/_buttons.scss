@@ -6,6 +6,7 @@ a {
     &[target="_blank"], &[download] {
       color: #000;
       position: relative;
+      white-space: nowrap;
       &:after {
         content: "";
         position: absolute;
