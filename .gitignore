@@ -15,7 +15,7 @@ erl_crash.dump
 # Since we are building assets from web/static,
 # we ignore priv/static. You may want to comment
 # this depending on your deployment strategy.
-/priv/static/
+/priv/static/*
 /priv/fixtures/
 
 # The config/prod.secret.exs file by default contains sensitive
@@ -30,3 +30,5 @@ yarn.lock
 docker-compose.override.yml
 
 # /config/dev.exs
+
+!/**/.gitkeep

@@ -14,8 +14,6 @@ services:
       - "postgres"
     env_file:
       - ".env"
-    ports:
-      - "4000:4000"
     command: iex -S mix phx.server
     volumes:
       - ".:/app"
