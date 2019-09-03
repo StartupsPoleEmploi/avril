@@ -25,9 +25,7 @@
     "react-dom": "^16.8.6",
     "react-table": "^6.10.0",
     "recharts": "^1.6.2",
-    "url-search-params": "^1.1.0"
-  },
-  "devDependencies": {
+    "url-search-params": "^1.1.0",
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
