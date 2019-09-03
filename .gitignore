@@ -27,5 +27,6 @@ erl_crash.dump
 /config/prod.secret.exs
 .env
 yarn.lock
+docker-compose.override.yml
 
 # /config/dev.exs

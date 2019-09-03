@@ -6,17 +6,7 @@ services:
       - ".env"
     image: "postgres:11.0-alpine"
     volumes:
-      - ".:/app"
       - "/var/run/postgresql:/var/run/postgresql"
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - "80:80"
-    env_file:
-      - ".env"
-    links:
-      - postgres
-
   app:
     build: "."
     working_dir: /app
@@ -26,14 +16,9 @@ services:
       - ".env"
     ports:
       - "4000:4000"
-    stdin_open: true
-    tty: true
     command: iex -S mix phx.server
     volumes:
       - ".:/app"
-      # - "../ex_admin:/ex_admin"
-      - "static:/app/priv/static"
-      - /tmp/.X11-unix:/tmp/.X11-unix
 
 volumes:
   postgres: {}
