@@ -4,11 +4,11 @@
   .d-flex.flex-column
     h1.h2.m-0 #{format_certification_label(@certification)}
 .my-5
-  .card
+  #register.card.mb-5
     .card-header.bg-secondary.text-white
       .row.align-items-center
         .col-md-6
-          h3 Ma Synthèse VAE
+          h3.mb-0 Démarrer une VAE
         .col-md-6
           = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
     .card-body.bg-primary.text-secondary
@@ -27,52 +27,39 @@
       .row
         .col-12.text-center
           .pe-connect.pe-connect-toggle class="#{if @is_asp, do: "d-none", else: ""}"
-            = link(to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light", data: [analytics: "?bouton=pe-connect"]) do
-              = img_tag("/images/conseillere.svg", width: 34, height: 31, style: "margin-right: 1rem;")
-              span.text
-                = if @is_asp do
-                  | Voir ma synthèse
-                - else
-                  | Transmettre mes expériences
+            = link(to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light btn-conseillere", data: [analytics: "?bouton=pe-connect"]) do
+              = img_tag "/images/conseillere.svg", alt: "Votre conseillère VAE"
+              = if @is_asp do
+                | Voir ma synthèse
+              - else
+                | Transmettre mes expériences
             .mt-4.text-right
-              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je n'ai pas de compte Pôle emploi
+              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je ne suis pas demandeur d'emploi
           .no-pe-connect.pe-connect-toggle class="#{if @is_asp, do: "", else: "d-none"}"
             .request-contact
               = if @is_asp do
                 .col-md-6.offset-md-3.text-center
                   p Pour recevoir par email votre synthèse VAE, merci de remplir le formulaire ci-dessous :
-              form.row.justify-content-center.contact-form id="contact_form" data-analytics="?soumettre=simple-contact"
+              = form_for @user_changeset, Routes.registration_path(@conn, :create), [as: :registration, class: "row justify-content-center"], fn f  ->
+                = if @user_changeset.action do
+                  .alert.alert-danger
+                    p= dgettext "coherence", "Oops, something went wrong! Please check the errors below."
                 .col-md-6
                   fieldset.mb-4
-                    legend.d-none Vos informations
-                    .row
-                      .col-lg
-                        .form-group.form-label-group
-                          input.form-control.px-3.py-3 id="contact_first_name" name="first_name" placeholder="ex: Georges" required="true"
-                          label.form-control-placeholder for="contact_first_name" Votre prénom
-                      .col-lg
-                        .form-group.form-label-group
-                          input.form-control.px-3.py-3 id="contact_last_name" name="last_name" placeholder="ex: Abitbol" required="true"
-                          label.form-control-placeholder for="contact_last_name" Votre nom
-                    .form-group.form-label-group
-                      input.form-control.px-3.py-3 id="contact_email" name="email" placeholder="ex: la.classe@americaine.com" required="true" type="email"
-                      label.form-control-placeholder for="contact_email" Votre email
                     .form-group
                       .form-label-group
-                        input.form-control.px-3.py-3 id="contact_phone_number" name="phone_number" placeholder="ex: 0606060606" type="tel" pattern="^(?:0|\(?\+33\)?\s?|0033\s?)[1-79](?:[\.\-\s]?\d\d){4}$"
-                        label.form-control-placeholder for="contact_phone_number" Votre numéro de téléphone *
-                      small.form-text.text-muted.text-white * facultatif
-                    = unless @is_asp do
-                      .form-check
-                        input.form-check-input id="contact_contact_delegate" name="contact_delegate" type="checkbox" value=""
-                        label.form-check-label for="contact_contact_delegate" Transmettre mes coordonnées à mon centre certificateur
-                    .form-check
-                      input.form-check-input id="contact_booklet_1" name="booklet_1" type="checkbox" value=""
-                      label.form-check-label for="contact_booklet_1" Recevoir mon dossier d'inscription
-                  button.btn.btn-light type="submit"
-                    = img_tag '/images/conseillere.svg', class: "mr-2", style: "width: 28px; height: 28px;", alt: "Votre conseillère VAE"
-                    span Recevoir ma synthèse VAE
-                = render_contact_form_data(@conn, @delegate, @certification)
+                        = text_input f, :email, class: "form-control form-control-lg", required: true, placeholder: "ex: la.classe@americaine.com"
+                        = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
+                        = error_tag f, :email
+                    .form-group
+                      .form-label-group
+                        = password_input f, :password, class: "form-control form-control-lg", required: true, placeholder: "Mot de passe"
+                        = label f, dgettext("coherence", "password"), class: "form-control-placeholder", required: true, for: "registration_password"
+                        = error_tag f, :password
+                  .form-group
+                    = submit class: "btn btn-light btn-conseillere" do
+                      = img_tag '/images/conseillere.svg', alt: "Votre conseillère VAE"
+                      | Créer mon dossier VAE
             .result-contact.d-none
               .mb-4
                 = if @is_asp do
@@ -93,14 +80,27 @@
                   h5 #{format_certification_label(@certification)}
             = unless @is_asp do
               .text-right.mt-4
-                button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" role="button" data-analytics="Certification#avec pe connect" Utiliser PE-connect
+                button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" role="button" data-analytics="Certification#avec pe connect" Je suis demandeur d'emploi
     = if @delegate.process do
       .card-footer.bg-white
+        h5.h2.text-center Les étapes de votre VAE
         = render("_pagination.html")
         div id="steps"
           = render_steps(@delegate.process)
+  .card.bg-light.text-secondary
+    .card-body
+      h5 Pas encore mûr dans votre projet de VAE ?
+      p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.
+      = form_for @user_changeset, Routes.registration_path(@conn, :create), [as: :simple_contact, class: "row align-items-center simple-contact-form"], fn f  ->
+        .col-md-8
+          .form-label-group
+            = text_input f, :email, class: "form-control form-control-lg", required: true, placeholder: "ex: la.classe@americaine.com"
+            = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
+            = error_tag f, :email
+        .col-md-4
+          = submit "Recevoir ma synthèse", class: "btn btn-secondary btn-block"
 
-button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button onclick="javascript:window.print()" data-analytics="Steps#print"
+button.d-none.d-md-block.btn.btn-link.no-print.px-0.pull-right.steps-print-button onclick="javascript:window.print()" data-analytics="Steps#print"
   = img_tag '/images/printer.svg', alt: 'imprimer'
   |  Imprimer
 
@@ -132,3 +132,8 @@ button.d-none.d-md-block.btn.btn-link.no-print.px-0.steps-print-button onclick="
       h2.h2 Félicitations pour votre nouveau diplôme !
       = img_tag '/images/step4-diplome-ok.svg', alt: 'diplome-ok', class: 'img-fluid my-4'
       h2.h2 Et vous ?
+  .row
+    .col-md-12.text-center
+      a.btn.btn-lg.btn-primary.btn-conseillere href="#register"
+        span.fa.fa-arrow-up
+        | Démarrer un projet de VAE

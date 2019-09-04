@@ -2,7 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, Places, Rome, SearchDelegate, ViewHelpers}
+  alias Vae.{Certification, Delegate, Places, Rome, SearchDelegate, User, ViewHelpers}
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -111,6 +111,7 @@ defmodule Vae.CertificationController do
       certification: certification,
       delegate: delegate,
       is_asp: Delegate.is_asp?(delegate),
+      user_changeset: User.changeset(%User{}, %{}),
       with_search: true
     )
   end

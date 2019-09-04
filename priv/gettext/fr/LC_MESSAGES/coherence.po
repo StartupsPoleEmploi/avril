@@ -1,0 +1,203 @@
+#: web/controllers/confirmation_controller.ex:54
+msgid "Account already confirmed."
+msgstr "Votre compte est déjà confirmé."
+
+#: web/controllers/unlock_controller.ex:100
+msgid "Account is not locked."
+msgstr "Votre compte n'est pas bloqué."
+
+#: web/controllers/registration_controller.ex:105
+msgid "Account updated successfully."
+msgstr "Votre compte a été mis à jour avec succès."
+
+#: web/controllers/controller_helpers.ex:252
+msgid "Already logged in."
+msgstr "Vous êtes déjà connecté."
+
+#: web/controllers/invitation_controller.ex:151
+msgid "Can't find that token"
+msgstr "Le lien sécurisé n'est pas valable."
+
+#: web/controllers/controller_helpers.ex:178
+msgid "Confirmation email sent."
+msgstr "Un email de confirmation a été envoyé."
+
+#: web/controllers/confirmation_controller.ex:88
+msgid "Confirmation token expired."
+msgstr "Le lien sécurisé est périmé."
+
+#: web/controllers/confirmation_controller.ex:49
+#: web/controllers/password_controller.ex:54
+msgid "Could not find that email address"
+msgstr "L'adresse email n'a pas été trouvée."
+
+#: web/controllers/controller_helpers.ex:11
+msgid "Failed to update lockable attributes "
+msgstr "Impossible de mettre à jour les valeurs saisies."
+
+#: web/views/view_helpers.ex:15
+msgid "Forgot your password?"
+msgstr "Mot de passe oublié ?"
+
+#: lib/coherence/plugs/authorization/basic.ex:53
+msgid "HTTP Authentication Required"
+msgstr "Authentification requise"
+
+#: web/controllers/session_controller.ex:24
+msgid "Incorrect %{login_field} or password."
+msgstr "%{login_field} ou mot de passe incorrect."
+
+#: web/controllers/invitation_controller.ex:125
+msgid "Invalid Invitation. Please contact the site administrator."
+msgstr "Invitation non valide. Merci de nous contacter."
+
+#: lib/coherence/plugs/require_login.ex:29
+#: lib/coherence/plugs/validate_option.ex:29
+msgid "Invalid Request."
+msgstr "La requête n'est pas valide."
+
+#: web/controllers/confirmation_controller.ex:83
+msgid "Invalid confirmation token."
+msgstr "Le lien sécurisé n'est pas valide."
+
+#: web/controllers/unlock_controller.ex:69
+msgid "Invalid email or password."
+msgstr "Mauvaise combinaison email/mot de passe."
+
+#: web/controllers/invitation_controller.ex:98
+msgid "Invalid invitation token."
+msgstr "Le lien d'invitation n'est pas valable."
+
+#: web/controllers/password_controller.ex:121
+msgid "Invalid reset token"
+msgstr "Le lien sécurisé n'est pas valide"
+
+#: web/controllers/password_controller.ex:87
+msgid "Invalid reset token."
+msgstr "Le lien sécurisé n'est pas valide."
+
+#: web/controllers/unlock_controller.ex:88
+msgid "Invalid unlock token."
+msgstr "Le lien sécurisé n'est pas valide."
+
+#: web/controllers/invitation_controller.ex:77
+msgid "Invitation already sent."
+msgstr "L'invitation a déjà été envoyée."
+
+#: web/controllers/invitation_controller.ex:70
+#: web/controllers/invitation_controller.ex:155
+msgid "Invitation sent."
+msgstr "Invitation envoyée."
+
+#: web/views/view_helpers.ex:18
+msgid "Invite Someone"
+msgstr "Inviter quelqu'un"
+
+#: web/controllers/session_controller.ex:25
+msgid "Maximum Login attempts exceeded. Your account has been locked."
+msgstr "Nombre maximum d'essais de connexion dépassé. Votre compte a été bloqué."
+
+#: web/views/view_helpers.ex:17
+msgid "Need An Account?"
+msgstr "Créer un compte"
+
+#: web/controllers/password_controller.ex:96
+#: web/controllers/password_controller.ex:129
+msgid "Password reset token expired."
+msgstr "Lien de réinitialisation du mot de passe invalide."
+
+#: web/controllers/password_controller.ex:139
+msgid "Password updated successfully."
+msgstr "Le mot de passe a bien été mis à jour."
+
+#: web/controllers/confirmation_controller.ex:102
+msgid "Problem confirming user account. Please contact the system administrator."
+msgstr "Il y a eu un problème lors de la confirmation du compte utilisateur. Merci de nous contacter."
+
+#: web/controllers/controller_helpers.ex:181
+msgid "Registration created successfully."
+msgstr "Votre compte a bien été créé."
+
+#: web/views/view_helpers.ex:19
+msgid "Resend confirmation email"
+msgstr "Renvoyer un email de confirmation"
+
+#: web/controllers/password_controller.ex:68
+msgid "Reset email sent. Check your email for a reset link."
+msgstr "Email envoyé. Vérifiez votre boîte de réception."
+
+#: lib/coherence/plugs/authorization/basic.ex:52
+msgid "Restricted Area"
+msgstr "Zone sécurisée."
+
+#: web/views/view_helpers.ex:16
+msgid "Send an unlock email"
+msgstr "Envoyer un email de déblocage."
+
+#: web/views/view_helpers.ex:20
+msgid "Sign In"
+msgstr "Se connecter"
+
+#: web/views/view_helpers.ex:21
+msgid "Sign Out"
+msgstr "Se déconnecter"
+
+#: web/controllers/session_controller.ex:125
+msgid "Signed in successfully."
+msgstr "Connecté avec succès."
+
+#: web/controllers/session_controller.ex:106
+msgid "Too many failed login attempts. Account has been locked."
+msgstr "Nombre maximum d'essais de connexion dépassé. Votre compte a été bloqué."
+
+#: lib/coherence/plugs/authorization/ip_address.ex:82
+msgid "Unauthorized IP Address"
+msgstr "Adresse IP non autorisée."
+
+#: web/controllers/unlock_controller.ex:57
+msgid "Unlock Instructions sent."
+msgstr "Email envoyé."
+
+#: web/controllers/confirmation_controller.ex:98
+msgid "User account confirmed successfully."
+msgstr "Votre compte a bien été confirmé."
+
+#: web/controllers/invitation_controller.ex:57
+msgid "User already has an account!"
+msgstr "L'utilisateur a déjà un compte."
+
+#: web/controllers/session_controller.ex:237
+msgid "You are using an invalid security token for this site! This security\nviolation has been logged.\n"
+msgstr "Vous utilisez un lien sécurisé non valide. Cette tentative a été loguée."
+
+#: web/controllers/session_controller.ex:91
+msgid "You must confirm your account before you can login."
+msgstr "Vous devez confirmer votre compte avant de vous connecter à nouveau."
+
+#: web/controllers/unlock_controller.ex:95
+msgid "Your account has been unlocked"
+msgstr "Votre compte a été débloqué."
+
+#: web/controllers/unlock_controller.ex:61
+msgid "Your account is not locked."
+msgstr "Votre compte n'est pas bloqué."
+
+#: web/controllers/controller_helpers.ex:197
+#: web/services/confirmable_service.ex:111
+msgid "already confirmed"
+msgstr "déjà confirmé"
+
+#: web/controllers/controller_helpers.ex:218
+msgid "already locked"
+msgstr "déjà bloqué"
+
+#: web/controllers/controller_helpers.ex:239
+msgid "not locked"
+msgstr "non bloqué"
+
+#: web/views/view_helpers.ex:189
+msgid "required"
+msgstr "requis"
+
+msgid "password"
+msgstr "Mot de passe"

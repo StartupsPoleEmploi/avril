@@ -116,7 +116,15 @@ config :coherence,
   messages_backend: Vae.Coherence.Messages,
   email_from_name: "Avril",
   email_from_email: "avril@pole-emploi.fr",
-  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
+  opts: [
+    :authenticatable,
+    :confirmable,
+    :registerable,
+    :recoverable,
+    :lockable,
+    :trackable,
+    :unlockable_with_token
+  ],
   session_model: Vae.Session,
   session_repo: Vae.Repo,
   schema_key: :id
@@ -154,6 +162,8 @@ config :ex_aws,
    host: "#{System.get_env("AWS_S3_BUCKET_NAME")}.s3.amazonaws.com",
    region: "eu-west-3"
 ]
+
+config :gettext, :default_locale, "fr"
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

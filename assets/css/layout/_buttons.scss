@@ -111,6 +111,16 @@ a, button {
     border-radius: 38.5px;
     box-shadow: 0 8px 24px 0 rgba(250,56,119,0.38);
   }
+
+  &.btn-conseillere {
+    display: inline-flex;
+    align-items: center;
+
+    img, span.fa {
+      margin-right: 2rem;
+      width: 2em;
+    }
+  }
 }
 
 a[target="_blank"]:before,
