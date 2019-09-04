@@ -14,6 +14,17 @@ defmodule Vae.Search.Client.Algolia do
     execute(:delegate, query)
   end
 
+  def get_meetings(delegate) do
+    query =
+      init()
+      |> build_academy_filter(delegate.academy_id)
+      |> build_certifier_ids_filter(delegate.certifiers)
+      |> build_geoloc(delegate.geolocation["_geoloc"])
+      |> build_query()
+
+    execute(:meetings, query, aroundRadius: 50_000)
+  end
+
   def init(), do: %{filters: %{and: [], or: []}, query: [], aroundLatLng: []}
 
   def build_active_filter(query) do
@@ -26,11 +37,22 @@ defmodule Vae.Search.Client.Algolia do
     end)
   end
 
+  def build_certifier_ids_filter(query, certifiers) do
+    Enum.reduce(certifiers, query, fn certifier, acc ->
+      add_or_filter(acc, "certifier_id=#{certifier.id}")
+    end)
+  end
+
   def build_geoloc(query, %{"lat" => lat, "lng" => lng} = geo) when nil not in [lat, lng] do
     add_aroundLatLng(query, geo)
   end
 
   def build_geoloc(query, _), do: query
+
+  def build_academy_filter(query, nil), do: add_and_filter(query, "has_academy:false")
+
+  def build_academy_filte(query, academy_id),
+    do: add_and_filter(query, "academy_id:#{academy_id}")
 
   def build_query(query) do
     build_filters(query) ++ build_geo(query)
@@ -66,8 +88,16 @@ defmodule Vae.Search.Client.Algolia do
     [aroundLatLng: lat_lng]
   end
 
-  defp execute(:delegate, query) do
-    Algolia.search("delegate", "", query)
+  defp execute(index, query, opts \\ [])
+
+  defp execute(:delegate, query, opts), do: search("delegate", query, opts)
+
+  defp execute(:meetings, query, opts), do: search("test-meetings", query, opts)
+
+  defp search(index_name, query, opts) do
+    merged_query = Keyword.merge(query, opts) |> IO.inspect()
+
+    Algolia.search(index_name, "", merged_query)
     |> case do
       {:ok, response} ->
         {:ok,

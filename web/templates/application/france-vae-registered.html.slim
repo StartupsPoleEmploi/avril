@@ -11,7 +11,7 @@ main.text-center.justify-content-center role="main"
 
     p
       = "Si rien ne se passe après 30 secondes, "
-      = link("cliquez ici", to: Routes.application_path(@conn, :show, @application_id, msg: "Merci ! Votre inscription à la réunion d'information est maintenant terminée, vous recevrez prochainement un email de confirmation de la part de france-vae.fr."), class: "btn btn-primary")
+      = link("cliquez ici", to: Routes.application_path(@conn, :show, @application_id), class: "btn btn-primary")
       = " pour revenir sur votre profil Avril."
 
 = unless Mix.env == :dev do

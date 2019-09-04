@@ -48,14 +48,12 @@ defmodule Vae.Delegates.FranceVae.UserRegistration do
     |> from_application()
     |> Map.merge(%{
       reunion: meeting_id,
-      type: 1,
-      dateNaissance: format_birthday(application.user.birthday, :api)
+      type: 1
     })
   end
 
   defp format_birthday(birthday, for \\ :form)
   defp format_birthday(nil, _for), do: nil
-  defp format_birthday(birthday, :api), do: Timex.format!(birthday, "%Y-%m-%d", :strftime)
   defp format_birthday(birthday, _for), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
 
   defp format_address(user) do

@@ -2,31 +2,36 @@ defmodule Vae.Delegates.FranceVae.Server do
   require Logger
   use GenServer
 
+  alias Vae.Delegates.Dispatcher
   alias Vae.Delegates.FranceVae
+  alias Vae.Delegates.FranceVae.Meeting
+
+  @name FVae
 
   @doc false
-  def start_link(delegate) do
-    GenServer.start_link(__MODULE__, delegate, name: delegate)
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: @name)
   end
 
   @impl true
-  def init(delegate) do
-    Logger.info("Init #{delegate} server")
+  def init(name) do
+    Logger.info("Init #{name} server")
 
     state = %{
-      name: delegate,
-      data: []
+      academies: [],
+      meetings: []
     }
 
     {:ok, state, {:continue, :get_data}}
   end
 
   @impl true
-  def handle_continue(:get_data, state) do
-    data = get_data(state.name)
-    updated_state = Map.put(state, :data, data)
+  def handle_continue(:get_data, _state) do
+    new_state = get_data()
 
-    {:noreply, updated_state}
+    Dispatcher.subscribe(@name, new_state)
+
+    {:noreply, new_state}
   end
 
   @impl true
@@ -50,10 +55,27 @@ defmodule Vae.Delegates.FranceVae.Server do
     {:no_reply, state}
   end
 
-  defp get_data(:france_vae) do
+  defp get_data() do
     FranceVae.get_academies()
-    |> Enum.reduce([], fn %{"id" => id, "nom" => name}, acc ->
-      [%{id: id, name: name} | acc]
+    |> Enum.reduce([], fn %{"id" => id}, acc ->
+      [
+        %{
+          # Call me DB ...
+          certifier_id: 2,
+          academy_id: id,
+          meetings:
+            FranceVae.get_meetings(id)
+            |> Enum.map(fn
+              %Meeting{postal_code: nil} = meeting ->
+                meeting
+
+              %Meeting{postal_code: postal_code} = meeting ->
+                geolocation = Vae.Places.get_geoloc_from_address(postal_code)
+                Map.put(meeting, :geolocation, geolocation)
+            end)
+        }
+        | acc
+      ]
     end)
   end
 end

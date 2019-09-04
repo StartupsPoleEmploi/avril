@@ -1,7 +1,6 @@
 defmodule Vae.ApplicationController do
   require Logger
   use Vae.Web, :controller
-  # plug Coherence.Authentication.Session, protected: true
 
   alias Vae.{Application, Resume, User}
   alias Vae.Crm.Polls
@@ -101,6 +100,11 @@ defmodule Vae.ApplicationController do
                 )
             )
           else
+            {:error, %{"code" => _code, "message" => msg}} ->
+              conn
+              |> put_flash(:error, msg)
+              |> redirect(to: Routes.application_path(conn, :show, application))
+
             msg ->
               conn
               |> put_flash(:error, msg)

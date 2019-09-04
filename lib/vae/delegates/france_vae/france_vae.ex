@@ -123,6 +123,7 @@ defmodule Vae.Delegates.FranceVae do
       meeting_id: params["id"],
       place: params["lieu"],
       address: params["addresse"],
+      postal_code: params["code_postal"],
       target: params["cible"],
       start_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_debut"]),
       end_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_fin"]),
