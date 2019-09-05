@@ -1,4 +1,4 @@
-defmodule Vae.Delegates.FranceVae.UserRegistration do
+defmodule Vae.Meetings.FranceVae.UserRegistration do
   @derive Jason.Encoder
   defstruct civilite: nil,
             nom: nil,

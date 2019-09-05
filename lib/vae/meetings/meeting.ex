@@ -1,4 +1,4 @@
-defmodule Vae.Delegates.FranceVae.Meeting do
+defmodule Vae.Meetings.Meeting do
   use Ecto.Schema
   import Ecto.Changeset
   use Xain

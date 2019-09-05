@@ -1,4 +1,4 @@
-defmodule Vae.Delegates.Connection do
+defmodule Vae.Meetings.FranceVae.Connection do
   defstruct delegate: nil,
             access_token: nil,
             refresh_token: nil,

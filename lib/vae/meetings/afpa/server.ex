@@ -1,9 +1,10 @@
-defmodule Vae.Delegates.Afpa.Server do
+defmodule Vae.Meetings.Afpa.Server do
   require Logger
   use GenServer
 
-  alias Vae.Delegates.Dispatcher
-  alias Vae.Delegates.FranceVae.Meeting
+  alias Vae.Meetings.Afpa.Scraper
+  alias Vae.Meetings.StateHolder
+  alias Vae.Meetings.Meeting
 
   @name Afpa
 
@@ -30,12 +31,12 @@ defmodule Vae.Delegates.Afpa.Server do
         certifier_id: 4,
         academy_id: nil,
         meetings:
-          Vae.Delegates.Afpa.Scraper.scrape_all_events()
+          Scraper.scrape_all_events()
           |> Enum.map(fn meeting -> struct(%Meeting{}, meeting) end)
       }
     ]
 
-    Dispatcher.subscribe(@name, new_state)
+    StateHolder.subscribe(@name, new_state)
 
     {:noreply, new_state}
   end

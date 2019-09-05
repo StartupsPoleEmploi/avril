@@ -51,7 +51,7 @@ defmodule Vae.Search.Client.Algolia do
 
   def build_academy_filter(query, nil), do: add_and_filter(query, "has_academy:false")
 
-  def build_academy_filte(query, academy_id),
+  def build_academy_filter(query, academy_id),
     do: add_and_filter(query, "academy_id:#{academy_id}")
 
   def build_query(query) do

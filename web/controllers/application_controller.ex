@@ -20,7 +20,7 @@ defmodule Vae.ApplicationController do
     meetings =
       if application.meeting,
         do: [],
-        else: Vae.Delegates.Dispatcher.get(application.delegate)
+        else: Vae.Meetings.get(application.delegate)
 
     preselected_place =
       Enum.find(meetings, {nil, []}, fn {{place, _address, _slug}, _meetings} ->
@@ -71,7 +71,7 @@ defmodule Vae.ApplicationController do
           meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
 
           with {:ok, _response} <-
-                 Vae.Delegates.register_to_france_vae_meeting(
+                 Vae.Meetings.register_to_france_vae_meeting(
                    application.delegate.academy_id,
                    meeting_id,
                    application
@@ -186,8 +186,8 @@ defmodule Vae.ApplicationController do
 
     render(conn, "france-vae-redirect.html", %{
       container_class: "d-flex flex-grow-1",
-      user_registration: Vae.Delegates.FranceVae.UserRegistration.from_application(application),
-      form_url: Vae.Delegates.FranceVae.Config.get_france_vae_form_url(academy_id, meeting_id)
+      user_registration: Vae.Meetings.FranceVae.UserRegistration.from_application(application),
+      form_url: Vae.Meetings.FranceVae.Config.get_france_vae_form_url(academy_id, meeting_id)
     })
   end
 

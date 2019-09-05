@@ -7,7 +7,7 @@ defmodule Vae.Application do
     ApplicationEmail,
     Certification,
     Delegate,
-    Delegates.FranceVae.Meeting,
+    Meetings.Meeting,
     Email,
     Repo,
     Resume,
@@ -129,19 +129,16 @@ defmodule Vae.Application do
   def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
 
   def set_registered_meeting(application, academy_id, meeting_id) do
+    {_render, meetings} = Vae.Meetings.get(application.delegate)
+
     meeting =
-      Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
+      meetings
       |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
 
     application
     |> change()
     |> put_embed(:meeting, meeting)
     |> Repo.update()
-  end
-
-  defp put_meeting(changeset, meeting) do
-    changeset
-    |> put_embed(:meeting, Meeting.changeset(meeting, %{}))
   end
 
   defp generate_hash(length) do

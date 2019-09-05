@@ -1,10 +1,10 @@
-defmodule Vae.Delegates.FranceVae.Server do
+defmodule Vae.Meetings.FranceVae.Server do
   require Logger
   use GenServer
 
-  alias Vae.Delegates.Dispatcher
-  alias Vae.Delegates.FranceVae
-  alias Vae.Delegates.FranceVae.Meeting
+  alias Vae.Meetings.StateHolder
+  alias Vae.Meetings.FranceVae
+  alias Vae.Meetings.Meeting
 
   @name FVae
 
@@ -29,7 +29,7 @@ defmodule Vae.Delegates.FranceVae.Server do
   def handle_continue(:get_data, _state) do
     new_state = get_data()
 
-    Dispatcher.subscribe(@name, new_state)
+    StateHolder.subscribe(@name, new_state)
 
     {:noreply, new_state}
   end

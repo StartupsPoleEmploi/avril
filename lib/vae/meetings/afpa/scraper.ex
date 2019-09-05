@@ -1,4 +1,4 @@
-defmodule Vae.Delegates.Afpa.Scraper do
+defmodule Vae.Meetings.Afpa.Scraper do
   require Logger
   import Ecto.Query
 

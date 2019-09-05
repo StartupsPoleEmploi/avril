@@ -33,6 +33,6 @@ config :vae, Vae.Scheduler,
     afpa_refresh: [
       timezone: "Europe/Paris",
       schedule: "0 5 * * *",
-      task: &Vae.Delegates.refresh_afpa_meetings/0
+      task: &Vae.Meetings.refresh_afpa_meetings/0
     ]
   ]

@@ -1,6 +1,8 @@
-defmodule Vae.Delegates.Dispatcher do
+defmodule Vae.Meetings.StateHolder do
   require Logger
   use GenServer
+
+  @name StateHolder
 
   @doc false
   def start_link() do
@@ -9,7 +11,7 @@ defmodule Vae.Delegates.Dispatcher do
 
   @doc false
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: DelegatesDispatcher)
+    GenServer.start_link(__MODULE__, opts, name: StateHolder)
   end
 
   @impl true
@@ -103,27 +105,27 @@ defmodule Vae.Delegates.Dispatcher do
   end
 
   def fetch_all() do
-    GenServer.cast(DelegatesDispatcher, :fetch_all)
+    GenServer.cast(@name, :fetch_all)
   end
 
   def fetch(server) do
-    GenServer.cast(DelegatesDispatcher, {:fetch, server})
+    GenServer.cast(@name, {:fetch, server})
   end
 
   def subscribe(who, meetings) do
-    GenServer.cast(DelegatesDispatcher, {:subscribe, who, meetings})
+    GenServer.cast(@name, {:subscribe, who, meetings})
   end
 
   def save(name, data) do
-    GenServer.cast(DelegatesDispatcher, {:save, name, data})
+    GenServer.cast(@name, {:save, name, data})
   end
 
   def all() do
-    GenServer.call(DelegatesDispatcher, :all)
+    GenServer.call(@name, :all)
   end
 
   def get(delegate) do
-    GenServer.call(DelegatesDispatcher, {:get, delegate})
+    GenServer.call(@name, {:get, delegate})
   end
 
   defp format(

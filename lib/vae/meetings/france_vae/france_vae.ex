@@ -1,10 +1,10 @@
-defmodule Vae.Delegates.FranceVae do
+defmodule Vae.Meetings.FranceVae do
   require Logger
 
-  alias Vae.Delegates.Cache
-  alias Vae.Delegates.FranceVae.Config
-  alias Vae.Delegates.FranceVae.Meeting
-  alias Vae.Delegates.FranceVae.UserRegistration
+  alias Vae.Meetings.FranceVae.Connection.Cache
+  alias Vae.Meetings.FranceVae.Config
+  alias Vae.Meetings.FranceVae.UserRegistration
+  alias Vae.Meetings.Meeting
 
   @name FranceVae
 
@@ -15,9 +15,14 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/academies", headers)
-    {:ok, academies} = response.body |> Jason.decode()
-    academies
+    with {:ok, response} <- HTTPoison.get("#{Config.get_base_url()}/academies", headers),
+         {:ok, academies} <- response.body |> Jason.decode() do
+      academies
+    else
+      {:error, reason} ->
+        Logger.error(fn -> inspect(reason) end)
+        []
+    end
   end
 
   def get_meetings(academy_id) do
@@ -27,24 +32,29 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers)
+    with {:ok, response} <-
+           HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers),
+         {:ok, json} <- response.body |> Jason.decode() do
+      json
+      |> Map.get("reunions")
+      |> case do
+        nil ->
+          []
 
-    response.body
-    |> Jason.decode!()
-    |> Map.get("reunions")
-    |> case do
-      nil ->
+        meetings ->
+          meetings
+          |> Enum.filter(fn meeting ->
+            meeting
+            |> Map.get("cible")
+            |> String.trim()
+            |> Kernel.in(["CAP au BTS", ""])
+          end)
+          |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
+      end
+    else
+      {:error, reason} ->
+        Logger.error(fn -> inspect(reason) end)
         []
-
-      meetings ->
-        meetings
-        |> Enum.filter(fn meeting ->
-          meeting
-          |> Map.get("cible")
-          |> String.trim()
-          |> Kernel.in(["CAP au BTS", ""])
-        end)
-        |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
     end
   end
 
@@ -104,7 +114,7 @@ defmodule Vae.Delegates.FranceVae do
               access_token
             else
               e ->
-                Log.error(fn -> inspect(e) end)
+                Logger.error(fn -> inspect(e) end)
                 {:error, nil}
             end
 
