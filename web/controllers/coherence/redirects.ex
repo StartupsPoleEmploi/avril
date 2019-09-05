@@ -45,6 +45,8 @@ defmodule Coherence.Redirects do
   # Uncomment the import below if adding overrides
   import Vae.Router.Helpers
 
+  alias Vae.{Application, Repo}
+
   # Add function overrides below
 
   # Example usage
@@ -55,7 +57,6 @@ defmodule Coherence.Redirects do
         redirect(conn, to: root_path(conn, :index))
 
       token ->
-
         url =
           "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
             token
@@ -64,4 +65,26 @@ defmodule Coherence.Redirects do
         redirect(conn, external: url)
     end
   end
+
+  def session_create(conn, params) do
+    application =
+      if params["registration"]["certification_id"] && params["registration"]["delegate_id"] do
+        Application.find_or_create_with_params(%{
+          user_id: Coherence.current_user(conn).id,
+          certification_id: params["registration"]["certification_id"],
+          delegate_id: params["registration"]["delegate_id"]
+        })
+      else
+        Coherence.current_user(conn)
+          |> Repo.preload(:applications)
+          |> Map.get(:applications)
+          |> List.first()
+      end
+    if application do
+      redirect(conn, to: application_path(conn, :show, application.id))
+    else
+      redirect(conn, to: root_path(conn, :index))
+    end
+  end
+
 end

@@ -41,6 +41,8 @@
                 .col-md-6.offset-md-3.text-center
                   p Pour recevoir par email votre synthèse VAE, merci de remplir le formulaire ci-dessous :
               = form_for @user_changeset, Routes.registration_path(@conn, :create), [as: :registration, class: "row justify-content-center"], fn f  ->
+                = hidden_input f, :certification_id, value: @certification.id
+                = hidden_input f, :delegate_id, value: @delegate.id
                 = if @user_changeset.action do
                   .alert.alert-danger
                     p= dgettext "coherence", "Oops, something went wrong! Please check the errors below."

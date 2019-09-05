@@ -265,7 +265,11 @@ defmodule Vae.User do
   end
 
   def fullname(user) do
-    user.name || "#{user.first_name} #{user.last_name}"
+    cond do
+      user.name -> user.name
+      user.first_name || user.last_name -> "#{user.first_name} #{user.last_name}" |> String.trim()
+      true -> user.email
+    end
   end
 
   def address(user) do
