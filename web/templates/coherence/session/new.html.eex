@@ -30,7 +30,7 @@
           <br />
         <% end %>
 
-        <div class="form-group">
+        <div class="form-group d-flex justify-content-between">
           <%= submit dgettext("coherence", "Me connecter"), class: "btn btn-primary" %>
           <%= link dgettext("coherence", "Retour"), to: Coherence.Config.logged_out_url("/"), class: "btn" %>
         </div>

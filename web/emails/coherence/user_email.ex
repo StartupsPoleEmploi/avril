@@ -2,11 +2,12 @@ Code.ensure_loaded Phoenix.Swoosh
 
 defmodule Vae.Coherence.UserEmail do
   @moduledoc false
-  use Phoenix.Swoosh, view: Coherence.EmailView, layout: {Coherence.LayoutView, :email}
+  use Phoenix.Swoosh, view: Vae.Coherence.EmailView, layout: {Vae.Coherence.LayoutView, :email}
   alias Swoosh.Email
   require Logger
   alias Coherence.Config
   import Vae.Gettext
+  alias Vae.Mailer.Sender.Mailjet
 
   defp site_name, do: Config.site_name(inspect Config.module)
 
@@ -20,12 +21,25 @@ defmodule Vae.Coherence.UserEmail do
   end
 
   def confirmation(user, url) do
+    # Vae.Email.send(%{
+    #   From: Mailjet.generic_from(),
+    #   CustomID: UUID.uuid5(nil, user.email),
+    #   # TemplateLanguage: true,
+    #   # TemplateErrorDeliver: Application.get_env(:vae, :mailjet_template_error_deliver),
+    #   # TemplateErrorReporting: Application.get_env(:vae, :mailjet_template_error_reporting),
+    #   # TemplateID: @mailjet_conf[template_id],
+    #   # Variables: variables,
+    #   Subject: "Bienvenue sur Avril!",
+    #   TextPart: "Voici le lien: #{url}",
+    #   HTMLPart: "<p>Voici le lien! #{url}</p>",
+    #   To: Mailjet.build_to(%{Email: user.email, Name: user.name})
+    # })
     %Email{}
     |> from(from_email())
     |> to(user_email(user))
     |> add_reply_to()
     |> subject(dgettext("coherence", "%{site_name} - Confirm your new account", site_name: site_name()))
-    |> render_body("confirmation.html", %{url: url, name: first_name(user.name)})
+    |> render_body("confirmation.html", %{url: url, name: "Augustin"})
   end
 
   def invitation(invitation, url) do
@@ -62,7 +76,7 @@ defmodule Vae.Coherence.UserEmail do
   end
 
   defp user_email(user) do
-    {user.name, user.email}
+    {"Augustin Riedinger", user.email}
   end
 
   defp from_email do

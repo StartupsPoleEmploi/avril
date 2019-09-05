@@ -79,30 +79,9 @@ defmodule Vae.User do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @fields ++ coherence_fields())
-    |> put_embed(
-      :skills,
-      Enum.uniq_by(
-        model.skills ++
-          List.wrap(params[:skills]),
-        &Skill.unique_key/1
-      )
-    )
-    |> put_embed(
-      :experiences,
-      Enum.uniq_by(
-        model.experiences ++
-          List.wrap(params[:experiences]),
-        &Experience.unique_key/1
-      )
-    )
-    |> put_embed(
-      :proven_experiences,
-      Enum.uniq_by(
-        model.proven_experiences ++
-          List.wrap(params[:proven_experiences]),
-        &ProvenExperience.unique_key/1
-      )
-    )
+    |> __MODULE__.put_embed_if_necessary(params, :skills)
+    |> __MODULE__.put_embed_if_necessary(params, :experiences)
+    |> __MODULE__.put_embed_if_necessary(params, :proven_experiences)
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -120,6 +99,17 @@ defmodule Vae.User do
       ~w(password password_confirmation reset_password_token reset_password_sent_at)
     )
     |> validate_coherence_password_reset(params)
+  end
+
+  def put_embed_if_necessary(changeset, params, key) do
+    klass = key |> Atom.to_string() |> String.capitalize() |> String.to_atom() |> List.wrap() |> Module.concat()
+    case params[key] do
+      nil -> changeset
+      values -> put_embed(changeset, key, Enum.uniq_by(
+        changeset.data[key] ++ List.wrap(values),
+        &klass.unique_key/1
+      ))
+    end
   end
 
   def create_or_update_with_pe_connect_data(%{"email" => email} = userinfo_api_result)
@@ -253,7 +243,8 @@ defmodule Vae.User do
       first_name: String.capitalize(api_fields["given_name"]),
       last_name: String.capitalize(api_fields["family_name"]),
       pe_id: api_fields["idIdentiteExterne"],
-      job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"]))
+      job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"])),
+      confirmed_at: Timex.now()
     })
     |> Enum.reject(fn {_, v} -> is_nil(v) end)
     |> Map.new()

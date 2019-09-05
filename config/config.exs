@@ -109,13 +109,10 @@ config :algolia,
   search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
 
 config :coherence,
-  web_module: Vae,
-  user_schema: Vae.User,
-  repo: Vae.Repo,
-  router: Vae.Router,
-  messages_backend: Vae.Coherence.Messages,
-  email_from_name: "Avril",
+  allow_unconfirmed_access_for: 365,
   email_from_email: "avril@pole-emploi.fr",
+  email_from_name: "Avril",
+  messages_backend: Vae.Coherence.Messages,
   opts: [
     :authenticatable,
     :confirmable,
@@ -123,11 +120,15 @@ config :coherence,
     :recoverable,
     :lockable,
     :trackable,
-    :unlockable_with_token
+    :unlockable_with_token,
   ],
+  repo: Vae.Repo,
+  router: Vae.Router,
   session_model: Vae.Session,
   session_repo: Vae.Repo,
-  schema_key: :id
+  schema_key: :id,
+  user_schema: Vae.User,
+  web_module: Vae
 
 config :coherence, :layout, {Vae.LayoutView, :app}
 
