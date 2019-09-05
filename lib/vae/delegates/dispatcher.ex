@@ -79,10 +79,16 @@ defmodule Vae.Delegates.Dispatcher do
 
   @impl true
   def handle_call({:get, delegate}, _from, state) do
-    Vae.Search.Client.Algolia.get_meetings(delegate)
-    |> IO.inspect()
+    {:ok, places} = Vae.Search.Client.Algolia.get_meetings(delegate)
 
-    {:reply, [], state}
+    meetings =
+      places
+      |> Enum.map(fn %{id: id, place: place, address: address} ->
+        found = Enum.find(state, &(&1[:id] == id))
+        {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
+      end)
+
+    {:reply, meetings, state}
   end
 
   defp format(

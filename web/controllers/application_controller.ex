@@ -20,13 +20,7 @@ defmodule Vae.ApplicationController do
     meetings =
       if application.meeting,
         do: [],
-        else:
-          Vae.Delegates.get_france_vae_meetings(application.delegate.academy_id)
-          |> Enum.group_by(fn meeting -> {meeting.place, meeting.address} end)
-          |> Map.to_list()
-          |> Enum.map(fn {{place, _address}, _meetings} ->
-            {{place, _address, Vae.String.parameterize(place)}, _meetings}
-          end)
+        else: Vae.Delegates.Dispatcher.get(application.delegate)
 
     preselected_place =
       Enum.find(meetings, {nil, []}, fn {{place, _address, _slug}, _meetings} ->
