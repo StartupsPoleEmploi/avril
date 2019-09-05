@@ -12,22 +12,27 @@ defmodule Vae.Delegates.Dispatcher do
     GenServer.start_link(__MODULE__, opts, name: DelegatesDispatcher)
   end
 
+  @impl true
   def init(_state) do
-    {:ok, []}
+    state =
+      PersistentEts.new(:meetings, "meetings.tab", [:named_table, :public])
+      |> from_ets()
+
+    {:ok, state}
   end
 
   @impl true
   def handle_cast({:subscribe, name, data}, state) do
     Logger.info(fn -> inspect("#{name} subscribed") end)
 
-    {to_index, new_state} =
+    {to_index, places} =
       data
       |> Enum.reduce({[], []}, fn %{
                                     academy_id: academy_id,
                                     certifier_id: certifier_id,
                                     meetings: meetings
                                   },
-                                  {to_index, new_state} = acc ->
+                                  {to_index, new_state} ->
         formatted =
           meetings
           |> Enum.group_by(&{&1.geolocation["_geoloc"], &1.place, &1.address})
@@ -52,13 +57,19 @@ defmodule Vae.Delegates.Dispatcher do
         }
       end)
 
-    with {:ok, objects} <- Algolia.save_objects("test-meetings", to_index, id_attribute: :id) do
+    with {:ok, objects} <- Algolia.save_objects("test-meetings", to_index, id_attribute: :id),
+         true <- persist(places),
+         new_state <- from_ets() do
       Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
-      {:noreply, new_state ++ state}
+
+      {:noreply, new_state}
     else
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
         {:noreply, state}
+
+      false ->
+        Logger.error("Error while inserting state into meetings ets table")
     end
   end
 
@@ -91,21 +102,6 @@ defmodule Vae.Delegates.Dispatcher do
     {:reply, meetings, state}
   end
 
-  defp format(
-         {geoloc, place, address},
-         %{academy_id: academy_id, certifier_id: certifier_id, meetings: meetings}
-       ),
-       do: %{
-         id: UUID.uuid5(nil, "#{place} #{address}"),
-         _geoloc: geoloc,
-         place: place,
-         address: address,
-         academy_id: academy_id,
-         certifier_id: certifier_id,
-         has_academy: !!academy_id,
-         meetings: Enum.map(meetings, &Map.from_struct/1)
-       }
-
   def fetch_all() do
     GenServer.cast(DelegatesDispatcher, :fetch_all)
   end
@@ -128,5 +124,34 @@ defmodule Vae.Delegates.Dispatcher do
 
   def get(delegate) do
     GenServer.call(DelegatesDispatcher, {:get, delegate})
+  end
+
+  defp format(
+         {geoloc, place, address},
+         %{academy_id: academy_id, certifier_id: certifier_id, meetings: meetings}
+       ),
+       do: %{
+         id: UUID.uuid5(nil, "#{place} #{address}"),
+         _geoloc: geoloc,
+         place: place,
+         address: address,
+         academy_id: academy_id,
+         certifier_id: certifier_id,
+         has_academy: !!academy_id,
+         meetings: Enum.map(meetings, &Map.from_struct/1)
+       }
+
+  defp from_ets(tab \\ :meetings) do
+    tab
+    |> :ets.tab2list()
+    |> Enum.map(fn {_id, place} -> place end)
+  end
+
+  defp persist(places) do
+    places
+    |> Enum.map(fn %{id: id} = place ->
+      :ets.insert(:meetings, {id, place})
+    end)
+    |> Enum.all?(&(&1 == true))
   end
 end
