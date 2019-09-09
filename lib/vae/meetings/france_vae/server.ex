@@ -56,21 +56,25 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   defp get_data() do
     FranceVae.get_academies()
-    |> Enum.reduce([], fn %{"id" => id}, acc ->
+    |> Enum.reduce([], fn %{"id" => academy_id}, acc ->
       [
         %{
           # Call me DB ...
           certifier_id: 2,
-          academy_id: id,
+          academy_id: academy_id,
           meetings:
-            FranceVae.get_meetings(id)
+            FranceVae.get_meetings(academy_id)
             |> Enum.map(fn
               %Meeting{postal_code: nil} = meeting ->
                 meeting
 
               %Meeting{postal_code: postal_code} = meeting ->
                 geolocation = Vae.Places.get_geoloc_from_address(postal_code)
-                Map.put(meeting, :geolocation, geolocation)
+
+                %{
+                  meeting
+                  | geolocation: geolocation
+                }
             end)
         }
         | acc

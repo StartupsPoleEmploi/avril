@@ -85,7 +85,7 @@ defmodule Vae.Meetings.StateHolder do
     meeting =
       state
       |> Enum.flat_map(& &1[:meetings])
-      |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
+      |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
 
     {:reply, meeting, state}
   end

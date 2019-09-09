@@ -49,7 +49,7 @@ defmodule Vae.Meetings.Afpa.Scraper do
         time_node_children =
           Floki.find(custom_back, ".date-info span:last-child") |> node_children()
 
-        if is_nil(info_node_children) || is_nil(time_node_children) do
+        if info_node_children == [] || time_node_children == [] do
           nil
         else
           [name, address, postal_city] =
@@ -100,7 +100,7 @@ defmodule Vae.Meetings.Afpa.Scraper do
   defp node_children(node_list) do
     case List.first(node_list) do
       node when is_tuple(node) -> elem(node, 2)
-      _ -> nil
+      _ -> []
     end
   end
 

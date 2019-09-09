@@ -18,6 +18,7 @@ defmodule Vae.Meetings.Afpa.Server do
     Logger.info("Init #{@name} server")
 
     StateHolder.subscribe(@name)
+
     {:ok, state}
   end
 
@@ -59,7 +60,18 @@ defmodule Vae.Meetings.Afpa.Server do
         academy_id: nil,
         meetings:
           Scraper.scrape_all_events()
-          |> Enum.map(fn meeting -> struct(%Meeting{}, meeting) end)
+          |> Enum.filter(&(&1 != []))
+          |> Enum.map(fn meeting ->
+            %{
+              struct(%Meeting{}, meeting)
+              | meeting_id2:
+                  UUID.uuid5(
+                    nil,
+                    "#{meeting[:place]} #{meeting[:start_date]}"
+                  ),
+                end_date: Timex.add(meeting[:start_date], Timex.Duration.from_hours(3))
+            }
+          end)
       }
     ]
   end

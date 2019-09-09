@@ -72,8 +72,8 @@ defmodule Vae.ApplicationController do
 
     case Application.submit(application) do
       {:ok, application} ->
-        if application.delegate.academy_id do
-          meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
+        if params["book"] == "on" do
+          meeting_id = params["application"]["meeting_id"]
 
           case Application.set_registered_meeting(
                  application,
@@ -81,16 +81,22 @@ defmodule Vae.ApplicationController do
                  meeting_id
                ) do
             {:ok, application} ->
-              redirect(conn,
-                to:
-                  Routes.application_france_vae_redirect_path(
-                    conn,
-                    :france_vae_redirect,
-                    application,
-                    %{academy_id: application.delegate.academy_id}
-                    |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
-                  )
-              )
+              if not is_nil(application.delegate.academy_id) do
+                redirect(conn,
+                  to:
+                    Routes.application_france_vae_redirect_path(
+                      conn,
+                      :france_vae_redirect,
+                      application,
+                      %{academy_id: application.delegate.academy_id}
+                      |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
+                    )
+                )
+              else
+                conn
+                |> put_flash(:succes, "Dossier transmis avec succès !")
+                |> redirect(to: Routes.application_path(conn, :show, application))
+              end
 
             {:error, msg} ->
               Logger.error(fn -> inspect(msg) end)
