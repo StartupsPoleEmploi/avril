@@ -75,38 +75,28 @@ defmodule Vae.ApplicationController do
         if application.delegate.academy_id do
           meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
 
-          with {:ok, _response} <-
-                 Vae.Meetings.register_to_france_vae_meeting(
-                   application.delegate.academy_id,
-                   meeting_id,
-                   application
-                 ),
-               {:ok, application} <-
-                 Application.set_registered_meeting(
-                   application,
-                   application.delegate.academy_id,
-                   meeting_id
-                 ) do
-            conn
-            |> redirect(
-              to:
-                Routes.application_france_vae_registered_path(
-                  conn,
-                  :france_vae_registered,
-                  application,
-                  %{academy_id: application.delegate.academy_id}
-                  |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
-                )
-            )
-          else
-            {:error, %{"code" => _code, "message" => msg}} ->
-              conn
-              |> put_flash(:error, msg)
-              |> redirect(to: Routes.application_path(conn, :show, application))
+          case Application.set_registered_meeting(
+                 application,
+                 application.delegate.academy_id,
+                 meeting_id
+               ) do
+            {:ok, application} ->
+              redirect(conn,
+                to:
+                  Routes.application_france_vae_redirect_path(
+                    conn,
+                    :france_vae_redirect,
+                    application,
+                    %{academy_id: application.delegate.academy_id}
+                    |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
+                  )
+              )
 
-            msg ->
+            {:error, msg} ->
+              Logger.error(fn -> inspect(msg) end)
+
               conn
-              |> put_flash(:error, msg)
+              |> put_flash(:error, "Une erreur est survenue")
               |> redirect(to: Routes.application_path(conn, :show, application))
           end
         else

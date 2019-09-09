@@ -129,11 +129,7 @@ defmodule Vae.Application do
   def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
 
   def set_registered_meeting(application, academy_id, meeting_id) do
-    {_render, meetings} = Vae.Meetings.get(application.delegate)
-
-    meeting =
-      meetings
-      |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
+    meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
 
     application
     |> change()

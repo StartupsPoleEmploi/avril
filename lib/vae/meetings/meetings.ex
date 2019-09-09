@@ -7,6 +7,10 @@ defmodule Vae.Meetings do
 
   defdelegate all(), to: StateHolder
 
+  def get_by_meeting_id(nil), do: %Vae.Meetings.Meeting{}
+
+  defdelegate get_by_meeting_id(meeting_id), to: StateHolder
+
   def get_france_vae_academies() do
     GenServer.call(:france_vae, :get_academies)
   end

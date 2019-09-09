@@ -80,6 +80,16 @@ defmodule Vae.Meetings.StateHolder do
     {:reply, meetings, state}
   end
 
+  @impl true
+  def handle_call({:get_by_meeting_id, meeting_id}, _from, state) do
+    meeting =
+      state
+      |> Enum.flat_map(& &1[:meetings])
+      |> Enum.find(fn meeting -> meeting.meeting_id == String.to_integer(meeting_id) end)
+
+    {:reply, meeting, state}
+  end
+
   def fetch_all() do
     GenServer.cast(@name, :fetch_all)
   end
@@ -98,6 +108,10 @@ defmodule Vae.Meetings.StateHolder do
 
   def get(delegate) do
     GenServer.call(@name, {:get, delegate})
+  end
+
+  def get_by_meeting_id(meeting_id) do
+    GenServer.call(@name, {:get_by_meeting_id, meeting_id})
   end
 
   defp fetch(name) do
