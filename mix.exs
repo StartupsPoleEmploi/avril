@@ -93,6 +93,7 @@ defmodule Vae.Mixfile do
       {:oauth2, "~> 0.9"},
       {:inflex, "~> 1.10.0"},
       {:swoosh, "~> 0.23"},
+      {:phoenix_swoosh, "~> 0.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},

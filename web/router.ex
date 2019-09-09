@@ -93,6 +93,7 @@ defmodule Vae.Router do
     get("/candidatures/:id/inadmissible", Vae.ApplicationController, :inadmissible)
 
     # Mailing link redirection
+    resources("/candidats", Vae.JobSeekerController, only: [:create])
     get("/candidats/:id/admissible", Vae.JobSeekerController, :admissible)
     get("/candidats/:id/inadmissible", Vae.JobSeekerController, :inadmissible)
 

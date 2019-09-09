@@ -2,12 +2,12 @@ Code.ensure_loaded Phoenix.Swoosh
 
 defmodule Vae.Coherence.UserEmail do
   @moduledoc false
-  use Phoenix.Swoosh, view: Vae.Coherence.EmailView, layout: {Vae.Coherence.LayoutView, :email}
-  alias Swoosh.Email
   require Logger
-  alias Coherence.Config
-  import Vae.Gettext
-  alias Vae.Mailer.Sender.Mailjet
+  use Phoenix.Swoosh,
+    view: Vae.Coherence.EmailView,
+    layout: {Vae.Coherence.LayoutView, :email}
+  alias Swoosh.Email
+  # alias Coherence.Config
   alias Vae.User
 
   def password(user, url) do
@@ -17,11 +17,6 @@ defmodule Vae.Coherence.UserEmail do
       user,
       %{url: url}
     )
-    # %Email{}
-    # |> from(Coherence.Config.email_from)
-    # |> to(User.formatted_email(user))
-    # |> subject("Réinitialisation du mot de passe Avril")
-    # |> render_body("password.html", %{url: url, name: User.fullname(user)})
   end
 
   def confirmation(user, url) do
@@ -31,11 +26,6 @@ defmodule Vae.Coherence.UserEmail do
       user,
       %{url: url}
     )
-    # %Email{}
-    # |> from(Coherence.Config.email_from)
-    # |> to(User.formatted_email(user))
-    # |> subject("Confirmation de mon compte VAE sur Avril - la VAE facile")
-    # |> render_body("confirmation.html", %{url: url, name: User.fullname(user)})
   end
 
   def unlock(user, url) do
@@ -45,11 +35,6 @@ defmodule Vae.Coherence.UserEmail do
       user,
       %{url: url}
     )
-    # %Email{}
-    # |> from(Coherence.Config.email_from)
-    # |> to(User.formatted_email(user))
-    # |> subject("Débloquer votre compte Avril")
-    # |> render_body("unlock.html", %{url: url, name: User.fullname(user)})
   end
 
   defp user_email(subject, template_name, user, params\\%{}) do

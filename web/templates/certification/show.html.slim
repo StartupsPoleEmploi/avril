@@ -89,14 +89,17 @@
         = render("_pagination.html")
         div id="steps"
           = render_steps(@delegate.process)
-  .card.bg-light.text-secondary
+  .card.bg-white.text-secondary
     .card-body
       h5 Pas encore mûr dans votre projet de VAE ?
       p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.
-      = form_for @user_changeset, Routes.registration_path(@conn, :create), [as: :simple_contact, class: "row align-items-center simple-contact-form"], fn f  ->
+      = form_for @job_seeker_changeset, Routes.job_seeker_path(@conn, :create), [class: "row align-items-center"], fn f  ->
+        = hidden_input f, :certification_id, value: @certification.id
+        = hidden_input f, :delegate_id, value: @delegate.id
+
         .col-md-8
           .form-label-group
-            = text_input f, :email, class: "form-control form-control-lg", required: true, placeholder: "ex: la.classe@americaine.com"
+            = text_input f, :email, class: "form-control form-control-lg bg-light", required: true, placeholder: "ex: la.classe@americaine.com"
             = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
             = error_tag f, :email
         .col-md-4

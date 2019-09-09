@@ -103,6 +103,11 @@ config :vae, Vae.Repo,
   ssl: false,
   timeout: 60_000
 
+config :vae, Vae.Mailer,
+  adapter: Swoosh.Adapters.Mailjet,
+  api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
+  secret: System.get_env("MAILJET_PRIVATE_API_KEY")
+
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),

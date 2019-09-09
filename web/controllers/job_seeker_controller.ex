@@ -1,8 +1,47 @@
 defmodule Vae.JobSeekerController do
   use Vae.Web, :controller
 
-  alias Vae.JobSeeker
-  alias Vae.Crm.Polls
+  alias Vae.{Certification, Crm.Polls, Delegate, Event, JobSeeker, Repo}
+
+  def create(conn, %{ "job_seeker" => %{
+    "email" => email,
+    "certification_id" => certification_id,
+    "delegate_id" => delegate_id
+  }}) do
+    with(
+      delegate <- Repo.get(Delegate, delegate_id) |> Repo.preload(:process),
+      certification <- Repo.get(Certification, certification_id),
+      job_seeker <- Event.create_or_update_job_seeker(%{
+        email: email,
+        type: "receive_synthesis",
+        event: "submitted",
+        delegate_id: delegate.id,
+        certification_id: certification.id
+      })) do
+        {:ok, _pid} = Task.start(fn ->
+          Vae.JobSeekerEmail.receive_synthesis(job_seeker, delegate.process)
+          |> Vae.Mailer.deliver()
+        end)
+        conn
+        |> put_flash(:info, "Vous allez recevoir votre synthèse d'un instant à l'autre.")
+        |> redirect(to: Routes.certification_path(
+          conn,
+          :show,
+          certification_id,
+          certificateur: delegate.id
+        ))
+    else
+      _ ->
+        conn
+        |> put_flash(:error, "Une erreur est survenue, merci de réessayer plus tard.")
+        |> redirect(to: Routes.certification_path(
+          conn,
+          :show,
+          certification_id,
+          certificateur: delegate_id
+        ))
+    end
+  end
 
   def admissible(conn, %{"id" => id}) do
     Repo.get(JobSeeker, id)
