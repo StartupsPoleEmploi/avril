@@ -10,7 +10,7 @@
       .col-lg-10.offset-lg-1
         = render Vae.ComponentView, "searchbar.html", conn: @conn
         .text-left.pt-2
-          = link("Je ne trouve pas mon métier", to: "https://avril_la_vae_facile.typeform.com/to/ZMi91e", class: "nav-link", data: [analytics: "Certification#manquante"])
+          = link("Je ne trouve pas mon métier", to: "https://avril_la_vae_facile.typeform.com/to/ZMi91e", class: "btn btn-link target-self", data: [analytics: "Certification#metier non trouve"])
     .row
       .col-md-12
         p.dm-logo Avril est une initiative Pôle emploi
@@ -103,7 +103,7 @@
         / li.nav-item
         /   = link "Découvrez l'équipe Avril", to: Routes.root_path(@conn, :index), class: "nav-link p-0 disabled"
         li.nav-item
-          = link "Contacter l'équipe", to: "mailto:avril@pole-emploi.fr", class: "nav-link p-0"
+          = link "Contacter l'équipe", to: Routes.page_path(@conn, :contact), class: "nav-link p-0"
 
     .col-md-4
       h3.my-4 Liens utiles pour la VAE
@@ -123,10 +123,12 @@
         li.nav-item
           = render Vae.ComponentView, "active_link.html", text: "Bien choisir son diplôme", class: "nav-link p-0", to: Routes.page_path(@conn, :choose_certification), conn: @conn
         li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: Routes.page_path(@conn, :accessibility_promess), conn: @conn
-        li.nav-item
-          = render Vae.ComponentView, "active_link.html", text: "Points Relais Conseil", class: "nav-link p-0", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :financement), conn: @conn
         li.nav-item
          = render Vae.ComponentView, "active_link.html", text: "C'est quoi un certificateur ?", class: "nav-link p-0", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
         li.nav-item
          = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Points Relais Conseil", class: "nav-link p-0", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+        li.nav-item
+          = render Vae.ComponentView, "active_link.html", text: "Accessibilité", class: "nav-link p-0", to: Routes.page_path(@conn, :accessibility_promess), conn: @conn

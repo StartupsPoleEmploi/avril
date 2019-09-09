@@ -96,7 +96,8 @@ defmodule Vae.Mixfile do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
-      {:sentry, "~> 6.4"}
+      {:sentry, "~> 6.4"},
+      {:phoenix_markdown, "~> 1.0"}
     ]
   end
 

@@ -40,6 +40,13 @@ div
             span.ic-icon.ic-time-clock.mr-2
             | 4 minutes
           = img_tag '/images/play.svg', alt: 'lecture'
+      = link to: Routes.page_path(@conn, :financement), class: "card card-pages p-4 my-4" do
+        h5.mb-5 Comment financer ma VAE ?
+        div.d-flex
+          div.mr-4
+            span.ic-icon.ic-time-clock.mr-2
+            | 4 minutes
+          = img_tag '/images/play.svg', alt: 'lecture'
       = link to: Routes.page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
         h5.mb-5 Les Points Relais Conseil
         div.d-flex

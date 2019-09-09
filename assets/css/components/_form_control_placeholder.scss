@@ -1,3 +1,31 @@
+
+@mixin move-placeholder-up() {
+  align-items: flex-end;
+  @include media-breakpoint-down(sm) {
+    font-size: 11px;
+    transform: translate3d(0, -25%, 0);
+    opacity: 1;
+    height: -moz-fit-content;
+    height: fit-content;
+
+    &.form-control-lg-placeholder {
+      font-size: 14px;
+    }
+  }
+  @include media-breakpoint-up(md) {
+    font-size: 11px;
+    transform: translate3d(0, -25%, 0);
+    opacity: 1;
+    height: -moz-fit-content;
+    height: fit-content;
+
+    &.form-control-lg-placeholder {
+      font-size: 16px;
+      transform: translate3d(0, -100%, 0);
+    }
+  }
+}
+
 .form-label-group {
   position: relative;
 
@@ -65,32 +93,14 @@
     }
   }
 
-  input:focus + label,
+  input:not(:-moz-placeholder-shown) + label {
+    @include move-placeholder-up();
+  }
   input:not(:placeholder-shown) + label {
-    align-items: flex-end;
-    @include media-breakpoint-down(sm) {
-      font-size: 11px;
-      transform: translate3d(0, -25%, 0);
-      opacity: 1;
-      height: -moz-fit-content;
-      height: fit-content;
-
-      &.form-control-lg-placeholder {
-        font-size: 14px;
-      }
-    }
-    @include media-breakpoint-up(md) {
-      font-size: 11px;
-      transform: translate3d(0, -25%, 0);
-      opacity: 1;
-      height: -moz-fit-content;
-      height: fit-content;
-
-      &.form-control-lg-placeholder {
-        font-size: 16px;
-        transform: translate3d(0, -100%, 0);
-      }
-    }
+    @include move-placeholder-up();
+  }
+  input:focus + label {
+    @include move-placeholder-up();
   }
 }
 /* Fallback for Edge

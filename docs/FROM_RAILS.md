@@ -4,7 +4,7 @@
 
 - App code : `/app` -> `/web`
 - Migrations : `/db/migrate` -> `/priv/repo/migrations`
-- Assets : `/app/assets` -> `/priv/static`
+- Assets : `/app/assets` -> `/assets`
 - Router : `/config/router.rb` -> `/web/router.ex`
 
 ## Commands

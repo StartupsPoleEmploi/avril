@@ -29,10 +29,5 @@ config :vae, Vae.Scheduler,
           err -> Logger.error(fn -> inspect(err) end)
         end
       end
-    ],
-    afpa_refresh: [
-      timezone: "Europe/Paris",
-      schedule: "0 5 * * *",
-      task: &Vae.Meetings.refresh_afpa_meetings/0
     ]
   ]

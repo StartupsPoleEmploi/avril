@@ -28,6 +28,7 @@ WORKDIR /app
 # Install dependencies
 RUN cd assets && npm install
 RUN mix local.hex --force
+RUN mix local.rebar --force
 RUN mix deps.get # TODO: make it non interactive
 
 # Setup DB

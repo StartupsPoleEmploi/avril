@@ -33,11 +33,11 @@ import $ from 'jquery';
             $(el).elementAnalyticsEvent()
           }
         });
-      } else if ($(el).is(':input') && $(el).parents('form').length) {
+      } else if ($(el).is(':input') && $(el).parents('form').length > 1 && $(el).is(':not([type="submit"])')) {
         $(el).attr('data-original-value', $(el).val())
         const $form = $(el).parents('form');
         $form.on('submit', e => {
-          if ($(el).val() && $(el).val() !== $(el).attr('data-original-value')) {
+          if (($(el).val() && $(el).val() !== $(el).attr('data-original-value'))) {
             $(el).elementAnalyticsEvent()
           }
         });

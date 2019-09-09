@@ -61,9 +61,9 @@ import $ from 'jquery';
 
     const activateSubmitButton = () => {
       if ($('select.date-select:not(:disabled)').length) {
-        $('form.select-meeting').find('button[name="book"]').removeAttr('disabled');
+        $('form.select-meeting').find('button[name="book"][value="on"]').removeAttr('disabled');
       } else {
-        $('form.select-meeting').find('button[name="book"]').attr('disabled', 'disabled');
+        $('form.select-meeting').find('button[name="book"][value="on"]').attr('disabled', 'disabled');
       }
     }
     activateSubmitButton();

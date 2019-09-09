@@ -1,0 +1,114 @@
+.financement
+  .uncontainer.d-none.d-xl-block
+    .d-flex.justify-content-end
+      div style="max-width: 30vw; z-index: 100; "
+        = img_tag "/images/Madame.png", style: "width: 100%;"
+  section.row
+    .col.col-md-8.offset-md-1.mb-5
+        button.btn.btn-link.btn-history-back
+          span.ic-icon.ic-tail-left.mr-3
+          | Retour
+  section.row
+    .col-md-8.offset-md-1.pb-5
+        h1.my-5 Financer sa VAE
+        h2.mb-5 Nous allons vous aider à vous y retrouver !
+        p.mb-4 Selon votre situation, le financement peut être pris en charge par Pôle emploi, la Région, les OPCO, le compte personnel de formation (CPF) ... il y a toujours une solution !
+
+        = link to: "#situation", class: "btn btn-link my-5" do
+          span.ic-icon.ic-tail-right.mr-3
+          | Trouver mon financement
+
+  section.row
+    .col-md-10.offset-md-1.bg-primary.py-5.px-5.with-arrow
+      .row
+        .col-md-10.py-5
+          h2 Le financement ne doit pas être un frein : des solutions existent pour chaque candidat
+
+  section.row
+    .col-md-4.offset-md-1.col-sm-6.py-5
+      h4 En résumé
+
+      p Le financement d'une VAE dépend de votre situation actuelle : salariée, demandeur d'emploi, travailleurs handicapés ...
+      p Soyez rassuré, il existe des solutions et des organismes dans la majorité des cas. Il suffit juste de contacter les bonnes personnes et les bons sites !
+
+    .col-md-4.col-sm-6.bg-secondary.d-flex.align-items-center.justify-content-center.move-up
+      = link to: "#situation", class: "btn btn-primary" do
+        span.ic-icon.ic-tail-right.mr-3 style="position: relative; top: 0.15rem;"
+        | Trouver mon financement
+
+  section.row.mb-5
+    .col-md-5.col-sm-6 style="background-image: url('/images/reunion-financement.jpg'); background-size: cover;"
+    .col-md-7.col-sm-6.py-6.px-5
+      h3 Un parcours humain
+
+      p La VAE est avant tout un parcours de coordination humaine. La VAE vous concerne vous mais aussi le certificateur (celui qui vous délivre le diplôme), l'accompagnateur (celui qui vous conseille) et le jury (qui évalue votre dossier).
+
+      p Comme vous allez prendre du temps pour rédiger votre dossier, il en faudra tout autant pour le lire. Vous allez sans doute avoir besoin d'un accompagnement pour vous aider à obtenir de meilleurs résultats plus rapidement. C'est le temps que toutes ces personnes vont mettre à votre disposition qu'il faut financer, ainsi que des frais d'inscription, de déplacement éventuels, de jury etc. Pour cela, nous allons vous expliquer comment solliciter l'aide des différents financeurs possibles (Pôle emploi, le conseil régional, les OPCO ...)
+
+  section.row
+    .col-lg-8.offset-lg-2.col-md-10.offset-md-1.p-5
+      bloquote.h2
+        strong « Avril et les différents organismes sont là pour vous aider et vous fournir le soutien nécessaire à la réussite de votre projet »
+      .author.text-center.my-4
+        p.name
+          strong Marie
+        .role CEO d'Avril
+
+  section.row
+    .col-lg-5.offset-lg-1.p-5
+      h3 Le financement dépend de votre situation actuelle
+
+      p Soyez tranquille, il y a toutes les chances que vous soyez financé ! Dans le cas des demandeurs d'emploi, 95% des dossiers sont financés dans leur totalité par exemple.
+      p Nous vous avons résumé les différentes situations et les différentes possibilités dans des fiches de renseignement.
+
+
+    #situation.col-lg-6.p-5.bg-secondary.with-arrow.left
+      .col-md-8.offset-md-2
+        h6 Vous êtes :
+        select.situation-select.form-control
+          option value="pole-emploi" selected="selected" Demandeur d'emploi
+          option value="salarie" Salarié du privé ou du public
+          option value="non-salarie" Non salarié
+          option value="handicap" Situation de handicap
+          option value="intermittent" Intermittent du spectacle
+          option value="interimaire" Intérimaire
+        .situation-descriptions.my-5
+          .collapse.show data-name="pole-emploi"
+            p
+              a href="https://www.pole-emploi.fr" target="_blank" Pôle emploi
+              ' , la Région et votre
+              a href="https://www.moncompteactivite.gouv.fr/cpa-public/" target="_blank" CPF
+              |  peuvent assurer le financement de votre projet VAE.
+          .collapse data-name="salarie"
+            p
+            ' Si la VAE est à votre initiative, vous pouvez être financé dans le cadre du
+            a href="https://www.moncompteactivite.gouv.fr/cpa-public/" target="_blank" CPF
+            | . Vous avez aussi droit à un congé VAE de 24h.Si la VAE est à l’initiative de l’employeur, elle est alors prise en charge dans le cadre du plan de développement des compétences de l’entreprise.
+          .collapse data-name="non-salarie"
+            p Prise en charge possible par le Fonds d’Assurance Formation, si vous êtes à jour de vos cotisations.
+          .collapse data-name="handicap"
+            p
+              | Prise en charge possible par l’
+              a href="https://www.agefiph.fr" target="_blank" AGEFIPH
+              |  ou le
+              a href="http://www.fiphfp.fr" target="_blank" FIPHFP
+              | .
+          .collapse data-name="intermittent"
+            p
+              | Prise en charge possible par l'
+              a href="https://www.afdas.com/intermittents/vae/obtenir-un-diplome-par-la-vae#informations-et-accompagnement" target="_blank" AFDAS
+              | .
+          .collapse data-name="interimaire"
+            p
+              | Prise en charge possible par le
+              a href="https://www.faftt.fr" target="_blank" FAFTT
+              | .
+
+  section.row
+    .col-lg-8.offset-lg-2.col-md-10.offset-md-1.p-5.my-4
+      h3.my-5.text-center Et ensuite ?
+
+      p Poursuivez votre démarche de VAE sans plus attendre ! Transmettez votre demande et votre dossier Pôle emploi d'expériences et compétences ! Le certificateur du diplôme que vous avez choisi pourra ainsi vous contacter rapidement grâce à Avril !
+
+      .text-center.my-5
+        = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary"
