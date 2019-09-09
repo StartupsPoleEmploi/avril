@@ -20,7 +20,7 @@ msgstr "Le lien sécurisé n'est pas valable."
 
 #: web/controllers/controller_helpers.ex:178
 msgid "Confirmation email sent."
-msgstr "Un email de confirmation a été envoyé."
+msgstr "Nous venons de vous envoyer un email pour confirmer votre adresse. Cette étape est obligatoire pour pouvoir soumettre sa candidature."
 
 #: web/controllers/confirmation_controller.ex:88
 msgid "Confirmation token expired."

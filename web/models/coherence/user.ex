@@ -272,6 +272,13 @@ defmodule Vae.User do
     end
   end
 
+  def formatted_email(user) do
+    cond do
+      fullname(user) == user.email -> user.email
+      true -> {fullname(user), user.email}
+    end
+  end
+
   def address(user) do
     [
       [user.address1, user.address2, user.address3, user.address4],
