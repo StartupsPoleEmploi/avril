@@ -24,11 +24,89 @@ defmodule Vae.Meetings.StateHolder do
   end
 
   @impl true
-  def handle_cast({:subscribe, name, data}, state) do
-    Logger.info(fn -> inspect("#{name} subscribed") end)
+  def handle_cast({:subscribe, name}, state) do
+    Logger.info(fn -> "#{name} subscribed" end)
 
-    {to_index, places} =
-      data
+    case :ets.lookup(:meetings, name) do
+      [] ->
+        new_state =
+          fetch(name)
+          |> index_and_persist(name)
+
+        {:noreply, new_state}
+
+      [{_delegate_name, updated_at, _grouped_meetings}] ->
+        new_state =
+          case DateTime.compare(
+                 Timex.add(updated_at, Timex.Duration.from_hours(12)),
+                 DateTime.utc_now()
+               ) do
+            :lt ->
+              fetch(name) |> index_and_persist(name)
+
+            _ ->
+              state
+          end
+
+        {:noreply, new_state}
+    end
+  end
+
+  @impl true
+  def handle_cast({:save, name, data}, state) do
+    new_state = Keyword.put(state, name, data)
+    {:noreply, new_state}
+  end
+
+  @impl true
+  def handle_cast(:fetch_all, state) do
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_call(:all, _from, state), do: {:reply, state, state}
+
+  @impl true
+  def handle_call({:get, delegate}, _from, state) do
+    {:ok, places} = Vae.Search.Client.Algolia.get_meetings(delegate)
+
+    meetings =
+      places
+      |> Enum.map(fn %{id: id, place: place, address: address} ->
+        found = Enum.find(state, &(&1[:id] == id))
+        {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
+      end)
+
+    {:reply, meetings, state}
+  end
+
+  def fetch_all() do
+    GenServer.cast(@name, :fetch_all)
+  end
+
+  def subscribe(who) do
+    GenServer.cast(@name, {:subscribe, who})
+  end
+
+  def save(name, data) do
+    GenServer.cast(@name, {:save, name, data})
+  end
+
+  def all() do
+    GenServer.call(@name, :all)
+  end
+
+  def get(delegate) do
+    GenServer.call(@name, {:get, delegate})
+  end
+
+  defp fetch(name) do
+    Logger.info(fn -> "Fetch data from #{name}" end)
+
+    delegate = GenServer.call(name, :fetch, :infinity)
+
+    {to_index, grouped} =
+      delegate.meetings
       |> Enum.reduce({[], []}, fn %{
                                     academy_id: academy_id,
                                     certifier_id: certifier_id,
@@ -59,73 +137,24 @@ defmodule Vae.Meetings.StateHolder do
         }
       end)
 
+    {to_index, %{delegate | grouped_meetings: grouped}}
+  end
+
+  defp index_and_persist({to_index, delegate}, name) do
     with {:ok, objects} <- Algolia.save_objects("test-meetings", to_index, id_attribute: :id),
-         true <- persist(places),
+         true <- persist(delegate, name),
          new_state <- from_ets() do
       Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
-
-      {:noreply, new_state}
+      new_state
     else
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
-        {:noreply, state}
+        []
 
       false ->
         Logger.error("Error while inserting state into meetings ets table")
+        []
     end
-  end
-
-  @impl true
-  def handle_cast({:save, name, data}, state) do
-    new_state = Keyword.put(state, name, data)
-    {:noreply, new_state}
-  end
-
-  @impl true
-  def handle_cast(:fetch_all, state) do
-    Logger.info(fn -> inspect(state) end)
-    {:noreply, state}
-  end
-
-  @impl true
-  def handle_call(:all, _from, state), do: {:reply, state, state}
-
-  @impl true
-  def handle_call({:get, delegate}, _from, state) do
-    {:ok, places} = Vae.Search.Client.Algolia.get_meetings(delegate)
-
-    meetings =
-      places
-      |> Enum.map(fn %{id: id, place: place, address: address} ->
-        found = Enum.find(state, &(&1[:id] == id))
-        {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
-      end)
-
-    {:reply, meetings, state}
-  end
-
-  def fetch_all() do
-    GenServer.cast(@name, :fetch_all)
-  end
-
-  def fetch(server) do
-    GenServer.cast(@name, {:fetch, server})
-  end
-
-  def subscribe(who, meetings) do
-    GenServer.cast(@name, {:subscribe, who, meetings})
-  end
-
-  def save(name, data) do
-    GenServer.cast(@name, {:save, name, data})
-  end
-
-  def all() do
-    GenServer.call(@name, :all)
-  end
-
-  def get(delegate) do
-    GenServer.call(@name, {:get, delegate})
   end
 
   defp format(
@@ -146,14 +175,10 @@ defmodule Vae.Meetings.StateHolder do
   defp from_ets(tab \\ :meetings) do
     tab
     |> :ets.tab2list()
-    |> Enum.map(fn {_id, place} -> place end)
+    |> Enum.flat_map(fn {_name, _updated_at, grouped_meetings} -> grouped_meetings end)
   end
 
-  defp persist(places) do
-    places
-    |> Enum.map(fn %{id: id} = place ->
-      :ets.insert(:meetings, {id, place})
-    end)
-    |> Enum.all?(&(&1 == true))
+  defp persist(delegate, name) do
+    :ets.insert(:meetings, {name, delegate.updated_at, delegate.grouped_meetings})
   end
 end

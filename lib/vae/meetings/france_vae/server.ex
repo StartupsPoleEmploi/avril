@@ -4,34 +4,22 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   alias Vae.Meetings.StateHolder
   alias Vae.Meetings.FranceVae
-  alias Vae.Meetings.Meeting
+  alias Vae.Meetings.{Delegate, Meeting}
 
-  @name FVae
+  @name :france_vae
 
   @doc false
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: @name)
+  def start_link() do
+    GenServer.start_link(__MODULE__, Delegate.new(@name), name: @name)
   end
 
   @impl true
-  def init(name) do
-    Logger.info("Init #{name} server")
+  def init(state) do
+    Logger.info("Init #{@name} server")
 
-    state = %{
-      academies: [],
-      meetings: []
-    }
+    StateHolder.subscribe(@name)
 
-    {:ok, state, {:continue, :get_data}}
-  end
-
-  @impl true
-  def handle_continue(:get_data, _state) do
-    new_state = get_data()
-
-    StateHolder.subscribe(@name, new_state)
-
-    {:noreply, new_state}
+    {:ok, state}
   end
 
   @impl true
@@ -47,6 +35,17 @@ defmodule Vae.Meetings.FranceVae.Server do
   @impl true
   def handle_call({:register_to_meeting, academy_id, meeting_id, user}, _from, state) do
     {:reply, FranceVae.register(academy_id, meeting_id, user), state}
+  end
+
+  @impl true
+  def handle_call(:fetch, _from, state) do
+    new_state = %{
+      state
+      | updated_at: DateTime.utc_now(),
+        meetings: get_data()
+    }
+
+    {:reply, new_state, new_state}
   end
 
   @impl true

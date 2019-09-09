@@ -4,41 +4,42 @@ defmodule Vae.Meetings.Afpa.Server do
 
   alias Vae.Meetings.Afpa.Scraper
   alias Vae.Meetings.StateHolder
-  alias Vae.Meetings.Meeting
+  alias Vae.Meetings.{Delegate, Meeting}
 
-  @name Afpa
+  @name :afpa
 
   @doc false
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: @name)
+  def start_link() do
+    GenServer.start_link(__MODULE__, Delegate.new(@name), name: @name)
   end
 
   @impl true
-  def init(name) do
-    Logger.info("Init #{name} server")
+  def init(state) do
+    Logger.info("Init #{@name} server")
 
-    state = %{
-      meetings: []
-    }
-
-    {:ok, state, {:continue, :get_data}}
+    StateHolder.subscribe(@name)
+    {:ok, state}
   end
 
   @impl true
   def handle_continue(:get_data, state) do
-    new_state = [
-      %{
-        certifier_id: 4,
-        academy_id: nil,
-        meetings:
-          Scraper.scrape_all_events()
-          |> Enum.map(fn meeting -> struct(%Meeting{}, meeting) end)
-      }
-    ]
-
-    StateHolder.subscribe(@name, new_state)
+    new_state = %{
+      state
+      | updated_at: DateTime.utc_now(),
+        meetings: get_data()
+    }
 
     {:noreply, new_state}
+  end
+
+  def handle_call(:fetch, _from, state) do
+    new_state = %{
+      state
+      | updated_at: DateTime.utc_now(),
+        meetings: get_data()
+    }
+
+    {:reply, new_state, new_state}
   end
 
   @impl true
@@ -49,5 +50,17 @@ defmodule Vae.Meetings.Afpa.Server do
   @impl true
   def handle_call(:get_meetings, _from, state) do
     {:reply, state[:meetings], state}
+  end
+
+  defp get_data() do
+    [
+      %{
+        certifier_id: 4,
+        academy_id: nil,
+        meetings:
+          Scraper.scrape_all_events()
+          |> Enum.map(fn meeting -> struct(%Meeting{}, meeting) end)
+      }
+    ]
   end
 end

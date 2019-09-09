@@ -14,7 +14,12 @@ defmodule Vae.ApplicationController do
           nil
 
         application ->
-          Repo.preload(application, [:user, [delegate: :process], :certification, :resumes])
+          Repo.preload(application, [
+            :user,
+            [delegate: [:process, :certifiers]],
+            :certification,
+            :resumes
+          ])
       end
 
     meetings =
@@ -62,7 +67,7 @@ defmodule Vae.ApplicationController do
     application =
       case Repo.get(Application, id) do
         nil -> nil
-        application -> Repo.preload(application, [:user, :delegate, :certification])
+        application -> Repo.preload(application, [:user, [delegate: :certifiers], :certification])
       end
 
     case Application.submit(application) do
