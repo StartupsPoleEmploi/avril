@@ -14,13 +14,17 @@ defmodule Vae.Places.Cache do
 
   @impl true
   def init(state) do
-    PersistentEts.new(@places_ets_table_name, "#{@places_ets_table_name}.tab", [:named_table])
+    PersistentEts.new(@places_ets_table_name, "#{@places_ets_table_name}.tab", [
+      :named_table,
+      :public
+    ])
+
     {:ok, state}
   end
 
   # -----------#
   #    API    #
-  # -----------#   
+  # -----------#
 
   def get_geoloc_from_postal_code(postal_code) do
     GenServer.call(PlacesCache, {:get, postal_code}, 10_000)
@@ -28,7 +32,7 @@ defmodule Vae.Places.Cache do
 
   # ------------#
   #   Server   #
-  # ------------#   
+  # ------------#
 
   @impl true
   def handle_call({:get, nil}, _from, state), do: {:reply, nil, state}
