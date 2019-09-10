@@ -76,6 +76,18 @@ defmodule Vae.User do
     is_admin
   )a
 
+  @application_submit_fields ~w(
+    first_name
+    last_name
+    email
+    phone_number
+    postal_code
+    city_label
+    country_label
+    birthday
+    confirmed_at
+  )a
+
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @fields ++ coherence_fields())
@@ -279,16 +291,26 @@ defmodule Vae.User do
     end
   end
 
+  def address_street(user) do
+    [user.address1, user.address2, user.address3, user.address4]
+    |> Vae.Enum.join_keep_nil(", ")
+  end
+
+  def address_city(user) do
+    [
+      Vae.Enum.join_keep_nil([user.postal_code, user.city_label], " "),
+      user.country_label
+    ] |> Vae.Enum.join_keep_nil(", ")
+  end
+
   def address(user) do
     [
-      [user.address1, user.address2, user.address3, user.address4],
-      ["#{user.postal_code} #{user.city_label}", user.country_label]
-    ]
-    |> Enum.map(fn list ->
-      list
-      |> Enum.filter(fn el -> el end)
-      |> Enum.join(", ")
-    end)
-    |> Enum.join("\n")
+      address_street(user),
+      address_city(user)
+    ] |> Vae.Enum.join_keep_nil("\n")
+  end
+
+  def submit_application_required_missing_fields(user) do
+    Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
   end
 end

@@ -50,12 +50,12 @@
                   fieldset.mb-4
                     .form-group
                       .form-label-group
-                        = text_input f, :email, class: "form-control form-control-lg", required: true, placeholder: "ex: la.classe@americaine.com"
+                        = text_input f, :email, class: "form-control form-control-lg form-control-avril", required: true, placeholder: "ex: la.classe@americaine.com"
                         = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
                         = error_tag f, :email
                     .form-group
                       .form-label-group
-                        = password_input f, :password, class: "form-control form-control-lg", required: true, placeholder: "Mot de passe"
+                        = password_input f, :password, class: "form-control form-control-lg form-control-avril", required: true, placeholder: "Mot de passe"
                         = label f, dgettext("coherence", "password"), class: "form-control-placeholder", required: true, for: "registration_password"
                         = error_tag f, :password
                   .form-group
@@ -99,7 +99,7 @@
 
         .col-md-8
           .form-label-group
-            = text_input f, :email, class: "form-control form-control-lg bg-light", required: true, placeholder: "ex: la.classe@americaine.com"
+            = text_input f, :email, class: "form-control form-control-lg form-control-avril bg-light", required: true, placeholder: "ex: la.classe@americaine.com"
             = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
             = error_tag f, :email
         .col-md-4

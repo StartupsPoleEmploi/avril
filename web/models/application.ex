@@ -55,37 +55,42 @@ defmodule Vae.Application do
   def find_or_create_with_params(_params), do: nil
 
   def submit(application, auto_submitted \\ false) do
-    case application.submitted_at do
-      nil ->
-        case Repo.update(
-               __MODULE__.changeset(application, %{
-                 delegate_access_hash: generate_hash(64),
-                 delegate_access_refreshed_at: DateTime.utc_now()
-               })
-             ) do
-          {:ok, application} ->
-            case Email.send([
-                   ApplicationEmail.delegate_submission(application),
-                   ApplicationEmail.user_submission_confirmation(application)
-                 ]) do
-              {:ok, _message} ->
-                Repo.update(
-                  __MODULE__.changeset(application, %{
-                    has_just_been_auto_submitted: auto_submitted,
-                    submitted_at: DateTime.utc_now()
-                  })
-                )
+    case User.submit_application_required_missing_fields(application.user) do
+      [] ->
+        case application.submitted_at do
+          nil ->
+            case Repo.update(
+                   __MODULE__.changeset(application, %{
+                     delegate_access_hash: generate_hash(64),
+                     delegate_access_refreshed_at: DateTime.utc_now()
+                   })
+                 ) do
+              {:ok, application} ->
+                case Email.send([
+                       ApplicationEmail.delegate_submission(application),
+                       ApplicationEmail.user_submission_confirmation(application)
+                     ]) do
+                  {:ok, _message} ->
+                    Repo.update(
+                      __MODULE__.changeset(application, %{
+                        has_just_been_auto_submitted: auto_submitted,
+                        submitted_at: DateTime.utc_now()
+                      })
+                    )
+
+                  error ->
+                    error
+                end
 
               error ->
                 error
             end
 
-          error ->
-            error
+          _ ->
+            {:ok, application}
         end
-
-      _ ->
-        {:ok, application}
+      missing_fields ->
+        {:error, "Remplissez d'abord les données manquantes : #{Enum.join(missing_fields, ", ")}"}
     end
   end
 
