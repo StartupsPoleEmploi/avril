@@ -21,6 +21,7 @@ rue Kellermann
 Tél. 09 72 10 10 07
 
 ## 2. Objet du site internet
+
 Le site internet https://avril.pole-emploi.fr a pour objet de permettre à l’utilisateur, sur la base des informations qu’il fournit, d'identifier une liste de certifications et le parcours V.A.E. - Validation des Acquis de l'Expérience - associé.
 
 ## 3. Données collectées
