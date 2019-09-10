@@ -133,7 +133,7 @@
                   = for resume <- @application.resumes do
                     li.list-inline-item.rounded.resume-block
                       = link to: resume.url, class: "download", data: [analytics: (if @edit_mode, do: "CV#download candidat", else: "CV#download certificateur")] do
-                        .content
+                        div
                           span.fa.fa-download
                           p= resume.filename
                       = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
