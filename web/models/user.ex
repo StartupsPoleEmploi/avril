@@ -1,6 +1,8 @@
 defmodule Vae.User do
+  use Vae.Web, :model
+
   @moduledoc false
-  use Ecto.Schema
+  # use Ecto.Schema
   use Coherence.Schema
   require Logger
 
