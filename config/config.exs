@@ -20,7 +20,7 @@ config :vae,
   mailjet_template_error_deliver: true,
   mailjet: [
     application_submitted_to_delegate_id: 758_379,
-    application_submitted_to_user_id: 764_589,
+    application_submitted_to_user_id: 984_794,
     campaign_template_id: 512_948,
     vae_recap_template_id: 985_164,
     dava_vae_recap_template_id: 986_006,
