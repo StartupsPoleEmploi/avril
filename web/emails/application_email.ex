@@ -1,6 +1,6 @@
 defmodule Vae.ApplicationEmail do
 
-  alias Vae.{Email, Endpoint, Repo}
+  alias Vae.{Email, Endpoint, Repo, User}
   alias Vae.Router.Helpers
 
   def delegate_submission(application) do
@@ -13,7 +13,7 @@ defmodule Vae.ApplicationEmail do
           Helpers.application_url(Endpoint, :show, application,
             hash: application.delegate_access_hash
           ),
-        user_name: application.user.name,
+        user_name: User.fullname(application.user),
         user_email: application.user.email,
         delegate_name: application.delegate.name,
         certification_name: application.certification.label
