@@ -11,6 +11,7 @@ erl_crash.dump
 
 # Static artifacts
 /assets/node_modules
+/assets/robots.txt
 
 # Since we are building assets from web/static,
 # we ignore priv/static. You may want to comment
