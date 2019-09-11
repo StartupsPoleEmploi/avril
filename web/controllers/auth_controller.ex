@@ -60,9 +60,9 @@ defmodule Vae.AuthController do
             Coherence.Authentication.Session.create_login(conn, user)
             |> redirect(to: Routes.application_path(conn, :show, application))
 
-          {:error, msg} -> handle_error(conn, msg)
+          # {:error, msg} -> handle_error(conn, msg)
         end
-      {:error, _error} -> handle_error(conn)
+      {:error, error} -> handle_error(conn, error)
     end
 
   end
