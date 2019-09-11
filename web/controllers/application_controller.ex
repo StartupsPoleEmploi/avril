@@ -263,7 +263,7 @@ defmodule Vae.ApplicationController do
       else
         {:error,
          %{
-           to: Routes.session_path(conn, :new, %{"mode" => "pe-connect"}),
+           to: Routes.session_path(conn, :new),
            msg: "Vous devez vous connecter"
          }}
       end

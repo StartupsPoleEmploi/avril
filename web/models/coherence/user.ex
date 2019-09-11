@@ -2,6 +2,7 @@ defmodule Vae.User do
   @moduledoc false
   use Ecto.Schema
   use Coherence.Schema
+  require Logger
 
   alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, OAuth}
 
@@ -211,7 +212,7 @@ defmodule Vae.User do
       Enum.reduce(build_api_calls(), initial_status, fn
         call, {:ok, user} = status ->
           if call.is_data_missing.(user) do
-            IO.puts("Calling #{call.url}")
+            Logger.info("Calling #{call.url}")
             api_result = OAuth.get(client_with_token, call.url)
             changeset = __MODULE__.changeset(user, call.data_map.(api_result.body))
             Repo.update(changeset)

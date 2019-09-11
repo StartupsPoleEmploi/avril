@@ -22,5 +22,11 @@
         = if assigns[:with_search] do
           .mt-5
             = render ComponentView, "searchbar.html", conn: @conn
-        = render @view_module, @view_template, assigns
+        - IO.inspect(@conn.private.phoenix_controller)
+        = if String.starts_with?(to_string(@conn.private.phoenix_controller), "Elixir.Coherence") do
+          .row
+            .col-md-6.offset-md-3
+              = render @view_module, @view_template, assigns
+        - else
+          = render @view_module, @view_template, assigns
   = render ComponentView, "footer.html", conn: @conn

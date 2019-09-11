@@ -1,6 +1,6 @@
 defmodule Vae.AuthController do
   use Vae.Web, :controller
-
+  require Logger
   alias Vae.{OAuth, User, Application}
   alias Vae.OAuth.Clients
 

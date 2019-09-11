@@ -1,32 +1,34 @@
 <%= form_for @changeset, @action, [as: :registration], fn f  -> %>
 
   <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p><%= dgettext "coherence", "Oops, something went wrong! Please check the errors below." %></p>
-    </div>
+    <div class="alert alert-danger mb-4">Une erreur est survenue.</div>
   <% end %>
   <div class="form-group">
-    <%= required_label f, dgettext("coherence", "email"), class: "control-label" %>
+    <%= label f, dgettext("coherence", "email"), class: "control-label" %>
     <%= text_input f, :email, class: "form-control", required: "" %>
     <%= error_tag f, :email %>
   </div>
 
   <%= if Coherence.Config.require_current_password and not is_nil(@changeset.data.id) do %>
     <div class="form-group">
-      <%= required_label f, :current_password, class: "control-label" %>
+      <%= label f, :current_password, class: "control-label" %>
       <%= password_input f, :current_password, [class: "form-control"] ++ @required %>
       <%= error_tag f, :current_password %>
     </div>
   <% end %>
 
   <div class="form-group">
-    <%= required_label f, dgettext("coherence", "password"), class: "control-label" %>
+    <%= label f, dgettext("coherence", "password"), class: "control-label" %>
     <%= password_input f, :password, [class: "form-control"] ++ @required %>
     <%= error_tag f, :password %>
   </div>
 
-  <div class="form-group d-flex justify-content-between">
+  <div class="form-group d-flex justify-content-between mt-4">
     <%= submit @label, class: "btn btn-primary" %>
     <%= link dgettext("coherence", "Cancel"), to: Coherence.Config.logged_out_url("/"), class: "btn" %>
+  </div>
+
+  <div class="form-group">
+    <%= coherence_links(@conn, :layout, register: false) %>
   </div>
 <% end %>

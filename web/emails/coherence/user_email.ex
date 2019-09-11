@@ -5,7 +5,7 @@ defmodule Vae.Coherence.UserEmail do
   require Logger
   use Phoenix.Swoosh,
     view: Vae.Coherence.EmailView,
-    layout: {Vae.Coherence.LayoutView, :email}
+    layout: {Vae.LayoutView, :email}
   alias Swoosh.Email
   # alias Coherence.Config
   alias Vae.User

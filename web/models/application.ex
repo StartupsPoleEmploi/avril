@@ -48,7 +48,7 @@ defmodule Vae.Application do
 
         {:error, msg} ->
           Logger.error(fn -> inspect(msg) end)
-          nil
+          {:error, msg}
       end
   end
 

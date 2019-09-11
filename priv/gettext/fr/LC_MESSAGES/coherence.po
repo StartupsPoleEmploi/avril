@@ -199,5 +199,17 @@ msgstr "non bloqué"
 msgid "required"
 msgstr "requis"
 
-msgid "password"
+msgid "Password"
 msgstr "Mot de passe"
+
+msgid "Remember Me?"
+msgstr "Rester connecté (je ne suis pas sur un ordinateur public)"
+
+msgid "Send reset password link"
+msgstr "Réinitialiser son mot de passe"
+
+msgid "Reset Password"
+msgstr "Recevoir un lien par email"
+
+msgid "Cancel"
+msgstr "Retour"
