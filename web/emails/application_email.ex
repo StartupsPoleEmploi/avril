@@ -27,9 +27,13 @@ defmodule Vae.ApplicationEmail do
       :application_submitted_to_user_id,
       application.user,
       %{
+        user_name: User.fullname(application.user),
         application_url: Helpers.application_url(Endpoint, :show, application),
         certification_name: application.certification.label,
-        delegate_name: application.delegate.name
+        delegate_name: application.delegate.name,
+        delegate_person_name: application.delegate.person_name,
+        delegate_phone_number: application.delegate.phone_number,
+        delegate_email: application.delegate.email
       }
     )
   end
