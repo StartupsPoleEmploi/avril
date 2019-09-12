@@ -1,6 +1,6 @@
 defmodule Vae.ApplicationEmail do
 
-  alias Vae.{Email, Endpoint, Repo}
+  alias Vae.{Email, Endpoint, Repo, User}
   alias Vae.Router.Helpers
 
   def delegate_submission(application) do
