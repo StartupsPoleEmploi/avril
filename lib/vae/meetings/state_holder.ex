@@ -68,16 +68,20 @@ defmodule Vae.Meetings.StateHolder do
 
   @impl true
   def handle_call({:get, delegate}, _from, state) do
-    {:ok, places} = Vae.Search.Client.Algolia.get_meetings(delegate)
+    case Vae.Search.Client.Algolia.get_meetings(delegate) do
+      {:ok, places} ->
+        meetings =
+          places
+          |> Enum.map(fn %{id: id, place: place, address: address} ->
+            found = Enum.find(state, &(&1[:id] == id))
+            {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
+          end)
 
-    meetings =
-      places
-      |> Enum.map(fn %{id: id, place: place, address: address} ->
-        found = Enum.find(state, &(&1[:id] == id))
-        {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
-      end)
-
-    {:reply, meetings, state}
+        {:reply, meetings, state}
+      {:error, msg} ->
+        Logger.error(msg)
+        {:reply, [], state}
+    end
   end
 
   @impl true

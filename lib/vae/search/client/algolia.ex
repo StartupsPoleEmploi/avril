@@ -14,16 +14,25 @@ defmodule Vae.Search.Client.Algolia do
     execute(:delegate, query)
   end
 
-  def get_meetings(delegate) do
+  def get_meetings(%{
+    certifiers: certifiers,
+    academy_id: academy_id,
+    geolocation: %{
+      "_geoloc" => %{
+        "lat" => _lat,
+        "lng" => _lng
+      } = geoloc
+    }}) when is_list(certifiers) do
     query =
       init()
-      |> build_academy_filter(delegate.academy_id)
-      |> build_certifier_ids_filter(delegate.certifiers)
-      |> build_geoloc(delegate.geolocation["_geoloc"])
+      |> build_academy_filter(academy_id)
+      |> build_certifier_ids_filter(certifiers)
+      |> build_geoloc(geoloc)
       |> build_query()
 
     execute(:meetings, query, aroundRadius: 50_000)
   end
+  def get_meetings(data), do: {:error, ":certifiers, :academy_id and :geolocation keys are expected in:\n#{inspect(data, pretty: true)}"}
 
   def init(), do: %{filters: %{and: [], or: []}, query: [], aroundLatLng: []}
 
