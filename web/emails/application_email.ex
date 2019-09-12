@@ -32,7 +32,7 @@ defmodule Vae.ApplicationEmail do
         certification_name: Certification.name(application.certification),
         delegate_name: application.delegate.name,
         delegate_person_name: application.delegate.person_name,
-        delegate_phone_number: application.delegate.phone_number,
+        delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email
       }
     )
