@@ -59,7 +59,7 @@ defmodule Vae.Meetings.Afpa.Server do
         certifier_id: 4,
         academy_id: nil,
         meetings:
-          Scraper.scrape_all_events()
+          Scraper.scrape_all_events(0, 4)
           |> Enum.filter(&(&1 != []))
           |> Enum.map(fn meeting ->
             %{
