@@ -141,6 +141,7 @@ config :ex_admin,
     Vae.ExAdmin.Process,
     Vae.ExAdmin.Profession,
     Vae.ExAdmin.Rome,
+    Vae.ExAdmin.Status,
     Vae.ExAdmin.User
   ]
 

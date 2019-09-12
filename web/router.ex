@@ -11,6 +11,7 @@ defmodule Vae.Router do
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
+    plug(:fetch_app_status)
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
@@ -21,7 +22,7 @@ defmodule Vae.Router do
       id_key: @id_key
     )
 
-    plug :put_user_token
+    plug(:put_user_token)
     #    plug(Vae.Tracker)
   end
 
@@ -117,6 +118,8 @@ defmodule Vae.Router do
   scope "/admin", ExAdmin do
     pipe_through([:browser, :protected, :admin])
     get("/sql", ApiController, :sql)
+    get("/status", ApiController, :get_status)
+    post("/status", ApiController, :put_status)
     admin_routes()
   end
 
@@ -128,4 +131,8 @@ defmodule Vae.Router do
     end
   end
 
+
+  defp fetch_app_status(conn, _opts \\ []) do
+    Map.merge(conn, %{app_status: GenServer.call(Status, :get)})
+  end
 end

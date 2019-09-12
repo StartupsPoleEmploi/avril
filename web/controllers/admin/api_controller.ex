@@ -16,6 +16,14 @@ end
 defmodule ExAdmin.ApiController do
   use Vae.Web, :controller
 
+  def get_status(conn, _params) do
+    json(conn, GenServer.call(Status, :get))
+  end
+
+  def put_status(conn, %{"status" => status, "level" => level}) do
+    json(conn, GenServer.cast(Status, {:set, {status, String.to_atom(level)}}))
+  end
+
   def sql(conn, %{"query" => query}) do
     query = apply(__MODULE__, :"#{query}_query", [])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)

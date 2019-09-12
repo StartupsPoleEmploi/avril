@@ -1,0 +1,6 @@
+= if @conn.app_status do
+  - {status, level} = @conn.app_status
+  p.alert.m2 role="alert" class="alert-#{level}"
+    = status
+    button.close aria-label="Close" type="button" data-dismiss="alert"
+      span aria-hidden="true" &times;
