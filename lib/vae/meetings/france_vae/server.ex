@@ -38,14 +38,16 @@ defmodule Vae.Meetings.FranceVae.Server do
   end
 
   @impl true
-  def handle_call(:fetch, _from, state) do
+  def handle_cast({:fetch, pid}, state) do
     new_state = %{
       state
       | updated_at: DateTime.utc_now(),
         meetings: get_data()
     }
 
-    {:reply, new_state, new_state}
+    GenServer.cast(pid, {:save, @name, new_state})
+
+    {:noreply, new_state}
   end
 
   @impl true

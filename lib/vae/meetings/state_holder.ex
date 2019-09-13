@@ -24,32 +24,37 @@ defmodule Vae.Meetings.StateHolder do
   end
 
   @impl true
+  def handle_cast({:save, name, delegate}, _state) do
+    new_state =
+      delegate
+      |> parse()
+      |> index_and_persist(name)
+
+    {:noreply, new_state}
+  end
+
+  @impl true
   def handle_cast({:subscribe, name}, state) do
     Logger.info(fn -> "#{name} subscribed" end)
 
     case :ets.lookup(:meetings, name) do
       [] ->
-        new_state =
-          fetch(name)
-          |> index_and_persist(name)
-
-        {:noreply, new_state}
+        GenServer.cast(name, {:fetch, self()})
 
       [{_delegate_name, updated_at, _grouped_meetings}] ->
-        new_state =
-          case DateTime.compare(
-                 Timex.add(updated_at, Timex.Duration.from_hours(12)),
-                 DateTime.utc_now()
-               ) do
-            :lt ->
-              fetch(name) |> index_and_persist(name)
+        case DateTime.compare(
+               Timex.add(updated_at, Timex.Duration.from_hours(12)),
+               DateTime.utc_now()
+             ) do
+          :lt ->
+            GenServer.cast(name, {:fetch, self()})
 
-            _ ->
-              state
-          end
-
-        {:noreply, new_state}
+          _ ->
+            nil
+        end
     end
+
+    {:noreply, state}
   end
 
   @impl true
@@ -112,17 +117,14 @@ defmodule Vae.Meetings.StateHolder do
 
   def get(delegate) do
     GenServer.call(@name, {:get, delegate})
+    |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) end)
   end
 
   def get_by_meeting_id(meeting_id) do
     GenServer.call(@name, {:get_by_meeting_id, meeting_id})
   end
 
-  defp fetch(name) do
-    Logger.info(fn -> "Fetch data from #{name}" end)
-
-    delegate = GenServer.call(name, :fetch, :infinity)
-
+  defp parse(delegate) do
     {to_index, grouped} =
       delegate.meetings
       |> Enum.reduce({[], []}, fn %{

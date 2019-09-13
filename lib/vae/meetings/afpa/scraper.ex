@@ -1,15 +1,11 @@
 defmodule Vae.Meetings.Afpa.Scraper do
   require Logger
 
-  def scrape_all_events(page \\ 0, max_pages \\ nil) do
-    if page == max_pages do
-      []
-    else
-      case scrape_page_events(page) do
-        [] -> []
-        events when is_list(events) -> events ++ scrape_all_events(page + 1, max_pages)
-        _ -> []
-      end
+  def scrape_all_events(page \\ 0) do
+    case scrape_page_events(page) do
+      [] -> []
+      events when is_list(events) -> events ++ scrape_all_events(page + 1)
+      _ -> []
     end
   end
 

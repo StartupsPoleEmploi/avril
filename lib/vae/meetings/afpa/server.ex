@@ -33,16 +33,6 @@ defmodule Vae.Meetings.Afpa.Server do
     {:noreply, new_state}
   end
 
-  def handle_call(:fetch, _from, state) do
-    new_state = %{
-      state
-      | updated_at: DateTime.utc_now(),
-        meetings: get_data()
-    }
-
-    {:reply, new_state, new_state}
-  end
-
   @impl true
   def handle_call(:get_meetings, _from, state) do
     {:reply, state, state}
@@ -53,13 +43,26 @@ defmodule Vae.Meetings.Afpa.Server do
     {:reply, state[:meetings], state}
   end
 
+  @impl true
+  def handle_cast({:fetch, pid}, state) do
+    new_state = %{
+      state
+      | updated_at: DateTime.utc_now(),
+        meetings: get_data()
+    }
+
+    GenServer.cast(pid, {:save, @name, new_state})
+
+    {:noreply, new_state}
+  end
+
   defp get_data() do
     [
       %{
         certifier_id: 4,
         academy_id: nil,
         meetings:
-          Scraper.scrape_all_events(0, 4)
+          Scraper.scrape_all_events()
           |> Enum.filter(&(&1 != []))
           |> Enum.map(fn meeting ->
             %{
