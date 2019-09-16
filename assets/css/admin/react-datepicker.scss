@@ -1,0 +1,33 @@
+// Required to adjust picker size
+
+.react-datepicker { font-size: 1em !important }
+.react-datepicker__header { padding-top: 0.8em !important}
+.react-datepicker__month { margin: 0.4em 1em !important}
+.react-datepicker__day-name, .react-datepicker__day {
+  width: 1.9em !important;
+  line-height: 1.9em !important;
+  margin: 0.166em !important;
+}
+.react-datepicker__current-month { font-size: 1em !important }
+.react-datepicker__navigation {
+  top: 1em !important;
+  line-height: 1.7em !important;
+  border: 0.45em solid transparent !important;
+}
+.react-datepicker__navigation--previous { border-right-color: #ccc !important; left: 1em !important }
+.react-datepicker__navigation--next {
+  border-left-color: #ccc !important;
+  right: 1em !important;
+  left: 220px !important
+}
+
+
+.react-datepicker__time-container { width: 6em !important}
+.react-datepicker-time__header { font-size: 1em !important }
+.react-datepicker-time__header--time { padding-left: 0px !important; padding-right: 0px !important }
+.react-datepicker__time-box {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  width:100% !important
+}
+.react-datepicker__time-list { padding: 0 !important; }

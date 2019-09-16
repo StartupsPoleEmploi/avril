@@ -29,12 +29,18 @@ defmodule Vae.Status.Server do
 
   @impl true
   def handle_cast({:set, status}, state) when is_binary(status) do
-    set_status(status)
+    set_status([status: status])
     {:noreply, state}
   end
 
-  def handle_cast({:set, {status, level}}, state) do
-    set_status(status, level)
+  @impl true
+  def handle_cast({:set, data}, state) do
+    set_status(data)
+    {:noreply, state}
+  end
+
+  def handle_cast({:delete}, state) do
+    delete_status()
     {:noreply, state}
   end
 
@@ -45,7 +51,13 @@ defmodule Vae.Status.Server do
     end
   end
 
-  defp set_status(status, level\\:info) do
-    :ets.insert(@ets_table, {@ets_key, {status, level}})
+  defp set_status(data) do
+    defaults = %{level: :info, starts_at: nil, ends_at: nil}
+    data = Enum.into(data, defaults)
+    :ets.insert(@ets_table, {@ets_key, data})
+  end
+
+  defp delete_status() do
+    :ets.insert(@ets_table, {@ets_key, nil})
   end
 end

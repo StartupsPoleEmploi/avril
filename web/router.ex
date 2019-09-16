@@ -120,6 +120,7 @@ defmodule Vae.Router do
     get("/sql", ApiController, :sql)
     get("/status", ApiController, :get_status)
     post("/status", ApiController, :put_status)
+    delete("/status", ApiController, :delete_status)
     admin_routes()
   end
 

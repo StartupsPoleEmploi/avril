@@ -20,8 +20,21 @@ defmodule ExAdmin.ApiController do
     json(conn, GenServer.call(Status, :get))
   end
 
-  def put_status(conn, %{"status" => status, "level" => level}) do
-    json(conn, GenServer.cast(Status, {:set, {status, String.to_atom(level)}}))
+  def put_status(conn, %{
+    "message" => status
+  } = params) do
+    :ok = GenServer.cast(Status, {:set, [
+      message: status,
+      level: params["level"] || "info",
+      starts_at: params["starts_at"],
+      ends_at: params["ends_at"]
+    ]})
+    json(conn, GenServer.call(Status, :get))
+  end
+
+  def delete_status(conn, _params) do
+    :ok = GenServer.cast(Status, {:delete})
+    json(conn, GenServer.call(Status, :get))
   end
 
   def sql(conn, %{"query" => query}) do
