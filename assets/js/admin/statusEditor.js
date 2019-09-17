@@ -11,8 +11,6 @@ import '../../css/admin/react-datepicker.scss';
 registerLocale('fr', fr)
 const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
 
-console.log(DATE_FORMAT)
-
 class StatusForm extends React.Component {
   state = {
     isEdit: false,
@@ -53,7 +51,6 @@ class StatusForm extends React.Component {
         [key]: ((key.indexOf("_at") > -1 && value) ? value.toISOString() : value)
       })
     }
-    console.log(newState)
     this.setState(newState)
   }
 
@@ -202,7 +199,6 @@ document.addEventListener('DOMContentLoaded', e => {
   if ($statusEditor) {
     $.ajax('/admin/status')
       .then(status => {
-        console.log(status)
         render( <StatusForm token={$statusEditor.dataset.token} status={status} />, $statusEditor)
       })
   }

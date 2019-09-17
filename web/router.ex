@@ -70,6 +70,7 @@ defmodule Vae.Router do
     get("/contact", Vae.PageController, :contact)
     post("/contact", Vae.PageController, :submit_contact)
     get("/financement-vae", Vae.PageController, :financement)
+    post("/close-app-status", Vae.PageController, :close_status)
     get("/stats", Vae.PageController, :stats)
 
     # Basic navigation
@@ -133,11 +134,15 @@ defmodule Vae.Router do
   end
 
   defp fetch_app_status(conn, _opts \\ []) do
-    status = GenServer.call(Status, :get)
-    if status &&
-      (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) &&
-      (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
-      Map.merge(conn, %{app_status: status})
+    unless get_session(conn, :app_status_closed) do
+      status = GenServer.call(Status, :get)
+      if status &&
+        (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) &&
+        (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
+        Map.merge(conn, %{app_status: status})
+      else
+        conn
+      end
     else
       conn
     end
