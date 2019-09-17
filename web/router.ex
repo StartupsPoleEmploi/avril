@@ -134,15 +134,12 @@ defmodule Vae.Router do
   end
 
   defp fetch_app_status(conn, _opts \\ []) do
-    unless get_session(conn, :app_status_closed) do
-      status = GenServer.call(Status, :get)
-      if status &&
-        (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) &&
-        (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
-        Map.merge(conn, %{app_status: status})
-      else
-        conn
-      end
+    status = GenServer.call(Status, :get)
+    if status && # There is a status
+      get_session(conn, :app_status_closed) != Vae.String.encode(status.message) && # not closed
+      (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) && # in interval
+      (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
+      Map.merge(conn, %{app_status: status})
     else
       conn
     end
