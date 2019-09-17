@@ -4,6 +4,7 @@ import he from 'he';
 import places from 'places.js';
 import './admin/tables';
 import './admin/charts';
+import './admin/statusEditor';
 
 
 $(document).ready(() => {

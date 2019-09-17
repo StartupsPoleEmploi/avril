@@ -117,6 +117,15 @@ $(() => {
     $('.cookies').addClass('d-none');
   })
 
+  $('.app-status button.close').on('click', e => {
+    $.ajax('/close-app-status', {
+      method: 'POST',
+      data: {
+        _csrf_token: $(e.delegateTarget).attr('data-csrf'),
+      }
+    });
+  });
+
 })
 
 $(window).scroll(function() {

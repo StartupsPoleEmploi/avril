@@ -96,6 +96,13 @@ defmodule Vae.PageController do
 
   end
 
+  def close_status(conn, _params) do
+    message = conn |> Map.get(:app_status) |> Map.get(:message)
+    conn
+      |> put_session(:app_status_closed, Vae.String.encode(message))
+      |> json(:ok)
+  end
+
   def stats(conn, _params) do
     redirect(conn, external: "https://datastudio.google.com/u/0/reporting/1t7iUT7wGQn9U7ODZeDyXIvIRlK-BJAZs/page/1M")
   end
