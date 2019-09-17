@@ -3,6 +3,10 @@ defmodule Vae.String do
   `String` method helpers
   """
 
+  def is_blank?(nil), do: true
+  def is_blank?(""), do: true
+  def is_blank?(_), do: false
+
   def titleize(string) do
     cond do
       String.upcase(string || "") == string ->

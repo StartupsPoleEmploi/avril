@@ -124,7 +124,7 @@ defmodule Vae.Router do
     admin_routes()
   end
 
-   defp put_user_token(conn, _) do
+  defp put_user_token(conn, _) do
     if current_user = Coherence.current_user(conn) do
       assign(conn, :user_token, Phoenix.Token.sign(conn, "user socket", current_user.id))
     else
@@ -132,8 +132,14 @@ defmodule Vae.Router do
     end
   end
 
-
   defp fetch_app_status(conn, _opts \\ []) do
-    Map.merge(conn, %{app_status: GenServer.call(Status, :get)})
+    status = GenServer.call(Status, :get)
+    if status &&
+      (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) &&
+      (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
+      Map.merge(conn, %{app_status: status})
+    else
+      conn
+    end
   end
 end

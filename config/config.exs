@@ -134,6 +134,7 @@ config :ex_admin,
   module: Vae,
   modules: [
     Vae.ExAdmin.Application,
+    Vae.ExAdmin.AppStatus,
     Vae.ExAdmin.Dashboard,
     Vae.ExAdmin.Certification,
     Vae.ExAdmin.Certifier,
@@ -141,7 +142,6 @@ config :ex_admin,
     Vae.ExAdmin.Process,
     Vae.ExAdmin.Profession,
     Vae.ExAdmin.Rome,
-    Vae.ExAdmin.Status,
     Vae.ExAdmin.User
   ]
 

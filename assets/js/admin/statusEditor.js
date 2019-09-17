@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import {markdown} from 'markdown';
 import moment from 'moment';
 import DatePicker, { registerLocale, setDefaultLocale }  from 'react-datepicker';
-import { format } from 'date-fns';
-// import parseISO from 'date-fns/parseISO'
 import { fr } from 'date-fns/locale';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../css/admin/react-datepicker.scss';
 
 registerLocale('fr', fr)
-const DATE_FORMAT = 'DD/MM/YYYY HH:mm';
+const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
 
 console.log(DATE_FORMAT)
 
@@ -51,7 +50,7 @@ class StatusForm extends React.Component {
   editStatus(key, value) {
     const newState = {
       status: Object.assign({}, this.state.status, {
-        [key]: value
+        [key]: ((key.indexOf("_at") > -1 && value) ? value.toISOString() : value)
       })
     }
     console.log(newState)
@@ -75,14 +74,13 @@ class StatusForm extends React.Component {
   }
 
   renderDateRange() {
-    console.log(format(this.state.status.starts_at, DATE_FORMAT, {locale: fr}))
-    // if (this.state.status && this.state.status.starts_at) {
-    //   if (this.state.status.ends_at) {
-    //     return `de ${format(this.state.status.starts_at, DATE_FORMAT)} à ${format(this.state.status.ends_at, DATE_FORMAT)}`
-    //   } else {
-    //     return `de ${format(this.state.status.starts_at, DATE_FORMAT)}`
-    //   }
-    // }
+    if (this.state.status && this.state.status.starts_at) {
+      if (this.state.status.ends_at) {
+        return `du ${moment(this.state.status.starts_at).format(DATE_FORMAT)} au ${moment(this.state.status.ends_at).format(DATE_FORMAT)}`
+      } else {
+        return `à partir du ${moment(this.state.status.starts_at).format(DATE_FORMAT)}`
+      }
+    }
   }
 
   render() {
@@ -101,9 +99,15 @@ class StatusForm extends React.Component {
         { this.props.status && !this.state.isEdit ? (
           <div>
             <p>Le message suivant sera affiché {this.renderDateRange()} : </p>
-            <div className={`alert alert-${this.state.status.level}`}>{this.state.status.message}</div>
-            <button onClick={e => this.setState({isEdit: true})} className="btn btn-primary">Editer le message</button>
-            <button onClick={e => this.deleteStatus(e)} className="btn btn-danger">Supprimer le message</button>
+            <div className={`app-status alert alert-${this.state.status.level}`} dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.status.message)}}></div>
+            <div className="row">
+              <div className="col-sm-2">
+                <button onClick={e => this.setState({isEdit: true})} className="btn btn-primary">Editer le message</button>
+              </div>
+              <div className="col-sm-2">
+                <button onClick={e => this.deleteStatus(e)} className="btn btn-danger">Supprimer le message</button>
+              </div>
+            </div>
           </div>
         ) : (
           <form action="/admin/status" method="POST" className="form-horizontal" onSubmit={e => this.createStatus(e)}>
@@ -117,14 +121,20 @@ class StatusForm extends React.Component {
                   onChange={e => this.editStatus('level', e.target.value)}
                   value={this.state.status && this.state.status.level || ''}
                 >
-                  <option className="text-info" value="info">Info</option>
-                  <option className="text-warning" value="warning">Warning</option>
-                  <option className="text-danger" value="danger">Danger</option>
+                  <option className="text-info" value="info">Info (gris)</option>
+                  <option className="text-warning" value="warning">Warning (jaune)</option>
+                  <option className="text-danger" value="danger">Danger (rouge)</option>
+                  <option className="text-success" value="success">Success (vert)</option>
+                  <option className="text-primary" value="primary">Primary (vert avril)</option>
                 </select>
               </div>
             </div>
             <div className="form-group">
-              <label htmlFor="message" className="col-sm-2 control-label">Contenu</label>
+              <label htmlFor="message" className="col-sm-2 control-label">
+                Contenu
+              <br />
+              <small>(Possibilité d'utiliser le format <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">markdown</a>)</small>
+              </label>
               <div className="col-sm-10">
                 <textarea
                   className="form-control"
@@ -146,7 +156,7 @@ class StatusForm extends React.Component {
                   dateFormat="dd/MM/yyyy HH:mm"
                   minDate={new Date()}
                   onChange={date => this.editStatus('starts_at', date)}
-                  selected={this.state.status && this.state.status.starts_at}
+                  selected={this.state.status && this.state.status.starts_at && new Date(this.state.status.starts_at)}
                 />
               </div>
             </div>
@@ -159,16 +169,22 @@ class StatusForm extends React.Component {
                   className="form-control"
                   showTimeSelect
                   dateFormat="dd/MM/yyyy HH:mm"
-                  minDate={this.state.status && this.state.status.starts_at}
+                  // minDate={this.state.status && this.state.status.starts_at && new Date(this.state.status.starts_at)}
+                  minDate={new Date()}
                   onChange={date => this.editStatus('ends_at', date)}
-                  selected={this.state.status && this.state.status.ends_at}
+                  selected={this.state.status && this.state.status.ends_at && new Date(this.state.status.ends_at)}
                 />
               </div>
             </div>
             <div className="form-group">
-              <div className="col-sm-offset-2 col-sm-10">
+              <div className="col-sm-offset-2 col-sm-2">
                 <button type="submit" className="btn btn-primary">Enregistrer</button>
               </div>
+              {this.props.status && (
+                <div className="col-sm-2">
+                  <button className="btn btn-info" onClick={e => this.setState({isEdit: false})}>Annuler</button>
+                </div>
+              )}
             </div>
           </form>
         )}

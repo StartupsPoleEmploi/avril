@@ -18,6 +18,13 @@ defmodule ExAdmin.ApiController do
 
   def get_status(conn, _params) do
     json(conn, GenServer.call(Status, :get))
+    |> Vae.Map.map_values(fn {k, v} ->
+        if k |> Atom.to_string() |> String.ends_with?("_at") do
+          Timex.format!(v, "{ISO:Extended:Z}")
+        else
+          v
+        end
+      end)
   end
 
   def put_status(conn, %{
@@ -26,8 +33,10 @@ defmodule ExAdmin.ApiController do
     :ok = GenServer.cast(Status, {:set, [
       message: status,
       level: params["level"] || "info",
-      starts_at: params["starts_at"],
-      ends_at: params["ends_at"]
+      starts_at: (if not Vae.String.is_blank?(params["starts_at"]),
+        do: Timex.parse!(params["starts_at"], "{ISO:Extended:Z}")),
+      ends_at: (if not Vae.String.is_blank?(params["ends_at"]),
+        do: Timex.parse!(params["ends_at"], "{ISO:Extended:Z}"))
     ]})
     json(conn, GenServer.call(Status, :get))
   end
