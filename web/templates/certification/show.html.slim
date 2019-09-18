@@ -8,89 +8,17 @@
     .card-header.bg-secondary.text-white
       .row.align-items-center
         .col-md-6
-          h3.mb-0 Démarrer une VAE
+          h3.mb-0 Les étapes de votre VAE
         .col-md-6
           = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
-    .card-body.bg-primary.text-secondary
-      .row.mb-3
-        = unless @is_asp do
-          .col-md-6
-            p
-              | Nous pouvons transmettre vos expériences professionnelles et compétences directement à votre conseiller
-              '
-              strong
-                = @delegate.name
-                |  (Nécessite un compte Pôle-emploi)
-              |  afin de vous aider à confirmer votre choix.
-          .col-md-6
-            p Cela ne vous engage pas dans la VAE. Votre conseiller aura simplement toutes les informations pour prendre la bonne décision.
-      .row
-        .col-12.text-center
-          .pe-connect.pe-connect-toggle class="#{if @is_asp, do: "d-none", else: ""}"
-            = link(to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "btn btn-light btn-conseillere", data: [analytics: "?bouton=pe-connect"]) do
-              = img_tag "/images/conseillere.svg", alt: "Votre conseillère VAE"
-              = if @is_asp do
-                | Voir ma synthèse
-              - else
-                | Transmettre mes expériences
-            .mt-4.text-right
-              button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" data-analytics="Certification#sans pe connect" Je ne suis pas demandeur d'emploi
-          .no-pe-connect.pe-connect-toggle class="#{if @is_asp, do: "", else: "d-none"}"
-            .request-contact
-              = if @is_asp do
-                .col-md-6.offset-md-3.text-center
-                  p Pour recevoir par email votre synthèse VAE, merci de remplir le formulaire ci-dessous :
-              = form_for @user_changeset, Routes.registration_path(@conn, :create), [as: :registration, class: "row justify-content-center"], fn f  ->
-                = hidden_input f, :certification_id, value: @certification.id
-                = hidden_input f, :delegate_id, value: @delegate.id
-                = if @user_changeset.action do
-                  .alert.alert-danger
-                    p= dgettext "coherence", "Oops, something went wrong! Please check the errors below."
-                .col-md-6
-                  fieldset.mb-4
-                    .form-group
-                      .form-label-group
-                        = text_input f, :email, class: "form-control form-control-lg form-control-avril", required: true, placeholder: "ex: la.classe@americaine.com"
-                        = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
-                        = error_tag f, :email
-                    .form-group
-                      .form-label-group
-                        = password_input f, :password, class: "form-control form-control-lg form-control-avril", required: true, placeholder: "Mot de passe"
-                        = label f, dgettext("coherence", "password"), class: "form-control-placeholder", required: true, for: "registration_password"
-                        = error_tag f, :password
-                  .form-group
-                    = submit class: "btn btn-light btn-conseillere" do
-                      = img_tag '/images/conseillere.svg', alt: "Votre conseillère VAE"
-                      | Créer mon dossier VAE
-            .result-contact.d-none
-              .mb-4
-                = if @is_asp do
-                  .col-md-6.offset-md-3
-                    p L’Agence de Service et de Paiement (ASP) organisme chargé de la recevabilité de ce diplôme propose un espace en ligne pour déposer votre demande de VAE.
-                    = link "Commencer ma VAE avec l'ASP", to: "https://vaedem.asp-public.fr", target: "_blank", rel: "noopener noreferrer", class: "btn btn-light btn-lg", data: [analytics: "?bouton=commencer-asp"]
-                - else
-                  h3.text-center Nous vous avons fait parvenir votre synthèse
-                  p
-                    | Votre conseiller
-                    strong " #{@delegate.name} "
-                    | sera votre contact privilégié pour vous aider à avoir votre diplôme.
-
-              .position-relative.d-none.d-md-block
-                = img_tag '/images/step-confirmation.svg', alt: 'confirmation', class: "img-fluid", style: "min-width: 100%;"
-                .position-absolute.d-flex.flex-column.justify-content-center.text-truncate.px-lg-3.px-0 style="top: 10%; width: 56%; height: 34%; left: 25%;"
-                  h5 Mon projet
-                  h5 #{format_certification_label(@certification)}
-            = unless @is_asp do
-              .text-right.mt-4
-                button.btn.btn-link.text-white data-toggle="show" data-target=".pe-connect-toggle" role="button" data-analytics="Certification#avec pe connect" Je suis demandeur d'emploi
     = if @delegate.process do
-      .card-footer.bg-white
-        h5.h2.text-center Les étapes de votre VAE
+      .card-body.bg-white
         = render("_pagination.html")
-        div id="steps"
+        div.mb-4 id="steps"
           = render_steps(@delegate.process)
-  .card.bg-white.text-secondary
-    .card-body
+        .py-4.text-center
+          = link "Je veux ce diplôme", to: Routes.registration_path(@conn, :new), class: "btn btn-primary"
+    .card-footer.bg-primary.text-secondary
       h5 Pas encore mûr dans votre projet de VAE ?
       p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.
       = form_for @job_seeker_changeset, Routes.job_seeker_path(@conn, :create), [class: "row align-items-center"], fn f  ->
@@ -104,7 +32,6 @@
             = error_tag f, :email
         .col-md-4
           = submit "Recevoir ma synthèse", class: "btn btn-secondary btn-block"
-
 button.d-none.d-md-block.btn.btn-link.no-print.px-0.pull-right.steps-print-button onclick="javascript:window.print()" data-analytics="Steps#print"
   = img_tag '/images/printer.svg', alt: 'imprimer'
   |  Imprimer
@@ -139,6 +66,4 @@ button.d-none.d-md-block.btn.btn-link.no-print.px-0.pull-right.steps-print-butto
       h2.h2 Et vous ?
   .row
     .col-md-12.text-center
-      a.btn.btn-lg.btn-primary.btn-conseillere href="#register"
-        span.fa.fa-arrow-up
-        | Démarrer un projet de VAE
+      = link "Démarrer un projet de VAE", to: Routes.registration_path(@conn, :new), class: "btn btn-primary"

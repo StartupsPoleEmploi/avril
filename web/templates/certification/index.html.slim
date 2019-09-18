@@ -24,14 +24,16 @@ div
             h3.h6.card-subtitle.my-3
               span.font-weight-normal> Niveau obtenu :
               a href="#" #{level_info_by_level(certification.level)}
-            .card-text.my-3
-              .truncate
-                = raw certification.description
-            .d-flex
-              .ml-auto
-                = link(to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-sm btn-primary d-flex align-items-center") do
-                  span.ic-icon.ic-tail-right-2.mr-2
-                  span #{to_delegate_label(@conn, @conn.params["certificateur"])}
+            = if certification.description do
+              .card-text.my-3
+                .truncate
+                  = raw certification.description
+            .row
+              .col-lg-6.d-flex.justify-content-around.justify-content-lg-between
+                = link("Quelles vont être les étapes ?", to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-link")
+              .col-lg-6.d-flex.justify-content-around.justify-content-lg-between.flex-row-reverse
+                = link("Je veux ce diplôme", to: Routes.registration_path(@conn, :new), aria_label: "S'inscrire pour obtenir le diplôme #{format_certification_label(certification)}", class: "btn btn-primary")
+
     .col
       = link to: Routes.page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
         h5.mb-5 Comment bien choisir son diplôme ?
