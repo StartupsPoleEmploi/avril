@@ -17,14 +17,18 @@ defmodule ExAdmin.ApiController do
   use Vae.Web, :controller
 
   def get_status(conn, _params) do
-    json(conn, GenServer.call(Status, :get))
-    |> Vae.Map.map_values(fn {k, v} ->
-        if k |> Atom.to_string() |> String.ends_with?("_at") do
-          Timex.format!(v, "{ISO:Extended:Z}")
-        else
-          v
-        end
-      end)
+    status = case GenServer.call(Status, :get) do
+      nil -> nil
+      map ->
+        Vae.Map.map_values(map, fn {k, v} ->
+          if (k |> Atom.to_string() |> String.ends_with?("_at")) && v do
+            Timex.format!(v, "{ISO:Extended:Z}")
+          else
+            v
+          end
+        end)
+    end
+    json(conn, status)
   end
 
   def put_status(conn, %{

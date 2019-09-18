@@ -11,9 +11,11 @@ import '../../css/admin/react-datepicker.scss';
 registerLocale('fr', fr)
 const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
 
+
 class StatusForm extends React.Component {
   state = {
-    isEdit: false,
+    isCancelable: this.props.status,
+    isEdit: !this.props.status,
     status: this.props.status,
   }
 
@@ -27,6 +29,7 @@ class StatusForm extends React.Component {
         this.setState({
           status,
           isEdit: false,
+          isCancelable: true,
           feedback: {
             success: true,
             message: 'Le bandeau a bien été soumis.'
@@ -36,6 +39,7 @@ class StatusForm extends React.Component {
       fail: () => {
         this.setState({
           isEdit: false,
+          isCancelable: true,
           feedback: {
             success: false,
             message: 'Une erreur est survenue, ... sorry!'
@@ -61,6 +65,7 @@ class StatusForm extends React.Component {
         this.setState({
           status,
           isEdit: true,
+          isCancelable: false,
           feedback: {
             success: true,
             message: 'Le bandeau a bien été supprimé.'
@@ -71,12 +76,13 @@ class StatusForm extends React.Component {
   }
 
   renderDateRange() {
-    if (this.state.status && this.state.status.starts_at) {
-      if (this.state.status.ends_at) {
-        return `du ${moment(this.state.status.starts_at).format(DATE_FORMAT)} au ${moment(this.state.status.ends_at).format(DATE_FORMAT)}`
-      } else {
+    if (this.state.status) {
+      if (this.state.status.starts_at && this.state.status.ends_at)
+        return `du ${moment(this.state.status.starts_at).format(DATE_FORMAT)} au ${moment(this.state.status.ends_at).format(DATE_FORMAT)}`;
+      if (this.state.status.starts_at)
         return `à partir du ${moment(this.state.status.starts_at).format(DATE_FORMAT)}`
-      }
+      if (this.state.status.ends_at)
+        return `jusqu'au ${moment(this.state.status.ends_at).format(DATE_FORMAT)}`
     }
   }
 
@@ -93,7 +99,7 @@ class StatusForm extends React.Component {
         <div className="col-sm-offset-2 col-sm-10" style={{marginBottom: '2rem'}}>
           <h1>Bandeau informatif</h1>
         </div>
-        { this.props.status && !this.state.isEdit ? (
+        { !this.state.isEdit ? (
           <div>
             <p>Le message suivant sera affiché {this.renderDateRange()} : </p>
             <div className={`app-status alert alert-${this.state.status.level}`} dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.status.message)}}></div>
@@ -177,7 +183,7 @@ class StatusForm extends React.Component {
               <div className="col-sm-offset-2 col-sm-2">
                 <button type="submit" className="btn btn-primary">Enregistrer</button>
               </div>
-              {this.props.status && (
+              {this.state.isCancelable && (
                 <div className="col-sm-2">
                   <button className="btn btn-info" onClick={e => this.setState({isEdit: false})}>Annuler</button>
                 </div>
@@ -188,10 +194,6 @@ class StatusForm extends React.Component {
       </div>
     );
   }
-}
-
-class StatusFormWithBackend extends React.Component {
-  if
 }
 
 document.addEventListener('DOMContentLoaded', e => {
