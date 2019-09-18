@@ -1,0 +1,278 @@
+defmodule Vae.Meetings.StateHolder do
+  require Logger
+  use GenServer
+
+  alias Vae.Meetings.{Delegate, Meeting}
+  alias Vae.Search.Client.Algolia, as: AlgoliaClient
+  alias Vae.Places
+
+  @name StateHolder
+
+  @doc false
+  def start_link() do
+    start_link([])
+  end
+
+  @doc false
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, opts, name: StateHolder)
+  end
+
+  @impl true
+  def init(_state) do
+    state =
+      PersistentEts.new(:meetings, "meetings.tab", [:named_table, :public])
+      |> from_ets()
+
+    {:ok, state}
+  end
+
+  def handle_cast({:save, name, delegate}, state) do
+    new_state =
+      state
+      |> Enum.find_index(fn del ->
+        del.name == name
+      end)
+      |> case do
+        nil ->
+          with parsed_delegate <- delegate |> parse(),
+               {:ok, delegate} <- index_and_persist(parsed_delegate, name) do
+            [
+              delegate
+              | state
+            ]
+          else
+            {:error, msg} ->
+              Logger.error(fn -> inspect(msg) end)
+              state
+          end
+
+        index ->
+          stated_delegate = Enum.at(state, index)
+
+          parsed_delegate =
+            delegate
+            |> parse()
+
+          updated_delegate =
+            if stated_delegate.req_id == parsed_delegate.req_id do
+              case parsed_delegate do
+                %Delegate{meetings: []} ->
+                  stated_delegate
+
+                parsed_delegate ->
+                  %Delegate{
+                    stated_delegate
+                    | grouped_meetings:
+                        parsed_delegate.grouped_meetings ++ stated_delegate.grouped_meetings,
+                      indexed_meetings:
+                        parsed_delegate.indexed_meetings ++ stated_delegate.indexed_meetings,
+                      meetings: parsed_delegate.meetings ++ stated_delegate.meetings
+                  }
+              end
+            else
+              Map.merge(stated_delegate, parsed_delegate)
+            end
+
+          with {:ok, delegate} <- index_and_persist(updated_delegate, name),
+               new_state <- List.delete_at(state, index) do
+            [
+              delegate
+              | new_state
+            ]
+          else
+            {:error, msg} ->
+              Logger.error(fn -> inspect(msg) end)
+              state
+          end
+      end
+
+    {:noreply, new_state}
+  end
+
+  @impl true
+  def handle_cast({:subscribe, name}, state) do
+    Logger.info(fn -> "#{name} subscribed" end)
+
+    case :ets.lookup(:meetings, name) do
+      [] ->
+        GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
+
+      [{_delegate_name, updated_at, _grouped_meetings}] ->
+        case DateTime.compare(
+               Timex.add(updated_at, Timex.Duration.from_hours(48)),
+               DateTime.utc_now()
+             ) do
+          :lt ->
+            GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
+
+          _ ->
+            nil
+        end
+    end
+
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_cast({:fetch, name}, state) do
+    GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_call(:all, _from, state), do: {:reply, state, state}
+
+  @impl true
+  def handle_call({:get, delegate}, _from, state) do
+    case AlgoliaClient.get_meetings(delegate) do
+      {:ok, places} ->
+        meetings =
+          places
+          |> Enum.map(fn %{id: id, place: place, address: address} ->
+            found =
+              state
+              |> from_delegates()
+              |> Enum.find(&(&1[:id] == id))
+
+            {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
+          end)
+
+        {:reply, meetings, state}
+
+      {:error, msg} ->
+        Logger.error(msg)
+        {:reply, [], state}
+    end
+  end
+
+  @impl true
+  def handle_call({:get_by_meeting_id, meeting_id}, _from, state) do
+    meeting =
+      state
+      |> Enum.flat_map(& &1[:meetings])
+      |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
+
+    {:reply, meeting, state}
+  end
+
+  def subscribe(who) do
+    GenServer.cast(@name, {:subscribe, who})
+  end
+
+  def save(name, data) do
+    GenServer.cast(@name, {:save, name, data})
+  end
+
+  def all() do
+    GenServer.call(@name, :all)
+  end
+
+  def get(delegate) do
+    GenServer.call(@name, {:get, delegate})
+    |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) end)
+  end
+
+  def get_by_meeting_id(meeting_id) do
+    GenServer.call(@name, {:get_by_meeting_id, meeting_id})
+  end
+
+  def fetch(name) do
+    GenServer.cast(@name, {:fetch, name})
+  end
+
+  defp parse(delegate) do
+    {to_index, grouped} =
+      delegate.meetings
+      |> Enum.reduce({[], []}, fn %{
+                                    academy_id: academy_id,
+                                    certifier_id: certifier_id,
+                                    meetings: meetings
+                                  },
+                                  {to_index, new_state} ->
+        formatted =
+          meetings
+          |> Enum.map(fn
+            %Meeting{postal_code: nil} = meeting ->
+              meeting
+
+            %Meeting{postal_code: postal_code} = meeting ->
+              geolocation = Places.get_geoloc_from_address(postal_code)
+
+              %{
+                meeting
+                | geolocation: geolocation
+              }
+          end)
+          |> Enum.group_by(&{&1.geolocation["_geoloc"], &1.place, &1.address})
+          |> Enum.map(fn {headers, meetings} ->
+            format(headers, %{
+              academy_id: academy_id,
+              certifier_id: certifier_id,
+              meetings: meetings
+            })
+          end)
+
+        {
+          formatted
+          |> Enum.map(fn meeting ->
+            Map.take(
+              meeting,
+              [:id, :_geoloc, :place, :address, :academy_id, :certifier_id, :has_academy]
+            )
+          end)
+          |> Kernel.++(to_index),
+          formatted ++ new_state
+        }
+      end)
+
+    %{delegate | grouped_meetings: grouped, indexed_meetings: to_index}
+  end
+
+  defp index_and_persist(%Delegate{indexed_meetings: to_index} = delegate, name) do
+    with {:ok, objects} <- Algolia.save_objects("test-meetings", to_index, id_attribute: :id),
+         true <- persist(delegate, name) do
+      Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
+      {:ok, delegate}
+    else
+      {:error, msg} ->
+        Logger.error(fn -> inspect(msg) end)
+        {:error, msg}
+
+      false ->
+        msg = "Error while inserting state into meetings ets table"
+        Logger.error(msg)
+        {:error, msg}
+    end
+  end
+
+  defp format(
+         {geoloc, place, address},
+         %{academy_id: academy_id, certifier_id: certifier_id, meetings: meetings}
+       ),
+       do: %{
+         id: UUID.uuid5(nil, "#{place} #{address}"),
+         _geoloc: geoloc,
+         place: place,
+         address: address,
+         academy_id: academy_id,
+         certifier_id: certifier_id,
+         has_academy: !!academy_id,
+         meetings: Enum.map(meetings, &Map.from_struct/1)
+       }
+
+  defp from_delegates(delegates) do
+    delegates
+    |> Enum.flat_map(& &1.grouped_meetings)
+  end
+
+  defp from_ets(tab \\ :meetings) do
+    tab
+    |> :ets.tab2list()
+    |> Enum.map(fn {_name, _updated_at, delegate} -> delegate end)
+  end
+
+  defp persist(delegate, name) do
+    :ets.insert(:meetings, {name, delegate.updated_at, delegate})
+  end
+end

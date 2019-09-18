@@ -1,0 +1,23 @@
+main.text-center.justify-content-center role="main"
+  .container
+
+    h4.mb-4
+      | Bravo ! Votre inscription est presque terminée!
+    p.font-weight-bold.h5
+      | Nous vérifions les places disponibles pour la réunion d'information chez notre partenaire
+
+    .img-container
+      = img_tag "/images/france-vae.png", alt: "Logo France VAE", class: "mb-4"
+
+    p
+      = "Si rien ne se passe après 30 secondes, "
+      = link("cliquez ici", to: Routes.application_path(@conn, :show, @application_id), class: "btn btn-primary")
+      = " pour revenir sur votre profil Avril."
+
+= unless Mix.env == :dev do
+  javascript:
+    document.addEventListener('DOMContentLoaded', function(e){
+      setTimeout(function(){
+        window.location.replace("#{Routes.application_path(@conn, :show, @application_id)}");
+      }, 20 * 1000);
+    });
