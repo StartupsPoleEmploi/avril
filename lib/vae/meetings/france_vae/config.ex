@@ -1,4 +1,4 @@
-defmodule Vae.Delegates.FranceVae.Config do
+defmodule Vae.Meetings.FranceVae.Config do
   def get_domain_name() do
     System.get_env("FRANCE_VAE_DOMAIN_NAME")
   end
@@ -35,9 +35,11 @@ defmodule Vae.Delegates.FranceVae.Config do
     "#{get_domain_name()}/academie/demande-information/#{academy_id}"
   end
 
-  def get_france_vae_form_url(academy_id, meeting_id) when is_nil(meeting_id) or meeting_id == "" do
+  def get_france_vae_form_url(academy_id, meeting_id)
+      when is_nil(meeting_id) or meeting_id == "" do
     get_france_vae_form_url(academy_id)
   end
+
   # def get_france_vae_form_url(academy_id, "") do: get_france_vae_form_url(academy_id)
   def get_france_vae_form_url(academy_id, meeting_id) do
     "#{get_domain_name()}/academie/inscription-rdv/#{academy_id}/#{meeting_id}"

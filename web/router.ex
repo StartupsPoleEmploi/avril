@@ -88,9 +88,18 @@ defmodule Vae.Router do
     # Loggued in applications
     resources("/candidatures", Vae.ApplicationController, only: [:show, :update]) do
       get("/telecharger", Vae.ApplicationController, :download, as: :download)
-      get("/france-vae-redirect", Vae.ApplicationController, :france_vae_redirect, as: :france_vae_redirect)
+
+      get("/france-vae-redirect", Vae.ApplicationController, :france_vae_redirect,
+        as: :france_vae_redirect
+      )
+
+      get("/france-vae-registered", Vae.ApplicationController, :france_vae_registered,
+        as: :france_vae_registered
+      )
+
       resources("/resume", Vae.ResumeController, only: [:create, :delete])
     end
+
     get("/candidatures/:id/admissible", Vae.ApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", Vae.ApplicationController, :inadmissible)
 
@@ -106,7 +115,7 @@ defmodule Vae.Router do
     get("/certifications", Vae.Redirector, to: "/diplomes")
     get("/certifications/:id", Vae.Redirector, to: "/diplomes/:id")
     get("/certifiers/:id", Vae.Redirector, to: "/certificateurs?organisme=:id")
-    get("/processes/:id", Vae.Redirector, [to: "/", msg: "La page demandée n'existe plus."])
+    get("/processes/:id", Vae.Redirector, to: "/", msg: "La page demandée n'existe plus.")
   end
 
   # Private pages

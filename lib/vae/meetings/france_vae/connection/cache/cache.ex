@@ -1,7 +1,7 @@
-defmodule Vae.Delegates.Cache do
+defmodule Vae.Meetings.FranceVae.Connection.Cache do
   use Agent
 
-  alias Vae.Delegates.Connection
+  alias Vae.Meetings.FranceVae.Connection
 
   def start_link(_args) do
     Agent.start_link(fn -> [] end, name: __MODULE__)

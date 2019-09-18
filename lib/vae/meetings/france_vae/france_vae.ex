@@ -1,9 +1,10 @@
-defmodule Vae.Delegates.FranceVae do
+defmodule Vae.Meetings.FranceVae do
   require Logger
 
-  alias Vae.Delegates.Cache
-  alias Vae.Delegates.FranceVae.Config
-  alias Vae.Delegates.FranceVae.Meeting
+  alias Vae.Meetings.FranceVae.Connection.Cache
+  alias Vae.Meetings.FranceVae.Config
+  alias Vae.Meetings.FranceVae.UserRegistration
+  alias Vae.Meetings.Meeting
 
   @name FranceVae
 
@@ -14,9 +15,14 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/academies", headers)
-    {:ok, academies} = response.body |> Jason.decode()
-    academies
+    with {:ok, response} <- HTTPoison.get("#{Config.get_base_url()}/academies", headers),
+         {:ok, academies} <- response.body |> Jason.decode() do
+      academies
+    else
+      {:error, reason} ->
+        Logger.error(fn -> inspect(reason) end)
+        []
+    end
   end
 
   def get_meetings(academy_id) do
@@ -26,40 +32,63 @@ defmodule Vae.Delegates.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    {:ok, response} = HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers)
+    Logger.info("Retrieve meetings from fvae for academy_id: #{academy_id}")
 
-    response.body
-    |> Jason.decode!()
-    |> Map.get("reunions")
-    |> case do
-      nil ->
+    with {:ok, response} <-
+           HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers),
+         {:ok, json} <- response.body |> Jason.decode() do
+      json
+      |> Map.get("reunions")
+      |> case do
+        nil ->
+          []
+
+        meetings ->
+          meetings
+          |> Enum.filter(fn meeting ->
+            meeting
+            |> Map.get("cible")
+            |> String.trim()
+            |> Kernel.in(["CAP au BTS", ""])
+          end)
+          |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
+      end
+    else
+      {:error, reason} ->
+        Logger.error(fn -> inspect(reason) end)
         []
-
-      meetings ->
-        meetings
-        |> Enum.filter(fn meeting ->
-          meeting
-          |> Map.get("cible")
-          |> String.trim()
-          |> Kernel.in(["CAP au BTS", ""])
-        end)
-        |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
     end
   end
 
-  def post_meeting_registration(academy_id, meeting_id, user) do
+  def register(academy_id, meeting_id, application) do
     token = get_token()
 
     headers = [
-      {"Authorization", "Bearer #{token}"}
+      {"Authorization", "Bearer #{token}"},
+      {"Content-Type", "application/json"}
     ]
 
-    {:ok, _response} =
-      HTTPoison.post(
-        "https://#{Config.get_base_url()}/academie/inscription-rdv/#{academy_id}/#{meeting_id}",
-        Vae.Delegates.FranceVae.UserRegistration.from_user(user),
-        headers
-      )
+    user_registration =
+      application
+      |> UserRegistration.new_meeting_registration(meeting_id)
+      |> Jason.encode!()
+
+    with {:ok, response} <-
+           HTTPoison.post(
+             "#{Config.get_base_url()}/formulaires/#{academy_id}",
+             user_registration,
+             headers
+           ),
+         {:ok, body} <- response.body |> Jason.decode() do
+      case response.status_code do
+        200 -> {:ok, body}
+        _ -> {:error, body["error"]}
+      end
+    else
+      {:error, msg} = error ->
+        Logger.error(fn -> inspect(msg) end)
+        error
+    end
   end
 
   def get_token() do
@@ -104,8 +133,10 @@ defmodule Vae.Delegates.FranceVae do
     %Meeting{
       academy_id: academy_id,
       meeting_id: params["id"],
+      meeting_id2: Integer.to_string(params["id"]),
       place: params["lieu"],
       address: params["addresse"],
+      postal_code: params["code_postal"],
       target: params["cible"],
       start_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_debut"]),
       end_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_fin"]),
