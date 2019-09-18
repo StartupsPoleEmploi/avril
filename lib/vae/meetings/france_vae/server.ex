@@ -38,12 +38,16 @@ defmodule Vae.Meetings.FranceVae.Server do
   end
 
   @impl true
-  def handle_cast({:fetch, pid}, state) do
-    new_state = %{
-      state
-      | updated_at: DateTime.utc_now(),
-        meetings: get_data()
-    }
+  def handle_cast({:fetch, pid, delegate}, state) do
+    new_state =
+      Map.merge(
+        state,
+        %{
+          req_id: delegate.req_id,
+          updated_at: DateTime.utc_now(),
+          meetings: get_data()
+        }
+      )
 
     GenServer.cast(pid, {:save, @name, new_state})
 

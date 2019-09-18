@@ -1,7 +1,15 @@
 defmodule Vae.Meetings.Delegate do
-  defstruct name: nil, updated_at: nil, meetings: [], grouped_meetings: []
+  defstruct req_id: nil,
+            name: nil,
+            updated_at: nil,
+            meetings: [],
+            indexed_meetings: [],
+            grouped_meetings: []
 
   def new(name) do
-    %__MODULE__{name: name}
+    %__MODULE__{
+      name: name,
+      req_id: make_ref()
+    }
   end
 end

@@ -27,8 +27,6 @@ defmodule Vae.Meetings.Afpa.Scraper do
         body
         |> Floki.find(".evenement figcaption .lirelasuite")
         |> Floki.attribute("id")
-        |> Enum.map(fn id -> scrape_event("https://www.afpa.fr/agenda/#{id}") end)
-        |> Enum.filter(fn meeting -> !is_nil(meeting) end)
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         Logger.warn("Not found :(")
@@ -81,19 +79,15 @@ defmodule Vae.Meetings.Afpa.Scraper do
             postal_code: postal_code,
             city: city
           }
-          |> Map.merge(%{
-            geolocation:
-              Vae.Places.Client.Algolia.get_geoloc_from_address(
-                "#{address} #{postal_code} #{city}"
-              )
-          })
         end
 
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         Logger.warn("Not found :(")
+        %{}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         Logger.error(reason)
+        %{}
     end
   end
 

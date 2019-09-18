@@ -2,6 +2,10 @@ defmodule Vae.Meetings.StateHolder do
   require Logger
   use GenServer
 
+  alias Vae.Meetings.{Delegate, Meeting}
+  alias Vae.Search.Client.Algolia, as: AlgoliaClient
+  alias Vae.Places
+
   @name StateHolder
 
   @doc false
@@ -23,12 +27,65 @@ defmodule Vae.Meetings.StateHolder do
     {:ok, state}
   end
 
-  @impl true
-  def handle_cast({:save, name, delegate}, _state) do
+  def handle_cast({:save, name, delegate}, state) do
     new_state =
-      delegate
-      |> parse()
-      |> index_and_persist(name)
+      state
+      |> Enum.find_index(fn del ->
+        del.name == name
+      end)
+      |> case do
+        nil ->
+          with parsed_delegate <- delegate |> parse(),
+               {:ok, delegate} <- index_and_persist(parsed_delegate, name) do
+            [
+              delegate
+              | state
+            ]
+          else
+            {:error, msg} ->
+              Logger.error(fn -> inspect(msg) end)
+              state
+          end
+
+        index ->
+          stated_delegate = Enum.at(state, index)
+
+          parsed_delegate =
+            delegate
+            |> parse()
+
+          updated_delegate =
+            if stated_delegate.req_id == parsed_delegate.req_id do
+              case parsed_delegate do
+                %Delegate{meetings: []} ->
+                  stated_delegate
+
+                parsed_delegate ->
+                  %Delegate{
+                    stated_delegate
+                    | grouped_meetings:
+                        parsed_delegate.grouped_meetings ++ stated_delegate.grouped_meetings,
+                      indexed_meetings:
+                        parsed_delegate.indexed_meetings ++ stated_delegate.indexed_meetings,
+                      meetings: parsed_delegate.meetings ++ stated_delegate.meetings
+                  }
+              end
+            else
+              Map.merge(stated_delegate, parsed_delegate)
+            end
+
+          with {:ok, delegate} <- index_and_persist(updated_delegate, name),
+               new_state <- List.delete_at(state, index) do
+            [
+              delegate
+              | new_state
+            ]
+          else
+            {:error, msg} ->
+              Logger.error(fn -> inspect(msg) end)
+              state
+          end
+      end
 
     {:noreply, new_state}
   end
@@ -39,15 +96,15 @@ defmodule Vae.Meetings.StateHolder do
 
     case :ets.lookup(:meetings, name) do
       [] ->
-        GenServer.cast(name, {:fetch, self()})
+        GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
 
       [{_delegate_name, updated_at, _grouped_meetings}] ->
         case DateTime.compare(
-               Timex.add(updated_at, Timex.Duration.from_hours(12)),
+               Timex.add(updated_at, Timex.Duration.from_hours(48)),
                DateTime.utc_now()
              ) do
           :lt ->
-            GenServer.cast(name, {:fetch, self()})
+            GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
 
           _ ->
             nil
@@ -58,13 +115,8 @@ defmodule Vae.Meetings.StateHolder do
   end
 
   @impl true
-  def handle_cast({:save, name, data}, state) do
-    new_state = Keyword.put(state, name, data)
-    {:noreply, new_state}
-  end
-
-  @impl true
-  def handle_cast(:fetch_all, state) do
+  def handle_cast({:fetch, name}, state) do
+    GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
     {:noreply, state}
   end
 
@@ -73,16 +125,21 @@ defmodule Vae.Meetings.StateHolder do
 
   @impl true
   def handle_call({:get, delegate}, _from, state) do
-    case Vae.Search.Client.Algolia.get_meetings(delegate) do
+    case AlgoliaClient.get_meetings(delegate) do
       {:ok, places} ->
         meetings =
           places
           |> Enum.map(fn %{id: id, place: place, address: address} ->
-            found = Enum.find(state, &(&1[:id] == id))
+            found =
+              state
+              |> from_delegates()
+              |> Enum.find(&(&1[:id] == id))
+
             {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
           end)
 
         {:reply, meetings, state}
+
       {:error, msg} ->
         Logger.error(msg)
         {:reply, [], state}
@@ -97,10 +154,6 @@ defmodule Vae.Meetings.StateHolder do
       |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
 
     {:reply, meeting, state}
-  end
-
-  def fetch_all() do
-    GenServer.cast(@name, :fetch_all)
   end
 
   def subscribe(who) do
@@ -124,6 +177,10 @@ defmodule Vae.Meetings.StateHolder do
     GenServer.call(@name, {:get_by_meeting_id, meeting_id})
   end
 
+  def fetch(name) do
+    GenServer.cast(@name, {:fetch, name})
+  end
+
   defp parse(delegate) do
     {to_index, grouped} =
       delegate.meetings
@@ -135,6 +192,18 @@ defmodule Vae.Meetings.StateHolder do
                                   {to_index, new_state} ->
         formatted =
           meetings
+          |> Enum.map(fn
+            %Meeting{postal_code: nil} = meeting ->
+              meeting
+
+            %Meeting{postal_code: postal_code} = meeting ->
+              geolocation = Places.get_geoloc_from_address(postal_code)
+
+              %{
+                meeting
+                | geolocation: geolocation
+              }
+          end)
           |> Enum.group_by(&{&1.geolocation["_geoloc"], &1.place, &1.address})
           |> Enum.map(fn {headers, meetings} ->
             format(headers, %{
@@ -157,23 +226,23 @@ defmodule Vae.Meetings.StateHolder do
         }
       end)
 
-    {to_index, %{delegate | grouped_meetings: grouped}}
+    %{delegate | grouped_meetings: grouped, indexed_meetings: to_index}
   end
 
-  defp index_and_persist({to_index, delegate}, name) do
+  defp index_and_persist(%Delegate{indexed_meetings: to_index} = delegate, name) do
     with {:ok, objects} <- Algolia.save_objects("test-meetings", to_index, id_attribute: :id),
-         true <- persist(delegate, name),
-         new_state <- from_ets() do
+         true <- persist(delegate, name) do
       Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
-      new_state
+      {:ok, delegate}
     else
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
-        []
+        {:error, msg}
 
       false ->
-        Logger.error("Error while inserting state into meetings ets table")
-        []
+        msg = "Error while inserting state into meetings ets table"
+        Logger.error(msg)
+        {:error, msg}
     end
   end
 
@@ -192,13 +261,18 @@ defmodule Vae.Meetings.StateHolder do
          meetings: Enum.map(meetings, &Map.from_struct/1)
        }
 
+  defp from_delegates(delegates) do
+    delegates
+    |> Enum.flat_map(& &1.grouped_meetings)
+  end
+
   defp from_ets(tab \\ :meetings) do
     tab
     |> :ets.tab2list()
-    |> Enum.flat_map(fn {_name, _updated_at, grouped_meetings} -> grouped_meetings end)
+    |> Enum.map(fn {_name, _updated_at, delegate} -> delegate end)
   end
 
   defp persist(delegate, name) do
-    :ets.insert(:meetings, {name, delegate.updated_at, delegate.grouped_meetings})
+    :ets.insert(:meetings, {name, delegate.updated_at, delegate})
   end
 end

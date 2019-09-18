@@ -7,6 +7,8 @@ defmodule Vae.Meetings do
 
   defdelegate all(), to: StateHolder
 
+  defdelegate fetch(name), to: StateHolder
+
   def get_by_meeting_id(nil), do: %Vae.Meetings.Meeting{}
 
   defdelegate get_by_meeting_id(meeting_id), to: StateHolder

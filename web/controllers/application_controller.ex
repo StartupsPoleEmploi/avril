@@ -27,8 +27,9 @@ defmodule Vae.ApplicationController do
         do: [],
         else: Vae.Meetings.get(application.delegate)
 
-    preselected_place = if length(meetings) > 0,
-      do: meetings |> List.first() |> elem(0)
+    preselected_place =
+      if length(meetings) > 0,
+        do: meetings |> List.first() |> elem(0)
 
     render(conn, "show.html", %{
       title:
