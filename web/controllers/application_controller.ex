@@ -43,7 +43,7 @@ defmodule Vae.ApplicationController do
       grouped_experiences:
         application.user.proven_experiences
         |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
-        |> Vae.Map.map_values(fn experiences ->
+        |> Vae.Map.map_values(fn {k, experiences} ->
           Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
         end)
         |> Map.to_list()
