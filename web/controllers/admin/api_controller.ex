@@ -16,6 +16,40 @@ end
 defmodule ExAdmin.ApiController do
   use Vae.Web, :controller
 
+  def get_status(conn, _params) do
+    status = case GenServer.call(Status, :get) do
+      nil -> nil
+      map ->
+        Vae.Map.map_values(map, fn {k, v} ->
+          if (k |> Atom.to_string() |> String.ends_with?("_at")) && v do
+            Timex.format!(v, "{ISO:Extended:Z}")
+          else
+            v
+          end
+        end)
+    end
+    json(conn, status)
+  end
+
+  def put_status(conn, %{
+    "message" => status
+  } = params) do
+    :ok = GenServer.cast(Status, {:set, [
+      message: status,
+      level: params["level"] || "info",
+      starts_at: (if not Vae.String.is_blank?(params["starts_at"]),
+        do: Timex.parse!(params["starts_at"], "{ISO:Extended:Z}")),
+      ends_at: (if not Vae.String.is_blank?(params["ends_at"]),
+        do: Timex.parse!(params["ends_at"], "{ISO:Extended:Z}"))
+    ]})
+    json(conn, GenServer.call(Status, :get))
+  end
+
+  def delete_status(conn, _params) do
+    :ok = GenServer.cast(Status, {:delete})
+    json(conn, GenServer.call(Status, :get))
+  end
+
   def sql(conn, %{"query" => query}) do
     query = apply(__MODULE__, :"#{query}_query", [])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)

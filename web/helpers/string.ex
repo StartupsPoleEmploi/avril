@@ -3,6 +3,14 @@ defmodule Vae.String do
   `String` method helpers
   """
 
+  def is_blank?(nil), do: true
+  def is_blank?(""), do: true
+  def is_blank?(_), do: false
+
+  def encode(string) do
+    :crypto.hash(:md5, string |> Base.encode16())
+  end
+
   def titleize(string) do
     cond do
       String.upcase(string || "") == string ->

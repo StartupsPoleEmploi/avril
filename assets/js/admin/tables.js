@@ -18,7 +18,7 @@ const mapRowDefinitions = (columns, rows) =>
 
 const renderTable = name => {
   const $table = document.getElementById(`${name}-table`);
-  if ($table.dataset.url) {
+  if ($table && $table.dataset.url) {
     fetch($table.dataset.url)
       .then(res => res.json())
       .then(({columns, rows}) => {

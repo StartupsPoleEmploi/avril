@@ -161,6 +161,7 @@ config :ex_admin,
   module: Vae,
   modules: [
     Vae.ExAdmin.Application,
+    Vae.ExAdmin.AppStatus,
     Vae.ExAdmin.Dashboard,
     Vae.ExAdmin.Certification,
     Vae.ExAdmin.Certifier,

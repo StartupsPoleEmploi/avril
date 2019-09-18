@@ -11,6 +11,7 @@ defmodule Vae.Router do
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
+    plug(:fetch_app_status)
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
@@ -21,7 +22,7 @@ defmodule Vae.Router do
       id_key: @id_key
     )
 
-    plug :put_user_token
+    plug(:put_user_token)
     #    plug(Vae.Tracker)
   end
 
@@ -69,6 +70,7 @@ defmodule Vae.Router do
     get("/contact", Vae.PageController, :contact)
     post("/contact", Vae.PageController, :submit_contact)
     get("/financement-vae", Vae.PageController, :financement)
+    post("/close-app-status", Vae.PageController, :close_status)
     get("/stats", Vae.PageController, :stats)
 
     # Basic navigation
@@ -86,9 +88,18 @@ defmodule Vae.Router do
     # Loggued in applications
     resources("/candidatures", Vae.ApplicationController, only: [:show, :update]) do
       get("/telecharger", Vae.ApplicationController, :download, as: :download)
-      get("/france-vae-redirect", Vae.ApplicationController, :france_vae_redirect, as: :france_vae_redirect)
+
+      get("/france-vae-redirect", Vae.ApplicationController, :france_vae_redirect,
+        as: :france_vae_redirect
+      )
+
+      get("/france-vae-registered", Vae.ApplicationController, :france_vae_registered,
+        as: :france_vae_registered
+      )
+
       resources("/resume", Vae.ResumeController, only: [:create, :delete])
     end
+
     get("/candidatures/:id/admissible", Vae.ApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", Vae.ApplicationController, :inadmissible)
 
@@ -105,7 +116,7 @@ defmodule Vae.Router do
     get("/certifications", Vae.Redirector, to: "/diplomes")
     get("/certifications/:id", Vae.Redirector, to: "/diplomes/:id")
     get("/certifiers/:id", Vae.Redirector, to: "/certificateurs?organisme=:id")
-    get("/processes/:id", Vae.Redirector, [to: "/", msg: "La page demandée n'existe plus."])
+    get("/processes/:id", Vae.Redirector, to: "/", msg: "La page demandée n'existe plus.")
   end
 
   # Private pages
@@ -118,10 +129,13 @@ defmodule Vae.Router do
   scope "/admin", ExAdmin do
     pipe_through([:browser, :protected, :admin])
     get("/sql", ApiController, :sql)
+    get("/status", ApiController, :get_status)
+    post("/status", ApiController, :put_status)
+    delete("/status", ApiController, :delete_status)
     admin_routes()
   end
 
-   defp put_user_token(conn, _) do
+  defp put_user_token(conn, _) do
     if current_user = Coherence.current_user(conn) do
       assign(conn, :user_token, Phoenix.Token.sign(conn, "user socket", current_user.id))
     else
@@ -129,4 +143,15 @@ defmodule Vae.Router do
     end
   end
 
+  defp fetch_app_status(conn, _opts \\ []) do
+    status = GenServer.call(Status, :get)
+    if status && # There is a status
+      get_session(conn, :app_status_closed) != Vae.String.encode(status.message) && # not closed
+      (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) && # in interval
+      (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
+      Map.merge(conn, %{app_status: status})
+    else
+      conn
+    end
+  end
 end
