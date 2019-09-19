@@ -1,13 +1,36 @@
 defmodule Vae.ExAdmin.Certification do
   use ExAdmin.Register
+  alias Vae.ExAdmin.Helpers
+
   alias Vae.{Certifier, Delegate, Repo, Rome}
 
-  alias Ecto.Query
   require Ecto.Query
 
   register_resource Vae.Certification do
+    index do
+      selectable_column()
+      column(:id)
+      column(:acronym)
+      column(:label)
+      column(:level)
+      column(:rncp_id)
+
+      actions()
+    end
+
     show certification do
       attributes_table()
+
+      panel "Applications" do
+        table_for certification.applications do
+          column(:id)
+          column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
+          column(:application_delegate, fn a -> Helpers.link_to_resource(a.delegate) end)
+          column(:submitted_at)
+          column(:admissible_at)
+          column(:inadmissible_at)
+        end
+      end
 
       panel "Romes" do
         table_for certification.romes do
@@ -17,12 +40,11 @@ defmodule Vae.ExAdmin.Certification do
       end
 
       panel "Delegates" do
-        table_for certification.certifications_delegates do
-          column("Name", & &1.delegate.name)
-          column(:booklet_1)
-          column(:booklet_2)
+        table_for certification.delegates do
+          column(:name, &Helpers.link_to_resource/1)
         end
       end
+
     end
 
     form certification do
@@ -69,7 +91,7 @@ defmodule Vae.ExAdmin.Certification do
             :delegate_id,
             collection:
               Delegate
-              |> Query.order_by(:name)
+              |> order_by(:name)
               |> Repo.all()
               |> Enum.map(&{&1.id, &1.name})
           )
@@ -82,12 +104,9 @@ defmodule Vae.ExAdmin.Certification do
 
     query do
       %{
-        all: [
-          preload: [
-            romes: from(r in Rome, order_by: r.code),
-            delegates: from(d in Delegate, order_by: d.name),
-            certifiers: from(c in Certifier, order_by: c.name)
-          ]
+        index: [default_sort: [asc: :id]],
+        show: [
+          preload: [:romes, :delegates, :certifiers, applications: [ :delegate, :user, :certification, :certifiers]]
         ]
       }
     end

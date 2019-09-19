@@ -6,14 +6,13 @@ defmodule Vae.Plugs.ApplicationAccess do
   alias Vae.Repo
   alias Vae.Router.Helpers
 
-  def init(_params) do
-  end
+  def init(params), do: params
 
-  def call(%{params: %{"id" => application_id}} = conn, _params),
-    do: execute(conn, application_id)
+  def call(%{params: %{"id" => application_id}} = conn, params),
+    do: execute(conn, application_id, IO.inspect(params))
 
-  def call(%{params: %{"application_id" => application_id}} = conn, _params),
-    do: execute(conn, application_id)
+  def call(%{params: %{"application_id" => application_id}} = conn, params),
+    do: execute(conn, application_id, params)
 
   def call(conn, _params) do
     conn
@@ -22,14 +21,14 @@ defmodule Vae.Plugs.ApplicationAccess do
     |> halt()
   end
 
-  def execute(conn, application_id) do
+  def execute(conn, application_id, options\\[]) do
     application =
       case Repo.get(Application, application_id) do
         nil -> nil
         application -> Repo.preload(application, :user)
       end
 
-    hash = get_in(conn, [Access.key(:params), "hash"])
+    hash = if options[:allow_hash_access], do: get_in(conn, [Access.key(:params), "hash"])
 
     case has_access?(conn, application, hash) do
       {:ok, nil} ->
@@ -39,8 +38,8 @@ defmodule Vae.Plugs.ApplicationAccess do
         |> render("404.html", layout: false)
         |> halt()
 
-      {:ok, _application} ->
-        conn
+      {:ok, application} ->
+        Plug.Conn.assign(conn, :current_application, application)
 
       {:error, %{to: to, msg: msg}} ->
         conn

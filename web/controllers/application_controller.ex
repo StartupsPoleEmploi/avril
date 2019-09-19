@@ -5,22 +5,17 @@ defmodule Vae.ApplicationController do
   alias Vae.{Application, Resume, User}
   alias Vae.Crm.Polls
 
-  plug Vae.Plugs.ApplicationAccess
+  plug Vae.Plugs.ApplicationAccess when not action in [:show, :admissible, :inadmissible]
+  plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
   def show(conn, %{"id" => id} = params) do
-    application =
-      case Repo.get(Application, id) do
-        nil ->
-          nil
-
-        application ->
-          Repo.preload(application, [
-            :user,
-            [delegate: [:process, :certifiers]],
-            :certification,
-            :resumes
-          ])
-      end
+    application = conn.assigns[:current_application]
+      |> Repo.preload([
+          :user,
+          [delegate: [:process, :certifiers]],
+          :certification,
+          :resumes
+        ])
 
     meetings =
       if application.meeting,
@@ -61,11 +56,12 @@ defmodule Vae.ApplicationController do
 
   # TODO: change to submit
   def update(conn, %{"id" => id} = params) do
-    application =
-      case Repo.get(Application, id) do
-        nil -> nil
-        application -> Repo.preload(application, [:user, [delegate: :certifiers], :certification])
-      end
+    application = conn.assigns[:current_application]
+      |> Repo.preload([
+        :user,
+        [delegate: [:process, :certifiers]],
+        :certification
+      ])
 
     case Application.submit(application) do
       {:ok, application} ->
@@ -116,11 +112,12 @@ defmodule Vae.ApplicationController do
   end
 
   def download(conn, %{"application_id" => id}) do
-    application =
-      case Repo.get(Application, id) do
-        nil -> nil
-        application -> Repo.preload(application, [:user, {:delegate, :process}, :certification])
-      end
+    application = conn.assigns[:current_application]
+      |> Repo.preload([
+        :user,
+        [delegate: [:process, :certifiers]],
+        :certification
+      ])
 
     case Vae.StepsPdf.create_pdf_file(application.delegate.process) do
       {:ok, file} ->
@@ -174,11 +171,9 @@ defmodule Vae.ApplicationController do
           "academy_id" => academy_id
         } = params
       ) do
-    application =
-      case Repo.get(Application, id) do
-        nil -> nil
-        application -> Repo.preload(application, [:user, {:delegate, :process}, :certification])
-      end
+
+    application = conn.assigns[:current_application]
+      |> Repo.preload([:user, {:delegate, :process}, :certification])
 
     meeting_id = params["meeting_id"]
 

@@ -1,5 +1,6 @@
 defmodule Vae.ExAdmin.Application do
   use ExAdmin.Register
+  alias Vae.ExAdmin.Helpers
 
   alias Vae.{Certification, Delegate, Repo, User}
 
@@ -12,13 +13,11 @@ defmodule Vae.ExAdmin.Application do
       column(:id)
       column(:user)
       column(:certification)
-      column(:certifier, fn a ->
-        Enum.map(a.certification.certifiers, fn c ->
-          Phoenix.HTML.Link.link(c.name, to: "/admin/certifiers/#{c.id}")
-        end)
-      end)
       column(:delegate)
-      column(:administrative, [], fn a -> a.delegate.administrative end)
+      column(:certifier, fn a ->
+        Enum.map(a.certifiers, &Helpers.link_to_resource/1)
+      end)
+      column(:administrative, fn a -> a.delegate.administrative end)
       column(:submitted_at)
       column(:admissible_at)
       column(:inadmissible_at)
@@ -86,12 +85,12 @@ defmodule Vae.ExAdmin.Application do
       column(:updated_at)
     end
 
-    filter [:id, :submitted_at, :admissible_at, :inserted_at, :updated_at]
+    filter [:id, :delegate_id, :certification_id, :submitted_at, :admissible_at, :inadmissible_at, :inserted_at, :updated_at]
 
     query do
       %{
         all: [
-          preload: [ :delegate, :user, certification: :certifiers]
+          preload: [ :delegate, :user, :certification, :certifiers]
         ],
         index: [
           default_sort: [desc: :inserted_at]
