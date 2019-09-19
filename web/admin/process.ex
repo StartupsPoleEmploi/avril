@@ -1,5 +1,6 @@
 defmodule Vae.ExAdmin.Process do
   use ExAdmin.Register
+  alias Vae.ExAdmin.Helpers
 
   alias Vae.{Delegate, Process, Repo}
 
@@ -28,7 +29,7 @@ defmodule Vae.ExAdmin.Process do
       panel "Delegates" do
         table_for process.delegates do
           column(:id)
-          column(:name)
+          column(:name, &Helpers.link_to_resource/1)
         end
       end
     end
@@ -86,7 +87,10 @@ defmodule Vae.ExAdmin.Process do
     end
 
     query do
-      %{all: [preload: [delegates: from(d in Vae.Delegate, order_by: d.name)]]}
+      %{
+        all: [preload: [delegates: from(d in Vae.Delegate, order_by: d.name)]],
+        index: [default_sort: [asc: :id]]
+      }
     end
   end
 end

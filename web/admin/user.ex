@@ -1,5 +1,7 @@
 defmodule Vae.ExAdmin.User do
   use ExAdmin.Register
+  alias Vae.ExAdmin.Helpers
+
 
   register_resource Vae.User do
     index do
@@ -108,10 +110,28 @@ defmodule Vae.ExAdmin.User do
           column(:company_uid)
         end
       end
+
+      panel "Applications" do
+        table_for user.applications do
+          column(:id)
+          column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+          column(:application_delegate, fn a -> Helpers.link_to_resource(a.delegate) end)
+          column(:application_certifiers, fn a ->
+            Enum.map(a.certifiers, &Helpers.link_to_resource/1)
+          end)
+          column(:administrative, fn a -> a.delegate.administrative end)
+          column(:submitted_at)
+          column(:admissible_at)
+          column(:inadmissible_at)
+        end
+      end
     end
 
     query do
-      %{index: [default_sort: [asc: :inserted_at]]}
+      %{
+        index: [default_sort: [desc: :inserted_at]],
+        show: [preload: [applications: [ :delegate, :user, :certification, :certifiers]]]
+      }
     end
   end
 end

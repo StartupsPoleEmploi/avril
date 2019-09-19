@@ -1,5 +1,7 @@
 defmodule Vae.ExAdmin.Delegate do
   use ExAdmin.Register
+  alias Vae.ExAdmin.Helpers
+
   alias Vae.{Certifier, Process, Repo}
 
   alias Ecto.Query
@@ -14,6 +16,9 @@ defmodule Vae.ExAdmin.Delegate do
       column(:id)
       column(:name)
       column(:process)
+      column(:certifiers, fn d ->
+        Enum.map(d.certifiers, &Helpers.link_to_resource/1)
+      end)
       column(:is_active)
       column(:administrative)
       column(:city)
@@ -21,7 +26,7 @@ defmodule Vae.ExAdmin.Delegate do
       actions()
     end
 
-    show _delegate do
+    show delegate do
       attributes_table(
         only: [
           :id,
@@ -36,6 +41,23 @@ defmodule Vae.ExAdmin.Delegate do
           :process
         ]
       )
+
+      panel "Certifiers" do
+        table_for delegate.certifiers do
+          column(:name, &Helpers.link_to_resource/1)
+        end
+      end
+
+      panel "Applications" do
+        table_for delegate.applications do
+          column(:id)
+          column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
+          column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+          column(:submitted_at)
+          column(:admissible_at)
+          column(:inadmissible_at)
+        end
+      end
     end
 
     form delegate do
@@ -89,7 +111,9 @@ defmodule Vae.ExAdmin.Delegate do
             certifiers: from(c in Certifier, order_by: c.name),
             process: from(p in Process, order_by: p.name)
           ]
-        ]
+        ],
+        index: [default_sort: [asc: :id]],
+        show: [preload: [:certifiers, applications: [ :delegate, :user, :certification, :certifiers]]]
       }
     end
   end
