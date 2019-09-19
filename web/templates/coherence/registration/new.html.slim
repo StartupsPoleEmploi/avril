@@ -1,0 +1,16 @@
+.container-fluid
+  .row
+    .col-md-6.d-flex.align-items-center.justify-content-around
+      = link(to: Routes.root_path(@conn, :index), class: "position-absolute m-3 btn btn-link", style: "top: 0; left: 0;") do
+        span.fa.fa-chevron-left
+        |  Retour au diplôme
+      = link("J'ai déjà un compte", to: Routes.session_path(@conn, :new), class: "btn btn-link")
+    .col-md-6.bg-primary.d-flex.align-items-center.justify-content-around
+      .w-75
+        h1.h2.text-center.my-5 Je crée mon compte Avril
+        .text-center
+          = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
+        p.text-center.mb-2.mt-4 - OU -
+        = render "form.html", changeset: @changeset,
+          action: Routes.registration_path(@conn, :create),
+          conn: @conn

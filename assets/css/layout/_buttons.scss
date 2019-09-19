@@ -53,6 +53,16 @@ a, button {
   font: bold 18px/24px $dm-font-nuito;
   white-space: normal;
 
+  &.btn-primary {
+    &.btn-inverse {
+      background-color: $white;
+      border-color: $white;
+      &:hover {
+        color: $dm-primary-green;
+      }
+    }
+  }
+
   &.btn-default {
     color: $dm-primary-blue;
   }

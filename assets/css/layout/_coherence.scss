@@ -1,0 +1,7 @@
+main.coherence {
+  background: $white;
+
+  &, > .container-fluid, > .container-fluid > .row {
+    height: 100vh;
+  }
+}

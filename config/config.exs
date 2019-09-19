@@ -148,7 +148,7 @@ config :coherence,
   user_schema: Vae.User,
   web_module: Vae
 
-config :coherence, :layout, {Vae.LayoutView, :app}
+config :coherence, :layout, {Vae.LayoutView, :coherence}
 
 config :coherence, Vae.Coherence.Mailer,
   adapter: Swoosh.Adapters.Mailjet,

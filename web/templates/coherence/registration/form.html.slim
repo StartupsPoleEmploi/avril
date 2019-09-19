@@ -1,0 +1,13 @@
+= form_for @changeset, @action, [as: :registration], fn f ->
+  = if @changeset.action do
+    .alert.alert-danger.mb-4 Une erreur est survenue.
+  .form-group
+    = label f, "Email", class: "control-label"
+    = text_input f, :email, class: "form-control", required: "required"
+    = error_tag f, :email
+  .form-group
+    = label f, "Mot de passe", class: "control-label"
+    = password_input f, :password, class: "form-control", required: "required"
+    = error_tag f, :password
+  .form-group.d-flex.justify-content-between.mt-4
+    = submit "Créer mon compte", class: "btn btn-primary btn-inverse"
