@@ -91,7 +91,7 @@ defmodule ExAdmin.ApiController do
       (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) as responded_percent,
       (100 * q.admissible / NULLIF(q.admissible + q.inadmissible, 0)) as admissible_percent
     from (
-      select CONCAT(certifications.acronym, certifications.label) as certification_name,
+      select CONCAT(certifications.acronym, ' ', certifications.label) as certification_name,
       (select count(*) from applications where applications.certification_id = certifications.id) as total,
       (select count(*) from applications where applications.certification_id = certifications.id  and applications.submitted_at IS NOT NULL) as submitted,
       (select count(*) from applications where applications.certification_id = certifications.id  and applications.admissible_at IS NOT NULL) as admissible,
