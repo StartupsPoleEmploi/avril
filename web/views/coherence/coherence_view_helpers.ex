@@ -78,8 +78,7 @@ defmodule Vae.Coherence.ViewHelpers do
     user_schema = Coherence.Config.user_schema
     [
       recover_link(conn, user_schema, recover_link),
-      unlock_link(conn, user_schema, unlock_link),
-      confirmation_link(conn, user_schema, confirm_link)
+      unlock_link(conn, user_schema, unlock_link)
     ]
     |> List.flatten
     |> concat([])

@@ -1,12 +1,10 @@
 .container-fluid
+  = link(to: Routes.root_path(@conn, :index), class: "btn btn-link back-button") do
+    span.fa.fa-chevron-left
+    |  Retour au diplôme
   .row
-    .col-md-6.d-flex.align-items-center.justify-content-around
-      = link(to: Routes.root_path(@conn, :index), class: "position-absolute m-3 btn btn-link", style: "top: 0; left: 0;") do
-        span.fa.fa-chevron-left
-        |  Retour au diplôme
-      = link("J'ai déjà un compte", to: Routes.session_path(@conn, :new), class: "btn btn-link")
-    .col-md-6.bg-primary.d-flex.align-items-center.justify-content-around
-      .w-75
+    .col-md-6.order-md-2.bg-primary.d-flex.align-items-center.justify-content-around
+      .w-75.my-5
         h1.h2.text-center.my-5 Je crée mon compte Avril
         .text-center
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
@@ -14,3 +12,5 @@
         = render "form.html", changeset: @changeset,
           action: Routes.registration_path(@conn, :create),
           conn: @conn
+    .col-md-6.order-md-1.d-flex.align-items-center.justify-content-around
+      = link("J'ai déjà un compte", to: Routes.session_path(@conn, :new), class: "btn btn-link")

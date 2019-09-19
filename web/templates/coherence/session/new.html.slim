@@ -1,10 +1,10 @@
 .container-fluid
+  = link(to: Routes.root_path(@conn, :index), class: "btn btn-link back-button") do
+    span.fa.fa-chevron-left
+    |  Retour au diplôme
   .row
     .col-md-6.d-flex.align-items-center.justify-content-around
-      = link(to: Routes.root_path(@conn, :index), class: "position-absolute m-3 btn btn-link", style: "top: 0; left: 0;") do
-        span.fa.fa-chevron-left
-        |  Retour au diplôme
-      .w-75
+      .w-75.my-5
         h1.h2.text-center.my-5 J'ai déjà un compte Avril
         .text-center
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
@@ -23,7 +23,7 @@
             .form-group
               input#remember name="remember" type="checkbox" /
               label for="remember" = dgettext "coherence", "Remember Me?"
-          .form-group.d-flex.justify-content-between
+          .form-group.d-flex.justify-content-around
             = submit dgettext("coherence", "Me connecter"), class: "btn btn-primary"
           .form-group
             = coherence_links(@conn, :new_session)
