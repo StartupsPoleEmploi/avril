@@ -12,7 +12,8 @@ defmodule Vae.Meetings.FranceVae do
     token = get_token()
 
     headers = [
-      {"Authorization", "Bearer #{token}"}
+      {"Authorization", "Bearer #{token}"},
+      {"Accept", "application/json"}
     ]
 
     with {:ok, response} <- HTTPoison.get("#{Config.get_base_url()}/academies", headers),
