@@ -3,6 +3,8 @@ defmodule Vae.Search.Client.Algolia do
 
   @behaviour Vae.Search.Client
 
+  @meetings_indice Application.get_env(:vae, :meetings_indice)
+
   def get_delegates(certifiers, geoloc) do
     query =
       init()
@@ -15,14 +17,17 @@ defmodule Vae.Search.Client.Algolia do
   end
 
   def get_meetings(%{
-    certifiers: certifiers,
-    academy_id: academy_id,
-    geolocation: %{
-      "_geoloc" => %{
-        "lat" => _lat,
-        "lng" => _lng
-      } = geoloc
-    }}) when is_list(certifiers) do
+        certifiers: certifiers,
+        academy_id: academy_id,
+        geolocation: %{
+          "_geoloc" =>
+            %{
+              "lat" => _lat,
+              "lng" => _lng
+            } = geoloc
+        }
+      })
+      when is_list(certifiers) do
     query =
       init()
       |> build_academy_filter(academy_id)
@@ -32,7 +37,13 @@ defmodule Vae.Search.Client.Algolia do
 
     execute(:meetings, query, aroundRadius: 50_000)
   end
-  def get_meetings(data), do: {:error, ":certifiers, :academy_id and :geolocation keys are expected in:\n#{inspect(data, pretty: true)}"}
+
+  def get_meetings(data),
+    do:
+      {:error,
+       ":certifiers, :academy_id and :geolocation keys are expected in:\n#{
+         inspect(data, pretty: true)
+       }"}
 
   def init(), do: %{filters: %{and: [], or: []}, query: [], aroundLatLng: []}
 
@@ -65,6 +76,10 @@ defmodule Vae.Search.Client.Algolia do
 
   def build_query(query) do
     build_filters(query) ++ build_geo(query)
+  end
+
+  def save_objects(:meetings, objects) do
+    Algolia.save_objects(@meetings_indice, objects, id_attribute: :id)
   end
 
   defp add_and_filter(query, filter) do
@@ -101,7 +116,7 @@ defmodule Vae.Search.Client.Algolia do
 
   defp execute(:delegate, query, opts), do: search("delegate", query, opts)
 
-  defp execute(:meetings, query, opts), do: search("test-meetings", query, opts)
+  defp execute(:meetings, query, opts), do: search(@meetings_indice, query, opts)
 
   defp search(index_name, query, opts) do
     merged_query = Keyword.merge(query, opts)

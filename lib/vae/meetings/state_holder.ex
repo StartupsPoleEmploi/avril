@@ -150,6 +150,7 @@ defmodule Vae.Meetings.StateHolder do
   def handle_call({:get_by_meeting_id, meeting_id}, _from, state) do
     meeting =
       state
+      |> from_delegates()
       |> Enum.flat_map(& &1[:meetings])
       |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
 
@@ -230,7 +231,7 @@ defmodule Vae.Meetings.StateHolder do
   end
 
   defp index_and_persist(%Delegate{indexed_meetings: to_index} = delegate, name) do
-    with {:ok, objects} <- Algolia.save_objects("test-meetings", to_index, id_attribute: :id),
+    with {:ok, objects} <- AlgoliaClient.save_objects(:meetings, to_index),
          true <- persist(delegate, name) do
       Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
       {:ok, delegate}
