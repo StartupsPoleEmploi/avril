@@ -3,6 +3,8 @@ defmodule Vae.Search.Client.Algolia do
 
   @behaviour Vae.Search.Client
 
+  @meetings_indice Application.get_env(:vae, :meetings_indice)
+
   def get_delegates(certifiers, geoloc) do
     query =
       init()
@@ -76,6 +78,10 @@ defmodule Vae.Search.Client.Algolia do
     build_filters(query) ++ build_geo(query)
   end
 
+  def save_objects(:meetings, objects) do
+    Algolia.save_objects(@meetings_indice, objects, id_attribute: :id)
+  end
+
   defp add_and_filter(query, filter) do
     add_filter(query, {:and, filter})
   end
@@ -110,7 +116,7 @@ defmodule Vae.Search.Client.Algolia do
 
   defp execute(:delegate, query, opts), do: search("delegate", query, opts)
 
-  defp execute(:meetings, query, opts), do: search("meetings", query, opts)
+  defp execute(:meetings, query, opts), do: search(@meetings_indice, query, opts)
 
   defp search(index_name, query, opts) do
     merged_query = Keyword.merge(query, opts)

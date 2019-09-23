@@ -10,13 +10,19 @@ config :vae,
   ecto_repos: [Vae.Repo],
   places_client: Vae.Places.Client.Algolia,
   search_client: Vae.Search.Client.Algolia,
+  meetings_indice: System.get_env("ALGOLIA_MEETINGS_INDICE"),
   places_ets_table_name: :places_dev,
   algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
   algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
   extractor: Vae.Mailer.FileExtractor.CsvExtractor,
-  mailer_extractor_limit: (if Mix.env() == :prod, do: :all, else: 10_000),
+  mailer_extractor_limit: if(Mix.env() == :prod, do: :all, else: 10_000),
   sender: Vae.Mailer.Sender.Mailjet,
-  mailjet_template_error_reporting: %{Email: (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr") |> String.split(",") |> List.first()},
+  mailjet_template_error_reporting: %{
+    Email:
+      (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
+      |> String.split(",")
+      |> List.first()
+  },
   mailjet_template_error_deliver: true,
   mailjet: [
     application_submitted_to_delegate_id: 758_379,
@@ -35,7 +41,10 @@ config :vae,
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
     site: "https://authentification-candidat.pole-emploi.fr",
     authorize_url: "/connexion/oauth2/authorize",
-    redirect_uri: "#{if Mix.env() == :dev, do: "http", else: "https"}://#{System.get_env("WHOST") || "localhost:4000"}/pole-emploi/callback"
+    redirect_uri:
+      "#{if Mix.env() == :dev, do: "http", else: "https"}://#{
+        System.get_env("WHOST") || "localhost:4000"
+      }/pole-emploi/callback"
   ],
   tracking: [
     analytics: System.get_env("GA_API_KEY"),
@@ -85,9 +94,15 @@ config :vae,
   ],
   # Unused?
   statistics: %{
-    email_from: (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr") |> String.split(",") |> List.first(),
+    email_from:
+      (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
+      |> String.split(",")
+      |> List.first(),
     email_from_name: "Avril",
-    email_to: (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr") |> String.split(",") |> List.first(),
+    email_to:
+      (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
+      |> String.split(",")
+      |> List.first(),
     email_to_name: "Statisticien"
   }
 
@@ -98,7 +113,11 @@ config :vae, Vae.Endpoint,
 
 config :vae, Vae.Repo,
   adapter: Ecto.Adapters.Postgres,
-  url: System.get_env("DATABASE_URL") || "postgres://#{System.get_env("POSTGRES_USER")}:#{System.get_env("POSTGRES_PASSWORD")}@#{System.get_env("POSTGRES_HOST")}/#{System.get_env("POSTGRES_DB")}",
+  url:
+    System.get_env("DATABASE_URL") ||
+      "postgres://#{System.get_env("POSTGRES_USER")}:#{System.get_env("POSTGRES_PASSWORD")}@#{
+        System.get_env("POSTGRES_HOST")
+      }/#{System.get_env("POSTGRES_DB")}",
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: false,
   timeout: 60_000
@@ -151,10 +170,10 @@ config :ex_aws,
   bucket_name: System.get_env("AWS_S3_BUCKET_NAME"),
   region: "eu-west-3",
   s3: [
-   scheme: "https://",
-   host: "#{System.get_env("AWS_S3_BUCKET_NAME")}.s3.amazonaws.com",
-   region: "eu-west-3"
-]
+    scheme: "https://",
+    host: "#{System.get_env("AWS_S3_BUCKET_NAME")}.s3.amazonaws.com",
+    region: "eu-west-3"
+  ]
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
@@ -171,7 +190,8 @@ config :phoenix, :json_library, Jason
 config :phoenix, :template_engines,
   slim: PhoenixSlime.Engine,
   slime: PhoenixSlime.Engine,
-  slimleex: PhoenixSlime.LiveViewEngine, # If you want to use LiveView
+  # If you want to use LiveView
+  slimleex: PhoenixSlime.LiveViewEngine,
   md: PhoenixMarkdown.Engine
 
 config :phoenix_markdown, :earmark, %{
@@ -179,6 +199,7 @@ config :phoenix_markdown, :earmark, %{
   breaks: true,
   pure_links: true
 }
+
 config :phoenix_markdown, :server_tags, :all
 
 config :scrivener_html,
@@ -189,9 +210,9 @@ config :sentry,
   dsn: System.get_env("SENTRY_DSN"),
   release: System.get_env("FLYNN_RELEASE_ID"),
   included_environments: [:prod],
-  environment_name: Mix.env,
+  environment_name: Mix.env(),
   enable_source_code_context: true,
-  root_source_code_path: File.cwd!
+  root_source_code_path: File.cwd!()
 
 config :xain, :after_callback, {Phoenix.HTML, :raw}
 
