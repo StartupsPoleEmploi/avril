@@ -1,3 +1,5 @@
+[SUJET]: # (Confirmation de mon compte VAE sur Avril - la VAE facile)
+
 Félicitations,
 
 Votre compte VAE sur Avril a bien été créé.

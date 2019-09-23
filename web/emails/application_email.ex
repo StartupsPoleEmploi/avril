@@ -1,13 +1,15 @@
 defmodule Vae.ApplicationEmail do
+  alias Vae.Mailer
 
   alias Vae.{Certification, Email, Endpoint, Repo, User}
   alias Vae.Router.Helpers
 
   def delegate_submission(application) do
-    application = Repo.preload(application, [:user, :delegate, :certification])
-    Email.generic_fields(
-      :application_submitted_to_delegate_id,
+    Mailer.send_email(
+      "application/delegate_submission",
+      :avril,
       application.delegate,
+      "#{application.user} souhaite faire une VAE: A vous de le/la recontacter !",
       %{
         application_url:
           Helpers.application_url(Endpoint, :show, application,

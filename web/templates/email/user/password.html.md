@@ -1,3 +1,5 @@
+[SUJET]: # (Réinitialisation du mot de passe sur Avril - la VAE facile)
+
 Bonjour <%= @name %>,
 
 Vous avez souhaité réinitialiser votre mot de passe sur Avril. Pour poursuivre,
