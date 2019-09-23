@@ -10,7 +10,7 @@ defmodule Vae.Meetings.Afpa.Scraper do
   end
 
   def scrape_page_events(page \\ 0, nb_per_page \\ 12) do
-    Logger.info("Scraping page #{page}")
+    Logger.info("[AFPA] Scraping page #{page}")
 
     query_params = %{
       p_p_id: "101_INSTANCE_agenda",
@@ -37,7 +37,7 @@ defmodule Vae.Meetings.Afpa.Scraper do
   end
 
   def scrape_event(url) do
-    Logger.info("Scraping #{url}")
+    Logger.info("[AFPA] Scraping #{url}")
 
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->

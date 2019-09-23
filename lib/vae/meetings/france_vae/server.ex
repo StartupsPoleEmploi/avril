@@ -15,7 +15,7 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   @impl true
   def init(state) do
-    Logger.info("Init #{@name} server")
+    Logger.info("[DAVA] Init #{@name} server")
 
     StateHolder.subscribe(@name)
 
