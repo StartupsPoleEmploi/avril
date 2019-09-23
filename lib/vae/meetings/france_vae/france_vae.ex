@@ -33,7 +33,7 @@ defmodule Vae.Meetings.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    Logger.info("Retrieve meetings from fvae for academy_id: #{academy_id}")
+    Logger.info("[DAVA] Retrieve meetings from fvae for academy_id: #{academy_id}")
 
     with {:ok, response} <-
            HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers),

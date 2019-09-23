@@ -15,7 +15,7 @@ defmodule Vae.Meetings.Afpa.Server do
 
   @impl true
   def init(state) do
-    Logger.info("Init #{@name} server")
+    Logger.info("[AFPA] Init #{@name} server")
 
     StateHolder.subscribe(@name)
 
