@@ -40,7 +40,7 @@ defmodule Vae.Mailer.Worker do
     Logger.info("Start extracting job seekers")
 
     @extractor.build_enumerable(path)
-    |> Flow.from_enumerable(max_demand: 100, min_demand: 50, window: Flow.Window.count(1_000))
+    |> Flow.from_enumerable(max_demand: 100, window: Flow.Window.count(1_000))
     |> @extractor.extract_lines_flow()
     |> @extractor.build_job_seeker_flow()
     |> @extractor.add_geolocation_flow()
@@ -53,7 +53,7 @@ defmodule Vae.Mailer.Worker do
 
       {inserted_job_seekers, []}
     end)
-    |> Flow.shuffle(window: Flow.Window.count(100))
+    |> Flow.shuffle(window: Flow.Window.count(50))
     |> Flow.reduce(fn -> pending_emails end, fn job_seeker, acc ->
       email =
         build_email(job_seeker)
