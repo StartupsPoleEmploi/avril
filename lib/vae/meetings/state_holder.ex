@@ -231,7 +231,7 @@ defmodule Vae.Meetings.StateHolder do
   end
 
   defp index_and_persist(%Delegate{indexed_meetings: to_index} = delegate, name) do
-    with {:ok, objects} <- AlgoliaClient.index_objects(:meetings, to_index),
+    with {:ok, objects} <- AlgoliaClient.save_objects(:meetings, to_index),
          true <- persist(delegate, name) do
       Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
       {:ok, delegate}
