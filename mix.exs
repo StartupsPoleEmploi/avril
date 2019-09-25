@@ -99,6 +99,7 @@ defmodule Vae.Mixfile do
       {:hackney, "~> 1.9"},
       {:sentry, "~> 6.4"},
       {:phoenix_markdown, "~> 1.0"}
+      # {:phoenix_markdown, path: "../phoenix_markdown"}
     ]
   end
 

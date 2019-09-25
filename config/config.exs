@@ -108,7 +108,7 @@ config :vae,
 
 config :vae, Vae.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
-  render_errors: [view: Vae.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: Vae.ErrorView, accepts: ~w(html email json)],
   pubsub: [name: Vae.PubSub, adapter: Phoenix.PubSub.PG2]
 
 config :vae, Vae.Repo,
