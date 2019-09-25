@@ -9,7 +9,7 @@ defmodule Vae.JobSeekerEmail do
         job_seeker.email,
         %{
           subject: "Votre synthèse VAE par Avril - la VAE facile",
-          _attachment: Swoosh.Attachment.new(file, filename: "synthese-vae.pdf", content_type: "application/pdf")
+          attachment: Swoosh.Attachment.new(file, filename: "synthese-vae.pdf", content_type: "application/pdf")
         }
       )
     end

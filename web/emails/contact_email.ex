@@ -1,0 +1,45 @@
+defmodule Vae.ContactEmail do
+  alias Vae.Mailer
+
+  def submit(%{
+    "email" => email,
+    "name" => name,
+    "object" => object,
+    "body" => body
+  }) do
+    Mailer.send_email(
+      "contact/submit.html",
+      :avril,
+      :avril,
+      %{
+        subject: "[Avril - la VAE Facile] Contact : #{object}",
+        reply_to: {name, email},
+        name: name,
+        email_address: email,
+        object: object,
+        body: body
+      }
+    )
+  end
+
+  def confirm(%{
+    "email" => email,
+    "name" => name,
+    "object" => object,
+    "body" => body
+  }) do
+    Mailer.send_email(
+      "contact/confirm.html",
+      :avril,
+      {name, email},
+      %{
+        subject: "[Avril - la VAE Facile] Confirmation de votre demande de contact : #{object}",
+        name: name,
+        email: email,
+        object: object,
+        body: body
+      }
+    )
+  end
+
+end

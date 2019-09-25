@@ -86,14 +86,15 @@ defmodule Vae.PageController do
     "contact_form" => %{} = variables
   }) do
 
-    case Vae.Email.send(Vae.Email.contact_fields(variables)) do
-      {:ok, _message} ->
-        json(conn, %{status: :ok, msg: "Votre message a bien été envoyé."})
+    with {:ok, _submit_message} <- Vae.Mailer.deliver(Vae.ContactEmail.submit(variables)),
+         {:ok, _confirm_message} <- Vae.Mailer.deliver(Vae.ContactEmail.confirm(variables))
+    do
+      json(conn, %{status: :ok, msg: "Votre message a bien été envoyé."})
+    else
       error ->
         conn
         |> send_resp(500, Poison.encode!(%{status: :error, msg: "Votre message n'a pas pu être envoyé : \n\n #{inspect(error)} \n\n Merci de réessayer plus tard."}, pretty: true))
     end
-
   end
 
   def close_status(conn, _params) do

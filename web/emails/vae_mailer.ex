@@ -19,7 +19,8 @@ defmodule Vae.Mailer do
     %Email{}
     |> from(format_mailer(from))
     |> to(format_mailer(to))
-    |> attach_if_attachment(Map.get(params, :_attachment))
+    |> reply_to_if_present(Map.get(params, :reply_to))
+    |> attach_if_attachment(Map.get(params, :attachment))
     |> render_body(template_name, params)
     |> render_text_and_extract_subject(template_name, params)
     # |> __MODULE__.deliver()
@@ -30,7 +31,11 @@ defmodule Vae.Mailer do
   defp format_mailer(%{name: name, email: email}), do: {name, email}
   defp format_mailer(%{email: email}), do: email
   defp format_mailer(email) when is_binary(email), do: email
-  defp format_mailer(_), do: nil
+  defp format_mailer(tuple) when is_tuple(tuple), do: tuple
+  defp format_mailer(anything), do: IO.inspect(anything)
+
+  defp reply_to_if_present(email, nil), do: email
+  defp reply_to_if_present(email, reply_to), do: reply_to(email, format_mailer(reply_to))
 
   defp attach_if_attachment(email, nil), do: email
   defp attach_if_attachment(email, attachment), do: attachment(email, attachment)
