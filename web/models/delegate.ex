@@ -233,6 +233,8 @@ defmodule Vae.Delegate do
     end
   end
 
+  def display_name(%__MODULE__{} = delegate), do: delegate.name
+
   def to_slug(%__MODULE__{} = delegate) do
     Vae.String.parameterize(
       "#{delegate.name} #{
