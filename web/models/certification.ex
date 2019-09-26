@@ -199,7 +199,6 @@ defmodule Vae.Certification do
 
   def display_name(%__MODULE__{} = certification), do: name(certification)
 
-
   def to_slug(%__MODULE__{} = certification) do
     Vae.String.parameterize(name(certification))
   end

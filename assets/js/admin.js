@@ -1,3 +1,4 @@
+/* global $ */
 import '../css/admin.scss';
 
 import 'chosen-js';
@@ -33,7 +34,7 @@ $(document).ready(() => {
 
   Simditor.locale = 'fr-FR';
 
-  $("textarea[id^=process_step_]").each((i, $el) => {
+  $('textarea[id^=process_step_]').each((i, $el) => {
     $($el).val(he.decode($($el).val()))
     new Simditor({
       textarea: $($el),
@@ -58,7 +59,7 @@ $(document).ready(() => {
     });
   });
 
-  $("form.filter_form select.form-control").chosen();
+  $('form.filter_form select.form-control').chosen();
 
 })
 
