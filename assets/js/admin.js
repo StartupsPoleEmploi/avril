@@ -1,11 +1,14 @@
+/* global $ */
 import '../css/admin.scss';
+
+import 'chosen-js';
+import 'chosen-js/chosen.css';
 
 import he from 'he';
 import places from 'places.js';
 import './admin/tables';
 import './admin/charts';
 import './admin/statusEditor';
-
 
 $(document).ready(() => {
   if(document.querySelector('#delegate_address')) {
@@ -31,7 +34,7 @@ $(document).ready(() => {
 
   Simditor.locale = 'fr-FR';
 
-  $("textarea[id^=process_step_]").each((i, $el) => {
+  $('textarea[id^=process_step_]').each((i, $el) => {
     $($el).val(he.decode($($el).val()))
     new Simditor({
       textarea: $($el),
@@ -55,6 +58,9 @@ $(document).ready(() => {
       defaultImage: 'http://temp.im/150x150'
     });
   });
+
+  $('form.filter_form select.form-control').chosen();
+
 })
 
 const $filters = document.querySelector('form.filter_form');

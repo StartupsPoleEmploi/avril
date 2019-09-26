@@ -184,13 +184,13 @@
                     = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
                     = if label != "Métier indéterminé" do
                       = "en tant que #{label} "
-                    = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.duration)))} heures "
+                    = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.work_duration)))} heures "
                     = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
                     = " : "
                     ul
                       = for exp <- experiences do
                         li
-                          = "#{exp.duration} heures en #{exp.contract_type}, "
+                          = "#{exp.work_duration} heures en #{exp.contract_type}, "
                           = render Vae.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
 
         = if length(@user.skills) > 0 do

@@ -195,10 +195,12 @@ defmodule Vae.Certification do
     |> Map.drop([:inserted_at, :updated_at, :description])
   end
 
-  def name(certification), do: "#{certification.acronym} #{certification.label}"
+  def name(%__MODULE__{} = certification), do: "#{certification.acronym} #{certification.label}"
 
-  def to_slug(certification) do
-    Vae.String.parameterize(__MODULE__.name(certification))
+  def display_name(%__MODULE__{} = certification), do: name(certification)
+
+  def to_slug(%__MODULE__{} = certification) do
+    Vae.String.parameterize(name(certification))
   end
 
   def slugify(changeset) do
