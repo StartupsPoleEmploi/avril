@@ -38,7 +38,7 @@ defmodule Vae.AuthController do
                 do: User.update_with_pe_connect_data(user, userinfo_api_result.body),
                 else: {:ok, user}
           end
-          |> User.fill_with_api_fields(client_with_token, 3)
+          |> User.fill_with_api_fields(client_with_token)
 
         application_status =
           case user_status do

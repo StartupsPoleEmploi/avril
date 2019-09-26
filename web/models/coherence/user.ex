@@ -145,7 +145,7 @@ defmodule Vae.User do
     |> Repo.update()
   end
 
-  def fill_with_api_fields({:ok, user} = initial_status, client_with_token, left_retries \\ 0) do
+  def fill_with_api_fields({:ok, user} = initial_status, client_with_token) do
     [
       Vae.Profile.ProvenExperiences,
       Vae.Profile.Experiences,
@@ -156,7 +156,7 @@ defmodule Vae.User do
     |> Enum.map(fn mod ->
       Task.async(fn ->
         if(mod.is_data_missing(user)) do
-          mod.execute(client_with_token)
+          res = mod.execute(client_with_token)
         else
           %{}
         end
@@ -164,50 +164,17 @@ defmodule Vae.User do
     end)
     |> Enum.map(&Task.await(&1, 15_000))
     |> Enum.reduce(initial_status, fn
-      res, {:ok, user} = status ->
-        __MODULE__.changeset(user, res)
+      %{}, user ->
+        user
+
+      data, {:ok, user} ->
+        __MODULE__.changeset(user, data)
         |> Repo.update()
+
+      data, {:error, changeset} ->
+        Logger.error(fn -> inspect(changeset) end)
+        Repo.get(__MODULE__, user.id)
     end)
-
-    #    |> Enum.reduce(initial_status, fn
-    #      mod, {:ok, user} = status ->
-    #        if mod.is_data_missing(user) do
-    #          res = mod.execute(client_with_token)
-    #          changeset = __MODULE__.changeset(user, res)
-    #          Repo.update(changeset)
-    #        else
-    #          status
-    #        end
-    #
-    #      _call, error ->
-    #        error
-    #    end)
-
-    #    try do
-    #      Enum.reduce(build_api_calls(), initial_status, fn
-    #        call, {:ok, user} = status ->
-    #          if call.is_data_missing.(user) do
-    #            IO.puts("Calling #{call.url}")
-    #            api_result = OAuth.get(client_with_token, call.url)
-    #            changeset = __MODULE__.changeset(user, call.data_map.(api_result.body))
-    #            Repo.update(changeset)
-    #          else
-    #            status
-    #          end
-    #
-    #        _call, error ->
-    #          error
-    #      end)
-    #    rescue
-    #      error ->
-    #        case left_retries do
-    #          0 ->
-    #            {:error, error}
-    #
-    #          _n ->
-    #            __MODULE__.fill_with_api_fields(initial_status, client_with_token, left_retries - 1)
-    #        end
-    #    end
   end
 
   def userinfo_api_map(api_fields, include_create_fields \\ true) do
