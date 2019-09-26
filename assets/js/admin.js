@@ -1,11 +1,13 @@
 import '../css/admin.scss';
 
+import 'chosen-js';
+import 'chosen-js/chosen.css';
+
 import he from 'he';
 import places from 'places.js';
 import './admin/tables';
 import './admin/charts';
 import './admin/statusEditor';
-
 
 $(document).ready(() => {
   if(document.querySelector('#delegate_address')) {
@@ -55,6 +57,9 @@ $(document).ready(() => {
       defaultImage: 'http://temp.im/150x150'
     });
   });
+
+  $("form.filter_form select.form-control").chosen();
+
 })
 
 const $filters = document.querySelector('form.filter_form');
