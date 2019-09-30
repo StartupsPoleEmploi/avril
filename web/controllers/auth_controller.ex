@@ -19,6 +19,7 @@ defmodule Vae.AuthController do
 
   def callback(conn, %{"code" => code, "state" => state} = _params) do
     client = Clients.get_client(state)
+
     case OAuth.generate_access_token(client, code) do
       {:ok, client_with_token} ->
         userinfo_api_result =
@@ -29,25 +30,34 @@ defmodule Vae.AuthController do
 
         user_status =
           case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
-            nil -> User.create_or_update_with_pe_connect_data(userinfo_api_result.body)
-            user -> if is_nil(user.gender), do: User.update_with_pe_connect_data(user, userinfo_api_result.body), else: {:ok, user}
+            nil ->
+              User.create_or_update_with_pe_connect_data(userinfo_api_result.body)
+
+            user ->
+              if is_nil(user.gender),
+                do: User.update_with_pe_connect_data(user, userinfo_api_result.body),
+                else: {:ok, user}
           end
-          |> User.fill_with_api_fields(client_with_token, 3)
+          |> User.fill_with_api_fields(client_with_token)
 
         application_status =
           case user_status do
             {:ok, user} ->
               user = Repo.preload(user, :current_application)
+
               {:ok,
                {user,
                 Application.find_or_create_with_params(
                   Map.merge(
-                    get_certification_id_and_delegate_id_from_referer(get_session(conn, :referer)),
+                    get_certification_id_and_delegate_id_from_referer(
+                      get_session(conn, :referer)
+                    ),
                     %{user_id: user.id}
                   )
                 ) || user.current_application}}
 
-            error -> error
+            error ->
+              error
           end
 
         case application_status do
@@ -60,11 +70,13 @@ defmodule Vae.AuthController do
             Coherence.Authentication.Session.create_login(conn, user)
             |> redirect(to: Routes.application_path(conn, :show, application))
 
-          {:error, msg} -> handle_error(conn, msg)
+          {:error, msg} ->
+            handle_error(conn, msg)
         end
-      {:error, _error} -> handle_error(conn)
-    end
 
+      {:error, _error} ->
+        handle_error(conn)
+    end
   end
 
   def callback(conn, _params) do
@@ -81,9 +93,9 @@ defmodule Vae.AuthController do
     for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
   end
 
-  defp handle_error(conn, msg\\"Une erreur est survenue. Veuillez réessayer plus tard.") do
+  defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.") do
     conn
-      |> put_flash(:error, (if is_binary(msg), do: msg, else: inspect(msg)))
-      |> redirect(external: get_session(conn, :referer))
+    |> put_flash(:error, if(is_binary(msg), do: msg, else: inspect(msg)))
+    |> redirect(external: get_session(conn, :referer))
   end
 end
