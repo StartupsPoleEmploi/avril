@@ -8,10 +8,10 @@ defmodule Vae.Plugs.ApplicationAccess do
 
   def init(params), do: params
 
-  def call(%{params: %{"id" => application_id}} = conn, params),
+  def call(%{params: %{"application_id" => application_id}} = conn, params),
     do: execute(conn, application_id, params)
 
-  def call(%{params: %{"application_id" => application_id}} = conn, params),
+  def call(%{params: %{"id" => application_id}} = conn, params),
     do: execute(conn, application_id, params)
 
   def call(conn, _params) do
