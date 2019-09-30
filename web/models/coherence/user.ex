@@ -177,6 +177,8 @@ defmodule Vae.User do
     end)
   end
 
+  def fill_with_api_fields({:error, msg} = error, _client_with_token), do: error
+
   def userinfo_api_map(api_fields, include_create_fields \\ true) do
     tmp_password = "AVRIL_#{api_fields["idIdentiteExterne"]}_TMP_PASSWORD"
 
