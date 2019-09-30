@@ -73,7 +73,8 @@ defmodule Vae.Mixfile do
       {:jason, "~> 1.0"},
       {:httpoison, "~> 1.5"},
       {:floki, "~> 0.21.0"},
-      {:poison, "~> 3.0", override: true}, # TODO: remove dependency: not needed anymore
+      # TODO: remove dependency: not needed anymore
+      {:poison, "~> 3.0", override: true},
       {:phoenix_slime, "~> 0.12.0"},
       # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
       {:ex_admin, github: "augnustin/ex_admin"},

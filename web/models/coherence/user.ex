@@ -156,7 +156,7 @@ defmodule Vae.User do
     |> Enum.map(fn mod ->
       Task.async(fn ->
         if(mod.is_data_missing(user)) do
-          res = mod.execute(client_with_token)
+          mod.execute(client_with_token)
         else
           %{}
         end
@@ -164,7 +164,7 @@ defmodule Vae.User do
     end)
     |> Enum.map(&Task.await(&1, 15_000))
     |> Enum.reduce(initial_status, fn
-      %{}, user ->
+      map, user when map == %{} ->
         user
 
       data, {:ok, user} ->
