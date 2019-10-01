@@ -6,7 +6,7 @@ defmodule Vae.User do
   use Coherence.Schema
   require Logger
 
-  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo, OAuth}
+  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo}
 
   schema "users" do
     field(:gender, :string)
@@ -176,13 +176,13 @@ defmodule Vae.User do
         __MODULE__.changeset(user, data)
         |> Repo.update()
 
-      data, {:error, changeset} ->
+      _data, {:error, changeset} ->
         Logger.error(fn -> inspect(changeset) end)
         Repo.get(__MODULE__, user.id)
     end)
   end
 
-  def fill_with_api_fields({:error, msg} = error, _client_with_token), do: error
+  def fill_with_api_fields({:error, _msg} = error, _client_with_token), do: error
 
   def userinfo_api_map(api_fields, include_create_fields \\ true) do
     tmp_password = "AVRIL_#{api_fields["idIdentiteExterne"]}_TMP_PASSWORD"

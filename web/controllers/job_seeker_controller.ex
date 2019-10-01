@@ -9,9 +9,9 @@ defmodule Vae.JobSeekerController do
     "delegate_id" => delegate_id
   }}) do
     with(
-      delegate <- Repo.get(Delegate, delegate_id) |> Repo.preload(:process),
-      certification <- Repo.get(Certification, certification_id),
-      job_seeker <- Event.create_or_update_job_seeker(%{
+      delegate when not is_nil(delegate) <- Repo.get(Delegate, delegate_id) |> Repo.preload(:process),
+      certification when not is_nil(certification) <- Repo.get(Certification, certification_id),
+      job_seeker when not is_nil(job_seeker) <- Event.create_or_update_job_seeker(%{
         email: email,
         type: "receive_synthesis",
         event: "submitted",

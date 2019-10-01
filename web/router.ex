@@ -143,7 +143,7 @@ defmodule Vae.Router do
     end
   end
 
-  defp fetch_app_status(conn, _opts \\ []) do
+  defp fetch_app_status(conn, _opts) do
     status = GenServer.call(Status, :get)
     if status && # There is a status
       get_session(conn, :app_status_closed) != Vae.String.encode(status.message) && # not closed

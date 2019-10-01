@@ -8,7 +8,7 @@ defmodule Vae.Application do
     Certification,
     Delegate,
     Meetings.Meeting,
-    Email,
+    Mailer,
     Repo,
     Resume,
     User
@@ -75,11 +75,11 @@ defmodule Vae.Application do
                    })
                  ) do
               {:ok, application} ->
-                case Email.send([
+                case Mailer.deliver_multi([
                        ApplicationEmail.delegate_submission(application),
                        ApplicationEmail.user_submission_confirmation(application)
                      ]) do
-                  {:ok, _message} ->
+                  {:ok, _messages} ->
                     Repo.update(
                       __MODULE__.changeset(application, %{
                         has_just_been_auto_submitted: auto_submitted,
@@ -133,7 +133,7 @@ defmodule Vae.Application do
 
   def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
 
-  def set_registered_meeting(application, academy_id, meeting_id) do
+  def set_registered_meeting(application, _academy_id, meeting_id) do
     meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
 
     application

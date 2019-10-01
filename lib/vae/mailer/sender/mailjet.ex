@@ -109,7 +109,7 @@ defmodule Vae.Mailer.Sender.Mailjet do
   # ["Full Name <email@example.com>", "Other Name <other-email@example.com>"]
   # %{Email: "email@example.com"}
   # [%{Email: "email@example.com"}, %{Email: "other-email@example.com"}]
-  defp format_receiver(%{Email: email} = params), do: List.wrap(params)
+  defp format_receiver(%{Email: _email} = params), do: List.wrap(params)
   defp format_receiver(email) when is_binary(email), do: email |> String.split(",") |> Enum.map(&format_string_email/1)
   defp format_receiver(emails) when is_list(emails), do: Enum.flat_map(emails, &format_receiver/1)
 

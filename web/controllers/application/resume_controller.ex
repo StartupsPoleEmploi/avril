@@ -3,9 +3,9 @@ defmodule Vae.ResumeController do
   use Vae.Web, :controller
   plug(Vae.Plugs.ApplicationAccess)
 
-  alias Vae.{Application, Resume}
+  alias Vae.{Resume}
 
-  def create(conn, %{"application_id" => id, "resume" => resume_params}) do
+  def create(conn, %{"application_id" => _application_id, "resume" => resume_params}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
@@ -25,7 +25,7 @@ defmodule Vae.ResumeController do
     end
   end
 
-  def delete(conn, %{"application_id" => application_id, "id" => id}) do
+  def delete(conn, %{"application_id" => _application_id, "id" => id}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])

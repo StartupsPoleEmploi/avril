@@ -1,6 +1,4 @@
 defmodule Vae.ExAdmin.Helpers do
-  alias Vae.Router.Helpers, as: Routes
-
   def link_to_resource(resource, opts\\[]) do
     name = cond do
       opts[:namify] -> opts[:namify].(resource)

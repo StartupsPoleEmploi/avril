@@ -5,10 +5,10 @@ defmodule Vae.ApplicationController do
   alias Vae.{Application, Resume, User}
   alias Vae.Crm.Polls
 
-  plug Vae.Plugs.ApplicationAccess when not action in [:show, :admissible, :inadmissible]
+  plug Vae.Plugs.ApplicationAccess when action not in [:show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
-  def show(conn, %{"id" => id} = params) do
+  def show(conn, %{"id" => _id} = params) do
     application = conn.assigns[:current_application]
       |> Repo.preload([
           :user,
@@ -38,7 +38,7 @@ defmodule Vae.ApplicationController do
       grouped_experiences:
         application.user.proven_experiences
         |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
-        |> Vae.Map.map_values(fn {k, experiences} ->
+        |> Vae.Map.map_values(fn {_k, experiences} ->
           Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
         end)
         |> Map.to_list()
@@ -55,7 +55,7 @@ defmodule Vae.ApplicationController do
   end
 
   # TODO: change to submit
-  def update(conn, %{"id" => id} = params) do
+  def update(conn, %{"id" => _id} = params) do
     application = conn.assigns[:current_application]
       |> Repo.preload([
         :user,
@@ -111,7 +111,7 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def download(conn, %{"application_id" => id}) do
+  def download(conn, %{"application_id" => _id}) do
     application = conn.assigns[:current_application]
       |> Repo.preload([
         :user,
@@ -167,7 +167,7 @@ defmodule Vae.ApplicationController do
   def france_vae_redirect(
         conn,
         %{
-          "application_id" => id,
+          "application_id" => _id,
           "academy_id" => academy_id
         } = params
       ) do

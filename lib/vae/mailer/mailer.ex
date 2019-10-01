@@ -1,4 +1,4 @@
-defmodule Vae.Mailer do
+defmodule Vae.OldMailer do
   def execute() do
     {:ok, pid} = Vae.Mailer.Worker.start_link()
 

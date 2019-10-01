@@ -30,11 +30,11 @@ defmodule Vae.Rome do
     |> validate_required([:code, :label, :slug])
   end
 
-  def all() do
-    Rome
-    |> order_by(:code)
-    |> Repo.all()
-  end
+  # def all() do
+  #   Rome
+  #   |> order_by(:code)
+  #   |> Repo.all()
+  # end
 
   def format_for_index(struct) do
     struct

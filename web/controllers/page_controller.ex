@@ -86,9 +86,10 @@ defmodule Vae.PageController do
     "contact_form" => %{} = variables
   }) do
 
-    with {:ok, _submit_message} <- Vae.Mailer.deliver(Vae.ContactEmail.submit(variables)),
-         {:ok, _confirm_message} <- Vae.Mailer.deliver(Vae.ContactEmail.confirm(variables))
-    do
+    with {:ok, _messages} <- Vae.Mailer.deliver_multi([
+      Vae.ContactEmail.submit(variables),
+      Vae.ContactEmail.confirm(variables)
+    ]) do
       json(conn, %{status: :ok, msg: "Votre message a bien été envoyé."})
     else
       error ->
