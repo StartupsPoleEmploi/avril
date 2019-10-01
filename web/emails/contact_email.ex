@@ -12,7 +12,7 @@ defmodule Vae.ContactEmail do
       :avril,
       :avril,
       %{
-        subject: "[Avril - la VAE Facile] Contact : #{object}",
+        subject: "[Avril - la VAE Facile] #{object}",
         reply_to: {name, email},
         name: name,
         email_address: email,

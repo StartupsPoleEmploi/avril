@@ -1,8 +1,7 @@
-Nouvelle demande de contact: <%= @name %> - <%= @email_address %>
+Nouvelle demande de contact de la part de [<%= @name %>](mailto: <%= @email_address %>)
 
-Sujet : <%= @object %>
+Sujet : __<%= @object %>__
 
-Message:
 
 ```
 <%= @body %>

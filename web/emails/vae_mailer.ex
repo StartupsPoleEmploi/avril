@@ -30,12 +30,12 @@ defmodule Vae.Mailer do
 
   def deliver_multi(emails, config \\ []) when is_list(emails) do
     Enum.reduce(emails, {:ok, []}, fn
-      {email, {:ok, sent_emails}} ->
-        case __MODULE__.deliver(email, config) do
+      email, {:ok, sent_emails} ->
+        case deliver(email, config) do
           {:ok, sent_email} -> {:ok, [sent_email | sent_emails]}
           error -> error
         end
-      {_email, error} -> error
+      _email, error -> error
     end)
   end
 
