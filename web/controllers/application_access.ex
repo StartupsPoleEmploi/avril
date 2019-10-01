@@ -8,10 +8,10 @@ defmodule Vae.Plugs.ApplicationAccess do
 
   def init(params), do: params
 
-  def call(%{params: %{"id" => application_id}} = conn, params),
-    do: execute(conn, application_id, IO.inspect(params))
-
   def call(%{params: %{"application_id" => application_id}} = conn, params),
+    do: execute(conn, application_id, params)
+
+  def call(%{params: %{"id" => application_id}} = conn, params),
     do: execute(conn, application_id, params)
 
   def call(conn, _params) do
@@ -21,7 +21,7 @@ defmodule Vae.Plugs.ApplicationAccess do
     |> halt()
   end
 
-  def execute(conn, application_id, options\\[]) do
+  def execute(conn, application_id, options \\ []) do
     application =
       case Repo.get(Application, application_id) do
         nil -> nil
