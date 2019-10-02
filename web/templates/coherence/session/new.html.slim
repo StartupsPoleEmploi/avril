@@ -1,5 +1,5 @@
 .container-fluid
-  = link(to: Routes.root_path(@conn, :index), class: "btn btn-link back-button") do
+  = link(to: NavigationHistory.last_path(@conn), class: "btn btn-link back-button") do
     span.fa.fa-chevron-left
     |  Retour au diplôme
   .row

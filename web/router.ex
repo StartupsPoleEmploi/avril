@@ -22,8 +22,13 @@ defmodule Vae.Router do
       id_key: @id_key
     )
 
-    plug(:put_user_token)
-    #    plug(Vae.Tracker)
+    plug(NavigationHistory.Tracker,
+      history_size: 2,
+      excluded_paths: [
+        "/registrations/new",
+        "/sessions/new"
+      ]
+    )
   end
 
   pipeline :protected do
