@@ -121,7 +121,7 @@ defmodule Vae.User do
     case params[key] do
       nil -> changeset
       values -> put_embed(changeset, key, Enum.uniq_by(
-        changeset.data[key] ++ List.wrap(values),
+        Map.get(changeset.data, key) ++ List.wrap(values),
         &klass.unique_key/1
       ))
     end
