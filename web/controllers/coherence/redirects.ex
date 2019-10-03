@@ -1,4 +1,5 @@
 defmodule Coherence.Redirects do
+  require Logger
   @moduledoc """
   Define controller action redirection functions.
 
@@ -66,24 +67,41 @@ defmodule Coherence.Redirects do
     end
   end
 
-  def session_create(conn, params) do
+  def session_create(conn, _) do
+    certification_id = Plug.Conn.get_session(conn, :certification_id)
+    delegate_id = Plug.Conn.get_session(conn, :delegate_id)
+
     application =
-      if params["registration"]["certification_id"] && params["registration"]["delegate_id"] do
-        Application.find_or_create_with_params(%{
+      if certification_id && delegate_id do
+        case Application.find_or_create_with_params(%{
           user_id: Coherence.current_user(conn).id,
-          certification_id: params["registration"]["certification_id"],
-          delegate_id: params["registration"]["delegate_id"]
-        })
+          certification_id: certification_id,
+          delegate_id: delegate_id
+        }) do
+          {:ok, application} ->
+            Plug.Conn.delete_session(conn, :certification_id)
+            Plug.Conn.delete_session(conn, :delegate_id)
+            application
+          error ->
+            Logger.warn("Error: #{inspect(error)}")
+            nil
+        end
       else
         Coherence.current_user(conn)
           |> Repo.preload(:applications)
           |> Map.get(:applications)
           |> List.first()
       end
+
     if application do
       redirect(conn, to: application_path(conn, :show, application.id))
     else
-      redirect(conn, to: root_path(conn, :index))
+      conn
+        |> Phoenix.Controller.put_flash(
+          :info,
+          "Vous êtes maintenant connecté ! Sélectionnez un diplôme pour démarrer une candidature."
+        )
+        |> redirect(to: root_path(conn, :index))
     end
   end
 

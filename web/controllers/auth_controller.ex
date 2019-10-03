@@ -17,7 +17,7 @@ defmodule Vae.AuthController do
     |> redirect(external: url)
   end
 
-  def callback(conn, %{"code" => code, "state" => state} = _params) do
+  def callback(conn, %{"code" => code, "state" => state} = params) do
     client = Clients.get_client(state)
 
     case OAuth.generate_access_token(client, code) do
@@ -28,7 +28,7 @@ defmodule Vae.AuthController do
             "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
           )
 
-        user_status =
+        {:ok, user} =
           case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
             nil ->
               User.create_or_update_with_pe_connect_data(userinfo_api_result.body)
@@ -40,39 +40,8 @@ defmodule Vae.AuthController do
           end
           |> User.fill_with_api_fields(client_with_token)
 
-        application_status =
-          case user_status do
-            {:ok, user} ->
-              user = Repo.preload(user, :current_application)
-
-              {:ok,
-               {user,
-                Application.find_or_create_with_params(
-                  Map.merge(
-                    get_certification_id_and_delegate_id_from_referer(
-                      get_session(conn, :referer)
-                    ),
-                    %{user_id: user.id}
-                  )
-                ) || user.current_application}}
-
-            error ->
-              error
-          end
-
-        case application_status do
-          {:ok, {user, nil}} ->
-            Coherence.Authentication.Session.create_login(conn, user)
-            |> put_flash(:info, "Sélectionnez un diplôme pour poursuivre.")
-            |> redirect(to: Routes.root_path(conn, :index))
-
-          {:ok, {user, application}} ->
-            Coherence.Authentication.Session.create_login(conn, user)
-            |> redirect(to: Routes.application_path(conn, :show, application))
-
-          {:error, msg} ->
-            handle_error(conn, msg)
-        end
+      Coherence.Authentication.Session.create_login(conn, user)
+      |> IO.inspect() |> Coherence.Redirects.session_create(params)
 
       {:error, _error} ->
         handle_error(conn)

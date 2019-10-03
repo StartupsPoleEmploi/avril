@@ -15,12 +15,12 @@ defmodule Vae.ResumeController do
         {:ok, _resume} ->
           conn
           |> put_flash(:success, "CV uploadé avec succès.")
-          |> redirect(to: Routes.application_path(conn, :show, application))
+          |> redirect_back(default: Routes.application_path(conn, :show, application))
 
         {:error, msg} ->
           conn
           |> put_flash(:error, msg)
-          |> redirect(to: Routes.application_path(conn, :show, application))
+          |> redirect_back(default: Routes.application_path(conn, :show, application))
       end
     end
   end
@@ -36,12 +36,12 @@ defmodule Vae.ResumeController do
       {:ok, _resume} ->
         conn
         |> put_flash(:success, "CV supprimé avec succès.")
-        |> redirect(to: Routes.application_path(conn, :show, application))
+        |> redirect_back(default: Routes.application_path(conn, :show, application))
 
       {:error, _msg} ->
         conn
         |> put_flash(:error, "Le CV n'a pas pu être supprimé, merci de réessayer plus tard.")
-        |> redirect(to: Routes.application_path(conn, :show, application))
+        |> redirect_back(default: Routes.application_path(conn, :show, application))
     end
   end
 end

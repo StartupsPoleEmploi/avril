@@ -47,21 +47,14 @@ defmodule Vae.Application do
   end
 
   def find_or_create_with_params(
-        %{user_id: _user_id, delegate_id: _delegate_id, certification_id: _certification_id} =
+        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} =
           params
-      ) do
-    Repo.get_by(__MODULE__, params) ||
-      case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
-        {:ok, application} ->
-          application
-
-        {:error, msg} ->
-          Logger.error(fn -> inspect(msg) end)
-          {:error, msg}
-      end
+      ) when not is_nil(user_id) and not is_nil(delegate_id) and not is_nil(certification_id) do
+    case Repo.get_by(__MODULE__, params) do
+      nil -> Repo.insert(changeset(%__MODULE__{}, params))
+      application -> {:ok, application}
+    end
   end
-
-  def find_or_create_with_params(_params), do: nil
 
   def submit(application, auto_submitted \\ false) do
     case User.submit_application_required_missing_fields(application.user) do

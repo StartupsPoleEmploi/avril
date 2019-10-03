@@ -78,8 +78,12 @@ $(() => {
     }
   });
 
-  $(".btn-history-back").click(function() {
-    history.back();
+  $('.btn-history-back').on('click', e => {
+    if (document.referrer.indexOf(window.location.host) > -1) {
+      history.back();
+    } else {
+      window.location.href = '/';
+    }
   })
 
   $(".moreless").click(function() {

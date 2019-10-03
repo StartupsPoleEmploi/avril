@@ -1,5 +1,5 @@
 .my-5.d-flex.flex-row.align-items-center
-  button.btn-history-back style="background: no-repeat;border: none;margin-right: 1rem;line-height: 1rem;color: inherit;font-size: 1rem;cursor: pointer;"
+  button.btn-history-back style="background: no-repeat;border: none;margin-right: 1rem;line-height: 1rem;color: inherit;font-size: 1rem;"
     span.ic-icon.ic-tail-left
   .d-flex.flex-column
     h1.h2.m-0 #{format_certification_label(@certification)}
@@ -17,7 +17,7 @@
         div.mb-4 id="steps"
           = render_steps(@delegate.process)
         .py-4.text-center
-          = link "Je veux ce diplôme", to: Routes.registration_path(@conn, :new), class: "btn btn-primary"
+          = render("_select_certification_button.html", conn: @conn, certification: @certification, delegate: @delegate)
     .card-footer.bg-primary.text-secondary
       h5 Pas encore mûr dans votre projet de VAE ?
       p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.

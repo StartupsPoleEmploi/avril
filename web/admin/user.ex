@@ -114,7 +114,7 @@ defmodule Vae.ExAdmin.User do
 
       panel "Applications" do
         table_for user.applications do
-          column(:id)
+          column(:id, fn a -> Helpers.link_to_resource(a, namify: fn a -> a.id end) end)
           column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
           column(:application_delegate, fn a -> Helpers.link_to_resource(a.delegate) end)
           column(:application_certifiers, fn a ->

@@ -21,14 +21,6 @@ defmodule Vae.Router do
       db_model: @user_schema,
       id_key: @id_key
     )
-
-    plug(NavigationHistory.Tracker,
-      history_size: 2,
-      excluded_paths: [
-        "/registrations/new",
-        "/sessions/new"
-      ]
-    )
   end
 
   pipeline :protected do
@@ -81,7 +73,9 @@ defmodule Vae.Router do
     # Basic navigation
     resources("/metiers", Vae.ProfessionController, only: [:index])
     resources("/certificateurs", Vae.DelegateController, only: [:index])
-    resources("/diplomes", Vae.CertificationController, only: [:index, :show])
+    resources("/diplomes", Vae.CertificationController, only: [:index, :show]) do
+      put("/select", Vae.CertificationController, :select, as: :select)
+    end
 
     # Search endpoint
     post("/search", Vae.SearchController, :search)

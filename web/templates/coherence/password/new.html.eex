@@ -1,5 +1,5 @@
-<div class="row justify-content-center mt-6">
-  <div class="col-6">
+<div class="mt-6">
+  <div class="col-6 offset-3">
     <h1 class="text-center mb-4"><%= dgettext "coherence", "Send reset password link" %></h1>
 
     <%= form_for @changeset, Routes.password_path(@conn, :create), [as: :password], fn f  -> %>
@@ -10,9 +10,9 @@
         <%= error_tag f, :email %>
       </div>
 
-      <div class="form-group">
+      <div class="form-group d-flex align-items-center justify-content-between">
         <%= submit dgettext("coherence", "Reset Password"), class: "btn btn-primary" %>
-        <%= link dgettext("coherence", "Cancel"), to: Coherence.Config.logged_out_url("/"), class: "btn" %>
+        <button class="btn btn-light btn-history-back">Retour</button>
       </div>
     <% end %>
   </div>
