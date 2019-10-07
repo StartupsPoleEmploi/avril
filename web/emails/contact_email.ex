@@ -7,7 +7,7 @@ defmodule Vae.ContactEmail do
     "object" => object,
     "body" => body
   }) do
-    Mailer.send_email(
+    Mailer.build_email(
       "contact/submit.html",
       :avril,
       :avril,
@@ -28,7 +28,7 @@ defmodule Vae.ContactEmail do
     "object" => object,
     "body" => body
   }) do
-    Mailer.send_email(
+    Mailer.build_email(
       "contact/confirm.html",
       :avril,
       {name, email},

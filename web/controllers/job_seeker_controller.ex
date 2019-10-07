@@ -20,7 +20,7 @@ defmodule Vae.JobSeekerController do
       })) do
         {:ok, _pid} = Task.start(fn ->
           Vae.JobSeekerEmail.receive_synthesis(job_seeker, delegate.process)
-          |> Vae.Mailer.deliver()
+          |> Vae.Mailer.send()
         end)
         conn
         |> put_flash(:info, "Vous allez recevoir votre synthèse d'un instant à l'autre.")

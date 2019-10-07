@@ -6,7 +6,7 @@ defmodule Vae.ApplicationEmail do
 
   def delegate_submission(application) do
     application = Repo.preload(application, [:user, :delegate])
-    Mailer.send_email(
+    Mailer.build_email(
       "application/delegate_submission.html",
       :avril,
       application.delegate,
@@ -41,7 +41,7 @@ defmodule Vae.ApplicationEmail do
 
   def user_submission_confirmation(application) do
     application = Repo.preload(application, [:user, :delegate])
-    Mailer.send_email(
+    Mailer.build_email(
       "application/user_submission_confirmation.html",
       :avril,
       application.user,

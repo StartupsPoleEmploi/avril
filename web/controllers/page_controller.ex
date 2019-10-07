@@ -86,7 +86,7 @@ defmodule Vae.PageController do
     "contact_form" => %{} = variables
   }) do
 
-    with {:ok, _messages} <- Vae.Mailer.deliver_multi([
+    with {:ok, _messages} <- Vae.Mailer.send([
       Vae.ContactEmail.submit(variables),
       Vae.ContactEmail.confirm(variables)
     ]) do

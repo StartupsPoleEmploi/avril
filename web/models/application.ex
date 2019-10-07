@@ -67,7 +67,7 @@ defmodule Vae.Application do
                 delegate_access_refreshed_at: DateTime.utc_now()
               })
             ),
-            {:ok, _messages} <- Mailer.deliver_multi([
+            {:ok, _messages} <- Mailer.send([
               ApplicationEmail.delegate_submission(application),
               ApplicationEmail.user_submission_confirmation(application)
             ])

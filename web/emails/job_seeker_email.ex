@@ -3,7 +3,7 @@ defmodule Vae.JobSeekerEmail do
 
   def receive_synthesis(job_seeker, process) when not is_nil(process) do
     with {:ok, file} <- Vae.StepsPdf.create_pdf_file(process) do
-      Mailer.send_email(
+      Mailer.build_email(
         "job_seeker/receive_synthesis.html",
         :avril,
         job_seeker.email,

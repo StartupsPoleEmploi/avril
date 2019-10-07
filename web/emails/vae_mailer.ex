@@ -15,24 +15,27 @@ defmodule Vae.Mailer do
 
   @mailjet_conf Application.get_env(:vae, :mailjet)
 
-  def send_email(template_name_or_id, from, to) do
-    send_email(template_name_or_id, from, to, %{})
+  def build_email(template_name_or_id, from, to) do
+    build_email(template_name_or_id, from, to, %{})
   end
 
-  def send_email(template_name_or_id, from, to, params) do
+  def build_email(template_name_or_id, from, to, params) do
     %Email{}
     |> from(format_mailer(:from, from))
     |> to(format_mailer(:to, to))
     |> reply_to_if_present(Map.get(params, :reply_to))
     |> attach_if_attachment(Map.get(params, :attachment))
     |> render_body_or_template_id(template_name_or_id, params)
-    # |> __MODULE__.deliver()
   end
 
-  def deliver_multi(emails, config \\ []) when is_list(emails) do
+  def send(%Email{} = email, config \\ []) do
+    deliver(email, config)
+  end
+
+  def send(emails, config \\ []) when is_list(emails) do
     Enum.reduce(emails, {:ok, []}, fn
       email, {:ok, sent_emails} ->
-        case deliver(email, config) do
+        case send(email, config) do
           {:ok, sent_email} -> {:ok, [sent_email | sent_emails]}
           error -> error
         end
@@ -42,10 +45,12 @@ defmodule Vae.Mailer do
 
   defp format_mailer!(:avril), do: @avril_email
   defp format_mailer!(%User{} = user), do: User.formatted_email(user)
+  defp format_mailer!(%JobSeeker{} = job_seeker), do: User.formatted_email(job_seeker)
   defp format_mailer!(%{name: name, email: email}), do: {name, email}
   defp format_mailer!(%{email: email}), do: email
   defp format_mailer!(email) when is_binary(email), do: format_string_email(email)
   defp format_mailer!(tuple) when is_tuple(tuple), do: tuple
+  defp format_mailer!(emails) when is_list(emails), do: Enum.flat_map(emails, &format_mailer!/1)
   defp format_mailer!(anything), do: IO.inspect(anything)
 
   defp format_mailer(:to, _anything) when not is_nil(@override_email), do: format_mailer!(@override_email)

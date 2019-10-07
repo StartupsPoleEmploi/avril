@@ -168,4 +168,19 @@ defmodule Vae.JobSeeker do
     changeset
     |> put_embed(:events, [event_changeset | events])
   end
+
+  def fullname(job_seeker) do
+    cond do
+      job_seeker.first_name || job_seeker.last_name -> "#{job_seeker.first_name} #{job_seeker.last_name}" |> String.trim()
+      true -> job_seeker.email
+    end
+  end
+
+  def formatted_email(job_seeker) do
+    cond do
+      fullname(job_seeker) == job_seeker.email -> job_seeker.email
+      true -> {fullname(job_seeker), job_seeker.email}
+    end
+  end
+
 end

@@ -3,7 +3,7 @@ defmodule Vae.Coherence.UserEmail do
   alias Vae.User
 
   def password(user, url) do
-    Mailer.send_email(
+    Mailer.build_email(
       "user/password.html",
       :avril,
       user,
@@ -16,7 +16,7 @@ defmodule Vae.Coherence.UserEmail do
   end
 
   def confirmation(user, url) do
-    Mailer.send_email(
+    Mailer.build_email(
       "user/confirmation.html",
       :avril,
       user,
@@ -28,7 +28,7 @@ defmodule Vae.Coherence.UserEmail do
   end
 
   def unlock(user, url) do
-    Mailer.send_email(
+    Mailer.build_email(
       "user/unlock.html",
       :avril,
       user,
