@@ -13,18 +13,19 @@ defmodule Vae.Mailer do
 
   @override_email System.get_env("DEV_EMAILS")
 
-  def send_email(template_name, from, to) do
-    send_email(template_name, from, to, %{})
+  @mailjet_conf Application.get_env(:vae, :mailjet)
+
+  def send_email(template_name_or_id, from, to) do
+    send_email(template_name_or_id, from, to, %{})
   end
 
-  def send_email(template_name, from, to, params) do
+  def send_email(template_name_or_id, from, to, params) do
     %Email{}
     |> from(format_mailer(:from, from))
     |> to(format_mailer(:to, to))
     |> reply_to_if_present(Map.get(params, :reply_to))
     |> attach_if_attachment(Map.get(params, :attachment))
-    |> render_body(template_name, params)
-    |> render_text_and_extract_subject(template_name, params)
+    |> render_body_or_template_id(template_name_or_id, params)
     # |> __MODULE__.deliver()
   end
 
@@ -62,6 +63,27 @@ defmodule Vae.Mailer do
 
   defp attach_if_attachment(email, nil), do: email
   defp attach_if_attachment(email, attachment), do: attachment(email, attachment)
+
+  defp render_body_or_template_id(email, template_name_or_id, params) do
+    if is_integer(template_name_or_id) || (is_atom(template_name_or_id) && @mailjet_conf[template_name_or_id]) do
+      render_template_name_or_id(email, template_name_or_id, params)
+    else
+      render_body_and_subject(email, template_name_or_id, params)
+    end
+  end
+
+  defp render_template_id(email, template_id, params) do
+    Map.merge(email, %{provider_options: Map.merge(email.provider_options, %{
+      template_id: template_id,
+      variables: params
+    })})
+  end
+
+  defp render_body_and_subject(email, template_name, params) do
+    email
+      |> render_body(template_name, params)
+      |> render_text_and_extract_subject(template_name, params)
+  end
 
   defp render_text_and_extract_subject(email, _template_name, params) do
     # {:ok, file_content} = File.read(IO.inspect("#{Application.app_dir(:vae)}/web/templates/email/#{template_name}.md"))
