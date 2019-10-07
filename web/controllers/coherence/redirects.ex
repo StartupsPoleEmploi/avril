@@ -67,14 +67,18 @@ defmodule Coherence.Redirects do
     end
   end
 
-  def session_create(conn, _) do
+  def session_create(conn, params) do
+    session_create(conn, params, Coherence.current_user(conn))
+  end
+
+  def session_create(conn, params, user) do
     certification_id = Plug.Conn.get_session(conn, :certification_id)
     delegate_id = Plug.Conn.get_session(conn, :delegate_id)
 
     application =
       if certification_id && delegate_id do
         case Application.find_or_create_with_params(%{
-          user_id: Coherence.current_user(conn).id,
+          user_id: user.id,
           certification_id: certification_id,
           delegate_id: delegate_id
         }) do
@@ -87,14 +91,19 @@ defmodule Coherence.Redirects do
             nil
         end
       else
-        Coherence.current_user(conn)
+        user
           |> Repo.preload(:applications)
           |> Map.get(:applications)
           |> List.first()
       end
 
     if application do
-      redirect(conn, to: application_path(conn, :show, application.id))
+      conn
+        |> Phoenix.Controller.put_flash(
+            :success,
+            "Bienvenue sur votre page de candidature. Merci de compléter vos informations #{unless user.confirmed_at, do: "et confirmer votre adresse email "}avant de transmettre votre dossier au certificateur."
+          )
+        |> redirect(to: application_path(conn, :show, application.id))
     else
       conn
         |> Phoenix.Controller.put_flash(

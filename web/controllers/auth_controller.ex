@@ -41,7 +41,7 @@ defmodule Vae.AuthController do
           |> User.fill_with_api_fields(client_with_token)
 
       Coherence.Authentication.Session.create_login(conn, user)
-      |> IO.inspect() |> Coherence.Redirects.session_create(params)
+      |> Coherence.Redirects.session_create(params, user)
 
       {:error, _error} ->
         handle_error(conn)
