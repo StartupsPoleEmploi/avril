@@ -15,8 +15,10 @@ defmodule Mix.Tasks.Crm.StockReminder do
     job_seekers()
     |> build_records()
     |> build_emails()
-    |> send()
-    |> (fn emails ->
+    # |> send()
+    |> Vae.Mailer.send()
+    # |> (fn emails ->
+    |> (fn {:ok, emails} ->
           Logger.info(fn -> "stock_reminder: #{Kernel.length(emails)} emails sent" end)
         end).()
   end
@@ -87,14 +89,20 @@ defmodule Mix.Tasks.Crm.StockReminder do
   def build_emails(job_seekers) do
     job_seekers
     |> Enum.map(fn {job_seeker_id, payload} ->
-      %Email{
-        custom_id: UUID.uuid5(nil, payload["email"]),
+      # %Email{
+      #   custom_id: UUID.uuid5(nil, payload["email"]),
+      #    to: %{Email: payload["email"], Name: "#{payload["first_name"]} #{payload["last_name"]}"},
+      #   vars: %{
+      #     job_seeker_id: job_seeker_id
+      #   },
+      #   template_id: Config.get_stock_template_id()
+      # }
+      Vae.Mailer.build_email(
+        Config.get_stock_template_id(),
+        :avril,
         to: %{Email: payload["email"], Name: "#{payload["first_name"]} #{payload["last_name"]}"},
-        vars: %{
-          job_seeker_id: job_seeker_id
-        },
-        template_id: Config.get_stock_template_id()
-      }
+        job_seeker_id: job_seeker_id
+      )
     end)
   end
 
