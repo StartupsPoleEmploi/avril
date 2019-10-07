@@ -74,6 +74,8 @@ defmodule Vae.Mailer do
 
   defp render_template_id(email, template_id, params) do
     Map.merge(email, %{provider_options: Map.merge(email.provider_options, %{
+      template_error_deliver: Application.get_env(:vae, :mailjet_template_error_deliver),
+      template_error_reporting: Application.get_env(:vae, :mailjet_template_error_reporting),
       template_id: template_id,
       variables: params
     })})
