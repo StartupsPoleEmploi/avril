@@ -71,19 +71,18 @@ defmodule Vae.Mailer do
 
   defp render_body_or_template_id(email, template_name_or_id, params) do
     if is_integer(template_name_or_id) || (is_atom(template_name_or_id) && @mailjet_conf[template_name_or_id]) do
-      render_template_name_or_id(email, template_name_or_id, params)
+      render_template(email, template_name_or_id, params)
     else
       render_body_and_subject(email, template_name_or_id, params)
     end
   end
 
-  defp render_template_id(email, template_id, params) do
-    Map.merge(email, %{provider_options: Map.merge(email.provider_options, %{
-      template_error_deliver: Application.get_env(:vae, :mailjet_template_error_deliver),
-      template_error_reporting: Application.get_env(:vae, :mailjet_template_error_reporting),
-      template_id: template_id,
-      variables: params
-    })})
+  defp render_template(email, template_id, params) do
+    email
+      |> put_provider_option(:template_id, template_id)
+      |> put_provider_option(:variables, params)
+      |> put_provider_option(:template_error_deliver, Application.get_env(:vae, :mailjet_template_error_deliver))
+      |> put_provider_option(:template_error_reporting, Application.get_env(:vae, :mailjet_template_error_reporting))
   end
 
   defp render_body_and_subject(email, template_name, params) do
