@@ -1,7 +1,7 @@
 defmodule Vae.AuthController do
   use Vae.Web, :controller
   require Logger
-  alias Vae.{OAuth, User, Application}
+  alias Vae.{OAuth, User}
   alias Vae.OAuth.Clients
 
   def save_session_and_redirect(conn, _params) do
@@ -17,7 +17,7 @@ defmodule Vae.AuthController do
     |> redirect(external: url)
   end
 
-  def callback(conn, %{"code" => code, "state" => state} = params) do
+  def callback(conn, %{"code" => code, "state" => state}) do
     client = Clients.get_client(state)
 
     case OAuth.generate_access_token(client, code) do
@@ -41,7 +41,7 @@ defmodule Vae.AuthController do
           |> User.fill_with_api_fields(client_with_token)
 
       Coherence.Authentication.Session.create_login(conn, user)
-      |> Coherence.Redirects.session_create(params, user)
+      |> Coherence.Redirects.create_or_get_application(user)
 
       {:error, _error} ->
         handle_error(conn)
@@ -50,16 +50,6 @@ defmodule Vae.AuthController do
 
   def callback(conn, _params) do
     redirect(conn, external: get_session(conn, :referer))
-  end
-
-  defp get_certification_id_and_delegate_id_from_referer(referer) do
-    string_key_map =
-      Regex.named_captures(
-        ~r/\/diplomes\/(?<certification_id>\d+)[0-9a-z\-]*\?certificateur=(?<delegate_id>\d+)[0-9a-z\-]*/,
-        referer
-      ) || %{}
-
-    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), val}
   end
 
   defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.") do

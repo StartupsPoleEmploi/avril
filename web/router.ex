@@ -134,14 +134,6 @@ defmodule Vae.Router do
     admin_routes()
   end
 
-  defp put_user_token(conn, _) do
-    if current_user = Coherence.current_user(conn) do
-      assign(conn, :user_token, Phoenix.Token.sign(conn, "user socket", current_user.id))
-    else
-      conn
-    end
-  end
-
   defp fetch_app_status(conn, _opts) do
     status = GenServer.call(Status, :get)
     if status && # There is a status

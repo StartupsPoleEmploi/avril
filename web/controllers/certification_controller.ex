@@ -2,7 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, JobSeeker, Places, Rome, SearchDelegate, User, ViewHelpers}
+  alias Vae.{Application, Certification, Delegate, JobSeeker, Places, Rome, SearchDelegate, User, ViewHelpers}
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -97,7 +97,7 @@ defmodule Vae.CertificationController do
       {:ok, application} = Application.find_or_create_with_params(%{
         certification_id: certification_id,
         delegate_id: delegate_id,
-        user_id: Coherence.current_user?(conn).id
+        user_id: Coherence.current_user(conn).id
       })
       conn
       |> redirect(to: Routes.application_path(conn, :show, application))

@@ -4,7 +4,7 @@ defmodule Vae.Mailer do
     view: Vae.EmailView,
     layout: {Vae.LayoutView, :email}
   alias Swoosh.Email
-  alias Vae.{User}
+  alias Vae.{JobSeeker, User}
 
   @avril_email {
     Application.get_env(:vae, :mailjet)[:from_name],
@@ -28,14 +28,16 @@ defmodule Vae.Mailer do
     |> render_body_or_template_id(template_name_or_id, params)
   end
 
-  def send(%Email{} = email, config \\ []) do
+  def send(email), do: __MODULE__.send(email, [])
+
+  def send(%Email{} = email, config) do
     deliver(email, config)
   end
 
-  def send(emails, config \\ []) when is_list(emails) do
+  def send(emails, config) when is_list(emails) do
     Enum.reduce(emails, {:ok, []}, fn
       email, {:ok, sent_emails} ->
-        case send(email, config) do
+        case __MODULE__.send(email, config) do
           {:ok, sent_email} -> {:ok, [sent_email | sent_emails]}
           error -> error
         end

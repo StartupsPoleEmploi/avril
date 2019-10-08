@@ -67,11 +67,11 @@ defmodule Coherence.Redirects do
     end
   end
 
-  def session_create(conn, params) do
-    session_create(conn, params, Coherence.current_user(conn))
+  def session_create(conn, _params) do
+    create_or_get_application(conn, Coherence.current_user(conn))
   end
 
-  def session_create(conn, params, user) do
+  def create_or_get_application(conn, user) do
     certification_id = Plug.Conn.get_session(conn, :certification_id)
     delegate_id = Plug.Conn.get_session(conn, :delegate_id)
 
