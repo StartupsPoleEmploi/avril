@@ -121,6 +121,16 @@ defmodule Vae.Meetings.StateHolder do
   end
 
   @impl true
+  def handle_cast(:fetch_all, state) do
+    :ets.tab2list(:meetings)
+    |> Enum.each(fn {name, _dt, _meetings} ->
+      GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
+    end)
+
+    {:noreply, state}
+  end
+
+  @impl true
   def handle_call(:all, _from, state), do: {:reply, state, state}
 
   @impl true
@@ -180,6 +190,10 @@ defmodule Vae.Meetings.StateHolder do
 
   def fetch(name) do
     GenServer.cast(@name, {:fetch, name})
+  end
+
+  def fetch_all() do
+    GenServer.cast(@name, :fetch_all)
   end
 
   defp parse(delegate) do

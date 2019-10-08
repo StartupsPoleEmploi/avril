@@ -9,6 +9,8 @@ defmodule Vae.Meetings do
 
   defdelegate fetch(name), to: StateHolder
 
+  defdelegate fetch_all(), to: StateHolder
+
   def get_by_meeting_id(nil), do: %Vae.Meetings.Meeting{}
 
   defdelegate get_by_meeting_id(meeting_id), to: StateHolder
@@ -19,9 +21,5 @@ defmodule Vae.Meetings do
 
   def register_to_france_vae_meeting(academy_id, meeting_id, application) do
     GenServer.call(:france_vae, {:register_to_meeting, academy_id, meeting_id, application})
-  end
-
-  def refresh_afpa_meetings() do
-    nil
   end
 end
