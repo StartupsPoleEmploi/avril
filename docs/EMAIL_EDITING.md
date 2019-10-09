@@ -1,8 +1,11 @@
 # Editer les emails sur Avril
 
+Certains emails sont éditables directement dans le code, au format markdown.
+
 <!-- MarkdownTOC -->
 
-- [Formattage Markdown](#formattage-markdown)
+- [Où se trouvent les fichiers ?](#o%C3%B9-se-trouvent-les-fichiers-)
+- [Markdown générique](#markdown-g%C3%A9n%C3%A9rique)
   - [Paragraphe](#paragraphe)
   - [Gras & Italique](#gras--italique)
   - [Listes](#listes)
@@ -13,13 +16,14 @@
   - [Call to action](#call-to-action)
   - [Variables](#variables)
   - [Conditions](#conditions)
-- [Où se trouvent les fichiers ?](#o%C3%B9-se-trouvent-les-fichiers-)
 
 <!-- /MarkdownTOC -->
 
-Certains emails sont éditables directement dans le code, au format markdown.
+## Où se trouvent les fichiers ?
 
-## Formattage Markdown
+Les fichiers sont situés dans le dossier [/web/templates/email](/web/templates/email). Les noms sont choisis pour être explicites et ne pas nécessiter plus d'explications.
+
+## Markdown générique
 
 Le [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) est un format de fichier qui permet de générer du texte riche de manière visuelle. L'objectif étant de maintenir la lisibilité du fichier en permanence.
 
@@ -136,7 +140,3 @@ Attendez d'être recontacté.
 ```
 
 NB: Le `<% else %>` est facultatif.
-
-## Où se trouvent les fichiers ?
-
-Les fichiers sont situés dans le dossier [/web/templates/email](/web/templates/email). Les noms sont choisis pour être explicites et ne pas nécessiter plus d'explications.
