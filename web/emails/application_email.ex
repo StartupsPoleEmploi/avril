@@ -2,7 +2,7 @@ defmodule Vae.ApplicationEmail do
   alias Vae.Mailer
 
   alias Vae.{Certification, Endpoint, Repo, User}
-  alias Vae.Router.Helpers
+  alias Vae.Router.Helpers, as: Routes
 
   def delegate_submission(application) do
     application = Repo.preload(application, [:user, :delegate])
@@ -12,7 +12,7 @@ defmodule Vae.ApplicationEmail do
       application.delegate,
       %{
         url:
-          Helpers.application_url(Endpoint, :show, application,
+          Routes.application_url(Endpoint, :show, application,
             hash: application.delegate_access_hash
           ),
         user_name: User.fullname(application.user),
@@ -21,24 +21,6 @@ defmodule Vae.ApplicationEmail do
     )
   end
 
-  # def delegate_submission(application) do
-  #   application = Repo.preload(application, [:user, :delegate, :certification])
-  #   Email.generic_fields(
-  #     :application_submitted_to_delegate_id,
-  #     application.delegate,
-  #     %{
-  #       application_url:
-  #         Helpers.application_url(Endpoint, :show, application,
-  #           hash: application.delegate_access_hash
-  #         ),
-  #       user_name: User.fullname(application.user),
-  #       user_email: application.user.email,
-  #       delegate_name: application.delegate.name,
-  #       certification_name: Certification.name(application.certification)
-  #     }
-  #   )
-  # end
-
   def user_submission_confirmation(application) do
     application = Repo.preload(application, [:user, :delegate])
     Mailer.build_email(
@@ -46,7 +28,7 @@ defmodule Vae.ApplicationEmail do
       :avril,
       application.user,
       %{
-        url: Helpers.application_url(Endpoint, :show, application),
+        url: Routes.application_url(Endpoint, :show, application),
         user_name: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_name: application.delegate.name,
@@ -57,21 +39,4 @@ defmodule Vae.ApplicationEmail do
       }
     )
   end
-
-  # def user_submission_confirmation(application) do
-    # application = Repo.preload(application, [:user, :delegate, :certification])
-  #   Email.generic_fields(
-  #     :application_submitted_to_user_id,
-  #     application.user,
-  #     %{
-  #       user_name: User.fullname(application.user),
-  #       application_url: Helpers.application_url(Endpoint, :show, application),
-  #       certification_name: Certification.name(application.certification),
-  #       delegate_name: application.delegate.name,
-  #       delegate_person_name: application.delegate.person_name,
-  #       delegate_phone_number: application.delegate.telephone,
-  #       delegate_email: application.delegate.email
-  #     }
-  #   )
-  # end
 end

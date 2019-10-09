@@ -1,21 +1,16 @@
 defmodule Vae.Mailer.Worker do
-  alias Ecto.Changeset
-  alias Vae.JobSeeker
-  alias Vae.Mailer.Email
-  alias Vae.Repo
-
   require Logger
 
-  @extractor Application.get_env(:vae, :extractor)
+  alias Vae.{JobSeeker, JobSeekerEmail, Mailer}
 
-  @sender Application.get_env(:vae, :sender)
+  @extractor Application.get_env(:vae, :extractor)
 
   @doc false
   def start_link() do
     Task.start_link(fn ->
       PersistentEts.new(:pending_emails, "pending_emails.tab", [:named_table, :public])
       |> :ets.tab2list()
-      |> Enum.map(fn {_custom_id, email} -> email end)
+      |> Enum.map(fn {_job_seeker_id, email} -> email end)
       |> run()
     end)
   end
@@ -29,7 +24,7 @@ defmodule Vae.Mailer.Worker do
         :ets.delete_all_objects(:pending_emails)
 
       {:get_pending_emails, sender} ->
-        send(sender, :ets.tab2list(:pending_emails))
+        send_emails(:ets.tab2list(:pending_emails))
 
       msg ->
         Logger.error(fn -> inspect(msg) end)
@@ -65,7 +60,7 @@ defmodule Vae.Mailer.Worker do
       Logger.info("Try to send #{length(emails)} emails")
 
       emails_sent =
-        send_email(emails)
+        send_emails(emails)
         |> remove()
 
       Logger.info("#{length(emails_sent)}/#{length(emails)} sent")
@@ -78,53 +73,21 @@ defmodule Vae.Mailer.Worker do
   end
 
   defp build_email(job_seeker) do
-    %Email{
-      custom_id: UUID.uuid5(nil, job_seeker.email),
-      job_seeker: job_seeker
-    }
+    JobSeekerEmail.campaign(job_seeker)
   end
 
-  defp send_email(emails) do
-    emails
-    |> Enum.reduce([], fn email, acc ->
-      case @sender.send(email) do
-        %Email{state: :success} -> [email | acc]
-        _ -> acc
-      end
-    end)
+  defp send_emails(emails) do
+    {:ok, sent_emails} = Mailer.send(emails)
+    sent_emails
   end
 
   defp persist(email) do
-    :ets.insert(:pending_emails, {email.custom_id, email})
+    :ets.insert(:pending_emails, {email.assigns.job_seeker_id, email})
     email
   end
 
   defp remove(emails) do
-    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.custom_id) end)
+    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.assigns.job_seeker_id) end)
     emails
-  end
-
-  defp insert_or_update!(job_seekers) do
-    Enum.map(job_seekers, fn job_seeker ->
-      case Repo.get_by(JobSeeker, email: job_seeker.email) do
-        nil ->
-          insert!(job_seeker)
-
-        actual_job_seeker ->
-          update!(actual_job_seeker, job_seeker)
-      end
-    end)
-  end
-
-  defp insert!(job_seeker) do
-    %JobSeeker{}
-    |> JobSeeker.changeset(job_seeker)
-    |> Repo.insert!()
-  end
-
-  defp update!(current_job_seeker, job_seeker) do
-    current_job_seeker
-    |> Changeset.change(job_seeker)
-    |> Repo.update!()
   end
 end

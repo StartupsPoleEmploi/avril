@@ -59,6 +59,7 @@
         color: #2E5266 !important;
         text-decoration: none;
         margin: 24px 64px;
+        display: block;
       }
 
       strong a:hover {
@@ -249,7 +250,7 @@
                             <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
                               <tr>
                                 <td align="left" style="font-size:0px;padding:0 5%;word-break:break-word;">
-                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:18px;line-height:28px;text-align:left;color:#2e5266;">
+                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:18px;text-align:<%= if assigns[:text_center], do: "center", else: "left"%>;color:#2e5266;">
                                     <%= render @view_module, @view_template, assigns %>
                                   </div>
                                 </td>
@@ -342,9 +343,16 @@
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
                           <tbody>
+                            <%= if assigns[:job_seeker_msg] do %>
+                              <tr>
+                                <td>
+                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:16px;line-height:24px;text-align:left;color:#2e5266;">Vous recevez cet email car vous êtes inscrit en tant que demandeur d'emploi</div>
+                                </td>
+                              </tr>
+                            <% end %>
                             <tr>
-                              <td style="width:40px;">
-                                <img height="auto" src="http://yukq.mjt.lu/tplimg/yg2n/b/h6mr/19i9.png" style="border:0;display:block;outline:none;text-decoration:none;width:100%;" width="40" />
+                              <td>
+                                <img height="auto" src="http://yukq.mjt.lu/tplimg/yg2n/b/h6mr/19i9.png" style="border:0;display:block;outline:none;text-decoration:none;width:50px;margin: 20px auto;" width="50" />
                               </td>
                             </tr>
                           </tbody>

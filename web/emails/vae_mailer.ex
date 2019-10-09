@@ -47,8 +47,9 @@ defmodule Vae.Mailer do
 
   defp format_mailer!(:avril), do: @avril_email
   defp format_mailer!(%User{} = user), do: User.formatted_email(user)
-  defp format_mailer!(%JobSeeker{} = job_seeker), do: User.formatted_email(job_seeker)
+  defp format_mailer!(%JobSeeker{} = job_seeker), do: JobSeeker.formatted_email(job_seeker)
   defp format_mailer!(%{name: name, email: email}), do: {name, email}
+  defp format_mailer!(%{Name: name, Email: email}), do: {name, email}
   defp format_mailer!(%{email: email}), do: email
   defp format_mailer!(email) when is_binary(email), do: format_string_email(email)
   defp format_mailer!(tuple) when is_tuple(tuple), do: tuple
