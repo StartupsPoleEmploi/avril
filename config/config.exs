@@ -14,9 +14,9 @@ config :vae,
   places_ets_table_name: :places_dev,
   algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
   algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
-  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
-  mailer_extractor_limit: if(Mix.env() == :prod, do: :all, else: 10_000),
-  sender: Vae.Mailer.Sender.Mailjet,
+  # extractor: Vae.Mailer.FileExtractor.CsvExtractor,
+  # mailer_extractor_limit: if(Mix.env() == :prod, do: :all, else: 10_000),
+  # sender: Vae.Mailer.Sender.Mailjet,
   mailjet_template_error_reporting: %{
     Email:
       (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
@@ -27,7 +27,7 @@ config :vae,
   mailjet: [
     # application_submitted_to_delegate_id: 758_379,
     # application_submitted_to_user_id: 984_794,
-    campaign_template_id: 512_948,
+    # campaign_template_id: 512_948,
     vae_recap_template_id: 985_164,
     dava_vae_recap_template_id: 986_006,
     asp_vae_recap_template_id: 833_668,

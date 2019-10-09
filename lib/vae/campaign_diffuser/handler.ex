@@ -1,4 +1,4 @@
-defmodule Vae.OldMailer do
+defmodule Vae.CampaignDiffuser.Handler do
   def execute() do
     {:ok, pid} = Vae.Mailer.Worker.start_link()
 
@@ -20,7 +20,7 @@ defmodule Vae.OldMailer do
 
   def get_pending_emails() do
     {:ok, pid} = Vae.Mailer.Worker.start_link()
-    send(pid, {:get_pending_emails, self()})
+    send(pid, {:get_pending_emails})
   end
 
   @doc """

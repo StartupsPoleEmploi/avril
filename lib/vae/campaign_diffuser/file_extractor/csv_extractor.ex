@@ -1,30 +1,41 @@
-defmodule Vae.Mailer.FileExtractor.CsvExtractor do
+defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   require Logger
 
   alias Vae.Places
 
-  @behaviour Vae.Mailer.FileExtractor
+  @behaviour Vae.CampaignDiffuser.FileExtractor
 
-  # @limit Application.get_env(:vae, :mailer_extractor_limit)
+  @fields ~w(
+    kn_individu_national
+    code_postal
+    telephone
+    courriel
+    date_eff_ins
+    listeformation
+    nom
+    prenom
+    dc_referencegms
+    dc_romeore
+    dc_listeromemetierrech
+    age
+  )
 
-  @fields ~w(kn_individu_national code_postal telephone courriel date_eff_ins listeformation nom prenom dc_referencegms dc_romeore dc_listeromemetierrech age)
-
-  @allowed_administratives [
-    "Bretagne",
-    "Île-de-France",
-    "Centre-Val de Loire",
-    "Occitanie",
-    "Bourgogne-Franche-Comté",
-    "Provence-Alpes-Côte d'Azur",
-    "Corse",
-    "Hauts-de-France",
-    "Auvergne-Rhône-Alpes",
-    "Nouvelle-Aquitaine",
-    "Grand-Est",
-    "Pays-de-la-Loire",
-    "Normandie",
-    "Guadeloupe"
-  ]
+  @allowed_administratives ~w(
+    Bretagne
+    Île-de-France
+    Centre-Val de Loire
+    Occitanie
+    Bourgogne-Franche-Comté
+    Provence-Alpes-Côte d'Azur
+    Corse
+    Hauts-de-France
+    Auvergne-Rhône-Alpes
+    Nouvelle-Aquitaine
+    Grand-Est
+    Pays-de-la-Loire
+    Normandie
+    Guadeloupe
+  )
 
   def extract(_) do
     # To implement

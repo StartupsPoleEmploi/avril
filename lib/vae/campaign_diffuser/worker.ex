@@ -1,9 +1,9 @@
-defmodule Vae.Mailer.Worker do
+defmodule Vae.CampaignDiffuser.Worker do
   require Logger
 
   alias Vae.{JobSeeker, JobSeekerEmail, Mailer}
 
-  @extractor Application.get_env(:vae, :extractor)
+  @extractor Vae.Mailer.FileExtractor.CsvExtractor
 
   @doc false
   def start_link() do
@@ -23,7 +23,7 @@ defmodule Vae.Mailer.Worker do
       {:flush} ->
         :ets.delete_all_objects(:pending_emails)
 
-      {:get_pending_emails, sender} ->
+      {:get_pending_emails} ->
         send_emails(:ets.tab2list(:pending_emails))
 
       msg ->

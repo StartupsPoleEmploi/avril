@@ -1,4 +1,4 @@
-defmodule Vae.Mailer.FileExtractor do
+defmodule Vae.CampaignDiffuser.FileExtractor do
   @type path :: String.t()
   @type job_seeker :: Map.t()
 
