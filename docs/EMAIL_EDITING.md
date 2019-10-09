@@ -1,5 +1,22 @@
 # Editer les emails sur Avril
 
+<!-- MarkdownTOC -->
+
+- [Formattage Markdown](#formattage-markdown)
+  - [Paragraphe](#paragraphe)
+  - [Gras & Italique](#gras--italique)
+  - [Listes](#listes)
+  - [Titres](#titres)
+  - [Liens](#liens)
+  - [Divers](#divers)
+- [Markdown spécifique à Avril](#markdown-sp%C3%A9cifique-%C3%A0-avril)
+  - [Call to action](#call-to-action)
+  - [Variables](#variables)
+  - [Conditions](#conditions)
+- [Où se trouvent les fichiers ?](#o%C3%B9-se-trouvent-les-fichiers-)
+
+<!-- /MarkdownTOC -->
+
 Certains emails sont éditables directement dans le code, au format markdown.
 
 ## Formattage Markdown
@@ -27,6 +44,18 @@ Pour obtenir un contenu **en gras**, il faut doubler les astérisques. __Entre d
 ```
 
 ### Listes
+
+Liste non numérotée :
+
+- élément
+- autre élément
+- et un autre
+
+Liste numérotée :
+
+1. élément
+2. autre élément
+3. et un autre
 
 ```
 Liste non numérotée :
@@ -78,7 +107,9 @@ Un séparateur s'écrit `---`:
 
 ### Call to action
 
-Pour générer un call-to-action dans un email: ![Call to action](assets/call-to-action.png), il faut mettre le lien en gras :
+Pour générer un call-to-action dans un email:
+
+![Call to action](assets/call-to-action.png), il faut mettre le lien en gras :
 
 ```
 **[Je confirme mon email](http://lien-de-confirmation.com)**
@@ -97,7 +128,7 @@ Pour afficher le contenu d'une variable branchée au préalable :
 Pour mettre une condition dans le template :
 
 ```
-<% if @is_asp do %>
+<%= if @is_asp do %>
 Il faut vous inscrire sur le site XXX.
 <% else %>
 Attendez d'être recontacté.
@@ -106,6 +137,6 @@ Attendez d'être recontacté.
 
 NB: Le `<% else %>` est facultatif.
 
-## Où se trouvent les fichiers :
+## Où se trouvent les fichiers ?
 
 Les fichiers sont situés dans le dossier [/web/templates/email](/web/templates/email). Les noms sont choisis pour être explicites et ne pas nécessiter plus d'explications.
