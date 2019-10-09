@@ -8,15 +8,27 @@ Le [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) 
 
 Voici les différentes possibilités utiles ici qu'offre cette syntaxe :
 
+### Paragraphe
+
+```
+Simple paragraphe de texte.
 ```
 
+### Gras & Italique
 
-Simple paragraphe de texte.
+Pour obtenir un contenu *en italique*, il suffit de l'entourer d'astérisques. _Entre underscore_ fonctionne aussi.
 
-Contenu avec *mots en italique* entre simple astérisque. _Mots entre underscore_ fonctionne aussi.
+Pour obtenir un contenu **en gras**, il faut doubler les astérisques. __Entre double underscore__ fonctionne aussi.
 
-Contenu avec **mots en gras** entre double astérisque. __Mots entre double underscore__ fonctionne aussi.
+```
+Pour obtenir un contenu *en italique*, il suffit de l'entourer d'astérisques. _Entre underscore_ fonctionne aussi.
 
+Pour obtenir un contenu **en gras**, il faut doubler les astérisques. __Entre double underscore__ fonctionne aussi.
+```
+
+### Listes
+
+```
 Liste non numérotée :
 
 - élément
@@ -28,10 +40,11 @@ Liste numérotée :
 1. élément
 2. autre élément
 3. et un autre
+```
 
-Un séparateur s'écrit
+### Titres
 
----
+```
 
 Un titre avec # :
 
@@ -40,12 +53,26 @@ Un titre avec # :
 ## Titre niveau 2
 
 etc. jusque niveau 6
+```
+
+### Liens
 
 Un lien s'écrit [Texte du lien](http://url-du-lien.com).
 
-Et une image presque pareil: ![description de l'image](https://url-de-limage.com/image.jpg "Titre de l'image")
+Et une image presque pareil: ![description de l'image](https://avril.pole-emploi.fr/images/avril-beta.svg "Titre de l'image")
 
 ```
+Un lien s'écrit [Texte du lien](http://url-du-lien.com).
+
+Et une image presque pareil: ![description de l'image](https://avril.pole-emploi.fr/images/avril-beta.svg "Titre de l'image")
+
+```
+
+### Divers
+
+Un séparateur s'écrit `---`:
+
+---
 
 ## Markdown spécifique à Avril
 
