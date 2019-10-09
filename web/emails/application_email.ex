@@ -53,7 +53,7 @@ defmodule Vae.ApplicationEmail do
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
-        subject: "#{User.fullname(application.user)} souhaite faire une VAE: A vous de le/la recontacter !"
+        subject: "Félicitations #{User.fullname(application.user)} pour votre projet VAE: découvrez la prochaine étape"
       }
     )
   end

@@ -1,4 +1,5 @@
 # Contribuer et améliorer Avril
+
 Nous accueillons les contributions de tous les développeurs volontaires à notre base de code, sous la forme de pull requests (https://help.github.com/articles/about-pull-requests/).
 
 Avant de soumettre votre pull request:

@@ -53,12 +53,12 @@
       }
 
       strong a {
-        padding: 7px 15px;
+        padding: 8px 16px;
         border-radius: 50px;
         background: #20D7A4;
         color: #2E5266 !important;
         text-decoration: none;
-        white-space: nowrap;
+        margin: 24px 64px;
       }
 
       strong a:hover {
