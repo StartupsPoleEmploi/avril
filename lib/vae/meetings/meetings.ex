@@ -19,7 +19,5 @@ defmodule Vae.Meetings do
     GenServer.call(:france_vae, :get_academies)
   end
 
-  def register_to_france_vae_meeting(academy_id, meeting_id, application) do
-    GenServer.call(:france_vae, {:register_to_meeting, academy_id, meeting_id, application})
-  end
+  def register(meeting, application), to: StateHolder
 end

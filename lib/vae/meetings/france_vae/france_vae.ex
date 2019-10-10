@@ -61,6 +61,10 @@ defmodule Vae.Meetings.FranceVae do
     end
   end
 
+  def register(meeting, application) do
+    register(meeting[:academy_id], meeting[:id], application)
+  end
+
   def register(academy_id, meeting_id, application) do
     token = get_token()
 

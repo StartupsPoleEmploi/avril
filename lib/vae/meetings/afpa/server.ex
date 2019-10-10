@@ -43,6 +43,11 @@ defmodule Vae.Meetings.Afpa.Server do
     {:noreply, new_state}
   end
 
+  @impl true
+  def handle_call({:register, {meeting, application}}, _from, state) do
+    {:reply, {:ok, meeting}, state}
+  end
+
   defp get_data(pid, req_id) do
     Scraper.scrape_all_events()
     |> Flow.from_enumerable(max_demand: 5, window: Flow.Window.count(10))
