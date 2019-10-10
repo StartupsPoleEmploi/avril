@@ -169,10 +169,7 @@ config :coherence,
 
 config :coherence, :layout, {Vae.LayoutView, :coherence}
 
-config :coherence, Vae.Coherence.Mailer,
-  adapter: Swoosh.Adapters.Mailjet,
-  api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
-  secret: System.get_env("MAILJET_PRIVATE_API_KEY")
+config :coherence, :mailer, Vae.Mailer
 
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},
