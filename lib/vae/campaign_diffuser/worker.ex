@@ -3,7 +3,7 @@ defmodule Vae.CampaignDiffuser.Worker do
 
   alias Vae.{JobSeeker, JobSeekerEmail, Mailer}
 
-  @extractor Vae.Mailer.FileExtractor.CsvExtractor
+  @extractor Vae.CampaignDiffuser.FileExtractor.CsvExtractor
 
   @doc false
   def start_link() do
@@ -42,7 +42,7 @@ defmodule Vae.CampaignDiffuser.Worker do
     |> Flow.on_trigger(fn job_seekers ->
       Logger.info("Insert or update #{length(job_seekers)} job seekers")
 
-      inserted_job_seekers = insert_or_update!(job_seekers)
+      inserted_job_seekers = JobSeeker.insert_or_update!(job_seekers)
 
       Logger.info("#{length(inserted_job_seekers)} inserted")
 

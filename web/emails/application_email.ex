@@ -39,4 +39,17 @@ defmodule Vae.ApplicationEmail do
       }
     )
   end
+
+  def monthly_status(application) do
+    application = Repo.preload(application, [:user])
+    Mailer.build_email(
+      Vae.Crm.Config.get_monthly_template_id(),
+      :avril,
+      application.user,
+      %{
+        application_id: application.id
+      }
+    )
+  end
+
 end

@@ -185,7 +185,7 @@ defmodule Vae.JobSeeker do
   end
 
   def insert_or_update!(job_seekers) when is_list(job_seekers) do
-    Enum.map(job_seekers, &insert_or_update\1)
+    Enum.map(job_seekers, &insert_or_update!(&1))
   end
 
   def insert_or_update!(job_seeker) do

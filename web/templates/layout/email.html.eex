@@ -343,10 +343,10 @@
                       <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                         <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;border-spacing:0px;">
                           <tbody>
-                            <%= if assigns[:job_seeker_msg] do %>
+                            <%= if assigns[:footer_note] do %>
                               <tr>
                                 <td>
-                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:16px;line-height:24px;text-align:left;color:#2e5266;">Vous recevez cet email car vous êtes inscrit en tant que demandeur d'emploi</div>
+                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:16px;line-height:24px;text-align:left;color:#2e5266;"><%= render "/email/footer_notes/#{assigns[:footer_note]}.html", assigns: assigns %></div>
                                 </td>
                               </tr>
                             <% end %>

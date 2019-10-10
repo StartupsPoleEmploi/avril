@@ -1,6 +1,6 @@
 defmodule Vae.CampaignDiffuser.Handler do
   def execute() do
-    {:ok, pid} = Vae.Mailer.Worker.start_link()
+    {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
 
     send(
       pid,
@@ -10,7 +10,7 @@ defmodule Vae.CampaignDiffuser.Handler do
   end
 
   def execute(path) do
-    {:ok, pid} = Vae.Mailer.Worker.start_link()
+    {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
 
     send(
       pid,
@@ -19,7 +19,7 @@ defmodule Vae.CampaignDiffuser.Handler do
   end
 
   def get_pending_emails() do
-    {:ok, pid} = Vae.Mailer.Worker.start_link()
+    {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
     send(pid, {:get_pending_emails})
   end
 
@@ -27,7 +27,7 @@ defmodule Vae.CampaignDiffuser.Handler do
   Utility function to flush both state and ETS
   """
   def flush() do
-    {:ok, pid} = Vae.Mailer.Worker.start_link()
+    {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
     send(pid, :flush)
   end
 end

@@ -34,7 +34,7 @@ defmodule Vae.StepsPdf do
         <img
           height="auto"
           src="https://avril.pole-emploi.fr/images/avril-beta.svg"
-          class="img-fluid"
+          class="img-fluid" style="display: block; margin: auto;"
         />
         #{Enum.map_join(render_steps, &Phoenix.HTML.safe_to_string/1)}
       </body>

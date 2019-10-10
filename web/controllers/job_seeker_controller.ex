@@ -9,7 +9,7 @@ defmodule Vae.JobSeekerController do
     "delegate_id" => delegate_id
   }}) do
     with(
-      delegate when not is_nil(delegate) <- Repo.get(Delegate, delegate_id) |> Repo.preload(:process),
+      delegate when not is_nil(delegate) <- Repo.get(Delegate, delegate_id),
       certification when not is_nil(certification) <- Repo.get(Certification, certification_id),
       job_seeker when not is_nil(job_seeker) <- Event.create_or_update_job_seeker(%{
         email: email,
@@ -19,7 +19,7 @@ defmodule Vae.JobSeekerController do
         certification_id: certification.id
       })) do
         {:ok, _pid} = Task.start(fn ->
-          Vae.JobSeekerEmail.receive_synthesis(job_seeker, delegate.process)
+          Vae.JobSeekerEmail.receive_synthesis(job_seeker, delegate)
           |> Vae.Mailer.send()
         end)
         conn

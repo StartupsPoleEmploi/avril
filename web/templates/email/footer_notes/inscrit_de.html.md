@@ -1,0 +1,1 @@
+Vous recevez cet email car vous êtes inscrit en tant que demandeur d'emploi.
