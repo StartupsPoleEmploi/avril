@@ -35,7 +35,8 @@ defmodule Vae.ApplicationEmail do
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
-        subject: "Félicitations #{User.fullname(application.user)} pour votre projet VAE: découvrez la prochaine étape"
+        subject: "Félicitations #{User.fullname(application.user)} pour votre projet VAE: découvrez la prochaine étape",
+        footer_note: :inscrit_avril
       }
     )
   end
@@ -47,7 +48,8 @@ defmodule Vae.ApplicationEmail do
       :avril,
       application.user,
       %{
-        application_id: application.id
+        application_id: application.id,
+        footer_note: :inscrit_avril
       }
     )
   end

@@ -346,13 +346,13 @@
                             <%= if assigns[:footer_note] do %>
                               <tr>
                                 <td>
-                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:16px;line-height:24px;text-align:left;color:#2e5266;"><%= render "/email/footer_notes/#{assigns[:footer_note]}.html", assigns: assigns %></div>
+                                  <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:16px;line-height:24px;text-align:left;color:#2e5266;"><%= render "footer_notes/#{assigns[:footer_note]}.html", assigns: assigns %></div>
                                 </td>
                               </tr>
                             <% end %>
                             <tr>
                               <td>
-                                <img height="auto" src="http://yukq.mjt.lu/tplimg/yg2n/b/h6mr/19i9.png" style="border:0;display:block;outline:none;text-decoration:none;width:50px;margin: 20px auto;" width="50" />
+                                <img height="auto" src="http://yukq.mjt.lu/tplimg/yg2n/b/h6mr/19i9.png" style="border:0;display:block;outline:none;text-decoration:none;width:60px;margin: 20px auto;" width="60" />
                               </td>
                             </tr>
                           </tbody>
@@ -400,7 +400,7 @@
                             <tr>
                               <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
                                 <div style="font-family:Roboto, Open Sans, Arial, sans-serif;font-size:12px;line-height:28px;text-align:center;color:#2e5266;">
-                                  <a href="[[UNSUB_LINK_FR]]" style="color: inherit; font-size: " color="#2e5266" background-color="#eee">Je ne souhaite plus recevoir d'emails Avril</a>
+                                  <a href="[[UNSUB_LINK_FR]]" style="font-family: Roboto,Open Sans,Arial,sans-serif;font-size: 16px;line-height: 24px;text-align: center;color: #2e5266;" color="#2e5266" background-color="#eee">Je ne souhaite plus recevoir d'emails Avril</a>
                                 </div>
                               </td>
                             </tr>

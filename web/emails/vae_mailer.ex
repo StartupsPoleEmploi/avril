@@ -2,7 +2,7 @@ defmodule Vae.Mailer do
   use Swoosh.Mailer, otp_app: :vae
   use Phoenix.Swoosh,
     view: Vae.EmailView,
-    layout: {Vae.LayoutView, :email}
+    layout: {Vae.EmailView, :layout}
   alias Swoosh.Email
   alias Vae.{JobSeeker, User}
 
