@@ -10,7 +10,8 @@ defmodule Vae.Coherence.UserEmail do
       %{
         subject: "Réinitialisation du mot de passe sur Avril - la VAE facile",
         name: User.fullname(user),
-        url: url
+        url: url,
+        footer_note: :inscrit_avril
       }
     )
   end
@@ -22,7 +23,8 @@ defmodule Vae.Coherence.UserEmail do
       user,
       %{
         subject: "Confirmation de mon compte VAE sur Avril - la VAE facile",
-        url: url
+        url: url,
+        footer_note: :inscrit_avril
       }
     )
   end
@@ -34,7 +36,8 @@ defmodule Vae.Coherence.UserEmail do
       user,
       %{
         subject: "Débloquer votre compte Avril - la VAE facile",
-        url: url
+        url: url,
+        footer_note: :inscrit_avril
       }
     )
   end
