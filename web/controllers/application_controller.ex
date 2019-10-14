@@ -77,17 +77,25 @@ defmodule Vae.ApplicationController do
                    application.delegate.academy_id,
                    meeting_id
                  ) do
-            conn
-            |> redirect(
-              to:
-                Routes.application_france_vae_registered_path(
-                  conn,
-                  :france_vae_registered,
-                  application,
-                  %{academy_id: application.delegate.academy_id}
-                  |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
+            case meeting.name do
+              :france_vae ->
+                conn
+                |> redirect(
+                  to:
+                    Routes.application_france_vae_registered_path(
+                      conn,
+                      :france_vae_registered,
+                      application,
+                      %{academy_id: application.delegate.academy_id}
+                      |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
+                    )
                 )
-            )
+
+              _ ->
+                conn
+                |> put_flash(:success, "Dossier transmis avec succès!")
+                |> redirect(to: Routes.application_path(conn, :show, application))
+            end
           else
             {:error, %{"code" => _code, "message" => msg}} ->
               conn
