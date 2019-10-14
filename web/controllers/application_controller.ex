@@ -189,12 +189,14 @@ defmodule Vae.ApplicationController do
   def france_vae_registered(
         conn,
         %{
-          "application_id" => id
+          "application_id" => id,
+          "academy_id" => academy_id
         }
       ) do
     render(conn, "france-vae-registered.html", %{
       container_class: "d-flex flex-grow-1",
-      application_id: id
+      application_id: id,
+      academy_id: academy_id
     })
   end
 end

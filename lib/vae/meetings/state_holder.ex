@@ -210,6 +210,7 @@ defmodule Vae.Meetings.StateHolder do
 
   def register(meeting_id, application) do
     meeting = get_by_meeting_id(meeting_id)
+
     GenServer.call(@name, {:register, {meeting, application}})
   end
 
@@ -233,7 +234,8 @@ defmodule Vae.Meetings.StateHolder do
 
               %{
                 meeting
-                | geolocation: geolocation
+                | geolocation: geolocation,
+                  name: name
               }
           end)
           |> Enum.group_by(&{&1.geolocation["_geoloc"], &1.place, &1.address})
@@ -241,8 +243,7 @@ defmodule Vae.Meetings.StateHolder do
             format(headers, %{
               academy_id: academy_id,
               certifier_id: certifier_id,
-              meetings: meetings,
-              name: name
+              meetings: meetings
             })
           end)
 

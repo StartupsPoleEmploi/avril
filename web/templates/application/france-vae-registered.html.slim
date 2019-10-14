@@ -13,6 +13,9 @@ main.text-center.justify-content-center role="main"
       = "Si rien ne se passe après 30 secondes, "
       = link("cliquez ici", to: Routes.application_path(@conn, :show, @application_id), class: "btn btn-primary")
       = " pour revenir sur votre profil Avril."
+    p.small
+      = "Afin de préparer au mieux votre rendez-vous, consultez les conseils de notre partenaire sur "
+      = link("France Vae", to: "https://www.francevae.fr/academie/#{@academy_id}")
 
 = unless Mix.env == :dev do
   javascript:
