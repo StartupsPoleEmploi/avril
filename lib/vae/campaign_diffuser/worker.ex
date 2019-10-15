@@ -23,8 +23,8 @@ defmodule Vae.CampaignDiffuser.Worker do
       {:flush} ->
         :ets.delete_all_objects(:pending_emails)
 
-      {:get_pending_emails} ->
-        send_emails(:ets.tab2list(:pending_emails))
+      {:get_pending_emails, sender} ->
+        send(sender, :ets.tab2list(:pending_emails))
 
       msg ->
         Logger.error(fn -> inspect(msg) end)
