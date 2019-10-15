@@ -198,13 +198,17 @@ defmodule Vae.ApplicationController do
         conn,
         %{
           "application_id" => id,
-          "academy_id" => academy_id
+          "academy_id" => academy_id,
+          "meeting_id" => meeting_id
         }
       ) do
+    meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
+
     render(conn, "france-vae-registered.html", %{
       container_class: "d-flex flex-grow-1",
       application_id: id,
-      academy_id: academy_id
+      academy_id: academy_id,
+      meeting: meeting
     })
   end
 end
