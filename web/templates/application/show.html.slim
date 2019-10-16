@@ -73,6 +73,11 @@
                     = if @edit_mode do
                       = date_input f, :birthday, class: "form-control", placeholder: "Date de naissance", disabled: @user.birthday, required: true
                       = error_tag f, :birthday
+                .col
+                  .form-group
+                    = if @edit_mode do
+                      = text_input f, :birth_place, class: "form-control", placeholder: "Lieu de naissance", disabled: @user.birth_place, required: true
+                      = error_tag f, :birth_place
               .row
                 .col
                   .form-group.address-component.mb-1

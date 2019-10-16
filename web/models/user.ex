@@ -26,6 +26,7 @@ defmodule Vae.User do
     field(:city_label, :string)
     field(:country_label, :string)
     field(:birthday, :date)
+    field(:birth_place, :string)
     field(:pe_id, :string)
     field(:pe_connect_token, :string)
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
@@ -74,6 +75,7 @@ defmodule Vae.User do
     city_label
     country_label
     birthday
+    birth_place
     pe_id
     pe_connect_token
     is_admin
