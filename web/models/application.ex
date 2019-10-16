@@ -57,6 +57,7 @@ defmodule Vae.Application do
   end
 
   def submit(application, auto_submitted \\ false) do
+    application = Repo.preload(application, :user, :delegate)
     case User.submit_application_required_missing_fields(application.user) do
       [] ->
         if is_nil(application.submitted_at) do
@@ -67,10 +68,14 @@ defmodule Vae.Application do
                 delegate_access_refreshed_at: DateTime.utc_now()
               })
             ),
-            {:ok, _messages} <- Mailer.send([
-              ApplicationEmail.delegate_submission(application),
-              ApplicationEmail.user_submission_confirmation(application)
-            ])
+            {:ok, _messages} <- Mailer.send(
+              if Delegate.is_asp?(application.delegate), do:
+                ApplicationEmail.asp_user_submission_confirmation(application),
+              else: [
+                ApplicationEmail.delegate_submission(application),
+                ApplicationEmail.user_submission_confirmation(application)
+              ]
+            )
           ) do
             Repo.update(
               __MODULE__.changeset(application, %{
