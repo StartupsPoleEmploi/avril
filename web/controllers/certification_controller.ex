@@ -100,6 +100,10 @@ defmodule Vae.CertificationController do
         user_id: Coherence.current_user(conn).id
       })
       conn
+      |> put_flash(
+          :success,
+          "Votre candidature a bien été créée. Nous vous invitons désormais à compléter votre profil et transmettre votre dossier."
+        )
       |> redirect(to: Routes.application_path(conn, :show, application))
     else
       conn

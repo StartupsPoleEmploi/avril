@@ -2,7 +2,13 @@
   .row
     .col-md-6.order-md-2.bg-primary.d-flex.align-items-center.justify-content-around
       .w-75.my-5
-        h1.h2.text-center.my-5 Je commence ma démarche VAE avec Avril
+        h1.h2.text-center.my-4 Je commence ma démarche VAE avec Avril
+        .my-5
+          p Créer un compte, c'est :
+          ul
+           li identifier mon conseiller VAE le plus proche
+           li avoir la possibilité de lui transmettre des informations sur mon parcours professionnel
+           li pouvoir recevoir un récapitulatif de mes recherches ...
         .text-center
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
         p.text-center.mb-2.mt-4 - OU -
@@ -10,4 +16,4 @@
           action: Routes.registration_path(@conn, :create),
           conn: @conn
     .col-md-6.order-md-1.d-flex.align-items-center.justify-content-around
-      = link("J'ai déjà un compte", to: Routes.session_path(@conn, :new), class: "btn btn-link")
+      = link("J'ai déjà un compte", to: Routes.session_path(@conn, :new), class: "btn btn-primary", data: [analytics: "Profil#deja"])

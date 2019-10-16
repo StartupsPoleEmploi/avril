@@ -21,7 +21,7 @@
     .card-footer.bg-primary.text-secondary
       h5 Pas encore mûr dans votre projet de VAE ?
       p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.
-      = form_for @job_seeker_changeset, Routes.job_seeker_path(@conn, :create), [class: "row align-items-center"], fn f  ->
+      = form_for @job_seeker_changeset, Routes.job_seeker_path(@conn, :create), [class: "row align-items-center", data: [analytics: "Certification#synthese"]], fn f  ->
         = hidden_input f, :certification_id, value: @certification.id
         = hidden_input f, :delegate_id, value: @delegate.id
 
