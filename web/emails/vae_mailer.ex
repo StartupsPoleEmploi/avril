@@ -24,6 +24,7 @@ defmodule Vae.Mailer do
     |> from(format_mailer(:from, from))
     |> to(format_mailer(:to, to))
     |> reply_to_if_present(Map.get(params, :reply_to))
+    |> custom_id_if_present(Map.get(params, :custom_id))
     |> attach_if_attachment(Map.get(params, :attachment))
     |> render_body_or_template_id(template_name_or_id, params)
   end
@@ -68,6 +69,9 @@ defmodule Vae.Mailer do
 
   defp reply_to_if_present(email, nil), do: email
   defp reply_to_if_present(email, reply_to), do: reply_to(email, format_mailer(:reply_to, reply_to))
+
+  defp custom_id_if_present(email, nil), do: email
+  defp custom_id_if_present(email, custom_id), do: put_provider_option(email, :custom_id, custom_id)
 
   defp attach_if_attachment(email, nil), do: email
   defp attach_if_attachment(email, attachment), do: attachment(email, attachment)

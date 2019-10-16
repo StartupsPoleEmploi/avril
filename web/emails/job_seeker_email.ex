@@ -48,7 +48,8 @@ defmodule Vae.JobSeekerEmail do
         text_center: true,
         job_seeker_id: job_seeker.id,
         job_seeker_msg: true,
-        footer_note: :inscrit_de
+        footer_note: :inscrit_de,
+        custom_id: UUID.uuid5(nil, job_seeker.email)
       }
     )
   end

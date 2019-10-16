@@ -10,7 +10,7 @@ defmodule Vae.CampaignDiffuser.Worker do
     Task.start_link(fn ->
       PersistentEts.new(:pending_emails, "pending_emails.tab", [:named_table, :public])
       |> :ets.tab2list()
-      |> Enum.map(fn {_job_seeker_id, email} -> email end)
+      |> Enum.map(fn {_custom_id, email} -> email end)
       |> run()
     end)
   end
@@ -82,12 +82,12 @@ defmodule Vae.CampaignDiffuser.Worker do
   end
 
   defp persist(email) do
-    :ets.insert(:pending_emails, {email.assigns.job_seeker_id, email})
+    :ets.insert(:pending_emails, {email.provider_options.custom_id, email})
     email
   end
 
   defp remove(emails) do
-    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.assigns.job_seeker_id) end)
+    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.provider_options.custom_id) end)
     emails
   end
 end

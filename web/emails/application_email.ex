@@ -74,6 +74,7 @@ defmodule Vae.ApplicationEmail do
       :avril,
       application.user,
       %{
+        custom_id: UUID.uuid5(nil, application.user.email),
         application_id: application.id,
         footer_note: :inscrit_avril
       }
