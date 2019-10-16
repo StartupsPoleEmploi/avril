@@ -26,12 +26,16 @@ defmodule Vae.ApplicationController do
       if length(meetings) > 0,
         do: meetings |> List.first() |> elem(0)
 
-    conn = if is_nil(Coherence.current_user(conn).confirmed_at), do:
-      put_flash(
-        conn,
-        :warning,
-        "Vous n'avez pas encore confirmé votre email. Merci de vérifier votre boite mail ou bien <a href=\"#{Routes.confirmation_path(conn, :new)}\">cliquez ici</a> pour le recevoir à nouveau l'email de confirmation."
-      ), else: conn
+    # conn = if is_nil(Coherence.current_user(conn).confirmed_at), do:
+    #   put_flash(
+    #     conn,
+    #     :warning,
+    #     Phoenix.HTML.raw([
+    #       "Vous n'avez pas encore confirmé votre email. Merci de vérifier votre boite mail ou bien ",
+    #       Phoenix.HTML.Link.button("Cliquez ici", to: Routes.confirmation_path(conn, :create), method: :post) |> Phoenix.HTML.safe_to_string(),
+    #       "pour recevoir à nouveau l'email de confirmation."
+    #     ])
+    #   ), else: conn
 
     render(conn, "show.html", %{
       title:

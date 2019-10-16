@@ -60,6 +60,7 @@
         text-decoration: none;
         margin: 24px 64px;
         display: block;
+        text-align: center;
       }
 
       strong a:hover {

@@ -4,15 +4,21 @@
     button.close aria-label="Close" type="button" data-dismiss="alert"
       span aria-hidden="true" &times;
 - else
-  = if success = get_flash(@conn, :success) do
-    p.alert.alert-success.m2 role="alert"
-      = success
+  = if warning = get_flash(@conn, :warning) do
+    p.alert.alert-warning.m2 role="alert"
+      = warning
       button.close aria-label="Close" type="button" data-dismiss="alert"
         span aria-hidden="true" &times;
   - else
-    = if info = get_flash(@conn, :info) do
-      p.alert.alert-info.m2 role="alert"
-        = info
+    = if success = get_flash(@conn, :success) do
+      p.alert.alert-success.m2 role="alert"
+        = success
         button.close aria-label="Close" type="button" data-dismiss="alert"
           span aria-hidden="true" &times;
+    - else
+      = if info = get_flash(@conn, :info) do
+        p.alert.alert-info.m2 role="alert"
+          = info
+          button.close aria-label="Close" type="button" data-dismiss="alert"
+            span aria-hidden="true" &times;
 

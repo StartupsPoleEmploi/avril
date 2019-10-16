@@ -52,13 +52,25 @@ defmodule Vae.Mailer do
   defp format_mailer!(%{name: name, email: email}), do: {name, email}
   defp format_mailer!(%{Name: name, Email: email}), do: {name, email}
   defp format_mailer!(%{email: email}), do: email
-  defp format_mailer!(email) when is_binary(email), do: format_string_email(email)
   defp format_mailer!(tuple) when is_tuple(tuple), do: tuple
   defp format_mailer!(emails) when is_list(emails), do: Enum.flat_map(emails, &format_mailer!/1)
+  defp format_mailer!(email) when is_binary(email) do
+    case String.split(email, ",") do
+      [] -> nil
+      [single] -> format_string_email(single)
+      list -> Enum.map(list, &format_string_email/1)
+    end
+  end
   defp format_mailer!(anything), do: IO.inspect(anything)
 
-  defp format_mailer(:to, _anything) when not is_nil(@override_email), do: format_mailer!(@override_email)
-  defp format_mailer(_any_role, anything), do: format_mailer!(anything)
+  def format_mailer(:to, _anything) when not is_nil(@override_email), do: format_mailer!(@override_email)
+  def format_mailer(:from, anything) do
+    case format_mailer!(anything) do
+      list when is_list(list) -> List.first(list)
+      no_list -> no_list
+    end
+  end
+  def format_mailer(_any_role, anything), do: format_mailer!(anything)
 
   defp format_string_email(string_email) do
     case Regex.named_captures(~r/(?<Name>.*) ?\<(?<Email>.*)\>/U, string_email) do
