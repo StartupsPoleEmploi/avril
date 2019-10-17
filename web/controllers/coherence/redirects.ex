@@ -51,17 +51,22 @@ defmodule Coherence.Redirects do
   # Add function overrides below
 
   def confirmation_edit(conn, _) do
-    current_user = Vae.Repo.get(Vae.User, Coherence.current_user(conn).id)
-      |> Repo.preload(:applications)
+    if (Coherence.logged_in?(conn)) do
+      current_user = Vae.Repo.get(Vae.User, Coherence.current_user(conn).id)
+        |> Repo.preload(:applications)
 
-    application = current_user
-      |> Map.get(:applications)
-      |> List.first()
+      application = current_user
+        |> Map.get(:applications)
+        |> List.first()
 
-    Coherence.Authentication.Session.update_login(conn, current_user)
-    Plug.Conn.assign(conn, :current_user, current_user)
+      Coherence.Authentication.Session.update_login(conn, current_user)
+      Plug.Conn.assign(conn, :current_user, current_user)
 
-    redirect_to_user_application(conn, current_user, application)
+      redirect_to_user_application(conn, current_user, application)
+    else
+      conn
+        |> redirect(to: root_path(conn, :index))
+    end
   end
 
   # Example usage
