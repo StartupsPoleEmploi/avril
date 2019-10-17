@@ -119,7 +119,8 @@ defmodule Vae.User do
   end
 
   def put_embed_if_necessary(changeset, params, key) do
-    klass = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom() |> List.wrap() |> Module.concat()
+    klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
+    klass = [Elixir, Vae, klass_name] |> Module.concat()
     case params[key] do
       nil -> changeset
       values -> put_embed(changeset, key, Enum.uniq_by(
