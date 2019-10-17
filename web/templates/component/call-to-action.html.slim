@@ -36,8 +36,9 @@
           = button to: Routes.application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: is_nil(Coherence.current_user(@conn).confirmed_at), data: [analytics: "?bouton=soumettre-candidature"] do
             = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
             | Transmettre mon dossier
-      = if is_nil(IO.inspect(Coherence.current_user(@conn)).confirmed_at) do
-        p.text-warning Vous devez confirmer votre adresse email avant de pouvoir transmettre votre dossier.
+      = unless Coherence.current_user(@conn).confirmed_at do
+        .alert.alert-secondary
+          p Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre dossier.
 
 - else
   button.btn.btn-primary.print-button onclick="window.print();"

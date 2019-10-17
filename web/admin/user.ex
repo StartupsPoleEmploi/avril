@@ -36,6 +36,7 @@ defmodule Vae.ExAdmin.User do
         input(user, :country_label)
         input(user, :pe_id)
         input(user, :pe_connect_token)
+        input(user, :confirmed_at)
       end
     end
 

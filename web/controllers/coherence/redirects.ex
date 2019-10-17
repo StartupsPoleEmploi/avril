@@ -121,7 +121,7 @@ defmodule Coherence.Redirects do
   def redirect_to_user_application(conn, user, application) do
     if application do
       conn
-        |> welcome_message_if_necessary(conn, user)
+        |> welcome_message_if_necessary(user)
         |> redirect(to: application_path(conn, :show, application.id))
     else
       conn
@@ -131,8 +131,8 @@ defmodule Coherence.Redirects do
 
   def welcome_message_if_necessary(conn, user) do
     todos = [
-      unless User.address(user), do: "compléter vos informations",
-      unless user.confirmed_at, do: "confirmer votre adresse email"
+      (unless User.address(user), do: "compléter vos informations"),
+      (unless user.confirmed_at, do: "confirmer votre adresse email")
     ] |> Enum.filter(&(&1))
     if length(todos) > 0 do
       message = "Bienvenue sur votre page de candidature. Merci de #{todos |> Enum.join(" et ")} avant de transmettre votre dossier au certificateur."
@@ -141,10 +141,6 @@ defmodule Coherence.Redirects do
     else
       conn
     end
-    base = "Bienvenue sur votre page de candidature."
-
-    base = unless User.address(user)), do: "#{base} Merci de compléter vos informations", else: base
-    base = unless user.confirmed_at, do:
   end
 
 end
