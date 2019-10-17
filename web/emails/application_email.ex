@@ -50,7 +50,7 @@ defmodule Vae.ApplicationEmail do
   def asp_user_submission_confirmation(application) do
     application = Repo.preload(application, [:user, :delegate])
     Mailer.build_email(
-      "application/user_submission_confirmation.html",
+      "application/asp_user_submission_confirmation.html",
       :avril,
       application.user,
       %{
