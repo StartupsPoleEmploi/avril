@@ -25,17 +25,18 @@
         = link((if @edit_mode, do: "Télécharger les étapes", else: "Télécharger le dossier du candidat"), to: Routes.application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profil#Telecharger recap #{if @edit_mode, do: "DE", else: "certificateur"}"], download: "Synthese VAE #{@application.user.name}.pdf")
 
     - else
-      = if length(@meetings) > 0 do
-        button.btn.btn-primary disabled="#{if is_nil(Coherence.current_user(@conn).confirmed_at), do: "disabled"}" onclick="$('body, html').animate({scrollTop: 0}, function(){$('#transmission-tab').trigger('click')});"
-          = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-          | Prendre rendez-vous
-          = unless @application.submitted_at do
-            = " et transmettre mon dossier"
-      - else
-        = button to: Routes.application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: is_nil(Coherence.current_user(@conn).confirmed_at), data: [analytics: "?bouton=soumettre-candidature"] do
-          = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
-          | Transmettre mon dossier
-      = if is_nil(Coherence.current_user(@conn).confirmed_at) do
+      p
+        = if length(@meetings) > 0 do
+          button.btn.btn-primary disabled="#{if is_nil(Coherence.current_user(@conn).confirmed_at), do: "disabled"}" onclick="$('body, html').animate({scrollTop: 0}, function(){$('#transmission-tab').trigger('click')});"
+            = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+            | Prendre rendez-vous
+            = unless @application.submitted_at do
+              = " et transmettre mon dossier"
+        - else
+          = button to: Routes.application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: is_nil(Coherence.current_user(@conn).confirmed_at), data: [analytics: "?bouton=soumettre-candidature"] do
+            = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+            | Transmettre mon dossier
+      = if is_nil(IO.inspect(Coherence.current_user(@conn)).confirmed_at) do
         p.text-warning Vous devez confirmer votre adresse email avant de pouvoir transmettre votre dossier.
 
 - else

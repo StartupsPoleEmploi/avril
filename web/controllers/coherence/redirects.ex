@@ -50,6 +50,20 @@ defmodule Coherence.Redirects do
 
   # Add function overrides below
 
+  def confirmation_edit(conn, _) do
+    current_user = Vae.Repo.get(Vae.User, Coherence.current_user(conn).id)
+      |> Repo.preload(:applications)
+
+    application = current_user
+      |> Map.get(:applications)
+      |> List.first()
+
+    Coherence.Authentication.Session.update_login(conn, current_user)
+    Plug.Conn.assign(conn, :current_user, current_user)
+
+    redirect_to_user_application(conn, current_user, application)
+  end
+
   # Example usage
   # Uncomment the following line to return the user to the login form after logging out
   def session_delete(conn, _) do
@@ -96,7 +110,10 @@ defmodule Coherence.Redirects do
           |> Map.get(:applications)
           |> List.first()
       end
+      redirect_to_user_application(conn, user, application)
+  end
 
+  def redirect_to_user_application(conn, user, application) do
     if application do
       conn
         |> Phoenix.Controller.put_flash(
@@ -108,7 +125,7 @@ defmodule Coherence.Redirects do
       conn
         |> Phoenix.Controller.put_flash(
           :info,
-          "Vous êtes maintenant connecté ! Sélectionnez un diplôme pour démarrer une candidature."
+          "Vous êtes maintenant connecté !"
         )
         |> redirect(to: root_path(conn, :index))
     end
