@@ -57,7 +57,7 @@ defmodule Vae.Application do
   end
 
   def submit(application, auto_submitted \\ false) do
-    application = Repo.preload(application, :user, :delegate)
+    application = Repo.preload(application, [:user, :delegate])
     case User.submit_application_required_missing_fields(application.user) do
       [] ->
         if is_nil(application.submitted_at) do
