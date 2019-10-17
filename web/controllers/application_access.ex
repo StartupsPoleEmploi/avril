@@ -59,7 +59,7 @@ defmodule Vae.Plugs.ApplicationAccess do
     else
       {:error,
        %{
-         to: Helpers.session_path(conn, :new, %{"mode" => "pe-connect"}),
+         to: Helpers.session_path(conn, :new),
          msg: "Vous devez vous connecter"
        }}
     end
