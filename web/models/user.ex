@@ -119,7 +119,7 @@ defmodule Vae.User do
   end
 
   def put_embed_if_necessary(changeset, params, key) do
-    klass = key |> Atom.to_string() |> String.capitalize() |> String.to_atom() |> List.wrap() |> Module.concat()
+    klass = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom() |> List.wrap() |> Module.concat()
     case params[key] do
       nil -> changeset
       values -> put_embed(changeset, key, Enum.uniq_by(
