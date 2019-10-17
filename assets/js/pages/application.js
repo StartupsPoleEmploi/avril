@@ -53,26 +53,26 @@ import $ from 'jquery';
       }
     });
 
-    $('a.show-hidden-meetings').on('click', e => {
-      $('.meeting-card').removeClass('d-none');
-      $(e.target).hide();
-      e.preventDefault();
-    })
-
-    const activateSubmitButton = () => {
-      if ($('select.date-select:not(:disabled)').length) {
-        $('form.select-meeting').find('button[name="book"][value="on"]').removeAttr('disabled');
-      } else {
-        $('form.select-meeting').find('button[name="book"][value="on"]').attr('disabled', 'disabled');
-      }
-    }
-    activateSubmitButton();
-
-    $('.meeting-card').on('click', e => {
-      document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'});
-      $('.date-select').attr('disabled', true);
-      $(`#${$(e.currentTarget).attr('id').replace('tab-', 'select-')}`).removeAttr('disabled');
-      activateSubmitButton();
-    });
   }
+  $('a.show-hidden-meetings').on('click', e => {
+    $('.meeting-card').removeClass('d-none');
+    $(e.target).hide();
+    e.preventDefault();
+  })
+
+  const activateSubmitButton = () => {
+    if ($('select.date-select:not(:disabled)').length) {
+      $('form.select-meeting').find('button[name="book"][value="on"]').removeAttr('disabled');
+    } else {
+      $('form.select-meeting').find('button[name="book"][value="on"]').attr('disabled', 'disabled');
+    }
+  }
+  activateSubmitButton();
+
+  $('.meeting-card').on('click', e => {
+    document.getElementById('when').scrollIntoView({behavior: 'smooth', block: 'center'});
+    $('.date-select').attr('disabled', true);
+    $(`#${$(e.currentTarget).attr('id').replace('tab-', 'select-')}`).removeAttr('disabled');
+    activateSubmitButton();
+  });
 })();

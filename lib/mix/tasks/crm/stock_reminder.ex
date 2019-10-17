@@ -2,12 +2,7 @@ defmodule Mix.Tasks.Crm.StockReminder do
   require Logger
   use Mix.Task
 
-  alias Vae.Crm.Config
-  alias Vae.JobSeeker
-  alias Vae.Mailer.Email
-  alias Vae.Repo
-
-  @sender Application.get_env(:vae, :sender)
+  alias Vae.{JobSeeker, Repo}
 
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
@@ -15,10 +10,12 @@ defmodule Mix.Tasks.Crm.StockReminder do
     job_seekers()
     |> build_records()
     |> build_emails()
-    |> send()
-    |> (fn emails ->
-          Logger.info(fn -> "stock_reminder: #{Kernel.length(emails)} emails sent" end)
-        end).()
+    |> Vae.Mailer.send()
+    |> (
+      fn {:ok, emails} ->
+        Logger.info(fn -> "stock_reminder: #{Kernel.length(emails)} emails sent" end)
+      end
+    ).()
   end
 
   def job_seekers() do
@@ -87,27 +84,7 @@ defmodule Mix.Tasks.Crm.StockReminder do
   def build_emails(job_seekers) do
     job_seekers
     |> Enum.map(fn {job_seeker_id, payload} ->
-      %Email{
-        custom_id: UUID.uuid5(nil, payload["email"]),
-        to: %{Email: payload["email"], Name: "#{payload["first_name"]} #{payload["last_name"]}"},
-        vars: %{
-          job_seeker_id: job_seeker_id
-        },
-        template_id: Config.get_stock_template_id()
-      }
-    end)
-  end
-
-  def send(emails) do
-    emails
-    |> Enum.reduce([], fn email, acc ->
-      case @sender.send(email) do
-        [%Email{state: :success} = email] ->
-          [email | acc]
-
-        _ ->
-          acc
-      end
+      Vae.JobSeekerEmail.stock(payload)
     end)
   end
 end

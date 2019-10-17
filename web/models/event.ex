@@ -10,6 +10,8 @@ defmodule Vae.Event do
     field(:event, :string)
     field(:email, :string)
     field(:time, :utc_datetime)
+    field(:certification_id, :integer)
+    field(:delegate_id, :integer)
     field(:campaign_id, :integer)
     field(:contact_id, :integer)
     field(:customcampaign, :string)
@@ -18,7 +20,7 @@ defmodule Vae.Event do
     field(:payload, :string)
   end
 
-  @fields ~w(type event email campaign_id contact_id customcampaign message_id custom_id payload)a
+  @fields ~w(type event email certification_id delegate_id campaign_id contact_id customcampaign message_id custom_id payload)a
 
   def changeset(struct, params \\ %{}) do
     struct

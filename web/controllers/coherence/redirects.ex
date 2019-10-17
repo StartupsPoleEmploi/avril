@@ -1,4 +1,5 @@
 defmodule Coherence.Redirects do
+  require Logger
   @moduledoc """
   Define controller action redirection functions.
 
@@ -45,6 +46,8 @@ defmodule Coherence.Redirects do
   # Uncomment the import below if adding overrides
   import Vae.Router.Helpers
 
+  alias Vae.{Application, Repo}
+
   # Add function overrides below
 
   # Example usage
@@ -55,7 +58,6 @@ defmodule Coherence.Redirects do
         redirect(conn, to: root_path(conn, :index))
 
       token ->
-
         url =
           "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
             token
@@ -64,4 +66,52 @@ defmodule Coherence.Redirects do
         redirect(conn, external: url)
     end
   end
+
+  def session_create(conn, _params) do
+    create_or_get_application(conn, Coherence.current_user(conn))
+  end
+
+  def create_or_get_application(conn, user) do
+    certification_id = Plug.Conn.get_session(conn, :certification_id)
+    delegate_id = Plug.Conn.get_session(conn, :delegate_id)
+
+    application =
+      if certification_id && delegate_id do
+        case Application.find_or_create_with_params(%{
+          user_id: user.id,
+          certification_id: certification_id,
+          delegate_id: delegate_id
+        }) do
+          {:ok, application} ->
+            Plug.Conn.delete_session(conn, :certification_id)
+            Plug.Conn.delete_session(conn, :delegate_id)
+            application
+          error ->
+            Logger.warn("Error: #{inspect(error)}")
+            nil
+        end
+      else
+        user
+          |> Repo.preload(:applications)
+          |> Map.get(:applications)
+          |> List.first()
+      end
+
+    if application do
+      conn
+        |> Phoenix.Controller.put_flash(
+            :success,
+            "Bienvenue sur votre page de candidature. Merci de compléter vos informations #{unless user.confirmed_at, do: "et confirmer votre adresse email "}avant de transmettre votre dossier au certificateur."
+          )
+        |> redirect(to: application_path(conn, :show, application.id))
+    else
+      conn
+        |> Phoenix.Controller.put_flash(
+          :info,
+          "Vous êtes maintenant connecté ! Sélectionnez un diplôme pour démarrer une candidature."
+        )
+        |> redirect(to: root_path(conn, :index))
+    end
+  end
+
 end

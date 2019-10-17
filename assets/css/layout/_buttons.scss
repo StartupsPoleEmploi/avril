@@ -1,5 +1,5 @@
 a {
-  color: $dm-primary-green;
+  color: $dm-primary-blue;
   position: relative;
 
   .content & {
@@ -52,6 +52,16 @@ a, button {
 .btn {
   font: bold 18px/24px $dm-font-nuito;
   white-space: normal;
+
+  &.btn-primary {
+    &.btn-inverse {
+      background-color: $white;
+      border-color: $white;
+      &:hover {
+        color: $dm-primary-green;
+      }
+    }
+  }
 
   &.btn-default {
     color: $dm-primary-blue;
@@ -111,6 +121,16 @@ a, button {
     border-radius: 38.5px;
     box-shadow: 0 8px 24px 0 rgba(250,56,119,0.38);
   }
+
+  &.btn-conseillere {
+    display: inline-flex;
+    align-items: center;
+
+    img, span.fa {
+      margin-right: 2rem;
+      width: 2em;
+    }
+  }
 }
 
 a[target="_blank"]:before,
@@ -132,9 +152,4 @@ a[href^="mailto:"]:before {
     border: none;
     cursor: pointer;
   }
-}
-
-.btn-history-back {
-  display: flex;
-  align-items: center;
 }

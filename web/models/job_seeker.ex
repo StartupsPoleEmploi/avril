@@ -1,7 +1,8 @@
 defmodule Vae.JobSeeker do
   use Vae.Web, :model
 
-  alias Vae.{Analytic, Event, JobSeeker, Repo}
+  alias Ecto.Changeset
+  alias Vae.{Analytic, Event, Repo}
 
   schema "job_seekers" do
     field(:identifier, :string)
@@ -25,7 +26,7 @@ defmodule Vae.JobSeeker do
   end
 
   @doc false
-  def changeset(%JobSeeker{} = job_seeker, attrs) do
+  def changeset(%__MODULE__{} = job_seeker, attrs) do
     job_seeker
     |> cast(attrs, [
       :identifier,
@@ -168,4 +169,45 @@ defmodule Vae.JobSeeker do
     changeset
     |> put_embed(:events, [event_changeset | events])
   end
+
+  def fullname(job_seeker) do
+    cond do
+      job_seeker.first_name || job_seeker.last_name -> "#{job_seeker.first_name} #{job_seeker.last_name}" |> String.trim()
+      true -> job_seeker.email
+    end
+  end
+
+  def formatted_email(job_seeker) do
+    cond do
+      fullname(job_seeker) == job_seeker.email -> job_seeker.email
+      true -> {fullname(job_seeker), job_seeker.email}
+    end
+  end
+
+  def insert_or_update!(job_seekers) when is_list(job_seekers) do
+    Enum.map(job_seekers, &insert_or_update!(&1))
+  end
+
+  def insert_or_update!(job_seeker) do
+    case Repo.get_by(__MODULE__, email: job_seeker.email) do
+      nil ->
+        insert!(job_seeker)
+
+      actual_job_seeker ->
+        update!(actual_job_seeker, job_seeker)
+    end
+  end
+
+  def insert!(job_seeker) do
+    %__MODULE__{}
+    |> __MODULE__.changeset(job_seeker)
+    |> Repo.insert!()
+  end
+
+  def update!(current_job_seeker, job_seeker) do
+    current_job_seeker
+    |> Changeset.change(job_seeker)
+    |> Repo.update!()
+  end
+
 end

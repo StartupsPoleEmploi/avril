@@ -48,13 +48,13 @@ defmodule Vae.Web do
       # import Vae.Router.Helpers
       alias Vae.Router.Helpers, as: Routes
       import Vae.Gettext
-      import Vae.Controllers.Helpers, only: [redirect_back: 2]
+      import Vae.Controllers.Helpers
     end
   end
 
   def view do
     quote do
-      use Phoenix.View, root: "web/templates"
+      use Phoenix.View, root: "web/templates", pattern: "**/*"
 
       # Import convenience functions from controllers
       import Phoenix.Controller,

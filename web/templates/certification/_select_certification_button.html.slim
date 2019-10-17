@@ -1,0 +1,1 @@
+= button("Je veux ce diplôme", to: Routes.certification_select_path(@conn, :select, @certification.id, delegate_id: (assigns[:delegate] || %{}) |> Map.get(:id)), method: :put, aria_label: "S'inscrire pour obtenir le diplôme #{format_certification_label(@certification)}", class: "btn btn-primary")

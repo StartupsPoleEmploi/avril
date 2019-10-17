@@ -4,7 +4,10 @@ defmodule Vae.ExAdmin.Profession do
   register_resource Vae.Profession do
     query do
       %{
-        index: [default_sort: [asc: :id]]
+        index: [
+          preload: [:rome],
+          default_sort: [asc: :id]
+        ]
       }
     end
   end

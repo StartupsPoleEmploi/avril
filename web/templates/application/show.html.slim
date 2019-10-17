@@ -26,17 +26,32 @@
     .tab-content
       #experience-pro.tab-pane.fade.show.active role="tabpanel" aria-labelledby="experience-pro-tab"
         .row
+          .col-md-12.mb-4
+            = if !@user.first_name && !@user.last_name do
+              .alert.alert-secondary
+                | Nous vous invitons à remplir vos coordonnées, et si vous l'avez sous la main, à nous envoyer votre CV pour que ces informations soient transmises au certificateur.
           .col-md-6
-            = unless @edit_mode do
-              h3.my-4 Le candidat
-            p
-              strong #{@user.first_name} #{@user.last_name}
             = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit", data: [analytics: "Profil#modifier coordonnees"]], fn f ->
+              .row
+                = if @edit_mode do
+                  .col
+                    .form-group
+                      = text_input f, :first_name, class: "form-control form-control-lg", placeholder: "Prénom", disabled: @user.first_name, required: true
+                      = error_tag f, :first_name
+                  .col
+                    .form-group
+                      = text_input f, :last_name, class: "form-control form-control-lg", placeholder: "Nom de famille", disabled: @user.last_name, required: true
+                      = error_tag f, :last_name
+                - else
+                  h3.my-4 Le candidat
+                  .col
+                    p
+                      strong #{@user.first_name} #{@user.last_name}
               .row
                 .col
                   .form-group
                     = if @edit_mode do
-                      = text_input f, :email, class: "form-control font-weight-bold", placeholder: "Email", disabled: true, required: true
+                      = text_input f, :email, class: "form-control", placeholder: "Email", disabled: @user.email, required: true
                       = error_tag f, :email
                     - else
                       = link(@user.email, to: "mailto:#{@user.email}")
@@ -44,7 +59,8 @@
                 .col
                   .form-group
                     = if @edit_mode do
-                      = telephone_input f, :phone_number, class: "form-control font-weight-bold #{if !@user.phone_number, do: "form-highlight"}", placeholder: "Saisissez votre numéro de téléphone", disabled: !is_nil(@user.phone_number), autofocus: is_nil(@user.phone_number), required: true, pattern: "[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}", data: [analytics: "Profil#ajouter tel"]
+                      - phone_highlight = @user.pe_id && !@user.phone_number
+                      = telephone_input f, :phone_number, class: "form-control #{if phone_highlight, do: "form-highlight"}", placeholder: "Saisissez votre numéro de téléphone", disabled: @user.phone_number, autofocus: phone_highlight, required: true, pattern: "[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}", data: [analytics: "Profil#ajouter tel"]
                       = error_tag f, :phone_number
                     - else
                       = if @user.phone_number do
@@ -53,9 +69,20 @@
                         p Téléphone non renseigné par le candidat
               .row
                 .col
+                  .form-group
+                    = if @edit_mode do
+                      = date_input f, :birthday, class: "form-control", placeholder: "Date de naissance", disabled: @user.birthday, required: true
+                      = error_tag f, :birthday
+                .col
+                  .form-group
+                    = if @edit_mode do
+                      = text_input f, :birth_place, class: "form-control", placeholder: "Lieu de naissance", disabled: @user.birth_place, required: true
+                      = error_tag f, :birth_place
+              .row
+                .col
                   .form-group.address-component.mb-1
                     .input-group
-                      = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: true
+                      = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: Vae.User.address_street(@user)
                       .input-group-append
                         button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
                     = error_tag f, :address4
@@ -71,16 +98,16 @@
               .row
                 .col-3.pr-0
                   .form-group.mb-1
-                    = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: true
+                    = text_input f, :postal_code, class: "form-control", placeholder: "Code postal", disabled: @user.postal_code
                     = error_tag f, :postal_code
                 .col-9
                   .form-group.mb-1
-                    = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: true
+                    = text_input f, :city_label, class: "form-control", placeholder: "Commune", disabled: @user.city_label
                     = error_tag f, :city_label
               .row
                 .col
                   .form-group.mb-4
-                    = text_input f, :country_label, class: "form-control", placeholder: "Pays", disabled: true
+                    = text_input f, :country_label, class: "form-control", placeholder: "Pays", disabled: @user.country_label
                     = error_tag f, :country_label
               = if @edit_mode do
                 .row
@@ -111,7 +138,7 @@
                   = for resume <- @application.resumes do
                     li.list-inline-item.rounded.resume-block
                       = link to: resume.url, class: "download", data: [analytics: (if @edit_mode, do: "CV#download candidat", else: "CV#download certificateur")] do
-                        .content
+                        div
                           span.fa.fa-download
                           p= resume.filename
                       = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
@@ -221,7 +248,7 @@
               .col-sm-12
                 .tab-content
                   h3.text-center Quand ?
-                  = for {{place, address, slug} = place_infos, meetings} <- @meetings do
+                  = for {{_place, _address, slug} = place_infos, meetings} <- @meetings do
                     div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{slug}" id="place-#{slug}" class="#{if place_infos == @preselected_place, do: "show active"}"
                       = select(f, :meeting_id, Enum.map(meetings, fn meeting -> [value: meeting.meeting_id2, key: "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))} de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)} #{if meeting.remaining_places <= 20, do: "(#{meeting.remaining_places} places disponibles)"}"] end), class: "custom-select custom-select-lg date-select", id: "select-#{slug}", disabled: place_infos != @preselected_place)
             .row

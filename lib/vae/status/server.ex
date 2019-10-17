@@ -4,7 +4,7 @@ defmodule Vae.Status.Server do
 
   @name Status
   @ets_table :status
-  @message :message
+  @ets_key :message
 
   @doc false
   def start_link() do
@@ -12,7 +12,7 @@ defmodule Vae.Status.Server do
   end
 
   @impl true
-  def init(delegate) do
+  def init(_delegate) do
     Logger.info("Init status server")
     PersistentEts.new(@ets_table, "#{@ets_table}.tab", [
       :set,

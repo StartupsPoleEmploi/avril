@@ -3,9 +3,9 @@ defmodule Vae.ResumeController do
   use Vae.Web, :controller
   plug(Vae.Plugs.ApplicationAccess)
 
-  alias Vae.{Application, Resume}
+  alias Vae.{Resume}
 
-  def create(conn, %{"application_id" => id, "resume" => resume_params}) do
+  def create(conn, %{"application_id" => _application_id, "resume" => resume_params}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
@@ -15,17 +15,17 @@ defmodule Vae.ResumeController do
         {:ok, _resume} ->
           conn
           |> put_flash(:success, "CV uploadé avec succès.")
-          |> redirect(to: Routes.application_path(conn, :show, application))
+          |> redirect_back(default: Routes.application_path(conn, :show, application))
 
         {:error, msg} ->
           conn
           |> put_flash(:error, msg)
-          |> redirect(to: Routes.application_path(conn, :show, application))
+          |> redirect_back(default: Routes.application_path(conn, :show, application))
       end
     end
   end
 
-  def delete(conn, %{"application_id" => application_id, "id" => id}) do
+  def delete(conn, %{"application_id" => _application_id, "id" => id}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
@@ -36,12 +36,12 @@ defmodule Vae.ResumeController do
       {:ok, _resume} ->
         conn
         |> put_flash(:success, "CV supprimé avec succès.")
-        |> redirect(to: Routes.application_path(conn, :show, application))
+        |> redirect_back(default: Routes.application_path(conn, :show, application))
 
       {:error, _msg} ->
         conn
         |> put_flash(:error, "Le CV n'a pas pu être supprimé, merci de réessayer plus tard.")
-        |> redirect(to: Routes.application_path(conn, :show, application))
+        |> redirect_back(default: Routes.application_path(conn, :show, application))
     end
   end
 end

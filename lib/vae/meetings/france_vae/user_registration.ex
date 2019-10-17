@@ -32,7 +32,7 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
         nomNaiss: nil,
         prenom: user.first_name,
         dateNaissance: format_birthday(user.birthday),
-        lieuNaissance: nil,
+        lieuNaissance: user.birth_place,
         cp: user.postal_code,
         commune: user.city_label,
         courrier: user.email,

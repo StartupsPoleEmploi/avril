@@ -15,6 +15,10 @@ body {
   align-items: stretch;
   background: $dm-primary-light-grey;
 
+  &.pdf {
+    background: white;
+  }
+
   .content {
     margin-top: 3rem;
     margin-bottom: 3rem;
@@ -89,4 +93,8 @@ select.custom-select {
     min-height: 10px;
     @include make-uncontainer-responsive();
   }
+}
+
+.bg-grey {
+  background-color: $dm-primary-light-grey;
 }

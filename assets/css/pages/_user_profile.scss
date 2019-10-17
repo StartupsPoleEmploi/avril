@@ -1,7 +1,7 @@
 .user-profile {
-  input {
-    font-size: 1.1rem;
-  }
+  // input {
+  //   font-size: 1.1rem;
+  // }
 
   h3 {
     margin-bottom: 1rem;
@@ -64,6 +64,14 @@
       margin-right: 2rem;
     }
 
+    p {
+      white-space: pre-wrap;
+      white-space: -moz-pre-wrap;
+      white-space: -pre-wrap;
+      white-space: -o-pre-wrap;
+      word-wrap: break-word;
+    }
+
     &.upload-block {
       border-style: dashed;
       &.dragged {
@@ -84,6 +92,9 @@
       align-items: center;
       justify-content: center;
       background: $white;
+      &:after {
+        content: none;
+      }
     }
 
     a.remove {

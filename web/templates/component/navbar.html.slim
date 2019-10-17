@@ -9,15 +9,15 @@ nav.navbar.dm-navbar.navbar-expand-md
         li.nav-item.d-md-none.mt-4
           = render Vae.ComponentView, "active_link.html", text: "Accueil", class: "nav-link p-0", to: Routes.root_path(@conn, :index), conn: @conn
         li.nav-item
-         = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :vae), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :vae), conn: @conn
         li.nav-item
-         = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :financement), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :financement), conn: @conn
         li.nav-item
-         = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
+          = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
       = if Coherence.current_user(@conn) do
         li.nav-item.dropdown
           a#navbarDropdown.nav-link.dropdown-toggle aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" href="#" role="button" data-id="#{Coherence.current_user(@conn).id}"
-            = "#{Coherence.current_user(@conn).first_name} #{Coherence.current_user(@conn).last_name}"
+            = Vae.User.fullname(Coherence.current_user(@conn))
           .dropdown-menu.dropdown-menu-right aria-labelledby="navbarDropdown"
             - current_user = Repo.preload(Coherence.current_user(@conn), applications: :certification)
             = for application <- current_user.applications do
@@ -25,3 +25,6 @@ nav.navbar.dm-navbar.navbar-expand-md
               .dropdown-divider
             = link(to: Routes.session_path(@conn, :delete), method: :delete, class: "dropdown-item", data: [analytics: "?bouton=logout"]) do
               span.text Me déconnecter
+      - else
+        li.nav-item
+          = link "Mon dossier VAE", to: Routes.session_path(@conn, :new), class: "btn btn-primary"

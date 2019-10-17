@@ -2,7 +2,7 @@ defmodule Vae.CertificationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Certification, Delegate, Places, Rome, SearchDelegate, ViewHelpers}
+  alias Vae.{Application, Certification, Delegate, JobSeeker, Places, Rome, SearchDelegate, User, ViewHelpers}
 
   def cast_array(str), do: String.split(str, ",")
 
@@ -79,6 +79,40 @@ defmodule Vae.CertificationController do
     end
   end
 
+  def select(conn, %{"certification_id" => certification_id} = params) do
+    certification_id = Vae.String.to_id(certification_id)
+    delegate_id =
+      Vae.String.to_id(params["delegate_id"]) ||
+      Vae.String.to_id(params["certificateur"]) ||
+      ((get_delegate(%{
+        geo: %{
+          "lat" => get_session(conn, :search_lat),
+          "lng" => get_session(conn, :search_lng)
+        },
+        postcode: get_session(conn, :search_postcode),
+        administrative: get_session(conn, :search_administrative)
+      }, Repo.get(Certification, certification_id)) || %{}) |> Map.get(:id))
+
+    if Coherence.logged_in?(conn) do
+      {:ok, application} = Application.find_or_create_with_params(%{
+        certification_id: certification_id,
+        delegate_id: delegate_id,
+        user_id: Coherence.current_user(conn).id
+      })
+      conn
+      |> put_flash(
+          :success,
+          "Votre candidature a bien été créée. Nous vous invitons désormais à compléter votre profil et transmettre votre dossier."
+        )
+      |> redirect(to: Routes.application_path(conn, :show, application))
+    else
+      conn
+      |> put_session(:certification_id, certification_id)
+      |> put_session(:delegate_id, delegate_id)
+      |> redirect(to: Routes.registration_path(conn, :new))
+    end
+  end
+
   defp redirect_or_show(conn, certification, nil, _has_delegate) do
     redirect(
       conn,
@@ -111,6 +145,8 @@ defmodule Vae.CertificationController do
       certification: certification,
       delegate: delegate,
       is_asp: Delegate.is_asp?(delegate),
+      user_changeset: User.changeset(%User{}, %{}),
+      job_seeker_changeset: JobSeeker.changeset(%JobSeeker{}, %{}),
       with_search: true
     )
   end
@@ -121,7 +157,6 @@ defmodule Vae.CertificationController do
          meta <- enrich_filter_values(Vae.Map.params_with_ids(filter_values)) do
       render(
         conn,
-        Vae.CertificationView,
         "index.html",
         certifications: page.entries,
         no_results: count_without_level_filter(params) == 0,

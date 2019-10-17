@@ -21,9 +21,6 @@ defmodule Vae.Router do
       db_model: @user_schema,
       id_key: @id_key
     )
-
-    plug(:put_user_token)
-    #    plug(Vae.Tracker)
   end
 
   pipeline :protected do
@@ -76,7 +73,9 @@ defmodule Vae.Router do
     # Basic navigation
     resources("/metiers", Vae.ProfessionController, only: [:index])
     resources("/certificateurs", Vae.DelegateController, only: [:index])
-    resources("/diplomes", Vae.CertificationController, only: [:index, :show])
+    resources("/diplomes", Vae.CertificationController, only: [:index, :show]) do
+      put("/select", Vae.CertificationController, :select, as: :select)
+    end
 
     # Search endpoint
     post("/search", Vae.SearchController, :search)
@@ -104,6 +103,7 @@ defmodule Vae.Router do
     get("/candidatures/:id/inadmissible", Vae.ApplicationController, :inadmissible)
 
     # Mailing link redirection
+    resources("/candidats", Vae.JobSeekerController, only: [:create])
     get("/candidats/:id/admissible", Vae.JobSeekerController, :admissible)
     get("/candidats/:id/inadmissible", Vae.JobSeekerController, :inadmissible)
 
@@ -134,15 +134,7 @@ defmodule Vae.Router do
     admin_routes()
   end
 
-  defp put_user_token(conn, _) do
-    if current_user = Coherence.current_user(conn) do
-      assign(conn, :user_token, Phoenix.Token.sign(conn, "user socket", current_user.id))
-    else
-      conn
-    end
-  end
-
-  defp fetch_app_status(conn, _opts \\ []) do
+  defp fetch_app_status(conn, _opts) do
     status = GenServer.call(Status, :get)
     if status && # There is a status
       get_session(conn, :app_status_closed) != Vae.String.encode(status.message) && # not closed
