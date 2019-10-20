@@ -29,7 +29,7 @@
           .col-md-12.mb-4
             = if !@user.first_name && !@user.last_name do
               .alert.alert-secondary
-                | Nous vous invitons à remplir vos coordonnées, et si vous l'avez sous la main, à nous envoyer votre CV pour que ces informations soient transmises au certificateur.
+                | Nous vous invitons à remplir vos coordonnées, et si vous l'avez sous la main, à nous envoyer votre CV pour que ces informations soient transmises au centre VAE.
           .col-md-6
             = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit", data: [analytics: "Profil#modifier coordonnees"]], fn f ->
               .row
@@ -129,7 +129,7 @@
           .col-md-12
             h3.my-4 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
             p
-              | Profitez de cet espace pour transmettre votre CV au certificateur pour qu'il vous connaisse mieux.
+              | Profitez de cet espace pour transmettre votre CV au centre VAE pour qu'il vous connaisse mieux.
               span.disabled= " (Cette étape est facultative.)"
           .col-md-12
             = if @edit_mode || length(@application.resumes) > 0 do
