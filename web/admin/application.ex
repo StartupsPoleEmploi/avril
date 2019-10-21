@@ -45,7 +45,7 @@ defmodule Vae.ExAdmin.Application do
       action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
     end
 
-    show _application do
+    show application do
       attributes_table do
         row :user
         row :certification
@@ -56,6 +56,14 @@ defmodule Vae.ExAdmin.Application do
         row :inadmissible_at
         row :inserted_at
         row :updated_at
+      end
+
+      panel "Resumes" do
+        table_for Vae.Repo.preload(application, [:resumes]).resumes do
+          column(:id, fn r -> Helpers.link_to_resource(r, namify: fn r -> r.id end) end)
+          column(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url) end)
+          column(:inserted_at)
+        end
       end
     end
 
@@ -97,6 +105,9 @@ defmodule Vae.ExAdmin.Application do
         index: [
           default_sort: [desc: :inserted_at]
         ]
+        # show: [
+        #   preload: [:resumes]
+        # ]
       }
     end
   end

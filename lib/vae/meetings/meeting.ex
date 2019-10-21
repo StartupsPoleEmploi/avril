@@ -12,6 +12,7 @@ defmodule Vae.Meetings.Meeting do
     field(:place, :string)
     field(:address, :string)
     field(:postal_code, :string)
+    field(:city, :string)
     field(:geolocation, :map)
     field(:target, :string)
     field(:remaining_places, :integer)

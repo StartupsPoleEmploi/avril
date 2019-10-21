@@ -30,11 +30,11 @@ defmodule Vae.StepsPdf do
         <link href="https://avril.pole-emploi.fr/css/app.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet">
       </head>
-      <body>
+      <body class="pdf">
         <img
           height="auto"
-          src="http://yt18.mjt.lu/tplimg/yt18/b/6yv1/3t9t.png"
-          class="img-fluid"
+          src="https://avril.pole-emploi.fr/images/avril-beta.svg"
+          class="img-fluid" style="display: block; margin: auto;"
         />
         #{Enum.map_join(render_steps, &Phoenix.HTML.safe_to_string/1)}
       </body>

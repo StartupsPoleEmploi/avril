@@ -103,7 +103,7 @@ defmodule Vae.Meetings.Afpa.Scraper do
       node_list
       |> Enum.filter(fn
         node when is_tuple(node) -> elem(node, 0) != tag_name
-        node -> true
+        _node -> true
       end)
 
   defp format_date(french_date, time) do

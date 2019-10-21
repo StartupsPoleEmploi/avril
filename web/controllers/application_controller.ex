@@ -5,7 +5,7 @@ defmodule Vae.ApplicationController do
   alias Vae.{Application, Resume, User}
   alias Vae.Crm.Polls
 
-  plug Vae.Plugs.ApplicationAccess when not (action in [:show, :admissible, :inadmissible])
+  plug Vae.Plugs.ApplicationAccess when action not in [:show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
   def show(conn, %{"id" => id} = params) do
@@ -27,6 +27,17 @@ defmodule Vae.ApplicationController do
       if length(meetings) > 0,
         do: meetings |> List.first() |> elem(0)
 
+    # conn = if is_nil(Coherence.current_user(conn).confirmed_at), do:
+    #   put_flash(
+    #     conn,
+    #     :warning,
+    #     Phoenix.HTML.raw([
+    #       "Vous n'avez pas encore confirmé votre email. Merci de vérifier votre boite mail ou bien ",
+    #       Phoenix.HTML.Link.button("Cliquez ici", to: Routes.confirmation_path(conn, :create), method: :post) |> Phoenix.HTML.safe_to_string(),
+    #       "pour recevoir à nouveau l'email de confirmation."
+    #     ])
+    #   ), else: conn
+
     render(conn, "show.html", %{
       title:
         "Candidature VAE de #{application.user.name} pour un diplôme de #{
@@ -39,7 +50,7 @@ defmodule Vae.ApplicationController do
       grouped_experiences:
         application.user.proven_experiences
         |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
-        |> Vae.Map.map_values(fn {k, experiences} ->
+        |> Vae.Map.map_values(fn {_k, experiences} ->
           Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
         end)
         |> Map.to_list()
@@ -177,7 +188,7 @@ defmodule Vae.ApplicationController do
   def france_vae_redirect(
         conn,
         %{
-          "application_id" => id,
+          "application_id" => _id,
           "academy_id" => academy_id
         } = params
       ) do

@@ -8,7 +8,7 @@ defmodule Vae.Application do
     Certification,
     Delegate,
     Meetings.Meeting,
-    Email,
+    Mailer,
     Repo,
     Resume,
     User
@@ -47,54 +47,51 @@ defmodule Vae.Application do
   end
 
   def find_or_create_with_params(
-        %{user_id: _user_id, delegate_id: _delegate_id, certification_id: _certification_id} =
+        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} =
           params
-      ) do
-    Repo.get_by(__MODULE__, params) ||
-      case Repo.insert(__MODULE__.changeset(%__MODULE__{}, params)) do
-        {:ok, application} ->
-          application
-
-        {:error, msg} ->
-          Logger.error(fn -> inspect(msg) end)
-          nil
-      end
+      ) when not is_nil(user_id) and not is_nil(delegate_id) and not is_nil(certification_id) do
+    case Repo.get_by(__MODULE__, params) do
+      nil -> Repo.insert(changeset(%__MODULE__{}, params))
+      application -> {:ok, application}
+    end
   end
 
-  def find_or_create_with_params(_params), do: nil
-
   def submit(application, auto_submitted \\ false) do
-    case application.submitted_at do
-      nil ->
-        case Repo.update(
-               __MODULE__.changeset(application, %{
-                 delegate_access_hash: generate_hash(64),
-                 delegate_access_refreshed_at: DateTime.utc_now()
-               })
-             ) do
-          {:ok, application} ->
-            case Email.send([
-                   ApplicationEmail.delegate_submission(application),
-                   ApplicationEmail.user_submission_confirmation(application)
-                 ]) do
-              {:ok, _message} ->
-                Repo.update(
-                  __MODULE__.changeset(application, %{
-                    has_just_been_auto_submitted: auto_submitted,
-                    submitted_at: DateTime.utc_now()
-                  })
-                )
-
-              error ->
-                error
-            end
-
-          error ->
-            error
+    application = Repo.preload(application, [:user, :delegate])
+    case User.submit_application_required_missing_fields(application.user) do
+      [] ->
+        if is_nil(application.submitted_at) do
+          with(
+            {:ok, application} <- Repo.update(
+              __MODULE__.changeset(application, %{
+                delegate_access_hash: generate_hash(64),
+                delegate_access_refreshed_at: DateTime.utc_now()
+              })
+            ),
+            {:ok, _messages} <- Mailer.send(
+              if Delegate.is_asp?(application.delegate), do:
+                ApplicationEmail.asp_user_submission_confirmation(application),
+              else: [
+                ApplicationEmail.delegate_submission(application),
+                ApplicationEmail.user_submission_confirmation(application)
+              ]
+            )
+          ) do
+            Repo.update(
+              __MODULE__.changeset(application, %{
+                has_just_been_auto_submitted: auto_submitted,
+                submitted_at: DateTime.utc_now()
+              })
+            )
+          else
+            error -> error
+          end
+        else
+          {:ok, application}
         end
 
-      _ ->
-        {:ok, application}
+      missing_fields ->
+        {:error, "Remplissez d'abord les données manquantes : #{Enum.join(missing_fields, ", ")}"}
     end
   end
 
@@ -128,7 +125,7 @@ defmodule Vae.Application do
 
   def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
 
-  def set_registered_meeting(application, academy_id, meeting_id) do
+  def set_registered_meeting(application, _academy_id, meeting_id) do
     meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
 
     application

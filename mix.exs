@@ -93,12 +93,15 @@ defmodule Vae.Mixfile do
       {:filterable, "~> 0.7.0"},
       {:oauth2, "~> 0.9"},
       {:inflex, "~> 1.10.0"},
-      {:swoosh, "~> 0.23"},
+      {:swoosh, github: "augnustin/swoosh", branch: "mailjet-custom_id", override: true},
+      # {:swoosh, "~> 0.23"},
+      {:phoenix_swoosh, "~> 0.2"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sentry, "~> 6.4"},
       {:phoenix_markdown, "~> 1.0"}
+      # {:phoenix_markdown, path: "../phoenix_markdown"}
     ]
   end
 

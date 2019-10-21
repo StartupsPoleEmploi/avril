@@ -4,6 +4,6 @@ defmodule Vae.Map do
   end
 
   def params_with_ids(params) do
-    map_values(params, fn {k, v} -> Vae.String.to_id(v) end)
+    map_values(params, fn {_k, v} -> Vae.String.to_id(v) end)
   end
 end

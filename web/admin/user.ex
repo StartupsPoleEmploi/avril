@@ -13,6 +13,7 @@ defmodule Vae.ExAdmin.User do
       column(:city_label)
       column(:sign_in_count)
       column(:is_admin)
+      column(:confirmed_at)
 
       actions()
     end
@@ -35,6 +36,7 @@ defmodule Vae.ExAdmin.User do
         input(user, :country_label)
         input(user, :pe_id)
         input(user, :pe_connect_token)
+        input(user, :confirmed_at)
       end
     end
 
@@ -113,7 +115,7 @@ defmodule Vae.ExAdmin.User do
 
       panel "Applications" do
         table_for user.applications do
-          column(:id)
+          column(:id, fn a -> Helpers.link_to_resource(a, namify: fn a -> a.id end) end)
           column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
           column(:application_delegate, fn a -> Helpers.link_to_resource(a.delegate) end)
           column(:application_certifiers, fn a ->

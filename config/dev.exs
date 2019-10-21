@@ -4,7 +4,7 @@ require Logger
 config :vae,
   mailjet: [
     override_to:
-      System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr"
+      System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr"
   ]
 
 config :vae, Vae.Endpoint,

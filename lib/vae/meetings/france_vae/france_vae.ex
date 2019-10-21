@@ -52,7 +52,9 @@ defmodule Vae.Meetings.FranceVae do
             |> String.trim()
             |> Kernel.in(["CAP au BTS", ""])
           end)
-          |> Enum.map(fn meeting -> to_meeting(meeting, academy_id) end)
+          |> Enum.map(fn meeting ->
+            to_meeting(meeting, academy_id)
+          end)
       end
     else
       {:error, reason} ->
@@ -142,6 +144,7 @@ defmodule Vae.Meetings.FranceVae do
       place: params["lieu"],
       address: params["addresse"],
       postal_code: params["code_postal"],
+      city: params["commune"],
       target: params["cible"],
       start_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_debut"]),
       end_date: cast_fr_date_and_time_to_naive(params["date"], params["heure_fin"]),

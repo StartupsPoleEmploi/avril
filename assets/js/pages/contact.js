@@ -12,12 +12,12 @@ $('#contact-form').on('submit', e => {
     data: $form.serialize(),
     success: data => {
     $form.append(`<div class="alert alert-success">${data.msg}</div>`);
-    $submit.text("Message envoyé :)");
+    $submit.text("Message envoyé :)").removeAttr('disabled');
     },
     error: error => {
       const json = JSON.parse(error.responseText);
       $form.append(`<div class="alert alert-danger">${json.msg}</div>`);
-      $submit.text("Message non envoyé :(");
+      $submit.text("Message non envoyé :(").removeAttr('disabled');
     }
   });
 });

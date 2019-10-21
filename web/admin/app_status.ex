@@ -1,6 +1,5 @@
 defmodule Vae.ExAdmin.AppStatus do
   use ExAdmin.Register
-  import Ecto.Query
 
   register_page "app-status" do
     menu priority: 2, label: "Bandeau informatif"

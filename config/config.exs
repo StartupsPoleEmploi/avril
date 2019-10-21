@@ -14,26 +14,23 @@ config :vae,
   places_ets_table_name: :places_dev,
   algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
   algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
-  extractor: Vae.Mailer.FileExtractor.CsvExtractor,
-  mailer_extractor_limit: if(Mix.env() == :prod, do: :all, else: 10_000),
-  sender: Vae.Mailer.Sender.Mailjet,
   mailjet_template_error_reporting: %{
     Email:
-      (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
+      (System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr")
       |> String.split(",")
       |> List.first()
   },
   mailjet_template_error_deliver: true,
   mailjet: [
-    application_submitted_to_delegate_id: 758_379,
-    application_submitted_to_user_id: 984_794,
-    campaign_template_id: 512_948,
-    vae_recap_template_id: 985_164,
-    dava_vae_recap_template_id: 986_006,
-    asp_vae_recap_template_id: 833_668,
-    delegate_contact_template_id: 543_455,
-    avril_contact_template_id: 977_749,
-    from_email: "avril@pole-emploi.fr",
+    # application_submitted_to_delegate_id: 758_379,
+    # application_submitted_to_user_id: 984_794,
+    # campaign_template_id: 512_948,
+    # vae_recap_template_id: 985_164,
+    # dava_vae_recap_template_id: 986_006,
+    # asp_vae_recap_template_id: 833_668,
+    # delegate_contact_template_id: 543_455,
+    # avril_contact_template_id: 977_749,
+    from_email: "contact@avril.pole-emploi.fr",
     from_name: "Avril"
   ],
   authentication: [
@@ -95,12 +92,12 @@ config :vae,
   # Unused?
   statistics: %{
     email_from:
-      (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
+      (System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr")
       |> String.split(",")
       |> List.first(),
     email_from_name: "Avril",
     email_to:
-      (System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr")
+      (System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr")
       |> String.split(",")
       |> List.first(),
     email_to_name: "Statisticien"
@@ -108,7 +105,7 @@ config :vae,
 
 config :vae, Vae.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
-  render_errors: [view: Vae.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: Vae.ErrorView, accepts: ~w(html email json)],
   pubsub: [name: Vae.PubSub, adapter: Phoenix.PubSub.PG2]
 
 config :vae, Vae.Repo,
@@ -122,25 +119,54 @@ config :vae, Vae.Repo,
   ssl: false,
   timeout: 60_000
 
+config :vae, Vae.Mailer,
+  adapter: Swoosh.Adapters.Mailjet,
+  api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
+  secret: System.get_env("MAILJET_PRIVATE_API_KEY")
+
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),
   search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
 
 config :coherence,
-  web_module: Vae,
-  user_schema: Vae.User,
+  allow_unconfirmed_access_for: 365,
+  email_from_email: "contact@avril.pole-emploi.fr",
+  email_from_name: "Avril",
+  # default_routes: %{
+  #   registrations_new:  "/souscription/nouvelle",
+  #   registrations:      "/souscription",
+  #   passwords:          "/mot-de-passe",
+  #   confirmations:      "/confirmations",
+  #   unlocks:            "/debloquage",
+  #   invitations:        "/invitations",
+  #   invitations_create: "/invitations/create",
+  #   invitations_resend: "/invitations/:id/renvoyer",
+  #   sessions:           "/connexions",
+  #   registrations_edit: "/souscription/edition"
+  #   },
+  messages_backend: Vae.Coherence.Messages,
+  opts: [
+    :authenticatable,
+    :confirmable,
+    :registerable,
+    :recoverable,
+    # :rememberable,
+    :lockable,
+    :trackable,
+    :unlockable_with_token,
+  ],
   repo: Vae.Repo,
   router: Vae.Router,
-  messages_backend: Vae.Coherence.Messages,
-  email_from_name: "Avril",
-  email_from_email: "avril@pole-emploi.fr",
-  opts: [:authenticatable, :recoverable, :lockable, :trackable, :unlockable_with_token],
   session_model: Vae.Session,
   session_repo: Vae.Repo,
-  schema_key: :id
+  schema_key: :id,
+  user_schema: Vae.User,
+  web_module: Vae
 
-config :coherence, :layout, {Vae.LayoutView, :app}
+config :coherence, :layout, {Vae.LayoutView, :coherence}
+
+config :coherence, :mailer, Vae.Mailer
 
 config :coherence, Vae.Coherence.Mailer,
   adapter: Swoosh.Adapters.Mailjet,
@@ -160,6 +186,7 @@ config :ex_admin,
     Vae.ExAdmin.Delegate,
     Vae.ExAdmin.Process,
     Vae.ExAdmin.Profession,
+    Vae.ExAdmin.Resume,
     Vae.ExAdmin.Rome,
     Vae.ExAdmin.User
   ]
@@ -174,6 +201,8 @@ config :ex_aws,
     host: "#{System.get_env("AWS_S3_BUCKET_NAME")}.s3.amazonaws.com",
     region: "eu-west-3"
   ]
+
+config :gettext, :default_locale, "fr"
 
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

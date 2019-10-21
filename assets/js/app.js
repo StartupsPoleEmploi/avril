@@ -7,7 +7,7 @@ import 'bootstrap-select';
 import 'url-search-params';
 
 import './analytics';
-import './socket';
+// import './socket';
 import './tools/smooth_scroll';
 import './components/searchbar';
 import './components/pagination';
@@ -78,8 +78,12 @@ $(() => {
     }
   });
 
-  $(".btn-history-back").click(function() {
-    history.back();
+  $('.btn-history-back').on('click', e => {
+    if (document.referrer.indexOf(window.location.host) > -1) {
+      history.back();
+    } else {
+      window.location.href = '/';
+    }
   })
 
   $(".moreless").click(function() {

@@ -37,8 +37,8 @@ defmodule Vae.ExAdmin.Delegate do
           :telephone,
           :email,
           :person_name,
-          :academy_id,
-          :process
+          :process_id,
+          :academy_id
         ]
       )
 
@@ -113,7 +113,7 @@ defmodule Vae.ExAdmin.Delegate do
           ]
         ],
         index: [default_sort: [asc: :id]],
-        show: [preload: [:certifiers, applications: [ :delegate, :user, :certification, :certifiers]]]
+        show: [preload: [:process, :certifiers, applications: [ :delegate, :user, :certification, :certifiers]]]
       }
     end
   end

@@ -1,4 +1,3 @@
-
 = base_layout @conn, assigns do
   main
     .sticky-top
@@ -10,8 +9,8 @@
       = if assigns[:is_landing] do
         .back-and-cta
           button.btn.btn-link.btn-history-back
-            span.ic-icon.ic-tail-left.mr-3
-            | Retour
+            span.fa.fa-chevron-left.mr-1
+            |  Retour
           = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary"
         = if assigns[:no_wrapper] do
           = render @view_module, @view_template, assigns

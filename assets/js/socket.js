@@ -94,7 +94,7 @@ function contact(event) {
 };
 
 $(function() {
-  $('form.contact-form').submit(contact)
+  $('form.simple-contact-form').submit(contact)
 });
 
 export default socket
