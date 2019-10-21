@@ -1,3 +1,4 @@
+
 defmodule Vae.JobSeekerEmail do
   require Logger
 
@@ -44,7 +45,7 @@ defmodule Vae.JobSeekerEmail do
           utm_medium: "email",
           js_id: job_seeker.id
         ),
-        image_url: "#{Vae.Endpoint.static_url()}#{Vae.Endpoint.static_path("/images/mon-diplome.jpg")}",
+        image_url: Routes.static_url("/images/mon-diplome.jpg"),
         text_center: true,
         job_seeker_id: job_seeker.id,
         job_seeker_msg: true,

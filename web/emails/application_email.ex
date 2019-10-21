@@ -41,7 +41,8 @@ defmodule Vae.ApplicationEmail do
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
-        subject: "#{User.fullname(application.user)}, voici comment obtenir votre Certification.name(application.certification)",
+        subject: "#{User.fullname(application.user)}, voici comment obtenir votre #{Certification.name(application.certification)}",
+        image_url: Routes.static_url("/images/group.png"),
         footer_note: :inscrit_avril
       }
     )
@@ -61,7 +62,8 @@ defmodule Vae.ApplicationEmail do
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
         delegate_website: application.delegate.website,
-        subject: "#{User.fullname(application.user)}, voici comment obtenir votre Certification.name(application.certification)",
+        subject: "#{User.fullname(application.user)}, voici comment obtenir votre #{Certification.name(application.certification)}",
+        image_url: Routes.static_url("/images/group.png"),
         footer_note: :inscrit_avril
       }
     )
