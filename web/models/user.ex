@@ -85,7 +85,6 @@ defmodule Vae.User do
     first_name
     last_name
     email
-    phone_number
     postal_code
     city_label
     country_label
@@ -96,9 +95,9 @@ defmodule Vae.User do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @fields ++ coherence_fields())
-    |> __MODULE__.put_embed_if_necessary(params, :skills)
-    |> __MODULE__.put_embed_if_necessary(params, :experiences)
-    |> __MODULE__.put_embed_if_necessary(params, :proven_experiences)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -135,11 +134,11 @@ defmodule Vae.User do
     case Repo.get_by(__MODULE__, email: String.downcase(email)) do
       nil ->
         Repo.insert(
-          __MODULE__.changeset(%__MODULE__{}, __MODULE__.userinfo_api_map(userinfo_api_result))
+          __MODULE__.changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result))
         )
 
       user ->
-        __MODULE__.update_with_pe_connect_data(user, userinfo_api_result)
+        update_with_pe_connect_data(user, userinfo_api_result)
     end
   end
 
@@ -149,7 +148,7 @@ defmodule Vae.User do
   def update_with_pe_connect_data(user, userinfo_api_result) do
     user
     |> Repo.preload(:job_seeker)
-    |> __MODULE__.changeset(__MODULE__.userinfo_api_map(userinfo_api_result, false))
+    |> __MODULE__.changeset(userinfo_api_map(userinfo_api_result, false))
     |> Repo.update()
   end
 
