@@ -22,14 +22,6 @@ defmodule Vae.Places.Cache do
     {:ok, state}
   end
 
-  # -----------#
-  #    API    #
-  # -----------#
-
-  def get_geoloc_from_postal_code(postal_code) do
-    GenServer.call(PlacesCache, {:get, postal_code}, 10_000)
-  end
-
   # ------------#
   #   Server   #
   # ------------#
@@ -56,6 +48,27 @@ defmodule Vae.Places.Cache do
       end
 
     {:reply, value, new_state}
+  end
+
+  def handle_call({:get_city, nil, nil}, _from, state), do: {:reply, nil, state}
+
+  def handle_call({:get_city, nil, postal_code}, _from, state),
+    do: {:reply, get_geoloc_from_postal_code(postal_code), state}
+
+  def handle_call({:get_city, city}, _from, state) do
+    {:reply, @places_client.get_geoloc_from_city(city), state}
+  end
+
+  # -----------#
+  #    API    #
+  # -----------#
+
+  def get_geoloc_from_city(city) do
+    GenServer.call(PlacesCache, {:get_city, city}, 10_000)
+  end
+
+  def get_geoloc_from_postal_code(postal_code) do
+    GenServer.call(PlacesCache, {:get, postal_code}, 10_000)
   end
 
   defp get_or_insert(postal_code) do

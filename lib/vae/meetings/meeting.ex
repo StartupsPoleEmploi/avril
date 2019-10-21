@@ -11,6 +11,7 @@ defmodule Vae.Meetings.Meeting do
     field(:place, :string)
     field(:address, :string)
     field(:postal_code, :string)
+    field(:city, :string)
     field(:geolocation, :map)
     field(:target, :string)
     field(:remaining_places, :integer)
@@ -18,7 +19,7 @@ defmodule Vae.Meetings.Meeting do
     field(:end_date, :naive_datetime)
   end
 
-  @fields ~w(academy_id meeting_id meeting_id2 place address postal_code geolocation target start_date end_date)a
+  @fields ~w(academy_id meeting_id meeting_id2 place address postal_code city geolocation target start_date end_date)a
 
   def changeset(module, params) do
     module
