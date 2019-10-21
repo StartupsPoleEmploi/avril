@@ -211,8 +211,23 @@ defmodule Vae.Meetings.StateHolder do
             %Meeting{postal_code: nil} = meeting ->
               meeting
 
+            %Meeting{city: nil} = meeting ->
+              meeting
+
+            %Meeting{city: city, postal_code: postal_code} = meeting ->
+              geolocation =
+                case Places.get_geoloc_from_city(city) do
+                  nil -> Places.get_geoloc_from_postal_code(postal_code)
+                  geoloc -> geoloc
+                end
+
+              %{
+                meeting
+                | geolocation: geolocation
+              }
+
             %Meeting{postal_code: postal_code} = meeting ->
-              geolocation = Places.get_geoloc_from_address(postal_code)
+              geolocation = Places.get_geoloc_from_postal_code(postal_code)
 
               %{
                 meeting

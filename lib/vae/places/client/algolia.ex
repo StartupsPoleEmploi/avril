@@ -19,6 +19,10 @@ defmodule Vae.Places.Client.Algolia do
     get(%{query: postal_code}, @algolia_places_query)
   end
 
+  def get_geoloc_from_city(city) do
+    get(%{query: city}, @algolia_places_query)
+  end
+
   def get_geoloc_from_address(address) do
     get(%{query: address}, @algolia_places_query)
   end
@@ -30,7 +34,13 @@ defmodule Vae.Places.Client.Algolia do
   defp get(query, endpoint) do
     query
     |> get_first_hit(endpoint)
-    |> Map.take(@algolia_places_keys)
+    |> case do
+      nil ->
+        nil
+
+      places ->
+        Map.take(places, @algolia_places_keys)
+    end
   end
 
   defp get_first_hit(query, endpoint) do
