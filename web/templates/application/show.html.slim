@@ -43,9 +43,9 @@
                       = text_input f, :last_name, class: "form-control form-control-lg", placeholder: "Nom de famille", disabled: @user.last_name, required: true
                       = error_tag f, :last_name
                 - else
-                  h3.my-4 Le candidat
                   .col
-                    p
+                    h4.my-4
+                      | Le candidat :&nbsp;
                       strong #{@user.first_name} #{@user.last_name}
               .row
                 .col

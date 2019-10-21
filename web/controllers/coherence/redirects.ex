@@ -121,6 +121,7 @@ defmodule Coherence.Redirects do
   def redirect_to_user_application(conn, user, application) do
     if application do
       conn
+        |> update_current_user()
         |> welcome_message_if_necessary(user)
         |> redirect(to: application_path(conn, :show, application.id))
     else
@@ -143,4 +144,10 @@ defmodule Coherence.Redirects do
     end
   end
 
+
+  def update_current_user(conn) do
+    current_user = Repo.get(User, Coherence.current_user(conn).id)
+    Coherence.Authentication.Session.update_login(conn, current_user)
+    Plug.Conn.assign(conn, :current_user, current_user)
+  end
 end
