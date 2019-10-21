@@ -52,15 +52,12 @@ defmodule Coherence.Redirects do
 
   def confirmation_edit(conn, _) do
     if (Coherence.logged_in?(conn)) do
-      current_user = Vae.Repo.get(Vae.User, Coherence.current_user(conn).id)
+      current_user = Coherence.current_user(conn)
         |> Repo.preload(:applications)
 
       application = current_user
         |> Map.get(:applications)
         |> List.first()
-
-      Coherence.Authentication.Session.update_login(conn, current_user)
-      Plug.Conn.assign(conn, :current_user, current_user)
 
       redirect_to_user_application(conn, current_user, application)
     else
@@ -146,8 +143,12 @@ defmodule Coherence.Redirects do
 
 
   def update_current_user(conn) do
-    current_user = Repo.get(User, Coherence.current_user(conn).id)
-    Coherence.Authentication.Session.update_login(conn, current_user)
-    Plug.Conn.assign(conn, :current_user, current_user)
+    if (Coherence.logged_in?(conn)) do
+      current_user = Repo.get(User, Coherence.current_user(conn).id)
+      Coherence.Authentication.Session.update_login(conn, current_user)
+      Plug.Conn.assign(conn, :current_user, current_user)
+    else
+      conn
+    end
   end
 end
