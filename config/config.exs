@@ -14,25 +14,6 @@ config :vae,
   places_ets_table_name: :places_dev,
   algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
   algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
-  mailjet_template_error_reporting: %{
-    Email:
-      (System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr")
-      |> String.split(",")
-      |> List.first()
-  },
-  mailjet_template_error_deliver: true,
-  mailjet: [
-    # application_submitted_to_delegate_id: 758_379,
-    # application_submitted_to_user_id: 984_794,
-    # campaign_template_id: 512_948,
-    # vae_recap_template_id: 985_164,
-    # dava_vae_recap_template_id: 986_006,
-    # asp_vae_recap_template_id: 833_668,
-    # delegate_contact_template_id: 543_455,
-    # avril_contact_template_id: 977_749,
-    from_email: "contact@avril.pole-emploi.fr",
-    from_name: "Avril"
-  ],
   authentication: [
     client_id: System.get_env("PE_CONNECT_CLIENT_ID"),
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
@@ -88,20 +69,7 @@ config :vae,
         ]
       ]
     ]
-  ],
-  # Unused?
-  statistics: %{
-    email_from:
-      (System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr")
-      |> String.split(",")
-      |> List.first(),
-    email_from_name: "Avril",
-    email_to:
-      (System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr")
-      |> String.split(",")
-      |> List.first(),
-    email_to_name: "Statisticien"
-  }
+  ]
 
 config :vae, Vae.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
@@ -122,7 +90,13 @@ config :vae, Vae.Repo,
 config :vae, Vae.Mailer,
   adapter: Swoosh.Adapters.Mailjet,
   api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
-  secret: System.get_env("MAILJET_PRIVATE_API_KEY")
+  secret: System.get_env("MAILJET_PRIVATE_API_KEY"),
+  template_error_deliver: true,
+  template_error_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr",
+  avril_name: "Avril",
+  avril_from: "contact@avril.pole-emploi.fr",
+  avril_to: "avril@pole-emploi.fr",
+  override_to: System.get_env("DEV_EMAILS")
 
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
@@ -207,12 +181,6 @@ config :gettext, :default_locale, "fr"
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
-
-config :mailjex,
-  api_base: "https://api.mailjet.com/v3.1",
-  public_api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
-  private_api_key: System.get_env("MAILJET_PRIVATE_API_KEY"),
-  development_mode: false
 
 config :phoenix, :json_library, Jason
 

@@ -6,14 +6,8 @@ defmodule Vae.Mailer do
   alias Swoosh.Email
   alias Vae.{JobSeeker, User}
 
-  @avril_email {
-    Application.get_env(:vae, :mailjet)[:from_name],
-    Application.get_env(:vae, :mailjet)[:from_email]
-  }
-
-  @override_email System.get_env("DEV_EMAILS")
-
-  @mailjet_conf Application.get_env(:vae, :mailjet)
+  @config Application.get_env(:vae, Vae.Mailer)
+  @override_to System.get_env("DEV_EMAILS")
 
   def build_email(template_name_or_id, from, to) do
     build_email(template_name_or_id, from, to, %{})
@@ -21,9 +15,9 @@ defmodule Vae.Mailer do
 
   def build_email(template_name_or_id, from, to, params) do
     %Email{}
-    |> from(format_mailer(:from, from))
     |> to(format_mailer(:to, to))
-    |> reply_to_if_present(Map.get(params, :reply_to))
+    |> from(format_mailer(:from, from))
+    |> reply_to_if_present_or_from_avril(Map.get(params, :reply_to), from)
     |> custom_id_if_present(Map.get(params, :custom_id))
     |> attach_if_attachment(Map.get(params, :attachment))
     |> render_body_or_template_id(template_name_or_id, params)
@@ -46,7 +40,8 @@ defmodule Vae.Mailer do
     end)
   end
 
-  defp format_mailer!(:avril), do: @avril_email
+  defp format_mailer!(:avril_from), do: {@config[:avril_name], @config[:avril_from]}
+  defp format_mailer!(:avril_to), do: {@config[:avril_name], @config[:avril_to]}
   defp format_mailer!(%User{} = user), do: User.formatted_email(user)
   defp format_mailer!(%JobSeeker{} = job_seeker), do: JobSeeker.formatted_email(job_seeker)
   defp format_mailer!(%{name: name, email: email}), do: {name, email}
@@ -63,14 +58,19 @@ defmodule Vae.Mailer do
   end
   defp format_mailer!(anything), do: IO.inspect(anything)
 
-  def format_mailer(:to, _anything) when not is_nil(@override_email), do: format_mailer!(@override_email)
-  def format_mailer(:from, anything) do
+  def format_mailer(:to, _anything) when not is_nil(@override_to),
+    do: format_mailer!(@override_to)
+
+  def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
+  def format_mailer(_role, :avril), do: format_mailer!(:avril_from)
+
+  def format_mailer(role, anything) when role in [:from, :reply_to] do
     case format_mailer!(anything) do
       list when is_list(list) -> List.first(list)
       no_list -> no_list
     end
   end
-  def format_mailer(_any_role, anything), do: format_mailer!(anything)
+  def format_mailer(_role, anything), do: format_mailer!(anything)
 
   defp format_string_email(string_email) do
     case Regex.named_captures(~r/(?<Name>.*) ?\<(?<Email>.*)\>/U, string_email) do
@@ -79,8 +79,12 @@ defmodule Vae.Mailer do
     end
   end
 
-  defp reply_to_if_present(email, nil), do: email
-  defp reply_to_if_present(email, reply_to), do: reply_to(email, format_mailer(:reply_to, reply_to))
+  defp reply_to_if_present_or_from_avril(email, reply_to, _from) when not is_nil(reply_to),
+    do: reply_to(email, format_mailer(:reply_to, reply_to))
+  defp reply_to_if_present_or_from_avril(email, _reply_to, :avril),
+    do: reply_to(email, format_mailer(:reply_to, :avril))
+  defp reply_to_if_present_or_from_avril(email, _, _),
+    do: email
 
   defp custom_id_if_present(email, nil), do: email
   defp custom_id_if_present(email, custom_id), do: put_provider_option(email, :custom_id, custom_id)
@@ -89,7 +93,7 @@ defmodule Vae.Mailer do
   defp attach_if_attachment(email, attachment), do: attachment(email, attachment)
 
   defp render_body_or_template_id(email, template_name_or_id, params) do
-    if is_integer(template_name_or_id) || (is_atom(template_name_or_id) && @mailjet_conf[template_name_or_id]) do
+    if is_integer(template_name_or_id) do
       render_template(email, template_name_or_id, params)
     else
       render_body_and_subject(email, template_name_or_id, params)
@@ -100,8 +104,8 @@ defmodule Vae.Mailer do
     email
       |> put_provider_option(:template_id, template_id)
       |> put_provider_option(:variables, params)
-      |> put_provider_option(:template_error_deliver, Application.get_env(:vae, :mailjet_template_error_deliver))
-      |> put_provider_option(:template_error_reporting, Application.get_env(:vae, :mailjet_template_error_reporting))
+      |> put_provider_option(:template_error_deliver, @config[:template_error_deliver])
+      |> put_provider_option(:template_error_reporting, format_mailer(:to, @config[:template_error_to]))
   end
 
   defp render_body_and_subject(email, template_name, params) do
