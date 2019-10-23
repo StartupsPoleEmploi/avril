@@ -144,8 +144,15 @@ defmodule Vae.Meetings.StateHolder do
               state
               |> from_delegates()
               |> Enum.find(&(&1[:id] == id))
-              |> Map.get(:meetings)
-              |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
+              |> case do
+                nil ->
+                  []
+
+                delegate ->
+                  delegate
+                  |> Map.get(:meetings)
+                  |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
+              end
 
             {{place, address, Vae.String.parameterize(place)}, meetings}
           end)
