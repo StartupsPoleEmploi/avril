@@ -19,9 +19,12 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
 RUN apt-get install -y nodejs
 RUN npm install -g npm
 
+RUN mkdir -p /app
+
 ADD assets/package.json /app/assets/package.json
 ADD assets/package-lock.json /app/assets/package-lock.json
 ADD mix.exs /app/mix.exs
+ADD mix.lock /app/mix.lock
 
 WORKDIR /app
 

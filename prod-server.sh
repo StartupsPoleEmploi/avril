@@ -1,6 +1,9 @@
 #!/bin/bash
 
-npm run deploy --prefix ./assets \
-&& mix phx.digest \
+mix deps.get --only prod \
+&& mix deps.compile \
+&& npm run deploy --prefix ./assets \
+&& mix do compile, phx.digest \
+&& (cd deps/bcrypt_elixir && make clean && make) \
 && mix ecto.migrate \
 && mix phx.server
