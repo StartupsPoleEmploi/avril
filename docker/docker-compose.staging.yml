@@ -1,15 +1,16 @@
 version: "3.6"
 
 services:
+  prod:
+    build:
+      context: ..
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - "app"
   avril:
-    image: avril_app
+    image: avril_prod
     command: /app/prod-server.sh
-    working_dir: /app
     deploy:
       replicas: 2
     depends_on:
       - postgres
-    ports:
-      - "80:4000"
-    volumes:
-      - ".:/app"

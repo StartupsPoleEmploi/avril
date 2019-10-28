@@ -1,8 +1,6 @@
 # TODO
 version: "3.6"
 
-version: "3.6"
-
 services:
   app:
     image: index.docker.io/augnustin/avril:latest
