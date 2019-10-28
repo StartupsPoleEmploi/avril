@@ -11,4 +11,4 @@ COPY . .
 
 # Compile the entire project and build the digest for production
 RUN mix do compile, phx.digest
-RUN (cd deps/bcrypt_elixir && make clean && make)
+# RUN (cd deps/bcrypt_elixir && make clean && make)
