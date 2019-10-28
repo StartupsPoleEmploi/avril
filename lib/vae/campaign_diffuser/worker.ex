@@ -87,7 +87,10 @@ defmodule Vae.CampaignDiffuser.Worker do
   end
 
   defp remove(emails) do
-    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.provider_options.custom_id) end)
+    Enum.each(emails, fn email ->
+      :ets.delete(:pending_emails, email.provider_options.custom_id)
+    end)
+
     emails
   end
 end
