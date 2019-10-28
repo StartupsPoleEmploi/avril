@@ -1,12 +1,12 @@
 version: "3.6"
 
 services:
-  prod:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    depends_on:
-      - "app"
+  postgres:
+    env_file:
+      - "..env"
+    image: "postgres:11.0-alpine"
+    volumes:
+      - "/var/run/postgresql:/var/run/postgresql"
   avril:
     image: avril_prod
     command: /app/prod-server.sh
@@ -14,3 +14,10 @@ services:
       replicas: 2
     depends_on:
       - postgres
+
+volumes:
+  postgres: {}
+  static:
+    driver_opts:
+      device: "tmpfs"
+      type: "tmpfs"
