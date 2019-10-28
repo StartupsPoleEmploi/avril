@@ -8,6 +8,7 @@ services:
     volumes:
       - "/var/run/postgresql:/var/run/postgresql"
   app:
+    container_name: avril_app
     build: .
     ports:
       - "4000:4000"
