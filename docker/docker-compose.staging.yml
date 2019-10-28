@@ -12,6 +12,9 @@ services:
     command: /app/prod-server.sh
     deploy:
       replicas: 2
+    ports:
+      - "80:4000"
+
     depends_on:
       - postgres
 
