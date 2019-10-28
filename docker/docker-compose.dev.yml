@@ -1,0 +1,26 @@
+version: "3.6"
+
+services:
+  app:
+    build: "."
+    stdin_open: true
+    tty: true
+    ports:
+      - "4000:4000"
+    volumes:
+      - "../coherence:/coherence"
+      - "../phoenix_markdown:/phoenix_markdown"
+      - "../ex_admin:/ex_admin"
+      - /tmp/.X11-unix:/tmp/.X11-unix
+  # postgres:
+  #   volumes:
+  #     - ".:/app"
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "80:80"
+    env_file:
+      - "../.env"
+    links:
+      - postgres
+

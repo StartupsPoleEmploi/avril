@@ -1,0 +1,22 @@
+# TODO
+version: "3.6"
+
+version: "3.6"
+
+services:
+  app:
+    image: index.docker.io/augnustin/avril:latest
+    ports:
+      - "4000:4000"
+    working_dir: /app
+    depends_on:
+      - "postgres"
+    env_file:
+      - "../.env"
+    command: iex -S mix phx.server
+  postgres:
+    env_file:
+      - "../.env"
+    image: "postgres:11.0-alpine"
+    volumes:
+      - "/var/run/postgresql:/var/run/postgresql"

@@ -1,0 +1,17 @@
+version: "3.6"
+
+services:
+  app:
+    build: ..
+    # working_dir: /app
+    # env_file:
+    #   - ".env"
+    # command: iex -S mix phx.server
+    # volumes:
+    #   - ".:/app"
+  prod:
+    build:
+      context: ..
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - "app"
