@@ -1,13 +1,6 @@
 version: "3.6"
 
 services:
-  postgres:
-    env_file:
-      - ../.env
-    image: postgres:11.0-alpine
-    volumes:
-      - "/var/run/postgresql:/var/run/postgresql"
-
   avril:
     image: avril_prod
     command: /app/prod-server.sh
@@ -15,14 +8,20 @@ services:
       replicas: 2
     ports:
       - "80:4000"
-
-    depends_on:
-      - postgres
     working_dir: /app
     volumes:
       - "..:/app"
     env_file:
       - ../.env
+    depends_on:
+      - postgres
+  postgres:
+    env_file:
+      - ../.env
+    image: postgres:11.0-alpine
+    volumes:
+      - "/var/run/postgresql:/var/run/postgresql"
+
 
 
 volumes:

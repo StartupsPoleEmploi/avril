@@ -1,7 +1,12 @@
 FROM avril_app
 
 # Copy all application files
-COPY . .
+# COPY . .
+
+ADD mix.exs /app/mix.exs
+ADD mix.lock /app/mix.lock
+ADD assets/package.json /app/assets/package.json
+ADD assets/package-lock.json /app/assets/package-lock.json
 
 # Install all production dependencies
 RUN mix deps.get --only prod
