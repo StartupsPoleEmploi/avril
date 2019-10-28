@@ -4,7 +4,7 @@ L'application est utilisée via Docker Swarm.
 
 Pour déployer un nouveau serveur, il faut :
 
-1. Installer docker et docker-compose
+1. Installer [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/)
 2. Cloner le repo sur le serveur
 3. Ajuster les variables d'environnement [.env](../.env) (un fichier [.env.example](../.env.example) est fournit)
 4. Télécharger un dump de la DB, le nommer latest.dump le placer dans [db/](./db)
