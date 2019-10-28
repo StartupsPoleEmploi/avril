@@ -19,18 +19,18 @@ RUN apt-get install -y nodejs
 
 RUN mkdir -p /app
 
+ADD mix.exs /app/mix.exs
+ADD mix.lock /app/mix.lock
 ADD assets/package.json /app/assets/package.json
-# ADD assets/package-lock.json /app/assets/package-lock.json
-# ADD mix.exs /app/mix.exs
-# ADD mix.lock /app/mix.lock
-#
-# WORKDIR /app
-#
-# # Install dependencies
-# RUN npm install --prefix ./assets
-# RUN mix local.hex --force
-# RUN mix local.rebar --force
-# RUN mix deps.get # TODO: make it non interactive
+ADD assets/package-lock.json /app/assets/package-lock.json
+
+WORKDIR /app
+
+# Install dependencies
+RUN mix local.hex --force
+RUN mix local.rebar --force
+RUN mix deps.get
+RUN npm install --prefix ./assets
 
 # Setup DB
 # RUN mix ecto.create && mix ecto.migrate # Note: run once the db is connected
