@@ -1,4 +1,3 @@
-
 defmodule Vae.JobSeekerEmail do
   require Logger
 
@@ -7,6 +6,7 @@ defmodule Vae.JobSeekerEmail do
 
   def receive_synthesis(job_seeker, delegate) do
     delegate = Repo.preload(delegate, :process)
+
     with(
       process when not is_nil(process) <- delegate.process,
       {:ok, file} <- StepsPdf.create_pdf_file(delegate.process)
@@ -17,10 +17,11 @@ defmodule Vae.JobSeekerEmail do
         job_seeker,
         %{
           subject: "Votre synthèse VAE par Avril - la VAE facile",
-          attachment: Swoosh.Attachment.new(file,
-            filename: "synthese-vae.pdf",
-            content_type: "application/pdf"
-          ),
+          attachment:
+            Swoosh.Attachment.new(file,
+              filename: "synthese-vae.pdf",
+              content_type: "application/pdf"
+            ),
           footer_note: :mise_en_relation
         }
       )
@@ -36,16 +37,22 @@ defmodule Vae.JobSeekerEmail do
       :avril,
       job_seeker,
       %{
-        subject: "Votre conseiller pôle emploi vous invite à tester un nouveau site : Avril, la VAE facile !",
-        url: Routes.root_url(
-          Vae.Endpoint,
-          :index,
-          utm_campaign: "mj-#{Date.utc_today() |> to_string()}",
-          utm_source: (job_seeker.geolocation["administrative"] || []) |> List.first(),
-          utm_medium: "email",
-          js_id: job_seeker.id
-        ),
-        image_url: Routes.static_url("/images/mon-diplome.jpg"),
+        subject:
+          "Votre conseiller pôle emploi vous invite à tester un nouveau site : Avril, la VAE facile !",
+        url:
+          Routes.root_url(
+            Vae.Endpoint,
+            :index,
+            utm_campaign: "mj-#{Date.utc_today() |> to_string()}",
+            utm_source: (job_seeker.geolocation["administrative"] || []) |> List.first(),
+            utm_medium: "email",
+            js_id: job_seeker.id
+          ),
+        image_url:
+          Routes.static_url(
+            Vae.Endpoint,
+            "/images/mon-diplome.jpg"
+          ),
         text_center: true,
         job_seeker_id: job_seeker.id,
         job_seeker_msg: true,
