@@ -1,7 +1,7 @@
 FROM avril_app
 
 # Copy all application files
-COPY . .
+# COPY . .
 
 # ADD mix.exs /app/mix.exs
 # ADD mix.lock /app/mix.lock

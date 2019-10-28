@@ -2,7 +2,7 @@ version: "3.6"
 
 services:
   avril:
-    image: avril_prod
+    image: avril_app
     command: /app/prod-server.sh
     deploy:
       replicas: 2
