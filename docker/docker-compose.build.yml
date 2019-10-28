@@ -2,8 +2,8 @@ version: "3.6"
 
 services:
   app:
-    build: .
+    build: ..
   prod:
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile.prod
