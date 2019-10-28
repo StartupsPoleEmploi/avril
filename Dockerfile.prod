@@ -1,14 +1,17 @@
 FROM avril_app
 
+# Copy all application files
+COPY . .
+
 # Install all production dependencies
 RUN mix deps.get --only prod
 
 # Compile all dependencies
-RUN mix deps.compile
+# RUN mix deps.compile
 
-# Copy all application files
-COPY . .
+RUN npm run deploy --prefix ./assets
 
 # Compile the entire project and build the digest for production
 RUN mix do compile, phx.digest
+
 # RUN (cd deps/bcrypt_elixir && make clean && make)
