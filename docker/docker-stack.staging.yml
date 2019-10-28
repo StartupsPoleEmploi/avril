@@ -20,6 +20,7 @@ services:
       - ../.env
     image: postgres:11.0-alpine
     volumes:
+      - "..:/app"
       - "/var/run/postgresql:/var/run/postgresql"
 
 
