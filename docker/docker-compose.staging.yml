@@ -7,6 +7,7 @@ services:
     image: postgres:11.0-alpine
     volumes:
       - "/var/run/postgresql:/var/run/postgresql"
+
   avril:
     image: avril_prod
     command: /app/prod-server.sh
@@ -17,6 +18,12 @@ services:
 
     depends_on:
       - postgres
+    working_dir: /app
+    volumes:
+      - "..:/app"
+    env_file:
+      - ../.env
+
 
 volumes:
   postgres: {}
