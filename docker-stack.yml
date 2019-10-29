@@ -1,7 +1,7 @@
 version: "3.6"
 
 services:
-  avril:
+  app:
     image: avril_app
     command: /app/prod-server.sh
     deploy:
