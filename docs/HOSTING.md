@@ -18,13 +18,13 @@ docker-compose build
 6. Deploy
 
 ```
-docker stack deploy -c docker-compose.yml -c docker-stack.yml avril
+docker stack deploy -c docker-stack.yml -c docker-compose.yml avril
 ```
 
 7. Rentrer dans un container elixir pour créer la DB:
 
 ```
-docker exec -it $(docker ps -a | grep "app" | awk '{print $1}' mix ecto.create
+docker exec -it $(docker ps -a | grep "app" | awk '{print $1}' | head -n 1) mix ecto.create
 ```
 
 8. Rentrer dans le container postgres pour lancer pg_restore:
