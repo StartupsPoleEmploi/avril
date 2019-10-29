@@ -54,6 +54,8 @@ defmodule Vae.Meetings.Afpa.Server do
     |> Flow.map(fn id ->
       Scraper.scrape_event("https://www.afpa.fr/agenda/#{id}")
     end)
+    |> Flow.filter(&(not is_nil(&1) && Map.has_key?(&1, :place)))
+    |> Flow.partition(key: {:key, :place})
     |> Flow.reduce(fn -> [] end, fn
       meeting, acc when meeting == [] or is_nil(meeting) ->
         acc

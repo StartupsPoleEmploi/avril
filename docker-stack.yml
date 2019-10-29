@@ -1,0 +1,33 @@
+version: "3.6"
+
+services:
+  app:
+    image: avril_app
+    command: /app/prod-server.sh
+    deploy:
+      replicas: 2
+    ports:
+      - "80:4000"
+#     working_dir: /app
+#     volumes:
+#       - "..:/app"
+#     env_file:
+#       - ../.env
+#     depends_on:
+#       - postgres
+#   postgres:
+#     image: postgres:11.0-alpine
+#     env_file:
+#       - ../.env
+#     volumes:
+#       - "..:/app"
+#       - "/var/run/postgresql:/var/run/postgresql"
+
+
+
+# volumes:
+#   postgres: {}
+#   static:
+#     driver_opts:
+#       device: "tmpfs"
+#       type: "tmpfs"

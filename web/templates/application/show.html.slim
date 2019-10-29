@@ -43,9 +43,9 @@
                       = text_input f, :last_name, class: "form-control form-control-lg", placeholder: "Nom de famille", disabled: @user.last_name, required: true
                       = error_tag f, :last_name
                 - else
-                  h3.my-4 Le candidat
                   .col
-                    p
+                    h4.my-4
+                      | Le candidat :&nbsp;
                       strong #{@user.first_name} #{@user.last_name}
               .row
                 .col
@@ -141,7 +141,7 @@
                         div
                           span.fa.fa-download
                           p= resume.filename
-                      = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove" do
+                      = link to: Routes.application_resume_path(@conn, :delete, @application, resume), method: :delete, data: [confirm: "Confirmez-vous la suppression du CV ?", analytics: "CV#delete"], class: "remove", data: [disable: true] do
                         span.fa.fa-trash
                   = if @edit_mode do
                     li.list-inline-item.rounded.resume-block.upload-block
@@ -151,7 +151,7 @@
                             span.fa.fa-upload
                             p.label Ajouter un CV
                           = file_input f, :file, class: "form-control-file", id: "resume"
-                        = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled'
+                        = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled', data: ["disable-with": "Envoi ..."]
             - else
               p Le candidat n'a pas encore déposé de CV.
 

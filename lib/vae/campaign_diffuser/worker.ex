@@ -59,11 +59,10 @@ defmodule Vae.CampaignDiffuser.Worker do
     |> Flow.on_trigger(fn emails ->
       Logger.info("Try to send #{length(emails)} emails")
 
-      emails_sent =
-        send_emails(emails)
-        |> remove()
-
-      Logger.info("#{length(emails_sent)}/#{length(emails)} sent")
+      with {:ok, emails_sent} <- send_emails(emails),
+           _ <- remove(emails) do
+        Logger.info("#{length(emails_sent)}/#{length(emails)} sent")
+      end
 
       {[], []}
     end)
@@ -87,7 +86,10 @@ defmodule Vae.CampaignDiffuser.Worker do
   end
 
   defp remove(emails) do
-    Enum.each(emails, fn email -> :ets.delete(:pending_emails, email.provider_options.custom_id) end)
+    Enum.each(emails, fn email ->
+      :ets.delete(:pending_emails, email.provider_options.custom_id)
+    end)
+
     emails
   end
 end

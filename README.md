@@ -1,70 +1,34 @@
 # Avril
 
-Avril est un projet Open Source des Startups d'Etat Pôle emploi.
+Avril est un projet Open Source des Startups d'Etat Pôle emploi qui traite le sujet de la VAE. Validation des Acquis de l'Expérience. La VAE permet d'obtenir un diplôme grâce à ses compétences.
 
-Avril traite le sujet de la VAE : validation des acquis de l'expérience. La VAE permet d'obtenir un diplôme grâce à ses compétences.
+[Découvrir Avril](https://avril.pole-emploi.fr)
 
-## Dépendences
+## Qu'est-ce qu'une VAE ?
 
-L'application est codée avec le language [Elixir](https://elixir-lang.org/) et utilise le [framework Phoenix](https://phoenixframework.org/) et stocke ses données dans une base [PostgreSQL](https://www.postgresql.org/). [NodeJS](https://nodejs.org) est nécessaire pour générer le front.
+La VAE, pour Validation des Acquis de l'Expérience est un dispositif permettant à tout personne ayant minimum 1 an d'expérience professionnelle de la valoriser en obtenant un diplôme en lien avec les compétences développées au cours de cette expérience.
 
-En outre, elle utilise [wkhtmltopdf](https://wkhtmltopdf.org/) pour générer des documents PDF ainsi que la librairie [Goon](https://github.com/alco/goon).
+Exemples :
+- une nounou à domicile non diplômée peut prétendre au CAP petite enfance après un an d'expérience
+- un auxiliaire de vie peut souhaiter avoir le diplôme d'accompagnant éducatif et social
 
-## Installation
+[Plus d'informations](https://avril.pole-emploi.fr/vae)
 
-Il est possible d'installer directement les dépendences sur sa machine, mais il est préconisé d'utiliser [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/) pour une installation accélérée. En effet, l'ensemble des dépendances sus-citées sont installées grâce au [Dockerfile](/Dockerfile).
+## Et Avril ?
 
-Une fois `docker-compose` installé, il ne reste plus qu'à faire `docker-compose build` puis `docker-compose run --rm --service-ports app bash` (que l'on recommande d'aliaser en `dkp`, [plus d'infos](https://augustin-riedinger.fr/en/resources/using-docker-as-a-development-environment-part-1/)) pour ouvrir un terminal dans le docker applicatif.
+Dans le cadre du programme d'intrapreneuriat Pôle emploi, Avril a pour objectif de faciliter l'entrée en VAE pour les demandeurs d'emploi et pas uniquement. Pour y parvenir, le site propose :
 
-## Variables d'environnement
+- une découverte des diplômes disponibles à la VAE ainsi qu'une mise en relation avec la structure qui fournira le diplôme (= le certificateur)
+- un espace personnel qui sert de zone d'échange entre le candidat et le certificateur
+- des relances et un suivi par email pour accompagner le bon déroulement d'une VAE
 
-Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Algolia, Crisp).
+## Ca vous intéresse ?
 
-## Installer le dump de la BDD
+Si vous êtes intéressés par le dispositif, rendez-vous sur le site d'[Avril](https://avril.pole-emploi.fr) sans plus attendre.
 
-Télécharger un dump de la BDD (probablement via [flynn](https://flynn.io/) si accès à la prod : `flynn pg dump -f db/latest.dump`).
+Si vous souhaitez contribuer au projet, vous trouverez ci-dessous la documentation technique pour démarrer :
 
-Copier le dump dans `db` pour qu'il soit accessible dans un docker.
+- [Comment contribuer ?](/docs/CONTRIBUTING.md) : Pour mettre en place un environnement de développement
+- [Comment héberger ?](/docs/HOSTING.md) : Pour déployer Avril avec docker compose et swarm
 
-Puis exécuter :
-
-- `docker-compose run --rm app bash`
-- Dans le docker, exécuter : `mix ecto.create` pour créer la BDD
-- Puis dans un autre terminal, exécuter : `docker-compose run --rm postgres pg_restore --verbose --clean --no-acl --no-owner -d vae_dev -U postgres /app/db/latest.dump`
-
-> Attention : cela génère un warning, ne pas hésiter à lancer deux fois la requête pour que le restore se passe bien ([suivre l'issue](https://github.com/flynn/flynn/issues/4525)).
-
-## Démarrer le serveur
-
-Une fois dans le docker, `iex -S mix phx.server` démarre un serveur disponible à http://localhost:4000/ ainsi qu'une console interactive dans le terminal.
-
-
-## Démarrer PG Admin
-
-[PG Admin](https://www.pgadmin.org/) est un programme GUI qui permet d'inspecter simplement le contenu de sa base de donnée. La dernière version est un client web à 100, aussi, il est dockerisé pour plus de facilité.
-
-`docker-compose up -d pgadmin` puis accessible via http://localhost.
-
-Les logins utilisés sont ceux définis dans `.env`:
-
-```
-PGADMIN_DEFAULT_EMAIL=email@example.com
-PGADMIN_DEFAULT_PASSWORD=password
-```
-
-Une fois connecté, vous pouvez a minima accéder à la BDD locale via la config suivante :
-
-```
-Name : Avril Local
-Host name : postgres
-Port : 5432
-Username : postgres
-Password :
-```
-
-## A propos de Phoenix
-
-Phoenix est un framework très inspiré de [Ruby On Rails](https://rubyonrails.org/).
-
-Aussi, [FROM_RAILS.md](FROM_RAILS.md) rassemble quelques équivalents pour ceux qui viennent de ce monde.
-
+Bonne route !

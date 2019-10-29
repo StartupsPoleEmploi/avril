@@ -42,7 +42,7 @@ defmodule Vae.LayoutView do
       }) do
     %{
       title: "Diplôme #{format_certification_label(c)} en VAE",
-      description: "Découvrez toutes les étapes VAE pour le diplôme #{format_certification_label(c)} en VAE et trouvez votre certificateur."
+      description: "Découvrez toutes les étapes VAE pour le diplôme #{format_certification_label(c)} en VAE et trouvez votre centre VAE."
     }
   end
 

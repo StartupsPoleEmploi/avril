@@ -49,8 +49,11 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   def extract_lines_flow(flow) do
     flow
     |> Flow.map(fn
-      {:ok, line} -> Map.take(line, @fields)
-      {:error, error} -> Logger.error(error)
+      {:ok, line} ->
+        Map.take(line, @fields)
+
+      {:error, error} ->
+        Logger.error(error)
     end)
   end
 

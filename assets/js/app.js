@@ -33,6 +33,17 @@ $(() => {
     $($(e.target).attr('data-target')).toggleClass('d-none');
   });
 
+  $('[data-disable-with], [data-disable]').on('click', e => {
+    const $button = e.delegateTarget;
+    const newContent = $($button).attr('data-disable-with');
+    if (newContent) {
+      $($button).text(newContent);
+    }
+    setTimeout(() => {
+      $button.disabled = true;
+    }, 0);
+  });
+
   // Search labels
   $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_query");
   $("#search_query").parent().addClass('form-label-group');

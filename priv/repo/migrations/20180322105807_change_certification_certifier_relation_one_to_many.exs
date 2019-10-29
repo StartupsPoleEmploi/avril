@@ -11,9 +11,9 @@ defmodule Vae.Repo.Migrations.ChangeCertificationCertifierRelationOneToMany do
 
     create index(:certifications, [:certifier_id])
 
-    flush()
+    # flush()
 
-    migrate_certifications()
+    # migrate_certifications()
   end
 
   defp migrate_certifications() do

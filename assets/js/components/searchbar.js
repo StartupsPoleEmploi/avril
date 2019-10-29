@@ -38,10 +38,10 @@ const setupSearchBar = () => {
     }
   }, {
     source: autocomplete.sources.hits(romes, { hitsPerPage: 1, queryType: 'prefixAll' }),
-    displayKey: suggestion => `${suggestion.label} (${suggestion.code})`,
+    displayKey: suggestion => `${suggestion.code} : ${suggestion.label}`,
     templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">Romes</div>',
-      suggestion: suggestion => `${suggestion._highlightResult.label.value} (${suggestion._highlightResult.code.value})`
+      header: '<h5 class="m-0 ap-suggestions-category">ROME</div>',
+      suggestion: suggestion => `${suggestion._highlightResult.code.value} : ${suggestion.label}`
   }}]).on('autocomplete:selected', (event, suggestion, dataset) => {
     if(dataset === 1) {
       $('#search_rome_code').val(suggestion.rome_code);

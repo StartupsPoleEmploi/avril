@@ -11,7 +11,7 @@ Votre inscription à la réunion d'information a bien été enregistrée :
 - Tel: <%= @delegate_phone_number %>
 
 <% else %>
-Contactez dès maintenant votre centre <%= @delegate_phone_number %> ou <%= @delegate_email %> pour y rencontrer votre conseiller VAE !
+Contactez dès maintenant votre centre VAE au <%= @delegate_phone_number %> ou par email <%= @delegate_email %> pour être mis en relation avec votre conseiller VAE !
 <% end %>
 
 Vous retrouverez dans votre profil les éléments transmis à votre centre VAE.

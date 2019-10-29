@@ -3,7 +3,6 @@ defmodule Vae.Statistics.Handler do
 
   alias Vae.{Certification, JobSeeker}
 
-  @email_config Application.get_env(:vae, :statistics)
   @csv_headers [
     "date",
     "identifier",
@@ -197,32 +196,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   defp send_email(file) do
-    content = %{
-      Subject: "Hello voici les Stats !",
-      From: %{
-        Email: @email_config.email_from,
-        Name: @email_config.email_from_name
-      },
-      To: [
-        %{
-          Email: @email_config.email_to,
-          Name: @email_config.email_to_name
-        }
-      ],
-      Attachments: [
-        %{
-          ContentType: "text/csv",
-          Filename: Path.basename(file),
-          Base64Content: File.read!(file) |> Base.encode64()
-        }
-      ],
-      TextPart:
-        "Hello toi qui aimes les chiffres, voici les statistiques du mois précédent sur les mises en relation Users -> Delegataires.\r\nTu peux maintenant reprendre une activité normale.\r\nBonne journée,\r\nAvril."
-    }
-
-    Mailjex.Delivery.send(%{
-      Messages: [content]
-    })
+    AdminEmail.stats(file) |> Vae.Mailer.send()
   end
 
   defp time_to_string(%DateTime{

@@ -140,12 +140,21 @@ defmodule Vae.Meetings.StateHolder do
         meetings =
           places
           |> Enum.map(fn %{id: id, place: place, address: address} ->
-            found =
+            meetings =
               state
               |> from_delegates()
               |> Enum.find(&(&1[:id] == id))
+              |> case do
+                nil ->
+                  []
 
-            {{place, address, Vae.String.parameterize(place)}, found[:meetings]}
+                delegate ->
+                  delegate
+                  |> Map.get(:meetings)
+                  |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
+              end
+
+            {{place, address, Vae.String.parameterize(place)}, meetings}
           end)
 
         {:reply, meetings, state}
@@ -302,8 +311,8 @@ defmodule Vae.Meetings.StateHolder do
        do: %{
          id: UUID.uuid5(nil, "#{place} #{address}"),
          _geoloc: geoloc,
-         place: place,
          address: address,
+         place: place,
          academy_id: academy_id,
          certifier_id: certifier_id,
          has_academy: !!academy_id,
