@@ -12,3 +12,5 @@ else
   echo "Dump file $DUMP_FILE not found"
   echo $(pwd)
 fi
+
+exit 0
