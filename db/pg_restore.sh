@@ -15,19 +15,20 @@ done
 
 >&2 echo "Postgres is up - executing command"
 
-psql -t -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;';
+if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB; then
+  echo "DB $POSTGRES_DB created";
+fi
 
-if [ $? -eq 0 ]; then
-  echo "Database $POSTGRES_DB has migrations: no need to seed"
+if psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;'; then
+  echo "FINISH: Database $POSTGRES_DB has migrations: no need to seed."
 else
   echo "Creating $POSTGRES_DB and seeding it"
 
-  createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB
-
   if [[ -f $DUMP_FILE ]]; then
     pg_restore --verbose --clean --create --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -w $DUMP_FILE
+    echo "FINISH: Database seeded"
   else
-    echo "Dump file $DUMP_FILE not found"
+    echo "FINISH: Dump file $DUMP_FILE not found"
   fi
 fi
 
