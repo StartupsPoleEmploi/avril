@@ -250,7 +250,8 @@ defmodule Vae.Meetings.StateHolder do
 
               %{
                 meeting
-                | geolocation: geolocation
+                | geolocation: geolocation,
+                  name: name
               }
 
             %Meeting{postal_code: postal_code} = meeting ->
