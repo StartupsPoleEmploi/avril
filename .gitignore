@@ -1,6 +1,7 @@
 # App artifacts
 /_build
-/db
+/db/*.dump
+/db/pgadmin
 /deps
 /*.ez
 .DS_Store
