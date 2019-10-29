@@ -25,7 +25,7 @@ else
   echo "Creating $POSTGRES_DB and seeding it"
 
   if [[ -f $DUMP_FILE ]]; then
-    pg_restore --verbose --clean --create --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -w $DUMP_FILE
+    pg_restore --verbose --clean --create --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -w $DUMP_FILE || true
     echo "FINISH: Database seeded"
   else
     echo "FINISH: Dump file $DUMP_FILE not found"
