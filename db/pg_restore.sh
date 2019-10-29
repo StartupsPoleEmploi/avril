@@ -15,7 +15,7 @@ done
 
 >&2 echo "Postgres is up - executing command"
 
-count=$(psql -t -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;';)
+psql -t -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;';
 
 if [ $? -eq 0 ]; then
   echo "Database $POSTGRES_DB has migrations: no need to seed"
@@ -30,9 +30,5 @@ else
     echo "Dump file $DUMP_FILE not found"
   fi
 fi
-
-# if [[ $count -gt 0 ]]; then
-# else
-# fi
 
 exit 0
