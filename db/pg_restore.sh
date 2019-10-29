@@ -19,7 +19,7 @@ if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB; then
   echo "DB $POSTGRES_DB created";
 fi
 
-if ! psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;'; then
+if psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;'; then
   echo "FINISH: Database $POSTGRES_DB has migrations: no need to seed."
 else
   echo "Creating $POSTGRES_DB and seeding it"
