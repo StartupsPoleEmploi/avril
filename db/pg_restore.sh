@@ -8,16 +8,17 @@ export PGPASSWORD=$POSTGRES_PASSWORD
 DUMP_FILE="/host/latest.dump"
 
 
-until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d postgres -c '\q'; do
+until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q'; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done
 
 >&2 echo "Postgres is up - executing command"
 
+count=$(psql -t -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;';)
 
-if psql -lqt -h $POSTGRES_HOST -U $POSTGRES_USER | cut -d \| -f 1 | grep -qw $POSTGRES_DB; then
-  echo "Database $POSTGRES_DB exists: no need to seed"
+if [[ $count -gt 0 ]]; then
+  echo "Database $POSTGRES_DB has migrations: no need to seed"
 else
   echo "Creating $POSTGRES_DB and seeding it"
 
