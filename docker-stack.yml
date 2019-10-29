@@ -2,12 +2,20 @@ version: "3.6"
 
 services:
   app:
+    extends:
+      file: docker-compose.yml
+      service: app
     image: avril_app
     command: /app/prod-server.sh
     deploy:
       replicas: 2
     ports:
       - "80:4000"
+  postgres:
+    extends:
+      file: docker-compose.yml
+      service: postgres
+
 #     working_dir: /app
 #     volumes:
 #       - "..:/app"
