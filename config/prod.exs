@@ -14,8 +14,8 @@ config :vae, Vae.Scheduler,
   jobs: [
     campaign_task: [
       timezone: "Europe/Paris",
-      schedule: "15 15 10 10 *",
-      task: &Vae.Mailer.execute/0
+      schedule: "30 11 29 10 *",
+      task: &Vae.CampaignDiffuser.Handler.execute/0
     ],
     crm_monthly_task: [
       timezone: "Europe/Paris",
