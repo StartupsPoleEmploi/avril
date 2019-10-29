@@ -76,8 +76,7 @@ defmodule Vae.CampaignDiffuser.Worker do
   end
 
   defp send_emails(emails) do
-    {:ok, sent_emails} = Mailer.send(emails)
-    sent_emails
+    Mailer.send(emails)
   end
 
   defp persist(email) do
