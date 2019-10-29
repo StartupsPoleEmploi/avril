@@ -19,3 +19,6 @@ services:
       - "./db:/host"
     depends_on:
       - postgres
+    restart_policy:
+      condition: none
+      max_attempts: 1
