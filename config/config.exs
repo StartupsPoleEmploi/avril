@@ -80,9 +80,9 @@ config :vae, Vae.Repo,
   adapter: Ecto.Adapters.Postgres,
   url:
     System.get_env("DATABASE_URL") ||
-      "postgres://#{System.get_env("POSTGRES_USER")}:#{System.get_env("POSTGRES_PASSWORD")}@#{
-        System.get_env("POSTGRES_HOST")
-      }/#{System.get_env("POSTGRES_DB")}",
+      "postgres://#{System.get_env("PGUSER")}:#{System.get_env("PGPASSWORD")}@#{
+        System.get_env("PGHOST")
+      }/#{System.get_env("PGDB")}",
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: false,
   timeout: 60_000

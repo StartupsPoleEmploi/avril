@@ -30,7 +30,8 @@ docker exec -it $(docker ps -a | grep "app" | awk '{print $1}' | head -n 1) mix 
 8. Rentrer dans le container postgres pour lancer pg_restore:
 
 ```
-docker exec -it $(docker ps -a | grep "postgres" | awk '{print $1}') pg_restore --verbose --clean --no-acl --no-owner -d vae_staging -U $POSTGRES_USER /app/db/latest.dump
+docker exec -it $(docker ps -a | grep "postgres" | awk '{print $1}') bash
+pg_restore --verbose --clean --create --no-acl --no-owner -h $PGHOST -d $PGDB -U $PGUSER /app/db/latest.dump
 ```
 
 9. Suivi
