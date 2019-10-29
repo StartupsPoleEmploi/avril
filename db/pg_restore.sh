@@ -8,7 +8,7 @@ export PGPASSWORD=$POSTGRES_PASSWORD
 DUMP_FILE="/host/latest.dump"
 
 
-until psql -h $POSTGRES_HOST -U $POSTGRES_USER -c '\q'; do
+until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d postgres -c '\q'; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done
@@ -17,7 +17,7 @@ done
 
 
 if psql -lqt -h $POSTGRES_HOST -U $POSTGRES_USER | cut -d \| -f 1 | grep -qw $POSTGRES_DB; then
-  echo "Database exists: no need to seed"
+  echo "Database $POSTGRES_DB exists: no need to seed"
 else
   echo "Creating $POSTGRES_DB and seeding it"
 
