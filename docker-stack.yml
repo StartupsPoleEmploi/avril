@@ -8,26 +8,14 @@ services:
       replicas: 2
     ports:
       - "80:4000"
-#     working_dir: /app
-#     volumes:
-#       - "..:/app"
-#     env_file:
-#       - ../.env
-#     depends_on:
-#       - postgres
-#   postgres:
-#     image: postgres:11.0-alpine
-#     env_file:
-#       - ../.env
-#     volumes:
-#       - "..:/app"
-#       - "/var/run/postgresql:/var/run/postgresql"
-
-
-
-# volumes:
-#   postgres: {}
-#   static:
-#     driver_opts:
-#       device: "tmpfs"
-#       type: "tmpfs"
+    depends_on:
+      - init
+  init:
+    image: postgres:11.0-alpine
+    command: /host/pg_restore.sh
+    env_file:
+      - ".env"
+    volumes:
+      - "./db:/host"
+    depends_on:
+      - postgres
