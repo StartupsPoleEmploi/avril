@@ -25,7 +25,7 @@ else
   echo "Creating $POSTGRES_DB and seeding it"
 
   if [[ -f $DUMP_FILE ]]; then
-    pg_restore --verbose --clean --create --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -w $DUMP_FILE || true
+    pg_restore --verbose --clean --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -w $DUMP_FILE || true
     echo "Checking restore"
     psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;' || true
     echo "FINISH: Database seeded"
