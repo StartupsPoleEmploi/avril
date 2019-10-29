@@ -15,7 +15,7 @@ services:
       - "4000:4000"
     working_dir: /app
     depends_on:
-      - "postgres"
+      - postgres
     env_file:
       - ".env"
     command: iex -S mix phx.server
