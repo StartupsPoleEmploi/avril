@@ -7,7 +7,7 @@ services:
     image: "postgres:11.0-alpine"
     volumes:
       # - "/var/lib/postgresql/data:/var/lib/postgresql/data"
-      - "./db:/docker-entrypoint-initdb.d"
+      - "./db:/host"
   app:
     container_name: avril_app
     build: .

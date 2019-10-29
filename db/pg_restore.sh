@@ -2,7 +2,7 @@
 
 export PGPASSWORD=$POSTGRES_PASSWORD
 
-DUMP_FILE="/docker-entrypoint-initdb.d/latest.dump"
+DUMP_FILE="/host/latest.dump"
 
 createdb -h $POSTGRES_HOST -U $POSTGRES_USER -W $POSTGRES_DB
 

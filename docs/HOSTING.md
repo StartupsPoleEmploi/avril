@@ -35,8 +35,7 @@ docker exec -it $(docker ps -a | grep "app" | awk '{print $1}' | head -n 1) mix 
 
 ```
 docker exec -it $(docker ps -a | grep "postgres" | awk '{print $1}') bash
-createdb -h $POSTGRES_HOST -U $POSTGRES_USER -W $POSTGRES_DB
-pg_restore --verbose --clean --create --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER /app/db/latest.dump
+/host/pg_restore.sh
 ```
 
 9. Suivi
