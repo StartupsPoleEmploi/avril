@@ -134,7 +134,7 @@ defmodule Vae.User do
     case Repo.get_by(__MODULE__, email: String.downcase(email)) do
       nil ->
         Repo.insert(
-          __MODULE__.changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result))
+          changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result))
         )
 
       user ->
@@ -148,7 +148,7 @@ defmodule Vae.User do
   def update_with_pe_connect_data(user, userinfo_api_result) do
     user
     |> Repo.preload(:job_seeker)
-    |> __MODULE__.changeset(userinfo_api_map(userinfo_api_result, false))
+    |> changeset(userinfo_api_map(userinfo_api_result, false))
     |> Repo.update()
   end
 

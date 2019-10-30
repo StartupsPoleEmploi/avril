@@ -28,7 +28,7 @@ defmodule Vae.AuthController do
             "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
           )
 
-        {:ok, user} =
+        result =
           case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
             nil ->
               User.create_or_update_with_pe_connect_data(userinfo_api_result.body)
@@ -40,8 +40,12 @@ defmodule Vae.AuthController do
           end
           |> User.fill_with_api_fields(client_with_token)
 
-      Coherence.Authentication.Session.create_login(conn, user)
-      |> Coherence.Redirects.create_or_get_application(user)
+        case result do
+          {:ok, user} ->
+            Coherence.Authentication.Session.create_login(conn, user)
+            |> Coherence.Redirects.create_or_get_application(user)
+          {:error, msg} -> handle_error(conn, msg)
+        end
 
       {:error, _error} ->
         handle_error(conn)
