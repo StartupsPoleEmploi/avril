@@ -14,7 +14,7 @@ defmodule Vae.Status.Server do
   @impl true
   def init(_delegate) do
     Logger.info("Init status server")
-    PersistentEts.new(@ets_table, "#{@ets_table}.tab", [
+    PersistentEts.new(@ets_table, "priv/tabs/#{@ets_table}.tab", [
       :set,
       :named_table,
       :protected

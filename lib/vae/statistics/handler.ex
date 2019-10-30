@@ -44,7 +44,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   def init(args) do
-    PersistentEts.new(:romes, "romes.tab", [:named_table])
+    PersistentEts.new(:romes, "priv/tabs/romes.tab", [:named_table])
     {:ok, args}
   end
 

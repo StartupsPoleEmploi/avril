@@ -8,7 +8,7 @@ defmodule Vae.CampaignDiffuser.Worker do
   @doc false
   def start_link() do
     Task.start_link(fn ->
-      PersistentEts.new(:pending_emails, "pending_emails.tab", [:named_table, :public])
+      PersistentEts.new(:pending_emails, "priv/tabs/pending_emails.tab", [:named_table, :public])
       |> :ets.tab2list()
       |> Enum.map(fn {_custom_id, email} -> email end)
       |> run()

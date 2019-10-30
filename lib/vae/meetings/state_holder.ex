@@ -21,7 +21,7 @@ defmodule Vae.Meetings.StateHolder do
   @impl true
   def init(_state) do
     state =
-      PersistentEts.new(:meetings, "meetings.tab", [:named_table, :public])
+      PersistentEts.new(:meetings, "priv/tabs/meetings.tab", [:named_table, :public])
       |> from_ets()
 
     {:ok, state}

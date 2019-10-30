@@ -14,7 +14,7 @@ defmodule Vae.Places.Cache do
 
   @impl true
   def init(state) do
-    PersistentEts.new(@places_ets_table_name, "#{@places_ets_table_name}.tab", [
+    PersistentEts.new(@places_ets_table_name, "priv/tabs/#{@places_ets_table_name}.tab", [
       :named_table,
       :public
     ])
