@@ -27,11 +27,11 @@
 
         .col-md-8
           .form-label-group
-            = text_input f, :email, class: "form-control form-control-lg form-control-avril bg-light", required: true, placeholder: "ex: la.classe@americaine.com"
+            = text_input f, :email, class: "form-control form-control-lg form-control-avril bg-white", required: true, placeholder: "ex: la.classe@americaine.com", value: if Coherence.logged_in?(@conn), do: Coherence.current_user(@conn).email
             = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
             = error_tag f, :email
         .col-md-4
-          = submit "Recevoir ma synthèse", class: "btn btn-secondary btn-block"
+          = submit "Recevoir ma synthèse", class: "btn btn-secondary btn-block", data: [disable: true]
 button.d-none.d-md-block.btn.btn-link.no-print.px-0.pull-right.steps-print-button onclick="javascript:window.print()" data-analytics="Steps#print"
   = img_tag '/images/printer.svg', alt: 'imprimer'
   |  Imprimer

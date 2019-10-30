@@ -9,6 +9,7 @@ defmodule Vae.JobSeekerController do
     "delegate_id" => delegate_id
   }}) do
     with(
+      email when email != "" <- email,
       delegate when not is_nil(delegate) <- Repo.get(Delegate, delegate_id),
       certification when not is_nil(certification) <- Repo.get(Certification, certification_id),
       job_seeker when not is_nil(job_seeker) <- Event.create_or_update_job_seeker(%{

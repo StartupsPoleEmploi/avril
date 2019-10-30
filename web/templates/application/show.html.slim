@@ -150,7 +150,7 @@
                           div
                             span.fa.fa-upload
                             p.label Ajouter un CV
-                          = file_input f, :file, class: "form-control-file", id: "resume"
+                          = file_input f, :file, class: "form-control-file", id: "resume", required: true
                         = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled', data: ["disable-with": "Envoi ..."]
             - else
               p Le candidat n'a pas encore déposé de CV.
