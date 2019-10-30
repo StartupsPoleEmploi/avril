@@ -7,7 +7,6 @@ const setupSearchBar = () => {
   const client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
   const professions = client.initIndex('profession');
   const certifications = client.initIndex('certification');
-  const romes = client.initIndex('rome');
   autocomplete('#search_query', {
     autoselect: true,
     autoselectOnBlur: true,
@@ -36,23 +35,14 @@ const setupSearchBar = () => {
         return acronym ? `${acronym} ${label}` : label;
       }
     }
-  }, {
-    source: autocomplete.sources.hits(romes, { hitsPerPage: 1, queryType: 'prefixAll' }),
-    displayKey: suggestion => `${suggestion.code} : ${suggestion.label}`,
-    templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">ROME</div>',
-      suggestion: suggestion => `${suggestion._highlightResult.code.value} : ${suggestion.label}`
-  }}]).on('autocomplete:selected', (event, suggestion, dataset) => {
+  }]).on('autocomplete:selected', (event, suggestion, dataset) => {
     if(dataset === 1) {
-      $('#search_rome_code').val(suggestion.rome_code);
       $('#search_certification').val('');
     }
     if(dataset === 3) {
-      $('#search_rome_code').val(suggestion.code);
       $('#search_certification').val('');
     }
     if(dataset === 2) {
-      $('#search_rome_code').val('');
       $('#search_certification').val(suggestion.id);
     }
   });
