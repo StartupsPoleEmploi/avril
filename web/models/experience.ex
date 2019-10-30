@@ -22,14 +22,7 @@ defmodule Vae.Experience do
   end
 
   def unique_key(experience) do
-    "#{experience.company}-#{experience.label}-#{format_date(experience.start_date)}-#{format_date(experience.end_date)}"
-  end
-
-  def format_date(date) do
-    case Timex.format(date, "{YYYY}{0M}{0D}") do
-      {:ok, str} -> str
-      {:error, _error_msg} -> "unknown"
-    end
+    "#{experience.company}-#{experience.label}-#{Vae.Date.format_for_unique_key(experience.start_date)}-#{Vae.Date.format_for_unique_key(experience.end_date)}"
   end
 
   def experiences_api_map(api_fields) do

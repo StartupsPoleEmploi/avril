@@ -27,7 +27,7 @@ defmodule Vae.ProvenExperience do
   end
 
   def unique_key(experience) do
-    "#{experience.company_uid}-#{experience.label}-#{Timex.format!(experience.start_date, "{YYYY}{0M}{0D}")}-#{if experience.end_date, do: Timex.format!(experience.end_date, "{YYYY}{0M}{0D}"), else: ""}"
+    "#{experience.company_uid}-#{experience.label}-#{Vae.Date.format_for_unique_key(experience.start_date)}-#{Vae.Date.format_for_unique_key(experience.end_date)}"
   end
 
   def experiencesprofessionellesdeclareesparlemployeur_api_map(api_fields) do

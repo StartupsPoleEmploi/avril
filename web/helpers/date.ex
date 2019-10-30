@@ -16,4 +16,11 @@ defmodule Vae.Date do
       {:error, _} -> nil
     end
   end
+
+  def format_for_unique_key(date) do
+    case Timex.format(date, "{YYYY}{0M}{0D}") do
+      {:ok, str} -> str
+      {:error, _error_msg} -> "unknown"
+    end
+  end
 end
