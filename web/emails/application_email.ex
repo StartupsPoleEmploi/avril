@@ -19,7 +19,7 @@ defmodule Vae.ApplicationEmail do
         certification_name: Certification.name(application.certification),
         date_format: "%d/%m/%Y à %H:%M",
         meeting: application.meeting,
-        subject: "#{User.fullname(application.user)} souhaite faire une VAE et attends un contact de votre part !"
+        subject: "#{User.fullname(application.user)} souhaite faire une VAE et attend un contact de votre part !"
       }
     )
   end
