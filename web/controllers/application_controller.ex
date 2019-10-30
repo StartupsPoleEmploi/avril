@@ -116,8 +116,9 @@ defmodule Vae.ApplicationController do
         end
 
       {:error, msg} ->
+        Logger.error(fn -> inspect(msg) end)
         conn
-        |> put_flash(:error, msg)
+        |> put_flash(:error, "Une erreur est survenue")
         |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end

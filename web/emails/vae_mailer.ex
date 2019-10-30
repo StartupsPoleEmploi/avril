@@ -121,7 +121,7 @@ defmodule Vae.Mailer do
     # email
     # |> subject(subject)
     # |> Map.put(:text_body, rest)
-    email |> subject(Map.get(params, :subject))
+    email |> subject(Map.get(params, :subject) |> String.slice(0, 255))
   end
 
   # defp _extract_subject(_template_name) do
