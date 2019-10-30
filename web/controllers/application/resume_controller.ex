@@ -5,13 +5,13 @@ defmodule Vae.ResumeController do
 
   alias Vae.{Resume}
 
-  def create(conn, %{"application_id" => _application_id, "resume" => resume_params}) do
+  def create(conn, %{"application_id" => _application_id} = params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
 
-    if params = resume_params["file"] do
-      case Resume.create(application, params) do
+    if resume_params = params["resume"]["file"] do
+      case Resume.create(application, resume_params) do
         {:ok, _resume} ->
           conn
           |> put_flash(:success, "CV uploadé avec succès.")
@@ -22,6 +22,10 @@ defmodule Vae.ResumeController do
           |> put_flash(:error, msg)
           |> redirect_back(default: Routes.application_path(conn, :show, application))
       end
+    else
+      conn
+      |> put_flash(:warning, "Vous n'avez pas sélectionné de fichier.")
+      |> redirect_back(default: Routes.application_path(conn, :show, application))
     end
   end
 
