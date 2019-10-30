@@ -35,16 +35,20 @@ const setupSearchBar = () => {
         return acronym ? `${acronym} ${label}` : label;
       }
     }
+
   }]).on('autocomplete:selected', (event, suggestion, dataset) => {
-    if(dataset === 1) {
-      $('#search_certification').val('');
-    }
-    if(dataset === 3) {
-      $('#search_certification').val('');
-    }
-    if(dataset === 2) {
-      $('#search_certification').val(suggestion.id);
-    }
+     if(dataset === 1) {
+      $('#search_rome_code').val(suggestion.rome_code);
+       $('#search_certification').val('');
+     }
+     if(dataset === 3) {
+      $('#search_rome_code').val(suggestion.code);
+       $('#search_certification').val('');
+     }
+     if(dataset === 2) {
+      $('#search_rome_code').val('');
+       $('#search_certification').val(suggestion.id);
+     }
   });
 
   const places = algoliasearch.initPlaces(window.algolia_places_app_id, window.algolia_places_api_key);
