@@ -1,6 +1,6 @@
 # Bonjour,
 
-### <%= @user_name %> souhaite démarrer une VAE pour le diplôme <%= @certification_name %>. Soutenez le !
+### <%= @user_name %> souhaite démarrer une VAE pour le diplôme <%= @certification_name %>. Soutenez sa démarche !
 
 Avril - la VAE Facile l'a informé des étapes à suivre (inscription en ligne ou à une réunion d'information, etc.) mais nous savons qu'un candidat sur deux a besoin d'être encouragé dans son projet de VAE.
 
