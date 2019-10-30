@@ -52,6 +52,20 @@ pg_dump --verbose -h $PGHOST -d $PGDB -U $PGUSER /app/db/latest.dump
 
 ## Rolling update
 
+### Sans rebuild
+
+Si uniquement le code a changé mais aucune dépendance (front & back), alors il suffit de relancer le service de l'app.
+
+Pour cela la commande est :
+
+```
+docker service update --force avril_app
+```
+
+NB: le `--force` est nécessaire car le code étant dans un `volume`, le container ne détecte pas qu'il a changé.
+
+### Avec rebuild
+
 Le rebuild du container n'est pas obligatoire mais suggéré si des dépendances ont été modifées :
 - dans [mix.exs](./mix.exs)
 - ou dans [package.json](./assets/package.json)
