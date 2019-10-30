@@ -5,7 +5,7 @@ defmodule Vae.AuthController do
   alias Vae.OAuth.Clients
 
   def save_session_and_redirect(conn, _params) do
-    referer = hd(get_req_header(conn, "referer"))
+    referer = List.first(get_req_header(conn, "referer"))
 
     client = OAuth.init_client()
 
