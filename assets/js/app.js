@@ -7,7 +7,6 @@ import 'bootstrap-select';
 import 'url-search-params';
 
 import './analytics';
-// import './socket';
 import './tools/smooth_scroll';
 import './components/searchbar';
 import './components/pagination';

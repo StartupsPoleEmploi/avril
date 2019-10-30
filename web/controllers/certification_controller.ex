@@ -76,7 +76,8 @@ defmodule Vae.CertificationController do
         redirect_or_show(conn, certification, delegate, is_nil(params["certificateur"]))
       end
     else
-      raise Ecto.NoResultsError, queryable: Certification
+      _error ->
+        raise Ecto.NoResultsError, queryable: Certification
     end
   end
 

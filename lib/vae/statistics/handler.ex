@@ -1,7 +1,7 @@
 defmodule Vae.Statistics.Handler do
   use GenServer
 
-  alias Vae.{Certification, JobSeeker}
+  alias Vae.{AdminEmail, Certification, JobSeeker}
 
   @csv_headers [
     "date",
