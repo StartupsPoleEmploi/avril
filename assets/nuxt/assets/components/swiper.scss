@@ -1,0 +1,35 @@
+.swiper{
+  &-container{
+    height: 100%;
+  }
+  &-button{
+    background: none !important;
+    top: 0 !important;
+    width: 20% !important;
+    height: 100% !important;
+    &-prev{
+      left: 0 !important;
+    }
+    &-right{
+      right: 0 !important;
+    }
+  }
+  &-wrapper{
+    width: 60% !important;
+  }
+  &-slide{
+    text-align: center;
+    padding: 20vh 0 10vh 0;
+    opacity: .3;
+    transition: all .4s ease-in-out;
+    &-active{
+      opacity: 1;
+    }
+  }
+  &-pagination-bullet-active{
+    background: avril-color('blue') !important;
+  }
+  &-pagination-bullet{
+    background: rgba(255,255,255,.3) !important;
+  }
+}

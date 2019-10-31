@@ -1,0 +1,26 @@
+// progress bar du footer
+.progress__{
+  &bar{
+    background: #d0d2d8;
+    height: 6px;
+    width: 100%;
+    display: block;
+    margin: 4px 0;
+    &--suivi{
+      background: avril-color('blue');
+      width: 0%;
+      height: 6px;
+      display: block;
+    }
+  }
+}
+.progress-vision{
+  margin: 2rem 0;
+}
+.navigation-progressbar{
+  height: 5px;
+  width: 90%;
+  .progress__bar--suivi{
+    height: 5px;
+  }
+}

@@ -1,5 +1,6 @@
 # App artifacts
 /_build
+/assets/.nuxt
 /db/*.dump
 /db/pgadmin
 /deps

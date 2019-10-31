@@ -1,0 +1,3 @@
+@function avril-color($key: 'gray') {
+  @return map-get($avril-colors, $key);
+}

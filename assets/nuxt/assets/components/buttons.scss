@@ -1,0 +1,16 @@
+.button{
+  &.is-dark{
+    background: avril-color('blue');
+    transition: all .2s ease-in-out;
+    color: #fff !important;
+    &:hover{
+      background: lighten(avril-color('blue'), 5%);
+      color: #fff !important;
+    }
+    svg{
+      width: 16px;
+      margin-left: -6px;
+      fill: #fff;
+    }
+  }
+}

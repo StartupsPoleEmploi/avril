@@ -1,0 +1,50 @@
+// transition
+.page-enter-active{
+  transition: transform .2s, opacity .2s;
+  .avril__page__help{
+    transition: transform 2s, opacity 2s;
+  }
+}
+
+.page-enter{
+  transform: translateX(200px);
+  opacity: 0;
+  .avril__page__help{
+    transform: translateX(200px);
+    opacity: 0;
+  }
+}
+
+.page-leave-active{
+  transition: transform .2s, opacity .2s;
+  .avril__page__help{
+    transition: transform 2s, opacity 2s;
+  }
+}
+
+.page-leave-to{
+  transform: translateX(-200px);
+  opacity: 0;
+  .avril__page__help{
+    transform: translateX(-200px);
+    opacity: 0;
+  }
+}
+
+
+// layout
+.layout-enter-active{
+  // transition: opacity .2s;
+}
+
+.layout-enter{
+  // opacity: 0;
+}
+
+.layout-leave-active{
+  // transition: opacity .2s;
+}
+
+.layout-leave-to{
+  // opacity: 0;
+}
