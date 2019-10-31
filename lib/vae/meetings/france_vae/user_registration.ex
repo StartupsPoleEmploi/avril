@@ -13,7 +13,7 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
             courrier: nil,
             telephonePortable: nil,
             # Avril
-            origine: 19,
+            origine: 100,
             # Chosen diplome
             diplome: 1,
             diplomeVise: nil,

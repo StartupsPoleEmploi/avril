@@ -35,7 +35,7 @@ defmodule Vae.Meetings.StateHolder do
       end)
       |> case do
         nil ->
-          with parsed_delegate <- delegate |> parse(),
+          with parsed_delegate <- delegate |> parse(name),
                {:ok, delegate} <- index_and_persist(parsed_delegate, name) do
             [
               delegate
@@ -52,7 +52,7 @@ defmodule Vae.Meetings.StateHolder do
 
           parsed_delegate =
             delegate
-            |> parse()
+            |> parse(name)
 
           updated_delegate =
             if stated_delegate.req_id == parsed_delegate.req_id do
@@ -176,6 +176,18 @@ defmodule Vae.Meetings.StateHolder do
     {:reply, meeting, state}
   end
 
+  @impl true
+  def handle_call({:register, {%{name: name} = meeting, application}}, _from, state) do
+    with {:ok, _registerd_meeting} <-
+           GenServer.call(name, {:register, {meeting, application}}) do
+      {:reply, {:ok, meeting}, state}
+    else
+      {:error, msg} ->
+        Logger.error(fn -> inspect(msg) end)
+        {:reply, {:error, meeting}, state}
+    end
+  end
+
   def subscribe(who) do
     GenServer.cast(@name, {:subscribe, who})
   end
@@ -205,7 +217,13 @@ defmodule Vae.Meetings.StateHolder do
     GenServer.cast(@name, :fetch_all)
   end
 
-  defp parse(delegate) do
+  def register(meeting_id, application) do
+    meeting = get_by_meeting_id(meeting_id)
+
+    GenServer.call(@name, {:register, {meeting, application}})
+  end
+
+  defp parse(delegate, name) do
     {to_index, grouped} =
       delegate.meetings
       |> Enum.reduce({[], []}, fn %{
@@ -232,7 +250,8 @@ defmodule Vae.Meetings.StateHolder do
 
               %{
                 meeting
-                | geolocation: geolocation
+                | geolocation: geolocation,
+                  name: name
               }
 
             %Meeting{postal_code: postal_code} = meeting ->
@@ -240,7 +259,8 @@ defmodule Vae.Meetings.StateHolder do
 
               %{
                 meeting
-                | geolocation: geolocation
+                | geolocation: geolocation,
+                  name: name
               }
           end)
           |> Enum.group_by(&{&1.geolocation["_geoloc"], &1.place, &1.address})

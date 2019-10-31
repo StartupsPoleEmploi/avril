@@ -2,17 +2,15 @@ main.text-center.justify-content-center role="main"
   .container
 
     h4.mb-4
-      | Bravo ! Votre inscription est presque terminée!
-    p.font-weight-bold.h5
-      | Nous vérifions les places disponibles pour la réunion d'information chez notre partenaire
-
+      | Bravo, votre inscription à la réunion d'informations du #{format_meeting_date(@meeting)} à #{format_meeting_hour(@meeting)} au centre #{@meeting.place} est enregistrée !
+    p.font-weight-bold.h5.mb-4
+      | Surveillez votre boite mail, vous allez recevoir un email de confirmation de la part de notre partenaire
     .img-container
       = img_tag "/images/france-vae.png", alt: "Logo France VAE", class: "mb-4"
 
-    p
-      = "Si rien ne se passe après 30 secondes, "
-      = link("cliquez ici", to: Routes.application_path(@conn, :show, @application_id), class: "btn btn-primary")
-      = " pour revenir sur votre profil Avril."
+    p.small
+      | Pour revenir à votre dossier de candidature
+      = link(" cliquez ici.", to: Routes.application_path(@conn, :show, @application_id))
 
 = unless Mix.env == :dev do
   javascript:

@@ -8,14 +8,15 @@ defmodule Vae.ApplicationController do
   plug Vae.Plugs.ApplicationAccess when action not in [:show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
-  def show(conn, %{"id" => _id} = params) do
-    application = conn.assigns[:current_application]
+  def show(conn, %{"id" => id} = params) do
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([
-          :user,
-          [delegate: [:process, :certifiers]],
-          :certification,
-          :resumes
-        ])
+        :user,
+        [delegate: [:process, :certifiers]],
+        :certification,
+        :resumes
+      ])
 
     meetings =
       if application.meeting,
@@ -66,8 +67,9 @@ defmodule Vae.ApplicationController do
   end
 
   # TODO: change to submit
-  def update(conn, %{"id" => _id} = params) do
-    application = conn.assigns[:current_application]
+  def update(conn, %{"id" => id} = params) do
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([
         :user,
         [delegate: [:process, :certifiers]],
@@ -79,34 +81,41 @@ defmodule Vae.ApplicationController do
         if params["book"] == "on" do
           meeting_id = params["application"]["meeting_id"]
 
-          case Application.set_registered_meeting(
-                 application,
-                 application.delegate.academy_id,
-                 meeting_id
-               ) do
-            {:ok, application} ->
-              if not is_nil(application.delegate.academy_id) do
-                redirect(conn,
+          with {:ok, meeting} <- Vae.Meetings.register(meeting_id, application),
+               {:ok, application} <-
+                 Application.set_registered_meeting(
+                   application,
+                   application.delegate.academy_id,
+                   meeting_id
+                 ) do
+            case meeting.name do
+              :france_vae ->
+                conn
+                |> redirect(
                   to:
-                    Routes.application_france_vae_redirect_path(
+                    Routes.application_france_vae_registered_path(
                       conn,
-                      :france_vae_redirect,
+                      :france_vae_registered,
                       application,
                       %{academy_id: application.delegate.academy_id}
                       |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
                     )
                 )
-              else
+
+              _ ->
                 conn
-                |> put_flash(:succes, "Dossier transmis avec succès !")
+                |> put_flash(:success, "Dossier transmis avec succès!")
                 |> redirect(to: Routes.application_path(conn, :show, application))
-              end
-
-            {:error, msg} ->
-              Logger.error(fn -> inspect(msg) end)
-
+            end
+          else
+            {:error, %{"code" => _code, "message" => msg}} ->
               conn
-              |> put_flash(:error, "Une erreur est survenue")
+              |> put_flash(:error, msg)
+              |> redirect(to: Routes.application_path(conn, :show, application))
+
+            {:error, _meeting} ->
+              conn
+              |> put_flash(:error, "Une erreur est survenue.")
               |> redirect(to: Routes.application_path(conn, :show, application))
           end
         else
@@ -123,8 +132,9 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def download(conn, %{"application_id" => _id}) do
-    application = conn.assigns[:current_application]
+  def download(conn, %{"application_id" => id}) do
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([
         :user,
         [delegate: [:process, :certifiers]],
@@ -183,8 +193,8 @@ defmodule Vae.ApplicationController do
           "academy_id" => academy_id
         } = params
       ) do
-
-    application = conn.assigns[:current_application]
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([:user, {:delegate, :process}, :certification])
 
     meeting_id = params["meeting_id"]
@@ -199,12 +209,18 @@ defmodule Vae.ApplicationController do
   def france_vae_registered(
         conn,
         %{
-          "application_id" => id
+          "application_id" => id,
+          "academy_id" => academy_id,
+          "meeting_id" => meeting_id
         }
       ) do
+    meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
+
     render(conn, "france-vae-registered.html", %{
       container_class: "d-flex flex-grow-1",
-      application_id: id
+      application_id: id,
+      academy_id: academy_id,
+      meeting: meeting
     })
   end
 end
