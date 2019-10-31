@@ -8,7 +8,7 @@ defmodule Vae.ApplicationController do
   plug Vae.Plugs.ApplicationAccess when action not in [:show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
-  def show(conn, %{"id" => id} = params) do
+  def show(conn, %{"id" => _id} = params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -64,17 +64,16 @@ defmodule Vae.ApplicationController do
         [delegate: [:process, :certifiers]],
         :certification
       ])
-    meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
+    meeting_id = if params["book"] == "on" && params["application"]["meeting_id"],
+      do: String.to_integer(params["application"]["meeting_id"])
 
     [
       fn application ->
         case Vae.Meetings.register(meeting_id, application) do
-          {:ok, meeting} -> {:ok, application}
+          {:ok, meeting} ->
+            Application.set_registered_meeting(application, meeting)
           {:error, _error} = error -> error
         end
-      end,
-      fn application ->
-        Application.set_registered_meeting(application, meeting_id)
       end,
       fn application -> Application.submit(application) end
     ]
@@ -91,8 +90,10 @@ defmodule Vae.ApplicationController do
                 conn,
                 :france_vae_redirect,
                 application,
-                %{academy_id: application.delegate.academy_id}
-                |> Map.merge(if application.meeting, do: %{meeting_id: application.meeting.meeting_id}, else: %{})
+                %{
+                  academy_id: application.delegate.academy_id,
+                  meeting_id: application.meeting.meeting_id
+                }
               )
           )
         else

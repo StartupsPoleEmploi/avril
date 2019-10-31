@@ -125,9 +125,12 @@ defmodule Vae.Application do
 
   def set_registered_meeting(application, nil), do: {:ok, application}
 
-  def set_registered_meeting(application, meeting_id) do
+  def set_registered_meeting(application, meeting_id) when is_integer(meeting_id) do
     meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
+    set_registered_meeting(application, meeting)
+  end
 
+  def set_registered_meeting(application, meeting) do
     application
     |> change()
     |> put_embed(:meeting, meeting)
