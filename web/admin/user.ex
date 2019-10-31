@@ -20,7 +20,6 @@ defmodule Vae.ExAdmin.User do
 
     form user do
       inputs do
-        input(user, :name)
         input(user, :first_name)
         input(user, :last_name)
         input(user, :email)
@@ -56,7 +55,6 @@ defmodule Vae.ExAdmin.User do
     show user do
       attributes_table(
         only: [
-          :name,
           :first_name,
           :last_name,
           :email,

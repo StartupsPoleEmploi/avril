@@ -72,7 +72,7 @@ defmodule Vae.ApplicationController do
     ]
     |> Enum.reduce({:ok, application}, fn
       function, {:ok, application} -> function.(application)
-      function, {:error, _} = error -> error
+      _function, {:error, _} = error -> error
     end)
     |> case do
       {:ok, application} ->
