@@ -86,9 +86,9 @@ defmodule Vae.ApplicationController do
         if application.meeting && (application.meeting.name == :france_vae) do
           redirect(conn,
             to:
-              Routes.application_france_vae_redirect_path(
+              Routes.application_france_vae_registered_path(
                 conn,
-                :france_vae_redirect,
+                :france_vae_registered,
                 application,
                 %{
                   academy_id: application.delegate.academy_id,
