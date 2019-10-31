@@ -26,17 +26,6 @@ defmodule Vae.ApplicationController do
       if length(meetings) > 0,
         do: meetings |> List.first() |> elem(0)
 
-    # conn = if is_nil(Coherence.current_user(conn).confirmed_at), do:
-    #   put_flash(
-    #     conn,
-    #     :warning,
-    #     Phoenix.HTML.raw([
-    #       "Vous n'avez pas encore confirmé votre email. Merci de vérifier votre boite mail ou bien ",
-    #       Phoenix.HTML.Link.button("Cliquez ici", to: Routes.confirmation_path(conn, :create), method: :post) |> Phoenix.HTML.safe_to_string(),
-    #       "pour recevoir à nouveau l'email de confirmation."
-    #     ])
-    #   ), else: conn
-
     render(conn, "show.html", %{
       title:
         "Candidature VAE de #{application.user.name} pour un diplôme de #{
@@ -74,52 +63,41 @@ defmodule Vae.ApplicationController do
         :certification
       ])
 
-    case Application.submit(application) do
+    [
+      fn application ->
+        meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
+        Application.set_registered_meeting(application, meeting_id)
+      end,
+      fn application -> Application.submit(application) end
+    ]
+    |> Enum.reduce({:ok, application}, fn
+      function, {:ok, application} -> function.(application)
+      function, {:error, _} = error -> error
+    end)
+    |> case do
       {:ok, application} ->
-        if params["book"] == "on" do
-          meeting_id = params["application"]["meeting_id"]
-
-          case Application.set_registered_meeting(
-                 application,
-                 application.delegate.academy_id,
-                 meeting_id
-               ) do
-            {:ok, application} ->
-              if not is_nil(application.delegate.academy_id) do
-                redirect(conn,
-                  to:
-                    Routes.application_france_vae_redirect_path(
-                      conn,
-                      :france_vae_redirect,
-                      application,
-                      %{academy_id: application.delegate.academy_id}
-                      |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
-                    )
-                )
-              else
-                conn
-                |> put_flash(:succes, "Dossier transmis avec succès !")
-                |> redirect(to: Routes.application_path(conn, :show, application))
-              end
-
-            {:error, msg} ->
-              Logger.error(fn -> inspect(msg) end)
-
-              conn
-              |> put_flash(:error, "Une erreur est survenue")
-              |> redirect(to: Routes.application_path(conn, :show, application))
-          end
+        if application.delegate.academy_id do
+          redirect(conn,
+            to:
+              Routes.application_france_vae_redirect_path(
+                conn,
+                :france_vae_redirect,
+                application,
+                %{academy_id: application.delegate.academy_id}
+                |> Map.merge(if application.meeting, do: %{meeting_id: application.meeting.meeting_id}, else: %{})
+              )
+          )
         else
           conn
-          |> put_flash(:success, "Dossier transmis avec succès!")
-          |> redirect(to: Routes.application_path(conn, :show, application))
+            |> put_flash(:succes, "Dossier transmis avec succès !")
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
-
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
+
         conn
-        |> put_flash(:error, "Une erreur est survenue")
-        |> redirect(to: Routes.application_path(conn, :show, application))
+          |> put_flash(:error, "Une erreur est survenue, merci de réessayer plus tard")
+          |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end
 
@@ -139,7 +117,7 @@ defmodule Vae.ApplicationController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de reéssayer plus tard.")
+        |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de réessayer plus tard.")
         |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end

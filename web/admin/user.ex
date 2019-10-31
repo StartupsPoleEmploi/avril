@@ -41,7 +41,8 @@ defmodule Vae.ExAdmin.User do
     end
 
     filter([
-      :name,
+      :first_name,
+      :last_name,
       :email,
       :postal_code,
       :address1,

@@ -123,9 +123,9 @@ defmodule Vae.Application do
     |> Repo.update!()
   end
 
-  def set_registered_meeting(application, _academy_id, nil), do: {:ok, application}
+  def set_registered_meeting(application, nil), do: {:ok, application}
 
-  def set_registered_meeting(application, _academy_id, meeting_id) do
+  def set_registered_meeting(application, meeting_id) do
     meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
 
     application
