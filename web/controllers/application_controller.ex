@@ -8,7 +8,7 @@ defmodule Vae.ApplicationController do
   plug Vae.Plugs.ApplicationAccess when action not in [:show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
-  def show(conn, %{"id" => id} = params) do
+  def show(conn, %{"id" => _id} = params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -26,17 +26,6 @@ defmodule Vae.ApplicationController do
     preselected_place =
       if length(meetings) > 0,
         do: meetings |> List.first() |> elem(0)
-
-    # conn = if is_nil(Coherence.current_user(conn).confirmed_at), do:
-    #   put_flash(
-    #     conn,
-    #     :warning,
-    #     Phoenix.HTML.raw([
-    #       "Vous n'avez pas encore confirmé votre email. Merci de vérifier votre boite mail ou bien ",
-    #       Phoenix.HTML.Link.button("Cliquez ici", to: Routes.confirmation_path(conn, :create), method: :post) |> Phoenix.HTML.safe_to_string(),
-    #       "pour recevoir à nouveau l'email de confirmation."
-    #     ])
-    #   ), else: conn
 
     render(conn, "show.html", %{
       title:
@@ -67,7 +56,7 @@ defmodule Vae.ApplicationController do
   end
 
   # TODO: change to submit
-  def update(conn, %{"id" => id} = params) do
+  def update(conn, %{"id" => _id} = params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -75,64 +64,42 @@ defmodule Vae.ApplicationController do
         [delegate: [:process, :certifiers]],
         :certification
       ])
+    meeting_id = if params["book"] == "on",
+      do: params["application"]["meeting_id"]
 
-    case Application.submit(application) do
-      {:ok, application} ->
-        if params["book"] == "on" do
-          meeting_id = params["application"]["meeting_id"]
-
-          with {:ok, meeting} <- Vae.Meetings.register(meeting_id, application),
-               {:ok, application} <-
-                 Application.set_registered_meeting(
-                   application,
-                   application.delegate.academy_id,
-                   meeting_id
-                 ) do
-            case meeting.name do
-              :france_vae ->
-                conn
-                |> redirect(
-                  to:
-                    Routes.application_france_vae_registered_path(
-                      conn,
-                      :france_vae_registered,
-                      application,
-                      %{academy_id: application.delegate.academy_id}
-                      |> Map.merge(if meeting_id, do: %{meeting_id: meeting_id}, else: %{})
-                    )
-                )
-
-              _ ->
-                conn
-                |> put_flash(:success, "Dossier transmis avec succès!")
-                |> redirect(to: Routes.application_path(conn, :show, application))
-            end
-          else
-            {:error, %{"code" => _code, "message" => msg}} ->
-              conn
-              |> put_flash(:error, msg)
-              |> redirect(to: Routes.application_path(conn, :show, application))
-
-            {:error, _meeting} ->
-              conn
-              |> put_flash(:error, "Une erreur est survenue.")
-              |> redirect(to: Routes.application_path(conn, :show, application))
-          end
+    with(
+      {:ok, application} <- Application.register_meeting(application, meeting_id),
+      {:ok, application} <- Application.submit(application)
+    ) do
+        if application.meeting && (application.meeting.name == :france_vae) do
+          redirect(conn,
+            to:
+              Routes.application_france_vae_registered_path(
+                conn,
+                :france_vae_registered,
+                application,
+                %{
+                  academy_id: application.delegate.academy_id,
+                  meeting_id: application.meeting.meeting_id
+                }
+              )
+          )
         else
           conn
-          |> put_flash(:success, "Dossier transmis avec succès!")
-          |> redirect(to: Routes.application_path(conn, :show, application))
+            |> put_flash(:succes, "Dossier transmis avec succès !")
+            |> redirect(to: Routes.application_path(conn, :show, application))
         end
-
+    else
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
+
         conn
-        |> put_flash(:error, "Une erreur est survenue")
-        |> redirect(to: Routes.application_path(conn, :show, application))
+          |> put_flash(:error, "Une erreur est survenue, merci de réessayer plus tard")
+          |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end
 
-  def download(conn, %{"application_id" => id}) do
+  def download(conn, %{"application_id" => _id}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -149,7 +116,7 @@ defmodule Vae.ApplicationController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de reéssayer plus tard.")
+        |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de réessayer plus tard.")
         |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end

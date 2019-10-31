@@ -60,7 +60,6 @@ defmodule Vae.User do
 
   @fields ~w(
     gender
-    name
     first_name
     last_name
     email
@@ -95,6 +94,7 @@ defmodule Vae.User do
   def changeset(model, params \\ %{}) do
     model
     |> cast(params, @fields ++ coherence_fields())
+    |> sync_name_with_first_and_last(params)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
@@ -199,10 +199,6 @@ defmodule Vae.User do
         else: %{}
 
     Map.merge(extra_fields, %{
-      name:
-        "#{String.capitalize(api_fields["given_name"])} #{
-          String.capitalize(api_fields["family_name"])
-        }",
       gender: api_fields["gender"],
       first_name: String.capitalize(api_fields["given_name"]),
       last_name: String.capitalize(api_fields["family_name"]),
@@ -226,6 +222,14 @@ defmodule Vae.User do
       city_label: Vae.String.titleize(api_fields["libelleCommune"]),
       country_label: Vae.String.titleize(api_fields["libellePays"])
     }
+  end
+
+  def sync_name_with_first_and_last(user_changeset, params) do
+    first_name = params[:first_name] || user_changeset.data.first_name
+    last_name = params[:last_name] || user_changeset.data.last_name
+    cast(user_changeset, %{
+      name: "#{first_name} #{last_name}"
+    }, [:name])
   end
 
   def fullname(user) do
