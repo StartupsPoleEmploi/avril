@@ -67,16 +67,10 @@ defmodule Vae.ApplicationController do
     meeting_id = if params["book"] == "on",
       do: params["application"]["meeting_id"]
 
-    [
-      fn application -> Application.register_meeting(application, meeting_id) end,
-      fn application -> Application.submit(application) end
-    ]
-    |> Enum.reduce({:ok, application}, fn
-      function, {:ok, application} -> function.(application)
-      _function, {:error, _} = error -> error
-    end)
-    |> case do
-      {:ok, application} ->
+    with(
+      {:ok, application} <- Application.register_meeting(application, meeting_id),
+      {:ok, application <- Application.submit(application)}
+    ) do
         if application.meeting && (application.meeting.name == :france_vae) do
           redirect(conn,
             to:
@@ -95,6 +89,7 @@ defmodule Vae.ApplicationController do
             |> put_flash(:succes, "Dossier transmis avec succès !")
             |> redirect(to: Routes.application_path(conn, :show, application))
         end
+    else
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
 
