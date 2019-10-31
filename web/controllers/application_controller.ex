@@ -8,14 +8,15 @@ defmodule Vae.ApplicationController do
   plug Vae.Plugs.ApplicationAccess when action not in [:show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [allow_hash_access: true] when action in [:show]
 
-  def show(conn, %{"id" => _id} = params) do
-    application = conn.assigns[:current_application]
+  def show(conn, %{"id" => id} = params) do
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([
-          :user,
-          [delegate: [:process, :certifiers]],
-          :certification,
-          :resumes
-        ])
+        :user,
+        [delegate: [:process, :certifiers]],
+        :certification,
+        :resumes
+      ])
 
     meetings =
       if application.meeting,
@@ -55,17 +56,24 @@ defmodule Vae.ApplicationController do
   end
 
   # TODO: change to submit
-  def update(conn, %{"id" => _id} = params) do
-    application = conn.assigns[:current_application]
+  def update(conn, %{"id" => id} = params) do
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([
         :user,
         [delegate: [:process, :certifiers]],
         :certification
       ])
+    meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
 
     [
       fn application ->
-        meeting_id = if params["book"] == "on", do: params["application"]["meeting_id"]
+        case Vae.Meetings.register(meeting_id, application) do
+          {:ok, meeting} -> {:ok, application}
+          {:error, _error} = error -> error
+        end
+      end,
+      fn application ->
         Application.set_registered_meeting(application, meeting_id)
       end,
       fn application -> Application.submit(application) end
@@ -76,7 +84,7 @@ defmodule Vae.ApplicationController do
     end)
     |> case do
       {:ok, application} ->
-        if application.delegate.academy_id do
+        if application.meeting && (application.meeting.name == :france_vae) do
           redirect(conn,
             to:
               Routes.application_france_vae_redirect_path(
@@ -101,8 +109,9 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def download(conn, %{"application_id" => _id}) do
-    application = conn.assigns[:current_application]
+  def download(conn, %{"application_id" => id}) do
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([
         :user,
         [delegate: [:process, :certifiers]],
@@ -161,8 +170,8 @@ defmodule Vae.ApplicationController do
           "academy_id" => academy_id
         } = params
       ) do
-
-    application = conn.assigns[:current_application]
+    application =
+      conn.assigns[:current_application]
       |> Repo.preload([:user, {:delegate, :process}, :certification])
 
     meeting_id = params["meeting_id"]
@@ -177,12 +186,18 @@ defmodule Vae.ApplicationController do
   def france_vae_registered(
         conn,
         %{
-          "application_id" => id
+          "application_id" => id,
+          "academy_id" => academy_id,
+          "meeting_id" => meeting_id
         }
       ) do
+    meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
+
     render(conn, "france-vae-registered.html", %{
       container_class: "d-flex flex-grow-1",
-      application_id: id
+      application_id: id,
+      academy_id: academy_id,
+      meeting: meeting
     })
   end
 end

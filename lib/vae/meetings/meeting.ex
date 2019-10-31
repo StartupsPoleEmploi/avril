@@ -5,6 +5,7 @@ defmodule Vae.Meetings.Meeting do
 
   @primary_key false
   embedded_schema do
+    field(:name, :string)
     field(:academy_id, :integer)
     field(:meeting_id, :integer)
     field(:meeting_id2, :string)
@@ -19,12 +20,13 @@ defmodule Vae.Meetings.Meeting do
     field(:end_date, :naive_datetime)
   end
 
-  @fields ~w(academy_id meeting_id meeting_id2 place address postal_code city geolocation target start_date end_date)a
+  @fields ~w(name academy_id meeting_id meeting_id2 place address postal_code geolocation target start_date end_date)a
 
   def changeset(module, params) do
     module
     |> cast(params, @fields)
     |> validate_required([
+      :name,
       :academy_id,
       :meeting_id,
       :place,
