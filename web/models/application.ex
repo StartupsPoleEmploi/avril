@@ -123,14 +123,10 @@ defmodule Vae.Application do
     |> Repo.update!()
   end
 
-  def set_registered_meeting(application, nil), do: {:ok, application}
+  def register_meeting(application, nil), do: {:ok, application}
 
-  def set_registered_meeting(application, meeting_id) when is_integer(meeting_id) do
-    meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
-    set_registered_meeting(application, meeting)
-  end
-
-  def set_registered_meeting(application, meeting) do
+  def register_meeting(application, meeting_id) do
+    {:ok, meeting} = Vae.Meetings.register(meeting_id, application)
     application
     |> change()
     |> put_embed(:meeting, meeting)

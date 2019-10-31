@@ -56,7 +56,7 @@ defmodule Vae.ApplicationController do
   end
 
   # TODO: change to submit
-  def update(conn, %{"id" => id} = params) do
+  def update(conn, %{"id" => _id} = params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -64,17 +64,11 @@ defmodule Vae.ApplicationController do
         [delegate: [:process, :certifiers]],
         :certification
       ])
-    meeting_id = if params["book"] == "on" && params["application"]["meeting_id"],
-      do: String.to_integer(params["application"]["meeting_id"])
+    meeting_id = if params["book"] == "on",
+      do: params["application"]["meeting_id"]
 
     [
-      fn application ->
-        case Vae.Meetings.register(meeting_id, application) do
-          {:ok, meeting} ->
-            Application.set_registered_meeting(application, meeting)
-          {:error, _error} = error -> error
-        end
-      end,
+      fn application -> Application.register_meeting(application, meeting_id) end,
       fn application -> Application.submit(application) end
     ]
     |> Enum.reduce({:ok, application}, fn
@@ -110,7 +104,7 @@ defmodule Vae.ApplicationController do
     end
   end
 
-  def download(conn, %{"application_id" => id}) do
+  def download(conn, %{"application_id" => _id}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
