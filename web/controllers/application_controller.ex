@@ -69,7 +69,7 @@ defmodule Vae.ApplicationController do
 
     with(
       {:ok, application} <- Application.register_meeting(application, meeting_id),
-      {:ok, application <- Application.submit(application)}
+      {:ok, application} <- Application.submit(application)
     ) do
         if application.meeting && (application.meeting.name == :france_vae) do
           redirect(conn,
