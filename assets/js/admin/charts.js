@@ -13,6 +13,17 @@ const formatData = data => {
   ).filter(datum => data.reduce((result, entry) => (result || datum[entry.name] !== 0), false))
 }
 
+const weekNumberToString = weekNumber => {
+  const monday = moment().week(weekNumber).day("Monday").format('DD/MM/YY');
+  const sunday = moment().week(weekNumber+1).day("Sunday").format('DD/MM/YY');
+  return `Du ${monday} au ${sunday}`;
+}
+
+const valueWithPercent = (value, name, props) => {
+  const {semaine, ...withValues} = props.payload;
+  const total = Object.values(withValues).reduce((a, b) => a + b, 0)
+  return `${value} (${(100*value/total).toFixed(2)}%)`;
+}
 
 const chart = data => {
   return (
@@ -24,10 +35,10 @@ const chart = data => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="semaine" label="N° Semaine" />
+        <XAxis dataKey="semaine" />
         <YAxis />
         <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red" label="-30j" />
-        <Tooltip />
+        <Tooltip labelFormatter={weekNumberToString} formatter={valueWithPercent} />
         <Legend />
         { data.map(entry =>
           <Bar key={entry.name} dataKey={entry.name} stackId="a" fill={entry.color} />
