@@ -4,8 +4,8 @@ defmodule Vae.Endpoint do
   plug(RemoteIp)
 
   # socket("/socket", Vae.UserSocket)
-  socket "/socket", Vae.UserSocket,
-    websocket: true # or list of options
+  # socket "/socket", Vae.UserSocket,
+  #   websocket: true # or list of options
     # longpoll: [check_origin: ...]
 
   # Serve at "/" the static files from "priv/static" directory.

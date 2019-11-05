@@ -16,7 +16,7 @@ config :vae, Vae.Endpoint,
   check_origin: false,
   live_reload: [
     patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+      ~r{priv/static/.*(html|js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{web/views/.*(ex)$},
       ~r{web/templates/.*(eex|slime|slim|md)$}
@@ -28,6 +28,11 @@ config :vae, Vae.Endpoint,
       "--mode",
       "development",
       "--watch-stdin",
+      cd: Path.expand("../assets", __DIR__)
+    ],
+    npm: [
+      "run",
+      "build",
       cd: Path.expand("../assets", __DIR__)
     ]
   ]

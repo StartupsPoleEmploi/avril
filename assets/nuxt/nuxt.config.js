@@ -1,16 +1,17 @@
 
 module.exports = {
   srcDir: 'nuxt/',
-  // buildDir: '../priv/static/livret-1',
+  buildDir: '../priv/static/livret-1',
   generate: {
     dir: '../priv/static/livret-1',
+    fallback: true,
   },
   mode: 'universal',
   /*
   ** Headers of the page
   */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'Livret 1 par Avril, la VAE facile',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -56,8 +57,10 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    babelrc: '../.babelrc',
+    analyze: true,
     ssr: false,
-    publicPath: '/livret-1',
+    publicPath: '/livret-1/_nuxt/',
     postcss: {
       preset: {
         features: {
