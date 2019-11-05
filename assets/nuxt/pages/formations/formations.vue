@@ -4,17 +4,17 @@
     <div class="form-fields">
 
       <div class="field">
-        <label class="label">Indiquez les éventuelles formations courtes suivies dans le cadre de la formation continue (stage, certification,...), en relation avec la certification visée</label>
+        <h3 class="title is-5">Si vous avez suivi des formation, effectué des stages ou obtenu des habilitations, indiquez les.</h3>
       </div>
 
       <div class="field">
         <div class="control">
           <input class="input" ref="avril__name" type="text" placeholder="Exemple : CACES, BTS MUC" @keyup.enter="addFormationsContinues">
-          <a class="button is-default is-small is-pulled-right" @click="addFormationsContinues" style="margin-top:4px">
+          <a class="button is-dark is-pulled-right" @click="addFormationsContinues" style="margin-top:4px">
             + Ajouter
           </a>
           <div class="push-enter is-pulled-right" style="margin-top:5px; margin-left:6px;">
-            Appuyez sur <strong>Entrée</strong> pour ajouter ou
+            Pour ajouter, appuyez sur <strong>Entrée</strong> ou
           </div>
         </div>
       </div>
@@ -29,8 +29,11 @@
 
       <div class="field">
         <div class="control">
-          <nuxt-link to="/experiences/fonction" class="is-ok button is-dark is-pulled-right">
-            Aucune, continuer
+          <nuxt-link v-if="displayNextButton" to="/experiences/fonction" class="is-ok button is-default is-pulled-right">
+            Continuer
+          </nuxt-link>
+          <nuxt-link v-else to="/experiences/fonction" class="is-ok button is-default is-pulled-right">
+            Aucun, continuer
           </nuxt-link>
           <nuxt-link to="/experiences/fonction" class="is-ok button is-text is-pulled-left">
             Remplir plus tard
@@ -44,8 +47,7 @@
     <div class="form-help">
       <h3 class="title is-4">Besoin d'aide ?</h3>
       <div class="form-help-content">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </div>
+Il faut indiquer les stages ou les formations qui ont un lien avec votre projet de diplôme actuel. Si vous n'êtes pas sûr de vous, remplissez cette rubrique au maximum, nous ferons le tri ! Rappelez-vous, ce n'est pas une condition pour valider votre demande, ces renseignements nous aident simplement à mieux vous connaitre. La seule condition requise pour démarrer votre projet reste d'avoir 1 an d'expérience.      </div>
       <p style="margin-top:1rem">
         <a href="#" class="is-text">J'ai besoin de plus d'aide</a>
       </p>
@@ -63,10 +65,15 @@ export default {
       let act = _.cloneDeep(this.$store.state.experiences.formationsContinues)
       return act.reverse()
     },
+    displayNextButton () {
+      if( this.$store.state.experiences.formationsContinues.length > 0 )return true;
+      return false;
+    },
   },
   mounted() {
-    // this.$store.commit('application/addRemplissage', 90)
     this.$store.commit('application/enableFormationStepper')
+    this.$store.commit('application/disableExperienceStepper')
+    this.$store.commit('application/changeTab', 1)
   },
   methods: {
     addFormations (e) {
@@ -86,6 +93,6 @@ export default {
 
 <style>
 .formations {
-    margin-top: 4rem;
+    /* margin-top: 4rem; */
 }
 </style>

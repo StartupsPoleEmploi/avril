@@ -34,6 +34,23 @@
   }
 }
 
+.experiences-header{
+  padding: 3rem;
+  padding-bottom: 2rem;
+  .field{
+    margin-bottom: 0 !important;
+  }
+  .has-addons{
+
+  }
+  .lefty{
+
+  }
+  .righty{
+
+  }
+}
+
 .real,.avril{
 
   // --------------------------
@@ -69,7 +86,7 @@
   &-form-help-container{
     display: flex;
     flex-direction: column;
-    padding-top: 4rem;
+    // padding-top: 4rem;
   }
   &-form{
     flex: 1;

@@ -1,12 +1,35 @@
 
-module.exports = {
+export default {
   srcDir: 'nuxt/',
-  buildDir: '../priv/static/livret-1',
+  // buildDir: '../priv/static/livret-1',
+  build: {
+    // babel: {
+    //   babelrc: true,
+    // },
+    // analyze: true,
+    // ssr: false,
+    // publicPath: '/livret-1/_nuxt/',
+    postcss: {
+      preset: {
+        features: {
+          customProperties: false
+        }
+      }
+    },
+    /*
+    ** You can extend webpack config here
+    */
+    extend (config, ctx) {
+    }
+  },
   generate: {
     dir: '../priv/static/livret-1',
     fallback: true,
   },
-  mode: 'universal',
+  router: {
+    base: '/livret-1'
+  },
+  mode: 'spa',
   /*
   ** Headers of the page
   */
@@ -53,25 +76,4 @@ module.exports = {
   */
   modules: [
   ],
-  /*
-  ** Build configuration
-  */
-  build: {
-    babelrc: '../.babelrc',
-    analyze: true,
-    ssr: false,
-    publicPath: '/livret-1/_nuxt/',
-    postcss: {
-      preset: {
-        features: {
-          customProperties: false
-        }
-      }
-    },
-    /*
-    ** You can extend webpack config here
-    */
-    extend (config, ctx) {
-    }
-  }
 }

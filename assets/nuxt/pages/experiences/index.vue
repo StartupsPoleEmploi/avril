@@ -38,7 +38,7 @@
       <div class="form-help">
         <h3 class="title is-4">Besoin d'aide ?</h3>
         <div class="form-help-content">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          Trouvez toutes les expériences en lien avec le diplôme que vous souhaitez obtenir. Si nécessaire consultez à nouveau le descriptif d'activités du diplôme (faire un lien?). Dans votre CV selectionnez les expériences utiles et reportez-les une par une. Au total il faut avoir travailler au moins l'équivalent d'un an à temps plein dans des activités en lien avec le diplôme.
         </div>
         <p style="margin-top:1rem">
           <a href="#" class="is-text">J'ai besoin de plus d'aide</a>
@@ -87,7 +87,69 @@ export default {
         this.$router.push('name')
       }
     }
-  }
+  },
+  watch: {
+    $route (to, from) {
+      this.slugIndex = _.findIndex(this.cerfa, ['slug', this.$route.name])
+    }
+  },
+  data: () => ({
+    current: 0,
+    slugIndex: 0,
+    cerfa:[{
+      slug: 'experiences',
+      title: "Mes expériences",
+    },
+    {
+      slug: 'experiences-fonction',
+      title: "Mes formations",
+    },
+    {
+      slug: 'experiences-famille',
+      title: "Mes formations",
+    },
+    {
+      slug: 'experiences-status',
+      title: "Mes formations",
+    },
+    {
+      slug: 'experiences-periode',
+      title: "Mes formations",
+    },
+    {
+      slug: 'experiences-precision',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations-diplome',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations-autre',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations-comparatibilite',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations-certification',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations-rncp',
+      title: "Mes formations",
+    },
+    {
+      slug: 'formations-formations',
+      title: "Mes formations",
+    },
+  ],
+  })
 }
 </script>
 

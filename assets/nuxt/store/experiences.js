@@ -1,21 +1,18 @@
 export const state = () => ({
   experiences: [],
-  activites: [],
   titres: [],
   formationsContinues: [],
   formations: {
     classe: null,
     diplome: null,
-    autre: null,
-    comparatibilite: null,
-    partie: null,
-    certification: null,
-    rncp: null,
-    formations: null,
+    // certification: null,
   },
-  certification: null,
   heures: 0,
 })
+
+// - experiences
+// - duree
+// - periode
 
 export const mutations = {
   new (state) {
@@ -25,9 +22,8 @@ export const mutations = {
       adresseEntreprise: null,
       famille: null,
       status: null,
-      periode: null,
-      duree: null,
-      activities: []
+      activities: [],
+      periodes: []
     })
   },
   addFonction (state, fonction) {
@@ -35,6 +31,9 @@ export const mutations = {
   },
   addEntreprise (state, entreprise) {
     state.experiences[state.experiences.length - 1].entreprise = entreprise
+  },
+  addAdresseEntreprise (state, adresse) {
+    state.experiences[state.experiences.length - 1].adresseEntreprise = adresse
   },
   addFamille (state, famille) {
     state.experiences[state.experiences.length - 1].famille = famille
@@ -48,11 +47,14 @@ export const mutations = {
   addDuree (state, duree) {
     state.experiences[state.experiences.length - 1].duree = duree
   },
+  addTemps (state, temps) {
+    state.experiences[state.experiences.length - 1].temps = temps
+  },
   // addPrecision (state, precision) {
   //   state.experiences[state.experiences.length - 1].precision = precision
   // },
-  addHours (state) {
-    state.heures = state.heures + state.experiences[state.experiences.length - 1].duree
+  addHours (state, heure) {
+    state.heures = state.heures + heure
   },
   // -------------
   // FORMATIONS
@@ -93,6 +95,10 @@ export const mutations = {
 
   addTitre (state, val) {
     state.titres.push(val)
+  },
+
+  addPeriodes (state, val) {
+    state.experiences[state.experiences.length - 1].periodes.push(val)
   },
 
   addFormationContinue (state, val) {

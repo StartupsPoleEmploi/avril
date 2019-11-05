@@ -13,14 +13,14 @@
       <div class="field">
         <label class="label">Nom de l'entreprise</label>
         <div class="control">
-          <input class="input" type="text" placeholder="Exemple : Nike" @input="addEntreprise">
+          <input class="input" type="text" placeholder="Exemple : Crêche p'tit loup" @input="addEntreprise">
         </div>
       </div>
 
       <div class="field">
         <label class="label">Adresse de l'entreprise ou association</label>
         <div class="control">
-          <input class="input" v-on:keyup="next" type="text" placeholder="Exemple : 40 boulevard machin, 56000 Lorient" @input="addEntreprise">
+          <input class="input" v-on:keyup="next" type="text" placeholder="Exemple : 40 boulevard machin, 56000 Lorient" @input="addAdresseEntreprise">
           <!-- <div class="push-enter is-pulled-right">
             Appuyez sur <strong>Entrée</strong>
           </div> -->
@@ -43,7 +43,7 @@
     <div class="form-help">
       <h3 class="title is-4">Besoin d'aide ?</h3>
       <div class="form-help-content">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+         Préciser votre métier, fonction, poste ou emploi. Celui en lien avec le diplôme que vous souhaitez obtenir. Vous pouvez recopier l'intitulé écrit sur votre CV ou votre bulletin de salaire. Vous pourrez ajouter plusieurs fonctions selon les postes que vous avez occupés.
       </div>
       <p style="margin-top:1rem">
         <a href="#" class="is-text">J'ai besoin de plus d'aide</a>
@@ -99,6 +99,9 @@ export default {
     },
     addEntreprise (e) {
       this.$store.commit('experiences/addEntreprise', e.target.value)
+    },
+    addAdresseEntreprise (e) {
+      this.$store.commit('experiences/addAdresseEntreprise', e.target.value)
     },
     gotoNext: function() {
       // this.addFonctionEtEntreprise('test')

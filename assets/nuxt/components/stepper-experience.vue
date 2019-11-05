@@ -2,17 +2,6 @@
 
   <div class="form-header" v-if="displayExperienceStepper == true">
 
-    <div class="field" v-if="slugIndex == 5" style="margin-right:3rem">
-      <div class="control">
-        <nuxt-link to="/recapitulatif" class="is-ok button is-dark is-pulled-right">
-          Enregistrer mon livret de recevabilité
-        </nuxt-link>
-        <!-- <nuxt-link to="/experiences/fonction" class="is-ok button is-default is-pulled-right" style="margin-right:1rem">
-          Ajouter une nouvelle expérience
-        </nuxt-link> -->
-      </div>
-    </div>
-
     <!-- <div class="field" v-if="slugIndex == 5" style="margin-right:3rem">
       <div class="control">
         <nuxt-link to="/experiences/fonction" class="is-ok button is-dark is-pulled-right">
@@ -29,7 +18,7 @@
       <li :class="slugIndex == 1 || slugIndex == 0 ? 'steps-segment is-active' : 'steps-segment'">
          <nuxt-link to="/experiences/fonction" :class="slugIndex == 1 || slugIndex == 0 ? 'steps-marker is-hollow' : 'steps-marker'"></nuxt-link>
          <div class="steps-content is-divider-content">
-           <nuxt-link class="is-size-6" to="/experiences/fonction">Fonction</nuxt-link>
+           <nuxt-link class="is-size-6" to="/experiences/fonction">Mon expérience</nuxt-link>
          </div>
        </li>
        <li :class="slugIndex == 2 ? 'steps-segment is-active' : 'steps-segment'">

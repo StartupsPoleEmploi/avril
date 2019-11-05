@@ -23,17 +23,15 @@ config :vae, Vae.Endpoint,
     ]
   ],
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--watch-stdin",
-      cd: Path.expand("../assets", __DIR__)
+    yarn: [
+      "--cwd",
+      "./assets",
+      "watch"
     ],
-    npm: [
-      "run",
-      "build",
-      cd: Path.expand("../assets", __DIR__)
+    yarn: [
+      "--cwd",
+      "./assets",
+      "generate"
     ]
   ]
 

@@ -13,6 +13,10 @@ defmodule Vae.Endpoint do
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug(
+    Plug.Static.IndexHtml,
+    at: "/livret-1"
+  )
+  plug(
     Plug.Static,
     at: "/",
     from: :vae,

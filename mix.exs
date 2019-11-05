@@ -94,6 +94,7 @@ defmodule Vae.Mixfile do
       {:swoosh, github: "augnustin/swoosh", branch: "mailjet-custom_id", override: true},
       # {:swoosh, "~> 0.23"},
       {:phoenix_swoosh, "~> 0.2"},
+      {:plug_static_index_html, "~> 1.0"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},

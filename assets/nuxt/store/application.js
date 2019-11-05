@@ -4,7 +4,7 @@ export const state = () => ({
   monDossier: null,
   displayExperienceStepper: false,
   displayFormationStepper: false,
-  tab: 0,
+  tab: 1,
 })
 
 export const mutations = {

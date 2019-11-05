@@ -28,6 +28,7 @@
 export default {
   mounted() {
     // this.$store.commit('application/addRemplissage', 100)
+    console.log(this.$store.state.experiences)
   },
   methods: {
   }

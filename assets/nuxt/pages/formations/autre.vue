@@ -30,7 +30,10 @@
     <div class="form-help">
       <h3 class="title is-4">Besoin d'aide ?</h3>
       <div class="form-help-content">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Dites nous si vous avez déjà chercher à obtenir un diplôme mais que vous n'en avez validé qu'une partie.
+Si l'organisme, l'école ou le centre de formation qui vous suivait pour ce diplôme , vous a donné une attestation ou un justificatif pour les parties de diplôme obtenue, cochez "oui".
+Ne vous inquiétez pas, il s'agit d'une simple information, cela ne sert pas à évaluer votre candidature à la VAE.
+Rappelez-vous, la seule condition pour demander votre diplôme en VAE est de justifier d'un an d'expérience.
       </div>
       <p style="margin-top:1rem">
         <a href="#" class="is-text">J'ai besoin de plus d'aide</a>

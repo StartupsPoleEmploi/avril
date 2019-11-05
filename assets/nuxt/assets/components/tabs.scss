@@ -42,14 +42,14 @@
 .navigation{
   &-active{
     // height: 300px;
-    background: avril-color('marine');
+    background: avril-color('blue');
     color: #fff !important;
     .title{
       color: #fff !important;
     }
     &:hover{
       color: #fff !important;
-      background: darken(avril-color('marine'), 3%);
+      background: darken(avril-color('blue'), 3%);
     }
   }
   &-indicator{

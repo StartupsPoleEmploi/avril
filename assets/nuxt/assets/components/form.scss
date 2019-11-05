@@ -28,8 +28,34 @@
 }
 
 .natural-language {
+  .mx-input{
+    border: none;
+    border-bottom: 2px solid avril-color('blue');
+    box-shadow: none;
+    border-radius: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: avril-color('blue');
+    &::placeholder{
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+  .input.heure{
+    height: 41px;
+    padding: 0 0 0 17px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 60px;
+    font-size: 20px !important;
+    padding-left: 40px;
+    border-bottom: 2px solid avril-color('blue') !important;
+    border-radius: 0 !important;
+    font-weight: 600 !important;
+  }
   .title{
-    line-height: 41px !important;
+    line-height: 47px !important;
     font-weight: 400 !important;
   }
   .select {
@@ -58,6 +84,9 @@
       width: 120px;
     }
     &.hours{
+      width: 140px;
+    }
+    &.semaines{
       width: 140px;
     }
   }

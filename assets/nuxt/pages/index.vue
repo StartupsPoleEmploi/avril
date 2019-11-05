@@ -13,12 +13,12 @@
             </div>
             <div class="swiper-slide">
               <p class="title is-4">
-                Munissez-vous de vos bulletins de salaire
+               Si possible, munissez-vous de votre CV et de vos bulletins de salaire
               </p>
             </div>
             <div class="swiper-slide">
               <p class="title is-4">
-                Vous aurez 3 grandes parties à remplir, celle des expériences professionnelles est celle qui demande le plus d'attentions
+                Vous aurez 2 parties à remplir, celle des expériences professionnelles est celle qui demande le plus d'attention
               </p>
             </div>
           </div>

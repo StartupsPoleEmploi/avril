@@ -4,17 +4,17 @@
     <div class="form-fields">
 
       <div class="field">
-        <label class="label">Si vous possédez une certification ou partie/s de certification professionnelle inscrite/s au Répertoire National des Certifications Professionnelles (RNCP) en rapport avec la certification professionnelle que vous souhaitez obtenir par la validation des acquis de l'expérience (VAE), indiquez son ou leur/s intitulé/s exact/s</label>
+        <h3 class="title is-5">Avez vous déjà un diplôme ou une partie d'un diplôme en rapport avec celui que vous souhaitez obtenir aujourd'hui ?</h3>
       </div>
 
       <div class="field">
         <div class="control">
           <input class="input" ref="avril__name" type="text" placeholder="Exemple : Bac pro commerce" @keyup.enter="addTitre">
-          <a class="button is-default is-small is-pulled-right" @click="addTitre" style="margin-top:4px">
+          <a class="button is-dark is-pulled-right" @click="addTitre" style="margin-top:4px">
             + Ajouter
           </a>
           <div class="push-enter is-pulled-right" style="margin-top:5px; margin-left:6px;">
-            Appuyez sur <strong>Entrée</strong> pour ajouter ce titre ou
+            Pour ajouter, appuyez sur <strong>Entrée</strong> ou
           </div>
         </div>
       </div>
@@ -29,7 +29,10 @@
 
       <div class="field">
         <div class="control">
-          <nuxt-link to="formations" class="is-ok button is-dark is-pulled-right">
+          <nuxt-link v-if="displayNextButton" to="formations" class="is-ok button is-default is-pulled-right">
+            Continuer
+          </nuxt-link>
+          <nuxt-link v-else to="formations" class="is-ok button is-default is-pulled-right">
             Aucun, continuer
           </nuxt-link>
           <nuxt-link to="formations" class="is-ok button is-text is-pulled-left">
@@ -44,7 +47,11 @@
     <div class="form-help">
       <h3 class="title is-4">Besoin d'aide ?</h3>
       <div class="form-help-content">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Indiquez nous ici les diplômes ou les parties de diplômes que vous avez déjà obtenus.
+Par exemple : Diplôme "CAP petite enfance" obtenu ou bloc de compétences "Conduite d'un projet RH" obtenu.
+Ces informations serviront aux certificateurs et aux accompagnateurs de votre projet de diplôme en VAE à mieux vous conseiller.
+Ne vous inquiétez pas, il s'agit d'une simple information, cela ne sert pas à évaluer votre candidature à la VAE.
+Rappelez-vous, la seule condition pour demander votre diplôme en VAE est de justifier d'un an d'expérience.
       </div>
       <p style="margin-top:1rem">
         <a href="#" class="is-text">J'ai besoin de plus d'aide</a>
@@ -65,6 +72,10 @@ export default {
     titres () {
       let act = _.cloneDeep(this.$store.state.experiences.titres)
       return act.reverse()
+    },
+    displayNextButton () {
+      if( this.$store.state.experiences.titres.length > 0 )return true;
+      return false;
     },
   },
   mounted() {
@@ -87,6 +98,6 @@ export default {
 
 <style>
 .titres {
-    margin-top: 4rem;
+    /* margin-top: 4rem; */
 }
 </style>
