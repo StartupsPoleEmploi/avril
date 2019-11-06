@@ -11,14 +11,14 @@ cd "$(dirname "$0")"
 
 touch $LOCK_FILE
 
-if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB; then
+if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB 2> /dev/null; then
   echo "DB $POSTGRES_DB created";
 else
   echo "DB $POSTGRES_DB already existed";
 fi
 
 if psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;'; then
-  echo "FINISH: Database $POSTGRES_DB has migrations: no need to seed.";
+  echo "[DONE] Database $POSTGRES_DB has migrations: no need to seed.";
 else
   echo "Creating $POSTGRES_DB and seeding it";
 
