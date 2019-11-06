@@ -17,8 +17,14 @@ services:
     ports:
       - "80:4000"
     depends_on:
-      - init
+      - front
+      - pginit
       - postgres
+  front:
+    image: avril_app
+    command: npm run deploy --prefix ./assets && mix phx.digest
+    volumes:
+      - ".:/app"
   pginit:
     image: postgres:11.0-alpine
     command: /host/pg_restore.sh
