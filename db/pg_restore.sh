@@ -5,11 +5,20 @@ set -e
 export PGPASSWORD=$POSTGRES_PASSWORD
 
 DUMP_FILE="latest.dump"
-LOCK_FILE="init.lock"
+LOCK_FILE="pginit.lock"
 
 cd "$(dirname "$0")"
 
 touch $LOCK_FILE
+
+echo "[INIT] Check Postgres status"
+
+until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q' 2> /dev/null; do
+  >&2 echo "[WAIT] Postgres is unavailable"
+  sleep 1
+done
+
+>&2 echo "[DONE] Postgres is up"
 
 if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB 2> /dev/null; then
   echo "DB $POSTGRES_DB created";

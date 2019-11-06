@@ -6,6 +6,6 @@ mix do compile && \
 # Build assets
 npm run deploy --prefix ./assets && \
 mix phx.digest && \
-./db/wait_for_init.sh && \
+db/wait_for_pginit.sh && \
 mix ecto.migrate && \
 mix phx.server

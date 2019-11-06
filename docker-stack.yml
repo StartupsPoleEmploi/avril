@@ -19,9 +19,9 @@ services:
     depends_on:
       - init
       - postgres
-  init:
+  pginit:
     image: postgres:11.0-alpine
-    command: /host/wait_for_postgres.sh && /host/pg_restore.sh
+    command: /host/pg_restore.sh
     working_dir: /host
     env_file:
       - ".env"
