@@ -1,19 +1,19 @@
 #!/bin/bash
-# wait-for-postgres.sh
 
 set -e
 
 export PGPASSWORD=$POSTGRES_PASSWORD
 
-DUMP_FILE="/host/latest.dump"
+DUMP_FILE="latest.dump"
+LOCK_FILE="init.lock"
 
+touch $LOCK_FILE
+# until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q'; do
+#   >&2 echo "Postgres is unavailable - sleeping"
+#   sleep 1
+# done
 
-until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q'; do
-  >&2 echo "Postgres is unavailable - sleeping"
-  sleep 1
-done
-
->&2 echo "Postgres is up - executing command"
+# >&2 echo "Postgres is up - executing command"
 
 if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB; then
   echo "DB $POSTGRES_DB created";
@@ -33,5 +33,7 @@ else
     echo "FINISH: Dump file $DUMP_FILE not found"
   fi
 fi
+
+rm $LOCK_FILE
 
 exit 0

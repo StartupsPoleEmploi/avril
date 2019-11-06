@@ -11,6 +11,9 @@ services:
         order: start-first
         parallelism: 1
         failure_action: rollback
+      restart_policy:
+        max_attempts: 10
+        window: 1h
     ports:
       - "80:4000"
     depends_on:
@@ -18,7 +21,7 @@ services:
       - postgres
   init:
     image: postgres:11.0-alpine
-    command: /host/pg_restore.sh
+    command: /host/wait_for_postgres.sh /host/pg_restore.sh
     env_file:
       - ".env"
     volumes:
