@@ -6,10 +6,12 @@ LOCK_FILE="init.lock"
 
 cmd="$@"
 
+cd "$(dirname "$0")"
+
 until [[ ! -f $LOCK_FILE ]]; do
-  >&2 echo "DB init is in process - sleeping"
+  >&2 echo "[WAIT] DB init is in process - sleeping"
   sleep 1
 done
 
->&2 echo "Finished init - executing command"
+>&2 echo "[DONE] Finished init - executing command"
 exec $cmd
