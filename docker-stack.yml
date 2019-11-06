@@ -10,11 +10,7 @@ services:
         delay: 5s
         order: start-first
         parallelism: 1
-      rollback_config:
-        delay: 5s
-        order: start-first
-        parallelism: 1
-
+        failure_action: rollback
     ports:
       - "80:4000"
     depends_on:
