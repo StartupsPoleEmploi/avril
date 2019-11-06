@@ -6,10 +6,20 @@ services:
     command: /app/prod-server.sh
     deploy:
       replicas: 2
+      update_config:
+        delay: 5s
+        order: start-first
+        parallelism: 1
+      rollback_config:
+        delay: 5s
+        order: start-first
+        parallelism: 1
+
     ports:
       - "80:4000"
     depends_on:
       - init
+      - postgres
   init:
     image: postgres:11.0-alpine
     command: /host/pg_restore.sh
