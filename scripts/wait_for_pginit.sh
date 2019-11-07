@@ -2,11 +2,11 @@
 # wait-for-postgres.sh
 
 set -e
-LOCK_FILE="../db/pginit.lock"
+LOCK_FILE="db/pginit.lock"
 
 cmd="$@"
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 echo "[INIT] check pginit status"
 

@@ -4,10 +4,10 @@ set -e
 
 export PGPASSWORD=$POSTGRES_PASSWORD
 
-DUMP_FILE="../db/latest.dump"
-LOCK_FILE="../db/pginit.lock"
+DUMP_FILE="db/latest.dump"
+LOCK_FILE="db/pginit.lock"
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 touch $LOCK_FILE
 
