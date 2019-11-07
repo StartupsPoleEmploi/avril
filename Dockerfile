@@ -44,7 +44,7 @@ WORKDIR /app
 RUN mix local.hex --force
 RUN mix local.rebar --force
 RUN mix deps.get
-RUN yarn install --prefix ./assets
+RUN yarn --cwd ./assets install
 
 # Setup DB
 # RUN mix ecto.create && mix ecto.migrate # Note: run once the db is connected
