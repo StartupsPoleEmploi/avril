@@ -3,20 +3,41 @@ version: "3.6"
 services:
   app:
     image: avril_app
-    command: /app/prod-server.sh
+    command: /app/scripts/app.sh
     deploy:
       replicas: 2
+      update_config:
+        delay: 5s
+        order: start-first
+        parallelism: 1
+        failure_action: rollback
+      restart_policy:
+        max_attempts: 10
+        window: 1h
     ports:
       - "80:4000"
     depends_on:
-      - init
-  init:
-    image: postgres:11.0-alpine
-    command: /host/pg_restore.sh
+      - front
+      - pginit
+      - postgres
+  front:
+    image: avril_app
+    command: /app/scripts/front.sh
     env_file:
       - ".env"
     volumes:
-      - "./db:/host"
+      - ".:/app"
+    deploy:
+      restart_policy:
+        condition: none
+        max_attempts: 1
+  pginit:
+    image: avril_app
+    command: /app/scripts/pginit.sh
+    env_file:
+      - ".env"
+    volumes:
+      - ".:/app"
     depends_on:
       - postgres
     deploy:

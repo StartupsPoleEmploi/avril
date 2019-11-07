@@ -20,7 +20,7 @@ docker-compose build
 6. Deploy
 
 ```
-docker stack deploy -c docker-stack.yml -c docker-compose.yml avril
+docker stack deploy --prune -c docker-stack.yml -c docker-compose.yml avril
 ```
 
 Vous pouvez ignorer les warnings.

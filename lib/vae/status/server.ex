@@ -17,7 +17,7 @@ defmodule Vae.Status.Server do
     PersistentEts.new(@ets_table, "priv/tabs/#{@ets_table}.tab", [
       :set,
       :named_table,
-      :protected
+      :public
     ])
     {:ok, nil}
   end
