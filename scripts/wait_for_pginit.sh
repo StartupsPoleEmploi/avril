@@ -2,7 +2,7 @@
 # wait-for-postgres.sh
 
 set -e
-LOCK_FILE="pginit.lock"
+LOCK_FILE="../db/pginit.lock"
 
 cmd="$@"
 

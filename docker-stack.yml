@@ -3,7 +3,7 @@ version: "3.6"
 services:
   app:
     image: avril_app
-    command: /app/prod-server.sh
+    command: /app/scripts/app.sh
     deploy:
       replicas: 2
       update_config:
@@ -22,17 +22,22 @@ services:
       - postgres
   front:
     image: avril_app
-    command: npm install --prefix ./assets && npm run deploy --prefix ./assets && mix phx.digest
-    volumes:
-      - ".:/app"
-  pginit:
-    image: postgres:11.0-alpine
-    command: /host/pg_restore.sh
-    working_dir: /host
+    command: /app/scripts/front.sh
     env_file:
       - ".env"
     volumes:
-      - "./db:/host"
+      - ".:/app"
+    deploy:
+      restart_policy:
+        condition: none
+        max_attempts: 1
+  pginit:
+    image: postgres:11.0-alpine
+    command: /app/scripts/pginit.sh
+    env_file:
+      - ".env"
+    volumes:
+      - ".:/app"
     depends_on:
       - postgres
     deploy:

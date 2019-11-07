@@ -4,8 +4,8 @@ set -e
 
 export PGPASSWORD=$POSTGRES_PASSWORD
 
-DUMP_FILE="latest.dump"
-LOCK_FILE="pginit.lock"
+DUMP_FILE="../db/latest.dump"
+LOCK_FILE="../db/pginit.lock"
 
 cd "$(dirname "$0")"
 
@@ -43,6 +43,8 @@ else
   fi
   echo "[DONE] Database seeded";
 fi
+
+mix ecto.migrate
 
 rm $LOCK_FILE
 
