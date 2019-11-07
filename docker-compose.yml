@@ -5,9 +5,12 @@ services:
     env_file:
       - ".env"
     image: "postgres:11.0-alpine"
+    restart: always
     volumes:
-      # - "/var/lib/postgresql/data:/var/lib/postgresql/data"
-      - "./db:/host"
+      # - pgdata:/var/lib/postgresql/data
+      # - "/etc/postgresql:/etc/postgresql"
+      # - "/var/log/postgresql:/var/log/postgresql"
+      - "/var/lib/postgresql:/var/lib/postgresql"
     healthcheck:
       test: pg_isready -U postgres
       interval: 15s
@@ -33,9 +36,13 @@ services:
     #   timeout: 5s
     #   # retries: 3
 
-volumes:
-  postgres: {}
-  static:
-    driver_opts:
-      device: "tmpfs"
-      type: "tmpfs"
+# Define the volumes
+# volumes:
+#   pgdata:
+
+# volumes:
+#   postgres: {}
+#   static:
+#     driver_opts:
+#       device: "tmpfs"
+#       type: "tmpfs"
