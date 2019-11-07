@@ -1,8 +1,8 @@
-FROM elixir:1.8.0
+FROM elixir:1.8.2
 
 RUN apt-get update
 RUN apt-get install -y \
-    inotify-tools libfontenc1 libxfont1 xfonts-encodings xfonts-utils xfonts-base xfonts-75dpi
+    inotify-tools libfontenc1 libxfont1 xfonts-encodings xfonts-utils xfonts-base xfonts-75dpi postgresql-client
 
 # Install wkhtmltopdf
 RUN wget -P /root https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb
