@@ -3,8 +3,25 @@ import places from 'places.js';
 import algoliasearch from 'algoliasearch';
 import autocomplete from 'autocomplete.js';
 
+let needProxy = false;
+$.get('https://api.ipify.org').done(ip => {
+  console.log(ip)
+  const [nb1, nb2, nb3, nb4] = ip.split('.').map(parseInt);
+  needProxy = nb1 === 185 && nb2 === 215 && nb3 == 64 && nb4 < 23;
+});
+
+const clientOptionsWithProxy = key => {
+  return needProxy ? {
+    hosts: [`algolia-${key}.beta.pole-emploi.fr`]
+  } : null;
+}
+
 const setupSearchBar = () => {
-  const client = algoliasearch(window.algolia_app_id, window.algolia_search_api_key);
+  const client = algoliasearch(
+    window.algolia_app_id,
+    window.algolia_search_api_key,
+    clientOptionsWithProxy(window.algolia_app_id)
+  );
   const professions = client.initIndex('profession');
   const certifications = client.initIndex('certification');
   autocomplete('#search_query', {
@@ -51,7 +68,11 @@ const setupSearchBar = () => {
      }
   });
 
-  const places = algoliasearch.initPlaces(window.algolia_places_app_id, window.algolia_places_api_key);
+  const places = algoliasearch.initPlaces(
+    window.algolia_places_app_id,
+    window.algolia_places_api_key,
+    clientOptionsWithProxy('places')
+  );
 
   const updateForm = response => {
     const hits = response.hits;
@@ -99,6 +120,7 @@ const setupPlaces = (type, prefix, tag) => {
     type,
     appId: window.algolia_places_app_id,
     apiKey: window.algolia_places_api_key,
+    clientOptions: clientOptionsWithProxy('places'),
     templates: {
       value: function(suggestion) {
         return suggestion.name;
