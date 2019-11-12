@@ -126,11 +126,14 @@ defmodule Vae.Application do
   def register_meeting(application, nil), do: {:ok, application}
 
   def register_meeting(application, meeting_id) do
-    {:ok, meeting} = Vae.Meetings.register(meeting_id, application)
-    application
-    |> change()
-    |> put_embed(:meeting, meeting)
-    |> Repo.update()
+    case Vae.Meetings.register(meeting_id, application) do
+      {:ok, meeting} ->
+        application
+        |> change()
+        |> put_embed(:meeting, meeting)
+        |> Repo.update()
+      {:error, _meeting} = error -> error
+    end
   end
 
   defp generate_hash(length) do
