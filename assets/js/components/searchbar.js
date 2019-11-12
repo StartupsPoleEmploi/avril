@@ -5,9 +5,8 @@ import autocomplete from 'autocomplete.js';
 
 let needProxy = false;
 $.get('https://api.ipify.org').done(ip => {
-  console.log(ip)
   const [nb1, nb2, nb3, nb4] = ip.split('.').map(parseInt);
-  needProxy = nb1 === 185 && nb2 === 215 && nb3 == 64 && nb4 < 23;
+  needProxy = nb1 === 185 && nb2 === 215 && nb3 >= 64 && nb3 <= 67;
 });
 
 const clientOptionsWithProxy = key => {

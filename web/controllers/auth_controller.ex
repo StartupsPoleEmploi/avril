@@ -20,34 +20,35 @@ defmodule Vae.AuthController do
   def callback(conn, %{"code" => code, "state" => state}) do
     client = Clients.get_client(state)
 
-    case OAuth.generate_access_token(client, code) do
-      {:ok, client_with_token} ->
-        userinfo_api_result =
-          OAuth.get(
-            client_with_token,
-            "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
-          )
+    with(
+      {:ok, client_with_token} <- OAuth.generate_access_token(client, code),
+      %OAuth2.Response{body: userinfo_api_result_body} <- OAuth.get(
+        client_with_token,
+        "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
+      )
+    ) do
+      result =
+        case Repo.get_by(User, pe_id: userinfo_api_result_body["idIdentiteExterne"]) do
+          nil ->
+            User.create_or_update_with_pe_connect_data(userinfo_api_result_body)
 
-        result =
-          case Repo.get_by(User, pe_id: userinfo_api_result.body["idIdentiteExterne"]) do
-            nil ->
-              User.create_or_update_with_pe_connect_data(userinfo_api_result.body)
-
-            user ->
-              if is_nil(user.gender),
-                do: User.update_with_pe_connect_data(user, userinfo_api_result.body),
-                else: {:ok, user}
-          end
-          |> User.fill_with_api_fields(client_with_token)
-
-        case result do
-          {:ok, user} ->
-            Coherence.Authentication.Session.create_login(conn, user)
-            |> Coherence.Redirects.create_or_get_application(user)
-          {:error, msg} -> handle_error(conn, msg)
+          user ->
+            if is_nil(user.gender),
+              do: User.update_with_pe_connect_data(user, userinfo_api_result_body),
+              else: {:ok, user}
         end
+        |> User.fill_with_api_fields(client_with_token)
 
-      {:error, _error} ->
+      case result do
+        {:ok, user} ->
+          Coherence.Authentication.Session.create_login(conn, user)
+          |> Coherence.Redirects.create_or_get_application(user)
+        {:error, msg} -> handle_error(conn, msg)
+      end
+
+    else
+      error ->
+        Logger.error(inspect(error))
         handle_error(conn)
     end
   end

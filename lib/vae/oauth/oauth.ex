@@ -50,8 +50,9 @@ defmodule Vae.OAuth do
           get(client, resource_url, retry - 1)
         end
 
-      {:error, error} ->
-        Logger.error(fn -> inspect(error) end)
+      {:error, msg} = error ->
+        Logger.error(fn -> inspect(msg) end)
+        error
     end
   end
 

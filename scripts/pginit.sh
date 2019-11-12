@@ -38,13 +38,13 @@ else
     psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c 'select count(*) from schema_migrations;' || true
   else
     echo "Dump file $DUMP_FILE not found, running migrations and seeds"
-    mix ecto.migrate
-    mix run priv/repo/seeds.exs
+    # mix ecto.migrate
+    # mix run priv/repo/seeds.exs
   fi
   echo "[DONE] Database seeded";
 fi
 
-mix ecto.migrate
+# mix ecto.migrate
 
 rm $LOCK_FILE
 

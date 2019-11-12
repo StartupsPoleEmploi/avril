@@ -264,12 +264,12 @@ defmodule Vae.CertificationController do
     place = Places.get_geoloc_from_geo(params)
 
     conn
-    |> put_session(:search_geo, List.first(place["city"]))
+    |> put_session(:search_geo, List.first(place["city"] || []))
     |> put_session(:search_lat, lat)
     |> put_session(:search_lng, lng)
-    |> put_session(:search_county, List.first(place["county"]))
-    |> put_session(:search_postcode, List.first(place["postcode"]))
-    |> put_session(:search_administrative, List.first(place["administrative"]))
+    |> put_session(:search_county, List.first(place["county"] || []))
+    |> put_session(:search_postcode, List.first(place["postcode"] || []))
+    |> put_session(:search_administrative, List.first(place["administrative"] || []))
   end
 
   defp save_geo_to_session(conn, _params), do: conn

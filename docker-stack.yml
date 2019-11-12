@@ -44,3 +44,14 @@ services:
       restart_policy:
         condition: none
         max_attempts: 1
+  compile:
+    image: avril_app
+    command: /app/scripts/compile.sh
+    env_file:
+      - ".env"
+    volumes:
+      - ".:/app"
+    deploy:
+      restart_policy:
+        condition: none
+        max_attempts: 1
