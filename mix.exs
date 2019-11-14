@@ -99,6 +99,7 @@ defmodule Vae.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sentry, "~> 6.4"},
+      {:cors_plug, "~> 2.0"},
       {:phoenix_markdown, "~> 1.0"}
       # {:phoenix_markdown, path: "../phoenix_markdown"}
     ]

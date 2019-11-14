@@ -17,4 +17,11 @@ defmodule Vae.ApiController do
       }
     })
   end
+
+  def set_booklet(conn, %{"hash" => hash} = params) do
+    # TODO: save
+    json(conn, %{
+      status: :ok
+    })
+  end
 end

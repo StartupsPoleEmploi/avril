@@ -147,6 +147,11 @@ config :coherence, Vae.Coherence.Mailer,
   api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
   secret: System.get_env("MAILJET_PRIVATE_API_KEY")
 
+config :cors_plug,
+  origin: ["http://localhost:3000"],
+  max_age: 86400,
+  methods: ["GET", "POST", "PUT"]
+
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},
   repo: Vae.Repo,

@@ -24,12 +24,6 @@ defmodule Vae.Router do
   end
 
   pipeline :protected do
-    # plug(:accepts, ["html"])
-    # plug(:fetch_session)
-    # plug(:fetch_flash)
-    # plug(:protect_from_forgery)
-    # plug(:put_secure_browser_headers)
-
     plug(Coherence.Authentication.Session,
       protected: true,
       store: Coherence.CredentialStore.Session,
@@ -44,6 +38,8 @@ defmodule Vae.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug(:fetch_session)
+    plug(:fetch_flash)
 
     post("/mail_events", Vae.MailEventsController, :new_event)
   end
@@ -126,9 +122,10 @@ defmodule Vae.Router do
   end
 
   scope "/api" do
-    pipe_through([:browser, :api])
+    pipe_through([:api])
     get("/booklet", Vae.ApiController, :get_booklet)
-    put("/booket", Vae.ApiController, :set_booklet)
+    put("/booklet", Vae.ApiController, :set_booklet)
+
   end
 
   # Admin

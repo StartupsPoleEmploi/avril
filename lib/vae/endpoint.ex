@@ -59,5 +59,6 @@ defmodule Vae.Endpoint do
     signing_salt: "2nvfILl2"
   )
 
+  plug(CORSPlug)
   plug(Vae.Router)
 end
