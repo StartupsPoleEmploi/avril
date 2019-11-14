@@ -25,16 +25,28 @@ services:
     working_dir: /app
     depends_on:
       - postgres
+      # - nuxt
     env_file:
       - ".env"
     command: iex -S mix phx.server
     volumes:
       - ".:/app"
-    # healthcheck:
-    #   test: curl -f -I http://localhost:4000 || exit 1
-    #   # interval: 5s
-    #   timeout: 5s
-    #   # retries: 3
+    networks:
+      default:
+        aliases:
+          - phoenix
+  nuxt:
+    image: node:latest
+    ports:
+      - "3000:3000"
+    working_dir: /app
+    command: yarn start
+    env_file:
+      - ".env"
+    volumes:
+      - "../Avril-Demat-Livret1:/app"
+    networks:
+      - default
 
 # Define the volumes
 # volumes:

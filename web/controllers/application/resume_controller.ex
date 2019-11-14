@@ -1,4 +1,4 @@
-defmodule Vae.ResumeController do
+defmodule Vae.ApplicationController.ResumeController do
   require Logger
   use Vae.Web, :controller
   plug(Vae.Plugs.ApplicationAccess)

@@ -85,6 +85,7 @@ defmodule Vae.Router do
     get("/:provider/redirect", Vae.AuthController, :save_session_and_redirect)
 
     # Loggued in applications
+    get("/candidatures/actuelle", Vae.ApplicationController, :current, as: :current)
     resources("/candidatures", Vae.ApplicationController, only: [:show, :update]) do
       get("/telecharger", Vae.ApplicationController, :download, as: :download)
 
@@ -96,7 +97,7 @@ defmodule Vae.Router do
         as: :france_vae_registered
       )
 
-      resources("/resume", Vae.ResumeController, only: [:create, :delete])
+      resources("/resume", Vae.ApplicationController.ResumeController, only: [:create, :delete])
     end
 
     get("/candidatures/:id/admissible", Vae.ApplicationController, :admissible)
@@ -122,6 +123,12 @@ defmodule Vae.Router do
   scope "/" do
     pipe_through([:browser, :protected])
     coherence_routes(:protected)
+  end
+
+  scope "/api" do
+    pipe_through([:browser, :api])
+    get("/booklet", Vae.ApiController, :get_booklet)
+    put("/booket", Vae.ApiController, :set_booklet)
   end
 
   # Admin

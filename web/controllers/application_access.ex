@@ -6,13 +6,16 @@ defmodule Vae.Plugs.ApplicationAccess do
   alias Vae.Repo
   alias Vae.Router.Helpers
 
-  def init(params), do: params
+  def init(options \\ []), do: options
 
-  def call(%{params: %{"application_id" => application_id}} = conn, params),
-    do: execute(conn, application_id, params)
+  def call(%{params: %{"application_id" => application_id}} = conn, options),
+    do: execute(conn, {:id, application_id}, options)
 
-  def call(%{params: %{"id" => application_id}} = conn, params),
-    do: execute(conn, application_id, params)
+  def call(%{params: %{"id" => application_id}} = conn, options),
+    do: execute(conn, {:id, application_id}, options)
+
+  def call(%{params: %{"hash" => hash_value}} = conn, [find_with_hash: hash_key] = options),
+    do: execute(conn, {hash_key, hash_value}, options)
 
   def call(conn, _params) do
     conn
@@ -21,16 +24,13 @@ defmodule Vae.Plugs.ApplicationAccess do
     |> halt()
   end
 
-  def execute(conn, application_id, options \\ []) do
-    application =
-      case Repo.get(Application, application_id) do
-        nil -> nil
-        application -> Repo.preload(application, :user)
-      end
+  def execute(conn, finder, options \\ []) do
+    application = Repo.get_by(Application, List.wrap(finder))
 
-    hash = if options[:allow_hash_access], do: get_in(conn, [Access.key(:params), "hash"])
+    verify_hash = if key = options[:verify_with_hash] || options[:find_with_hash],
+      do: {key, get_in(conn, [Access.key(:params), "hash"])}
 
-    case has_access?(conn, application, hash) do
+    case has_access?(conn, application, verify_hash) do
       {:ok, nil} ->
         conn
         |> put_status(:not_found)
@@ -49,9 +49,8 @@ defmodule Vae.Plugs.ApplicationAccess do
     end
   end
 
-  defp has_access?(_conn, nil, _hash), do: {:ok, nil}
-
   defp has_access?(conn, application, nil) do
+    application = application |> Repo.preload(:user)
     if Coherence.logged_in?(conn) &&
          (Coherence.current_user(conn).id == application.user.id ||
             Coherence.current_user(conn).is_admin) do
@@ -65,16 +64,16 @@ defmodule Vae.Plugs.ApplicationAccess do
     end
   end
 
-  defp has_access?(conn, application, hash) do
+  defp has_access?(conn, application, {hash_key, hash_value}) do
     # && Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10))
-    if application.delegate_access_hash == hash do
+    if Map.get(application, hash_key) == hash_value do
       {:ok, application}
     else
       {:error,
        %{
          to: Helpers.root_path(conn, :index),
          msg:
-           if(application.delegate_access_hash == hash,
+           if(Map.get(application, hash_key) == hash_value,
              do: "Accès expiré",
              else: "Vous n'avez pas accès"
            )

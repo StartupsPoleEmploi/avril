@@ -15,14 +15,15 @@
               a#experience-pro-tab.nav-item.nav-link.active href="#experience-pro" data-toggle="tab" aria-controls="experience-pro" aria-selected="true"
                 h6
                   span.fa.fa-user
-                  = " 1 - Expériences Pro"
+                  = " 1 - Mon profil"
               a#transmission-tab.nav-item.nav-link href="#transmission" data-toggle="tab" aria-controls="tranmission" aria-selected="false" data-analytics="Profil#Transmission tab"
                 h6
-                  span.fa.fa-users
-                  = if is_nil(@application.submitted_at) do
-                    = " 2 - Transmission"
-                  - else
-                    = " 2 - Réunion d'information"
+                  span.fa.fa-calendar
+                  = " 2 - Mon entretien"
+              a#booklet-tab.nav-item.nav-link href="#booklet" data-toggle="tab" aria-controls="booklet" aria-selected="false"
+                h6
+                  span.fa.fa-form
+                  = " 3 - Mon dossier de candidature"
     .tab-content
       #experience-pro.tab-pane.fade.show.active role="tabpanel" aria-labelledby="experience-pro-tab"
         .row
@@ -261,3 +262,7 @@
                 .col-sm-12
                   .pull-right
                     button.btn.btn-link type="submit" name="book" value="off" data-analytics="Profil#Sans Reunion information" Non merci, je veux juste transmettre mon dossier VAE
+      #booklet.tab-pane.fade role="tabpanel" aria-labelledby="booklet-tab"
+        p Le dossier de candidature permet au certificateur de vérifier que vous avez bien 1 an d'expérience. Il permet aussi de vérifier que cette expérience a bien un lien avec votre futur diplôme. Et enfin, grâce aux renseignements demandés, le certificateur pourra vous donner son avis sur votre projet.
+
+        a href="http://localhost:3000?hash=#{@application.booklet_hash}" class="btn btn-lg btn-primary" Démarrer mon dossier de candidature

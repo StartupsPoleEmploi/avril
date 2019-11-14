@@ -20,6 +20,7 @@ defmodule Vae.Application do
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
+    field(:booklet_hash, :string)
     field(:admissible_at, :utc_datetime)
     field(:inadmissible_at, :utc_datetime)
 
@@ -44,6 +45,11 @@ defmodule Vae.Application do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, @fields)
+    |> init_booklet_hash()
+  end
+
+  def init_booklet_hash(changeset) do
+    change(changeset, booklet_hash: changeset.data.booklet_hash || generate_hash(64))
   end
 
   def find_or_create_with_params(
