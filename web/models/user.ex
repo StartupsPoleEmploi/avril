@@ -6,7 +6,7 @@ defmodule Vae.User do
   use Coherence.Schema
   require Logger
 
-  alias Vae.{Skill, Experience, ProvenExperience, JobSeeker, Application, Repo}
+  alias Vae.{Application, BookletData, Experience, JobSeeker, ProvenExperience, Repo, Skill}
 
   schema "users" do
     field(:gender, :string)
@@ -46,6 +46,8 @@ defmodule Vae.User do
       through: [:current_application, :certification],
       on_delete: :nilify
     )
+
+    embeds_one(:booklet_data, BookletData, on_replace: :delete)
 
     embeds_many(:skills, Skill, on_replace: :delete)
 
@@ -98,6 +100,7 @@ defmodule Vae.User do
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
+    |> put_embed_if_necessary(params, :booklet_data, [is_single: true])
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -117,15 +120,18 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def put_embed_if_necessary(changeset, params, key) do
+  def put_embed_if_necessary(changeset, params, key, options\\[]) do
     klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
     klass = [Elixir, Vae, klass_name] |> Module.concat()
     case params[key] do
       nil -> changeset
-      values -> put_embed(changeset, key, Enum.uniq_by(
-        Map.get(changeset.data, key) ++ List.wrap(values),
-        &klass.unique_key/1
-      ))
+      values when is_list(values) -> put_embed(changeset, key,
+          Enum.uniq_by(
+            Map.get(changeset.data, key) ++ values,
+            &klass.unique_key/1
+          )
+        )
+      value -> put_embed(changeset, key, value)
     end
   end
 
