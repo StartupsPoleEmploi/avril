@@ -1,18 +1,18 @@
 defmodule Vae.ApiController do
   use Vae.Web, :controller
 
-  alias Vae.{User}
+  alias Vae.{Certification, User}
 
   plug Vae.Plugs.ApplicationAccess, [find_with_hash: :booklet_hash]
 
   def get_booklet(conn, %{"hash" => hash}) do
     application =
       conn.assigns[:current_application]
-      |> Repo.preload([:user])
+      |> Repo.preload([:user, :certification])
     user = application.user
     json(conn, %{
       status: :ok,
-      data: IO.inspect(Vae.Map.deep_merge(booklet_init_data(user), Map.from_struct(user.booklet_data)))
+      data: Vae.Map.deep_merge(booklet_init_data(application), Map.from_struct(user.booklet_data))
     })
   end
 
@@ -38,8 +38,10 @@ defmodule Vae.ApiController do
 
   end
 
-  defp booklet_init_data(user) do
+  defp booklet_init_data(application) do
+    user = application.user
     %{
+      certificationLabel: Certification.name(application.certification),
       identity: %{
         firstNames: [user.first_name],
         lastName: user.last_name,
