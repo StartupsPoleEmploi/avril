@@ -3,10 +3,25 @@ import places from 'places.js';
 import algoliasearch from 'algoliasearch';
 import autocomplete from 'autocomplete.js';
 
+const ipNumber = iPaddress => {
+  const ip = iPaddress.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+  if(ip) {
+    return (+ip[1]<<24) + (+ip[2]<<16) + (+ip[3]<<8) + (+ip[4]);
+  }
+}
+
+const ipMask = maskSize => {
+  return -1<<(32-maskSize);
+}
+
+const isInSubnet = (ip, subnetIp, subnetMask) => {
+  return (ipNumber(ip) & ipMask(subnetMask)) === ipNumber(subnetIp);
+}
+
 let needProxy = false;
 $.get('https://api.ipify.org').done(ip => {
   const [nb1, nb2, nb3, nb4] = ip.split('.').map(parseInt);
-  needProxy = nb1 === 185 && nb2 === 215 && nb3 >= 64 && nb3 <= 67;
+  needProxy = isInSubnet(ip, '185.215.64.0', '22')
 });
 
 const clientOptionsWithProxy = key => {
