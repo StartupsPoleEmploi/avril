@@ -23,7 +23,7 @@ config :vae, Vae.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "",
-  database: "vae_test",
+  database: "vae_dev",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
@@ -37,3 +37,6 @@ config :vae,
     # from_email: "contact@avril.pole-emploi.fr"
     override_to: [%{Email: "x@gmail.com"}]
   }
+
+config :vae, Vae.Endpoint,
+  secret_key_base: "CPBIsZXHKo41NCrQGS/S3zaVhZrPeH/EtkS/nR2+uf7gFQaEXpd1SM92za61ZO1V"

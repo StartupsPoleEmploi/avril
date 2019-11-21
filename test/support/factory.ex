@@ -4,6 +4,7 @@ defmodule Vae.Factory do
   def build(:delegate) do
     %Vae.Delegate{
       name: unique_name("delegate"),
+      person_name: unique_name("delegate_person_name"),
       process: build(:process)
     }
   end
@@ -28,6 +29,45 @@ defmodule Vae.Factory do
         build(:delegate),
         build(:delegate)
       ]
+    }
+  end
+
+  def build(:application, date) do
+    %Vae.Application{
+      booklet_hash: "plopplippluq",
+      user: build({:user, date}),
+      delegate: build(:delegate),
+      certification: build(:certification),
+      booklet_hash: "1234"
+    }
+  end
+
+  def build({:user, date}) do
+    %Vae.User{
+      gender: "M",
+      first_name: "John",
+      last_name: "Doe",
+      email: "john@doe.com",
+      phone_number: "0102030405",
+      postal_code: "75000",
+      address1: "Street 1",
+      address2: "Street 2",
+      insee_code: "22",
+      country_code: "FR",
+      city_label: "Paris",
+      country_label: "France",
+      birthday: date,
+      birth_place: "Dijon"
+    }
+  end
+
+  def build(:certification) do
+    %Vae.Certification{
+      label: "my certification",
+      acronym: "BT",
+      level: 1,
+      rncp_id: "12345",
+      description: "Top certification"
     }
   end
 

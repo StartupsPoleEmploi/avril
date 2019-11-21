@@ -17,7 +17,9 @@ defmodule Vae do
       Vae.Meetings.FranceVae.Connection.Cache,
       worker(Vae.Meetings.StateHolder, []),
       worker(Vae.Meetings.FranceVae.Server, []),
-      worker(Vae.Meetings.Afpa.Server, [])
+      worker(Vae.Meetings.Afpa.Server, []),
+      supervisor(Vae.Booklet.WorkerSupervisor, []),
+      Vae.Booklet.ProcessRegistry
     ]
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]

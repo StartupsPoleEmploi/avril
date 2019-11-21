@@ -20,9 +20,9 @@ defmodule Vae.Application do
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
-    field(:booklet_hash, :string)
     field(:admissible_at, :utc_datetime)
     field(:inadmissible_at, :utc_datetime)
+    field(:booklet_hash, :string)
 
     belongs_to(:user, User, foreign_key: :user_id)
     belongs_to(:delegate, Delegate, foreign_key: :delegate_id)
@@ -36,6 +36,7 @@ defmodule Vae.Application do
     )
 
     embeds_one(:meeting, Meeting, on_replace: :delete)
+    embeds_one(:booklet_1, Vae.Booklet.Cerfa, on_replace: :delete)
 
     timestamps()
   end
@@ -53,9 +54,9 @@ defmodule Vae.Application do
   end
 
   def find_or_create_with_params(
-        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} =
-          params
-      ) when not is_nil(user_id) and not is_nil(delegate_id) and not is_nil(certification_id) do
+        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params
+      )
+      when not is_nil(user_id) and not is_nil(delegate_id) and not is_nil(certification_id) do
     case Repo.get_by(__MODULE__, params) do
       nil -> Repo.insert(changeset(%__MODULE__{}, params))
       application -> {:ok, application}
@@ -64,24 +65,27 @@ defmodule Vae.Application do
 
   def submit(application, auto_submitted \\ false) do
     application = Repo.preload(application, [:user, :delegate])
+
     case User.submit_application_required_missing_fields(application.user) do
       [] ->
         if is_nil(application.submitted_at) do
           with(
-            {:ok, application} <- Repo.update(
-              __MODULE__.changeset(application, %{
-                delegate_access_hash: generate_hash(64),
-                delegate_access_refreshed_at: DateTime.utc_now()
-              })
-            ),
-            {:ok, _messages} <- Mailer.send(
-              if Delegate.is_asp?(application.delegate), do:
-                ApplicationEmail.asp_user_submission_confirmation(application),
-              else: [
-                ApplicationEmail.delegate_submission(application),
-                ApplicationEmail.user_submission_confirmation(application)
-              ]
-            )
+            {:ok, application} <-
+              Repo.update(
+                __MODULE__.changeset(application, %{
+                  delegate_access_hash: generate_hash(64),
+                  delegate_access_refreshed_at: DateTime.utc_now()
+                })
+              ),
+            {:ok, _messages} <-
+              Mailer.send(
+                if Delegate.is_asp?(application.delegate),
+                  do: ApplicationEmail.asp_user_submission_confirmation(application),
+                  else: [
+                    ApplicationEmail.delegate_submission(application),
+                    ApplicationEmail.user_submission_confirmation(application)
+                  ]
+              )
           ) do
             Repo.update(
               __MODULE__.changeset(application, %{
@@ -138,8 +142,17 @@ defmodule Vae.Application do
         |> change()
         |> put_embed(:meeting, meeting)
         |> Repo.update()
-      {:error, _meeting} = error -> error
+
+      {:error, _meeting} = error ->
+        error
     end
+  end
+
+  def save_booklet(application, booklet) do
+    application
+    |> change()
+    |> put_embed(:booklet_1, booklet)
+    |> Repo.update()
   end
 
   defp generate_hash(length) do

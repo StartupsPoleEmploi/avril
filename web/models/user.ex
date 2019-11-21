@@ -29,6 +29,7 @@ defmodule Vae.User do
     field(:birth_place, :string)
     field(:pe_id, :string)
     field(:pe_connect_token, :string)
+
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
     has_many(:applications, Application, on_replace: :delete, on_delete: :delete_all)
@@ -46,8 +47,6 @@ defmodule Vae.User do
       through: [:current_application, :certification],
       on_delete: :nilify
     )
-
-    embeds_one(:booklet_data, BookletData, on_replace: :delete)
 
     embeds_many(:skills, Skill, on_replace: :delete)
 
@@ -100,7 +99,7 @@ defmodule Vae.User do
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
-    |> put_embed_if_necessary(params, :booklet_data, [is_single: true])
+    |> put_embed_if_necessary(params, :booklet_data, is_single: true)
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -120,18 +119,26 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def put_embed_if_necessary(changeset, params, key, options\\[]) do
+  def put_embed_if_necessary(changeset, params, key, options \\ []) do
     klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
     klass = [Elixir, Vae, klass_name] |> Module.concat()
+
     case params[key] do
-      nil -> changeset
-      values when is_list(values) -> put_embed(changeset, key,
+      nil ->
+        changeset
+
+      values when is_list(values) ->
+        put_embed(
+          changeset,
+          key,
           Enum.uniq_by(
             Map.get(changeset.data, key) ++ values,
             &klass.unique_key/1
           )
         )
-      value -> put_embed(changeset, key, value)
+
+      value ->
+        put_embed(changeset, key, value)
     end
   end
 
@@ -139,9 +146,7 @@ defmodule Vae.User do
       when is_binary(email) do
     case Repo.get_by(__MODULE__, email: String.downcase(email)) do
       nil ->
-        Repo.insert(
-          changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result))
-        )
+        Repo.insert(changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result)))
 
       user ->
         update_with_pe_connect_data(user, userinfo_api_result)
@@ -233,9 +238,14 @@ defmodule Vae.User do
   def sync_name_with_first_and_last(user_changeset, params) do
     first_name = params[:first_name] || user_changeset.data.first_name
     last_name = params[:last_name] || user_changeset.data.last_name
-    cast(user_changeset, %{
-      name: "#{first_name} #{last_name}"
-    }, [:name])
+
+    cast(
+      user_changeset,
+      %{
+        name: "#{first_name} #{last_name}"
+      },
+      [:name]
+    )
   end
 
   def fullname(user) do
@@ -262,14 +272,16 @@ defmodule Vae.User do
     [
       Vae.Enum.join_keep_nil([user.postal_code, user.city_label], " "),
       user.country_label
-    ] |> Vae.Enum.join_keep_nil(", ")
+    ]
+    |> Vae.Enum.join_keep_nil(", ")
   end
 
   def address(user) do
     [
       address_street(user),
       address_city(user)
-    ] |> Vae.Enum.join_keep_nil("\n")
+    ]
+    |> Vae.Enum.join_keep_nil("\n")
   end
 
   def submit_application_required_missing_fields(user) do
