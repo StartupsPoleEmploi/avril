@@ -5,7 +5,7 @@ defmodule Vae.Booklet.Civility do
   embedded_schema do
     field(:gender, :string)
     field(:birthday, :date)
-    field(:birthplace, :string)
+    field(:birth_place, :string)
     field(:first_name, :string)
     field(:last_name, :string)
     field(:usage_name, :string)

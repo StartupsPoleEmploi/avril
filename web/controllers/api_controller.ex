@@ -12,7 +12,7 @@ defmodule Vae.ApiController do
 
     data =
       case application.booklet_1 do
-        nil -> from_application(application)
+        nil -> init_cerfa_from_application(application)
         booklet -> booklet
       end
 
@@ -68,16 +68,34 @@ defmodule Vae.ApiController do
           country: data.civility.country
           # "isDomTom" => false
         }
-      }
+      },
+      experiences: map_experiences_to_view(data.experiences)
     }
   end
 
-  def from_application(application) do
+  def map_experiences_to_view([]), do: []
+
+  def map_experiences_to_view(experiences), do: Enum.map(experiences, &map_experience_to_view/1)
+
+  def map_experience_to_view(experience) do
+    %{
+      role: experience.title,
+      companyName: experience.company_name,
+      companyAddress: experience.full_address,
+      category: experience.job_industry,
+      contractType: experience.employment_type,
+      activities: experience.skills,
+      periods: [experience.start_date, experience.end_date],
+      hours: experience.week_hour_duration
+    }
+  end
+
+  def init_cerfa_from_application(application) do
     user = application.user
 
-    %{
+    %Vae.Booklet.Cerfa{
       certification_name: Certification.name(application.certification),
-      civility: %{
+      civility: %Vae.Booklet.Civility{
         gender: user.gender,
         birthday: user.birthday,
         birth_place: user.birth_place,
@@ -90,8 +108,23 @@ defmodule Vae.ApiController do
         city: user.city_label,
         country: user.country_label
       },
-      education: %{},
-      experiences: []
+      experiences: map_experiences(user.experiences)
+    }
+  end
+
+  def map_experiences([]), do: []
+
+  def map_experiences(experiences),
+    do: Enum.map(experiences, &map_experience/1)
+
+  def map_experience(experience) do
+    %Vae.Booklet.Experience{
+      title: experience.label,
+      company_name: experience.company,
+      full_address: nil,
+      start_date: experience.start_date,
+      end_date: experience.end_date,
+      week_hour_duration: 35
     }
   end
 

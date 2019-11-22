@@ -57,8 +57,50 @@ defmodule Vae.Factory do
       city_label: "Paris",
       country_label: "France",
       birthday: date,
-      birth_place: "Dijon"
+      birth_place: "Dijon",
+      experiences: build(:experiences)
     }
+  end
+
+  def build(:experiences) do
+    [
+      %{
+        label: "Chargé d'affaires Vidéosurveillance, alarme, gestion des accès ",
+        company: "Ads Securite ",
+        duration: 7,
+        end_date: "2019-06-30T22:00:00Z",
+        is_abroad: false,
+        start_date: "2018-12-31T23:00:00Z",
+        is_current_job: false
+      },
+      %{
+        label: "President Sas",
+        company: "Suissa Elec",
+        duration: 28,
+        end_date: "2017-12-31T23:00:00Z",
+        is_abroad: false,
+        start_date: "2015-09-30T22:00:00Z",
+        is_current_job: false
+      },
+      %{
+        label: "Ingénieur d'affaires",
+        company: "Ecus Ondulique",
+        duration: 21,
+        end_date: "2014-08-31T22:00:00Z",
+        is_abroad: false,
+        start_date: "2012-12-31T23:00:00Z",
+        is_current_job: false
+      },
+      %{
+        label: "Entrepreneur et opérateur certifié",
+        company: "Dan'diag",
+        duration: 33,
+        end_date: "2012-08-31T22:00:00Z",
+        is_abroad: false,
+        start_date: "2009-12-31T23:00:00Z",
+        is_current_job: false
+      }
+    ]
   end
 
   def build(:certification) do
