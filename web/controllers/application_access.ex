@@ -27,8 +27,9 @@ defmodule Vae.Plugs.ApplicationAccess do
   def execute(conn, finder, options \\ []) do
     application = Repo.get_by(Application, List.wrap(finder))
 
-    verify_hash = if key = options[:verify_with_hash] || options[:find_with_hash],
-      do: {key, get_in(conn, [Access.key(:params), "hash"])}
+    verify_hash =
+      if key = options[:verify_with_hash] || options[:find_with_hash],
+        do: {key, get_in(conn, [Access.key(:params), "hash"])}
 
     case has_access?(conn, application, verify_hash) do
       {:ok, nil} ->
@@ -51,6 +52,7 @@ defmodule Vae.Plugs.ApplicationAccess do
 
   defp has_access?(conn, application, nil) do
     application = application |> Repo.preload(:user)
+
     if Coherence.logged_in?(conn) &&
          (Coherence.current_user(conn).id == application.user.id ||
             Coherence.current_user(conn).is_admin) do

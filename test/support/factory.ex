@@ -34,11 +34,10 @@ defmodule Vae.Factory do
 
   def build(:application, date) do
     %Vae.Application{
-      booklet_hash: "plopplippluq",
       user: build({:user, date}),
       delegate: build(:delegate),
       certification: build(:certification),
-      booklet_hash: "1234"
+      booklet_hash: "123456"
     }
   end
 
@@ -111,6 +110,98 @@ defmodule Vae.Factory do
       rncp_id: "12345",
       description: "Top certification"
     }
+  end
+
+  def build(:application_with_booklet, date) do
+    application = insert!(:application, date) |> Repo.preload(:resumes)
+
+    cerfa = %{
+      certification_name: "BT my certification",
+      civility: %{
+        gender: "M",
+        birthday: date,
+        birth_place: "Saint-Malo",
+        first_name: "John",
+        last_name: "Doe",
+        usage_name: "Smith",
+        email: "john@smith.com",
+        home_phone: "0300000000",
+        mobile_number: "0600000000",
+        street_address: "Rue de la Pierre",
+        postal_code: "35000",
+        city: "Saint-Malo",
+        country: "FR"
+      },
+      education: %{
+        grade: "A",
+        degree: "I",
+        diplomas: [
+          %{
+            label: "CAP Boucher"
+          },
+          %{
+            label: "BTS Boulanger"
+          }
+        ],
+        courses: [
+          %{
+            label: "CAPES"
+          },
+          %{
+            label: "CACES"
+          }
+        ]
+      },
+      experiences: [
+        %{
+          title: "Responsable Boucherie",
+          company_name: "Butcher Market",
+          full_address: "Centre commercial Binard",
+          job_industry: "H",
+          employment_type: "A",
+          start_date: ~D[2019-11-30],
+          end_date: ~D[2018-11-30],
+          week_hours_duration: 35,
+          skills: [
+            %{
+              label: "Découpe de charcuterie"
+            },
+            %{
+              label: "Affutage"
+            },
+            %{
+              label: "Découpe de poulet"
+            },
+            %{
+              label: "Rotisserie"
+            }
+          ]
+        },
+        %{
+          title: "Responsable Patisserie",
+          company_name: "Baker Market",
+          full_address: "Centre commercial 2e gauche",
+          job_industry: "H",
+          employment_type: "D",
+          start_date: ~D[2018-11-29],
+          end_date: ~D[2017-11-30],
+          week_hours_duration: 35,
+          skills: [
+            %{
+              label: "Glacage"
+            },
+            %{
+              label: "Pate brisée"
+            }
+          ]
+        }
+      ]
+    }
+
+    application
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_embed(:booklet_1, cerfa)
+    |> Repo.update!()
   end
 
   def build(factory_name, attributes) do

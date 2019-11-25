@@ -69,7 +69,8 @@ defmodule Vae.ApiController do
           # "isDomTom" => false
         }
       },
-      experiences: map_experiences_to_view(data.experiences)
+      experiences: map_experiences_to_view(data.experiences),
+      education: map_education_to_view(data.education)
     }
   end
 
@@ -84,11 +85,34 @@ defmodule Vae.ApiController do
       companyAddress: experience.full_address,
       category: experience.job_industry,
       contractType: experience.employment_type,
-      activities: experience.skills,
+      activities: map_skills_to_view(experience.skills),
       periods: [experience.start_date, experience.end_date],
-      hours: experience.week_hour_duration
+      hours: experience.week_hours_duration
     }
   end
+
+  def map_skills_to_view([]), do: []
+
+  def map_skills_to_view(skills), do: Enum.map(skills, & &1.label)
+
+  def map_education_to_view(nil), do: nil
+
+  def map_education_to_view(education) do
+    %{
+      latestCourseLevel: education.grade,
+      latestDegree: education.degree,
+      relatedDegrees: map_diplomas_to_view(education.diplomas),
+      trainings: map_courses_to_view(education.courses)
+    }
+  end
+
+  def map_diplomas_to_view([]), do: []
+
+  def map_diplomas_to_view(diplomas), do: Enum.map(diplomas, & &1.label)
+
+  def map_courses_to_view([]), do: []
+
+  def map_courses_to_view(courses), do: Enum.map(courses, & &1.label)
 
   def init_cerfa_from_application(application) do
     user = application.user
@@ -124,7 +148,7 @@ defmodule Vae.ApiController do
       full_address: nil,
       start_date: experience.start_date,
       end_date: experience.end_date,
-      week_hour_duration: 35
+      week_hours_duration: 35
     }
   end
 

@@ -11,10 +11,10 @@ defmodule Vae.Booklet.Experience do
     field(:employment_type, :string)
     field(:start_date, :date)
     field(:end_date, :date)
-    field(:week_hour_duration, :integer)
+    field(:week_hours_duration, :integer)
 
-    embeds_many :skills, Skill, primary_key: false do
-      field(:description, :string)
+    embeds_many :skills, Skill, primary_key: false, on_replace: :delete do
+      field(:label, :string)
     end
   end
 end

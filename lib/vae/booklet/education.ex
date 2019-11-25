@@ -8,14 +8,12 @@ defmodule Vae.Booklet.Education do
     field(:grade, :string)
     field(:degree, :string)
 
-    embeds_many(:diplomas, Diploma, on_replace: :delete)
-    embeds_many(:courses, Course, on_replace: :delete)
-  end
+    embeds_many :diplomas, Diploma, primary_key: false, on_replace: :delete do
+      field(:label, :string)
+    end
 
-  def changeset(struct, params) do
-    struct
-    |> cast(params, [:grade, :degree])
-    |> cast_embed(:diplomas)
-    |> cast_embed(:courses)
+    embeds_many :courses, Course, primary_key: false, on_replace: :delete do
+      field(:label, :string)
+    end
   end
 end
