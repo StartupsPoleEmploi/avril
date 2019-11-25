@@ -144,4 +144,56 @@ defmodule Vae.ApiControllerTest do
              "status" => "ok"
            } == response
   end
+
+  test "update booklet civilty", %{conn: conn} do
+    date = Date.utc_today()
+    application = insert!(:application, date)
+
+    conn = Plug.Conn.assign(conn, :current_application, application)
+
+    response =
+      conn
+      |> get("/api/booklet?hash=123456")
+      |> json_response(200)
+
+    assert response["data"]["certificationLabel"] == "BT my certification"
+    assert response["data"]["identity"]["sex"] == "M"
+    assert response["data"]["identity"]["birth"]["date"] == "#{date}"
+    assert response["data"]["identity"]["birth"]["city"] == "Dijon"
+
+    params = %{
+      "certification_name" => "plop",
+      "civility" => %{
+        "gender" => "F",
+        "birthday" => "2000-11-30",
+        "birth_place" => "Marseille",
+        "first_name" => "Jeanne",
+        "last_name" => "Daux",
+        "usage_name" => "Martins",
+        "email" => "jeanne@daux.com",
+        "home_phone" => "0100000000",
+        "mobile_phone" => "0600000000",
+        "street_address" => "rue mousette",
+        "postal_code" => "84000",
+        "city" => "Pierre Saint Martin",
+        "country" => "FR"
+      }
+    }
+
+    Plug.Conn.assign(conn, :current_application, application)
+    |> put("/api/booklet?hash=123456", params)
+    |> json_response(200)
+
+    updated_booklet =
+      Repo.get(Vae.Application, application.id)
+      |> Map.get(:booklet_1)
+
+    updated_booklet.civility
+    |> Map.from_struct()
+    |> Map.keys()
+    |> Enum.each(fn key ->
+      assert "#{get_in(updated_booklet, [Access.key(:civility), Access.key(key)])}" ==
+               params["civility"][Atom.to_string(key)]
+    end)
+  end
 end

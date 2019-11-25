@@ -150,8 +150,8 @@ defmodule Vae.Application do
 
   def save_booklet(application, booklet) do
     application
-    |> change()
-    |> put_embed(:booklet_1, booklet)
+    |> cast(booklet, [])
+    |> cast_embed(:booklet_1)
     |> Repo.update()
   end
 

@@ -1,7 +1,7 @@
 defmodule Vae.ApiController do
   use Vae.Web, :controller
 
-  alias Vae.{Certification, User}
+  alias Vae.{Application, Certification, User}
 
   plug Vae.Plugs.ApplicationAccess, find_with_hash: :booklet_hash
 
@@ -12,7 +12,7 @@ defmodule Vae.ApiController do
 
     data =
       case application.booklet_1 do
-        nil -> init_cerfa_from_application(application)
+        nil -> from_application(application)
         booklet -> booklet
       end
 
@@ -23,14 +23,11 @@ defmodule Vae.ApiController do
   end
 
   def set_booklet(conn, %{"hash" => hash} = params) do
-    application =
-      conn.assigns[:current_application]
-      |> Repo.preload([:user])
+    application = conn.assigns[:current_application]
 
-    user = application.user
-
-    case User.changeset(user, %{booklet_data: params}) |> Repo.update() do
-      {:ok, user} ->
+    Application.save_booklet(application, %{"booklet_1" => params})
+    |> case do
+      {:ok, _application} ->
         json(conn, %{
           status: :ok
         })
@@ -51,7 +48,7 @@ defmodule Vae.ApiController do
         lastName: data.civility.last_name,
         email: data.civility.email,
         sex: data.civility.gender,
-        cellPhoneNumber: data.civility.mobile_number,
+        cellPhoneNumber: data.civility.mobile_phone,
         birth: %{
           date: data.civility.birthday,
           # county: null,
@@ -114,7 +111,7 @@ defmodule Vae.ApiController do
 
   def map_courses_to_view(courses), do: Enum.map(courses, & &1.label)
 
-  def init_cerfa_from_application(application) do
+  def from_application(application) do
     user = application.user
 
     %Vae.Booklet.Cerfa{
@@ -126,7 +123,7 @@ defmodule Vae.ApiController do
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        mobile_number: user.phone_number,
+        mobile_phone: user.phone_number,
         street_address: User.address_street(user),
         postal_code: user.postal_code,
         city: user.city_label,

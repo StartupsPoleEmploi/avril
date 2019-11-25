@@ -12,6 +12,12 @@ defmodule Vae.Booklet.Cerfa do
     embeds_many(:experiences, Experience, on_replace: :delete)
   end
 
+  def changeset(struct, params) do
+    struct
+    |> cast(params, [:certification_name])
+    |> cast_embed(:civility)
+  end
+
   def new_cerfa(params \\ %{})
 
   def new_cerfa(%{}) do
