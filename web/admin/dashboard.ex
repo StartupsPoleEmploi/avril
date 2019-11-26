@@ -68,7 +68,7 @@ defmodule Vae.ExAdmin.Dashboard do
         h2 "Candidatures dans le temps"
         # p between_dates_string(start_date, end_date)
         p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
-        div "#applications-plot.plot-container" do
+        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}"] do
           pre do
             Jason.encode!([%{
               name: "Candidatures transmises",

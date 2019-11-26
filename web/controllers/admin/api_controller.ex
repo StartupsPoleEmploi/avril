@@ -59,6 +59,16 @@ defmodule ExAdmin.ApiController do
     json(conn, Map.from_struct(result))
   end
 
+  def applications_query(start_date, end_date) do
+    """
+    SELECT
+    date_part('week', applications.inserted_at) AS week_number,
+    count(*) AS count
+    FROM applications
+    GROUP BY week_number
+    """
+  end
+
   def delegates_query(start_date, end_date) do
     """
     SELECT
