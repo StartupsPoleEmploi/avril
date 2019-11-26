@@ -17,6 +17,7 @@ defmodule Vae.Booklet.Cerfa do
     |> cast(params, [:certification_name])
     |> cast_embed(:civility)
     |> cast_embed(:education)
+    |> cast_embed(:experiences)
   end
 
   def new_cerfa(params \\ %{})

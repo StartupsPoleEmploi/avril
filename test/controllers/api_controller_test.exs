@@ -264,4 +264,130 @@ defmodule Vae.ApiControllerTest do
       end
     end)
   end
+
+  test "update booklet experiences", %{conn: conn} do
+    date = Date.utc_today()
+    application = insert!(:application, date)
+
+    conn = Plug.Conn.assign(conn, :current_application, application)
+
+    response =
+      conn
+      |> get("/api/booklet?hash=123456")
+      |> json_response(200)
+
+    assert response["data"]["education"] == nil
+
+    params = %{
+      "experiences" => [
+        %{
+          "title" => "Responsable GD",
+          "company_name" => "Peclerc",
+          "full_address" => "25, rue de la Pompe 87600 La Pierre",
+          "job_industry" => "B",
+          "employment_type" => "C",
+          "start_date" => "2019-11-25",
+          "end_date" => "2018-10-01",
+          "week_hours_duration" => "35",
+          "skills" => [
+            %{
+              "label" => "Mise en place"
+            },
+            %{
+              "label" => "Gestion des stocks"
+            },
+            %{
+              "label" => "Management 10 personnes"
+            }
+          ]
+        },
+        %{
+          "title" => "Agent Polyvalent",
+          "company_name" => "Peclerc",
+          "full_address" => "10, rue de la Pierre, 86000 La Pompe",
+          "job_industry" => "B",
+          "employment_type" => "C",
+          "start_date" => "2018-10-01",
+          "end_date" => "2015-01-01",
+          "week_hours_duration" => "35",
+          "skills" => [
+            %{
+              "label" => "Réception marchandise"
+            },
+            %{
+              "label" => "Réapro"
+            }
+          ]
+        }
+      ]
+    }
+
+    Plug.Conn.assign(conn, :current_application, application)
+    |> put("/api/booklet?hash=123456", params)
+    |> json_response(200)
+
+    updated_booklet =
+      Repo.get(Vae.Application, application.id)
+      |> Map.get(:booklet_1)
+
+    assert Kernel.length(updated_booklet.experiences) == Kernel.length(params["experiences"])
+
+    expected_skills =
+      Enum.flat_map(params["experiences"], & &1["skills"])
+      |> Enum.flat_map(fn skill ->
+        skill
+        |> Map.values()
+      end)
+      |> Enum.sort()
+
+    given_skills =
+      Enum.flat_map(updated_booklet.experiences, & &1.skills)
+      |> Enum.flat_map(fn skill ->
+        skill
+        |> Map.from_struct()
+        |> Map.values()
+      end)
+      |> Enum.sort()
+
+    assert given_skills == expected_skills
+
+    expected_experiences =
+      params["experiences"]
+      |> Enum.flat_map(fn experience ->
+        experience
+        |> Map.take([
+          "title",
+          "company_name",
+          "full_address",
+          "job_industry",
+          "employment_type",
+          "start_date",
+          "end_date",
+          "week_hours_duration"
+        ])
+        |> Map.values()
+      end)
+      |> Enum.sort()
+
+    given_experiences =
+      updated_booklet.experiences
+      |> Enum.flat_map(fn experience ->
+        experience
+        |> Map.take([
+          :title,
+          :company_name,
+          :full_address,
+          :job_industry,
+          :employment_type,
+          :start_date,
+          :end_date,
+          :week_hours_duration
+        ])
+        |> Map.values()
+        |> Enum.map(&"#{&1}")
+      end)
+      |> Enum.sort()
+
+    assert expected_experiences == given_experiences
+  end
 end
