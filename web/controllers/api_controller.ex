@@ -23,9 +23,8 @@ defmodule Vae.ApiController do
   end
 
   def set_booklet(conn, %{"hash" => hash} = params) do
-    application = conn.assigns[:current_application]
-
-    Application.save_booklet(application, %{"booklet_1" => params})
+    conn.assigns[:current_application]
+    |> Application.save_booklet(%{"booklet_1" => params})
     |> case do
       {:ok, _application} ->
         json(conn, %{

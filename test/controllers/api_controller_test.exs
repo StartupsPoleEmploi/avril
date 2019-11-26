@@ -145,6 +145,11 @@ defmodule Vae.ApiControllerTest do
            } == response
   end
 
+  test "update a nil application", %{conn: conn} do
+    conn
+    |> get("/api/booklet?hash=45678")
+  end
+
   test "update booklet civilty", %{conn: conn} do
     date = Date.utc_today()
     application = insert!(:application, date)
@@ -194,6 +199,69 @@ defmodule Vae.ApiControllerTest do
     |> Enum.each(fn key ->
       assert "#{get_in(updated_booklet, [Access.key(:civility), Access.key(key)])}" ==
                params["civility"][Atom.to_string(key)]
+    end)
+  end
+
+  test "update booklet education", %{conn: conn} do
+    date = Date.utc_today()
+    application = insert!(:application, date)
+
+    conn = Plug.Conn.assign(conn, :current_application, application)
+
+    response =
+      conn
+      |> get("/api/booklet?hash=123456")
+      |> json_response(200)
+
+    assert response["data"]["education"] == nil
+
+    params = %{
+      "education" => %{
+        "grade" => "B",
+        "degree" => "F",
+        "diplomas" => [
+          %{
+            "label" => "BTS Charcutier"
+          },
+          %{
+            "label" => "CAP Chauffeur"
+          }
+        ],
+        "courses" => [
+          %{
+            "label" => "Permis B"
+          },
+          %{
+            "label" => "Permis C"
+          }
+        ]
+      }
+    }
+
+    Plug.Conn.assign(conn, :current_application, application)
+    |> put("/api/booklet?hash=123456", params)
+    |> json_response(200)
+
+    updated_booklet =
+      Repo.get(Vae.Application, application.id)
+      |> Map.get(:booklet_1)
+
+    updated_booklet.education
+    |> Map.from_struct()
+    |> Map.keys()
+    |> Enum.each(fn key ->
+      case get_in(updated_booklet, [Access.key(:education), Access.key(key)]) do
+        xs when is_list(xs) ->
+          assert Kernel.length(xs) == Kernel.length(params["education"][Atom.to_string(key)])
+
+          assert(
+            Enum.map(xs, & &1.label) |> Enum.sort() ==
+              Enum.map(params["education"][Atom.to_string(key)], & &1["label"]) |> Enum.sort()
+          )
+
+        s ->
+          assert s == params["education"][Atom.to_string(key)]
+      end
     end)
   end
 end
