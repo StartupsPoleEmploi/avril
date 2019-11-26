@@ -2,7 +2,18 @@ import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
 import {
-  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Label,
+  LabelList,
+  Legend,
+  ResponsiveContainer,
+  ReferenceLine,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
 
 const formatData = data => {
@@ -13,7 +24,7 @@ const formatData = data => {
   ).filter(datum => data.reduce((result, entry) => (result || datum[entry.name] !== 0), false))
 }
 
-const weekNumberToString = weekNumber => {
+const weekNumberToString = (weekNumber, otherArgs) => {
   const monday = moment().week(weekNumber).day("Monday").format('DD/MM/YY');
   const sunday = moment().week(weekNumber+1).day("Sunday").format('DD/MM/YY');
   return `Du ${monday} au ${sunday}`;
@@ -24,6 +35,11 @@ const valueWithPercent = (value, name, props) => {
   const total = Object.values(withValues).reduce((a, b) => a + b, 0)
   return `${value} (${(100*value/total).toFixed(2)}%)`;
 }
+
+const total = (entry) => {
+  const {semaine, ...withValues} = entry.payload;
+  return Object.values(withValues).reduce((a, b) => a + b, 0)
+};
 
 const chart = data => {
   return (
@@ -37,11 +53,15 @@ const chart = data => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="semaine" />
         <YAxis />
-        <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red" label="-30j" />
+        <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red">
+          <Label value="Relance à 30 jours" angle="90" position="left"/>
+        </ReferenceLine>
         <Tooltip labelFormatter={weekNumberToString} formatter={valueWithPercent} />
         <Legend />
-        { data.map(entry =>
-          <Bar key={entry.name} dataKey={entry.name} stackId="a" fill={entry.color} />
+        { data.map((entry, i) =>
+          <Bar key={entry.name} dataKey={entry.name} stackId="a" fill={entry.color}>
+            {i === (data.length - 1) && <LabelList position="top" valueAccessor={total}/>}
+          </Bar>
         )}
       </BarChart>
     </ResponsiveContainer>

@@ -27,23 +27,24 @@ defmodule Vae.ExAdmin.Dashboard do
       hr
 
       div ".text-center" do
+        p "Voir les chiffres sur une période données :"
         Xain.form ".form-inline", [method: "GET"] do
           div ".form-group" do
-            label "Date de début : ", [for: "start_date"]
+            label "Date de début :", [for: "start_date", style: "padding-right: 0.5rem;"]
             div ".input-group" do
               div ".input-group-addon" do
                 i ".fa.fa-calendar"
               end
-              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date]
+              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off"]
             end
           end
           div ".form-group" do
-            label "Date de fin : ", [for: "end_date"]
+            label "Date de fin : ", [for: "end_date", style: "padding-right: 0.5rem;"]
             div ".input-group" do
               div ".input-group-addon" do
                 i ".fa.fa-calendar"
               end
-              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date]
+              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off"]
             end
           end
           div ".form-group" do
