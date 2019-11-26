@@ -201,10 +201,15 @@ const setupLabelsAndAccessibility = () => {
 $(() => {
   if ($('.dm-search-box').length) {
     let needProxy = false;
-    $.get('https://api.ipify.org').done(ip => {
+    $.get('https://api.ipify.org')
+    .done(ip => {
       needProxy = isInSubnet(ip, '185.215.64.0', '22');
+    })
+    .fail(() => {
+      needProxy = true;
+    })
+    .always(() => {
       console.log('Proxy set ? ', needProxy);
-    }).always(() => {
       setupSearchBar(needProxy);
       setupPlaces('city', 'search', 'geolocation_text', needProxy);
       setupLabelsAndAccessibility();
