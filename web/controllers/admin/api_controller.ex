@@ -50,56 +50,79 @@ defmodule ExAdmin.ApiController do
     json(conn, GenServer.call(Status, :get))
   end
 
-  def sql(conn, %{"query" => query}) do
-    query = apply(__MODULE__, :"#{query}_query", [])
+  def sql(conn, %{"query" => query} = params) do
+    query = apply(__MODULE__, :"#{query}_query", [
+      params["start_date"],
+      params["end_date"]
+    ])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
     json(conn, Map.from_struct(result))
   end
 
-  def delegates_query() do
+  def delegates_query(start_date, end_date) do
     """
-    select
+    SELECT
       q.delegate_name,
       q.total,
       q.submitted,
-      (100 * q.submitted / NULLIF(total, 0)) as submitted_percent,
+      (100 * q.submitted / NULLIF(total, 0)) AS submitted_percent,
       q.admissible,
-      q.inadmissible as not_yet_admissible,
-      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) as responded_percent,
-      q.admissible * 100 / NULLIF(q.admissible + q.inadmissible, 0) as admissible_percent
-    from (
-      select delegates.name as delegate_name,
-      (select count(*) from applications where applications.delegate_id = delegates.id) as total,
-      (select count(*) from applications where applications.delegate_id = delegates.id  and applications.submitted_at IS NOT NULL) as submitted,
-      (select count(*) from applications where applications.delegate_id = delegates.id  and applications.admissible_at IS NOT NULL) as admissible,
-      (select count(*) from applications where applications.delegate_id = delegates.id  and applications.inadmissible_at IS NOT NULL) as inadmissible
-      from delegates
+      q.inadmissible AS not_yet_admissible,
+      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) AS responded_percent,
+      q.admissible * 100 / NULLIF(q.admissible + q.inadmissible, 0) AS admissible_percent
+    FROM (
+      SELECT delegates.name AS delegate_name,
+      (#{applications_query("delegate", start_date, end_date)}) AS total,
+      (#{applications_query("delegate", start_date, end_date)} AND applications.submitted_at IS NOT NULL) AS submitted,
+      (#{applications_query("delegate", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
+      (#{applications_query("delegate", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
+      FROM delegates
     ) q
-    order by admissible_percent desc NULLS LAST, total desc
+    ORDER BY admissible_percent DESC NULLS LAST, total DESC
     """
   end
 
-  def certifications_query() do
+  def certifications_query(start_date, end_date) do
+    IO.inspect(start_date)
+    IO.inspect(end_date)
     """
-    select
+    SELECT
       q.certification_name,
       q.total,
       q.submitted,
-      (100 * q.submitted / NULLIF(total, 0)) as submitted_percent,
+      (100 * q.submitted / NULLIF(total, 0)) AS submitted_percent,
       q.admissible,
       q.inadmissible,
-      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) as responded_percent,
-      (100 * q.admissible / NULLIF(q.admissible + q.inadmissible, 0)) as admissible_percent
-    from (
-      select CONCAT(certifications.acronym, ' ', certifications.label) as certification_name,
-      (select count(*) from applications where applications.certification_id = certifications.id) as total,
-      (select count(*) from applications where applications.certification_id = certifications.id  and applications.submitted_at IS NOT NULL) as submitted,
-      (select count(*) from applications where applications.certification_id = certifications.id  and applications.admissible_at IS NOT NULL) as admissible,
-      (select count(*) from applications where applications.certification_id = certifications.id  and applications.inadmissible_at IS NOT NULL) as inadmissible
-      from certifications
+      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) AS responded_percent,
+      (100 * q.admissible / NULLIF(q.admissible + q.inadmissible, 0)) AS admissible_percent
+    FROM (
+      SELECT CONCAT(certifications.acronym, ' ', certifications.label) AS certification_name,
+      (#{applications_query("certification", start_date, end_date)}) AS total,
+      (#{applications_query("certification", start_date, end_date)} AND applications.submitted_at IS NOT NULL) AS submitted,
+      (#{applications_query("certification", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
+      (#{applications_query("certification", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
+      FROM certifications
     ) q
-    order by admissible_percent desc NULLS LAST, total desc
+    ORDER BY admissible_percent DESC NULLS LAST, total DESC
     """
   end
 
+  defp applications_query(entity, nil, nil), do:
+   "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
+
+  defp applications_query(entity, start_date, nil), do:
+   "#{applications_query(entity)} AND applications.inserted_at >= '#{start_date}'::DATE"
+
+  defp applications_query(entity, nil, end_date), do:
+   "#{applications_query(entity)} AND applications.inserted_at <= '#{end_date}'::DATE"
+
+  defp applications_query(entity, start_date, end_date), do:
+   "#{applications_query(entity)} AND applications.inserted_at BETWEEN '#{start_date}'::DATE AND '#{end_date}'::DATE"
+
+  defp applications_query(entity, start_date\\nil, end_date\\nil), do:
+    applications_query(entity, start_date, end_date)
+
+  defp date_parser(nil), do: nil
+  defp date_parser(date_string), do: date_string
+  # defp date_parser(date_string), do: Timex.parse!(date_string, "{YYYY}-{0M}-{0D}")
 end
