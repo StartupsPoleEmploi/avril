@@ -65,7 +65,7 @@ defmodule Vae.ExAdmin.Dashboard do
       hr
       div ".section" do
         h2 "Candidatures dans le temps"
-        p between_dates_string(start_date, end_date)
+        # p between_dates_string(start_date, end_date)
         p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
         div "#applications-plot.plot-container" do
           pre do
