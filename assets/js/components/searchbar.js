@@ -18,23 +18,17 @@ const isInSubnet = (ip, subnetIp, subnetMask) => {
   return (ipNumber(ip) & ipMask(subnetMask)) === ipNumber(subnetIp);
 }
 
-let needProxy = false;
-$.get('https://api.ipify.org').done(ip => {
-  const [nb1, nb2, nb3, nb4] = ip.split('.').map(parseInt);
-  needProxy = isInSubnet(ip, '185.215.64.0', '22')
-});
-
-const clientOptionsWithProxy = key => {
+const clientOptionsWithProxy = (key, needProxy) => {
   return needProxy ? {
     hosts: [`algolia-${key}.beta.pole-emploi.fr`]
   } : null;
 }
 
-const setupSearchBar = () => {
+const setupSearchBar = needProxy => {
   const client = algoliasearch(
     window.algolia_app_id,
     window.algolia_search_api_key,
-    clientOptionsWithProxy(window.algolia_app_id)
+    clientOptionsWithProxy(window.algolia_app_id, needProxy)
   );
   const professions = client.initIndex('profession');
   const certifications = client.initIndex('certification');
@@ -85,7 +79,7 @@ const setupSearchBar = () => {
   const places = algoliasearch.initPlaces(
     window.algolia_places_app_id,
     window.algolia_places_api_key,
-    clientOptionsWithProxy('places')
+    clientOptionsWithProxy('places', needProxy)
   );
 
   const updateForm = response => {
@@ -126,7 +120,7 @@ const setupSearchBar = () => {
   });
 }
 
-const setupPlaces = (type, prefix, tag) => {
+const setupPlaces = (type, prefix, tag, needProxy) => {
   const placesAutocomplete = places({
     container: document.querySelector(`#${prefix}_${tag}`),
     countries: ['FR'],
@@ -134,7 +128,7 @@ const setupPlaces = (type, prefix, tag) => {
     type,
     appId: window.algolia_places_app_id,
     apiKey: window.algolia_places_api_key,
-    clientOptions: clientOptionsWithProxy('places'),
+    clientOptions: clientOptionsWithProxy('places', needProxy),
     templates: {
       value: function(suggestion) {
         return suggestion.name;
@@ -165,9 +159,56 @@ const setupPlaces = (type, prefix, tag) => {
   });
 }
 
+const setupLabelsAndAccessibility = () => {
+
+  const stepLabel = () => {
+    if ($(window).width() < 768) {
+      return 'Votre métier';
+    } else {
+      return 'Tapez le métier pour lequel vous souhaitez obtenir un diplôme';
+    }
+  }
+
+    // Search labels
+  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel() + "</label>").insertAfter("#search_query");
+  $("#search_query").parent().addClass('form-label-group');
+  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+  $("#search_geolocation_text").parent().addClass('form-label-group');
+
+  // accessibility
+  setTimeout(function() {
+    // Ajout d'un aria pour aider à la compréhesion de l'utilité
+    $('#algolia-places-listbox-0').attr('aria-labelledby', "residence");
+    $('#algolia-places-listbox-0').attr('aria-selected', "false");
+    // Ajout d'un aria atomic pour les aria assertive. A quoi çà sert ? Je ne sais pas.
+    $("[aria-live='assertive']").attr('aria-atomic', 'true');
+    // Ajout d'un aide à la compréhesion de qui controle quoi
+    $('#search_geolocation_text').attr('aria-controls', 'algolia-places-listbox-0');
+
+    $('#search_query').attr('aria-controls', 'algolia-autocomplete-listbox-0');
+    $('#search_query').attr('aria-activedescendant', '');
+    $('#search_query').attr('aria-readonly', 'true');
+
+    $('#algolia-autocomplete-listbox-0').attr('aria-label', 'liste des métiers ou diplomes');
+    $('#algolia-autocomplete-listbox-0').attr('aria-selected', 'false');
+  }, 200);
+
+  $(window).on('resize', e => {
+    $('#label_search_query').text(stepLabel());
+  });
+}
+
 $(() => {
   if ($('.dm-search-box').length) {
-    setupSearchBar();
-    setupPlaces('city', 'search', 'geolocation_text');
+    let needProxy = false;
+    $.get('https://api.ipify.org').done(ip => {
+      needProxy = isInSubnet(ip, '185.215.64.0', '22');
+      console.log('Proxy set ? ', needProxy);
+    }).always(() => {
+      setupSearchBar(needProxy);
+      setupPlaces('city', 'search', 'geolocation_text', needProxy);
+      setupLabelsAndAccessibility();
+    });
+
   }
 });
