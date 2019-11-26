@@ -53,7 +53,7 @@ defmodule ExAdmin.ApiController do
   def sql(conn, %{"query" => query} = params) do
     query = apply(__MODULE__, :"#{query}_query", [
       (unless Vae.String.is_blank?(params["start_date"]), do: params["start_date"]),
-      (unless Vae.String.is_blank?(params["start_date"]), do: params["end_date"])
+      (unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"])
     ])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
     json(conn, Map.from_struct(result))
@@ -62,10 +62,15 @@ defmodule ExAdmin.ApiController do
   def applications_query(start_date, end_date) do
     """
     SELECT
-    date_part('week', applications.inserted_at) AS week_number,
-    count(*) AS count
+      date_part('week', applications.inserted_at) AS week_number,
+      count(*) FILTER (WHERE admissible_at IS NOT NULL) AS admissible,
+      count(*) FILTER (WHERE inadmissible_at IS NOT NULL) AS inadmissible,
+      count(*) FILTER (WHERE admissible_at IS NULL and inadmissible_at IS NULL) AS submitted
     FROM applications
+    WHERE applications.submitted_at IS NOT NULL
+    #{applications_date_filter(start_date, end_date)}
     GROUP BY week_number
+    ORDER BY week_number
     """
   end
 
@@ -115,22 +120,24 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  defp applications_base_query(entity, nil, nil), do:
+  defp applications_date_filter(nil, nil), do: ""
+  defp applications_date_filter(start_date, end_date),
+    do: "AND applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
+
+  defp applications_base_query(entity), do:
    "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
 
-  defp applications_base_query(entity, start_date, nil), do:
-   "#{applications_base_query(entity)} AND applications.inserted_at >= '#{start_date}'::DATE"
-
-  defp applications_base_query(entity, nil, end_date), do:
-   "#{applications_base_query(entity)} AND applications.inserted_at <= '#{end_date}'::DATE"
-
+  defp applications_base_query(entity, nil, nil), do: applications_base_query(entity)
   defp applications_base_query(entity, start_date, end_date), do:
-   "#{applications_base_query(entity)} AND applications.inserted_at BETWEEN '#{start_date}'::DATE AND '#{end_date}'::DATE"
+   "#{applications_base_query(entity)} AND applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
 
-  defp applications_base_query(entity, start_date\\nil, end_date\\nil), do:
-    applications_base_query(entity, start_date, end_date)
+  defp between_dates_to_sql(start_date, nil),
+    do: ">= '#{start_date}'::DATE"
+  defp between_dates_to_sql(nil, end_date),
+    do: "<= '#{end_date}'::DATE"
+  defp between_dates_to_sql(start_date, end_date),
+    do: "BETWEEN '#{start_date}'::DATE AND '#{end_date}'::DATE"
+  defp between_dates_to_sql(start_date\\nil, end_date\\nil),
+    do: between_dates_to_sql(start_date, end_date)
 
-  defp date_parser(nil), do: nil
-  defp date_parser(date_string), do: date_string
-  # defp date_parser(date_string), do: Timex.parse!(date_string, "{YYYY}-{0M}-{0D}")
 end

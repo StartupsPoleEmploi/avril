@@ -5,8 +5,6 @@ defmodule Vae.ExAdmin.Dashboard do
   register_page "Dashboard" do
     menu priority: 1, label: "Statistiques"
     content do
-      IO.inspect(conn)
-
       start_date = conn.query_params["start_date"]
       end_date = conn.query_params["end_date"]
 
@@ -35,7 +33,7 @@ defmodule Vae.ExAdmin.Dashboard do
               div ".input-group-addon" do
                 i ".fa.fa-calendar"
               end
-              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off"]
+              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off", "data-week-start": 1]
             end
           end
           div ".form-group" do
@@ -44,7 +42,7 @@ defmodule Vae.ExAdmin.Dashboard do
               div ".input-group-addon" do
                 i ".fa.fa-calendar"
               end
-              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off"]
+              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off", "data-week-start": 1]
             end
           end
           div ".form-group" do
@@ -52,22 +50,11 @@ defmodule Vae.ExAdmin.Dashboard do
           end
         end
       end
-      hr ".invisible"
-      div ".section" do
-        h2 "Candidatures par certificateurs"
-        p between_dates_string(start_date, end_date)
-        div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}"]
-      end
-      div ".section" do
-        h2 "Candidatures par certifications"
-        p between_dates_string(start_date, end_date)
-        div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}"]
-      end
       hr
       div ".section" do
-        h2 "Candidatures dans le temps"
-        # p between_dates_string(start_date, end_date)
-        p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
+        h2 "Candidatures démarrées"
+        p between_dates_string(start_date, end_date)
+        # p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
         div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}"] do
           pre do
             Jason.encode!([%{
@@ -86,6 +73,18 @@ defmodule Vae.ExAdmin.Dashboard do
           end
           div ".plot"
         end
+      end
+      hr
+      div ".section" do
+        h2 "Candidatures par certificateurs"
+        p between_dates_string(start_date, end_date)
+        div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}"]
+      end
+      hr
+      div ".section" do
+        h2 "Candidatures par certifications"
+        p between_dates_string(start_date, end_date)
+        div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}"]
       end
     end
   end
