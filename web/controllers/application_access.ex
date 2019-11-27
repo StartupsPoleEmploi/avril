@@ -50,6 +50,8 @@ defmodule Vae.Plugs.ApplicationAccess do
     end
   end
 
+  defp has_access?(conn, nil, _opts), do: {:ok, nil}
+
   defp has_access?(conn, application, nil) do
     application = application |> Repo.preload(:user)
 

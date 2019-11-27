@@ -147,7 +147,8 @@ defmodule Vae.ApiControllerTest do
 
   test "update a nil application", %{conn: conn} do
     conn
-    |> get("/api/booklet?hash=45678")
+    |> get("/api/booklet?hash=456780000")
+    |> html_response(404)
   end
 
   test "update booklet civilty", %{conn: conn} do

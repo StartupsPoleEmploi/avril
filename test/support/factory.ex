@@ -126,7 +126,7 @@ defmodule Vae.Factory do
         usage_name: "Smith",
         email: "john@smith.com",
         home_phone: "0300000000",
-        mobile_number: "0600000000",
+        mobile_phone: "0600000000",
         street_address: "Rue de la Pierre",
         postal_code: "35000",
         city: "Saint-Malo",
