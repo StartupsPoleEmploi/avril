@@ -167,6 +167,7 @@ defmodule Vae.ApiControllerTest do
     assert response["data"]["identity"]["birth"]["date"] == "#{date}"
     assert response["data"]["identity"]["birth"]["city"] == "Dijon"
 
+    # Set
     params = %{
       "certification_name" => "plop",
       "civility" => %{
@@ -182,6 +183,42 @@ defmodule Vae.ApiControllerTest do
         "street_address" => "rue mousette",
         "postal_code" => "84000",
         "city" => "Pierre Saint Martin",
+        "country" => "FR"
+      }
+    }
+
+    Plug.Conn.assign(conn, :current_application, application)
+    |> put("/api/booklet?hash=123456", params)
+    |> json_response(200)
+
+    updated_booklet =
+      Repo.get(Vae.Application, application.id)
+      |> Map.get(:booklet_1)
+
+    updated_booklet.civility
+    |> Map.from_struct()
+    |> Map.keys()
+    |> Enum.each(fn key ->
+      assert "#{get_in(updated_booklet, [Access.key(:civility), Access.key(key)])}" ==
+               params["civility"][Atom.to_string(key)]
+    end)
+
+    # Update
+    params = %{
+      "certification_name" => "plip",
+      "civility" => %{
+        "gender" => "M",
+        "birthday" => "2000-12-30",
+        "birth_place" => "Paris",
+        "first_name" => "Pierre",
+        "last_name" => "Faux",
+        "usage_name" => "",
+        "email" => "pierre@faux.com",
+        "home_phone" => "0200000000",
+        "mobile_phone" => "0700000000",
+        "street_address" => "rue Fierre Paux",
+        "postal_code" => "75000",
+        "city" => "Paris",
         "country" => "FR"
       }
     }
@@ -264,6 +301,49 @@ defmodule Vae.ApiControllerTest do
           assert s == params["education"][Atom.to_string(key)]
       end
     end)
+
+    params = %{
+      "education" => %{
+        "grade" => "C",
+        "degree" => "D",
+        "diplomas" => [
+          %{
+            "label" => "BTS Plombier"
+          }
+        ],
+        "courses" => [
+          %{
+            "label" => "Permis B"
+          }
+        ]
+      }
+    }
+
+    Plug.Conn.assign(conn, :current_application, application)
+    |> put("/api/booklet?hash=123456", params)
+    |> json_response(200)
+
+    updated_booklet =
+      Repo.get(Vae.Application, application.id)
+      |> Map.get(:booklet_1)
+
+    updated_booklet.education
+    |> Map.from_struct()
+    |> Map.keys()
+    |> Enum.each(fn key ->
+      case get_in(updated_booklet, [Access.key(:education), Access.key(key)]) do
+        xs when is_list(xs) ->
+          assert Kernel.length(xs) == Kernel.length(params["education"][Atom.to_string(key)])
+
+          assert(
+            Enum.map(xs, & &1.label) |> Enum.sort() ==
+              Enum.map(params["education"][Atom.to_string(key)], & &1["label"]) |> Enum.sort()
+          )
+
+        s ->
+          assert s == params["education"][Atom.to_string(key)]
+      end
+    end)
   end
 
   test "update booklet experiences", %{conn: conn} do
@@ -277,7 +357,117 @@ defmodule Vae.ApiControllerTest do
       |> get("/api/booklet?hash=123456")
       |> json_response(200)
 
-    assert response["data"]["education"] == nil
+    params = %{
+      "experiences" => [
+        %{
+          "title" => "Responsable GD",
+          "company_name" => "Peclerc",
+          "full_address" => "25, rue de la Pompe 87600 La Pierre",
+          "job_industry" => "B",
+          "employment_type" => "C",
+          "start_date" => "2019-11-25",
+          "end_date" => "2018-10-01",
+          "week_hours_duration" => "35",
+          "skills" => [
+            %{
+              "label" => "Mise en place"
+            },
+            %{
+              "label" => "Gestion des stocks"
+            },
+            %{
+              "label" => "Management 10 personnes"
+            }
+          ]
+        },
+        %{
+          "title" => "Agent Polyvalent",
+          "company_name" => "Peclerc",
+          "full_address" => "10, rue de la Pierre, 86000 La Pompe",
+          "job_industry" => "B",
+          "employment_type" => "C",
+          "start_date" => "2018-10-01",
+          "end_date" => "2015-01-01",
+          "week_hours_duration" => "35",
+          "skills" => [
+            %{
+              "label" => "Réception marchandise"
+            },
+            %{
+              "label" => "Réapro"
+            }
+          ]
+        }
+      ]
+    }
+
+    Plug.Conn.assign(conn, :current_application, application)
+    |> put("/api/booklet?hash=123456", params)
+    |> json_response(200)
+
+    updated_booklet =
+      Repo.get(Vae.Application, application.id)
+      |> Map.get(:booklet_1)
+
+    assert Kernel.length(updated_booklet.experiences) == Kernel.length(params["experiences"])
+
+    expected_skills =
+      Enum.flat_map(params["experiences"], & &1["skills"])
+      |> Enum.flat_map(fn skill ->
+        skill
+        |> Map.values()
+      end)
+      |> Enum.sort()
+
+    given_skills =
+      Enum.flat_map(updated_booklet.experiences, & &1.skills)
+      |> Enum.flat_map(fn skill ->
+        skill
+        |> Map.from_struct()
+        |> Map.values()
+      end)
+      |> Enum.sort()
+
+    assert given_skills == expected_skills
+
+    expected_experiences =
+      params["experiences"]
+      |> Enum.flat_map(fn experience ->
+        experience
+        |> Map.take([
+          "title",
+          "company_name",
+          "full_address",
+          "job_industry",
+          "employment_type",
+          "start_date",
+          "end_date",
+          "week_hours_duration"
+        ])
+        |> Map.values()
+      end)
+      |> Enum.sort()
+
+    given_experiences =
+      updated_booklet.experiences
+      |> Enum.flat_map(fn experience ->
+        experience
+        |> Map.take([
+          :title,
+          :company_name,
+          :full_address,
+          :job_industry,
+          :employment_type,
+          :start_date,
+          :end_date,
+          :week_hours_duration
+        ])
+        |> Map.values()
+        |> Enum.map(&"#{&1}")
+      end)
+      |> Enum.sort()
+
+    assert expected_experiences == given_experiences
 
     params = %{
       "experiences" => [
