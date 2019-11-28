@@ -3,7 +3,8 @@ version: "3.6"
 services:
   nginx:
     image: nginx:latest
-    volumes: "./nginx:/etc/nginx/sites-available"
+    volumes:
+      - "./nginx:/etc/nginx/sites-available"
     ports:
       - "80:80"
     depends_on:
