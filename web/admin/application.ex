@@ -85,8 +85,8 @@ defmodule Vae.ExAdmin.Application do
       column(:certifier, fn a ->
         Enum.join(Enum.map(a.certification.certifiers, fn c -> c.name end), ",")
       end)
-      column(:delegate, fn a -> a.delegate.name end)
-      column(:administrative, fn a -> a.delegate.administrative end)
+      column(:delegate, fn a -> a.delegate && a.delegate.name end)
+      column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:submitted_at)
       column(:admissible_at)
       column(:inadmissible_at)

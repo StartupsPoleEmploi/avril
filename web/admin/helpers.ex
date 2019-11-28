@@ -1,5 +1,7 @@
 defmodule Vae.ExAdmin.Helpers do
-  def link_to_resource(resource, opts\\[]) do
+  def link_to_resource(resource, opts \\ [])
+  def link_to_resource(nil, opts), do: nil
+  def link_to_resource(resource, opts) do
     name = cond do
       opts[:namify] -> opts[:namify].(resource)
       Keyword.has_key?(resource.__struct__.__info__(:functions), :name) ->
