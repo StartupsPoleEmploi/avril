@@ -28,11 +28,6 @@ config :vae, Vae.Endpoint,
       "./assets",
       "watch"
     ]
-    # yarn: [
-    #   "--cwd",
-    #   "./assets",
-    #   "generate"
-    # ]
   ]
 
 # Unused?
