@@ -128,7 +128,7 @@ defmodule Vae.ApiController do
         city: user.city_label,
         country: user.country_label
       },
-      experiences: map_experiences(user.experiences)
+      experiences: map_experiences(user.proven_experiences)
     }
   end
 
@@ -140,42 +140,12 @@ defmodule Vae.ApiController do
   def map_experience(experience) do
     %Vae.Booklet.Experience{
       title: experience.label,
-      company_name: experience.company,
+      company_name: experience.company_name,
       full_address: nil,
+      employment_type: experience.contract_type,
       start_date: experience.start_date,
       end_date: experience.end_date,
       week_hours_duration: 35
-    }
-  end
-
-  def booklet_init_data(application) do
-    user = application.user
-
-    %{
-      certificationLabel: Certification.name(application.certification),
-      identity: %{
-        firstNames: [user.first_name],
-        lastName: user.last_name,
-        email: user.email,
-        sex: user.gender,
-        cellPhoneNumber: user.phone_number,
-        birth: %{
-          date: user.birthday,
-          # county: null,
-          # country: 'FR',
-          city: user.birth_place
-        },
-        address: %{
-          street: User.address_street(user),
-          # streetType: null,
-          # streetName: null,
-          # streetNumber: null,
-          city: user.city_label,
-          postalCode: user.postal_code,
-          country: user.country_label
-          # "isDomTom" => false
-        }
-      }
     }
   end
 end
