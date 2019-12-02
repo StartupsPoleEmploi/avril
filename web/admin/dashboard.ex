@@ -26,14 +26,14 @@ defmodule Vae.ExAdmin.Dashboard do
 
       div ".text-center" do
         p "Voir les chiffres sur une période données :"
-        Xain.form ".form-inline", [method: "GET"] do
+        Xain.form ".form-inline", [method: "GET", style: "margin-bottom: 1rem;"] do
           div ".form-group" do
             label "Date de début :", [for: "start_date", style: "padding-right: 0.5rem;"]
             div ".input-group" do
               div ".input-group-addon" do
                 i ".fa.fa-calendar"
               end
-              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off", "data-week-start": 1]
+              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off", "data-date-week-start": 1]
             end
           end
           div ".form-group" do
@@ -42,17 +42,18 @@ defmodule Vae.ExAdmin.Dashboard do
               div ".input-group-addon" do
                 i ".fa.fa-calendar"
               end
-              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off", "data-week-start": 1]
+              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off", "data-date-week-start": 1]
             end
           end
           div ".form-group" do
             button "Filtrer sur les dates", [class: "btn btn-primary", type: "submit"]
           end
         end
+        p "Une semaine démarre le lundi et termine le dimanche."
       end
       hr
       div ".section" do
-        h2 "Candidatures démarrées"
+        h2 "Candidatures démarrées par semaines"
         p between_dates_string(start_date, end_date)
         # p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
         div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}"]

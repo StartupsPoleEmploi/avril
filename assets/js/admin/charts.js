@@ -107,7 +107,7 @@ const renderChart = name => {
                 <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red">
                   <Label value="Relance à 30 jours" angle={90} position="left"/>
                 </ReferenceLine>
-                <Tooltip labelFormatter={weekNumberToString} formatter={valueWithPercent} />
+                <Tooltip labelFormatter={weekNumberToString} formatter={formatValueWithPercent} />
                 <Legend />
                 { formatDataToBar(data).map(c =>
                   <Bar key={c.key} dataKey={c.label} stackId="a" fill={c.color}>
