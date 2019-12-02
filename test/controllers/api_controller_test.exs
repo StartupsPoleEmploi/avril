@@ -13,6 +13,77 @@ defmodule Vae.ApiControllerTest do
       |> get("/api/booklet?hash=123456")
       |> json_response(200)
 
+    assert %Vae.Booklet.Cerfa{
+             certification_name: "BT my certification",
+             civility: %Vae.Booklet.Civility{
+               birth_place: "Dijon",
+               birthday: date,
+               city: "75000 Paris, France",
+               country: "France",
+               email: "john@doe.com",
+               first_name: "John",
+               full_address: "Street 1, Street 2, 75000 Paris, France",
+               gender: "M",
+               home_phone: nil,
+               last_name: "Doe",
+               mobile_phone: "0102030405",
+               postal_code: "75000",
+               street_address: "Street 1, Street 2",
+               usage_name: nil
+             },
+             education: nil,
+             experiences: [
+               %Vae.Booklet.Experience{
+                 company_name: nil,
+                 employment_type: nil,
+                 end_date: ~D[2019-06-30],
+                 full_address: nil,
+                 job_industry: nil,
+                 skills: [],
+                 start_date: ~D[2018-12-31],
+                 title: "Chargé d'affaires Vidéosurveillance, alarme, gestion des accès ",
+                 uuid: nil,
+                 week_hours_duration: 35
+               },
+               %Vae.Booklet.Experience{
+                 company_name: nil,
+                 employment_type: nil,
+                 end_date: ~D[2017-12-31],
+                 full_address: nil,
+                 job_industry: nil,
+                 skills: [],
+                 start_date: ~D[2015-09-30],
+                 title: "President Sas",
+                 uuid: nil,
+                 week_hours_duration: 35
+               },
+               %Vae.Booklet.Experience{
+                 company_name: nil,
+                 employment_type: nil,
+                 end_date: ~D[2014-08-31],
+                 full_address: nil,
+                 job_industry: nil,
+                 skills: [],
+                 start_date: ~D[2012-12-31],
+                 title: "Ingénieur d'affaires",
+                 uuid: nil,
+                 week_hours_duration: 35
+               },
+               %Vae.Booklet.Experience{
+                 company_name: nil,
+                 employment_type: nil,
+                 end_date: ~D[2012-08-31],
+                 full_address: nil,
+                 job_industry: nil,
+                 skills: [],
+                 start_date: ~D[2009-12-31],
+                 title: "Entrepreneur et opérateur certifié",
+                 uuid: nil,
+                 week_hours_duration: 35
+               }
+             ]
+           } == Repo.get(Vae.Application, application.id) |> Map.get(:booklet_1)
+
     assert %{
              "status" => "ok",
              "data" => %{
@@ -109,6 +180,7 @@ defmodule Vae.ApiControllerTest do
                },
                "experiences" => [
                  %{
+                   "uuid" => "1",
                    "company_name" => "Butcher Market",
                    "employment_type" => "A",
                    "end_date" => "2018-11-30",
@@ -122,10 +194,10 @@ defmodule Vae.ApiControllerTest do
                    ],
                    "start_date" => "2019-11-30",
                    "title" => "Responsable Boucherie",
-                   "uuid" => nil,
                    "week_hours_duration" => 35
                  },
                  %{
+                   "uuid" => "2",
                    "company_name" => "Baker Market",
                    "employment_type" => "D",
                    "end_date" => "2017-11-30",
@@ -134,7 +206,6 @@ defmodule Vae.ApiControllerTest do
                    "skills" => [%{"label" => "Glacage"}, %{"label" => "Pate brisée"}],
                    "start_date" => "2018-11-29",
                    "title" => "Responsable Patisserie",
-                   "uuid" => nil,
                    "week_hours_duration" => 35
                  }
                ],

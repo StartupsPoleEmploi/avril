@@ -155,6 +155,13 @@ defmodule Vae.Application do
     |> Repo.update()
   end
 
+  def put_booklet(application, booklet) do
+    application
+    |> change()
+    |> put_embed(:booklet_1, booklet)
+    |> Repo.update()
+  end
+
   defp generate_hash(length) do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end

@@ -154,6 +154,7 @@ defmodule Vae.Factory do
       },
       experiences: [
         %{
+          uuid: "1",
           title: "Responsable Boucherie",
           company_name: "Butcher Market",
           full_address: "Centre commercial Binard",
@@ -178,6 +179,7 @@ defmodule Vae.Factory do
           ]
         },
         %{
+          uuid: "2",
           title: "Responsable Patisserie",
           company_name: "Baker Market",
           full_address: "Centre commercial 2e gauche",

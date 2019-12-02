@@ -1,7 +1,9 @@
 defmodule Vae.ApiController do
   use Vae.Web, :controller
+  require Logger
 
   alias Vae.{Application, Certification, User}
+  alias Vae.Booklet.Cerfa
 
   plug Vae.Plugs.ApplicationAccess, find_with_hash: :booklet_hash
 
@@ -12,8 +14,18 @@ defmodule Vae.ApiController do
 
     data =
       case application.booklet_1 do
-        nil -> from_application(application)
-        booklet -> booklet
+        nil ->
+          with booklet <- from_application(application),
+               {:ok, application} <- Application.put_booklet(application, booklet) do
+            application.booklet_1
+          else
+            {:error, msg} ->
+              Logger.error(fn -> inspect("#{msg}") end)
+              %Cerfa{}
+          end
+
+        booklet ->
+          booklet
       end
 
     json(conn, %{
