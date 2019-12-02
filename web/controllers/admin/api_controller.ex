@@ -131,13 +131,11 @@ defmodule ExAdmin.ApiController do
   defp applications_base_query(entity, start_date, end_date), do:
    "#{applications_base_query(entity)} AND applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
 
+  defp between_dates_to_sql(start_date\\nil, end_date\\nil)
   defp between_dates_to_sql(start_date, nil),
     do: ">= '#{start_date}'::DATE"
   defp between_dates_to_sql(nil, end_date),
     do: "<= '#{end_date}'::DATE"
   defp between_dates_to_sql(start_date, end_date),
     do: "BETWEEN '#{start_date}'::DATE AND '#{end_date}'::DATE"
-  defp between_dates_to_sql(start_date\\nil, end_date\\nil),
-    do: between_dates_to_sql(start_date, end_date)
-
 end

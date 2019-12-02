@@ -19,7 +19,7 @@ import {
 const KEY_MAP = {
   week_number: 'semaine',
   admissible: 'Admissible après relance',
-  inadmissible: 'Refusé après relance',
+  inadmissible: 'Pas encore admissible après relance',
   submitted: 'Candidatures transmises',
 }
 
@@ -54,10 +54,12 @@ const weekNumberToString = (weekNumber, otherArgs) => {
   return `Du ${monday} au ${sunday}`;
 }
 
-const valueWithPercent = (value, name, props) => {
+const valueWithPercent = (value, total) => `${value} (${(100*value/total).toFixed(2)}%)`
+
+const formatValueWithPercent = (value, name, props) => {
   const {semaine, ...withValues} = props.payload;
   const total = Object.values(withValues).reduce((a, b) => a + b, 0)
-  return `${value} (${(100*value/total).toFixed(2)}%)`;
+  return valueWithPercent(value, total);
 }
 
 const total = (entry) => {
@@ -65,35 +67,56 @@ const total = (entry) => {
   return Object.values(withValues).reduce((a, b) => a + b, 0)
 };
 
+const Aggregate = ({data}) => {
+  const aggregatedData = data.reduce((result, datum) => {
+    return Object.keys(datum).filter(c => c !== 'semaine').reduce((subResult, key) => {
+      return Object.assign(subResult, {[key]: datum[key] + (subResult[key] || 0)})
+    }, result)
+  }, {});
+  const total = Object.values(aggregatedData).reduce((t, d) => (t+d), 0)
+  return (
+    <ul>
+      { Object.keys(aggregatedData).map(k =>
+        <li>{k}: {valueWithPercent(aggregatedData[k], total)} </li>
+      )}
+      <li>Total: {total}</li>
+    </ul>
+  );
+}
+
 const renderChart = name => {
   const $container = document.querySelector(`#${name}-plot`);
   if ($container && $container.dataset.url) {
     fetch($container.dataset.url)
       .then(res => res.json())
       .then((data) => {
+        const formattedData = formatDataToChart(data);
         render(
-          <ResponsiveContainer height={500}>
-            <BarChart
-              data={formatDataToChart(data)}
-              margin={{
-                top: 5, right: 30, left: 20, bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="semaine" />
-              <YAxis />
-              <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red">
-                <Label value="Relance à 30 jours" angle={90} position="left"/>
-              </ReferenceLine>
-              <Tooltip labelFormatter={weekNumberToString} formatter={valueWithPercent} />
-              <Legend />
-              { formatDataToBar(data).map(c =>
-                <Bar key={c.key} dataKey={c.label} stackId="a" fill={c.color}>
-                  {c.isLast && <LabelList position="top" valueAccessor={total}/>}
-                </Bar>
-              )}
-            </BarChart>
-          </ResponsiveContainer>,
+          <div>
+            <Aggregate data={formattedData} />
+            <ResponsiveContainer height={500}>
+              <BarChart
+                data={formattedData}
+                margin={{
+                  top: 5, right: 30, left: 20, bottom: 5,
+                }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="semaine" />
+                <YAxis />
+                <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red">
+                  <Label value="Relance à 30 jours" angle={90} position="left"/>
+                </ReferenceLine>
+                <Tooltip labelFormatter={weekNumberToString} formatter={valueWithPercent} />
+                <Legend />
+                { formatDataToBar(data).map(c =>
+                  <Bar key={c.key} dataKey={c.label} stackId="a" fill={c.color}>
+                    {c.isLast && <LabelList position="top" valueAccessor={total}/>}
+                  </Bar>
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>,
           document.getElementById(`${name}-plot`)
         )
       })

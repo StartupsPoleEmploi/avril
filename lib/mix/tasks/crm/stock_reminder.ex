@@ -83,7 +83,7 @@ defmodule Mix.Tasks.Crm.StockReminder do
 
   def build_emails(job_seekers) do
     job_seekers
-    |> Enum.map(fn {job_seeker_id, payload} ->
+    |> Enum.map(fn {_job_seeker_id, payload} ->
       Vae.JobSeekerEmail.stock(payload)
     end)
   end

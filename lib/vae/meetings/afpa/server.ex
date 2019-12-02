@@ -44,7 +44,7 @@ defmodule Vae.Meetings.Afpa.Server do
   end
 
   @impl true
-  def handle_call({:register, {meeting, application}}, _from, state) do
+  def handle_call({:register, {meeting, _application}}, _from, state) do
     {:reply, {:ok, meeting}, state}
   end
 

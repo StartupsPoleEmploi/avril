@@ -1,6 +1,6 @@
 defmodule Vae.ExAdmin.Helpers do
   def link_to_resource(resource, opts \\ [])
-  def link_to_resource(nil, opts), do: nil
+  def link_to_resource(nil, _opts), do: nil
   def link_to_resource(resource, opts) do
     name = cond do
       opts[:namify] -> opts[:namify].(resource)
