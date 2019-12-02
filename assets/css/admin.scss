@@ -24,4 +24,10 @@
       display: none;
     }
   }
+
+  .form-inline {
+    .form-group {
+      margin: 0 0.5rem;
+    }
+  }
 }

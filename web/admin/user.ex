@@ -120,7 +120,7 @@ defmodule Vae.ExAdmin.User do
           column(:application_certifiers, fn a ->
             Enum.map(a.certifiers, &Helpers.link_to_resource/1)
           end)
-          column(:administrative, fn a -> a.delegate.administrative end)
+          column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
           column(:submitted_at)
           column(:admissible_at)
           column(:inadmissible_at)

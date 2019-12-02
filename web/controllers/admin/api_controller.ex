@@ -50,56 +50,92 @@ defmodule ExAdmin.ApiController do
     json(conn, GenServer.call(Status, :get))
   end
 
-  def sql(conn, %{"query" => query}) do
-    query = apply(__MODULE__, :"#{query}_query", [])
+  def sql(conn, %{"query" => query} = params) do
+    query = apply(__MODULE__, :"#{query}_query", [
+      (unless Vae.String.is_blank?(params["start_date"]), do: params["start_date"]),
+      (unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"])
+    ])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
     json(conn, Map.from_struct(result))
   end
 
-  def delegates_query() do
+  def applications_query(start_date, end_date) do
     """
-    select
+    SELECT
+      date_part('week', applications.inserted_at) AS week_number,
+      count(*) FILTER (WHERE admissible_at IS NOT NULL) AS admissible,
+      count(*) FILTER (WHERE inadmissible_at IS NOT NULL) AS inadmissible,
+      count(*) FILTER (WHERE admissible_at IS NULL and inadmissible_at IS NULL) AS submitted
+    FROM applications
+    WHERE applications.submitted_at IS NOT NULL
+    #{applications_date_filter(start_date, end_date)}
+    GROUP BY week_number
+    ORDER BY week_number
+    """
+  end
+
+  def delegates_query(start_date, end_date) do
+    """
+    SELECT
       q.delegate_name,
       q.total,
       q.submitted,
-      (100 * q.submitted / NULLIF(total, 0)) as submitted_percent,
+      (100 * q.submitted / NULLIF(total, 0)) AS submitted_percent,
       q.admissible,
-      q.inadmissible as not_yet_admissible,
-      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) as responded_percent,
-      q.admissible * 100 / NULLIF(q.admissible + q.inadmissible, 0) as admissible_percent
-    from (
-      select delegates.name as delegate_name,
-      (select count(*) from applications where applications.delegate_id = delegates.id) as total,
-      (select count(*) from applications where applications.delegate_id = delegates.id  and applications.submitted_at IS NOT NULL) as submitted,
-      (select count(*) from applications where applications.delegate_id = delegates.id  and applications.admissible_at IS NOT NULL) as admissible,
-      (select count(*) from applications where applications.delegate_id = delegates.id  and applications.inadmissible_at IS NOT NULL) as inadmissible
-      from delegates
+      q.inadmissible AS not_yet_admissible,
+      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) AS responded_percent,
+      q.admissible * 100 / NULLIF(q.admissible + q.inadmissible, 0) AS admissible_percent
+    FROM (
+      SELECT delegates.name AS delegate_name,
+      (#{applications_base_query("delegate", start_date, end_date)}) AS total,
+      (#{applications_base_query("delegate", start_date, end_date)} AND applications.submitted_at IS NOT NULL) AS submitted,
+      (#{applications_base_query("delegate", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
+      (#{applications_base_query("delegate", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
+      FROM delegates
     ) q
-    order by admissible_percent desc NULLS LAST, total desc
+    ORDER BY admissible_percent DESC NULLS LAST, total DESC
     """
   end
 
-  def certifications_query() do
+  def certifications_query(start_date, end_date) do
     """
-    select
+    SELECT
       q.certification_name,
       q.total,
       q.submitted,
-      (100 * q.submitted / NULLIF(total, 0)) as submitted_percent,
+      (100 * q.submitted / NULLIF(total, 0)) AS submitted_percent,
       q.admissible,
       q.inadmissible,
-      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) as responded_percent,
-      (100 * q.admissible / NULLIF(q.admissible + q.inadmissible, 0)) as admissible_percent
-    from (
-      select CONCAT(certifications.acronym, ' ', certifications.label) as certification_name,
-      (select count(*) from applications where applications.certification_id = certifications.id) as total,
-      (select count(*) from applications where applications.certification_id = certifications.id  and applications.submitted_at IS NOT NULL) as submitted,
-      (select count(*) from applications where applications.certification_id = certifications.id  and applications.admissible_at IS NOT NULL) as admissible,
-      (select count(*) from applications where applications.certification_id = certifications.id  and applications.inadmissible_at IS NOT NULL) as inadmissible
-      from certifications
+      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) AS responded_percent,
+      (100 * q.admissible / NULLIF(q.admissible + q.inadmissible, 0)) AS admissible_percent
+    FROM (
+      SELECT CONCAT(certifications.acronym, ' ', certifications.label) AS certification_name,
+      (#{applications_base_query("certification", start_date, end_date)}) AS total,
+      (#{applications_base_query("certification", start_date, end_date)} AND applications.submitted_at IS NOT NULL) AS submitted,
+      (#{applications_base_query("certification", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
+      (#{applications_base_query("certification", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
+      FROM certifications
     ) q
-    order by admissible_percent desc NULLS LAST, total desc
+    ORDER BY admissible_percent DESC NULLS LAST, total DESC
     """
   end
 
+  defp applications_date_filter(nil, nil), do: ""
+  defp applications_date_filter(start_date, end_date),
+    do: "AND applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
+
+  defp applications_base_query(entity), do:
+   "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
+
+  defp applications_base_query(entity, nil, nil), do: applications_base_query(entity)
+  defp applications_base_query(entity, start_date, end_date), do:
+   "#{applications_base_query(entity)} AND applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
+
+  defp between_dates_to_sql(start_date\\nil, end_date\\nil)
+  defp between_dates_to_sql(start_date, nil),
+    do: ">= '#{start_date}'::DATE"
+  defp between_dates_to_sql(nil, end_date),
+    do: "<= '#{end_date}'::DATE"
+  defp between_dates_to_sql(start_date, end_date),
+    do: "BETWEEN '#{start_date}'::DATE AND '#{end_date}'::DATE"
 end

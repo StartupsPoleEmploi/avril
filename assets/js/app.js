@@ -67,30 +67,6 @@ $(() => {
     }
   });
 
-  // Search labels
-  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel($(window).width()) + "</label>").insertAfter("#search_query");
-  $("#search_query").parent().addClass('form-label-group');
-  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
-  $("#search_geolocation_text").parent().addClass('form-label-group');
-
-  // accessibility
-  setTimeout(function() {
-    // Ajout d'un aria pour aider à la compréhesion de l'utilité
-    $('#algolia-places-listbox-0').attr('aria-labelledby', "residence");
-    $('#algolia-places-listbox-0').attr('aria-selected', "false");
-    // Ajout d'un aria atomic pour les aria assertive. A quoi çà sert ? Je ne sais pas.
-    $("[aria-live='assertive']").attr('aria-atomic', 'true');
-    // Ajout d'un aide à la compréhesion de qui controle quoi
-    $('#search_geolocation_text').attr('aria-controls', 'algolia-places-listbox-0');
-
-    $('#search_query').attr('aria-controls', 'algolia-autocomplete-listbox-0');
-    $('#search_query').attr('aria-activedescendant', '');
-    $('#search_query').attr('aria-readonly', 'true');
-
-    $('#algolia-autocomplete-listbox-0').attr('aria-label', 'liste des métiers ou diplomes');
-    $('#algolia-autocomplete-listbox-0').attr('aria-selected', 'false');
-  }, 200);
-
   var showChar = 300;
   var ellipsestext = "...";
 
@@ -174,15 +150,3 @@ $(window).scroll(function() {
     $('.sticky-top').removeClass('--not-top');
   }
 });
-
-$(window).on('resize', function() {
-  $('#label_search_query').text(stepLabel($(window).width()));
-});
-
-function stepLabel(width) {
-  if (width < 768) {
-    return "Votre métier";
-  } else {
-    return "Tapez le métier pour lequel vous souhaitez obtenir un diplôme";
-  }
-}

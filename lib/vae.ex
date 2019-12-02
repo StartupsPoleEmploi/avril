@@ -14,13 +14,14 @@ defmodule Vae do
       worker(Vae.Scheduler, []),
       worker(Vae.Places.Cache, []),
       Vae.OAuth.Clients,
-      Vae.Meetings.FranceVae.Connection.Cache,
+      supervisor(Vae.Booklet.WorkerSupervisor, []),
+      Vae.Booklet.ProcessRegistry
+    ] |> Enum.concat(if Application.get_env(:vae, :meetings_indice), do: [
       worker(Vae.Meetings.StateHolder, []),
       worker(Vae.Meetings.FranceVae.Server, []),
       worker(Vae.Meetings.Afpa.Server, []),
-      supervisor(Vae.Booklet.WorkerSupervisor, []),
-      Vae.Booklet.ProcessRegistry
-    ]
+      Vae.Meetings.FranceVae.Connection.Cache
+    ], else: [])
 
     opts = [strategy: :one_for_one, name: Vae.Supervisor]
     Supervisor.start_link(children, opts)
