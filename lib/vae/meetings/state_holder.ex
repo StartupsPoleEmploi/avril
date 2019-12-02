@@ -188,20 +188,37 @@ defmodule Vae.Meetings.StateHolder do
     end
   end
 
+  def safe_send_to_genserver(method, params) do
+    try do
+      apply(GenServer, method, [
+        @name,
+        params
+      ])
+    catch
+      :exit, {:noproc, _infos} ->
+        Logger.warn("Meetings process not available. Set ALGOLIA_MEETINGS_INDICE environment variable.")
+        []
+    end
+  end
+
   def subscribe(who) do
-    GenServer.cast(@name, {:subscribe, who})
+    safe_send_to_genserver(:cast, {:subscribe, who})
+    # GenServer.cast(@name, {:subscribe, who})
   end
 
   def save(name, data) do
-    GenServer.cast(@name, {:save, name, data})
+    safe_send_to_genserver(:cast, {:save, name, data})
+    # GenServer.cast(@name, {:save, name, data})
   end
 
   def all() do
-    GenServer.call(@name, :all)
+    safe_send_to_genserver(:call, :all)
+    # GenServer.call(@name, :all)
   end
 
   def get(delegate) do
-    GenServer.call(@name, {:get, delegate})
+    safe_send_to_genserver(:call, {:get, delegate})
+    # GenServer.call(@name, {:get, delegate})
     |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) end)
   end
 
