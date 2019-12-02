@@ -5,11 +5,13 @@ defmodule Vae.Booklet.Education do
   alias Vae.Booklet.{Course, Diploma}
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
     field(:grade, :string)
     field(:degree, :string)
 
     embeds_many :diplomas, Diploma, primary_key: false, on_replace: :delete do
+      @derive Jason.Encoder
       field(:label, :string)
 
       def changeset(struct, params \\ %{}) do
@@ -19,6 +21,7 @@ defmodule Vae.Booklet.Education do
     end
 
     embeds_many :courses, Course, primary_key: false, on_replace: :delete do
+      @derive Jason.Encoder
       field(:label, :string)
 
       def changeset(struct, params \\ %{}) do

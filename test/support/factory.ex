@@ -57,11 +57,11 @@ defmodule Vae.Factory do
       country_label: "France",
       birthday: date,
       birth_place: "Dijon",
-      experiences: build(:experiences)
+      proven_experiences: build(:proven_experiences)
     }
   end
 
-  def build(:experiences) do
+  def build(:proven_experiences) do
     [
       %{
         label: "Chargé d'affaires Vidéosurveillance, alarme, gestion des accès ",

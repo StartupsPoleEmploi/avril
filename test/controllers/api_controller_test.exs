@@ -14,68 +14,79 @@ defmodule Vae.ApiControllerTest do
       |> json_response(200)
 
     assert %{
+             "status" => "ok",
              "data" => %{
-               "certificationLabel" => "BT my certification",
-               "identity" => %{
-                 "address" => %{
-                   "city" => "Paris",
-                   "country" => "France",
-                   "postalCode" => "75000",
-                   "street" => "Street 1, Street 2"
-                 },
-                 "birth" => %{"city" => "Dijon", "date" => "#{date}"},
-                 "cellPhoneNumber" => "0102030405",
+               "certification_name" => "BT my certification",
+               "civility" => %{
+                 "birth_place" => "Dijon",
+                 "birthday" => "2019-12-02",
+                 "city" => "75000 Paris, France",
+                 "country" => "France",
                  "email" => "john@doe.com",
-                 "firstNames" => ["John"],
-                 "lastName" => "Doe",
-                 "sex" => "M"
+                 "first_name" => "John",
+                 "full_address" => "Street 1, Street 2, 75000 Paris, France",
+                 "gender" => "M",
+                 "home_phone" => nil,
+                 "last_name" => "Doe",
+                 "mobile_phone" => "0102030405",
+                 "postal_code" => "75000",
+                 "street_address" => "Street 1, Street 2",
+                 "usage_name" => nil
                },
+               "education" => nil,
                "experiences" => [
                  %{
-                   "activities" => [],
-                   "category" => nil,
-                   "companyAddress" => nil,
-                   "companyName" => "Ads Securite ",
-                   "contractType" => nil,
-                   "hours" => 35,
-                   "periods" => ["2018-12-31", "2019-06-30"],
-                   "role" => "Chargé d'affaires Vidéosurveillance, alarme, gestion des accès "
+                   "company_name" => nil,
+                   "employment_type" => nil,
+                   "end_date" => "2019-06-30",
+                   "full_address" => nil,
+                   "job_industry" => nil,
+                   "skills" => [],
+                   "start_date" => "2018-12-31",
+                   "title" => "Chargé d'affaires Vidéosurveillance, alarme, gestion des accès ",
+                   "uuid" => nil,
+                   "week_hours_duration" => 35
                  },
                  %{
-                   "activities" => [],
-                   "category" => nil,
-                   "companyAddress" => nil,
-                   "companyName" => "Suissa Elec",
-                   "contractType" => nil,
-                   "hours" => 35,
-                   "periods" => ["2015-09-30", "2017-12-31"],
-                   "role" => "President Sas"
+                   "company_name" => nil,
+                   "employment_type" => nil,
+                   "end_date" => "2017-12-31",
+                   "full_address" => nil,
+                   "job_industry" => nil,
+                   "skills" => [],
+                   "start_date" => "2015-09-30",
+                   "title" => "President Sas",
+                   "uuid" => nil,
+                   "week_hours_duration" => 35
                  },
                  %{
-                   "activities" => [],
-                   "category" => nil,
-                   "companyAddress" => nil,
-                   "companyName" => "Ecus Ondulique",
-                   "contractType" => nil,
-                   "hours" => 35,
-                   "periods" => ["2012-12-31", "2014-08-31"],
-                   "role" => "Ingénieur d'affaires"
+                   "company_name" => nil,
+                   "employment_type" => nil,
+                   "end_date" => "2014-08-31",
+                   "full_address" => nil,
+                   "job_industry" => nil,
+                   "skills" => [],
+                   "start_date" => "2012-12-31",
+                   "title" => "Ingénieur d'affaires",
+                   "uuid" => nil,
+                   "week_hours_duration" => 35
                  },
                  %{
-                   "activities" => [],
-                   "category" => nil,
-                   "companyAddress" => nil,
-                   "companyName" => "Dan'diag",
-                   "contractType" => nil,
-                   "hours" => 35,
-                   "periods" => ["2009-12-31", "2012-08-31"],
-                   "role" => "Entrepreneur et opérateur certifié"
+                   "company_name" => nil,
+                   "employment_type" => nil,
+                   "end_date" => "2012-08-31",
+                   "full_address" => nil,
+                   "job_industry" => nil,
+                   "skills" => [],
+                   "start_date" => "2009-12-31",
+                   "title" => "Entrepreneur et opérateur certifié",
+                   "uuid" => nil,
+                   "week_hours_duration" => 35
                  }
-               ],
-               "education" => nil
-             },
-             "status" => "ok"
-           } == response
+               ]
+             }
+           } ==
+             response
   end
 
   test "init cerfa with booklet values", %{conn: conn} do
@@ -88,61 +99,65 @@ defmodule Vae.ApiControllerTest do
       |> json_response(200)
 
     assert %{
+             "status" => "ok",
              "data" => %{
-               "certificationLabel" => "BT my certification",
-               "identity" => %{
-                 "address" => %{
-                   "city" => "Saint-Malo",
-                   "country" => "FR",
-                   "postalCode" => "35000",
-                   "street" => "Rue de la Pierre"
-                 },
-                 "birth" => %{"city" => "Saint-Malo", "date" => "#{date}"},
-                 "cellPhoneNumber" => "0600000000",
-                 "email" => "john@smith.com",
-                 "firstNames" => ["John"],
-                 "lastName" => "Doe",
-                 "sex" => "M"
+               "education" => %{
+                 "courses" => [%{"label" => "CAPES"}, %{"label" => "CACES"}],
+                 "degree" => "I",
+                 "diplomas" => [%{"label" => "CAP Boucher"}, %{"label" => "BTS Boulanger"}],
+                 "grade" => "A"
                },
                "experiences" => [
                  %{
-                   "activities" => [
-                     "Découpe de charcuterie",
-                     "Affutage",
-                     "Découpe de poulet",
-                     "Rotisserie"
+                   "company_name" => "Butcher Market",
+                   "employment_type" => "A",
+                   "end_date" => "2018-11-30",
+                   "full_address" => "Centre commercial Binard",
+                   "job_industry" => "H",
+                   "skills" => [
+                     %{"label" => "Découpe de charcuterie"},
+                     %{"label" => "Affutage"},
+                     %{"label" => "Découpe de poulet"},
+                     %{"label" => "Rotisserie"}
                    ],
-                   "category" => "H",
-                   "companyAddress" => "Centre commercial Binard",
-                   "companyName" => "Butcher Market",
-                   "contractType" => "A",
-                   "hours" => 35,
-                   "periods" => ["2019-11-30", "2018-11-30"],
-                   "role" => "Responsable Boucherie"
+                   "start_date" => "2019-11-30",
+                   "title" => "Responsable Boucherie",
+                   "uuid" => nil,
+                   "week_hours_duration" => 35
                  },
                  %{
-                   "activities" => [
-                     "Glacage",
-                     "Pate brisée"
-                   ],
-                   "category" => "H",
-                   "companyAddress" => "Centre commercial 2e gauche",
-                   "companyName" => "Baker Market",
-                   "contractType" => "D",
-                   "hours" => 35,
-                   "periods" => ["2018-11-29", "2017-11-30"],
-                   "role" => "Responsable Patisserie"
+                   "company_name" => "Baker Market",
+                   "employment_type" => "D",
+                   "end_date" => "2017-11-30",
+                   "full_address" => "Centre commercial 2e gauche",
+                   "job_industry" => "H",
+                   "skills" => [%{"label" => "Glacage"}, %{"label" => "Pate brisée"}],
+                   "start_date" => "2018-11-29",
+                   "title" => "Responsable Patisserie",
+                   "uuid" => nil,
+                   "week_hours_duration" => 35
                  }
                ],
-               "education" => %{
-                 "latestCourseLevel" => "A",
-                 "latestDegree" => "I",
-                 "relatedDegrees" => ["CAP Boucher", "BTS Boulanger"],
-                 "trainings" => ["CAPES", "CACES"]
+               "certification_name" => "BT my certification",
+               "civility" => %{
+                 "birth_place" => "Saint-Malo",
+                 "birthday" => "2019-12-02",
+                 "city" => "Saint-Malo",
+                 "country" => "FR",
+                 "email" => "john@smith.com",
+                 "first_name" => "John",
+                 "full_address" => nil,
+                 "gender" => "M",
+                 "home_phone" => "0300000000",
+                 "last_name" => "Doe",
+                 "mobile_phone" => "0600000000",
+                 "postal_code" => "35000",
+                 "street_address" => "Rue de la Pierre",
+                 "usage_name" => "Smith"
                }
-             },
-             "status" => "ok"
-           } == response
+             }
+           } ==
+             response
   end
 
   test "update a nil application", %{conn: conn} do
@@ -162,10 +177,10 @@ defmodule Vae.ApiControllerTest do
       |> get("/api/booklet?hash=123456")
       |> json_response(200)
 
-    assert response["data"]["certificationLabel"] == "BT my certification"
-    assert response["data"]["identity"]["sex"] == "M"
-    assert response["data"]["identity"]["birth"]["date"] == "#{date}"
-    assert response["data"]["identity"]["birth"]["city"] == "Dijon"
+    assert response["data"]["certification_name"] == "BT my certification"
+    assert response["data"]["civility"]["gender"] == "M"
+    assert response["data"]["civility"]["birthday"] == "#{date}"
+    assert response["data"]["civility"]["birth_place"] == "Dijon"
 
     # Set
     params = %{
@@ -180,6 +195,7 @@ defmodule Vae.ApiControllerTest do
         "email" => "jeanne@daux.com",
         "home_phone" => "0100000000",
         "mobile_phone" => "0600000000",
+        "full_address" => "rue mousette, 84000 Pierre Saint Martin, FR",
         "street_address" => "rue mousette",
         "postal_code" => "84000",
         "city" => "Pierre Saint Martin",
@@ -216,6 +232,7 @@ defmodule Vae.ApiControllerTest do
         "email" => "pierre@faux.com",
         "home_phone" => "0200000000",
         "mobile_phone" => "0700000000",
+        "full_address" => "rue Fierre Paux, 75000 Paris, FR",
         "street_address" => "rue Fierre Paux",
         "postal_code" => "75000",
         "city" => "Paris",

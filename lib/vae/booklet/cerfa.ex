@@ -5,6 +5,7 @@ defmodule Vae.Booklet.Cerfa do
   alias Vae.Booklet.{Civility, Education, Experience}
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
     field(:certification_name, :string)
     embeds_one(:civility, Civility, on_replace: :delete)

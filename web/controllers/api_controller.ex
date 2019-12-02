@@ -18,7 +18,7 @@ defmodule Vae.ApiController do
 
     json(conn, %{
       status: :ok,
-      data: data |> to_view()
+      data: data
     })
   end
 
@@ -39,77 +39,6 @@ defmodule Vae.ApiController do
     end
   end
 
-  def to_view(data) do
-    %{
-      certificationLabel: data.certification_name,
-      identity: %{
-        firstNames: [data.civility.first_name],
-        lastName: data.civility.last_name,
-        email: data.civility.email,
-        sex: data.civility.gender,
-        cellPhoneNumber: data.civility.mobile_phone,
-        birth: %{
-          date: data.civility.birthday,
-          # county: null,
-          # country: 'FR',
-          city: data.civility.birth_place
-        },
-        address: %{
-          street: data.civility.street_address,
-          # streetType: null,
-          # streetName: null,
-          # streetNumber: null,
-          city: data.civility.city,
-          postalCode: data.civility.postal_code,
-          country: data.civility.country
-          # "isDomTom" => false
-        }
-      },
-      experiences: map_experiences_to_view(data.experiences),
-      education: map_education_to_view(data.education)
-    }
-  end
-
-  def map_experiences_to_view([]), do: []
-
-  def map_experiences_to_view(experiences), do: Enum.map(experiences, &map_experience_to_view/1)
-
-  def map_experience_to_view(experience) do
-    %{
-      role: experience.title,
-      companyName: experience.company_name,
-      companyAddress: experience.full_address,
-      category: experience.job_industry,
-      contractType: experience.employment_type,
-      activities: map_skills_to_view(experience.skills),
-      periods: [experience.start_date, experience.end_date],
-      hours: experience.week_hours_duration
-    }
-  end
-
-  def map_skills_to_view([]), do: []
-
-  def map_skills_to_view(skills), do: Enum.map(skills, & &1.label)
-
-  def map_education_to_view(nil), do: nil
-
-  def map_education_to_view(education) do
-    %{
-      latestCourseLevel: education.grade,
-      latestDegree: education.degree,
-      relatedDegrees: map_diplomas_to_view(education.diplomas),
-      trainings: map_courses_to_view(education.courses)
-    }
-  end
-
-  def map_diplomas_to_view([]), do: []
-
-  def map_diplomas_to_view(diplomas), do: Enum.map(diplomas, & &1.label)
-
-  def map_courses_to_view([]), do: []
-
-  def map_courses_to_view(courses), do: Enum.map(courses, & &1.label)
-
   def from_application(application) do
     user = application.user
 
@@ -123,9 +52,10 @@ defmodule Vae.ApiController do
         last_name: user.last_name,
         email: user.email,
         mobile_phone: user.phone_number,
+        full_address: User.address_inline(user),
         street_address: User.address_street(user),
         postal_code: user.postal_code,
-        city: user.city_label,
+        city: User.address_city(user),
         country: user.country_label
       },
       experiences: map_experiences(user.proven_experiences)

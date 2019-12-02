@@ -3,6 +3,7 @@ defmodule Vae.Booklet.Civility do
   import Ecto.Changeset
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
     field(:gender, :string)
     field(:birthday, :date)
@@ -13,6 +14,7 @@ defmodule Vae.Booklet.Civility do
     field(:email, :string)
     field(:home_phone, :string)
     field(:mobile_phone, :string)
+    field(:full_address, :string)
     field(:street_address, :string)
     field(:postal_code, :string)
     field(:city, :string)
@@ -29,6 +31,7 @@ defmodule Vae.Booklet.Civility do
     email
     home_phone
     mobile_phone
+    full_address
     street_address
     postal_code
     city
