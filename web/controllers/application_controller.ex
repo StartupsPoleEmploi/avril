@@ -2,7 +2,7 @@ defmodule Vae.ApplicationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Application, Repo, Resume, User}
+  alias Vae.{Application, Delegate, Repo, Resume, User}
   alias Vae.Crm.Polls
 
   plug Vae.Plugs.ApplicationAccess when action not in [:show, :current, :admissible, :inadmissible]
@@ -18,14 +18,31 @@ defmodule Vae.ApplicationController do
         :resumes
       ])
 
+    edit_mode = params["mode"] != "certificateur" &&
+      Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id
+
+    grouped_experiences = application.user.proven_experiences
+      |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
+      |> Vae.Map.map_values(fn {_k, experiences} ->
+        Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
+      end)
+      |> Map.to_list()
+      |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2)
+
     meetings =
-      if application.meeting,
+      if application.meeting || !edit_mode,
         do: [],
         else: Vae.Meetings.get(application.delegate)
 
     preselected_place =
       if length(meetings) > 0,
         do: meetings |> List.first() |> elem(0)
+
+    tabs = [
+      :profile,
+      (if length(meetings) > 0, do: :meetings),
+      (if edit_mode && Delegate.is_educ_nat?(application.delegate), do: :booklet)
+    ] |> Enum.reject(&is_nil/1)
 
     render(conn, "show.html", %{
       title:
@@ -36,22 +53,15 @@ defmodule Vae.ApplicationController do
       delegate: application.delegate,
       certification: application.certification,
       user: application.user,
-      grouped_experiences:
-        application.user.proven_experiences
-        |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
-        |> Vae.Map.map_values(fn {_k, experiences} ->
-          Enum.sort_by(experiences, fn exp -> Date.to_erl(exp.start_date) end, &>/2)
-        end)
-        |> Map.to_list()
-        |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2),
-      edit_mode:
-        params["mode"] != "certificateur" &&
-          Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id,
+      grouped_experiences: grouped_experiences,
+      edit_mode: edit_mode,
       user_changeset: User.changeset(application.user, %{}),
       resume_changeset: Resume.changeset(%Resume{}, %{}),
       application_changeset: Application.changeset(application, %{}),
       preselected_place: preselected_place,
-      meetings: meetings
+      meetings: meetings,
+      tabs: tabs,
+      booklet_url: System.get_env("NUXT_URL")
     })
   end
 
