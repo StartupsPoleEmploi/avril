@@ -3,7 +3,9 @@ defmodule Vae.Booklet.Experience do
   import Ecto.Changeset
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
+    field(:uuid, :string)
     field(:title, :string)
     field(:company_name, :string)
     field(:full_address, :string)
@@ -14,6 +16,7 @@ defmodule Vae.Booklet.Experience do
     field(:week_hours_duration, :integer)
 
     embeds_many :skills, Skill, primary_key: false, on_replace: :delete do
+      @derive Jason.Encoder
       field(:label, :string)
 
       def changeset(struct, params \\ %{}) do
@@ -24,6 +27,7 @@ defmodule Vae.Booklet.Experience do
   end
 
   @fields ~w(
+    uuid
     title
     company_name
     full_address
