@@ -160,9 +160,13 @@ defmodule Vae.Factory do
           full_address: "Centre commercial Binard",
           job_industry: "H",
           employment_type: "A",
-          start_date: ~D[2019-11-30],
-          end_date: ~D[2018-11-30],
-          week_hours_duration: 35,
+          periods: [
+            %{
+              start_date: ~D[2019-11-30],
+              end_date: ~D[2018-11-30],
+              week_hours_duration: 35
+            }
+          ],
           skills: [
             %{
               label: "Découpe de charcuterie"
@@ -185,9 +189,13 @@ defmodule Vae.Factory do
           full_address: "Centre commercial 2e gauche",
           job_industry: "H",
           employment_type: "D",
-          start_date: ~D[2018-11-29],
-          end_date: ~D[2017-11-30],
-          week_hours_duration: 35,
+          periods: [
+            %{
+              start_date: ~D[2018-11-29],
+              end_date: ~D[2017-11-30],
+              week_hours_duration: 35
+            }
+          ],
           skills: [
             %{
               label: "Glacage"

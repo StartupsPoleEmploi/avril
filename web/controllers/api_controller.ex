@@ -70,24 +70,46 @@ defmodule Vae.ApiController do
         city: User.address_city(user),
         country: user.country_label
       },
-      experiences: map_experiences(user.proven_experiences)
+      experiences: user.proven_experiences |> group_experiences() |> map_experiences()
     }
+  end
+
+  def group_experiences([]), do: []
+
+  def group_experiences(experiences) do
+    Enum.group_by(experiences, fn experience ->
+      [experience.company_name, experience.label, experience.contract_type]
+    end)
+  end
+
+  def merge_periods_into_experience([], acc), do: acc
+
+  def merge_periods_into_experience([h | t], acc) do
+    merge_periods_into_experience(
+      t,
+      %Vae.Booklet.Experience{
+        acc
+        | title: h.label,
+          company_name: h.company_name,
+          full_address: nil,
+          employment_type: h.contract_type,
+          periods: [
+            %Vae.Booklet.Experience.Period{
+              start_date: h.start_date,
+              end_date: h.end_date,
+              week_hours_duration: 35
+            }
+            | acc.periods
+          ]
+      }
+    )
   end
 
   def map_experiences([]), do: []
 
-  def map_experiences(experiences),
-    do: Enum.map(experiences, &map_experience/1)
-
-  def map_experience(experience) do
-    %Vae.Booklet.Experience{
-      title: experience.label,
-      company_name: experience.company_name,
-      full_address: nil,
-      employment_type: experience.contract_type,
-      start_date: experience.start_date,
-      end_date: experience.end_date,
-      week_hours_duration: 35
-    }
+  def map_experiences(experiences) do
+    Enum.map(experiences, fn {[company_name, label, contract], data} ->
+      merge_periods_into_experience(data, %Vae.Booklet.Experience{})
+    end)
   end
 end
