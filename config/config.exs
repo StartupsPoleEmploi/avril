@@ -148,7 +148,7 @@ config :coherence, Vae.Coherence.Mailer,
   secret: System.get_env("MAILJET_PRIVATE_API_KEY")
 
 config :cors_plug,
-  origin: ["http://localhost:3000"],
+  origin: [System.get_env("NUXT_URL")],
   max_age: 86400,
   methods: ["GET", "POST", "PUT"]
 
