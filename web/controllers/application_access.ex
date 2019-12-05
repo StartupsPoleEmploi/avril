@@ -11,8 +11,10 @@ defmodule Vae.Plugs.ApplicationAccess do
   def call(%{params: %{"application_id" => application_id}} = conn, options),
     do: execute(conn, {:id, application_id}, options)
 
-  def call(%{params: %{"id" => application_id}} = conn, options),
-    do: execute(conn, {:id, application_id}, options)
+  def call(%{params: %{"id" => application_id}} = conn, options) do
+    IO.inspect(options, label: "OPTIONS")
+    execute(conn, {:id, application_id}, options)
+  end
 
   def call(%{params: %{"hash" => hash_value}} = conn, [find_with_hash: hash_key] = options),
     do: execute(conn, {hash_key, hash_value}, options)
@@ -67,6 +69,8 @@ defmodule Vae.Plugs.ApplicationAccess do
        }}
     end
   end
+
+  defp has_access?(_conn, _application, {_hash_key, nil}), do: {:ok, nil}
 
   defp has_access?(conn, application, {hash_key, hash_value}) do
     # && Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10))
