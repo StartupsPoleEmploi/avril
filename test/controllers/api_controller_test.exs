@@ -18,19 +18,31 @@ defmodule Vae.ApiControllerTest do
       "data" => %{
         "certification_name" => "BT my certification",
         "civility" => %{
-          "birth_place" => "Dijon",
-          "birthday" => "2019-12-04",
-          "city" => "75000 Paris, France",
-          "country" => "France",
+          "birth_place" => %{
+            "city" => "Dijon",
+            "country" => nil,
+            "domTom" => nil,
+            "lat" => nil,
+            "lng" => nil,
+            "postal_code" => nil,
+            "street" => nil
+          },
+          "birthday" => "2019-12-05",
           "email" => "john@doe.com",
           "first_name" => "John",
-          "full_address" => "Street 1, Street 2, 75000 Paris, France",
+          "full_address" => %{
+            "city" => "Paris",
+            "country" => "France",
+            "domTom" => nil,
+            "lat" => nil,
+            "lng" => nil,
+            "postal_code" => "75000",
+            "street" => "Street 1, Street 2"
+          },
           "gender" => "M",
           "home_phone" => nil,
           "last_name" => "Doe",
           "mobile_phone" => "0102030405",
-          "postal_code" => "75000",
-          "street_address" => "Street 1, Street 2",
           "usage_name" => nil
         },
         "education" => nil,
@@ -167,19 +179,31 @@ defmodule Vae.ApiControllerTest do
         ],
         "certification_name" => "BT my certification",
         "civility" => %{
-          "birth_place" => "Saint-Malo",
-          "birthday" => "2019-12-04",
-          "city" => "Saint-Malo",
-          "country" => "FR",
+          "birth_place" => %{
+            "city" => "Saint-Malo",
+            "country" => nil,
+            "domTom" => nil,
+            "lat" => nil,
+            "lng" => nil,
+            "postal_code" => nil,
+            "street" => nil
+          },
+          "birthday" => "2019-12-05",
           "email" => "john@smith.com",
           "first_name" => "John",
-          "full_address" => nil,
+          "full_address" => %{
+            "city" => "Saint-Malo",
+            "country" => "France",
+            "street" => "23, Rue Jean Jaures",
+            "postal_code" => "35000",
+            "domTom" => nil,
+            "lat" => 45.3333,
+            "lng" => 2.4323
+          },
           "gender" => "M",
           "home_phone" => "0300000000",
           "last_name" => "Doe",
           "mobile_phone" => "0600000000",
-          "postal_code" => "35000",
-          "street_address" => "Rue de la Pierre",
           "usage_name" => "Smith"
         }
       }
@@ -210,7 +234,26 @@ defmodule Vae.ApiControllerTest do
     assert response["data"]["certification_name"] == "BT my certification"
     assert response["data"]["civility"]["gender"] == "M"
     assert response["data"]["civility"]["birthday"] == "#{date}"
-    assert response["data"]["civility"]["birth_place"] == "Dijon"
+
+    assert response["data"]["civility"]["full_address"] == %{
+             "city" => "Paris",
+             "country" => "France",
+             "lat" => nil,
+             "lng" => nil,
+             "postal_code" => "75000",
+             "street" => "Street 1, Street 2",
+             "domTom" => nil
+           }
+
+    assert response["data"]["civility"]["birth_place"] == %{
+             "city" => "Dijon",
+             "country" => nil,
+             "domTom" => nil,
+             "lat" => nil,
+             "lng" => nil,
+             "postal_code" => nil,
+             "street" => nil
+           }
 
     # Set
     params = %{
@@ -218,18 +261,28 @@ defmodule Vae.ApiControllerTest do
       "civility" => %{
         "gender" => "F",
         "birthday" => "2000-11-30",
-        "birth_place" => "Marseille",
+        "birth_place" => %{
+          "city" => "Dijon",
+          "country" => "France",
+          "domTom" => nil,
+          "lat" => 47.323,
+          "lng" => 5.04198
+        },
         "first_name" => "Jeanne",
         "last_name" => "Daux",
         "usage_name" => "Martins",
         "email" => "jeanne@daux.com",
         "home_phone" => "0100000000",
         "mobile_phone" => "0600000000",
-        "full_address" => "rue mousette, 84000 Pierre Saint Martin, FR",
-        "street_address" => "rue mousette",
-        "postal_code" => "84000",
-        "city" => "Pierre Saint Martin",
-        "country" => "FR"
+        "full_address" => %{
+          "city" => "Levallois-Perret",
+          "country" => "France",
+          "lat" => 48.8928,
+          "lng" => 2.2942,
+          "postalCode" => "92300",
+          "street" => "44 Rue Jean Jaurès",
+          "domTom" => nil
+        }
       }
     }
 
@@ -249,18 +302,27 @@ defmodule Vae.ApiControllerTest do
       "civility" => %{
         "gender" => "M",
         "birthday" => "2000-12-30",
-        "birth_place" => "Paris",
+        "birth_place" => %{
+          "city" => "Paris",
+          "country" => "France",
+          "domTom" => nil,
+          "lat" => 52.323,
+          "lng" => 6.04198
+        },
         "first_name" => "Pierre",
         "last_name" => "Faux",
         "usage_name" => "",
         "email" => "pierre@faux.com",
         "home_phone" => "0200000000",
         "mobile_phone" => "0700000000",
-        "full_address" => "rue Fierre Paux, 75000 Paris, FR",
-        "street_address" => "rue Fierre Paux",
-        "postal_code" => "75000",
-        "city" => "Paris",
-        "country" => "FR"
+        "full_address" => %{
+          "city" => "Paris",
+          "country" => "France",
+          "lat" => 21.8928,
+          "lng" => 1.2942,
+          "postalCode" => "75000",
+          "street" => "rue Fierre Paux"
+        }
       }
     }
 
@@ -281,8 +343,24 @@ defmodule Vae.ApiControllerTest do
     |> Map.from_struct()
     |> Map.keys()
     |> Enum.each(fn key ->
-      assert "#{get_in(struct, [Access.key(root_key), Access.key(key)])}" ==
-               params[Atom.to_string(root_key)][Atom.to_string(key)]
+      case get_in(struct, [Access.key(root_key), Access.key(key)]) do
+        nil ->
+          assert "" == "#{params[Atom.to_string(root_key)][Atom.to_string(key)]}"
+
+        %Date{} = value ->
+          assert "#{value}" == "#{params[Atom.to_string(root_key)][Atom.to_string(key)]}"
+
+        %{__struct__: _struct_name} = value ->
+          assert_struct_by_params(
+            Map.get(struct, root_key),
+            params[Atom.to_string(root_key)],
+            key
+          )
+
+        value ->
+          assert "#{value}" ==
+                   "#{params[Atom.to_string(root_key)][Atom.to_string(key)]}"
+      end
     end)
   end
 

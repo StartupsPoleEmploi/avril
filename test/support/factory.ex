@@ -120,17 +120,27 @@ defmodule Vae.Factory do
       civility: %{
         gender: "M",
         birthday: date,
-        birth_place: "Saint-Malo",
+        birth_place: %{
+          city: "Saint-Malo",
+          country: nil,
+          domTom: nil,
+          lat: nil,
+          lng: nil
+        },
         first_name: "John",
         last_name: "Doe",
         usage_name: "Smith",
         email: "john@smith.com",
         home_phone: "0300000000",
         mobile_phone: "0600000000",
-        street_address: "Rue de la Pierre",
-        postal_code: "35000",
-        city: "Saint-Malo",
-        country: "FR"
+        full_address: %{
+          city: "Saint-Malo",
+          country: "France",
+          lat: 45.3333,
+          lng: 2.4323,
+          postal_code: "35000",
+          street: "23, Rue Jean Jaures"
+        }
       },
       education: %{
         grade: "A",
