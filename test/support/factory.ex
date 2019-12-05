@@ -143,8 +143,8 @@ defmodule Vae.Factory do
         }
       },
       education: %{
-        grade: "A",
-        degree: "I",
+        grade: 1,
+        degree: 1,
         diplomas: [
           %{
             label: "CAP Boucher"

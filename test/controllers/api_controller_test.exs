@@ -134,9 +134,9 @@ defmodule Vae.ApiControllerTest do
       "data" => %{
         "education" => %{
           "courses" => [%{"label" => "CAPES"}, %{"label" => "CACES"}],
-          "degree" => "I",
+          "degree" => 1,
           "diplomas" => [%{"label" => "CAP Boucher"}, %{"label" => "BTS Boulanger"}],
-          "grade" => "A"
+          "grade" => 1
         },
         "experiences" => [
           %{
@@ -402,8 +402,8 @@ defmodule Vae.ApiControllerTest do
 
     params = %{
       "education" => %{
-        "grade" => "B",
-        "degree" => "F",
+        "grade" => 2,
+        "degree" => 2,
         "diplomas" => [
           %{
             "label" => "BTS Charcutier"
@@ -435,8 +435,8 @@ defmodule Vae.ApiControllerTest do
 
     params = %{
       "education" => %{
-        "grade" => "C",
-        "degree" => "D",
+        "grade" => 3,
+        "degree" => 3,
         "diplomas" => [
           %{
             "label" => "BTS Plombier"
