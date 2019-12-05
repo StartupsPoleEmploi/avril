@@ -150,7 +150,8 @@ config :coherence, Vae.Coherence.Mailer,
 config :cors_plug,
   origin: [System.get_env("NUXT_URL")],
   max_age: 86400,
-  methods: ["GET", "POST", "PUT"]
+  methods: ["GET", "POST", "PUT"],
+  headers: ["*"]
 
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},
