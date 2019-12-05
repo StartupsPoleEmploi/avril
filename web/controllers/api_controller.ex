@@ -15,14 +15,7 @@ defmodule Vae.ApiController do
     data =
       case application.booklet_1 do
         nil ->
-          with booklet <- from_application(application),
-               {:ok, application} <- Application.put_booklet(application, booklet) do
-            application.booklet_1
-          else
-            {:error, msg} ->
-              Logger.error(fn -> inspect("#{msg}") end)
-              %Cerfa{}
-          end
+          from_application(application)
 
         booklet ->
           booklet
@@ -59,16 +52,19 @@ defmodule Vae.ApiController do
       civility: %Vae.Booklet.Civility{
         gender: user.gender,
         birthday: user.birthday,
-        birth_place: user.birth_place,
+        birth_place: %Vae.Booklet.Address{
+          city: user.birth_place
+        },
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
         mobile_phone: user.phone_number,
-        full_address: User.address_inline(user),
-        street_address: User.address_street(user),
-        postal_code: user.postal_code,
-        city: User.address_city(user),
-        country: user.country_label
+        full_address: %Vae.Booklet.Address{
+          city: user.city_label,
+          country: user.country_label,
+          postal_code: user.postal_code,
+          street: User.address_street(user)
+        }
       },
       experiences: user.proven_experiences |> group_experiences() |> map_experiences()
     }

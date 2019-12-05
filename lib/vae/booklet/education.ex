@@ -7,8 +7,8 @@ defmodule Vae.Booklet.Education do
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do
-    field(:grade, :string)
-    field(:degree, :string)
+    field(:grade, :integer)
+    field(:degree, :integer)
 
     embeds_many :diplomas, Diploma, primary_key: false, on_replace: :delete do
       @derive Jason.Encoder
