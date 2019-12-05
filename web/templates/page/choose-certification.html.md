@@ -41,7 +41,7 @@ Tenez compte du niveau du diplôme choisi : il doit correspondre au niveau d'em
 Prenez connaissance du marché de l’emploi que vous visez en recherchant des offres d'emploi sur [pole-emploi.fr](https://pole-emploi.fr) par exemple. Tenez compte des diplômes demandés par les employeurs pour confirmer votre choix.
 
 **_5_**
-Rencontrez un conseiller spécialisé dans un [centre de conseils en VAE](http://www.vae.gouv.fr/?page=carte-prc) ou votre conseiller Pôle emploi. [En savoir plus](http://localhost:4000/point-relais-conseil-vae).
+Rencontrez un conseiller spécialisé dans un [centre de conseils en VAE](http://www.vae.gouv.fr/?page=carte-prc) ou votre conseiller Pôle emploi. [En savoir plus](/point-relais-conseil-vae).
 
 **_6_**
 Tenez aussi compte de votre projet : quel diplôme nécessite-t-il ?
