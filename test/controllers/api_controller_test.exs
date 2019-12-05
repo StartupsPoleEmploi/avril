@@ -142,7 +142,7 @@ defmodule Vae.ApiControllerTest do
           %{
             "uuid" => "1",
             "company_name" => "Butcher Market",
-            "employment_type" => "A",
+            "employment_type" => 1,
             "full_address" => "Centre commercial Binard",
             "job_industry" => "H",
             "periods" => [
@@ -163,7 +163,7 @@ defmodule Vae.ApiControllerTest do
           %{
             "uuid" => "2",
             "company_name" => "Baker Market",
-            "employment_type" => "D",
+            "employment_type" => 4,
             "full_address" => "Centre commercial 2e gauche",
             "job_industry" => "H",
             "periods" => [
@@ -479,7 +479,7 @@ defmodule Vae.ApiControllerTest do
           "company_name" => "Peclerc",
           "full_address" => "25, rue de la Pompe 87600 La Pierre",
           "job_industry" => "B",
-          "employment_type" => "C",
+          "employment_type" => 3,
           "periods" => [
             %{
               "start_date" => "2019-11-25",
@@ -509,7 +509,7 @@ defmodule Vae.ApiControllerTest do
           "company_name" => "Peclerc",
           "full_address" => "10, rue de la Pierre, 86000 La Pompe",
           "job_industry" => "B",
-          "employment_type" => "C",
+          "employment_type" => 3,
           "periods" => [
             %{
               "start_date" => "2018-10-01",
@@ -590,6 +590,7 @@ defmodule Vae.ApiControllerTest do
           "employment_type"
         ])
         |> Map.values()
+        |> Enum.map(&"#{&1}")
       end)
       |> Enum.sort()
 
@@ -618,7 +619,7 @@ defmodule Vae.ApiControllerTest do
           "company_name" => "Peclerc",
           "full_address" => "25, rue de la Pompe 87600 La Pierre",
           "job_industry" => "B",
-          "employment_type" => "C",
+          "employment_type" => 3,
           "periods" => [
             %{
               "start_date" => "2019-11-25",
@@ -643,7 +644,7 @@ defmodule Vae.ApiControllerTest do
           "company_name" => "Peclerc",
           "full_address" => "10, rue de la Pierre, 86000 La Pompe",
           "job_industry" => "B",
-          "employment_type" => "C",
+          "employment_type" => 3,
           "periods" => [
             %{
               "start_date" => "2018-10-01",
@@ -724,6 +725,7 @@ defmodule Vae.ApiControllerTest do
           "employment_type"
         ])
         |> Map.values()
+        |> Enum.map(&"#{&1}")
       end)
       |> Enum.sort()
 
@@ -752,7 +754,7 @@ defmodule Vae.ApiControllerTest do
         label: "foo",
         company_name: "bar",
         full_address: nil,
-        contract_type: "cdi",
+        contract_type: 3,
         start_date: ~D[2019-01-02],
         end_date: ~D[2019-01-05],
         week_hours_duration: 35
@@ -761,7 +763,7 @@ defmodule Vae.ApiControllerTest do
         label: "foo",
         company_name: "bar",
         full_address: nil,
-        contract_type: "cdi",
+        contract_type: 2,
         start_date: ~D[2019-01-02],
         end_date: ~D[2019-01-05],
         week_hours_duration: 35
@@ -770,7 +772,7 @@ defmodule Vae.ApiControllerTest do
         label: "foo",
         company_name: "bar",
         full_address: nil,
-        contract_type: "cdd",
+        contract_type: 3,
         start_date: ~D[2019-01-02],
         end_date: ~D[2019-01-05],
         week_hours_duration: 35
@@ -779,7 +781,7 @@ defmodule Vae.ApiControllerTest do
         label: "baz",
         company_name: "bar",
         full_address: nil,
-        contract_type: "cdi",
+        contract_type: 1,
         start_date: ~D[2019-01-02],
         end_date: ~D[2019-01-05],
         week_hours_duration: 35
@@ -788,11 +790,12 @@ defmodule Vae.ApiControllerTest do
 
     assert experiences
            |> Vae.ApiController.group_experiences()
-           |> Vae.ApiController.map_experiences() ==
+           |> Vae.ApiController.map_experiences()
+           |> Enum.sort_by(& &1.employment_type) ==
              [
                %Vae.Booklet.Experience{
                  company_name: "bar",
-                 employment_type: "cdi",
+                 employment_type: 1,
                  full_address: nil,
                  job_industry: nil,
                  periods: [
@@ -808,7 +811,7 @@ defmodule Vae.ApiControllerTest do
                },
                %Vae.Booklet.Experience{
                  company_name: "bar",
-                 employment_type: "cdd",
+                 employment_type: 2,
                  full_address: nil,
                  job_industry: nil,
                  periods: [
@@ -824,7 +827,7 @@ defmodule Vae.ApiControllerTest do
                },
                %Vae.Booklet.Experience{
                  company_name: "bar",
-                 employment_type: "cdi",
+                 employment_type: 3,
                  full_address: nil,
                  job_industry: nil,
                  periods: [
@@ -922,5 +925,119 @@ defmodule Vae.ApiControllerTest do
       experience["periods"]
     end)
     |> Enum.sort_by(& &1["start_date"])
+  end
+
+  def foo() do
+    [
+      %Vae.Booklet.Experience{
+        company_name: "bar",
+        employment_type: 1,
+        full_address: nil,
+        job_industry: nil,
+        periods: [
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          }
+        ],
+        skills: [],
+        title: "baz",
+        uuid: nil
+      },
+      %Vae.Booklet.Experience{
+        company_name: "bar",
+        full_address: nil,
+        job_industry: nil,
+        skills: [],
+        title: "foo",
+        uuid: nil,
+        employment_type: 1,
+        periods: [
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          },
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          }
+        ]
+      },
+      %Vae.Booklet.Experience{
+        company_name: "bar",
+        full_address: nil,
+        job_industry: nil,
+        skills: [],
+        title: "foo",
+        uuid: nil,
+        employment_type: 2,
+        periods: [
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          }
+        ]
+      }
+    ]
+
+    [
+      %Vae.Booklet.Experience{
+        company_name: "bar",
+        employment_type: 1,
+        full_address: nil,
+        job_industry: nil,
+        periods: [
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          }
+        ],
+        skills: [],
+        title: "baz",
+        uuid: nil
+      },
+      %Vae.Booklet.Experience{
+        company_name: "bar",
+        full_address: nil,
+        job_industry: nil,
+        skills: [],
+        title: "foo",
+        uuid: nil,
+        employment_type: 2,
+        periods: [
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          }
+        ]
+      },
+      %Vae.Booklet.Experience{
+        company_name: "bar",
+        full_address: nil,
+        job_industry: nil,
+        skills: [],
+        title: "foo",
+        uuid: nil,
+        employment_type: 1,
+        periods: [
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          },
+          %Vae.Booklet.Experience.Period{
+            end_date: ~D[2019-01-05],
+            start_date: ~D[2019-01-02],
+            week_hours_duration: 35
+          }
+        ]
+      }
+    ]
   end
 end

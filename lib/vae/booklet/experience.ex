@@ -10,7 +10,7 @@ defmodule Vae.Booklet.Experience do
     field(:company_name, :string)
     field(:full_address, :string)
     field(:job_industry, :string)
-    field(:employment_type, :string)
+    field(:employment_type, :integer)
 
     embeds_many :skills, Skill, primary_key: false, on_replace: :delete do
       @derive Jason.Encoder

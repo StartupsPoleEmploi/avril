@@ -169,7 +169,7 @@ defmodule Vae.Factory do
           company_name: "Butcher Market",
           full_address: "Centre commercial Binard",
           job_industry: "H",
-          employment_type: "A",
+          employment_type: 1,
           periods: [
             %{
               start_date: ~D[2019-11-30],
@@ -198,7 +198,7 @@ defmodule Vae.Factory do
           company_name: "Baker Market",
           full_address: "Centre commercial 2e gauche",
           job_industry: "H",
-          employment_type: "D",
+          employment_type: 4,
           periods: [
             %{
               start_date: ~D[2018-11-29],
