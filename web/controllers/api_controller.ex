@@ -15,14 +15,7 @@ defmodule Vae.ApiController do
     data =
       case application.booklet_1 do
         nil ->
-          with booklet <- from_application(application),
-               {:ok, application} <- Application.put_booklet(application, booklet) do
-            application.booklet_1
-          else
-            {:error, msg} ->
-              Logger.error(fn -> inspect("#{msg}") end)
-              %Cerfa{}
-          end
+          from_application(application)
 
         booklet ->
           booklet
