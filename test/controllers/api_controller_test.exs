@@ -153,7 +153,15 @@ defmodule Vae.ApiControllerTest do
             "uuid" => "1",
             "company_name" => "Butcher Market",
             "employment_type" => 1,
-            "full_address" => "Centre commercial Binard",
+            "full_address" => %{
+              "city" => "Saint-Malo",
+              "country" => "FR",
+              "domTom" => nil,
+              "lat" => 32.1111,
+              "lng" => 2.1111,
+              "postal_code" => "35000",
+              "street" => "Centre commercial Binard"
+            },
             "job_industry" => "H",
             "periods" => [
               %{
@@ -174,7 +182,15 @@ defmodule Vae.ApiControllerTest do
             "uuid" => "2",
             "company_name" => "Baker Market",
             "employment_type" => 4,
-            "full_address" => "Centre commercial 2e gauche",
+            "full_address" => %{
+              "city" => "Saint-Malo",
+              "country" => "FR",
+              "domTom" => nil,
+              "lat" => 32.1111,
+              "lng" => 2.1111,
+              "postal_code" => "35000",
+              "street" => "Centre commercial Binard"
+            },
             "job_industry" => "H",
             "periods" => [
               %{
@@ -496,7 +512,15 @@ defmodule Vae.ApiControllerTest do
         %{
           "title" => "Responsable GD",
           "company_name" => "Peclerc",
-          "full_address" => "25, rue de la Pompe 87600 La Pierre",
+          "full_address" => %{
+            city: "La Pierre",
+            country: "FR",
+            domTom: nil,
+            lat: 32.1111,
+            lng: 2.1111,
+            postal_code: "87600",
+            street: "25, rue de la Pompe"
+          },
           "job_industry" => "B",
           "employment_type" => 3,
           "periods" => [
@@ -526,7 +550,15 @@ defmodule Vae.ApiControllerTest do
         %{
           "title" => "Agent Polyvalent",
           "company_name" => "Peclerc",
-          "full_address" => "10, rue de la Pierre, 86000 La Pompe",
+          "full_address" => %{
+            "city" => "La Pompe",
+            "country" => "FR",
+            "domTom" => nil,
+            "lat" => 32.1111,
+            "lng" => 2.1111,
+            "postal_code" => "86000",
+            "street" => "10, rue de la Pierre"
+          },
           "job_industry" => "B",
           "employment_type" => 3,
           "periods" => [
@@ -604,7 +636,6 @@ defmodule Vae.ApiControllerTest do
         |> Map.take([
           "title",
           "company_name",
-          "full_address",
           "job_industry",
           "employment_type"
         ])
@@ -620,7 +651,6 @@ defmodule Vae.ApiControllerTest do
         |> Map.take([
           :title,
           :company_name,
-          :full_address,
           :job_industry,
           :employment_type
         ])
@@ -636,7 +666,15 @@ defmodule Vae.ApiControllerTest do
         %{
           "title" => "Responsable GD",
           "company_name" => "Peclerc",
-          "full_address" => "25, rue de la Pompe 87600 La Pierre",
+          "full_address" => %{
+            "city" => "La Pierre",
+            "country" => "FR",
+            "domTom" => nil,
+            "lat" => 32.1111,
+            "lng" => 2.1111,
+            "postal_code" => "87600",
+            "street" => "25, rue de la Pompe"
+          },
           "job_industry" => "B",
           "employment_type" => 3,
           "periods" => [
@@ -661,7 +699,15 @@ defmodule Vae.ApiControllerTest do
         %{
           "title" => "Agent Polyvalent",
           "company_name" => "Peclerc",
-          "full_address" => "10, rue de la Pierre, 86000 La Pompe",
+          "full_address" => %{
+            "city" => "La Pompe",
+            "country" => "FR",
+            "domTom" => nil,
+            "lat" => 32.1111,
+            "lng" => 2.1111,
+            "postal_code" => "86000",
+            "street" => "10, rue de la Pierre"
+          },
           "job_industry" => "B",
           "employment_type" => 3,
           "periods" => [
@@ -739,7 +785,6 @@ defmodule Vae.ApiControllerTest do
         |> Map.take([
           "title",
           "company_name",
-          "full_address",
           "job_industry",
           "employment_type"
         ])
@@ -755,7 +800,6 @@ defmodule Vae.ApiControllerTest do
         |> Map.take([
           :title,
           :company_name,
-          :full_address,
           :job_industry,
           :employment_type
         ])

@@ -2,13 +2,14 @@ defmodule Vae.Booklet.Experience do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Vae.Booklet.Address
+
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do
     field(:uuid, :string)
     field(:title, :string)
     field(:company_name, :string)
-    field(:full_address, :string)
     field(:job_industry, :string)
     field(:employment_type, :integer)
 
@@ -33,13 +34,14 @@ defmodule Vae.Booklet.Experience do
         |> cast(params, [:start_date, :end_date, :week_hours_duration])
       end
     end
+
+    embeds_one(:full_address, Address, on_replace: :delete)
   end
 
   @fields ~w(
     uuid
     title
     company_name
-    full_address
     job_industry
     employment_type
   )a
@@ -49,5 +51,6 @@ defmodule Vae.Booklet.Experience do
     |> cast(params, @fields)
     |> cast_embed(:skills)
     |> cast_embed(:periods)
+    |> cast_embed(:full_address)
   end
 end

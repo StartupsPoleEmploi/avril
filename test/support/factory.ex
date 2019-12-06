@@ -166,7 +166,15 @@ defmodule Vae.Factory do
           uuid: "1",
           title: "Responsable Boucherie",
           company_name: "Butcher Market",
-          full_address: "Centre commercial Binard",
+          full_address: %{
+            city: "Saint-Malo",
+            country: "FR",
+            domTom: nil,
+            lat: 32.1111,
+            lng: 2.1111,
+            postal_code: "35000",
+            street: "Centre commercial Binard"
+          },
           job_industry: "H",
           employment_type: 1,
           periods: [
@@ -195,7 +203,15 @@ defmodule Vae.Factory do
           uuid: "2",
           title: "Responsable Patisserie",
           company_name: "Baker Market",
-          full_address: "Centre commercial 2e gauche",
+          full_address: %{
+            city: "Saint-Malo",
+            country: "FR",
+            domTom: nil,
+            lat: 32.1111,
+            lng: 2.1111,
+            postal_code: "35000",
+            street: "Centre commercial Binard"
+          },
           job_industry: "H",
           employment_type: 4,
           periods: [
