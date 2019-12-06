@@ -12,7 +12,6 @@ defmodule Vae.Plugs.ApplicationAccess do
     do: execute(conn, {:id, application_id}, options)
 
   def call(%{params: %{"id" => application_id}} = conn, options) do
-    IO.inspect(options, label: "OPTIONS")
     execute(conn, {:id, application_id}, options)
   end
 
