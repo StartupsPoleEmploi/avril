@@ -51,6 +51,8 @@ defmodule Vae.Plugs.ApplicationAccess do
     end
   end
 
+  defp has_access?(conn, application, opts \\ nil)
+
   defp has_access?(conn, nil, _opts), do: {:ok, nil}
 
   defp has_access?(conn, application, nil) do
@@ -69,7 +71,7 @@ defmodule Vae.Plugs.ApplicationAccess do
     end
   end
 
-  defp has_access?(_conn, _application, {_hash_key, nil}), do: {:ok, nil}
+  defp has_access?(conn, application, {_hash_key, nil}), do: has_access?(conn, application)
 
   defp has_access?(conn, application, {hash_key, hash_value}) do
     # && Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10))
