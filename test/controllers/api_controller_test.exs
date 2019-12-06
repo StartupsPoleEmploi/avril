@@ -6,17 +6,25 @@ defmodule Vae.ApiControllerTest do
   test "init cerfa with application values", %{conn: conn} do
     date = Date.utc_today()
 
-    application = insert!(:application, date)
+    {application, delegate} =
+      insert!(:application, date)
+      |> put_delegate_with_certifier()
 
     response =
       Plug.Conn.assign(conn, :current_application, application)
       |> get("/api/booklet?hash=123456")
       |> json_response(200)
 
+    certifier_name =
+      delegate.certifiers
+      |> hd()
+      |> Map.get(:name)
+
     expected_response = %{
       "status" => "ok",
       "data" => %{
         "certification_name" => "BT my certification",
+        "certififier_name" => certifier_name,
         "civility" => %{
           "birth_place" => %{
             "city" => "Dijon",
@@ -27,7 +35,7 @@ defmodule Vae.ApiControllerTest do
             "postal_code" => nil,
             "street" => nil
           },
-          "birthday" => "2019-12-05",
+          "birthday" => "#{date}",
           "email" => "john@doe.com",
           "first_name" => "John",
           "full_address" => %{
@@ -115,6 +123,8 @@ defmodule Vae.ApiControllerTest do
       }
     }
 
+    assert response["data"]["certification_name"] == "BT my certification"
+    assert response["data"]["certifier_name"] == certifier_name
     assert_status_is_ok?(response)
     assert_civility(response, expected_response)
     assert_experiences(response, expected_response)
@@ -188,7 +198,7 @@ defmodule Vae.ApiControllerTest do
             "postal_code" => nil,
             "street" => nil
           },
-          "birthday" => "2019-12-05",
+          "birthday" => "#{date}",
           "email" => "john@smith.com",
           "first_name" => "John",
           "full_address" => %{
@@ -222,7 +232,10 @@ defmodule Vae.ApiControllerTest do
 
   test "update booklet civilty", %{conn: conn} do
     date = Date.utc_today()
-    application = insert!(:application, date)
+
+    {application, _delegate} =
+      insert!(:application, date)
+      |> put_delegate_with_certifier()
 
     conn = Plug.Conn.assign(conn, :current_application, application)
 
@@ -389,7 +402,10 @@ defmodule Vae.ApiControllerTest do
 
   test "update booklet education", %{conn: conn} do
     date = Date.utc_today()
-    application = insert!(:application, date)
+
+    {application, _delegate} =
+      insert!(:application, date)
+      |> put_delegate_with_certifier()
 
     conn = Plug.Conn.assign(conn, :current_application, application)
 
@@ -463,7 +479,10 @@ defmodule Vae.ApiControllerTest do
 
   test "update booklet experiences", %{conn: conn} do
     date = Date.utc_today()
-    application = insert!(:application, date)
+
+    {application, _delegate} =
+      insert!(:application, date)
+      |> put_delegate_with_certifier()
 
     conn = Plug.Conn.assign(conn, :current_application, application)
 
@@ -1039,5 +1058,22 @@ defmodule Vae.ApiControllerTest do
         ]
       }
     ]
+  end
+
+  defp put_delegate_with_certifier(application) do
+    with delegate <-
+           insert!(:certifier_with_one_delegate)
+           |> Vae.Repo.preload(:delegates)
+           |> Map.get(:delegates)
+           |> hd()
+           |> Vae.Repo.preload(:certifiers),
+         {:ok, application} <-
+           application
+           |> Vae.Repo.preload(:delegate)
+           |> Ecto.Changeset.change()
+           |> Ecto.Changeset.put_assoc(:delegate, delegate)
+           |> Vae.Repo.update() do
+      {application, delegate}
+    end
   end
 end

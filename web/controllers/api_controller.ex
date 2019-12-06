@@ -49,6 +49,7 @@ defmodule Vae.ApiController do
 
     %Vae.Booklet.Cerfa{
       certification_name: Certification.name(application.certification),
+      certifier_name: Application.certifier_name(application),
       civility: %Vae.Booklet.Civility{
         gender: user.gender,
         birthday: user.birthday,

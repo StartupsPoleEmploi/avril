@@ -162,6 +162,14 @@ defmodule Vae.Application do
     |> Repo.update()
   end
 
+  def certifier_name(application) do
+    application
+    |> Repo.preload(delegate: :certifiers)
+    |> get_in([Access.key(:delegate), Access.key(:certifiers)])
+    |> hd()
+    |> Map.get(:name)
+  end
+
   defp generate_hash(length) do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end

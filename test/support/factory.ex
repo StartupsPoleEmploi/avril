@@ -35,7 +35,6 @@ defmodule Vae.Factory do
   def build(:application, date) do
     %Vae.Application{
       user: build({:user, date}),
-      delegate: build(:delegate),
       certification: build(:certification),
       booklet_hash: "123456"
     }
