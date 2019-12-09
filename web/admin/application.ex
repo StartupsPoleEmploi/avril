@@ -2,11 +2,12 @@ defmodule Vae.ExAdmin.Application do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-  alias Vae.{Application, Certification, Delegate, Repo, User}
+  # Note: Vae.Application cannot be aliased here: ex_admin fails
+  alias Vae.{Certification, Delegate, Repo, User}
 
   require Ecto.Query
 
-  register_resource Application do
+  register_resource Vae.Application do
 
     index do
       selectable_column()
@@ -26,7 +27,7 @@ defmodule Vae.ExAdmin.Application do
     end
 
     action_item :show, fn id ->
-      application = Vae.Repo.get(Application, id)
+      application = Vae.Repo.get(Vae. Application, id)
       href = Vae.Router.Helpers.application_path(Vae.Endpoint, :show, application,
         hash: application.delegate_access_hash
       )
@@ -34,20 +35,20 @@ defmodule Vae.ExAdmin.Application do
     end
 
     action_item :show, fn id ->
-      application = Vae.Repo.get(Application, id)
+      application = Vae.Repo.get(Vae. Application, id)
       href = Vae.Router.Helpers.application_path(Vae.Endpoint, :update, application)
       action_item_link "Submit Application", href: href, "data-method": :put
     end
 
     action_item :show, fn id ->
-      application = Vae.Repo.get(Application, id)
+      application = Vae.Repo.get(Vae. Application, id)
       href = Vae.Router.Helpers.application_download_path(Vae.Endpoint, :download, application)
       action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
     end
 
     action_item :show, fn id ->
-      application = Vae.Repo.get(Application, id)
-      action_item_link "Fill Booklet", href: Application.booklet_url(application)
+      application = Vae.Repo.get(Vae. Application, id)
+      action_item_link "Fill Booklet", href: Vae.Application.booklet_url(application), target: "_blank"
     end
 
     show application do
