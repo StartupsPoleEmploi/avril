@@ -19,7 +19,7 @@
         .py-4.text-center
           = render("_select_certification_button.html", conn: @conn, certification: @certification, delegate: @delegate)
     .card-footer.bg-primary.text-secondary
-      h5 Besoin de réfélchir avant de rencontrer votre conseiller VAE ?
+      h5 Besoin de réfléchir avant de rencontrer votre conseiller VAE ?
       p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.
       = form_for @job_seeker_changeset, Routes.job_seeker_path(@conn, :create), [class: "row align-items-center", data: [analytics: "Certification#synthese"]], fn f  ->
         = hidden_input f, :certification_id, value: @certification.id

@@ -117,8 +117,8 @@
                         span.fa.fa-edit
                         |  Modifier mes coordonnées
                       .d-none.save
-                        = submit "Enregistrer", class: "btn btn-primary btn-sm"
-                        = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
+                        = reset "Annuler", class: "btn btn-default btn-sm reset"
+                        = submit "Enregistrer", class: "btn btn-primary btn-sm pull-right"
             .row
               .col
           = if length(@meetings) == 0 || @application.submitted_at do
