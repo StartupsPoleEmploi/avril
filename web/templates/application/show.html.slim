@@ -124,14 +124,13 @@
                           span.fa.fa-edit
                           |  Modifier mes coordonnées
                         .d-none.save
-                          = submit "Enregistrer", class: "btn btn-primary btn-sm"
-                          = reset "Annuler", class: "btn btn-default btn-sm pull-right reset"
+                          = reset "Annuler", class: "btn btn-default btn-sm reset"
+                          = submit "Enregistrer", class: "btn btn-primary btn-sm pull-right"
               .row
                 .col
             = if length(@meetings) == 0 || @application.submitted_at do
               .col-md-6.text-right
                 = render Vae.ComponentView, "call-to-action.html", conn: @conn, application: @application, edit_mode: @edit_mode, meetings: @meetings
-
           .row.mb-5.resume-section
             .col-md-12
               h3.my-4 #{if @edit_mode, do: "Mes", else: "Ses"} CVs
@@ -273,4 +272,4 @@
           .row
             .col-sm-10.offset-1
               p Le dossier de candidature permet au certificateur de vérifier que vous avez bien 1 an d'expérience. Il permet aussi de vérifier que cette expérience a bien un lien avec votre futur diplôme. Et enfin, grâce aux renseignements demandés, le certificateur pourra vous donner son avis sur votre projet.
-              a href="#{@booklet_url}?hash=#{@application.booklet_hash}" class="btn btn-lg btn-primary" Démarrer mon dossier de candidature
+              a href=Application.booklet_url(@application) class="btn btn-lg btn-primary" Démarrer mon dossier de candidature

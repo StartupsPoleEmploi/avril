@@ -170,6 +170,12 @@ defmodule Vae.Application do
     |> Map.get(:name)
   end
 
+  def booklet_url(application) do
+    if System.get_env("NUXT_URL"),
+      do: "#{System.get_env("NUXT_URL")}?hash=#{application.booklet_hash}",
+      else: Logger.warn("NUXT_URL environment variable not set") && nil
+  end
+
   defp generate_hash(length) do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end

@@ -60,8 +60,7 @@ defmodule Vae.ApplicationController do
       application_changeset: Application.changeset(application, %{}),
       preselected_place: preselected_place,
       meetings: meetings,
-      tabs: tabs,
-      booklet_url: System.get_env("NUXT_URL")
+      tabs: tabs
     })
   end
 

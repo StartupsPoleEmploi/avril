@@ -45,6 +45,11 @@ defmodule Vae.ExAdmin.Application do
       action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
     end
 
+    action_item :show, fn id ->
+      application = Vae.Repo.get(Vae.Application, id)
+      action_item_link "Fill Booklet", href: Application.booklet_url(application)
+    end
+
     show application do
       attributes_table do
         row :user
