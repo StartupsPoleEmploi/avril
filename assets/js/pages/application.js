@@ -60,6 +60,16 @@ import $ from 'jquery';
     e.preventDefault();
   })
 
+
+  const goToTab = () => {
+    const $targetLink = $(`a[href='${window.location.hash}'].nav-item`)
+    if ($targetLink.length) {
+      $targetLink.tab('show');
+      window.location.hash = '';
+    }
+  }
+  goToTab();
+
   const activateSubmitButton = () => {
     if ($('select.date-select:not(:disabled)').length) {
       $('form.select-meeting').find('button[name="book"][value="on"]').removeAttr('disabled');

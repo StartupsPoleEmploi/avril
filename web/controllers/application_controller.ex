@@ -20,7 +20,7 @@ defmodule Vae.ApplicationController do
         "request_failed" -> put_flash(conn, :error, "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard.")
         "not_allowed" -> put_flash(conn, :error, "Vous n'avez pas accès.")
         _ -> conn
-      end |> redirect(to: Routes.application_path(conn, :show, current_application))
+      end |> redirect(to: "#{Routes.application_path(conn, :show, current_application)}#booklet")
     else
       error ->
         conn
