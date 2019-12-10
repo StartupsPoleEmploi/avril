@@ -5,8 +5,29 @@ defmodule Vae.ApplicationController do
   alias Vae.{Application, Delegate, Repo, Resume, User}
   alias Vae.Crm.Polls
 
-  plug Vae.Plugs.ApplicationAccess when action not in [:show, :current, :admissible, :inadmissible]
+  plug Vae.Plugs.ApplicationAccess when action not in [:index, :show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [verify_with_hash: :delegate_access_hash] when action in [:show]
+
+  def index(conn, %{"hash" => hash} = params) do
+    with(
+      current_user when not is_nil(current_user)
+        <- Coherence.current_user(conn),
+      current_application when not is_nil(current_application)
+        <- Repo.preload(current_user, :applications).applications
+          |> Enum.find(fn a -> a.booklet_hash == hash end)
+    ) do
+      case params["msg"] do
+        "request_failed" -> put_flash(conn, :error, "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard.")
+        "not_allowed" -> put_flash(conn, :error, "Vous n'avez pas accès.")
+        _ -> conn
+      end |> redirect(to: Routes.application_path(conn, :show, current_application))
+    else
+      error ->
+        conn
+          |> put_flash(:error, "Vous n'avez pas accès")
+          |> redirect(to: Routes.root_path(conn, :index))
+    end
+  end
 
   def show(conn, %{"id" => _id} = params) do
     application =
@@ -105,28 +126,6 @@ defmodule Vae.ApplicationController do
         conn
           |> put_flash(:error, "Une erreur est survenue, merci de réessayer plus tard")
           |> redirect(to: Routes.application_path(conn, :show, application))
-    end
-  end
-
-  def current(conn, params) do
-    with(
-      current_user when not is_nil(current_user)
-        <- Coherence.current_user(conn),
-      current_application when not is_nil(current_application)
-        <- Repo.preload(current_user, :applications).applications
-          |> Enum.sort_by(fn a -> Map.get(a, :updated_at) end)
-          |> List.first
-    ) do
-      case params["msg"] do
-        "request_failed" -> put_flash(conn, :error, "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard.")
-        "not_allowed" -> put_flash(conn, :error, "Vous n'avez pas accès.")
-        _ -> conn
-      end |> redirect(to: Routes.application_path(conn, :show, current_application))
-    else
-      error ->
-        conn
-          |> put_flash(:error, "Vous n'avez pas accès")
-          |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 

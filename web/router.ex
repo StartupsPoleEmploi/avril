@@ -81,8 +81,7 @@ defmodule Vae.Router do
     get("/:provider/redirect", Vae.AuthController, :save_session_and_redirect)
 
     # Loggued in applications
-    get("/candidatures/actuelle", Vae.ApplicationController, :current, as: :current)
-    resources("/candidatures", Vae.ApplicationController, only: [:show, :update]) do
+    resources("/candidatures", Vae.ApplicationController, only: [:index, :show, :update]) do
       get("/telecharger", Vae.ApplicationController, :download, as: :download)
 
       get("/france-vae-redirect", Vae.ApplicationController, :france_vae_redirect,
