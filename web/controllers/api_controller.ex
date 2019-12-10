@@ -56,6 +56,7 @@ defmodule Vae.ApiController do
         birth_place: %Vae.Booklet.Address{
           city: user.birth_place
         },
+        is_handicapped: false,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
@@ -116,6 +117,7 @@ defmodule Vae.ApiController do
       "CUI" -> 10
       "Professionnalisation" -> 9
       "Apprentissage" -> 8
+      _ -> 1
     end
   end
 end
