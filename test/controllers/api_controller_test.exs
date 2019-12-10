@@ -35,6 +35,7 @@ defmodule Vae.ApiControllerTest do
             "postal_code" => nil,
             "street" => nil
           },
+          "nationality" => nil,
           "current_situation" => nil,
           "is_handicapped" => false,
           "birthday" => "#{date}",
@@ -49,7 +50,7 @@ defmodule Vae.ApiControllerTest do
             "postal_code" => "75000",
             "street" => "Street 1, Street 2"
           },
-          "gender" => "M",
+          "gender" => "m",
           "home_phone" => nil,
           "last_name" => "Doe",
           "mobile_phone" => "0102030405",
@@ -208,6 +209,10 @@ defmodule Vae.ApiControllerTest do
         ],
         "certification_name" => "BT my certification",
         "civility" => %{
+          "nationality" => %{
+            "country" => "France",
+            "country_code" => "FR"
+          },
           "birth_place" => %{
             "city" => "Saint-Malo",
             "country" => nil,
@@ -231,7 +236,7 @@ defmodule Vae.ApiControllerTest do
           },
           "current_situation" => nil,
           "is_handicapped" => nil,
-          "gender" => "M",
+          "gender" => "m",
           "home_phone" => "0300000000",
           "last_name" => "Doe",
           "mobile_phone" => "0600000000",
@@ -266,7 +271,7 @@ defmodule Vae.ApiControllerTest do
       |> json_response(200)
 
     assert response["data"]["certification_name"] == "BT my certification"
-    assert response["data"]["civility"]["gender"] == "M"
+    assert response["data"]["civility"]["gender"] == "m"
     assert response["data"]["civility"]["birthday"] == "#{date}"
 
     assert response["data"]["civility"]["full_address"] == %{
@@ -293,7 +298,11 @@ defmodule Vae.ApiControllerTest do
     params = %{
       "certification_name" => "plop",
       "civility" => %{
-        "gender" => "F",
+        "nationality" => %{
+          "country" => "Espagne",
+          "country_code" => "ES"
+        },
+        "gender" => "f",
         "birthday" => "2000-11-30",
         "birth_place" => %{
           "city" => "Dijon",
@@ -342,7 +351,11 @@ defmodule Vae.ApiControllerTest do
     params = %{
       "certification_name" => "plip",
       "civility" => %{
-        "gender" => "M",
+        "nationality" => %{
+          "country" => "France",
+          "country_code" => "FR"
+        },
+        "gender" => "m",
         "birthday" => "2000-12-30",
         "birth_place" => %{
           "city" => "Paris",
