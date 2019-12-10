@@ -42,7 +42,7 @@ defmodule Vae.Factory do
 
   def build({:user, date}) do
     %Vae.User{
-      gender: "M",
+      gender: "male",
       first_name: "John",
       last_name: "Doe",
       email: "john@doe.com",
@@ -118,7 +118,11 @@ defmodule Vae.Factory do
       certifier_name: "Certifier",
       certification_name: "BT my certification",
       civility: %{
-        gender: "M",
+        nationality: %{
+          country: "France",
+          country_code: "FR"
+        },
+        gender: "m",
         birthday: date,
         birth_place: %{
           city: "Saint-Malo",

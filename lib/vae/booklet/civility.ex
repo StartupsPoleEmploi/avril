@@ -20,6 +20,17 @@ defmodule Vae.Booklet.Civility do
     embeds_one(:birth_place, Address, on_replace: :delete)
     embeds_one(:full_address, Address, on_replace: :delete)
     embeds_one(:current_situation, CurrentSituation, on_replace: :delete)
+
+    embeds_one :nationality, Nationality, primary_key: false, on_replace: :delete do
+      @derive Jason.Encoder
+      field(:country, :string)
+      field(:country_code, :string)
+
+      def changeset(struct, params \\ %{}) do
+        struct
+        |> cast(params, [:country, :country_code])
+      end
+    end
   end
 
   @fields ~w(
@@ -40,5 +51,6 @@ defmodule Vae.Booklet.Civility do
     |> cast_embed(:birth_place)
     |> cast_embed(:full_address)
     |> cast_embed(:current_situation)
+    |> cast_embed(:nationality)
   end
 end
