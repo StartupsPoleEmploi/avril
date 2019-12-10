@@ -4,7 +4,7 @@ services:
   postgres:
     env_file:
       - ".env"
-    image: "postgres:11.0-alpine"
+    image: "postgres:11.6-alpine"
     restart: always
     volumes:
       # - pgdata:/var/lib/postgresql/data
