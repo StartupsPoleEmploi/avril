@@ -2,7 +2,7 @@ defmodule Vae.Booklet.Civility do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Vae.Booklet.Address
+  alias Vae.Booklet.{Address, CurrentSituation}
 
   @primary_key false
   @derive Jason.Encoder
@@ -15,9 +15,11 @@ defmodule Vae.Booklet.Civility do
     field(:email, :string)
     field(:home_phone, :string)
     field(:mobile_phone, :string)
+    field(:is_handicapped, :boolean)
 
     embeds_one(:birth_place, Address, on_replace: :delete)
     embeds_one(:full_address, Address, on_replace: :delete)
+    embeds_one(:current_situation, CurrentSituation, on_replace: :delete)
   end
 
   @fields ~w(
@@ -29,6 +31,7 @@ defmodule Vae.Booklet.Civility do
     email
     home_phone
     mobile_phone
+    is_handicapped
   )a
 
   def changeset(struct, params \\ %{}) do
@@ -36,5 +39,6 @@ defmodule Vae.Booklet.Civility do
     |> cast(params, @fields)
     |> cast_embed(:birth_place)
     |> cast_embed(:full_address)
+    |> cast_embed(:current_situation)
   end
 end

@@ -35,6 +35,8 @@ defmodule Vae.ApiControllerTest do
             "postal_code" => nil,
             "street" => nil
           },
+          "current_situation" => nil,
+          "is_handicapped" => false,
           "birthday" => "#{date}",
           "email" => "john@doe.com",
           "first_name" => "John",
@@ -56,8 +58,8 @@ defmodule Vae.ApiControllerTest do
         "education" => nil,
         "experiences" => [
           %{
-            "company_name" => nil,
-            "employment_type" => nil,
+            "company_name" => "Ads Securite ",
+            "employment_type" => 1,
             "full_address" => nil,
             "job_industry" => nil,
             "skills" => [],
@@ -72,8 +74,8 @@ defmodule Vae.ApiControllerTest do
             "uuid" => nil
           },
           %{
-            "company_name" => nil,
-            "employment_type" => nil,
+            "company_name" => "Suissa Elec",
+            "employment_type" => 1,
             "full_address" => nil,
             "job_industry" => nil,
             "skills" => [],
@@ -88,8 +90,8 @@ defmodule Vae.ApiControllerTest do
             "uuid" => nil
           },
           %{
-            "company_name" => nil,
-            "employment_type" => nil,
+            "company_name" => "Ecus Ondulique",
+            "employment_type" => 1,
             "full_address" => nil,
             "job_industry" => nil,
             "skills" => [],
@@ -104,8 +106,8 @@ defmodule Vae.ApiControllerTest do
             "uuid" => nil
           },
           %{
-            "company_name" => nil,
-            "employment_type" => nil,
+            "company_name" => "Dan'diag",
+            "employment_type" => 1,
             "full_address" => nil,
             "job_industry" => nil,
             "skills" => [],
@@ -142,6 +144,7 @@ defmodule Vae.ApiControllerTest do
     expected_response = %{
       "status" => "ok",
       "data" => %{
+        "certififier_name" => "Certifier",
         "education" => %{
           "courses" => [%{"label" => "CAPES"}, %{"label" => "CACES"}],
           "degree" => 1,
@@ -226,6 +229,8 @@ defmodule Vae.ApiControllerTest do
             "lat" => 45.3333,
             "lng" => 2.4323
           },
+          "current_situation" => nil,
+          "is_handicapped" => nil,
           "gender" => "M",
           "home_phone" => "0300000000",
           "last_name" => "Doe",
@@ -297,6 +302,14 @@ defmodule Vae.ApiControllerTest do
           "lat" => 47.323,
           "lng" => 5.04198
         },
+        "current_situation" => %{
+          "status" => "employee",
+          "employment_type" => "CDI",
+          "register_to_pole_emploi" => "true",
+          "register_to_pole_emploi_since" => "2019-11-01",
+          "compensation_type" => "AAH"
+        },
+        "is_handicapped" => "true",
         "first_name" => "Jeanne",
         "last_name" => "Daux",
         "usage_name" => "Martins",
@@ -338,6 +351,13 @@ defmodule Vae.ApiControllerTest do
           "lat" => 52.323,
           "lng" => 6.04198
         },
+        "current_situation" => %{
+          "status" => "job_seeker",
+          "employment_type" => nil,
+          "register_to_pole_emploi" => "true",
+          "compensation_type" => "RSA"
+        },
+        "is_handicapped" => "false",
         "first_name" => "Pierre",
         "last_name" => "Faux",
         "usage_name" => "",
@@ -844,7 +864,7 @@ defmodule Vae.ApiControllerTest do
         label: "baz",
         company_name: "bar",
         full_address: nil,
-        contract_type: 1,
+        contract_type: 2,
         start_date: ~D[2019-01-02],
         end_date: ~D[2019-01-05],
         week_hours_duration: 35
@@ -874,7 +894,7 @@ defmodule Vae.ApiControllerTest do
                },
                %Vae.Booklet.Experience{
                  company_name: "bar",
-                 employment_type: 2,
+                 employment_type: 1,
                  full_address: nil,
                  job_industry: nil,
                  periods: [
@@ -890,7 +910,7 @@ defmodule Vae.ApiControllerTest do
                },
                %Vae.Booklet.Experience{
                  company_name: "bar",
-                 employment_type: 3,
+                 employment_type: 1,
                  full_address: nil,
                  job_industry: nil,
                  periods: [
@@ -926,6 +946,9 @@ defmodule Vae.ApiControllerTest do
         %{"data" => %{"experiences" => given_experiences}},
         %{"data" => %{"experiences" => expected_experiences}}
       ) do
+    given_experiences = Enum.sort_by(given_experiences, fn xp -> xp["company_name"] end)
+    expected_experiences = Enum.sort_by(expected_experiences, fn xp -> xp["company_name"] end)
+
     assert_experiences_meta(given_experiences, expected_experiences)
     assert_experiences_skills(given_experiences, expected_experiences)
     assert_experiences_periods(given_experiences, expected_experiences)
@@ -988,120 +1011,6 @@ defmodule Vae.ApiControllerTest do
       experience["periods"]
     end)
     |> Enum.sort_by(& &1["start_date"])
-  end
-
-  def foo() do
-    [
-      %Vae.Booklet.Experience{
-        company_name: "bar",
-        employment_type: 1,
-        full_address: nil,
-        job_industry: nil,
-        periods: [
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          }
-        ],
-        skills: [],
-        title: "baz",
-        uuid: nil
-      },
-      %Vae.Booklet.Experience{
-        company_name: "bar",
-        full_address: nil,
-        job_industry: nil,
-        skills: [],
-        title: "foo",
-        uuid: nil,
-        employment_type: 1,
-        periods: [
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          },
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          }
-        ]
-      },
-      %Vae.Booklet.Experience{
-        company_name: "bar",
-        full_address: nil,
-        job_industry: nil,
-        skills: [],
-        title: "foo",
-        uuid: nil,
-        employment_type: 2,
-        periods: [
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          }
-        ]
-      }
-    ]
-
-    [
-      %Vae.Booklet.Experience{
-        company_name: "bar",
-        employment_type: 1,
-        full_address: nil,
-        job_industry: nil,
-        periods: [
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          }
-        ],
-        skills: [],
-        title: "baz",
-        uuid: nil
-      },
-      %Vae.Booklet.Experience{
-        company_name: "bar",
-        full_address: nil,
-        job_industry: nil,
-        skills: [],
-        title: "foo",
-        uuid: nil,
-        employment_type: 2,
-        periods: [
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          }
-        ]
-      },
-      %Vae.Booklet.Experience{
-        company_name: "bar",
-        full_address: nil,
-        job_industry: nil,
-        skills: [],
-        title: "foo",
-        uuid: nil,
-        employment_type: 1,
-        periods: [
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          },
-          %Vae.Booklet.Experience.Period{
-            end_date: ~D[2019-01-05],
-            start_date: ~D[2019-01-02],
-            week_hours_duration: 35
-          }
-        ]
-      }
-    ]
   end
 
   defp put_delegate_with_certifier(application) do

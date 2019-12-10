@@ -56,6 +56,7 @@ defmodule Vae.ApiController do
         birth_place: %Vae.Booklet.Address{
           city: user.birth_place
         },
+        is_handicapped: false,
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
@@ -89,7 +90,7 @@ defmodule Vae.ApiController do
         | title: h.label,
           company_name: h.company_name,
           full_address: nil,
-          employment_type: h.contract_type,
+          employment_type: map_contract_type_from_string(h.contract_type),
           periods: [
             %Vae.Booklet.Experience.Period{
               start_date: h.start_date,
@@ -108,5 +109,15 @@ defmodule Vae.ApiController do
     Enum.map(experiences, fn {[company_name, label, contract], data} ->
       merge_periods_into_experience(data, %Vae.Booklet.Experience{})
     end)
+  end
+
+  def map_contract_type_from_string(status) do
+    case status do
+      s when s in ["CDI", "CDD", "CTT"] -> 1
+      "CUI" -> 10
+      "Professionnalisation" -> 9
+      "Apprentissage" -> 8
+      _ -> 1
+    end
   end
 end

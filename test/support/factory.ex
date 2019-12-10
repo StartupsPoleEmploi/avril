@@ -64,7 +64,7 @@ defmodule Vae.Factory do
     [
       %{
         label: "Chargé d'affaires Vidéosurveillance, alarme, gestion des accès ",
-        company: "Ads Securite ",
+        company_name: "Ads Securite ",
         duration: 7,
         end_date: "2019-06-30T22:00:00Z",
         is_abroad: false,
@@ -73,7 +73,7 @@ defmodule Vae.Factory do
       },
       %{
         label: "President Sas",
-        company: "Suissa Elec",
+        company_name: "Suissa Elec",
         duration: 28,
         end_date: "2017-12-31T23:00:00Z",
         is_abroad: false,
@@ -82,7 +82,7 @@ defmodule Vae.Factory do
       },
       %{
         label: "Ingénieur d'affaires",
-        company: "Ecus Ondulique",
+        company_name: "Ecus Ondulique",
         duration: 21,
         end_date: "2014-08-31T22:00:00Z",
         is_abroad: false,
@@ -91,7 +91,7 @@ defmodule Vae.Factory do
       },
       %{
         label: "Entrepreneur et opérateur certifié",
-        company: "Dan'diag",
+        company_name: "Dan'diag",
         duration: 33,
         end_date: "2012-08-31T22:00:00Z",
         is_abroad: false,
@@ -115,6 +115,7 @@ defmodule Vae.Factory do
     application = insert!(:application, date) |> Repo.preload(:resumes)
 
     cerfa = %{
+      certifier_name: "Certifier",
       certification_name: "BT my certification",
       civility: %{
         gender: "M",
