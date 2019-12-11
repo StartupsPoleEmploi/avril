@@ -31,9 +31,12 @@ defmodule Vae.ProvenExperience do
   end
 
   def experiencesprofessionellesdeclareesparlemployeur_api_map(api_fields) do
+    # If the experience is not finished, we receive '01/01/4000', which must be changed to nil
+    end_date = Vae.Date.format(api_fields["dateFin"])
+    end_date = if end_date && Date.compare(Timex.today(), end_date) == :gt, do: end_date
     %__MODULE__{
       start_date: Vae.Date.format(api_fields["dateDebut"]),
-      end_date: Vae.Date.format(api_fields["dateFin"]),
+      end_date: end_date,
       duration: api_fields["dureeContrat"],
       label: Vae.String.titleize(api_fields["intitulePoste"]),
       contract_type: api_fields["natureContrat"],
