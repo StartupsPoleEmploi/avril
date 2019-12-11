@@ -3,11 +3,10 @@ defmodule Vae.ApiController do
   require Logger
 
   alias Vae.{Application, Certification, User}
-  alias Vae.Booklet.Cerfa
 
   plug Vae.Plugs.ApplicationAccess, find_with_hash: :booklet_hash
 
-  def get_booklet(conn, %{"hash" => hash}) do
+  def get_booklet(conn, %{"hash" => _hash}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user, :certification])
@@ -27,7 +26,7 @@ defmodule Vae.ApiController do
     })
   end
 
-  def set_booklet(conn, %{"hash" => hash} = params) do
+  def set_booklet(conn, %{"hash" => _hash} = params) do
     conn.assigns[:current_application]
     |> Application.save_booklet(%{"booklet_1" => params})
     |> case do
@@ -109,7 +108,7 @@ defmodule Vae.ApiController do
   def map_experiences([]), do: []
 
   def map_experiences(experiences) do
-    Enum.map(experiences, fn {[company_name, label, contract], data} ->
+    Enum.map(experiences, fn {[_company_name, _label, _contract], data} ->
       merge_periods_into_experience(data, %Vae.Booklet.Experience{})
     end)
   end

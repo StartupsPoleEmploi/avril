@@ -22,7 +22,7 @@ defmodule Vae.ApplicationController do
         _ -> conn
       end |> redirect(to: "#{Routes.application_path(conn, :show, current_application)}#booklet")
     else
-      error ->
+      _error ->
         conn
           |> put_flash(:error, "Vous n'avez pas accès")
           |> redirect(to: Routes.root_path(conn, :index))
