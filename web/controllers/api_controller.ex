@@ -97,7 +97,7 @@ defmodule Vae.ApiController do
               start_date: h.start_date,
               # This could be removed if data is migrated to change 01/01/4000 end dates to nil
               # CF. proven_experiences.ex
-              end_date: if h.end_date && Date.compare(Timex.today(), h.end_date) == :gt, do: h.end_date,
+              end_date: (if h.end_date && Date.compare(Timex.today(), h.end_date) == :gt, do: h.end_date),
               week_hours_duration: 35
             }
             | acc.periods
