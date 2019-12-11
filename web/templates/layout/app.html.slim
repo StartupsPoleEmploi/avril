@@ -6,12 +6,13 @@
       = render ComponentView, "navbar.html", conn: @conn
       = render ComponentView, "flash.html", conn: @conn
     #content.content class="#{unless assigns[:no_container], do: "container"} #{assigns[:container_class]}"
-      = if assigns[:is_landing] do
+      = if assigns[:is_landing] || assigns[:return_button] do
         .back-and-cta
           button.btn.btn-link.btn-history-back
             span.fa.fa-chevron-left.mr-1
             |  Retour
-          = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary"
+          = if assigns[:is_landing] do
+            = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "btn btn-primary"
         = if assigns[:no_wrapper] do
           = render @view_module, @view_template, assigns
         - else

@@ -29,7 +29,7 @@ defmodule Vae.PageController do
     render(conn, "receipts.html",
       title: "Les justificatifs de la VAE",
       description: "La liste des justificatifs à fournir peut varier grandement selon la situation du candidat : voici le détail.",
-      is_landing: true
+      return_button: true
     )
   end
 

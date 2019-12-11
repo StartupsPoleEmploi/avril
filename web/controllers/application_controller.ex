@@ -8,13 +8,13 @@ defmodule Vae.ApplicationController do
   plug Vae.Plugs.ApplicationAccess when action not in [:index, :show, :admissible, :inadmissible]
   plug Vae.Plugs.ApplicationAccess, [verify_with_hash: :delegate_access_hash] when action in [:show]
 
-  def index(conn, %{"hash" => hash} = params) do
+  def index(conn, params) do
     with(
       current_user when not is_nil(current_user)
         <- Coherence.current_user(conn),
       current_application when not is_nil(current_application)
         <- Repo.preload(current_user, :applications).applications
-          |> Enum.find(fn a -> a.booklet_hash == hash end)
+          |> Enum.find(fn a -> a.booklet_hash == params["hash"] end)
     ) do
       case params["msg"] do
         "request_failed" -> put_flash(conn, :error, "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard.")

@@ -51,6 +51,11 @@ defmodule Vae.ExAdmin.Application do
       action_item_link "Fill Booklet", href: Vae.Application.booklet_url(application), target: "_blank"
     end
 
+    action_item :show, fn id ->
+      application = Vae.Repo.get(Vae. Application, id)
+      action_item_link "Check CERFA", href: Vae.Application.booklet_url(application, "/cerfa"), target: "_blank"
+    end
+
     show application do
       attributes_table do
         row :user
