@@ -5,6 +5,8 @@ footer
       li.nav-item
         = render "active_link.html", text: "Mentions légales", class: "nav-link", to: Routes.page_path(@conn, :terms_of_use), conn: @conn
       li.nav-item
+        = render "active_link.html", text: "Justificatifs", class: "nav-link", to: Routes.page_path(@conn, :receipts), conn: @conn
+      li.nav-item
         = render "active_link.html", text: "Métiers", class: "nav-link", to: Routes.profession_path(@conn, :index), conn: @conn
       li.nav-item
         = render "active_link.html", text: "Diplômes", class: "nav-link", to: Routes.certification_path(@conn, :index), conn: @conn

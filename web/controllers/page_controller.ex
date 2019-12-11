@@ -25,6 +25,14 @@ defmodule Vae.PageController do
     )
   end
 
+  def receipts(conn, _params) do
+    render(conn, "receipts.html",
+      title: "Les justificatifs de la VAE",
+      description: "La liste des justificatifs à fournir peut varier grandement selon la situation du candidat : voici le détail.",
+      is_landing: true
+    )
+  end
+
   def choose_certification(conn, _params) do
     render(conn, "choose-certification.html",
       title: "Comment bien choisir son diplôme ?",

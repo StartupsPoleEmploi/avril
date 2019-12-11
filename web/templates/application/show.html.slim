@@ -269,20 +269,49 @@
                     button.btn.btn-link type="submit" name="book" value="off" data-analytics="Profil#Sans Reunion information" Non merci, je veux juste transmettre mon dossier VAE
       = if Enum.member?(@tabs, :profile) do
         #booklet.tab-pane.fade role="tabpanel" aria-labelledby="booklet-tab"
-          .row
-            .col-sm-8.offset-2
-              p Le dossier de candidature permet au certificateur de vérifier que vous avez bien 1 an d'expérience. Il permet aussi de vérifier que cette expérience a bien un lien avec votre futur diplôme.
-              p Et enfin, grâce aux renseignements demandés, le certificateur pourra vous donner son avis sur votre projet, c'est à dire qu'il pourra se prononcer sur la recevabilité de votre demande.
-          .row style="margin-top: 2rem;"
-            .col-sm-12.text-center
-              a href=Vae.Application.booklet_url(@application) class="btn btn-md btn-primary"
+          = if @application.booklet_1.is_complete do
+            .row
+              .col-sm-8.offset-2
+                h3 Par ici la suite !
+
+                p Bravo ! Vous avez finalisé votre dossier de recevabilité.
+                p Il n’y a plus qu’à le transmettre.
+
+                ol
+                  li
+                    a href="#{Vae.Application.booklet_url(@application, '/cerfa')}" class="btn btn-md btn-secondary"
+                      | Téléchargez votre dossier
+                    | puis imprimez-le.
+                  li N’oubliez pas de dater et signer le document à la fin.
+                  li Rassemblez les pièces justificatives, voir liste ci-après.
+                  li
+                    | Envoyez le tout par voie postale à
+                    strong #{@application.delete.name}, #{@application.delete.address}
+                p Vous recevrez la réponse sous 2 mois maximum. Sachez que la loi stipule qu’une non-réponse au bout de 2 mois vaut accord, si votre dossier était complet.
+
+                hr
+
+                h4 Documents à fournir (photocopies, pas besoin de fournir les originaux) :
+                ul
+                  li Photocopie de carte nationale d’identité ou de passeport, en cours de validité ou périmés depuis moins de 5 ans
+                  li Justificatif pour toutes les formations, ou diplômes que vous avez cités dans votre dossier
+                  li Pour les emplois salariés, l’attestation employeur ou le contrat de travail avec vos fiches de paie
+                  li Si vous avez des emplois non-salariés, l’attestation d’inscription auprès des organismes habilités et les justificatifs de la durée de cette inscription (registre du commerce ou des sociétés, registre des métiers, URSSAF ou tout autre document pouvant attester de votre activité professionnelle indépendante).
+
+                = link("Voir l’ensemble des justificatifs pour toutes les situations", to: Routes.page_path(@conn, :receipts))
+          - else
+            .row
+              .col-sm-8.offset-2
+                p Le dossier de candidature permet au certificateur de vérifier que vous avez bien 1 an d'expérience. Il permet aussi de vérifier que cette expérience a bien un lien avec votre futur diplôme.
+                p Et enfin, grâce aux renseignements demandés, le certificateur pourra vous donner son avis sur votre projet, c'est à dire qu'il pourra se prononcer sur la recevabilité de votre demande.
+            .row style="margin-top: 2rem;"
+              .col-sm-12.text-center
+                a href=Vae.Application.booklet_url(@application) class="btn btn-md btn-primary"
+                  = if @application.booklet_1 do
+                    | Modifier mon dossier de candidature
+                  - else
+                    | Démarrer mon dossier de candidature
+            .row style="margin-top: 2rem;"
+              .col-sm-12.text-center
                 = if @application.booklet_1 do
-                  | Modifier mon dossier de candidature
-                - else
-                  | Démarrer mon dossier de candidature
-          .row style="margin-top: 2rem;"
-            .col-sm-12.text-center
-              = if @application.booklet_1 do
-                a href="#{Vae.Application.booklet_url(@application, '/cerfa')}" class="btn btn-md btn-secondary"
-                  | Voir le formulaire CERFA à transmettre
 

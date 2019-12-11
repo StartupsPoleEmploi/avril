@@ -55,6 +55,7 @@ defmodule Vae.Router do
     get("/", Vae.PageController, :index, as: :root)
     get("/vae", Vae.PageController, :vae)
     get("/conditions-generales-d-utilisation", Vae.PageController, :terms_of_use)
+    get("/justificatifs-vae", Vae.PageController, :receipts)
     get("/bien-choisir-son-diplome-vae", Vae.PageController, :choose_certification)
     get("/avril-aime-tous-ses-utilisateurs", Vae.PageController, :accessibility_promess)
     get("/point-relais-conseil-vae", Vae.PageController, :point_relais_conseil)
