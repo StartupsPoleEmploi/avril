@@ -7,6 +7,7 @@ defmodule Vae.Booklet.Cerfa do
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do
+    field(:is_complete, :boolean)
     field(:certification_name, :string)
     field(:certifier_name, :string)
     embeds_one(:civility, Civility, on_replace: :delete)
@@ -16,7 +17,7 @@ defmodule Vae.Booklet.Cerfa do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:certification_name, :certifier_name])
+    |> cast(params, [:is_complete, :certification_name, :certifier_name])
     |> cast_embed(:civility)
     |> cast_embed(:education)
     |> cast_embed(:experiences)
@@ -30,7 +31,7 @@ defmodule Vae.Booklet.Cerfa do
 
   def new_cerfa(params) do
     %__MODULE__{}
-    |> cast(params, [:certification_name, :certifier_name])
+    |> cast(params, [:is_complete, :certification_name, :certifier_name])
     |> cast_embed(:education)
     |> cast_embed(:experiences)
   end
