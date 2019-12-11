@@ -269,7 +269,7 @@
                     button.btn.btn-link type="submit" name="book" value="off" data-analytics="Profil#Sans Reunion information" Non merci, je veux juste transmettre mon dossier VAE
       = if Enum.member?(@tabs, :profile) do
         #booklet.tab-pane.fade role="tabpanel" aria-labelledby="booklet-tab"
-          = if @application.booklet_1.is_complete do
+          = if @application.booklet_1 && @application.booklet_1.completed_at do
             .row
               .col-sm-8.offset-2
                 h3 Par ici la suite !
@@ -311,7 +311,4 @@
                     | Modifier mon dossier de candidature
                   - else
                     | Démarrer mon dossier de candidature
-            .row style="margin-top: 2rem;"
-              .col-sm-12.text-center
-                = if @application.booklet_1 do
 

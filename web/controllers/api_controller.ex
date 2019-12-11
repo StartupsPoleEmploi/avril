@@ -47,7 +47,7 @@ defmodule Vae.ApiController do
     user = application.user
 
     %Vae.Booklet.Cerfa{
-      is_complete: false,
+      completed_at: nil,
       certification_name: Certification.name(application.certification),
       certifier_name: Application.certifier_name(application),
       civility: %Vae.Booklet.Civility{

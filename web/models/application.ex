@@ -155,10 +155,17 @@ defmodule Vae.Application do
     |> Repo.update()
   end
 
-  def put_booklet(application, booklet) do
+  # def put_booklet(application, booklet) do
+  #   application
+  #   |> change()
+  #   |> put_embed(:booklet_1, booklet)
+  #   |> Repo.update()
+  # end
+
+  def reset_booklet(application) do
     application
     |> change()
-    |> put_embed(:booklet_1, booklet)
+    |> put_embed(:booklet_1, nil)
     |> Repo.update()
   end
 
