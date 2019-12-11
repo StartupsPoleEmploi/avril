@@ -272,24 +272,27 @@
           = if @application.booklet_1 && @application.booklet_1.completed_at do
             .row
               .col-sm-8.offset-2
-                h3 Par ici la suite !
+                h3.text-center Par ici la suite !
 
                 p Bravo ! Vous avez finalisé votre dossier de recevabilité.
                 p Il n’y a plus qu’à le transmettre.
 
                 ol
                   li
-                    a href="#{Vae.Application.booklet_url(@application, '/cerfa')}" class="btn btn-md btn-secondary"
+                    a href="#{Vae.Application.booklet_url(@application, '/cerfa')}" class="btn btn-link" target="_blank"
                       | Téléchargez votre dossier
-                    | puis imprimez-le.
+                    |  puis imprimez-le.
                   li N’oubliez pas de dater et signer le document à la fin.
                   li Rassemblez les pièces justificatives, voir liste ci-après.
                   li
-                    | Envoyez le tout par voie postale à
-                    strong #{@application.delete.name}, #{@application.delete.address}
+                    | Envoyez le tout par voie postale à :
+                    br
+                    strong #{@application.delegate.name}
+                    br
+                    = @application.delegate.address
                 p Vous recevrez la réponse sous 2 mois maximum. Sachez que la loi stipule qu’une non-réponse au bout de 2 mois vaut accord, si votre dossier était complet.
 
-                hr
+                hr style="margin: 3rem;"
 
                 h4 Documents à fournir (photocopies, pas besoin de fournir les originaux) :
                 ul
@@ -298,7 +301,7 @@
                   li Pour les emplois salariés, l’attestation employeur ou le contrat de travail avec vos fiches de paie
                   li Si vous avez des emplois non-salariés, l’attestation d’inscription auprès des organismes habilités et les justificatifs de la durée de cette inscription (registre du commerce ou des sociétés, registre des métiers, URSSAF ou tout autre document pouvant attester de votre activité professionnelle indépendante).
 
-                = link("Voir l’ensemble des justificatifs pour toutes les situations", to: Routes.page_path(@conn, :receipts))
+                = link("Voir l’ensemble des justificatifs pour toutes les situations", to: Routes.page_path(@conn, :receipts), class: "btn btn-link")
           - else
             .row
               .col-sm-8.offset-2
