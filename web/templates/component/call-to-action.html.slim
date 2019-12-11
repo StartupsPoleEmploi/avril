@@ -20,7 +20,10 @@
       = if Enum.member?(@tabs, :booklet) do
         p Pour poursuivre :
         button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#booklet-tab').trigger('click')});"
-          | Compléter mon dossier de candidature
+          = if @application.booklet_1 && @application.booklet_1.completed_at do
+            | Envoyer mon dossier de candidature
+          - else
+            | Compléter mon dossier de candidature
       - else
         .my-3
           = link("Imprimer mon dossier", to: "#", class: "small print", onclick: "window.print();", data: [analytics: "Profil#Imprimer recap DE"])
