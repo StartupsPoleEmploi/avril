@@ -21,12 +21,18 @@ const KEY_MAP = {
   admissible: 'Admissible après relance',
   inadmissible: 'Pas encore admissible après relance',
   submitted: 'Candidatures transmises',
+  finished: 'Livret 1 terminé',
+  started: 'Livret 1 démarré',
+  not_started: 'Livret 1 non démarré',
 }
 
 const COLORS = {
   admissible: '#2ecc71',
   inadmissible: '#c0392b',
   submitted: '#bdc3c7',
+  finished: '#2ecc71',
+  started: '#222d32',
+  not_started: '#bdc3c7',
 }
 
 const arrayToObject = (row, keys) => {

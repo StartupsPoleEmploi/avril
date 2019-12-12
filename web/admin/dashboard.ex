@@ -7,18 +7,7 @@ defmodule Vae.ExAdmin.Dashboard do
     content do
       start_date = conn.query_params["start_date"]
       end_date = conn.query_params["end_date"]
-
-      # applications =  %{
-      #   total: Vae.Repo.aggregate((from p in Vae.Application), :count, :id),
-      #   submitted: Vae.Repo.aggregate((from p in Vae.Application, where: not is_nil(p.submitted_at)), :count, :id),
-      #   admissibles: Vae.Repo.aggregate((from p in Vae.Application, where: not is_nil(p.admissible_at)), :count, :id),
-      #   inadmissibles: Vae.Repo.aggregate((from p in Vae.Application, where: not is_nil(p.inadmissible_at)), :count, :id),
-      #   submitted_week_array: Vae.Application.count_by_week((from p in Vae.Application, where: not is_nil(p.submitted_at) and is_nil(p.admissible_at) and is_nil(p.inadmissible_at)), :inserted_at) |> Vae.Repo.all,
-      #   admissible_week_array: Vae.Application.count_by_week((from p in Vae.Application, where: not is_nil(p.submitted_at) and not is_nil(p.admissible_at)), :inserted_at) |> Vae.Repo.all,
-      #   inadmissible_week_array: Vae.Application.count_by_week((from p in Vae.Application, where: not is_nil(p.submitted_at) and not is_nil(p.inadmissible_at)), :inserted_at) |> Vae.Repo.all,
-      # } |> (&(Map.put(&1, :admissibles_ratio, :erlang.float_to_binary(100 * &1.admissibles / (&1.admissibles + &1.inadmissibles), [decimals: 2])))).()
-      #   |> (&(Map.put(&1, :inadmissibles_ratio, :erlang.float_to_binary(100 * &1.inadmissibles / (&1.admissibles + &1.inadmissibles), [decimals: 2])))).()
-      #   |> (&(Map.put(&1, :submitted_ratio, :erlang.float_to_binary(100 * &1.submitted / (&1.total), [decimals: 2])))).()
+      type = conn.query_params["type"] || "submissions"
 
       p ".text-center Citation du jour:"
       h1 "“#{daily_quote()}”"
@@ -53,10 +42,16 @@ defmodule Vae.ExAdmin.Dashboard do
       end
       hr
       div ".section" do
-        h2 "Candidatures démarrées par semaines"
-        p between_dates_string(start_date, end_date)
-        # p "#{applications.total} candidatures dont #{applications.submitted} soumises (#{applications.submitted_ratio}%) dont #{applications.admissibles} admissibles et #{applications.inadmissibles} rejetées soit #{applications.admissibles_ratio}% d'acceptation."
-        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}"]
+        div ".pull-right" do
+          Xain.form [method: "GET"] do
+            Xain.button (if type == "submissions",  do: "Vue Livret 1", else: "Vue Transmissions"), [type: "submit", name: "type", value: (if type == "submissions",  do: "booklet", else: "submissions"), class: "btn btn-primary"]
+          end
+        end
+        div ".clearfix" do
+          h2 "Candidatures démarrées par semaines", [class: "text-center"]
+          p between_dates_string(start_date, end_date)
+          div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
+        end
       end
       hr
       div ".section" do

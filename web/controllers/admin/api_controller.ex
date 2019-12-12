@@ -53,19 +53,34 @@ defmodule ExAdmin.ApiController do
   def sql(conn, %{"query" => query} = params) do
     query = apply(__MODULE__, :"#{query}_query", [
       (unless Vae.String.is_blank?(params["start_date"]), do: params["start_date"]),
-      (unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"])
+      (unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"]),
+      (unless Vae.String.is_blank?(params["type"]), do: params["type"])
     ])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
     json(conn, Map.from_struct(result))
   end
 
-  def applications_query(start_date, end_date) do
+  def applications_select("booklet") do
     """
-    SELECT
-      date_part('week', applications.inserted_at) AS week_number,
+      count(*) FILTER (WHERE booklet_1 IS NULL) AS not_started,
+      count(*) FILTER (WHERE booklet_1 IS NOT NULL AND booklet_1 ->> 'completed_at' IS NULL) AS started,
+      count(*) FILTER (WHERE booklet_1 IS NOT NULL AND booklet_1 ->> 'completed_at' IS NOT NULL) AS finished
+    """
+  end
+
+  def applications_select(_) do
+    """
       count(*) FILTER (WHERE admissible_at IS NOT NULL) AS admissible,
       count(*) FILTER (WHERE inadmissible_at IS NOT NULL) AS inadmissible,
       count(*) FILTER (WHERE admissible_at IS NULL and inadmissible_at IS NULL) AS submitted
+    """
+  end
+
+  def applications_query(start_date, end_date, type) do
+    """
+    SELECT
+      date_part('week', applications.inserted_at) AS week_number,
+      #{applications_select(type)}
     FROM applications
     WHERE applications.submitted_at IS NOT NULL
     #{applications_date_filter(start_date, end_date)}
@@ -74,7 +89,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def delegates_query(start_date, end_date) do
+  def delegates_query(start_date, end_date, type) do
     """
     SELECT
       q.delegate_name,
@@ -97,7 +112,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def certifications_query(start_date, end_date) do
+  def certifications_query(start_date, end_date, type) do
     """
     SELECT
       q.certification_name,
