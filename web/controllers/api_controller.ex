@@ -51,7 +51,7 @@ defmodule Vae.ApiController do
       certification_name: Certification.name(application.certification),
       certifier_name: Application.certifier_name(application),
       civility: %Vae.Booklet.Civility{
-        gender: user.gender |> String.downcase() |> map_gender(),
+        gender: (if user.gender, do: user.gender |> String.downcase() |> map_gender()),
         birthday: user.birthday,
         birth_place: %Vae.Booklet.Address{
           city: user.birth_place
