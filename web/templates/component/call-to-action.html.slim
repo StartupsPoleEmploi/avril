@@ -33,7 +33,7 @@
     - else
       p
         = if Enum.member?(@tabs, :meetings) do
-          button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#transmission-tab').trigger('click')});"
+          button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#meetings-tab').trigger('click')});"
             = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
             | Prendre rendez-vous
             = unless @application.submitted_at do
