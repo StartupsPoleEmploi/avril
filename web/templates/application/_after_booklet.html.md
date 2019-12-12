@@ -1,10 +1,6 @@
-### Par ici la suite !
+Prochaines étapes à suivre :
 
-Bravo ! Vous avez finalisé votre dossier de recevabilité.
-
-Il n’y a plus qu’à le transmettre.
-
-1. **[Téléchargez votre dossier](<%= @booklet_url %>)** puis imprimez-le.
+1. Téléchargez votre dossier puis imprimez-le.
 2. N'oubliez pas de dater et signer le document à la fin.
 3. Rassemblez les pièces justificatives, voir liste ci-après.
 4. Envoyez le tout par voie postale à :
