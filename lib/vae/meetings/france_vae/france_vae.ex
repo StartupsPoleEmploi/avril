@@ -50,7 +50,7 @@ defmodule Vae.Meetings.FranceVae do
             meeting
             |> Map.get("cible")
             |> String.trim()
-            |> Kernel.in(["CAP au BTS", ""])
+            |> Kernel.in(["CAP au BTS", "Tout public", ""])
           end)
           |> Enum.map(fn meeting ->
             to_meeting(meeting, academy_id)
