@@ -22,6 +22,8 @@ defmodule Vae.ExAdmin.Application do
       column(:submitted_at)
       column(:admissible_at)
       column(:inadmissible_at)
+      column(:meeting)
+      column(:booklet_1)
 
       actions()
     end
@@ -62,7 +64,8 @@ defmodule Vae.ExAdmin.Application do
         row :certification
         row :delegate
         row :submitted_at
-        row :meeting
+        row(:meeting, fn a -> Helpers.print_in_json(a.meeting) end)
+        row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
         row :admissible_at
         row :inadmissible_at
         row :inserted_at
@@ -107,7 +110,7 @@ defmodule Vae.ExAdmin.Application do
 
     filter(:certification, order_by: [:acronym, :label])
     filter(:delegate, order_by: :name)
-    filter [:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at]
+    filter [:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at, :meeting, :booklet_1]
 
     query do
       %{
@@ -117,9 +120,6 @@ defmodule Vae.ExAdmin.Application do
         index: [
           default_sort: [desc: :inserted_at]
         ]
-        # show: [
-        #   preload: [:resumes]
-        # ]
       }
     end
   end

@@ -6,11 +6,11 @@ services:
       - ".env"
     image: "postgres:11.6-alpine"
     restart: always
-    volumes:
+    # volumes:
       # - pgdata:/var/lib/postgresql/data
       # - "/etc/postgresql:/etc/postgresql"
       # - "/var/log/postgresql:/var/log/postgresql"
-      - "/var/lib/postgresql:/var/lib/postgresql"
+      # - "/var/lib/postgresql:/var/lib/postgresql"
     healthcheck:
       test: pg_isready -U postgres
       interval: 15s

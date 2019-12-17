@@ -35,4 +35,16 @@ defmodule Vae.Booklet.Cerfa do
     |> cast_embed(:education)
     |> cast_embed(:experiences)
   end
+
+  defimpl ExAdmin.Render, for: __MODULE__ do
+    def to_string(data) do
+      cond do
+        is_nil(data) -> "Non"
+        data.completed_at -> "Terminé"
+        true -> "Démarré"
+      end
+    end
+  end
+
+
 end
