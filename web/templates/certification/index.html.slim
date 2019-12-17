@@ -16,45 +16,47 @@ div
       - else
         = if @page.total_entries == 0 do
           p Aucun résultat pour le niveau sélectionné
+
       = for certification <- @certifications do
-        .my-4.card.p-0.p-md-2
-          .card-body
-            h2.h5.card-title
-              = link(format_certification_label(certification), to: to_delegate(@conn, certification, @conn.params["certificateur"]))
-            h3.h6.card-subtitle.my-3
-              span.font-weight-normal> Niveau obtenu :
-              a href="#" #{level_info_by_level(certification.level)}
-            = if certification.description do
-              .card-text.my-3
-                .truncate
-                  = raw certification.description
-            .row
-              .col-lg-6.d-flex.justify-content-around.justify-content-lg-between
-                = link("Quelles vont être les étapes ?", to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-link")
-              .col-lg-6.d-flex.justify-content-around.justify-content-lg-between.flex-row-reverse
+        .col.my-4
+          .card.p-0.p-md-2
+            .card-body
+              h2.h5.card-title
+                = link(format_certification_label(certification), to: to_delegate(@conn, certification, @conn.params["certificateur"]))
+              h3.h6.card-subtitle.my-3
+                span.font-weight-normal> Niveau obtenu :
+                a href="#" #{level_info_by_level(certification.level)}
+              = if certification.description do
+                .card-text.my-3
+                  .truncate
+                    = raw certification.description
+              .mt-5
+                = link("Quelles vont être mes étapes ?", to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-link btn-link-underlined")
+              div
+                = link("Remplir simplement ma demande de recevabilité", to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-link")
+              .mt-5
                 = render("_select_certification_button.html", conn: @conn, certification: certification)
     .col
-      = link to: Routes.page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Comment bien choisir son diplôme ?
+      = link to: Routes.page_path(@conn, :choose_certification), class: "d-block my-5" do
+        h5 Comment bien choisir son diplôme ?
         div.d-flex
           div.mr-4
             span.ic-icon.ic-time-clock.mr-2
             | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: Routes.page_path(@conn, :financement), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Comment financer ma VAE ?
+          / = img_tag '/images/play.svg', alt: 'lecture'
+      = link to: Routes.page_path(@conn, :financement), class: "d-block my-5 mt-5" do
+        h5 Comment financer ma VAE ?
         div.d-flex
           div.mr-4
             span.ic-icon.ic-time-clock.mr-2
             | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: Routes.page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Les Points Relais Conseil
+          / = img_tag '/images/play.svg', alt: 'lecture'
+      = link to: Routes.page_path(@conn, :point_relais_conseil), class: "d-block my-5 mt-5" do
+        h5 Les Points Relais Conseil
         div.d-flex
           div.mr-4
             span.ic-icon.ic-time-clock.mr-2
             | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
+          / = img_tag '/images/play.svg', alt: 'lecture'
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
-

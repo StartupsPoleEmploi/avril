@@ -1,0 +1,7 @@
+version: "3.6"
+
+services:
+  postgres:
+    volumes:
+      - /private/var/lib/postgresql:/var/lib/postgresql
+      - $PWD/db/latest.dump:/app/db/latest.dump
