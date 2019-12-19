@@ -10,8 +10,8 @@ import $ from 'jquery';
     if (!window.ga) return console.warn('Analytics not set up:', target, element);
     if (!target) return console.warn('Target not correctly set');
     if (target.indexOf('?') === 0) {
-      var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).join('&');
-      window.ga('send', 'pageview', window.location.pathname + '?' + queryString);
+      var queryString = naiveDeparam(window.location.search).concat(naiveDeparam(target)).filter(v => v).join('&');
+      window.ga('send', 'pageview', `${window.location.pathname}?${queryString}`);
     } else if (target.indexOf('/') === 0) {
       window.ga('send', 'pageview', target);
     } else {
