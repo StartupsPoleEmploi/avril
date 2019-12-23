@@ -1,4 +1,6 @@
 defmodule Vae.Mailer do
+  require Logger
+
   use Swoosh.Mailer, otp_app: :vae
 
   use Phoenix.Swoosh,
