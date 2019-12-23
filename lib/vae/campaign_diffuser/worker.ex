@@ -35,7 +35,7 @@ defmodule Vae.CampaignDiffuser.Worker do
     Logger.info("Start extracting job seekers")
 
     @extractor.build_enumerable(path)
-    |> Flow.from_enumerable(max_demand: 100, window: Flow.Window.count(1_000))
+    |> Flow.from_enumerable(max_demand: 500, window: Flow.Window.count(100))
     |> @extractor.extract_lines_flow()
     |> @extractor.build_job_seeker_flow()
     |> @extractor.add_geolocation_flow()
@@ -60,7 +60,7 @@ defmodule Vae.CampaignDiffuser.Worker do
       Logger.info("Try to send #{length(emails)} emails")
 
       with {:ok, emails_sent} <- send_emails(emails),
-           _ <- remove(emails) do
+           _ <- remove(emails_sent) do
         Logger.info("#{length(emails_sent)}/#{length(emails)} sent")
       end
 

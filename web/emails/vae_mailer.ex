@@ -1,8 +1,10 @@
 defmodule Vae.Mailer do
   use Swoosh.Mailer, otp_app: :vae
+
   use Phoenix.Swoosh,
     view: Vae.EmailView,
     layout: {Vae.EmailView, :layout}
+
   alias Swoosh.Email
   alias Vae.{JobSeeker, User}
 
@@ -33,10 +35,19 @@ defmodule Vae.Mailer do
     Enum.reduce(emails, {:ok, []}, fn
       email, {:ok, sent_emails} ->
         case __MODULE__.send(email, config) do
-          {:ok, sent_email} -> {:ok, [sent_email | sent_emails]}
-          error -> error
+          {:ok, sent_email} ->
+            {:ok, [sent_email | sent_emails]}
+
+          {:error, {error_code, body}} ->
+            Logger.error(fn -> inspect("Error code: #{error_code} for body: #{body}") end)
+            {:ok, sent_emails}
+
+          error ->
+            {:ok, sent_emails}
         end
-      _email, error -> error
+
+      _email, error ->
+        error
     end)
   end
 
@@ -49,6 +60,7 @@ defmodule Vae.Mailer do
   defp format_mailer!(%{email: email}), do: email
   defp format_mailer!(tuple) when is_tuple(tuple), do: tuple
   defp format_mailer!(emails) when is_list(emails), do: Enum.flat_map(emails, &format_mailer!/1)
+
   defp format_mailer!(email) when is_binary(email) do
     case String.split(email, ",") do
       [] -> nil
@@ -56,6 +68,7 @@ defmodule Vae.Mailer do
       list -> Enum.map(list, &format_string_email/1)
     end
   end
+
   defp format_mailer!(anything), do: IO.inspect(anything)
 
   def format_mailer(:to, _anything) when not is_nil(@override_to),
@@ -70,6 +83,7 @@ defmodule Vae.Mailer do
       no_list -> no_list
     end
   end
+
   def format_mailer(_role, anything), do: format_mailer!(anything)
 
   defp format_string_email(string_email) do
@@ -81,13 +95,17 @@ defmodule Vae.Mailer do
 
   defp reply_to_if_present_or_from_avril(email, reply_to, _from) when not is_nil(reply_to),
     do: reply_to(email, format_mailer(:reply_to, reply_to))
+
   defp reply_to_if_present_or_from_avril(email, _reply_to, :avril),
     do: reply_to(email, format_mailer(:reply_to, :avril))
+
   defp reply_to_if_present_or_from_avril(email, _, _),
     do: email
 
   defp custom_id_if_present(email, nil), do: email
-  defp custom_id_if_present(email, custom_id), do: put_provider_option(email, :custom_id, custom_id)
+
+  defp custom_id_if_present(email, custom_id),
+    do: put_provider_option(email, :custom_id, custom_id)
 
   defp attach_if_attachment(email, nil), do: email
   defp attach_if_attachment(email, attachment), do: attachment(email, attachment)
@@ -102,16 +120,19 @@ defmodule Vae.Mailer do
 
   defp render_template(email, template_id, params) do
     email
-      |> put_provider_option(:template_id, template_id)
-      |> put_provider_option(:variables, params)
-      |> put_provider_option(:template_error_deliver, @config[:template_error_deliver])
-      |> put_provider_option(:template_error_reporting, format_mailer(:to, @config[:template_error_to]))
+    |> put_provider_option(:template_id, template_id)
+    |> put_provider_option(:variables, params)
+    |> put_provider_option(:template_error_deliver, @config[:template_error_deliver])
+    |> put_provider_option(
+      :template_error_reporting,
+      format_mailer(:to, @config[:template_error_to])
+    )
   end
 
   defp render_body_and_subject(email, template_name, params) do
     email
-      |> render_body(template_name, params)
-      |> render_text_and_extract_subject(template_name, params)
+    |> render_body(template_name, params)
+    |> render_text_and_extract_subject(template_name, params)
   end
 
   defp render_text_and_extract_subject(email, _template_name, params) do
@@ -136,5 +157,4 @@ defmodule Vae.Mailer do
   #   |> Map.put(:html_body, Phoenix.View.render_to_string(Vae.EmailView, template_name, params))
   #   # |> Map.put(:"text_body", Phoenix.View.render_to_string(Vae.EmailView, template_name, params))
   # end
-
 end
