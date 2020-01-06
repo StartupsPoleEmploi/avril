@@ -43,9 +43,10 @@ defmodule Vae.SearchController do
           )
       )
     else
-      conn
-      |> put_flash(:error, "La recherche n'a pas abouti. Merci de réessayer avec une autre recherche.")
-      |> redirect(to: Routes.root_path(conn, :index))
+      _error ->
+        conn
+        |> put_flash(:error, "La recherche n'a pas abouti. Merci de réessayer avec une autre recherche.")
+        |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 
