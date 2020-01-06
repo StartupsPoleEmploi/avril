@@ -45,7 +45,7 @@ defmodule Vae.Places.Client.Algolia do
 
   defp get_first_hit(query, endpoint) do
     with {:ok, result} <- execute(query, endpoint),
-         hits <- Map.get(result, "hits"),
+         hits when not is_nil(hits) <- Map.get(result, "hits"),
          first_hit <- List.first(hits) do
       first_hit
     else
