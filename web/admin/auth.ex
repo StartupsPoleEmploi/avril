@@ -1,6 +1,7 @@
 defmodule Vae.CheckAdmin do
   import Phoenix.Controller
   import Plug.Conn
+  alias Vae.Router.Helpers, as: Routes
 
   def init(opts), do: opts
 
