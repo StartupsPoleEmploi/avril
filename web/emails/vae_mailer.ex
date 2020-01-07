@@ -40,10 +40,7 @@ defmodule Vae.Mailer do
           {:ok, %{id: id}} ->
             sent_email = %{
               email
-              | provider_options: %{
-                  email.provider_options
-                  | id: id
-                }
+              | provider_options: Map.put(email.provider_options, :id, id)
             }
 
             {:ok, [sent_email | sent_emails]}
