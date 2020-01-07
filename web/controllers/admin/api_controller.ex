@@ -51,13 +51,25 @@ defmodule ExAdmin.ApiController do
   end
 
   def sql(conn, %{"query" => query} = params) do
+    start_date = unless Vae.String.is_blank?(params["start_date"]), do: params["start_date"]
+    end_date = unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"]
+    type = unless Vae.String.is_blank?(params["type"]), do: params["type"]
     query = apply(__MODULE__, :"#{query}_query", [
-      (unless Vae.String.is_blank?(params["start_date"]), do: params["start_date"]),
-      (unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"]),
-      (unless Vae.String.is_blank?(params["type"]), do: params["type"])
+      start_date,
+      end_date,
+      type
     ])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
-    json(conn, Map.from_struct(result))
+    json(conn, Map.merge(
+      Map.from_struct(result),
+      %{
+        query: %{
+          start_date: start_date,
+          end_date: end_date,
+          type: type
+        }
+      }
+    ))
   end
 
   def applications_select("booklet") do
@@ -79,7 +91,11 @@ defmodule ExAdmin.ApiController do
   def applications_query(start_date, end_date, type) do
     """
     SELECT
-      date_part('week', applications.inserted_at) AS week_number,
+      CONCAT(
+        date_part('year', applications.inserted_at),
+        '-',
+        date_part('week', applications.inserted_at)
+      ) AS week_number,
       #{applications_select(type)}
     FROM applications
     WHERE applications.submitted_at IS NOT NULL

@@ -54,9 +54,11 @@ const formatDataToBar = ({columns, rows}) => {
   }));
 }
 
-const weekNumberToString = (weekNumber, otherArgs) => {
-  const monday = moment().week(weekNumber).day("Monday").format('DD/MM/YY');
-  const sunday = moment().week(weekNumber+1).day("Sunday").format('DD/MM/YY');
+const weekNumberToString = (weekNumberWithYear, otherArgs) => {
+  const [year, weekNumber] = weekNumberWithYear.split('-');
+  const monday = moment().year(year).week(weekNumber).weekday(1).format('DD/MM/YY');
+  const sunday = moment().year(year).week(weekNumber).weekday(7).format('DD/MM/YY');
+  // console.log(weekNumberWithYear)
   return `Du ${monday} au ${sunday}`;
 }
 
@@ -83,7 +85,7 @@ const Aggregate = ({data}) => {
   return (
     <ul>
       { Object.keys(aggregatedData).map(k =>
-        <li>{k}: {valueWithPercent(aggregatedData[k], total)} </li>
+        <li key={k}>{k}: {valueWithPercent(aggregatedData[k], total)} </li>
       )}
       <li>Total: {total}</li>
     </ul>
@@ -95,7 +97,7 @@ const renderChart = name => {
   if ($container && $container.dataset.url) {
     fetch($container.dataset.url)
       .then(res => res.json())
-      .then((data) => {
+      .then(data => {
         const formattedData = formatDataToChart(data);
         render(
           <div>
@@ -108,11 +110,13 @@ const renderChart = name => {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="semaine" />
+                <XAxis dataKey="semaine" hide={true} label="Semaine" />
                 <YAxis />
-                <ReferenceLine x={moment().add(-30, 'days').format('w')} stroke="red">
-                  <Label value="Relance à 30 jours" angle={90} position="left"/>
-                </ReferenceLine>
+                { (data.query.type == 'submissions') &&
+                  <ReferenceLine x={moment().add(-30, 'days').format('YYYY-w')} stroke="red">
+                    <Label value="Relance à 30 jours" angle={90} position="left"/>
+                  </ReferenceLine>
+                }
                 <Tooltip labelFormatter={weekNumberToString} formatter={formatValueWithPercent} />
                 <Legend />
                 { formatDataToBar(data).map(c =>
