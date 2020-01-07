@@ -44,7 +44,6 @@ defmodule Vae.ExAdmin.Certification do
           column(:name, &Helpers.link_to_resource/1)
         end
       end
-
     end
 
     form certification do
@@ -57,12 +56,14 @@ defmodule Vae.ExAdmin.Certification do
         certifier_option_tags =
           Certifier
           |> Repo.all()
+          |> Repo.preload(:certifications)
           |> Enum.sort_by(fn certifier -> certifier.name end)
           |> Enum.map(&option_tag(&1.id, &1.name, certification.certifiers))
 
         rome_options_tags =
           Rome
           |> Repo.all()
+          |> Repo.preload(:certifications)
           |> Enum.sort_by(fn rome -> rome.code end)
           |> Enum.map(&option_tag(&1.id, "#{&1.code} - #{&1.label}", certification.romes))
 
@@ -104,9 +105,15 @@ defmodule Vae.ExAdmin.Certification do
 
     query do
       %{
+        all: [preload: [:romes, :certifiers]],
         index: [default_sort: [asc: :id]],
         show: [
-          preload: [:romes, :delegates, :certifiers, applications: [ :delegate, :user, :certification, :certifiers]]
+          preload: [
+            :romes,
+            :delegates,
+            :certifiers,
+            applications: [:delegate, :user, :certification, :certifiers]
+          ]
         ]
       }
     end
