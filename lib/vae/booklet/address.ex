@@ -6,8 +6,8 @@ defmodule Vae.Booklet.Address do
   @derive Jason.Encoder
   embedded_schema do
     field(:city, :string)
+    field(:county, :string)
     field(:country, :string)
-    field(:domTom, :string)
     field(:lat, :float)
     field(:lng, :float)
     field(:street, :string)
@@ -16,6 +16,6 @@ defmodule Vae.Booklet.Address do
 
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:city, :country, :domTom, :lat, :lng, :street, :postal_code])
+    |> cast(params, [:city, :county, :country, :lat, :lng, :street, :postal_code])
   end
 end
