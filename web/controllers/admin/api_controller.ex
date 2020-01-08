@@ -98,8 +98,8 @@ defmodule ExAdmin.ApiController do
       ) AS week_number,
       #{applications_select(type)}
     FROM applications
-    WHERE applications.submitted_at IS NOT NULL
-    #{applications_date_filter(start_date, end_date)}
+    WHERE #{applications_date_filter(start_date, end_date)}
+    #{if type != "booklet", do: "AND applications.submitted_at IS NOT NULL"}
     GROUP BY week_number
     ORDER BY week_number
     """
@@ -153,7 +153,7 @@ defmodule ExAdmin.ApiController do
 
   defp applications_date_filter(nil, nil), do: ""
   defp applications_date_filter(start_date, end_date),
-    do: "AND applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
+    do: "applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
 
   defp applications_base_query(entity), do:
    "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
