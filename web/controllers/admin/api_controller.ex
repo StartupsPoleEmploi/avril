@@ -105,7 +105,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def delegates_query(start_date, end_date, type) do
+  def delegates_query(start_date, end_date, _type) do
     """
     SELECT
       q.delegate_name,
@@ -128,7 +128,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def certifications_query(start_date, end_date, type) do
+  def certifications_query(start_date, end_date, _type) do
     """
     SELECT
       q.certification_name,

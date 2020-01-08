@@ -4,27 +4,48 @@ defmodule Vae do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    children = [
-      supervisor(Vae.Repo, []),
-      supervisor(Vae.Endpoint, []),
-      supervisor(Vae.Event.EventSupervisor, []),
-      supervisor(Vae.Statistics.StatisticsSupervisor, []),
-      supervisor(Vae.Crm.CrmSupervisor, []),
-      worker(Vae.Status.Server, []),
-      worker(Vae.Scheduler, []),
-      worker(Vae.Places.Cache, []),
-      Vae.OAuth.Clients,
-      supervisor(Vae.Booklet.WorkerSupervisor, []),
-      Vae.Booklet.ProcessRegistry
-    ] |> Enum.concat(if Application.get_env(:vae, :meetings_indice), do: [
-      worker(Vae.Meetings.StateHolder, []),
-      worker(Vae.Meetings.FranceVae.Server, []),
-      worker(Vae.Meetings.Afpa.Server, []),
-      Vae.Meetings.FranceVae.Connection.Cache
-    ], else: [])
+    repo_children = %{
+      should_start: true,
+      children: [
+        supervisor(Vae.Repo, [])
+      ]
+    }
 
-    opts = [strategy: :one_for_one, name: Vae.Supervisor]
-    Supervisor.start_link(children, opts)
+    server_children = %{
+      should_start: Phoenix.Endpoint.server?(:vae, Vae.Endpoint),
+      children: [
+        supervisor(Vae.Endpoint, []),
+        supervisor(Vae.Event.EventSupervisor, []),
+        supervisor(Vae.Statistics.StatisticsSupervisor, []),
+        supervisor(Vae.Crm.CrmSupervisor, []),
+        worker(Vae.Status.Server, []),
+        worker(Vae.Scheduler, []),
+        worker(Vae.Places.Cache, []),
+        Vae.OAuth.Clients,
+        supervisor(Vae.Booklet.WorkerSupervisor, []),
+        Vae.Booklet.ProcessRegistry
+      ]
+    }
+
+    meetings_children = %{
+      should_start:
+        Application.get_env(:vae, :meetings_indice) &&
+        Phoenix.Endpoint.server?(:vae, Vae.Endpoint),
+      children: [
+        worker(Vae.Meetings.StateHolder, []),
+        worker(Vae.Meetings.FranceVae.Server, []),
+        worker(Vae.Meetings.Afpa.Server, []),
+        Vae.Meetings.FranceVae.Connection.Cache
+      ]
+    }
+
+    Supervisor.start_link(
+      [repo_children, server_children, meetings_children]
+      |> Enum.filter(fn c -> c.should_start end)
+      |> Enum.map(fn c -> c.children end)
+      |> Enum.concat(),
+      [strategy: :one_for_one, name: Vae.Supervisor]
+    )
   end
 
   def config_change(changed, _new, removed) do
