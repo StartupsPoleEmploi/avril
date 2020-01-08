@@ -56,11 +56,15 @@ const formatDataToBar = ({columns, rows}) => {
   }));
 }
 
+const formatWeekNumber = weekNumberWithYear => {
+  const [year, weekNumber] = weekNumberWithYear.split('-');
+  return moment().year(year).week(weekNumber).weekday(1).format('DD/MM');
+}
+
 const weekNumberToString = (weekNumberWithYear, otherArgs) => {
   const [year, weekNumber] = weekNumberWithYear.split('-');
   const monday = moment().year(year).week(weekNumber).weekday(1).format('DD/MM/YY');
   const sunday = moment().year(year).week(weekNumber).weekday(7).format('DD/MM/YY');
-  // console.log(weekNumberWithYear)
   return `Du ${monday} au ${sunday}`;
 }
 
@@ -112,7 +116,7 @@ const renderChart = name => {
                 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="semaine" hide={true} label="Semaine" />
+                <XAxis dataKey="semaine" tickFormatter={formatWeekNumber} interval="preserveStartEnd" minTickGap={30} />
                 <YAxis />
                 { (data.query.type == 'submissions') &&
                   <ReferenceLine x={moment().add(-30, 'days').format('YYYY-w')} stroke="red">
@@ -120,7 +124,7 @@ const renderChart = name => {
                   </ReferenceLine>
                 }
                 <Tooltip labelFormatter={weekNumberToString} formatter={formatValueWithPercent} />
-                <Legend />
+                <Legend wrapperStyle={{bottom: -5}} />
                 { formatDataToBar(data).map(c =>
                   <Bar key={c.key} dataKey={c.label} stackId="a" fill={c.color}>
                     {c.isLast && <LabelList position="top" valueAccessor={total}/>}
