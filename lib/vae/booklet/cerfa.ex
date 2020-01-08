@@ -13,6 +13,7 @@ defmodule Vae.Booklet.Cerfa do
     embeds_one(:civility, Civility, on_replace: :delete)
     embeds_one(:education, Education, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
+    timestamps()
   end
 
   def changeset(struct, params) do
