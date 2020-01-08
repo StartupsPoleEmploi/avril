@@ -37,6 +37,7 @@ defmodule Vae.Coherence.UserEmail do
       %{
         subject: "Débloquer votre compte Avril - la VAE facile",
         url: url,
+        name: User.fullname(user),
         footer_note: :inscrit_avril
       }
     )
