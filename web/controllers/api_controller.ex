@@ -83,6 +83,9 @@ defmodule Vae.ApiController do
   def merge_periods_into_experience([], acc), do: acc
 
   def merge_periods_into_experience([h | t], acc) do
+    # This could be removed if data is migrated to change 01/01/4000 end dates to nil
+    # CF. proven_experiences.ex
+    end_date = (if h.end_date && Date.compare(Timex.today(), h.end_date) == :gt, do: h.end_date)
     merge_periods_into_experience(
       t,
       %Vae.Booklet.Experience{
@@ -94,10 +97,8 @@ defmodule Vae.ApiController do
           periods: [
             %Vae.Booklet.Experience.Period{
               start_date: h.start_date,
-              # This could be removed if data is migrated to change 01/01/4000 end dates to nil
-              # CF. proven_experiences.ex
-              end_date: (if h.end_date && Date.compare(Timex.today(), h.end_date) == :gt, do: h.end_date),
-              week_hours_duration: 35
+              end_date: end_date,
+              week_hours_duration: Float.round(h.work_duration / Vae.Date.workdays_between(h.start_date, end_date), 1)
             }
             | acc.periods
           ]

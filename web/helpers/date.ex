@@ -23,4 +23,15 @@ defmodule Vae.Date do
       {:error, _error_msg} -> "unknown"
     end
   end
+
+  def workdays_between(start_date, end_date \\ nil) do
+    end_date = end_date || Date.utc_today()
+    Timex.Interval.new(from: start_date, until: Date.add(end_date, 1))
+    |> Enum.filter(&(!weekend?(&1)))
+    |> Enum.count()
+  end
+
+  def weekend?(date) do
+    Date.day_of_week(date) > 5
+  end
 end
