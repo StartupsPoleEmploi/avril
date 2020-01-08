@@ -70,6 +70,7 @@ defmodule Vae.ExAdmin.Application do
         row :updated_at
         row(:meeting, fn a -> Helpers.print_in_json(a.meeting) end)
         row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
+        row :booklet_hash
       end
 
       panel "Resumes" do

@@ -35,10 +35,11 @@ defmodule Vae.ApiController do
           status: :ok
         })
 
-      {:error, error} ->
+      {:error, changeset} ->
+        Logger.error(inspect(changeset))
         json(conn, %{
           status: :error,
-          error: error
+          error: "Une erreur est survenue: #{inspect changeset.errors}.Merci de réessayer plus tard"
         })
     end
   end
@@ -98,7 +99,7 @@ defmodule Vae.ApiController do
             %Vae.Booklet.Experience.Period{
               start_date: h.start_date,
               end_date: end_date,
-              week_hours_duration: Float.round(h.work_duration / Vae.Date.workdays_between(h.start_date, end_date), 1)
+              week_hours_duration: Float.round(h.work_duration / Vae.Date.workdays_between(h.start_date, end_date))
             }
             | acc.periods
           ]
