@@ -82,9 +82,10 @@ defmodule ExAdmin.ApiController do
 
   def applications_select(_) do
     """
-      count(*) FILTER (WHERE admissible_at IS NOT NULL) AS admissible,
-      count(*) FILTER (WHERE inadmissible_at IS NOT NULL) AS inadmissible,
-      count(*) FILTER (WHERE admissible_at IS NULL and inadmissible_at IS NULL) AS submitted
+      count(*) FILTER (WHERE submitted_at IS NULL) AS unsubmitted,
+      count(*) FILTER (WHERE submitted_at IS NOT NULL AND admissible_at IS NULL and inadmissible_at IS NULL) AS submitted,
+      count(*) FILTER (WHERE submitted_at IS NOT NULL AND inadmissible_at IS NOT NULL) AS inadmissible,
+      count(*) FILTER (WHERE submitted_at IS NOT NULL AND admissible_at IS NOT NULL) AS admissible
     """
   end
 
@@ -98,8 +99,7 @@ defmodule ExAdmin.ApiController do
       ) AS week_number,
       #{applications_select(type)}
     FROM applications
-    WHERE #{applications_date_filter(start_date, end_date)}
-    #{if type != "booklet", do: "AND applications.submitted_at IS NOT NULL"}
+    #{where_applications_date_filter(start_date, end_date)}
     GROUP BY week_number
     ORDER BY week_number
     """
@@ -151,9 +151,9 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  defp applications_date_filter(nil, nil), do: ""
-  defp applications_date_filter(start_date, end_date),
-    do: "applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
+  defp where_applications_date_filter(nil, nil), do: ""
+  defp where_applications_date_filter(start_date, end_date),
+    do: "WHERE applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
 
   defp applications_base_query(entity), do:
    "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"

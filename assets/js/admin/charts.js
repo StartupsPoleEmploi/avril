@@ -21,17 +21,19 @@ const KEY_MAP = {
   admissible: 'Admissible après relance',
   inadmissible: 'Pas encore admissible après relance',
   submitted: 'Candidatures transmises',
+  unsubmitted: 'Candidatures non transmises',
   finished: 'Livret 1 terminé',
   started: 'Livret 1 démarré',
   not_started: 'Livret 1 non démarré',
 }
 
 const COLORS = {
-  admissible: '#2ecc71',
-  inadmissible: '#c0392b',
-  submitted: '#bdc3c7',
-  finished: '#2ecc71',
-  started: '#222d32',
+  admissible: '#27ae60',
+  inadmissible: '#d35400',
+  submitted: '#f39c12',
+  unsubmitted: '#f1c40f',
+  finished: '#2c3e50',
+  started: '#3498db',
   not_started: '#bdc3c7',
 }
 

@@ -48,7 +48,7 @@ defmodule Vae.ExAdmin.Dashboard do
           end
         end
         div ".clearfix" do
-          h2 "Candidatures démarrées par semaines", [class: "text-center"]
+          h2 "Candidatures par semaines", [class: "text-center"]
           p between_dates_string(start_date, end_date)
           div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
         end
