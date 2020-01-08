@@ -46,6 +46,4 @@ defmodule Vae.Booklet.Cerfa do
       end
     end
   end
-
-
 end

@@ -123,6 +123,11 @@ const renderChart = name => {
                     <Label value="Relance à 30 jours" angle={90} position="left"/>
                   </ReferenceLine>
                 }
+                { (data.query.type == 'booklet') &&
+                  <ReferenceLine x={moment('2019-12-11').format('YYYY-w')} stroke="#3498db">
+                    <Label value="MEP Livret 1" angle={90} position="left"/>
+                  </ReferenceLine>
+                }
                 <Tooltip labelFormatter={weekNumberToString} formatter={formatValueWithPercent} />
                 <Legend wrapperStyle={{bottom: -5}} />
                 { formatDataToBar(data).map(c =>
