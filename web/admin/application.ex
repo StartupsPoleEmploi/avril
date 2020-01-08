@@ -63,13 +63,13 @@ defmodule Vae.ExAdmin.Application do
         row :user
         row :certification
         row :delegate
+        row :inserted_at
         row :submitted_at
-        row(:meeting, fn a -> Helpers.print_in_json(a.meeting) end)
-        row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
         row :admissible_at
         row :inadmissible_at
-        row :inserted_at
         row :updated_at
+        row(:meeting, fn a -> Helpers.print_in_json(a.meeting) end)
+        row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
       end
 
       panel "Resumes" do
@@ -101,11 +101,13 @@ defmodule Vae.ExAdmin.Application do
       end)
       column(:delegate, fn a -> a.delegate && a.delegate.name end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
+      column(:inserted_at)
       column(:submitted_at)
       column(:admissible_at)
       column(:inadmissible_at)
-      column(:inserted_at)
       column(:updated_at)
+      column(:meeting)
+      column(:booklet_1)
     end
 
     filter(:certification, order_by: [:acronym, :label])
