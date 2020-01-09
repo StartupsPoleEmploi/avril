@@ -117,9 +117,10 @@ defmodule Vae.ExAdmin.Application do
       column(:booklet_1)
     end
 
+    filter [:meeting, :booklet_1]
     filter(:certification, order_by: [:acronym, :label])
     filter(:delegate, order_by: :name)
-    filter [:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at, :meeting, :booklet_1]
+    filter [:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at]
 
     query do
       %{

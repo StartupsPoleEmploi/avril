@@ -6,7 +6,7 @@ defmodule Vae.User do
   use Coherence.Schema
   require Logger
 
-  alias Vae.{Application, BookletData, Experience, JobSeeker, ProvenExperience, Repo, Skill}
+  alias Vae.{Application, Experience, JobSeeker, ProvenExperience, Repo, Skill}
 
   schema "users" do
     field(:gender, :string)
@@ -119,7 +119,7 @@ defmodule Vae.User do
     |> validate_coherence_password_reset(params)
   end
 
-  def put_embed_if_necessary(changeset, params, key, options \\ []) do
+  def put_embed_if_necessary(changeset, params, key, _options \\ []) do
     klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
     klass = [Elixir, Vae, klass_name] |> Module.concat()
 

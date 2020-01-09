@@ -10,7 +10,34 @@ import './admin/tables';
 import './admin/charts';
 import './admin/statusEditor';
 
-$(document).ready(() => {
+const trimPaste = () => {
+  const $filters = document.querySelector('form.filter_form');
+
+  if ($filters) {
+    $filters.addEventListener('paste', (event) => {
+      let paste = (event.clipboardData || window.clipboardData).getData('text');
+      paste = paste.trim();
+    });
+  }
+}
+
+const clearSelection = () => {
+  if(document.selection && document.selection.empty) {
+      document.selection.empty();
+  } else if(window.getSelection) {
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+  }
+}
+
+const doubleClickUncheckPresenceRadioInputs = () => {
+  $('form.filter_form .label.with-null-filter .label-inline').on('dblclick', e => {
+    $(e.currentTarget).find('input[type=radio]').removeAttr('checked');
+    clearSelection();
+  });
+}
+
+const algoliaAutocompleteDelegateAddress = () => {
   if(document.querySelector('#delegate_address')) {
     var placesAutocomplete = places({
       appId: window.algolia_places_app_id,
@@ -31,7 +58,9 @@ $(document).ready(() => {
       delegate_geo.value = '';
     });
   }
+}
 
+const textareaToSimditor = () => {
   Simditor.locale = 'fr-FR';
 
   $('textarea[id^=process_step_]').each((i, $el) => {
@@ -58,16 +87,17 @@ $(document).ready(() => {
       defaultImage: 'http://temp.im/150x150'
     });
   });
+}
 
+const selectFiltersWithChosen = () => {
   $('form.filter_form select.form-control').chosen();
+}
 
+$(document).ready(() => {
+  algoliaAutocompleteDelegateAddress();
+  textareaToSimditor();
+  selectFiltersWithChosen();
+  trimPaste();
+  doubleClickUncheckPresenceRadioInputs();
 })
 
-const $filters = document.querySelector('form.filter_form');
-
-if ($filters) {
-  $filters.addEventListener('paste', (event) => {
-    let paste = (event.clipboardData || window.clipboardData).getData('text');
-    paste = paste.trim();
-  });
-}

@@ -1,6 +1,5 @@
 defmodule Vae.ExAdmin.Dashboard do
   use ExAdmin.Register
-  import Ecto.Query
 
   register_page "Dashboard" do
     menu priority: 1, label: "Statistiques"

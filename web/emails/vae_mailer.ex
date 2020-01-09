@@ -49,7 +49,7 @@ defmodule Vae.Mailer do
             Logger.error(fn -> inspect("Error code: #{error_code} for body: #{body}") end)
             {:ok, sent_emails}
 
-          error ->
+          _error ->
             {:ok, sent_emails}
         end
 

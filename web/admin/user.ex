@@ -49,7 +49,8 @@ defmodule Vae.ExAdmin.User do
       :address3,
       :address4,
       :city_label,
-      :country_label
+      :country_label,
+      :pe_id
     ])
 
     show user do

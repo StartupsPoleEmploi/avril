@@ -342,7 +342,7 @@ defmodule Vae.Meetings.StateHolder do
     |> Enum.flat_map(& &1.grouped_meetings)
   end
 
-  defp from_ets(tab \\ :meetings) do
+  defp from_ets(tab) do
     tab
     |> :ets.tab2list()
     |> Enum.map(fn {_name, _updated_at, delegate} -> delegate end)

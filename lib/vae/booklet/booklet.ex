@@ -5,7 +5,7 @@ defmodule Vae.Booklet do
 
   def new_cerfa(id) do
     case WorkerSupervisor.add_worker(id) do
-      {:ok, pid} = ok ->
+      {:ok, _pid} = ok ->
         Logger.info(fn -> "Init #{id} booklet worker" end)
         ok
 

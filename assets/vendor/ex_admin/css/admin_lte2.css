@@ -67,10 +67,24 @@ div#titlebar_right {
   display: block;
   text-transform: uppercase;
   color: #5E6469;
-  font-size: 0.9em;
+  font-size: 1.2rem;
   font-weight: bold;
   text-align: left;
   padding: 0;
+}
+.sidebar_section .label.with-null-filter .label-inline {
+  margin-left: 0.5rem;
+  font-weight: normal;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.sidebar_section .label.with-null-filter input[type="radio"] {
+  margin-right: 0.5rem;
+  top: 2px;
+  position: relative;
+}
+.sidebar_section .label.with-null-filter input[type="radio"]:checked + span {
+  font-weight: bold;
 }
 .form-group .input-group-addon {
     border-radius: 0;
