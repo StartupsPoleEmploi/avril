@@ -99,7 +99,7 @@ defmodule Vae.ApiController do
             %Vae.Booklet.Experience.Period{
               start_date: h.start_date,
               end_date: end_date,
-              week_hours_duration: Float.round(h.work_duration / Vae.Date.workdays_between(h.start_date, end_date))
+              week_hours_duration: Float.round(5 * h.work_duration / Vae.Date.workdays_between(h.start_date, end_date))
             }
             | acc.periods
           ]
