@@ -38,8 +38,10 @@ defmodule Vae.ExAdmin.Application do
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae. Application, id)
-      href = Vae.Router.Helpers.application_path(Vae.Endpoint, :update, application)
-      action_item_link "Submit Application", href: href, "data-method": :put
+      if !application.submitted_at do
+        href = Vae.Router.Helpers.application_path(Vae.Endpoint, :update, application)
+        action_item_link "Submit Application", href: href, "data-method": :put
+      end
     end
 
     action_item :show, fn id ->
@@ -50,12 +52,16 @@ defmodule Vae.ExAdmin.Application do
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae. Application, id)
-      action_item_link "Fill Booklet", href: Vae.Application.booklet_url(application), target: "_blank"
+      if application.booklet_1 do
+        action_item_link "Fill Booklet", href: Vae.Application.booklet_url(application), target: "_blank"
+      end
     end
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae. Application, id)
-      action_item_link "Check CERFA", href: Vae.Application.booklet_url(application, "/cerfa"), target: "_blank"
+      if application.booklet_1 do
+        action_item_link "Check CERFA", href: Vae.Application.booklet_url(application, "/cerfa"), target: "_blank"
+      end
     end
 
     show application do
