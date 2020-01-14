@@ -44,7 +44,7 @@
             | Transmettre mon dossier
       = unless Coherence.current_user(@conn).confirmed_at do
         .alert.alert-secondary
-          p Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre dossier.
+          p Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre profil.
 
 - else
   button.btn.btn-primary.print-button onclick="window.print();"

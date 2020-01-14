@@ -133,7 +133,7 @@ defmodule Coherence.Redirects do
       (unless user.confirmed_at, do: "confirmer votre adresse email")
     ] |> Enum.filter(&(&1))
     if length(todos) > 0 do
-      message = "Bienvenue sur votre page de candidature. Merci de #{todos |> Enum.join(" et ")} avant de transmettre votre dossier au certificateur."
+      message = "Bienvenue sur votre page de candidature. Merci de #{todos |> Enum.join(" et ")} avant de transmettre votre profil."
 
       Phoenix.Controller.put_flash(conn, :success, message)
     else
