@@ -116,7 +116,7 @@ defmodule Vae.ApplicationController do
           )
         else
           conn
-            |> put_flash(:succes, "Dossier transmis avec succès !")
+            |> put_flash(:succes, "Votre profil a été transmis avec succès !")
             |> redirect(to: Routes.application_path(conn, :show, application))
         end
     else

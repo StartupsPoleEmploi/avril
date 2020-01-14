@@ -15,7 +15,7 @@ defmodule Vae.UserController do
     |> case do
       {:ok, user} ->
         conn
-        |> put_flash(:success, "Enregistré")
+        |> put_flash(:success, "Vos données de profil ont bien été enregistrées")
         |> Coherence.Authentication.Session.update_login(user)
         |> redirect_back(default: default_route)
       {:error, _changeset} ->

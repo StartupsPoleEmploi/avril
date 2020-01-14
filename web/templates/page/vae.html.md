@@ -6,7 +6,7 @@ En effet, La **VAE** vous permet de faire reconnaitre la valeur de vos expérien
 
 Le parcours VAE peut varier d’un certificateur à l’autre. **« Avril, la VAE facile »** vous indique les étapes de la VAE du diplôme, titre ou certificat que vous souhaitez valider. Chaque parcours VAE comporte au moins 3 étapes qui sont :
 
-- **un dossier de candidature** (ou livret 1),
+- **une candidature** (ou livret 1),
 - **un dossier d’expérience** (ou livret 2)
 - et **un oral devant un jury** avec un exercice de mise de situation pour certains titres et diplômes.
 

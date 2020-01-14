@@ -2,7 +2,7 @@
   div style="margin: auto;"
     = if @application.submitted_at do
       p
-        strong Dossier Transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
+        strong Profil transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
         | .
       = if @application.meeting do
         p Bravo pour ce premier pas dans votre projet! Nous vous confirmons que vous avez choisi l'atelier collectif du
@@ -21,9 +21,9 @@
         p Pour poursuivre :
         button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#booklet-tab').trigger('click')});"
           = if @application.booklet_1 && @application.booklet_1.completed_at do
-            | Envoyer mon dossier de candidature
+            | Envoyer ma candidature
           - else
-            | Compléter mon dossier de candidature
+            | Compléter ma candidature
       - else
         .my-3
           = link("Imprimer mon dossier", to: "#", class: "small print", onclick: "window.print();", data: [analytics: "Profil#Imprimer recap DE"])

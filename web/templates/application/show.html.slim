@@ -27,7 +27,7 @@
                     a#booklet-tab.nav-item.nav-link href="#booklet" data-toggle="tab" aria-controls="booklet" aria-selected="false"
                       h6
                         span.fa.fa-folder
-                        = " #{i+1} - Mon dossier de candidature"
+                        = " #{i+1} - Ma candidature"
 
     .tab-content
       = if Enum.member?(@tabs, :profile) do
@@ -286,7 +286,7 @@
                 p Pas d'inquiétude, vous pouvez continuer de modifier le contenu de votre dossier.
                 a href=Vae.Application.booklet_url(@application) class="btn btn-md btn-secondary" data-analytics="?bouton=livret-modifier"
                   = if @application.booklet_1 do
-                    | Modifier mon dossier de candidature
+                    | Modifier ma candidature
 
           - else
             .row
@@ -297,7 +297,7 @@
               .col-sm-12.text-center
                 a href=Vae.Application.booklet_url(@application) class="btn btn-md btn-primary" data-analytics="?bouton=livret-#{if @application.booklet_1, do: "modifier", else: "demarrer"}"
                   = if @application.booklet_1 do
-                    | Modifier mon dossier de candidature
+                    | Modifier ma candidature
                   - else
-                    | Démarrer mon dossier de candidature
+                    | Démarrer ma candidature
 

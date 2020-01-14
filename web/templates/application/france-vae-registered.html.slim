@@ -9,7 +9,7 @@ main.text-center.justify-content-center role="main"
       = img_tag "/images/france-vae.png", alt: "Logo France VAE", class: "mb-4"
 
     p.small
-      | Pour revenir à votre dossier de candidature
+      | Pour revenir à votre candidature
       = link(" cliquez ici.", to: Routes.application_path(@conn, :show, @application_id))
 
 = unless Mix.env == :dev do

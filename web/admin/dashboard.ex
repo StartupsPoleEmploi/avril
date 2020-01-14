@@ -84,7 +84,7 @@ defmodule Vae.ExAdmin.Dashboard do
       "Grâce à la team Avril, au revoir l'inutile",
       "Je fais l'éloge d'Avril, même si ça t'horripile",
       "Avril ne tremble pas d'un fil",
-      "Avril à les meilleurs devs, ils ne sont pas débiles !"
+      "Avril a les meilleurs devs, ils ne sont pas débiles !"
     ] |> (fn list ->
       daily_index = (
         Timex.today().day() +
