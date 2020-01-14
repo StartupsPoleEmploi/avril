@@ -12,7 +12,7 @@ msgstr "est requis"
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
-msgstr "est déjà pris"
+msgstr "est déjà pris. Veuillez cliquer sur j'ai déjà un compte."
 
 ## From Ecto.Changeset.put_change/3
 msgid "is invalid"
