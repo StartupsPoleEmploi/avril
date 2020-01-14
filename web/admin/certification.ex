@@ -34,6 +34,7 @@ defmodule Vae.ExAdmin.Certification do
 
       panel "Romes" do
         table_for certification.romes do
+          column(:id)
           column(:label)
           column(:code)
         end
@@ -41,6 +42,13 @@ defmodule Vae.ExAdmin.Certification do
 
       panel "Delegates" do
         table_for certification.delegates do
+          column(:id)
+          column(:name, &Helpers.link_to_resource/1)
+        end
+      end
+      panel "Certifiers" do
+        table_for certification.certifiers do
+          column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
