@@ -1,4 +1,5 @@
 defmodule Vae.Meetings do
+  require Logger
   alias Vae.Meetings.StateHolder
 
   def get(nil), do: []
@@ -18,6 +19,11 @@ defmodule Vae.Meetings do
   defdelegate get_by_meeting_id(meeting_id), to: StateHolder
 
   def get_france_vae_academies() do
-    GenServer.call(:france_vae, :get_academies)
+    if Process.whereis(:france_vae) do
+      GenServer.call(:france_vae, :get_academies)
+    else
+      Logger.warn("France VAE gen server not started")
+      []
+    end
   end
 end

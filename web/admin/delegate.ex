@@ -31,6 +31,7 @@ defmodule Vae.ExAdmin.Delegate do
         only: [
           :id,
           :is_active,
+          :slug,
           :name,
           :website,
           :address,
@@ -42,8 +43,17 @@ defmodule Vae.ExAdmin.Delegate do
         ]
       )
 
+      panel "Certifications" do
+        table_for delegate.certifications do
+          column(:id)
+          column(:name, &Helpers.link_to_resource/1)
+          column(:rncp_id)
+        end
+      end
+
       panel "Certifiers" do
         table_for delegate.certifiers do
+          column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
@@ -68,6 +78,8 @@ defmodule Vae.ExAdmin.Delegate do
           Vae.Meetings.get_france_vae_academies()
           |> Enum.sort_by(& &1["nom"])
           |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
+
+        academies_options_tags = if length(academies_options_tags) > 0, do: academies_options_tags, else: [{nil, "No academies: France VAE not connected"}]
 
         input(delegate, :academy_id,
           label: "Académies",
@@ -113,7 +125,7 @@ defmodule Vae.ExAdmin.Delegate do
           ]
         ],
         index: [default_sort: [asc: :id]],
-        show: [preload: [:process, :certifiers, applications: [ :delegate, :user, :certification, :certifiers]]]
+        show: [preload: [:process, :certifiers, :certifications, applications: [ :delegate, :user, :certification, :certifiers]]]
       }
     end
   end

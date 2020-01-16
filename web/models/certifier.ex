@@ -34,8 +34,9 @@ defmodule Vae.Certifier do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name])
-    |> slugify
+    |> slugify()
     |> validate_required([:name, :slug])
+    |> unique_constraint(:slug)
   end
 
   def to_slug(certifier) do

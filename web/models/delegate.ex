@@ -31,7 +31,6 @@ defmodule Vae.Delegate do
 
     has_many(:certifications, through: [:certifications_delegates, :certification])
 
-    # TODO: add many_to_manys
     has_many(:applications, Application, on_replace: :nilify)
 
     has_many(
@@ -80,11 +79,13 @@ defmodule Vae.Delegate do
       :administrative,
       :academy_id
     ])
-    |> slugify
+    |> slugify()
     |> validate_required([:name, :slug])
+    |> unique_constraint(:slug)
     |> add_certifiers(params)
   end
 
+  # TODO: consider refacto changeset and changeset_update, or remove one
   def changeset_update(struct, params) do
     params =
       Map.merge(
@@ -117,6 +118,9 @@ defmodule Vae.Delegate do
       :process_id,
       :academy_id
     ])
+    |> slugify()
+    |> validate_required([:name, :slug])
+    |> unique_constraint(:slug)
     |> add_certifiers(params)
     |> link_certifications()
     |> add_geolocation(params)

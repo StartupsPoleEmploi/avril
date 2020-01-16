@@ -111,6 +111,9 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
+    filter [:id, :label, :acronym, :level, :rncp_id, :description]
+
+
     query do
       %{
         all: [preload: [:romes, :certifiers]],

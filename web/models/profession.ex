@@ -19,6 +19,7 @@ defmodule Vae.Profession do
     |> slugify()
     |> validate_required([:label, :slug, :priority])
     |> unique_constraint(:label)
+    |> unique_constraint(:slug)
     |> assoc_constraint(:rome)
   end
 

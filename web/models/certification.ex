@@ -40,7 +40,6 @@ defmodule Vae.Certification do
       through: [:certifications_delegates, :delegate]
     )
 
-    # TODO: add many_to_manys
     has_many(:applications, Application, on_replace: :nilify)
 
     has_many(
@@ -65,6 +64,7 @@ defmodule Vae.Certification do
     ])
     |> slugify()
     |> validate_required([:label, :slug])
+    |> unique_constraint(:slug)
     |> add_romes(params)
     |> add_certifiers(params)
     |> add_delegates(params)

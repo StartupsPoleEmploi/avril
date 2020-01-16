@@ -277,7 +277,7 @@
                   p
                     strong Bravo ! Vous avez finalisé votre dossier de recevabilité. Il n’y a plus qu’à le transmettre.
                   p
-                    a href=Vae.Application.booklet_url(@application, "/cerfa") target="_blank" class="btn btn-md btn-primary" data-analytics="?bouton=livret-cerfa" Téléchargez votre dossier
+                    a href=Vae.Application.booklet_url(@application, "/cerfa") class="btn btn-md btn-primary" data-analytics="?bouton=livret-cerfa" Téléchargez votre dossier
                 = render "_after_booklet.html", booklet_url: Vae.Application.booklet_url(@application, "/cerfa"), receipts_url: Routes.page_path(@conn, :receipts), application: @application
             .row
               .col-sm-8.offset-2.text-center

@@ -26,8 +26,9 @@ defmodule Vae.Rome do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:code, :label, :url])
-    |> slugify
+    |> slugify()
     |> validate_required([:code, :label, :slug])
+    |> unique_constraint(:slug)
   end
 
   # def all() do
