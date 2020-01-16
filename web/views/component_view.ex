@@ -49,7 +49,7 @@ defmodule Vae.ComponentView do
         """
           ga('create', '#{@tracking_config[:analytics]}', 'auto', {'allowLinker': true});
           ga('require', 'linker');
-          ga('linker:autoLink', ['#{System.get_env("NUXT_URL")}'.replace(/^https?:\/\//i, '')] );
+          ga('linker:autoLink', ['#{System.get_env("NUXT_URL")}'.replace(/^https?:\\\/\\\//i, '')] );
         """
       else
         """
