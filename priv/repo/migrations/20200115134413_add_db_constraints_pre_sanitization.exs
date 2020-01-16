@@ -17,4 +17,5 @@ defmodule Vae.Repo.Migrations.AddDbConstraintsPreSanitization do
     ) |> IO.inspect()
 
     create unique_index(:certifications_delegates, [:delegate_id, :certification_id])
+  end
 end
