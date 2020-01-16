@@ -20,7 +20,8 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
             # 1 => Réunion, 2 => Demande d'infos
             type: 2,
             # meeting_id
-            reunion: nil
+            reunion: nil,
+            commentaire: nil
 
   def from_application(application = %Vae.Application{}) do
     user = application.user
@@ -37,7 +38,8 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
         commune: user.city_label,
         courrier: user.email,
         telephonePortable: format_phone_number(user.phone_number),
-        diplomeVise: format_diplome_vise(application.certification.acronym)
+        diplomeVise: format_diplome_vise(application.certification.acronym),
+        commentaire: Vae.Certification.name(application.certification)
       },
       format_address(user)
     )
