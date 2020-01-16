@@ -83,7 +83,7 @@ defmodule Mix.Tasks.UpdateCertifications do
 
   def parse() do
     System.cmd("rm", ["priv/rncp_2019_11.xml"]) |> IO.inspect()
-    System.cmd("wget", ["-O", "priv/rncp_2019_11.xml", "https://avril-resumes.s3.eu-west-3.amazonaws.com/rncp_2019_11.xml"]) |> IO.inspect()
+    System.cmd("curl", ["-o", "priv/rncp_2019_11.xml", "https://avril-resumes.s3.eu-west-3.amazonaws.com/rncp_2019_11.xml"]) |> IO.inspect()
     IO.puts("RNCP xml file downloaded")
 
     File.stream!("priv/rncp_2019_11.xml")
@@ -106,7 +106,6 @@ defmodule Mix.Tasks.UpdateCertifications do
       )
     end)
     |> Stream.filter(fn certification ->
-      # Logger.info("Rncp id not found for #{certification.label}")s
       !Vae.String.is_blank?(certification.rncp_id) && !Vae.String.is_blank?(certification.label)
     end)
     |> Stream.scan(%{ok: [], errors: []}, fn c, acc ->
@@ -227,9 +226,13 @@ defmodule Mix.Tasks.UpdateCertifications do
       query = from c in Vae.Certification, where: ^wheres
       results = Vae.Repo.all(query)
       if length(results) > 1 do
-        Logger.warn("Plusieurs résultats pour \n#{slug}:\n#{Enum.map(results, &(&1.slug)) |> Enum.join("\n")}")
+        Logger.info("Plusieurs résultats pour \n#{slug}:\n#{Enum.map(results, &(&1.slug)) |> Enum.join("\n")}")
+
       end
-      closest_slug(slug, results)
+
+      winner = closest_slug(slug, results)
+      Logger.info("Le gagnant est : #{winner && winner.slug}")
+      winner
     )
     end
 

@@ -111,7 +111,7 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
-    filter [:id, :label, :acronym, :level, :rncp_id, :description]
+    filter [:id, :slug, :label, :acronym, :level, :rncp_id, :description]
 
 
     query do
