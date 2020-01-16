@@ -82,9 +82,8 @@ defmodule Mix.Tasks.UpdateCertifications do
 
 
   def parse() do
-    :inets.start()
-    :ssl.start()
-    {:ok, :saved_to_file} = :httpc.request(:get, {'https://avril-resumes.s3.eu-west-3.amazonaws.com/rncp_2019_11.xml', []}, [], [stream: 'priv/rncp_2019_11.xml'])
+    System.cmd("rm", ["priv/rncp_2019_11.xml"]) |> IO.inspect()
+    System.cmd("wget", ["-O", "priv/rncp_2019_11.xml", "https://avril-resumes.s3.eu-west-3.amazonaws.com/rncp_2019_11.xml"]) |> IO.inspect()
     IO.puts("RNCP xml file downloaded")
 
     File.stream!("priv/rncp_2019_11.xml")
