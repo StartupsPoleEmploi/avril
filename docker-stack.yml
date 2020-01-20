@@ -4,7 +4,7 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - "./nginx:/etc/nginx/sites-enabled"
+      - "./nginx:/etc/nginx/conf.d"
       - "/var/log/nginx:/var/log/nginx"
     ports:
       - "80:80"
