@@ -2,9 +2,10 @@ Bonjour <%= @user_name %>,
 
 Vous souhaitez toujours obtenir votre <%= @certification_name %> en VAE ?
 
-Obtenir ce diplôme à votre rythme et en 2020, c'est possible, voici <%= if @booklet_url, do: 3, else: 2 %> conseils d'Avril pour vous :
+Obtenir ce diplôme cette année et à votre rythme, c'est possible.
+Voici <%= if @booklet_url, do: 3, else: 2 %> conseils d'Avril pour vous :
 
-#### Contactez ou recontactez votre centre VAE
+#### 1 - Contactez ou recontactez votre centre VAE
 
 > <%= @delegate_name %>
 > <%= @delegate_address %>
@@ -13,7 +14,7 @@ Obtenir ce diplôme à votre rythme et en 2020, c'est possible, voici <%= if @bo
 **[Je contact mon centre VAE par email](<%= @delegate_email %>)**
 
 <%= if @booklet_url do %>
-#### Remplissez votre dossier de candidature en ligne
+#### 2 - Remplissez votre dossier de candidature en ligne
 
 Nous avons dématérialisé votre dossier de candidature.
 
@@ -21,7 +22,7 @@ Nous avons dématérialisé votre dossier de candidature.
 <% end %>
 
 
-#### Financez votre VAE
+#### 3 - Financez votre VAE
 
 Une VAE ça coûte combien ? Où trouver les financements ? Vous avez des questions sur le financement : celui-ci est prit en charge dans la majorité des cas.
 
@@ -29,7 +30,7 @@ Une VAE ça coûte combien ? Où trouver les financements ? Vous avez des questi
 
 
 
-Surtout n'attendez pas le printemps, si vous êtes perdus, [contactez notre équipe](contact@avril.pole-emploi.fr).
+Surtout n'attendez pas le printemps, si vous êtes perdus, [contactez notre équipe](contact@avril.pole-emploi.fr) !
 
 Bonne chance,
 
