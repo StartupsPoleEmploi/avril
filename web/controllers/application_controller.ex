@@ -2,7 +2,7 @@ defmodule Vae.ApplicationController do
   require Logger
   use Vae.Web, :controller
 
-  alias Vae.{Application, Delegate, Repo, Resume, User}
+  alias Vae.{Application, Repo, Resume, User}
   alias Vae.Crm.Polls
 
   plug Vae.Plugs.ApplicationAccess when action not in [:index, :show, :admissible, :inadmissible]
@@ -62,7 +62,7 @@ defmodule Vae.ApplicationController do
     tabs = [
       :profile,
       (if length(meetings) > 0, do: :meetings),
-      (if edit_mode && Delegate.is_educ_nat?(application.delegate), do: :booklet)
+      (if edit_mode && Application.booklet_url(application), do: :booklet)
     ] |> Enum.reject(&is_nil/1)
 
     render(conn, "show.html", %{

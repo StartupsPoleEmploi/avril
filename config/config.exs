@@ -93,7 +93,7 @@ config :vae, Vae.Mailer,
   secret: System.get_env("MAILJET_PRIVATE_API_KEY"),
   template_error_deliver: true,
   template_error_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr",
-  avril_name: "Avril",
+  avril_name: "Avril - la VAE facile - service numérique de Pôle emploi",
   avril_from: "contact@avril.pole-emploi.fr",
   avril_to: "avril@pole-emploi.fr",
   override_to: System.get_env("DEV_EMAILS")

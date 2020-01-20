@@ -69,6 +69,30 @@ defmodule Vae.ApplicationEmail do
     )
   end
 
+  def user_raise(application) do
+    application = Repo.preload(application, [:user, :delegate, :certification])
+    Mailer.build_email(
+      "application/user_raise.html",
+      :avril,
+      application.user,
+      %{
+        delegate_name: application.delegate.name,
+        delegate_address: application.delegate.address,
+        delegate_phone_number: application.delegate.telephone,
+        delegate_email: application.delegate.email,
+        application_url: Routes.application_url(Endpoint, :show, application),
+        booklet_url: Vae.Application.booklet_url(application),
+        funding_url: Routes.page_url(Endpoint, :financement),
+        user_name: User.fullname(application.user),
+        certification_name: Certification.name(application.certification),
+        subject: "#{User.fullname(application.user)}, pour votre #{Certification.name(application.certification)} en VAE : on vous aide",
+        image_url: Routes.static_url(Endpoint, "/images/group.png"),
+        footer_note: :inscrit_avril
+      }
+    )
+
+  end
+
   def monthly_status(application) do
     application = Repo.preload(application, [:user])
     Mailer.build_email(
