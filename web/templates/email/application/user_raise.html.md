@@ -3,7 +3,7 @@ Bonjour <%= @user_name %>,
 Vous souhaitez toujours obtenir votre <%= @certification_name %> en VAE ?
 
 Obtenir ce diplôme cette année et à votre rythme, c'est possible.
-voici <%= if @booklet_url, do: 3, else: 2 %> conseils d'Avril pour vous :
+Voici <%= if @booklet_url, do: 3, else: 2 %> conseils d'Avril pour vous :
 
 #### 1 - Contactez ou recontactez votre centre VAE
 
