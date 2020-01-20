@@ -40,7 +40,7 @@ services:
     ports:
       - "3000:3000"
     working_dir: /app
-    command: bash
+    # command: bash
     # command: yarn install && yarn build && yarn start
     env_file:
       - ".env"
