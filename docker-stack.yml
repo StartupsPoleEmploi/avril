@@ -1,15 +1,6 @@
 version: "3.6"
 
 services:
-  nginx:
-    image: nginx:latest
-    volumes:
-      - "./nginx:/etc/nginx/conf.d"
-      - "/var/log/nginx:/var/log/nginx"
-    ports:
-      - "80:80"
-    depends_on:
-      - app
   app:
     image: avril_app
     command: /app/scripts/app.sh
@@ -23,8 +14,6 @@ services:
       restart_policy:
         max_attempts: 10
         window: 1h
-    # ports:
-    #   - "4000:4000"
     depends_on:
       - front
       - pginit
@@ -64,3 +53,13 @@ services:
       restart_policy:
         condition: none
         max_attempts: 1
+  nginx:
+    image: nginx:latest
+    volumes:
+      - "./nginx:/etc/nginx/conf.d"
+      - "/var/log/nginx:/var/log/nginx"
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+      - nuxt
