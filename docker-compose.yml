@@ -48,6 +48,10 @@ services:
       - "../Avril-Demat-Livret1:/app"
     networks:
       - default
+    deploy:
+      restart_policy:
+        condition: none
+        max_attempts: 1
 
 # Define the volumes
 # volumes:
