@@ -2,51 +2,53 @@ defmodule Vae.Status.Server do
   require Logger
   use GenServer
 
-  @name Status
-  @ets_table :status
-  @ets_key :message
+  @tab_name 'priv/tabs/status.tab'
+  @tab_key :message
+
+  ##############
+  ### Server ###
+  ##############
 
   @doc false
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: @name)
+    GenServer.start_link(__MODULE__, nil, name: Status)
   end
 
   @impl true
-  def init(_delegate) do
+  def init(_state) do
     Logger.info("Init status server")
-    PersistentEts.new(@ets_table, "priv/tabs/#{@ets_table}.tab", [
-      :set,
-      :named_table,
-      :public
-    ])
-    {:ok, nil}
+    :dets.open_file(@tab_name, [type: :set])
   end
 
   @impl true
-  def handle_call(:get, _from, state) do
-    {:reply, get_status(), state}
+  def handle_call(:get, _from, _state) do
+    {:reply, get_status(), nil}
   end
 
   @impl true
-  def handle_cast({:set, status}, state) when is_binary(status) do
+  def handle_cast({:set, status}, _state) when is_binary(status) do
     set_status([status: status])
-    {:noreply, state}
+    {:noreply, nil}
   end
 
   @impl true
-  def handle_cast({:set, data}, state) do
+  def handle_cast({:set, data}, _state) do
     set_status(data)
-    {:noreply, state}
+    {:noreply, nil}
   end
 
-  def handle_cast({:delete}, state) do
+  def handle_cast({:delete}, _state) do
     delete_status()
-    {:noreply, state}
+    {:noreply, nil}
   end
+
+  #############
+  #### API ####
+  #############
 
   defp get_status() do
-    case :ets.lookup(@ets_table, @ets_key) do
-      [{@ets_key, value}] -> value
+    case :dets.lookup(@tab_name, @tab_key) do
+      [{@tab_key, value}] -> value
       [] -> nil
     end
   end
@@ -54,10 +56,10 @@ defmodule Vae.Status.Server do
   defp set_status(data) do
     defaults = %{level: :info, starts_at: nil, ends_at: nil}
     data = Enum.into(data, defaults)
-    :ets.insert(@ets_table, {@ets_key, data})
+    :dets.insert(@tab_name, {@tab_key, data})
   end
 
   defp delete_status() do
-    :ets.insert(@ets_table, {@ets_key, nil})
+    :dets.delete(@tab_name, @tab_key)
   end
 end

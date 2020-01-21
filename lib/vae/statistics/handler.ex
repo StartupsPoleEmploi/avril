@@ -1,8 +1,11 @@
 defmodule Vae.Statistics.Handler do
   use GenServer
 
+  # Unused ? Or should be moved to a mix task?
+
   alias Vae.{AdminEmail, Certification, JobSeeker}
 
+  @tab_name 'priv/tabs/romes.tab'
   @csv_headers [
     "date",
     "identifier",
@@ -40,22 +43,21 @@ defmodule Vae.Statistics.Handler do
   end
 
   def start_link(args) do
-    GenServer.start_link(__MODULE__, args)
+    GenServer.start_link(__MODULE__, nil)
   end
 
-  def init(args) do
-    PersistentEts.new(:romes, "priv/tabs/romes.tab", [:named_table, :public])
-    {:ok, args}
+  def init(_state) do
+    :dets.open_file(@tab_name, [type: :set])
   end
 
-  def handle_call({:execute, datetime}, _from, state) do
+  def handle_call({:execute, datetime}, _from, _state) do
     JobSeeker.list_from_events_month(datetime)
     |> build_records()
     |> build_csv()
     |> write()
     |> send_email()
 
-    {:reply, :ok, state}
+    {:reply, :ok, nil}
   end
 
   defp build_records(job_seekers) do
@@ -108,7 +110,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   defp get_certification_labels_from_rome_code(key) do
-    case :ets.lookup(:romes, key) do
+    case :dets.lookup(@tab_name, key) do
       [] ->
         get_from_db_and_cache(key)
 
@@ -134,7 +136,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   defp cache(labels, key) do
-    :ets.insert(:romes, {key, labels})
+    :dets.insert(@tab_name, {key, labels})
     labels
   end
 

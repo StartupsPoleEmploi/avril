@@ -7,25 +7,80 @@ defmodule Vae.Meetings.StateHolder do
   alias Vae.Places
 
   @name StateHolder
+  @tab_name 'priv/tabs/meetings.tab'
+
+  ##############
+  ### Server ###
+  ##############
 
   @doc false
   def start_link() do
-    start_link([])
-  end
-
-  @doc false
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts, name: StateHolder)
+    GenServer.start_link(__MODULE__, nil, name: StateHolder)
   end
 
   @impl true
   def init(_state) do
-    state =
-      PersistentEts.new(:meetings, "priv/tabs/meetings.tab", [:named_table, :public])
-      |> from_ets()
-
-    {:ok, state}
+    :dets.open_file(@tab_name, [type: :set])
   end
+
+  @impl true
+  def handle_call(:all, _from, state), do: {:reply, state, state}
+
+  @impl true
+  def handle_call({:get, delegate}, _from, state) do
+    case AlgoliaClient.get_meetings(delegate) do
+      {:ok, places} ->
+        meetings =
+          places
+          |> Enum.map(fn %{id: id, place: place, address: address} ->
+            meetings =
+              state
+              |> from_delegates()
+              |> Enum.find(&(&1[:id] == id))
+              |> case do
+                nil ->
+                  []
+
+                delegate ->
+                  delegate
+                  |> Map.get(:meetings)
+                  |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
+              end
+
+            {{place, address, Vae.String.parameterize(place)}, meetings}
+          end)
+
+        {:reply, meetings, state}
+
+      {:error, msg} ->
+        Logger.error(msg)
+        {:reply, [], state}
+    end
+  end
+
+  @impl true
+  def handle_call({:get_by_meeting_id, meeting_id}, _from, state) do
+    meeting =
+      state
+      |> from_delegates()
+      |> Enum.flat_map(& &1[:meetings])
+      |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
+
+    {:reply, meeting, state}
+  end
+
+  @impl true
+  def handle_call({:register, {%{name: name} = meeting, application}}, _from, state) do
+    with {:ok, _registered_meeting} <-
+           GenServer.call(name, {:register, {meeting, application}}) do
+      {:reply, {:ok, meeting}, state}
+    else
+      {:error, msg} ->
+        Logger.error(fn -> inspect(msg) end)
+        {:reply, {:error, meeting}, state}
+    end
+  end
+
 
   def handle_cast({:save, name, delegate}, state) do
     new_state =
@@ -94,7 +149,7 @@ defmodule Vae.Meetings.StateHolder do
   def handle_cast({:subscribe, name}, state) do
     Logger.info(fn -> "#{name} subscribed" end)
 
-    case :ets.lookup(:meetings, name) do
+    case :dets.lookup(@tab_name, name) do
       [] ->
         GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
 
@@ -122,7 +177,7 @@ defmodule Vae.Meetings.StateHolder do
 
   @impl true
   def handle_cast(:fetch_all, state) do
-    :ets.tab2list(:meetings)
+    :ets.tab2list(@tab_name)
     |> Enum.each(fn {name, _dt, _meetings} ->
       GenServer.cast(name, {:fetch, self(), Delegate.new(name)})
     end)
@@ -130,63 +185,10 @@ defmodule Vae.Meetings.StateHolder do
     {:noreply, state}
   end
 
-  @impl true
-  def handle_call(:all, _from, state), do: {:reply, state, state}
+  #############
+  #### API ####
+  #############
 
-  @impl true
-  def handle_call({:get, delegate}, _from, state) do
-    case AlgoliaClient.get_meetings(delegate) do
-      {:ok, places} ->
-        meetings =
-          places
-          |> Enum.map(fn %{id: id, place: place, address: address} ->
-            meetings =
-              state
-              |> from_delegates()
-              |> Enum.find(&(&1[:id] == id))
-              |> case do
-                nil ->
-                  []
-
-                delegate ->
-                  delegate
-                  |> Map.get(:meetings)
-                  |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
-              end
-
-            {{place, address, Vae.String.parameterize(place)}, meetings}
-          end)
-
-        {:reply, meetings, state}
-
-      {:error, msg} ->
-        Logger.error(msg)
-        {:reply, [], state}
-    end
-  end
-
-  @impl true
-  def handle_call({:get_by_meeting_id, meeting_id}, _from, state) do
-    meeting =
-      state
-      |> from_delegates()
-      |> Enum.flat_map(& &1[:meetings])
-      |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
-
-    {:reply, meeting, state}
-  end
-
-  @impl true
-  def handle_call({:register, {%{name: name} = meeting, application}}, _from, state) do
-    with {:ok, _registered_meeting} <-
-           GenServer.call(name, {:register, {meeting, application}}) do
-      {:reply, {:ok, meeting}, state}
-    else
-      {:error, msg} ->
-        Logger.error(fn -> inspect(msg) end)
-        {:reply, {:error, meeting}, state}
-    end
-  end
 
   def safe_send_to_genserver(method, params) do
     try do
@@ -342,13 +344,7 @@ defmodule Vae.Meetings.StateHolder do
     |> Enum.flat_map(& &1.grouped_meetings)
   end
 
-  defp from_ets(tab) do
-    tab
-    |> :ets.tab2list()
-    |> Enum.map(fn {_name, _updated_at, delegate} -> delegate end)
-  end
-
   defp persist(delegate, name) do
-    :ets.insert(:meetings, {name, delegate.updated_at, delegate})
+    :ets.insert(@tab_name, {name, delegate.updated_at, delegate})
   end
 end
