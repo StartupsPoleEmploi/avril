@@ -22,7 +22,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        window: 1h
+        window: 15m
     healthcheck:
       test: pg_isready -U postgres
       interval: 15s
