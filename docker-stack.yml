@@ -55,11 +55,22 @@ services:
         max_attempts: 1
   nginx:
     image: nginx:latest
+    # command: nginx -g 'daemon off;'
     volumes:
       - "./nginx:/etc/nginx/conf.d"
       - "/var/log/nginx:/var/log/nginx"
     ports:
       - "80:80"
+    deploy:
+      restart_policy:
+        delay: 10s
+        # max_attempts: 3
+        # window: 120s
+    # healthcheck:
+    #     test: wget -q0- http://avril_nuxt:3000
+    #     interval: 5s
+    #     timeout: 3s
+    #     retries: 3
     depends_on:
       - app
       - nuxt

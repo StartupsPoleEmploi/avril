@@ -50,8 +50,9 @@ services:
       - default
     deploy:
       restart_policy:
-        condition: none
-        max_attempts: 1
+        # condition: none
+        # max_attempts: 1
+        window: 120s
 
 # Define the volumes
 # volumes:
