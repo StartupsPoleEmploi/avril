@@ -7,26 +7,26 @@ defmodule Vae.Repo.Migrations.AddFirstNameLastNameToUsers do
       add(:last_name, :string)
     end
 
-    flush()
+    # flush()
 
-    Enum.map(Vae.Repo.all(Vae.User), fn user ->
-      [first_name, last_name] = String.split(user.name, " ", parts: 2)
+    # Enum.map(Vae.Repo.all(Vae.User), fn user ->
+    #   [first_name, last_name] = String.split(user.name, " ", parts: 2)
 
-      Vae.User.changeset(user, %{
-        first_name: first_name,
-        last_name: last_name
-      })
-      |> Vae.Repo.update()
-    end)
+    #   Vae.User.changeset(user, %{
+    #     first_name: first_name,
+    #     last_name: last_name
+    #   })
+    #   |> Vae.Repo.update()
+    # end)
   end
 
   def down do
-    Enum.map(Vae.Repo.all(Vae.User), fn user ->
-      Vae.User.changeset(user, %{
-        name: "#{user.first_name} #{user.last_name}"
-      })
-      |> Vae.Repo.update()
-    end)
+    # Enum.map(Vae.Repo.all(Vae.User), fn user ->
+    #   Vae.User.changeset(user, %{
+    #     name: "#{user.first_name} #{user.last_name}"
+    #   })
+    #   |> Vae.Repo.update()
+    # end)
 
     alter table(:users) do
       remove(:first_name)
