@@ -40,6 +40,17 @@
             .col-md-6
               = form_for @user_changeset, Routes.user_path(@conn, :update, @user), [class: "profile-edit", data: [analytics: "Profil#modifier coordonnees"]], fn f ->
                 .row
+                  .col
+                    .form-group
+                      = if @edit_mode do
+                        .form-check.form-check-inline
+                          = radio_button f, :gender, "male", class: "form-check-input", disabled: @user.first_name, required: true
+                          = label f, :user_gender_male, "Homme", class: "form-check-label form-control-lg"
+                        .form-check.form-check-inline
+                          = radio_button f, :gender, "female", class: "form-check-input", disabled: @user.first_name, required: true
+                          = label f, :user_gender_female, "Femme", class: "form-check-label form-control-lg"
+                        = error_tag f, :gender
+                .row
                   = if @edit_mode do
                     .col
                       .form-group
