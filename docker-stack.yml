@@ -18,6 +18,12 @@ services:
       - front
       - pginit
       - postgres
+  nuxt:
+    deploy:
+      restart_policy:
+        # condition: none
+        # max_attempts: 1
+        window: 120s
   front:
     image: avril_app
     command: /app/scripts/front.sh

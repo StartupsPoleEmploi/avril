@@ -41,18 +41,13 @@ services:
       - "3000:3000"
     working_dir: /app
     # command: bash
-    command: yarn install && yarn build && yarn start
+    command: yarn setup
     env_file:
       - ".env"
     volumes:
       - "../Avril-Demat-Livret1:/app"
     networks:
       - default
-    deploy:
-      restart_policy:
-        # condition: none
-        # max_attempts: 1
-        window: 120s
 
 # Define the volumes
 # volumes:
