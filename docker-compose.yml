@@ -5,18 +5,6 @@ services:
     env_file:
       - ".env"
     image: "postgres:11.6-alpine"
-    restart: always
-    # volumes:
-      # - pgdata:/var/lib/postgresql/data
-      # - "/etc/postgresql:/etc/postgresql"
-      # - "/var/log/postgresql:/var/log/postgresql"
-      # - "/var/lib/postgresql:/var/lib/postgresql"
-    healthcheck:
-      test: pg_isready -U postgres
-      interval: 15s
-      timeout: 10s
-      start_period: 15s
-      retries: 2
   app:
     container_name: avril_app
     build: .
@@ -25,22 +13,20 @@ services:
     working_dir: /app
     depends_on:
       - postgres
-      # - nuxt
     env_file:
       - ".env"
     command: iex -S mix phx.server
     volumes:
       - ".:/app"
     networks:
-      default:
-        aliases:
-          - phoenix
+      - default
+        # aliases:
+        #   - phoenix
   nuxt:
     image: node:latest
     ports:
       - "3000:3000"
     working_dir: /app
-    # command: bash
     command: yarn setup
     env_file:
       - ".env"
@@ -48,14 +34,3 @@ services:
       - "../Avril-Demat-Livret1:/app"
     networks:
       - default
-
-# Define the volumes
-# volumes:
-#   pgdata:
-
-# volumes:
-#   postgres: {}
-#   static:
-#     driver_opts:
-#       device: "tmpfs"
-#       type: "tmpfs"
