@@ -9,7 +9,7 @@ defmodule Vae.User do
   alias Vae.{Application, Experience, JobSeeker, ProvenExperience, Repo, Skill}
 
   schema "users" do
-    field(:gender, :string)
+    field(:gender, :string, default: "female")
     field(:name, :string)
     field(:first_name, :string)
     field(:last_name, :string)
