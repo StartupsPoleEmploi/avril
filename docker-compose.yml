@@ -33,6 +33,6 @@ services:
     env_file:
       - ".env"
     volumes:
-      - "../Avril-Demat-Livret1:/app"
+      - "../avril-livret1:/app"
     networks:
       - default
