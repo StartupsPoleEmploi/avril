@@ -7,10 +7,10 @@ JOINER=""
 
 for SERVICE in $SERVICES
 do
-  COMMAND="$COMMAND $JOINER docker service logs -f --tail=100 $SERVICE"
-  JOINER="&"
+  COMMAND="$COMMAND $JOINER docker service logs -f --tail=100 $SERVICE;"
+  # JOINER=";"
 done
 
-COMMAND="$COMMAND; }"
+COMMAND="$COMMAND }"
 
 eval $COMMAND
