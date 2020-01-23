@@ -7,4 +7,6 @@ cd "$(dirname "$0")/.."
 
 mix deps.get --only prod && \
 mix do compile && \
+./scripts/wait_for_pg.sh && \
+mix ecto.migrate && \
 mix phx.server

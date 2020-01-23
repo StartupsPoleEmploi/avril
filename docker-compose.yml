@@ -8,6 +8,7 @@ services:
     volumes:
       - "./db/data:/var/lib/postgresql/data"
       - "./scripts/pginit:/docker-entrypoint-initdb.d"
+      - "./db/latest.dump:/pg-dump/latest.dump"
   app:
     container_name: avril_app
     build: .
@@ -23,8 +24,6 @@ services:
       - ".:/app"
     networks:
       - default
-        # aliases:
-        #   - phoenix
   nuxt:
     image: node:latest
     ports:
