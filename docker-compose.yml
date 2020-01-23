@@ -1,29 +1,27 @@
 version: "3.6"
 
 services:
-  postgres:
-    env_file:
-      - ".env"
-    image: "postgres:11.6-alpine"
-    volumes:
-      - "./db/data:/var/lib/postgresql/data"
-      - "./scripts/pginit:/docker-entrypoint-initdb.d"
-      - "./db/latest.dump:/pg-dump/latest.dump"
   app:
-    container_name: avril_app
     build: .
-    ports:
-      - "4000:4000"
-    working_dir: /app
+    command: /app/scripts/app.sh
+    container_name: avril_app
     depends_on:
       - postgres
     env_file:
       - ".env"
-    command: iex -S mix phx.server
     volumes:
       - ".:/app"
-    networks:
-      - default
+    working_dir: /app
+  nginx:
+    depends_on:
+      - app
+      - nuxt
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx:/etc/nginx/conf.d"
+      - "/var/log/nginx:/var/log/nginx"
   nuxt:
     image: node:latest
     ports:
@@ -34,5 +32,11 @@ services:
       - ".env"
     volumes:
       - "../avril-livret1:/app"
-    networks:
-      - default
+  postgres:
+    env_file:
+      - ".env"
+    image: "postgres:11.6-alpine"
+    volumes:
+      - "./db/data:/var/lib/postgresql/data"
+      - "./scripts/pginit:/docker-entrypoint-initdb.d"
+      - "./db/latest.dump:/pg-dump/latest.dump"
