@@ -9,16 +9,16 @@ LOCK_FILE="db/pginit.lock"
 
 cd "$(dirname "$0")/.."
 
-touch $LOCK_FILE
+# touch $LOCK_FILE
 
-echo "[INIT] Check Postgres status"
+# echo "[INIT] Check Postgres status"
 
-until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q' 2> /dev/null; do
-  >&2 echo "[WAIT] Postgres is unavailable"
-  sleep 1
-done
+# until psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -c '\q' 2> /dev/null; do
+#   >&2 echo "[WAIT] Postgres is unavailable"
+#   sleep 1
+# done
 
->&2 echo "[DONE] Postgres is up"
+# >&2 echo "[DONE] Postgres is up"
 
 if createdb -h $POSTGRES_HOST -U $POSTGRES_USER -w $POSTGRES_DB 2> /dev/null; then
   echo "DB $POSTGRES_DB created";
@@ -44,8 +44,8 @@ else
   echo "[DONE] Database seeded";
 fi
 
-# mix ecto.migrate
+mix ecto.migrate
 
-rm $LOCK_FILE
+# rm $LOCK_FILE
 
 exit 0

@@ -16,7 +16,7 @@ services:
         window: 1h
     depends_on:
       - front
-      - pginit
+      # - pginit
       - postgres
   # postgres:
   #   deploy:
@@ -40,31 +40,31 @@ services:
       restart_policy:
         condition: none
         max_attempts: 1
-  pginit:
-    image: avril_app
-    command: /app/scripts/pginit.sh
-    env_file:
-      - ".env"
-    volumes:
-      - ".:/app"
-    depends_on:
-      - postgres
-    deploy:
-      restart_policy:
-        condition: none
-        max_attempts: 1
-        window: 15m
-  compile:
-    image: avril_app
-    command: /app/scripts/compile.sh
-    env_file:
-      - ".env"
-    volumes:
-      - ".:/app"
-    deploy:
-      restart_policy:
-        condition: none
-        max_attempts: 1
+  # pginit:
+  #   image: avril_app
+  #   command: /app/scripts/pginit.sh
+  #   env_file:
+  #     - ".env"
+  #   volumes:
+  #     - ".:/app"
+  #   depends_on:
+  #     - postgres
+  #   deploy:
+  #     restart_policy:
+  #       condition: none
+  #       max_attempts: 1
+  #       window: 15m
+  # compile:
+  #   image: avril_app
+  #   command: /app/scripts/compile.sh
+  #   env_file:
+  #     - ".env"
+  #   volumes:
+  #     - ".:/app"
+  #   deploy:
+  #     restart_policy:
+  #       condition: none
+  #       max_attempts: 1
   nginx:
     image: nginx:latest
     volumes:
