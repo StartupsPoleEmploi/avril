@@ -18,11 +18,11 @@ services:
       - front
       - pginit
       - postgres
-  postgres:
-    deploy:
-      restart_policy:
-        condition: on-failure
-        window: 15m
+  # postgres:
+  #   deploy:
+  #     restart_policy:
+  #       condition: on-failure
+  #       window: 15m
     # healthcheck:
     #   test: pg_isready -U postgres
     #   interval: 15s
