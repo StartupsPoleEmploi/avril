@@ -5,6 +5,8 @@ services:
     env_file:
       - ".env"
     image: "postgres:11.6-alpine"
+    volumes:
+      - db:/var/lib/postgresql/data
   app:
     container_name: avril_app
     build: .
