@@ -189,7 +189,7 @@ defmodule Vae.Application do
 
   def booklet_url!(application, path\\'/') do
     if System.get_env("NUXT_URL"),
-      do: "#{System.get_env("NUXT_URL")}#{path}?hash=#{application.booklet_hash}",
+      do: "#{System.get_env("NUXT_URL")}#{System.get_env("NUXT_PATH")}#{path}?hash=#{application.booklet_hash}",
       else: Logger.warn("NUXT_URL environment variable not set") && nil
   end
 
