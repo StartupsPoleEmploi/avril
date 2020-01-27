@@ -4,6 +4,7 @@ cd "$(dirname "$0")/.."
 
 # Compile elixir
 # ./scripts/wait_for.sh compile && \
+./scripts/front.sh
 
 mix deps.get --only prod && \
 mix do compile && \
