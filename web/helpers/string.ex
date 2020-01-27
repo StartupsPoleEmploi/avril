@@ -15,20 +15,23 @@ defmodule Vae.String do
     cond do
       String.upcase(string || "") == string ->
         String.split(string, " ") |> Enum.map(&String.capitalize/1) |> Enum.join(" ")
-      true                                  -> string
+
+      true ->
+        string
     end
   end
 
-  def parameterize(string, separator\\"-")
+  def parameterize(string, separator \\ "-")
   def parameterize(nil, _), do: nil
+
   def parameterize(string, separator) do
     string
-      |> :unicode.characters_to_nfd_binary()
-      |> String.replace(~r/[\'’\"\-]/u, " ")
-      |> String.replace(~r/[^A-z\s0-9]/u, "")
-      |> String.downcase()
-      |> String.trim()
-      |> String.replace(~r/\s+/, separator)
+    |> :unicode.characters_to_nfd_binary()
+    |> String.replace(~r/[\'’\"\-]/u, " ")
+    |> String.replace(~r/[^A-z\s0-9]/u, "")
+    |> String.downcase()
+    |> String.trim()
+    |> String.replace(~r/\s+/, separator)
   end
 
   def to_id(param) when is_binary(param) do
@@ -37,6 +40,9 @@ defmodule Vae.String do
       :error -> nil
     end
   end
+
   def to_id(_param), do: nil
 
+  def capitalize(nil), do: nil
+  def capitalize(s), do: String.capitalize(s)
 end
