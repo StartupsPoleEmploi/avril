@@ -17,9 +17,8 @@ services:
       - app
       - nuxt
     image: nginx:latest
-    nginx:
-      ports:
-        - "${NGINX_PORT:-4000}:80"
+    ports:
+      - "${NGINX_PORT:-4000}:80"
     volumes:
       - "../nginx:/etc/nginx/conf.d"
       - "/var/log/nginx:/var/log/nginx"
