@@ -211,8 +211,8 @@ defmodule Vae.User do
 
     Map.merge(extra_fields, %{
       gender: api_fields["gender"],
-      first_name: String.capitalize(api_fields["given_name"]),
-      last_name: String.capitalize(api_fields["family_name"]),
+      first_name: Vae.String.capitalize(api_fields["given_name"]),
+      last_name: Vae.String.capitalize(api_fields["family_name"]),
       pe_id: api_fields["idIdentiteExterne"],
       job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"])),
       confirmed_at: Timex.now()
