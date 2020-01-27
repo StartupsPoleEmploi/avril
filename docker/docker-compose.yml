@@ -2,39 +2,40 @@ version: "3.6"
 
 services:
   app:
-    build: .
+    build: ..
     command: /app/scripts/app.sh
     container_name: avril_app
     depends_on:
       - postgres
     env_file:
-      - ".env"
+      - "../.env"
     volumes:
-      - ".:/app"
+      - "..:/app"
     working_dir: /app
   nginx:
     depends_on:
       - app
       - nuxt
     image: nginx:latest
+    nginx:
+      ports:
+        - "${NGINX_PORT:-4000}:80"
     volumes:
-      - "./nginx:/etc/nginx/conf.d"
+      - "../nginx:/etc/nginx/conf.d"
       - "/var/log/nginx:/var/log/nginx"
   nuxt:
     image: node:latest
-    ports:
-      - "3000:3000"
     working_dir: /app
     command: yarn setup
     env_file:
-      - ".env"
+      - "../.env"
     volumes:
-      - "../avril-livret1:/app"
+      - "../../avril-livret1:/app"
   postgres:
     env_file:
-      - ".env"
+      - "../.env"
     image: "postgres:11.6-alpine"
     volumes:
-      - "./db/data:/var/lib/postgresql/data"
-      - "./scripts/pginit:/docker-entrypoint-initdb.d"
-      - "./db/latest.dump:/pg-dump/latest.dump"
+      - "../db/data:/var/lib/postgresql/data"
+      - "../scripts/pginit:/docker-entrypoint-initdb.d"
+      - "../db/latest.dump:/pg-dump/latest.dump"
