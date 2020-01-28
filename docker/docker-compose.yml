@@ -4,13 +4,14 @@ services:
   app:
     build: ..
     command: /app/scripts/app.sh
-    container_name: avril_app
+    # container_name: avril_app
     depends_on:
       - postgres
     env_file:
       - "../.env"
     volumes:
-      - "..:/app"
+      - ..:/app
+      # - /app/_build/
     working_dir: /app
   nginx:
     depends_on:
@@ -29,7 +30,8 @@ services:
     env_file:
       - "../.env"
     volumes:
-      - "../../avril-livret1:/app"
+      - ../../avril-livret1:/app
+      # - /app/.nuxt/
   postgres:
     env_file:
       - "../.env"
