@@ -13,15 +13,11 @@ defmodule Vae.Endpoint do
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug(
-    Plug.Static.IndexHtml,
-    at: "/livret-1"
-  )
-  plug(
     Plug.Static,
     at: "/",
     from: :vae,
     gzip: true,
-    only: ~w(livret-1 css fonts images js robots.txt),
+    only: ~w(css fonts images js robots.txt),
     only_matching: ~w(favicon)
   )
 
