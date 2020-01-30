@@ -16,6 +16,7 @@ services:
       start_period: 30s
     volumes:
       - .:/app
+      - /mnt/datalakepe/depuis_datalake/:/datalake
     working_dir: /app
   nginx:
     depends_on:
