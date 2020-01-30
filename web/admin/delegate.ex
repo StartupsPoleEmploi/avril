@@ -68,6 +68,20 @@ defmodule Vae.ExAdmin.Delegate do
           column(:inadmissible_at)
         end
       end
+
+      panel "Meetings" do
+        table_for Vae.Meetings.get(delegate) do
+          column(:name)
+          column(:place)
+          column(:address)
+          column(:postal_code)
+          column(:city)
+          column(:remaining_places)
+          column(:start_date)
+          column(:end_date)
+        end
+      end
+
     end
 
     form delegate do
