@@ -34,7 +34,7 @@ Puis exécuter :
 
 - `docker-compose run --rm app bash`
 - Dans le docker, exécuter : `mix ecto.create` pour créer la BDD
-- Puis dans un autre terminal, exécuter : `docker-compose run --rm postgres pg_restore --verbose --clean --no-acl --no-owner -h postgres -d vae_dev -U postgres /app/db/latest.dump`
+- Puis dans un autre terminal, exécuter : `docker-compose exec postgres pg_restore --verbose --clean --no-acl --no-owner -h postgres -d vae_dev -U postgres /pg-dump/latest.dump`
 
 > Attention : cela génère un warning, ne pas hésiter à lancer deux fois la requête pour que le restore se passe bien ([suivre l'issue](https://github.com/flynn/flynn/issues/4525)).
 
