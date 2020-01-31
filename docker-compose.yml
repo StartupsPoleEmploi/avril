@@ -28,7 +28,7 @@ services:
       timeout: 3s
       retries: 3
     ports:
-      - ${NGINX_PORT:-4000}:80
+      - ${NGINX_PORT:-80}:80
     volumes:
       - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/nginx.conf
       - /var/log/nginx:/var/log/nginx

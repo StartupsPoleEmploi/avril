@@ -20,12 +20,15 @@ docker-compose build
 6. Deploy
 
 ```
-docker stack deploy --prune -c docker-stack.yml -c docker-compose.yml avril
+docker-compose up -d
 ```
 
-Vous pouvez ignorer les warnings.
+<!-- ```
+docker stack deploy --prune -c docker-stack.yml -c docker-compose.yml avril
+```
+ -->
 
-7. Rentrer dans un container elixir pour créer la DB:
+<!-- 7. Rentrer dans un container elixir pour créer la DB:
 
 ```
 docker exec -it $(docker ps -a | grep "app" | awk '{print $1}' | head -n 1) mix ecto.create
@@ -37,48 +40,46 @@ docker exec -it $(docker ps -a | grep "app" | awk '{print $1}' | head -n 1) mix 
 docker exec -it $(docker ps -a | grep "postgres" | awk '{print $1}') bash
 /host/pg_restore.sh
 ```
-
+ -->
 9. Suivi
 
-- Voir l'état des services : `docker stack ps avril`
-- Voir les logs de l'app : `docker service logs --tail=100 -f avril_app`
+- Voir l'état des services : `watch -n 5 docker ps -a`
+- Voir les logs de l'app : `docker-compose logs --tail=100 -f`
+
+<!-- - Voir l'état des services : `docker stack ps avril`
+- Voir les logs de l'app : `docker service logs --tail=100 -f avril_app` -->
 
 10. DB Backup
 
 ```
-docker exec -it $(docker ps -a | grep "postgres" | awk '{print $1}') bash
+docker-compose exec postgres bash
 pg_dump --verbose -h $PGHOST -d $PGDB -U $PGUSER /app/db/latest.dump
 ```
 
 ## Rolling update
 
-### Sans rebuild
+Avril est actuellement constituée de 2 webservices :
+- phoenix : l'app d'Avril historique
+- nuxt : le formulaire de dématarialisation du livret 1
 
-Si uniquement le code a changé mais aucune dépendance (front & back), alors il suffit de relancer le service de l'app.
+Pour mettre à jour l'un de ces deux services, il faut
 
-Pour cela la commande est :
+1. Prendre la dernière version du code :
 
-```
-docker service update --force avril_app
-```
+- phoenix : `cd /home/docker/avril && git pull`
+- nuxt : `cd /home/docker/avril-livret1 && git pull`
 
-NB: le `--force` est nécessaire car le code étant dans un `volume`, le container ne détecte pas qu'il a changé.
-
-### Avec rebuild
-
-Le rebuild du container n'est pas obligatoire mais suggéré si des dépendances ont été modifées :
-- dans [mix.exs](./mix.exs)
-- ou dans [package.json](./assets/package.json)
-
-Dans ce cas, relancer d'abord :
+2. Lancer le script de rolling-update :
 
 ```
-docker-compose build
+../avril/scripts/utils/docker-update.sh <SERVICE_NAME>
 ```
 
-Puis pour mettre à jour le code, la commande est la même :
+Ce script exécute les opérations suivantes :
+- initialize et lance un container avec la nouvelle version du code
+- attend que le service soit "healthy"
+- redémarre nginx qui prend en compte la nouvelle instance en parallèle
+- stop la précédente instance puis la supprime
+- nginx ne route que sur l'instance qui reste active
 
-```
-docker stack deploy -c docker-stack.yml -c docker-compose.yml avril
-```
 
