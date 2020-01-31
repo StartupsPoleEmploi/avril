@@ -26,7 +26,7 @@ Nous avons dématérialisé votre dossier de candidature.
 
 Une VAE ça coûte combien ? Où trouver les financements ? Vous avez des questions sur le financement : celui-ci est prit en charge dans la majorité des cas.
 
-**[En apprendre plus sur le financement](<%= @funding_url %>)**
+**[En apprendre plus sur le financement](https://avril.pole-emploi.fr/financement-vae)**
 
 
 
