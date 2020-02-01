@@ -3,9 +3,9 @@
 cd "$(dirname "$0")/.."
 
 {
-  ./scripts/init-phoenix-frontend.sh;
-  ./scripts/init-phoenix-backend.sh;
-  ./scripts/wait-for-postgres.sh
+  ./scripts/init-phoenix-frontend.sh &
+  ./scripts/init-phoenix-backend.sh &
+  ./scripts/wait-for-postgres.sh &
 }
 
 wait

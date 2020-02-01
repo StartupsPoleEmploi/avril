@@ -26,7 +26,7 @@ Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des dif
 
 ## Installer le dump de la BDD
 
-Télécharger un dump de la BDD (probablement via [flynn](https://flynn.io/) si accès à la prod : `docker-compose exec postgres pg_dump -h postgres -d vae_prod -U postgres -f /pg-dump/docker.dump`).
+Télécharger un dump de la BDD (probablement via [flynn](https://flynn.io/) si accès à la prod : `docker-compose exec postgres pg_dump -h postgres -d vae_prod -U postgres -F c -f /pg-dump/docker.dump`).
 
 Copier le dump dans `[/db](../db)` pour qu'il soit accessible dans un docker.
 
