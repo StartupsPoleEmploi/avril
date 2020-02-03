@@ -70,7 +70,7 @@ defmodule Vae.ExAdmin.Delegate do
       end
 
       panel "Meetings" do
-        table_for Vae.Meetings.get(delegate) |> elem(1) do
+        table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&(elem(&1, 1))) do
           column(:meeting_id)
           column(:meeting_id2)
           column(:name)

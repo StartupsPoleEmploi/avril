@@ -26,8 +26,8 @@ echo "[DONE] $NEW_CONTAINER_NAME is ready!"
 echo "[DONE] Restarting nginx..."
 docker-compose restart nginx
 
-echo -n "[INIT] Killing $OLD_CONTAINER_NAME: "
-docker kill -s SIGTERM $OLD_CONTAINER_ID
+echo -n "[INIT] Stoping $OLD_CONTAINER_NAME: "
+docker stop $OLD_CONTAINER_ID
 until [[ $(docker ps -a -f "id=$OLD_CONTAINER_ID" -f "status=exited" -q) ]]; do
   echo -ne "\r[WAIT] $OLD_CONTAINER_NAME is getting killed ..."
   sleep 1
