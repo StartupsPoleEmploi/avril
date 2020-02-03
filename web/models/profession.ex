@@ -14,19 +14,17 @@ defmodule Vae.Profession do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:label, :priority])
-    |> cast_assoc(:rome)
+    |> cast(params, [:label, :priority, :rome_id])
     |> slugify()
     |> validate_required([:label, :slug, :priority])
     |> unique_constraint(:label)
     |> unique_constraint(:slug)
-    |> assoc_constraint(:rome)
   end
 
   def format_for_index(struct) do
     struct
     |> Map.take(__schema__(:fields))
-    |> Map.put_new(:rome_code, struct.rome.code)
+    |> Map.put_new(:rome_code, get_in(Map.from_struct(struct), [:rome, :code]))
     |> Map.put_new(:length, String.length(struct.label))
     |> Map.put_new(:priority, struct.priority)
     |> Map.drop([:inserted_at, :updated_at])
