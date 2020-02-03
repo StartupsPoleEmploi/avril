@@ -26,15 +26,23 @@ Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des dif
 
 ## Installer le dump de la BDD
 
-Télécharger un dump de la BDD (probablement via [flynn](https://flynn.io/) si accès à la prod : `flynn pg dump -f db/latest.dump`).
+Télécharger un dump de la BDD si accès à la prod :
 
-Copier le dump dans `[/db](../db)` pour qu'il soit accessible dans un docker.
+```
+docker-compose exec postgres bash -c 'pg_dump -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -F c -f /pg-dump/latest.dump'
+```
+
+Copier le dump dans `[/db/dumps](../db/dumps)` pour qu'il soit accessible dans un docker.
 
 Puis exécuter :
 
 - `docker-compose run --rm app bash`
 - Dans le docker, exécuter : `mix ecto.create` pour créer la BDD
-- Puis dans un autre terminal, exécuter : `docker-compose run --rm postgres pg_restore --verbose --clean --no-acl --no-owner -h postgres -d vae_dev -U postgres /app/db/latest.dump`
+- Puis dans un autre terminal, exécuter :
+
+```
+docker-compose exec postgres bash -c 'pg_restore --verbose --clean --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER /pg-dump/latest.dump'
+```
 
 > Attention : cela génère un warning, ne pas hésiter à lancer deux fois la requête pour que le restore se passe bien ([suivre l'issue](https://github.com/flynn/flynn/issues/4525)).
 

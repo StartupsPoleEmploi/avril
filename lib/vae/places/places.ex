@@ -1,11 +1,15 @@
 defmodule Vae.Places do
-  defdelegate get_geoloc_from_address(address), to: Vae.Places.Client.Algolia
+  @places_client Vae.Places.Client.Algolia
+  @places_cache Vae.Places.Cache
 
-  defdelegate get_geoloc_from_postal_code(postal_code), to: Vae.Places.Cache
 
-  defdelegate get_geoloc_from_city(city), to: Vae.Places.Cache
+  defdelegate get_geoloc_from_address(address), to: @places_client
 
-  defdelegate get_geoloc_from_geo(geo), to: Vae.Places.Client.Algolia
+  defdelegate get_geoloc_from_postal_code(postal_code), to: @places_cache
+
+  defdelegate get_geoloc_from_city(city), to: @places_client
+
+  defdelegate get_geoloc_from_geo(geo), to: @places_client
 
   def get_city(geolocation) do
     case get_cities(geolocation) do

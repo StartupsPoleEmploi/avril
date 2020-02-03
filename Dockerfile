@@ -32,9 +32,9 @@ RUN apt-get install -y --no-install-recommends yarn
 
 RUN mkdir -p /app
 
-ADD mix.exs /app/mix.exs
-ADD mix.lock /app/mix.lock
-COPY assets/package.json assets/yarn.lock* /app/assets/
+ADD ./mix.exs /app/mix.exs
+ADD ./mix.lock /app/mix.lock
+COPY ./assets/package.json ./assets/yarn.lock* /app/assets/
 # ADD assets/package-lock.json /app/assets/package-lock.json
 # ADD assets/yarn.lock /app/assets/yarn.lock
 

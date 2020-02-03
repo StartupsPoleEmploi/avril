@@ -1,65 +1,62 @@
 version: "3.6"
 
 services:
-  postgres:
-    env_file:
-      - ".env"
-    image: "postgres:11.6-alpine"
-    restart: always
-    # volumes:
-      # - pgdata:/var/lib/postgresql/data
-      # - "/etc/postgresql:/etc/postgresql"
-      # - "/var/log/postgresql:/var/log/postgresql"
-      # - "/var/lib/postgresql:/var/lib/postgresql"
-    healthcheck:
-      test: pg_isready -U postgres
-      interval: 15s
-      timeout: 10s
-      start_period: 15s
-      retries: 2
-  app:
-    container_name: avril_app
+  phoenix:
     build: .
-    ports:
-      - "4000:4000"
-    working_dir: /app
+    command: /app/scripts/init-phoenix.sh
     depends_on:
       - postgres
-      # - nuxt
     env_file:
-      - ".env"
-    command: iex -S mix phx.server
+      - ./.env
+    healthcheck:
+      test: curl -sS http://127.0.0.1:4000 || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
     volumes:
-      - ".:/app"
-    networks:
-      default:
-        aliases:
-          - phoenix
+      - .:/app
+      - /mnt/datalakepe/depuis_datalake/:/datalake
+    working_dir: /app
+  nginx:
+    depends_on:
+      - phoenix
+      - nuxt
+    image: nginx:latest
+    healthcheck:
+      test: service nginx status
+      timeout: 3s
+      retries: 3
+    ports:
+      - ${NGINX_PORT:-80}:80
+    volumes:
+      - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/nginx.conf
+      - /var/log/nginx:/var/log/nginx
   nuxt:
     image: node:latest
-    ports:
-      - "3000:3000"
     working_dir: /app
-    # command: bash
-    command: yarn install && yarn build && yarn start
+    command: yarn setup
     env_file:
-      - ".env"
+      - ./.env
+    healthcheck:
+      test: curl -sS http://127.0.0.1:3000 || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 1m
     volumes:
-      - "../Avril-Demat-Livret1:/app"
-    networks:
-      - default
-    deploy:
-      restart_policy:
-        condition: none
-        max_attempts: 1
-
-# Define the volumes
-# volumes:
-#   pgdata:
-
-# volumes:
-#   postgres: {}
-#   static:
-#     driver_opts:
-#       device: "tmpfs"
-#       type: "tmpfs"
+      - ../avril-livret1:/app
+  postgres:
+    env_file:
+      - ./.env
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    image: postgres:11.6-alpine
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+      - ./scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
+      - ./db/dumps:/pg-dump

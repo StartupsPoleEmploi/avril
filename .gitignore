@@ -1,7 +1,7 @@
 # App artifacts
 /_build
 /assets/.nuxt
-/db/*.dump
+/db/dumps/*.dump
 /db/pgadmin
 /deps
 /*.ez
