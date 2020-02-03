@@ -44,7 +44,7 @@ defmodule Vae.Meetings.Meeting do
 
   defimpl ExAdmin.Render, for: __MODULE__ do
     def to_string(data) do
-      if data, do: data.start_date
+      if data, do: ExAdmin.Render.to_string(data.start_date)
     end
   end
 end
