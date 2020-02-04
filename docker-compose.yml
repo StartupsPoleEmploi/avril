@@ -9,7 +9,7 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: curl -sS http://127.0.0.1:4000 || exit 1
+      test: /healthcheck_retry.sh 4000
       interval: 5s
       timeout: 3s
       retries: 3
@@ -17,6 +17,7 @@ services:
     volumes:
       - .:/app
       - /mnt/datalakepe/depuis_datalake/:/datalake
+      - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
     working_dir: /app
   nginx:
     depends_on:
@@ -33,19 +34,20 @@ services:
       - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/nginx.conf
       - /var/log/nginx:/var/log/nginx
   nuxt:
-    image: node:latest
-    working_dir: /app
     command: yarn setup
     env_file:
       - ./.env
     healthcheck:
-      test: curl -sS http://127.0.0.1:3000 || exit 1
+      test: /healthcheck_retry.sh 3000
       interval: 5s
       timeout: 3s
       retries: 3
       start_period: 1m
+    image: node:latest
     volumes:
       - ../avril-livret1:/app
+      - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
+    working_dir: /app
   postgres:
     env_file:
       - ./.env
