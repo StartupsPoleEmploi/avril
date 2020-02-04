@@ -30,7 +30,7 @@ services:
     ports:
       - ${NGINX_PORT:-80}:80
     volumes:
-      - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/nginx.conf
+      - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/default.conf
       - /var/log/nginx:/var/log/nginx
   nuxt:
     image: node:latest
