@@ -48,6 +48,8 @@ defmodule Vae.Router do
   scope "/" do
     pipe_through(:browser)
 
+    forward "/healthcheck", HealthCheckup
+
     # Sessions routes
     coherence_routes()
 

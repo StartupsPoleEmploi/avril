@@ -9,7 +9,7 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: /healthcheck_retry.sh 4000
+      test: /healthcheck_retry.sh curl -fsS localhost:4000/healthcheck
       interval: 5s
       timeout: 3s
       retries: 3
@@ -38,7 +38,7 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: /healthcheck_retry.sh 3000
+      test: /healthcheck_retry.sh curl -fsS localhost:3000/healthcheck
       interval: 5s
       timeout: 3s
       retries: 3
