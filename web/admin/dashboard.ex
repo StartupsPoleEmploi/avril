@@ -4,8 +4,8 @@ defmodule Vae.ExAdmin.Dashboard do
   register_page "Dashboard" do
     menu priority: 1, label: "Statistiques"
     content do
-      start_date = conn.query_params["start_date"]
-      end_date = conn.query_params["end_date"]
+      start_date = Vae.String.blank_is_nil(conn.query_params["start_date"])
+      end_date = Vae.String.blank_is_nil(conn.query_params["end_date"])
       type = conn.query_params["type"] || "submissions"
 
       p ".text-center Citation du jour:"
