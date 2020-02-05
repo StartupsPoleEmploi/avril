@@ -4,8 +4,8 @@ defmodule Vae.ExAdmin.Dashboard do
   register_page "Dashboard" do
     menu priority: 1, label: "Statistiques"
     content do
-      start_date = conn.query_params["start_date"]
-      end_date = conn.query_params["end_date"]
+      start_date = Vae.String.blank_is_nil(conn.query_params["start_date"])
+      end_date = Vae.String.blank_is_nil(conn.query_params["end_date"])
       type = conn.query_params["type"] || "submissions"
 
       p ".text-center Citation du jour:"
@@ -15,6 +15,7 @@ defmodule Vae.ExAdmin.Dashboard do
       div ".text-center" do
         p "Voir les chiffres sur une période données :"
         Xain.form ".form-inline", [method: "GET", style: "margin-bottom: 1rem;"] do
+          Xain.input type: "hidden", name: "type", value: type
           div ".form-group" do
             label "Date de début :", [for: "start_date", style: "padding-right: 0.5rem;"]
             div ".input-group" do
@@ -37,17 +38,19 @@ defmodule Vae.ExAdmin.Dashboard do
             button "Filtrer sur les dates", [class: "btn btn-primary", type: "submit"]
           end
         end
-        p "Une semaine démarre le lundi et termine le dimanche."
+        p "NB: Une semaine démarre le lundi et termine le dimanche."
       end
       hr
       div ".section" do
         div ".pull-right" do
           Xain.form [method: "GET"] do
+            Xain.input type: "hidden", name: "start_date", value: start_date
+            Xain.input type: "hidden", name: "end_date", value: end_date
             Xain.button (if type == "submissions",  do: "Vue Livret 1", else: "Vue Transmissions"), [type: "submit", name: "type", value: (if type == "submissions",  do: "booklet", else: "submissions"), class: "btn btn-primary"]
           end
         end
         div ".clearfix" do
-          h2 "Candidatures par semaines", [class: "text-center"]
+          h2 "Candidatures #{if type == "booklet", do: "éducation nationnale "}par semaines", [class: "text-center"]
           p between_dates_string(start_date, end_date)
           div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
         end

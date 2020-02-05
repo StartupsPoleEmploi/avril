@@ -89,16 +89,22 @@ defmodule ExAdmin.ApiController do
     """
   end
 
+  def educ_nat_only("booklet") do
+    """
+    INNER JOIN certifiers_delegates
+    ON certifiers_delegates.delegate_id = applications.delegate_id
+    AND certifiers_delegates.certifier_id = 2
+    """
+  end
+  def educ_nat_only(_), do: ""
+
   def applications_query(start_date, end_date, type) do
     """
     SELECT
-      CONCAT(
-        date_part('year', applications.inserted_at),
-        '-',
-        date_part('week', applications.inserted_at)
-      ) AS week_number,
+      to_char(applications.inserted_at, 'IYYY-IW') AS week_number,
       #{applications_select(type)}
     FROM applications
+    #{educ_nat_only(type)}
     #{where_applications_date_filter(start_date, end_date)}
     GROUP BY week_number
     ORDER BY week_number
