@@ -21,7 +21,7 @@ defmodule Vae.ExAdmin.Helpers do
     Phoenix.HTML.Link.link(name, to: path)
   end
 
-  def csv_link_to_resource(resource, opts) do
+  def csv_link_to_resource(resource, opts \\ []) do
     {name, path} = link_to_resource(resource, opts)
     "=HYPERLINK(\"#{path_to_url(path)}\";\"#{name}\")"
   end
