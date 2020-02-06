@@ -2,6 +2,19 @@
 
 Nous accueillons les contributions de tous les développeurs volontaires à notre base de code, sous la forme de pull requests.
 
+<!-- MarkdownTOC -->
+
+- [Dépendences](#d%C3%A9pendences)
+- [Installation](#installation)
+- [Variables d'environnement](#variables-denvironnement)
+- [Installer le dump de la BDD](#installer-le-dump-de-la-bdd)
+- [Installer `avril-livret1`](#installer-avril-livret1)
+- [Démarrer le serveur](#d%C3%A9marrer-le-serveur)
+- [Démarrer PG Admin](#d%C3%A9marrer-pg-admin)
+- [Configuration sous OSX](#configuration-sous-osx)
+
+<!-- /MarkdownTOC -->
+
 ## Dépendences
 
 L'application est codée avec le language [Elixir](https://elixir-lang.org/) et utilise le [framework Phoenix](https://phoenixframework.org/) et stocke ses données dans une base [PostgreSQL](https://www.postgresql.org/). [NodeJS](https://nodejs.org) est nécessaire pour générer le front.
@@ -18,11 +31,11 @@ En outre, elle utilise [wkhtmltopdf](https://wkhtmltopdf.org/) pour générer de
 
 Il est possible d'installer directement les dépendences sur sa machine, mais il est préconisé d'utiliser [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/) pour une installation accélérée. En effet, l'ensemble des dépendances sus-citées sont installées grâce au [Dockerfile](/Dockerfile).
 
-Une fois `docker-compose` installé, il ne reste plus qu'à faire `docker-compose build` puis `docker-compose run --rm --service-ports app bash` (que l'on recommande d'aliaser en `dkp`, [plus d'infos](https://augustin-riedinger.fr/en/resources/using-docker-as-a-development-environment-part-1/)) pour ouvrir un terminal dans le docker applicatif.
+Une fois `docker-compose` installé, il ne reste plus qu'à faire `docker-compose build`.
 
 ## Variables d'environnement
 
-Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Algolia, Crisp).
+Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Algolia).
 
 ## Installer le dump de la BDD
 
@@ -34,27 +47,50 @@ docker-compose exec postgres bash -c 'pg_dump -h $POSTGRES_HOST -d $POSTGRES_DB 
 
 Copier le dump dans `[/db/dumps](../db/dumps)` pour qu'il soit accessible dans un docker.
 
-Puis exécuter :
+Celui-ci sera automatiquement *restore* lors du premier lancement du container `postgres`, à condition que le dossier `db/data` soit effectivement vide.
 
-- `docker-compose run --rm app bash`
-- Dans le docker, exécuter : `mix ecto.create` pour créer la BDD
-- Puis dans un autre terminal, exécuter :
+Sinon la commande manuelle sera, une fois le container `postgres` lancé :
 
 ```
 docker-compose exec postgres bash -c 'pg_restore --verbose --clean --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER /pg-dump/latest.dump'
 ```
 
-> Attention : cela génère un warning, ne pas hésiter à lancer deux fois la requête pour que le restore se passe bien ([suivre l'issue](https://github.com/flynn/flynn/issues/4525)).
+## Installer `avril-livret1`
+
+Avril est constitué d'un second service, qu'il n'est pas obligatoire d'installer, mais c'est tout de même conseillé pour que l'installation fonctionne directement.
+
+Il faut clôner le repo suivant au même niveau hierarchique que le dossier `avril`: https://github.com/StartupsPoleEmploi/avril-livret1
+
+Il s'agit d'une appli [Nuxt](https://nuxtjs.org/) basée sur NodeJS.
 
 ## Démarrer le serveur
 
-Une fois dans le docker, `iex -S mix phx.server` démarre un serveur disponible à http://localhost:4000/ ainsi qu'une console interactive dans le terminal.
+Une fois que l'on a:
+
+```
+/avril/<Ce Repo>
+/avril/.env
+/avril/docker-compose.override.yml
+/avril/db/dumps/latest.dump
+/avril/db/data/<VIDE>
+/avril-livret1/<Le repo nuxt>
+```
+
+il est temps de démarrer le serveur avec :
+
+```
+docker-compose up
+```
+
+Les différents services démarrent, et l'application est disponible à l'adresse : http://localhost
 
 ## Démarrer PG Admin
 
 [PG Admin](https://www.pgadmin.org/) est un programme GUI qui permet d'inspecter simplement le contenu de sa base de donnée. La dernière version est un client web à 100%, aussi, il est dockerisé pour plus de facilité.
 
-`docker-compose up -d pgadmin` puis accessible via http://localhost.
+Il est conseillé de l'ajouter dans son environnement local via le fichier `docker-compose.override.yml` (dupliquer [`docker-compose.override.example.yml`](../docker-compose.override.example.yml))
+
+`docker-compose up -d pgadmin` si le container n'est pas démarré puis accessible via http://localhost:8080.
 
 Les logins utilisés sont ceux définis dans `.env`:
 
@@ -72,4 +108,17 @@ Port : 5432
 Username : postgres
 Password :
 ```
+<!--
+## Configuration sous OSX
 
+Il semblerait qu'il faille ajouter les configurations suivantes dans `docker-compose.override.yml` pour que `postgres` fonctionne sous OSX:
+
+```
+version: “3.6”
+services:
+  postgres:
+    volumes:
+      - $PWD/db/data:/var/lib/postgresql/data
+      - $PWD/db/dumps/latest.dump:/pg-dump/latest.dump
+```
+ -->

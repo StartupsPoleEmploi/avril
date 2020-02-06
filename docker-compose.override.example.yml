@@ -1,0 +1,29 @@
+version: "3.6"
+
+services:
+  phoenix:
+    command: mix phx.server
+    ports:
+      - 4000:4000
+    volumes:
+      - "/build"
+    #   - "../plug_static_index_html:/plug_static_index_html"
+      # - "../ex_admin:/ex_admin"
+  nuxt:
+    command: yarn dev
+  pgadmin:
+    depends_on:
+      - postgres
+    env_file:
+      - ./.env
+    healthcheck:
+      test: /healthcheck_retry.sh wget --spider -q localhost/misc/ping
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    image: dpage/pgadmin4:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh

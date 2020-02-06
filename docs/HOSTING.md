@@ -6,6 +6,13 @@ Elle est actuellement constituée de 2 webservices :
 - phoenix : l'app d'Avril historique
 - nuxt : le formulaire de dématarialisation du livret 1, dont la code base est disponible là : https://github.com/StartupsPoleEmploi/avril-livret1
 
+<!-- MarkdownTOC -->
+
+- [Déploiement](#d%C3%A9ploiement)
+- [Rolling update](#rolling-update)
+
+<!-- /MarkdownTOC -->
+
 ## Déploiement
 
 Pour déployer un nouveau serveur, il faut :

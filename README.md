@@ -29,6 +29,7 @@ Si vous êtes intéressés par le dispositif, rendez-vous sur le site d'[Avril](
 Si vous souhaitez contribuer au projet, vous trouverez ci-dessous la documentation technique pour démarrer :
 
 - [Comment contribuer ?](/docs/CONTRIBUTING.md) : Pour mettre en place un environnement de développement
-- [Comment héberger ?](/docs/HOSTING.md) : Pour déployer Avril avec docker compose et swarm
+- [Comment héberger ?](/docs/HOSTING.md) : Pour déployer Avril avec docker compose
+- [Comment monitorer ?](/docs/MONITORING.md) : Pour vérifier qu'Avril tourne correctement et que faire dans le cas contraire
 
 Bonne route !
