@@ -12,7 +12,7 @@ defmodule Vae.ExAdmin.Application do
     index do
       selectable_column()
       column(:id)
-      column(:user)
+      column(:user, fn a -> User.fullname(a.user) end)
       column(:certification)
       column(:delegate)
       column(:certifier, fn a ->
@@ -66,7 +66,7 @@ defmodule Vae.ExAdmin.Application do
 
     show application do
       attributes_table do
-        row :user
+        row(:user, fn a -> User.fullname(a.user) end)
         row :certification
         row :delegate
         row :inserted_at
@@ -100,6 +100,7 @@ defmodule Vae.ExAdmin.Application do
 
     csv do
       column(:id)
+      column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
       column(:user, fn a -> User.fullname(a.user) end)
       column(:email, fn a -> a.user.email end)
       column(:certification, fn a -> Certification.name(a.certification) end)

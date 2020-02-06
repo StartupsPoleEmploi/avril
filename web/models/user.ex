@@ -249,11 +249,9 @@ defmodule Vae.User do
   end
 
   def fullname(user) do
-    cond do
-      user.name -> user.name
-      user.first_name || user.last_name -> "#{user.first_name} #{user.last_name}" |> String.trim()
-      true -> user.email
-    end
+    Vae.String.blank_is_nil(user.name) ||
+    Vae.String.blank_is_nil("#{user.first_name} #{user.last_name}") ||
+    user.email
   end
 
   def formatted_email(user) do

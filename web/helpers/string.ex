@@ -4,7 +4,7 @@ defmodule Vae.String do
   """
 
   def is_blank?(nil), do: true
-  def is_blank?(""), do: true
+  def is_blank?(str) when is_binary(str), do: String.trim(str) == ""
   def is_blank?(_), do: false
 
   def blank_is_nil(v), do:

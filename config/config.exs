@@ -21,7 +21,7 @@ config :vae,
     authorize_url: "/connexion/oauth2/authorize",
     redirect_uri:
       "#{if Mix.env() == :dev, do: "http", else: "https"}://#{
-        System.get_env("WHOST") || "localhost:4000"
+        System.get_env("WHOST") || "localhost"
       }/pole-emploi/callback"
   ],
   tracking: [

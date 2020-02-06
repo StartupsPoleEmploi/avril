@@ -8,8 +8,8 @@ config :vae,
   ]
 
 config :vae, Vae.Endpoint,
-  http: [port: 4000],
-  url: [host: "localhost"],
+  http: [port: System.get_env("PORT") || 4000],
+  url: [host: System.get_env("WHOST") || "localhost"],
   secret_key_base: "akyL4W53VWMOrzMxWNJP9Y1ofAIkm9dpvp1KLHJhWQUolRUVlCbOdRrr/0UmcjZx",
   debug_errors: true,
   code_reloader: true,
