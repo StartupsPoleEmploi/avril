@@ -18,12 +18,12 @@ defmodule Vae.ExAdmin.Helpers do
 
   def link_to_resource(resource, opts \\ []) do
     {name, path} = link_to_resource(resource, opts)
-    Phoenix.HTML.Link.link(name, to:  path_to_url(path))
+    Phoenix.HTML.Link.link(name, to: path)
   end
 
   def csv_link_to_resource(resource, opts) do
     {name, path} = link_to_resource(resource, opts)
-    "=HYPERLINK(\"#{path}\";\"#{name}\")"
+    "=HYPERLINK(\"#{path_to_url(path)}\";\"#{name}\")"
   end
 
   def print_in_json(nil), do: nil
