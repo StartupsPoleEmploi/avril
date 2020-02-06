@@ -101,13 +101,12 @@ defmodule Vae.ExAdmin.Application do
     csv do
       column(:id)
       column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
-      column(:user, fn a -> User.fullname(a.user) end)
       column(:email, fn a -> a.user.email end)
-      column(:certification, fn a -> Certification.name(a.certification) end)
+      column(:certification, fn a -> Helpers.csv_link_to_resource(a.certification) end)
       column(:certifier, fn a ->
         Enum.join(Enum.map(a.certification.certifiers, fn c -> c.name end), ",")
       end)
-      column(:delegate, fn a -> a.delegate && a.delegate.name end)
+      column(:delegate, fn Helpers.csv_link_to_resource(a.delegate) end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:inserted_at)
       column(:submitted_at)
