@@ -4,6 +4,7 @@ defmodule Vae.Repo do
   require Logger
 
   alias Vae.{Certification, Delegate, Profession, Rome}
+  alias __MODULE__
 
   @search_client Application.get_env(:vae, :search_client)
   @entities [Certification, Delegate, Profession, Rome]
@@ -65,6 +66,14 @@ defmodule Vae.Repo do
       t ->
         t
     end
+  end
+
+  def stream_preload(stream, size, preloads) do
+    stream
+    |> Stream.chunk_every(size)
+    |> Stream.flat_map(fn chunk ->
+      Repo.preload(chunk, preloads)
+    end)
   end
 
   defp save_object_index(%type{} = struct) do

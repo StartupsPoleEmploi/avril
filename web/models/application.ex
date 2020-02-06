@@ -177,7 +177,7 @@ defmodule Vae.Application do
     |> Map.get(:name)
   end
 
-  def booklet_url(application, path\\'/') do
+  def booklet_url(application, path \\ '/') do
     application = application |> Repo.preload(:delegate)
 
     cond do
@@ -187,10 +187,10 @@ defmodule Vae.Application do
     end
   end
 
-  def booklet_url!(application, path\\'/') do
-    if System.get_env("NUXT_PATH"),
-      do: "#{System.get_env("NUXT_URL")}#{System.get_env("NUXT_PATH")}#{path}?hash=#{application.booklet_hash}",
-      else: Logger.warn("NUXT_PATH environment variable not set") && nil
+  def booklet_url!(application, path \\ '/') do
+    if System.get_env("NUXT_URL"),
+      do: "#{System.get_env("NUXT_URL")}#{path}?hash=#{application.booklet_hash}",
+      else: Logger.warn("NUXT_URL environment variable not set") && nil
   end
 
   defp generate_hash(length) do
