@@ -181,9 +181,14 @@ defmodule Vae.Application do
     application = application |> Repo.preload(:delegate)
 
     cond do
-      Delegate.is_asp?(application.delegate) -> "https://vaedem.asp-public.fr/vaedems"
-      Delegate.is_educ_nat?(application.delegate) -> booklet_url!(application, path)
-      true -> nil
+      Delegate.is_asp?(application.delegate) ->
+        "https://vaedem.asp-public.fr/vaedem/creationCompte.html"
+
+      Delegate.is_educ_nat?(application.delegate) ->
+        booklet_url!(application, path)
+
+      true ->
+        nil
     end
   end
 
