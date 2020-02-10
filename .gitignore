@@ -3,6 +3,7 @@
 /assets/.nuxt
 /db/dumps/*.dump
 /db/pgadmin
+/db/data
 /deps
 /*.ez
 .DS_Store
