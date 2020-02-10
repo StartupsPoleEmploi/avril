@@ -17,13 +17,17 @@ defmodule Vae.ExAdmin.Helpers do
   def path_to_url(path), do: "#{Vae.Endpoint.static_url}#{path}"
 
   def link_to_resource(resource, opts \\ []) do
-    {name, path} = resource_name_and_link(resource, opts)
-    Phoenix.HTML.Link.link(name, to: path)
+    case resource_name_and_link(resource, opts) do
+      nil -> nil
+      {name, path} -> Phoenix.HTML.Link.link(name, to: path)
+    end
   end
 
   def csv_link_to_resource(resource, opts \\ []) do
-    {name, path} = resource_name_and_link(resource, opts)
-    "=HYPERLINK(\"#{path_to_url(path)}\";\"#{name}\")"
+    case resource_name_and_link(resource, opts) do
+      nil -> nil
+      {name, path} -> "=HYPERLINK(\"#{path_to_url(path)}\";\"#{name}\")"
+    end
   end
 
   def print_in_json(nil), do: nil
