@@ -32,7 +32,8 @@ Sont pris en compte :
 
 Les certifications partielles sont désormais acquises à vie et font l’objet d’une attestation de compétences. Les Conseils Régionaux  ont la responsabilité de mettre en œuvre un réseau de centres de conseil gratuits en VAE. Chacun peut ainsi bénéficier d’un entretien individuel sur son projet VAE pour obtenir un diagnostic personnalisé de sa situation, des informations sur la mise en œuvre et le financement de la VAE et un appui à la constitution des dossiers de candidature.
 
-Les acteurs du CEP (Conseil en Evolution Professionnel) assurent aussi une information sur la VAE. Ces acteurs du CEP sont : Pôle emploi, les missions locales, Cap emploi, les Opca et Opacif, l’APEC, ainsi que d’éventuels opérateurs régionaux.
+Les acteurs du CEP (Conseil en Evolution Professionnel) assurent aussi une information sur la VAE. Ces acteurs du CEP sont : Pôle emploi, les missions locales, Cap emploi, l’APEC, ainsi que certains opérateurs régionaux (pour les actifs en emploi).
+[le site du CEP](https://www.mon-cep.org)
 
 ## Pourquoi faire une VAE ?
 
