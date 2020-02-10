@@ -16,12 +16,17 @@ docker-compose up -d --no-deps --scale $SERVICE_NAME=2 --no-recreate $SERVICE_NA
 NEW_CONTAINER_ID=$(docker ps --filter="since=$OLD_CONTAINER_NAME" --format "table {{.ID}}  {{.Names}}  {{.CreatedAt}}" | grep $SERVICE_NAME | tail -n 1 | awk -F  "  " '{print $1}')
 NEW_CONTAINER_NAME=$(docker ps --filter="since=$OLD_CONTAINER_NAME" --format "table {{.ID}}  {{.Names}}  {{.CreatedAt}}" | grep $SERVICE_NAME | tail -n 1 | awk -F  "  " '{print $2}')
 
+echo "[INIT] Starting $NEW_CONTAINER_NAME:"
+docker logs --tail=10 -f $NEW_CONTAINER_ID &
+LOGS_PID=$!
+
 until [[ $(docker ps -a -f "id=$NEW_CONTAINER_ID" -f "health=healthy" -q) ]]; do
-  echo -ne "\r[WAIT] New instance $NEW_CONTAINER_NAME is not healthy yet ...";
+  # echo -ne "\r[WAIT] New instance $NEW_CONTAINER_NAME is not healthy yet ...";
   sleep 1
 done
 echo ""
-echo "[DONE] $NEW_CONTAINER_NAME is ready!"
+kill $LOGS_PID
+echo "[DONE] $NEW_CONTAINER_NAME is healthy!"
 
 echo "[DONE] Restarting nginx..."
 docker-compose restart nginx
