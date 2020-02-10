@@ -35,6 +35,10 @@ defmodule Vae.Places.Cache do
   #### API ####
   #############
 
+  def get_geoloc_from_postal_code(postal_code) do
+    get_or_insert(postal_code)
+  end
+
   defp get_or_insert(nil), do: nil
 
   defp get_or_insert(postal_code) do

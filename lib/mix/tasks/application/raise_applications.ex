@@ -4,10 +4,6 @@ defmodule Mix.Tasks.RaiseApplications do
 
   import Mix.Ecto
   import Ecto.Query
-  import SweetXml
-
-  alias Vae.Endpoint
-  alias Vae.Router.Helpers, as: Routes
 
   alias Vae.Mailer
   alias Vae.Repo
@@ -51,7 +47,7 @@ defmodule Mix.Tasks.RaiseApplications do
       |> Stream.map(&build_deliver/1)
       |> Stream.scan([], fn application_email, acc ->
         case Mailer.send(application_email) do
-          {:ok, result} ->
+          {:ok, _result} ->
             acc
 
           {:error, reason} ->

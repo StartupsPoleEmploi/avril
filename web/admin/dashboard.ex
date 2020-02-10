@@ -10,7 +10,7 @@ defmodule Vae.ExAdmin.Dashboard do
 
       p ".text-center Citation du jour:"
       h1 "“#{daily_quote()}”"
-      hr
+      hr()
 
       div ".text-center" do
         p "Voir les chiffres sur une période données :"
@@ -40,7 +40,7 @@ defmodule Vae.ExAdmin.Dashboard do
         end
         p "NB: Une semaine démarre le lundi et termine le dimanche."
       end
-      hr
+      hr()
       div ".section" do
         div ".pull-right" do
           Xain.form [method: "GET"] do
@@ -55,13 +55,13 @@ defmodule Vae.ExAdmin.Dashboard do
           div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
         end
       end
-      hr
+      hr()
       div ".section" do
         h2 "Candidatures par certificateurs"
         p between_dates_string(start_date, end_date)
         div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}"]
       end
-      hr
+      hr()
       div ".section" do
         h2 "Candidatures par certifications"
         p between_dates_string(start_date, end_date)

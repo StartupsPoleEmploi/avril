@@ -42,7 +42,7 @@ defmodule Vae.Statistics.Handler do
     }
   end
 
-  def start_link(args) do
+  def start_link(_args) do
     GenServer.start_link(__MODULE__, nil)
   end
 
