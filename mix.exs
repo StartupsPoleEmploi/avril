@@ -64,7 +64,6 @@ defmodule Vae.Mixfile do
       {:postgrex, "~> 0.13.0"},
       {:phoenix_html, "~> 2.13.3"},
       {:plug_cowboy, "~> 2.0"},
-      {:distillery, "~> 1.4"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.0.0"},
       {:scrivener_ecto, "~> 1.0"},
@@ -77,7 +76,7 @@ defmodule Vae.Mixfile do
       {:phoenix_slime, "~> 0.12.0"},
       # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
       {:ex_admin, github: "augnustin/ex_admin"},
-      {:coherence, "~> 0.5.2"},
+      {:coherence, "~> 0.5.2"}, # TODO: move to POW
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},
