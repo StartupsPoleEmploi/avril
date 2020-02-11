@@ -17,8 +17,8 @@ defmodule Vae.CampaignDiffuser.Worker do
 
   def run(pending_emails) do
     receive do
-      {:execute, path} ->
-        execute(pending_emails, path)
+      {:execute, {type, from}} ->
+        execute(pending_emails, type, from)
 
       {:flush} ->
         :ets.delete_all_objects(:pending_emails)
@@ -31,42 +31,50 @@ defmodule Vae.CampaignDiffuser.Worker do
     end
   end
 
-  def execute(pending_emails, path) do
+  def execute(pending_emails, type, from) do
     Logger.info("Start extracting job seekers")
 
-    @extractor.build_enumerable(path)
-    |> Flow.from_enumerable(max_demand: 500, window: Flow.Window.count(100))
-    |> @extractor.extract_lines_flow()
-    |> @extractor.build_job_seeker_flow()
-    |> @extractor.add_geolocation_flow()
-    |> Flow.on_trigger(fn job_seekers ->
-      Logger.info("Insert or update #{length(job_seekers)} job seekers")
+    @extractor.build_enumerable(type, from)
+    |> case do
+      {:ok, csv} ->
+        csv
+        |> Flow.from_enumerable(max_demand: 500, window: Flow.Window.count(100))
+        |> @extractor.extract_lines_flow()
+        |> @extractor.build_job_seeker_flow()
+        #        |> @extractor.add_geolocation_flow()
+        |> Flow.on_trigger(fn job_seekers ->
+          Logger.info("Insert or update #{length(job_seekers)} job seekers")
 
-      inserted_job_seekers = JobSeeker.insert_or_update!(job_seekers)
+          inserted_job_seekers = JobSeeker.insert_or_update!(job_seekers)
 
-      Logger.info("#{length(inserted_job_seekers)} inserted")
+          Logger.info("#{length(inserted_job_seekers)} inserted")
 
-      {inserted_job_seekers, []}
-    end)
-    |> Flow.shuffle(window: Flow.Window.count(50))
-    |> Flow.reduce(fn -> pending_emails end, fn job_seeker, acc ->
-      email =
-        build_email(job_seeker)
-        |> persist()
+          {inserted_job_seekers, []}
+        end)
+        |> Flow.shuffle(window: Flow.Window.count(50))
+        |> Flow.reduce(fn -> pending_emails end, fn job_seeker, acc ->
+          email =
+            build_email(job_seeker)
+            |> persist()
 
-      [email | acc]
-    end)
-    |> Flow.on_trigger(fn emails ->
-      Logger.info("Try to send #{length(emails)} emails")
+          [email | acc]
+        end)
+        |> Flow.on_trigger(fn emails ->
+          Logger.info("Try to send #{length(emails)} emails")
 
-      with {:ok, emails_sent} <- send_emails(emails),
-           _ <- remove(emails_sent) do
-        Logger.info("#{length(emails_sent)}/#{length(emails)} sent")
-      end
+          with {:ok, emails_sent} <- send_emails(emails),
+               _ <- remove(emails_sent) do
+            Logger.info("#{length(emails_sent)}/#{length(emails)} sent")
+          end
 
-      {[], []}
-    end)
-    |> Flow.run()
+          {[], []}
+        end)
+        |> Flow.run()
+
+      {:error, type} ->
+        Logger.error("Error while extract #{type}")
+        nil
+    end
 
     Logger.info("End of extracting job seekers")
   end
