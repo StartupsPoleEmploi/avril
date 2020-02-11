@@ -41,7 +41,7 @@ defmodule Vae.CampaignDiffuser.Worker do
         |> Flow.from_enumerable(max_demand: 500, window: Flow.Window.count(100))
         |> @extractor.extract_lines_flow()
         |> @extractor.build_job_seeker_flow()
-        #        |> @extractor.add_geolocation_flow()
+        |> @extractor.add_geolocation_flow()
         |> Flow.on_trigger(fn job_seekers ->
           Logger.info("Insert or update #{length(job_seekers)} job seekers")
 
