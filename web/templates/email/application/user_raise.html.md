@@ -16,7 +16,7 @@ Voici <%= if @booklet_url, do: 3, else: 2 %> conseils d'Avril pour vous :
 <%= if @booklet_url do %>
 #### 2 - Remplissez votre dossier de candidature en ligne
 
-Nous avons dématérialisé votre dossier de candidature.
+Avec l'aide d'Avril, remplissez facilement votre dossier de recevabilité pour l'envoyer à votre centre VAE.
 
 **[Je remplis mon dossier](<%= @booklet_url %>)**
 <% end %>
