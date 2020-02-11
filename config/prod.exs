@@ -14,7 +14,7 @@ config :vae, Vae.Scheduler,
   jobs: [
     registered_campaign_task: [
       timezone: "Europe/Paris",
-      schedule: "15 12 * * 2",
+      schedule: "0 17 * * 2",
       task: &Vae.CampaignDiffuser.Handler.execute_registered/0
     ],
     #    new_registered_campaign_task: [

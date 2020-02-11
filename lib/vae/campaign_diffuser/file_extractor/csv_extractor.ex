@@ -85,12 +85,10 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   def add_geolocation_flow(flow) do
     flow
     |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-      build_geolocation(job_seeker)
-      |> is_allowed_administrative?()
-      |> case do
-        {:allowed, located_job_seeker} -> [located_job_seeker | acc]
-        _ -> acc
-      end
+      [
+        build_geolocation(job_seeker)
+        | acc
+      ]
     end)
   end
 
