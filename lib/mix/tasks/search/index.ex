@@ -24,7 +24,7 @@ defmodule Mix.Tasks.Search.Index do
   """
 
   def run(args) do
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
     with {parsed, _argv, []} <- option_parser(args),

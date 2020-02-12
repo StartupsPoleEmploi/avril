@@ -7,7 +7,7 @@ defmodule Mix.Tasks.UpdateCertifications do
   alias Vae.Repo
 
   def run(_args) do
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:poison)
     {:ok, _started} = Application.ensure_all_started(:hackney)
 

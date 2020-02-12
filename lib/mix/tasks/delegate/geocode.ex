@@ -8,7 +8,7 @@ defmodule Mix.Tasks.Delegate.Geocode do
   alias Vae.Places
 
   def run(_args) do
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
     with true <- geocode_delegates() do

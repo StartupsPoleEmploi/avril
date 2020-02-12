@@ -9,7 +9,7 @@ defmodule Mix.Tasks.Delegate.AttachCertifiersToDelegate do
   alias Vae.{Certifier, Delegate}
 
   def run(_args) do
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
     extract()

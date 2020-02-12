@@ -7,7 +7,7 @@ defmodule Mix.Tasks.Certification.AttachCertifiersCertifications do
   alias Vae.Certification
 
   def run(_args) do
-    {:ok, _pid, _apps} = ensure_started(Vae.Repo, [])
+    # {:ok, _pid, _apps} = ensure_started(Vae.Repo, [])
 
     Repo.all(Certification)
     |> Repo.preload(:certifiers)

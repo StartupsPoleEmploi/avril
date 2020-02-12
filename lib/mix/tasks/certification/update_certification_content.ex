@@ -8,7 +8,7 @@ defmodule Mix.Tasks.UpdateCertificationContent do
   alias Vae.Certification
 
   def run(_args) do
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:poison)
 
     Path.wildcard("priv/fixtures/export_fiches_cncp_2018-09-19/*.xml")

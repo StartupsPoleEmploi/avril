@@ -94,7 +94,7 @@ defmodule Vae.User do
 
   def changeset(model, params \\ %{}) do
     model
-    |> cast(params, @fields ++ coherence_fields())
+    |> cast(params, @fields ++ Enum.map(coherence_fields(), &String.to_atom/1)) # Ecto 3 expects atom while coherence brings strings
     |> sync_name_with_first_and_last(params)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)

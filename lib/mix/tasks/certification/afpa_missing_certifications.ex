@@ -10,8 +10,7 @@ defmodule Mix.Tasks.Certification.AddMissingCertifications do
   alias Vae.Rome
 
   def run(_args) do
-    with {:ok, _pid, _apps} <- ensure_started(Vae.Repo, []),
-         delegates <- Delegate |> where(certifier_id: 4) |> Repo.all() do
+    with delegates <- Delegate |> where(certifier_id: 4) |> Repo.all() do
       File.stream!("/priv/fixtures/csv/certifications_to_remove.csv")
       |> CSV.decode!(headers: true, num_workers: 1)
       |> Enum.each(fn %{

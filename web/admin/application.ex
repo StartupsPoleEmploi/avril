@@ -19,9 +19,7 @@ defmodule Vae.ExAdmin.Application do
         Enum.map(a.certifiers, &Helpers.link_to_resource/1)
       end)
       column(:administrative, fn a -> a.delegate.administrative end)
-      column(:submitted_at)
-      column(:admissible_at)
-      column(:inadmissible_at)
+      column(:status, &application_status/1)
       column(:meeting)
       column(:booklet_1)
 
@@ -131,6 +129,14 @@ defmodule Vae.ExAdmin.Application do
           default_sort: [desc: :inserted_at]
         ]
       }
+    end
+  end
+
+  defp application_status(application) do
+    cond do
+      application.admissible_at -> application.admissible_at
+      application.inadmissible_at -> application.inadmissible_at
+      application.submitted_at -> application.submitted_at
     end
   end
 end

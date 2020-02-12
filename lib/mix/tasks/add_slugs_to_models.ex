@@ -11,7 +11,7 @@ defmodule Mix.Tasks.AddSlugsToModels do
 
   @shortdoc "Add Slugs to Models"
   def run(_args) do
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:httpoison)
 
     Enum.each([Certification, Delegate, Profession, Certifier, Rome], fn klass ->

@@ -14,7 +14,7 @@ defmodule Mix.Tasks.RaiseApplications do
   def run(_args) do
     Logger.info("Applicants wake up !")
 
-    ensure_started(Repo, [])
+    # ensure_started(Repo, [])
     {:ok, _started} = Application.ensure_all_started(:hackney)
 
     select_applications()
