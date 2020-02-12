@@ -3,7 +3,6 @@ defmodule Mix.Tasks.User.ConfirmPEConnectAndAdminUsers do
 
   require Logger
 
-  import Mix.Ecto
   import Ecto.Query
 
   alias Vae.{Repo, User}

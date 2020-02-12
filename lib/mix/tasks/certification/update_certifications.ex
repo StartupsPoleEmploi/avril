@@ -1,7 +1,6 @@
 defmodule Mix.Tasks.UpdateCertifications do
   require Logger
   use Mix.Task
-  import Mix.Ecto
   import Ecto.Query
   import SweetXml
   alias Vae.Repo

@@ -2,7 +2,6 @@ defmodule Mix.Tasks.UpdateCertificationContent do
   use Mix.Task
 
   import SweetXml
-  import Mix.Ecto
 
   alias Vae.Repo
   alias Vae.Certification

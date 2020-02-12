@@ -2,7 +2,6 @@ defmodule Mix.Tasks.RaiseApplications do
   require Logger
   use Mix.Task
 
-  import Mix.Ecto
   import Ecto.Query
 
   alias Vae.Mailer

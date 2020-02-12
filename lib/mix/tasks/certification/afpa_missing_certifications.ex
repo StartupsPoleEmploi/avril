@@ -1,7 +1,6 @@
 defmodule Mix.Tasks.Certification.AddMissingCertifications do
   use Mix.Task
 
-  import Mix.Ecto
   import Ecto.Query
 
   alias Vae.Repo
@@ -10,40 +9,37 @@ defmodule Mix.Tasks.Certification.AddMissingCertifications do
   alias Vae.Rome
 
   def run(_args) do
-    with delegates <- Delegate |> where(certifier_id: 4) |> Repo.all() do
-      File.stream!("/priv/fixtures/csv/certifications_to_remove.csv")
-      |> CSV.decode!(headers: true, num_workers: 1)
-      |> Enum.each(fn %{
-                        "Code RNCP" => rncp_code,
-                        "Code rome" => romes,
-                        "Intitulé" => label,
-                        "Niveau" => level
-                      } ->
-        cond do
-          Certification |> where(label: ^label, acronym: "TP") |> Repo.one() == nil ->
-            %Certification{
-              label: label,
-              acronym: "TP",
-              level: level |> map_level,
-              rncp_id: rncp_code
-            }
-            |> Repo.insert!()
-            |> Repo.preload([:romes, :delegates])
-            |> Ecto.Changeset.change()
-            |> Ecto.Changeset.put_assoc(
-              :romes,
-              romes |> String.split() |> Enum.map(&Repo.get_by!(Rome, code: &1))
-            )
-            |> Ecto.Changeset.put_assoc(:delegates, delegates)
-            |> Repo.update!()
+    delegates = Delegate |> where(certifier_id: 4) |> Repo.all()
+    File.stream!("/priv/fixtures/csv/certifications_to_remove.csv")
+    |> CSV.decode!(headers: true, num_workers: 1)
+    |> Enum.each(fn %{
+                      "Code RNCP" => rncp_code,
+                      "Code rome" => romes,
+                      "Intitulé" => label,
+                      "Niveau" => level
+                    } ->
+      cond do
+        Certification |> where(label: ^label, acronym: "TP") |> Repo.one() == nil ->
+          %Certification{
+            label: label,
+            acronym: "TP",
+            level: level |> map_level,
+            rncp_id: rncp_code
+          }
+          |> Repo.insert!()
+          |> Repo.preload([:romes, :delegates])
+          |> Ecto.Changeset.change()
+          |> Ecto.Changeset.put_assoc(
+            :romes,
+            romes |> String.split() |> Enum.map(&Repo.get_by!(Rome, code: &1))
+          )
+          |> Ecto.Changeset.put_assoc(:delegates, delegates)
+          |> Repo.update!()
 
-          true ->
-            true
-        end
-      end)
-    else
-      msg -> msg
-    end
+        true ->
+          true
+      end
+    end)
   end
 
   defp map_level(level) do

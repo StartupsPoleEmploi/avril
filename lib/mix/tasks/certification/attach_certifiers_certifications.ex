@@ -1,8 +1,6 @@
 defmodule Mix.Tasks.Certification.AttachCertifiersCertifications do
   use Mix.Task
 
-  import Mix.Ecto
-
   alias Vae.Repo
   alias Vae.Certification
 

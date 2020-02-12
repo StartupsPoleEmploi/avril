@@ -3,8 +3,6 @@ defmodule Mix.Tasks.Delegate.AttachCertifiersToDelegate do
 
   require Logger
 
-  import Mix.Ecto
-
   alias Vae.Repo
   alias Vae.{Certifier, Delegate}
 

@@ -134,9 +134,10 @@ defmodule Vae.ExAdmin.Application do
 
   defp application_status(application) do
     cond do
-      application.admissible_at -> application.admissible_at
-      application.inadmissible_at -> application.inadmissible_at
-      application.submitted_at -> application.submitted_at
+      application.admissible_at -> "Admissible le #{application.admissible_at |> Timex.format!("%d/%m/%Y", :strftime)}"
+      application.inadmissible_at -> "Pas encore admissible au #{application.inadmissible_at |> Timex.format!("%d/%m/%Y", :strftime)}"
+      application.submitted_at -> "Transmise le #{application.submitted_at |> Timex.format!("%d/%m/%Y", :strftime)}"
+      true -> nil
     end
   end
 end

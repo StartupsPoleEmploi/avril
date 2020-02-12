@@ -3,7 +3,6 @@ defmodule Mix.Tasks.AddSlugsToModels do
 
   require Logger
 
-  import Mix.Ecto
   import Ecto.Query
 
   alias Vae.Repo

@@ -1,8 +1,6 @@
 defmodule Mix.Tasks.Delegate.Geocode do
   use Mix.Task
 
-  import Mix.Ecto
-
   alias Vae.Repo
   alias Vae.Delegate
   alias Vae.Places

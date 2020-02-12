@@ -2,7 +2,6 @@ defmodule Mix.Tasks.Search.Index do
   use Mix.Task
 
   require Logger
-  import Mix.Ecto
 
   import Vae.Search.Client.Algolia, only: [get_index_name: 1]
 

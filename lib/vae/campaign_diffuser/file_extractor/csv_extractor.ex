@@ -1,8 +1,6 @@
 defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   require Logger
 
-  alias Vae.Places
-
   @behaviour Vae.CampaignDiffuser.FileExtractor
 
   @fields ~w(
@@ -137,7 +135,7 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     administrative =
       job_seeker
       |> get_in([:geolocation])
-      |> Places.get_administrative()
+      |> Vae.Places.get_administrative()
 
     if Enum.member?(@allowed_administratives, administrative) do
       {:allowed, job_seeker}
