@@ -117,19 +117,19 @@ defmodule Vae.Application do
 
   def submitted_now(application) do
     application
-    |> change(%{submitted_at: DateTime.utc_now()})
+    |> change(%{submitted_at: DateTime.truncate(DateTime.utc_now(), :second)})
     |> Repo.update!()
   end
 
   def admissible_now(application) do
     application
-    |> change(admissible_at: DateTime.utc_now())
+    |> change(admissible_at: DateTime.truncate(DateTime.utc_now(), :second))
     |> Repo.update!()
   end
 
   def inadmissible_now(application) do
     application
-    |> change(inadmissible_at: DateTime.utc_now())
+    |> change(inadmissible_at: DateTime.truncate(DateTime.utc_now(), :second))
     |> Repo.update!()
   end
 
