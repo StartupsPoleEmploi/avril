@@ -28,7 +28,7 @@ defmodule Vae.ApiController do
 
   def set_booklet(conn, %{"hash" => _hash} = params) do
     conn.assigns[:current_application]
-    |> Application.save_booklet(%{"booklet_1" => params})
+    |> Application.save_booklet(params)
     |> case do
       {:ok, _application} ->
         json(conn, %{
@@ -39,7 +39,7 @@ defmodule Vae.ApiController do
         Logger.error(inspect(changeset))
         json(conn, %{
           status: :error,
-          error: "Une erreur est survenue: #{inspect changeset.errors}.Merci de réessayer plus tard"
+          error: "Une erreur est survenue: #{inspect changeset.errors}. Merci de réessayer plus tard"
         })
     end
   end

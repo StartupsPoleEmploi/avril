@@ -21,9 +21,7 @@ defmodule Vae do
         worker(Vae.Status.Server, []),
         worker(Vae.Scheduler, []),
         worker(Vae.Places.Cache, []),
-        Vae.OAuth.Clients,
-        supervisor(Vae.Booklet.WorkerSupervisor, []),
-        Vae.Booklet.ProcessRegistry
+        Vae.OAuth.Clients
       ]
     }
 

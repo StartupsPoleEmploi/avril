@@ -65,7 +65,7 @@ defmodule Vae.Mixfile do
       {:phoenix_html, "~> 2.13.3"},
       {:plug_cowboy, "~> 2.0"},
       {:sweet_xml, "~> 0.6.5"},
-      {:csv, "~> 2.0.0"},
+      {:csv, "~> 2.3.1"},
       {:scrivener_ecto, "~> 1.0"},
       {:scrivener_html, "~> 1.8"},
       {:jason, "~> 1.0"},

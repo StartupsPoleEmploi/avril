@@ -74,7 +74,7 @@ defmodule Vae.ExAdmin.Dashboard do
     [
       "La Team Avril, elle est pas fragile !",
       "Avec la team Avril, tout devient facile.",
-      "On est tous agile, dans la team Avril",
+      "On est tous agiles, dans la team Avril",
       "Plus de VAE stériles avec la team Avril",
       "C'est clair la team Avril, jamais elle se défile",
       "La team Avril, plus balaise qu'un alterophile",

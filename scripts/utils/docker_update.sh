@@ -26,6 +26,8 @@ until [[ $(docker ps -a -f "id=$NEW_CONTAINER_ID" -f "health=healthy" -q) ]]; do
 done
 echo ""
 kill $LOGS_PID
+wait $LOGS_PID 2>/dev/null
+
 echo "[DONE] $NEW_CONTAINER_NAME is healthy!"
 
 echo "[DONE] Restarting nginx..."
