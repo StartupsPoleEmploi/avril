@@ -151,15 +151,15 @@ defmodule Vae.Application do
   def save_booklet(application, booklet_params) do
     application
     |> change()
-    # |> cast(booklet_params, [])
-    # |> cast_embed(:booklet_1)
-    |> put_embed(
-      :booklet_1,
-      Vae.Booklet.Cerfa.changeset(
-        application.booklet_1 || %Vae.Booklet.Cerfa{},
-        booklet_params
-      )
-    )
+    |> cast(%{"booklet_1" => booklet_params}, [])
+    |> cast_embed(:booklet_1)
+    # |> put_embed(
+    #   :booklet_1,
+    #   Vae.Booklet.Cerfa.changeset(
+    #     application.booklet_1 || %Vae.Booklet.Cerfa{},
+    #     booklet_params
+    #   )
+    # )
     |> Repo.update()
   end
 
