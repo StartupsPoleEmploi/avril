@@ -31,7 +31,7 @@ defmodule Vae.Step do
 
   def create_changeset(step, params \\ %{}) do
     step
-    |> cast(params, ~w(title content))
+    |> cast(params, ~w(title content)a)
     |> validate_required([:title, :content])
   end
 end

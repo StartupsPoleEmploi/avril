@@ -31,7 +31,7 @@ defmodule Vae.Booklet.Education do
     end
   end
 
-  @fields ~w(grade degree)
+  @fields ~w(grade degree)a
 
   def changeset(struct, params \\ %{}) do
     struct
