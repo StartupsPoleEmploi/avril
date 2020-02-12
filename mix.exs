@@ -73,10 +73,10 @@ defmodule Vae.Mixfile do
       {:httpoison, "~> 1.5"},
       {:floki, "~> 0.21.0"},
       # TODO: remove dependency: not needed anymore
-      {:poison, "~> 3.0", override: true},
+      {:poison, "~> 3.1", override: true},
       {:phoenix_slime, "~> 0.12.0"},
-      {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
-      # {:ex_admin, github: "augnustin/ex_admin"},
+      # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
+      {:ex_admin, github: "augnustin/ex_admin"},
       # {:coherence, "~> 0.5.2"}, # TODO: move to POW
       {:coherence, git: "https://github.com/johannesE/coherence", branch: "#394"}, # Ecto 3.0 compatible
       {:phoenix_live_reload, "~> 1.0", only: :dev},

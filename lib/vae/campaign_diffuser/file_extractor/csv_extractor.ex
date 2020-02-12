@@ -1,7 +1,7 @@
 defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   require Logger
 
-  @behaviour Vae.CampaignDiffuser.FileExtractor
+  # @behaviour Vae.CampaignDiffuser.FileExtractor
 
   @fields ~w(
     kn_individu_national
@@ -131,7 +131,7 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     }
   end
 
-  defp is_allowed_administrative?(job_seeker) do
+  def is_allowed_administrative?(job_seeker) do
     administrative =
       job_seeker
       |> get_in([:geolocation])
