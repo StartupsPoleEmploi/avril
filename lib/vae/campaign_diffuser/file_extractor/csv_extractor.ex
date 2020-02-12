@@ -37,13 +37,34 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     Guadeloupe
   )
 
-  def extract(_) do
-    # To implement
+  def build_enumerable(type, from) do
+    with {:ok, output_path} <- extract(type, from),
+         stream <- File.stream!(output_path) do
+      {
+        :ok,
+        stream
+        |> CSV.decode(separator: ?;, headers: true)
+      }
+    else
+      {:error, %{type: type}} ->
+        {:error, type}
+    end
   end
 
-  def build_enumerable(path) do
-    File.stream!(path)
-    |> CSV.decode(separator: ?;, headers: true)
+  def extract(type, from) do
+    System.cmd("bunzip2", ["-kc", build_path(type, from)])
+    |> case do
+      {data, 0} ->
+        output_path = "/tmp/emails_#{type}_#{Date.utc_today()}.csv"
+
+        {
+          File.write!(output_path, data),
+          output_path
+        }
+
+      _ ->
+        {:error, %{type: type}}
+    end
   end
 
   def extract_lines_flow(flow) do
@@ -64,13 +85,21 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   def add_geolocation_flow(flow) do
     flow
     |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-      build_geolocation(job_seeker)
-      |> is_allowed_administrative?()
-      |> case do
-        {:allowed, located_job_seeker} -> [located_job_seeker | acc]
-        _ -> acc
-      end
+      [
+        build_geolocation(job_seeker)
+        | acc
+      ]
     end)
+  end
+
+  def build_path(type, from) do
+    "#{System.get_env("CAMPAIGN_BASE_PATH")}/avril_de_#{type}_delta_#{define_date(from)}1800.bz2"
+  end
+
+  def define_date(from) do
+    Date.utc_today()
+    |> Date.add(from * -1)
+    |> Timex.format!("{YYYY}{0M}{0D}")
   end
 
   defp build_geolocation(job_seeker) do
@@ -83,7 +112,7 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
       identifier: line["kn_individu_national"],
       first_name: line["prenom"] |> String.trim() |> String.capitalize(),
       last_name: line["nom"] |> String.trim() |> String.capitalize(),
-      email: String.trim(line["courriel"]),
+      email: clean_email(line["courriel"]),
       telephone: line["telephone"] |> String.trim(),
       postal_code: line["code_postal"] |> String.trim(),
       education_level: line["listeformation"],
@@ -115,5 +144,13 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     else
       {:not_allowed, job_seeker}
     end
+  end
+
+  defp clean_email(nil), do: nil
+
+  defp clean_email(email) do
+    email
+    |> String.downcase()
+    |> String.trim()
   end
 end

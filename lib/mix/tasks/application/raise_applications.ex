@@ -37,7 +37,7 @@ defmodule Mix.Tasks.RaiseApplications do
           not is_nil(a.submitted_at) and
             fragment("?::date", a.submitted_at) < ^date and
             is_nil(a.admissible_at) and
-            u.id == 15581
+            u.id == 12667
       )
       |> Repo.stream()
 

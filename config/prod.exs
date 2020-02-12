@@ -12,11 +12,16 @@ config :logger, level: :info
 
 config :vae, Vae.Scheduler,
   jobs: [
-    campaign_task: [
+    registered_campaign_task: [
       timezone: "Europe/Paris",
-      schedule: "30 11 29 10 *",
-      task: &Vae.CampaignDiffuser.Handler.execute/0
+      schedule: "0 17 * * 2",
+      task: &Vae.CampaignDiffuser.Handler.execute_registered/0
     ],
+    #    new_registered_campaign_task: [
+    #      timezone: "Europe/Paris",
+    #      schedule: "0 14 * * 2",
+    #      task: &Vae.CampaignDiffuser.Handler.execute_new_registered/0
+    #    ],
     crm_monthly_task: [
       timezone: "Europe/Paris",
       schedule: "15 11 * * *",

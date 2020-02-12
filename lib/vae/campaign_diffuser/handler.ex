@@ -1,20 +1,14 @@
 defmodule Vae.CampaignDiffuser.Handler do
-  def execute() do
+  def execute_registered(), do: execute(:reinscrits)
+
+  def execute_new_registered(), do: execute(:primo_inscrits)
+
+  def execute(type, from \\ 2) do
     {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
 
     send(
       pid,
-      {:execute,
-       "priv/campaigns/emails_#{Date.utc_today() |> to_string() |> String.replace("-", "_")}.csv"}
-    )
-  end
-
-  def execute(path) do
-    {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
-
-    send(
-      pid,
-      {:execute, path}
+      {:execute, {type, from}}
     )
   end
 
