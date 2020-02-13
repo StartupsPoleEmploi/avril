@@ -10,12 +10,26 @@
 
   .section {
     padding: 2rem;
-    text-align: center;
     background: rgba(white, 0.2);
     box-shadow: 0 0 10px darken(#ecf0f5, 40%);
+    position: relative;
+
+    .absolute-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 2rem;
+    }
+
+    h2, h4 {
+      text-align: center;
+    }
 
     ul {
-      list-style: none;
+      text-align: left;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+      margin-left: 5rem;
     }
   }
 

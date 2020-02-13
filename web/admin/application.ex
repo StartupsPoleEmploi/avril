@@ -113,6 +113,8 @@ defmodule Vae.ExAdmin.Application do
       column(:updated_at)
       column(:meeting)
       column(:booklet_1)
+      column(:booklet_1@inserted_at, fn a -> a.booklet_1 && a.booklet_1.inserted_at end)
+      column(:booklet_1@completed_at, fn a -> a.booklet_1 && a.booklet_1.completed_at end)
     end
 
     filter [:meeting, :booklet_1]

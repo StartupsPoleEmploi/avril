@@ -18,8 +18,8 @@ import {
 
 const KEY_MAP = {
   week_number: 'semaine',
-  admissible: 'Admissible après relance',
-  inadmissible: 'Pas encore admissible après relance',
+  admissible: 'Candidatures transmises admissible après relance',
+  inadmissible: 'Candidatures transmises pas encore admissible après relance',
   submitted: 'Candidatures transmises',
   unsubmitted: 'Candidatures non transmises',
   finished: 'Livret 1 terminé',
@@ -93,7 +93,7 @@ const Aggregate = ({data}) => {
       { Object.keys(aggregatedData).map(k =>
         <li key={k}>{k}: {valueWithPercent(aggregatedData[k], total)} </li>
       )}
-      <li>Total: {total}</li>
+      <li>Total: {total} (100%)</li>
     </ul>
   );
 }

@@ -42,29 +42,27 @@ defmodule Vae.ExAdmin.Dashboard do
       end
       hr()
       div ".section" do
-        div ".pull-right" do
+        div ".absolute-right" do
           Xain.form [method: "GET"] do
             Xain.input type: "hidden", name: "start_date", value: start_date
             Xain.input type: "hidden", name: "end_date", value: end_date
             Xain.button (if type == "submissions",  do: "Vue Livret 1", else: "Vue Transmissions"), [type: "submit", name: "type", value: (if type == "submissions",  do: "booklet", else: "submissions"), class: "btn btn-primary"]
           end
         end
-        div ".clearfix" do
-          h2 "Candidatures #{if type == "booklet", do: "éducation nationnale "}par semaines", [class: "text-center"]
-          p between_dates_string(start_date, end_date)
-          div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
-        end
+        h2 "Candidatures #{if type == "booklet", do: "éducation nationnale "}par semaines", [class: "text-center"]
+        h4 between_dates_string(start_date, end_date)
+        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
       end
       hr()
       div ".section" do
         h2 "Candidatures par certificateurs"
-        p between_dates_string(start_date, end_date)
+        h4 between_dates_string(start_date, end_date)
         div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}"]
       end
       hr()
       div ".section" do
         h2 "Candidatures par certifications"
-        p between_dates_string(start_date, end_date)
+        h4 between_dates_string(start_date, end_date)
         div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}"]
       end
     end
@@ -98,7 +96,7 @@ defmodule Vae.ExAdmin.Dashboard do
     end).()
   end
 
-  defp between_dates_string(nil, nil), do: ""
+  defp between_dates_string(nil, nil), do: "depuis le début des candidatures (avril 2019)"
   defp between_dates_string(start_date, nil), do: "à partir du #{Timex.format!(Timex.parse!(start_date, "{YYYY}-{0M}-{0D}"), "%d/%m/%Y", :strftime)}"
   defp between_dates_string(nil, end_date), do: "jusqu'au #{Timex.format!(Timex.parse!(end_date, "{YYYY}-{0M}-{0D}"), "%d/%m/%Y", :strftime)}"
   defp between_dates_string(start_date, end_date), do: "entre le #{Timex.format!(Timex.parse!(start_date, "{YYYY}-{0M}-{0D}"), "%d/%m/%Y", :strftime)} et le #{Timex.format!(Timex.parse!(end_date, "{YYYY}-{0M}-{0D}"), "%d/%m/%Y", :strftime)}"
