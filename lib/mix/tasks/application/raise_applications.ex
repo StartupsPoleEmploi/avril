@@ -13,12 +13,11 @@ defmodule Mix.Tasks.RaiseApplications do
   def run(_args) do
     Logger.info("Applicants wake up !")
 
-    # ensure_started(Repo, [])
-    {:ok, _started} = Application.ensure_all_started(:hackney)
+    Mix.Task.run("app.start")
 
     select_applications()
 
-    Logger.info("Great !")
+    Logger.info("Thanks for your attention !")
   end
 
   def select_applications() do
