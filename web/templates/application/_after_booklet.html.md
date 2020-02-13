@@ -5,7 +5,12 @@ Prochaines étapes à suivre :
 3. Rassemblez les pièces justificatives, voir liste ci-après.
 4. Envoyez le tout par voie postale à :
 
+<%= if @application.delegate.process.booklet_address do %>
+**<%= @application.delegate.process.booklet_address %>**
+<% else %>
 **<%= @application.delegate.name %>**<br /><%= @application.delegate.address %>
+<% end %>
+
 
 Vous recevrez la réponse sous 2 mois maximum. Sachez que la loi stipule qu’une non-réponse au bout de 2 mois vaut accord, si votre dossier était complet.
 

@@ -9,6 +9,7 @@ defmodule Vae.Process do
     field(:name, :string)
     field(:booklet_1, :string)
     field(:booklet_2, :string)
+    field(:booklet_address, :string)
 
     field(:step_1, :string)
     field(:step_2, :string)
