@@ -31,9 +31,9 @@ defmodule Mix.Tasks.RaiseApplications do
         on: a.delegate_id == d.id,
         join: c in Certification,
         on: a.certification_id == c.id,
+        # fragment("?::date", a.submitted_at) < ^date and
         where:
           not is_nil(a.submitted_at) and
-            fragment("?::date", a.submitted_at) < ^date and
             is_nil(a.admissible_at) and
             u.id == 12667
       )
