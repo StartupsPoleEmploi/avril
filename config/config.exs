@@ -128,7 +128,7 @@ config :coherence,
     # :rememberable,
     :lockable,
     :trackable,
-    :unlockable_with_token,
+    :unlockable_with_token
   ],
   repo: Vae.Repo,
   router: Vae.Router,
