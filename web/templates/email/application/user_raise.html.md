@@ -11,7 +11,7 @@ Voici <%= if @booklet_url, do: 3, else: 2 %> conseils d'Avril pour vous :
 > <%= @delegate_address %>
 > Tel : <%= @delegate_phone_number %>
 
-**[Je contact mon centre VAE par email](mailto:<%= @delegate_email %>)**
+**[Je contacte mon centre VAE par email](mailto:<%= @delegate_email %>)**
 
 <%= if @booklet_url do %>
 #### - Remplissez votre dossier de candidature en ligne
