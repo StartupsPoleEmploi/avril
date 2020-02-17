@@ -37,8 +37,7 @@ defmodule Vae.JobSeekerEmail do
       :avril,
       job_seeker,
       %{
-        subject:
-          "Votre conseiller pôle emploi vous invite à tester un nouveau site : Avril, la VAE facile !",
+        subject: "Ajoutez un nouveau diplôme sur votre CV",
         url:
           Routes.root_url(
             Vae.Endpoint,
