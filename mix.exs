@@ -27,6 +27,7 @@ defmodule Vae.Mixfile do
         :phoenix_html,
         :cowboy,
         :logger,
+        :tzdata,
         :gettext,
         :phoenix_ecto,
         :postgrex,
@@ -34,7 +35,6 @@ defmodule Vae.Mixfile do
         :scrivener_ecto,
         :scrivener_html,
         :httpoison,
-        :coherence,
         :sentry,
         :algolia,
         :persistent_ets,
@@ -61,12 +61,16 @@ defmodule Vae.Mixfile do
       {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 4.1.0"},
-      {:ecto, "~> 3.3.2"},
-      {:postgrex, "~> 0.15.3"},
       {:phoenix_html, "~> 2.13.3"},
+      {:ecto, "~> 3.3.2"},
+      {:ecto_sql, "~> 3.3.4"},
+      {:postgrex, "~> 0.15.3"},
       {:plug_cowboy, "~> 2.0"},
+      {:pow, "~> 1.0.18"},
+      {:comeonin, "~> 3.0"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.3.1"},
+      {:csvlixir, "~> 2.0.3"},
       {:scrivener_ecto, "~> 2.0"},
       {:scrivener_html, "~> 1.8"},
       {:jason, "~> 1.0"},
@@ -75,10 +79,10 @@ defmodule Vae.Mixfile do
       # TODO: remove dependency: not needed anymore
       {:poison, "~> 3.1", override: true},
       {:phoenix_slime, "~> 0.12.0"},
-      # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
-      {:ex_admin, github: "augnustin/ex_admin"},
+      {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
+      # {:ex_admin, github: "augnustin/ex_admin"},
       # {:coherence, "~> 0.5.2"}, # TODO: move to POW
-      {:coherence, git: "https://github.com/johannesE/coherence", branch: "#394"}, # Ecto 3.0 compatible
+      # {:coherence, git: "https://github.com/johannesE/coherence", branch: "#394"}, # Ecto 3.0 compatible
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},

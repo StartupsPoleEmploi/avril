@@ -13,7 +13,7 @@
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
         p.text-center.mb-2.mt-4 - OU -
         = render "form.html", changeset: @changeset,
-          action: Routes.registration_path(@conn, :create),
+          action: Routes.pow_registration_path(@conn, :create),
           conn: @conn
     .col-md-6.order-md-1.d-flex.align-items-center.justify-content-around
-      = link("J'ai déjà un compte", to: Routes.session_path(@conn, :new), class: "btn btn-primary", data: [analytics: "Profil#deja"])
+      = link("J'ai déjà un compte", to: Routes.pow_session_path(@conn, :new), class: "btn btn-primary", data: [analytics: "Profil#deja"])

@@ -2,11 +2,12 @@ defmodule Vae.Router do
   use Vae.Web, :router
   use Plug.ErrorHandler
   use Sentry.Plug
+  use Pow.Phoenix.Router
+  use Pow.Extension.Phoenix.Router, otp_app: :vae
   use ExAdmin.Router
-  use Coherence.Router
 
-  @user_schema Application.get_env(:coherence, :user_schema)
-  @id_key Application.get_env(:coherence, :schema_key)
+  # @user_schema Application.get_env(:coherence, :user_schema)
+  # @id_key Application.get_env(:coherence, :schema_key)
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -16,20 +17,22 @@ defmodule Vae.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
 
-    plug(Coherence.Authentication.Session,
-      store: Coherence.CredentialStore.Session,
-      db_model: @user_schema,
-      id_key: @id_key
-    )
+    # plug(Coherence.Authentication.Session,
+    #   store: Coherence.CredentialStore.Session,
+    #   db_model: @user_schema,
+    #   id_key: @id_key
+    # )
   end
 
   pipeline :protected do
-    plug(Coherence.Authentication.Session,
-      protected: true,
-      store: Coherence.CredentialStore.Session,
-      db_model: @user_schema,
-      id_key: @id_key
-    )
+    plug Pow.Plug.RequireAuthenticated,
+      error_handler: Pow.Phoenix.PlugErrorHandler
+  #   plug(Coherence.Authentication.Session,
+  #     protected: true,
+  #     store: Coherence.CredentialStore.Session,
+  #     db_model: @user_schema,
+  #     id_key: @id_key
+  #   )
   end
 
   pipeline :admin do
@@ -51,7 +54,9 @@ defmodule Vae.Router do
     forward "/healthcheck", HealthCheckup
 
     # Sessions routes
-    coherence_routes()
+    # coherence_routes()
+    pow_routes()
+    pow_extension_routes()
 
     # Landing pages
     get("/", Vae.PageController, :index, as: :root)
@@ -118,10 +123,10 @@ defmodule Vae.Router do
   end
 
   # Private pages
-  scope "/" do
-    pipe_through([:browser, :protected])
-    coherence_routes(:protected)
-  end
+  # scope "/" do
+  #   pipe_through([:browser, :protected])
+  #   coherence_routes(:protected)
+  # end
 
   scope "/api" do
     pipe_through([:api])

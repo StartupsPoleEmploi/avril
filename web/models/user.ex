@@ -1,19 +1,35 @@
 defmodule Vae.User do
-  use Vae.Web, :model
-
-  @moduledoc false
-  # use Ecto.Schema
-  use Coherence.Schema
   require Logger
 
-  alias Vae.{Application, Experience, JobSeeker, ProvenExperience, Repo, Skill}
+  @moduledoc false
+  use Vae.Web, :model
+  use Pow.Ecto.Schema,
+    password_hash_methods: {&Comeonin.Bcrypt.hashpwsalt/1,
+                            &Comeonin.Bcrypt.checkpw/2}
+  use Pow.Extension.Ecto.Schema,
+    extensions: [PowEmailConfirmation, PowResetPassword]
+
+  alias Vae.{
+    Application,
+    Experience,
+    JobSeeker,
+    ProvenExperience,
+    Repo,
+    Skill
+  }
 
   schema "users" do
+    pow_user_fields()
+
+    # Legacy fields to keep data
+    field :confirmation_token, :string
+    field :confirmed_at, :utc_datetime
+
     field(:gender, :string, default: "female")
     field(:name, :string)
     field(:first_name, :string)
     field(:last_name, :string)
-    field(:email, :string)
+    # field(:email, :string)
     field(:phone_number, :string)
     field(:is_admin, :boolean)
     field(:postal_code, :string)
@@ -54,8 +70,6 @@ defmodule Vae.User do
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
 
-    coherence_schema()
-
     timestamps()
   end
 
@@ -94,7 +108,9 @@ defmodule Vae.User do
 
   def changeset(model, params \\ %{}) do
     model
-    |> cast(params, @fields ++ Enum.map(coherence_fields(), &String.to_atom/1)) # Ecto 3 expects atom while coherence brings strings
+    |> cast(params, @fields)
+    |> pow_changeset(params)
+    |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
@@ -104,24 +120,10 @@ defmodule Vae.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-    |> validate_coherence(params)
   end
 
   defp put_job_seeker(changeset, nil), do: changeset
   defp put_job_seeker(changeset, job_seeker), do: put_assoc(changeset, :job_seeker, job_seeker)
-
-  def changeset(model, params, :registration) do
-    changeset(model, params)
-  end
-
-  def changeset(model, params, :password) do
-    model
-    |> cast(
-      params,
-      ~w(password password_confirmation reset_password_token reset_password_sent_at)a
-    )
-    |> validate_coherence_password_reset(params)
-  end
 
   def put_embed_if_necessary(changeset, params, key, _options \\ []) do
     klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()

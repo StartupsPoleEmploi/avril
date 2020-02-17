@@ -55,6 +55,9 @@ defmodule Vae.Endpoint do
     signing_salt: "2nvfILl2"
   )
 
+  # After plug Plug.Session
+  plug Pow.Plug.Session, otp_app: :vae
+
   plug(CORSPlug)
   plug(Vae.Router)
 end

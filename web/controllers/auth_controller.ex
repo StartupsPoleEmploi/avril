@@ -41,8 +41,9 @@ defmodule Vae.AuthController do
 
       case result do
         {:ok, user} ->
-          Coherence.Authentication.Session.create_login(conn, user)
-          |> Coherence.Redirects.create_or_get_application(user)
+          Pow.Plug.create(conn, user)
+          # Coherence.Authentication.Session.create_login(conn, user)
+          # |> Coherence.Redirects.create_or_get_application(user)
         {:error, msg} -> handle_error(conn, msg)
       end
 

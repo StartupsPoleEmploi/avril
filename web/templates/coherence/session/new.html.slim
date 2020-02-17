@@ -6,7 +6,7 @@
         .text-center
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
         p.text-center.mb-2.mt-4 - OU -
-        = form_for @conn, Routes.session_path(@conn, :create), [as: :session], fn f ->
+        = form_for @conn, Routes.pow_session_path(@conn, :create), [as: :session], fn f ->
           - login_field = Coherence.Config.login_field
           .form-group
             = label f, login_field, class: "control-label"
@@ -25,4 +25,4 @@
           .form-group
             = coherence_links(@conn, :new_session)
     .col-md-6.bg-primary.d-flex.align-items-center.justify-content-around
-      = link("J'ai besoin d'un compte Avril", to: Routes.registration_path(@conn, :new), class: "btn btn-link")
+      = link("J'ai besoin d'un compte Avril", to: Routes.pow_registration_path(@conn, :new), class: "btn btn-link")

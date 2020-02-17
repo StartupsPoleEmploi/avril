@@ -11,7 +11,7 @@ defmodule Vae.ApplicationController do
   def index(conn, params) do
     with(
       current_user when not is_nil(current_user)
-        <- Coherence.current_user(conn),
+        <- Pow.Plug.current_user(conn),
       current_application when not is_nil(current_application)
         <- Repo.preload(current_user, :applications).applications
           |> Enum.find(fn a -> a.booklet_hash == params["hash"] end)
@@ -40,7 +40,7 @@ defmodule Vae.ApplicationController do
       ])
 
     edit_mode = params["mode"] != "certificateur" &&
-      Coherence.logged_in?(conn) && Coherence.current_user(conn).id == application.user.id
+      Pow.Plug.current_user(conn) && Pow.Plug.current_user(conn).id == application.user.id
 
     grouped_experiences = application.user.proven_experiences
       |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)

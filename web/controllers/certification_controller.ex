@@ -95,11 +95,11 @@ defmodule Vae.CertificationController do
         administrative: get_session(conn, :search_administrative)
       }, Repo.get(Certification, certification_id)) || %{}) |> Map.get(:id))
 
-    if Coherence.logged_in?(conn) do
+    if Pow.Plug.current_user(conn) do
       {:ok, application} = Application.find_or_create_with_params(%{
         certification_id: certification_id,
         delegate_id: delegate_id,
-        user_id: Coherence.current_user(conn).id
+        user_id: Pow.Plug.current_user(conn).id
       })
       conn
       |> put_flash(
@@ -111,7 +111,7 @@ defmodule Vae.CertificationController do
       conn
       |> put_session(:certification_id, certification_id)
       |> put_session(:delegate_id, delegate_id)
-      |> redirect(to: Routes.registration_path(conn, :new))
+      |> redirect(to: Routes.pow_registration_path(conn, :new))
     end
   end
 
