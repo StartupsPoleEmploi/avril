@@ -4,8 +4,11 @@ defmodule Vae.User do
   @moduledoc false
   use Vae.Web, :model
   use Pow.Ecto.Schema,
-    password_hash_methods: {&Comeonin.Bcrypt.hashpwsalt/1,
-                            &Comeonin.Bcrypt.checkpw/2}
+    password_hash_methods: {&Bcrypt.hash_pwd_salt/1,
+                            &Bcrypt.functionverify_pass/2}
+  # use Pow.Ecto.Schema,
+  #   password_hash_methods: {&Comeonin.Bcrypt.hashpwsalt/1,
+  #                           &Comeonin.Bcrypt.checkpw/2}
   use Pow.Extension.Ecto.Schema,
     extensions: [PowEmailConfirmation, PowResetPassword]
 
@@ -197,7 +200,7 @@ defmodule Vae.User do
 
       _data, {:error, changeset} ->
         Logger.error(fn -> inspect(changeset) end)
-        Repo.get(__MODULE__, user.id)
+        {:ok, Repo.get(__MODULE__, user.id)}
     end)
   end
 

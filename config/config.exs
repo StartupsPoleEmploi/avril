@@ -101,9 +101,10 @@ config :vae, Vae.Mailer,
 config :vae, :pow,
   repo: Vae.Repo,
   user: Vae.User,
-  extensions: [PowEmailConfirmation, PowResetPassword],
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
-  mailer_backend: Vae.PowMailer
+  extensions: [PowEmailConfirmation, PowResetPassword],
+  mailer_backend: Vae.PowMailer,
+  messages_backend: Vae.Pow.Messages,
   web_module: Vae
 
 
