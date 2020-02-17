@@ -39,24 +39,23 @@ defmodule Mix.Tasks.RaiseApplications do
       |> Repo.stream()
 
     Repo.transaction(fn ->
-      stream
-      |> Repo.stream_preload(20, [:user, :delegate, :certification])
-      |> Stream.map(&build_deliver/1)
-      |> Stream.scan([], fn application_email, acc ->
-        case Mailer.send(application_email) do
-          {:ok, _result} ->
-            acc
+      emails_sent =
+        stream
+        |> Repo.stream_preload(20, [:user, :delegate, :certification])
+        |> Stream.map(&build_deliver/1)
+        |> Stream.scan(0, fn application_email, count ->
+          case Mailer.send(application_email) do
+            {:ok, _result} ->
+              count + 1
 
-          {:error, reason} ->
-            Logger.error(fn -> inspect(reason) end)
+            {:error, reason} ->
+              Logger.error(fn -> inspect(reason) end)
+              count
+          end
+        end)
+        |> Enum.to_list()
 
-            [
-              application_email
-              | acc
-            ]
-        end
-      end)
-      |> Enum.to_list()
+      Logger.info("#{List.last(emails_sent)} emails sent")
     end)
   end
 
