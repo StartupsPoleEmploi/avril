@@ -15,7 +15,30 @@ defmodule Mix.Tasks.RaiseApplications do
 
     Mix.Task.run("app.start")
 
-    select_applications()
+    with {:ok, emails} <- select_applications() do
+      emails
+      |> Flow.from_enumerable(window: Flow.Window.count(100))
+      |> Flow.reduce(fn -> [] end, fn application, acc ->
+        [
+          build_deliver(application)
+          | acc
+        ]
+      end)
+      |> Flow.on_trigger(fn emails ->
+        with {:ok, emails_sent} = Mailer.send(emails) do
+          Logger.info("#{length(emails_sent)} emails sent")
+        else
+          {:error, error} ->
+            Logger.error(fn -> "Error while attempting to send emails: #{inspect(error)}" end)
+        end
+
+        {[], []}
+      end)
+      |> Flow.run()
+    else
+      msg ->
+        Logger.error(fn -> "Unexpected error: #{msg}" end)
+    end
 
     Logger.info("Thanks for your attention !")
   end
@@ -40,22 +63,7 @@ defmodule Mix.Tasks.RaiseApplications do
 
     Repo.transaction(fn ->
       stream
-      |> Repo.stream_preload(20, [:user, :delegate, :certification])
-      |> Stream.map(&build_deliver/1)
-      |> Stream.scan([], fn application_email, acc ->
-        case Mailer.send(application_email) do
-          {:ok, _result} ->
-            acc
-
-          {:error, reason} ->
-            Logger.error(fn -> inspect(reason) end)
-
-            [
-              application_email
-              | acc
-            ]
-        end
-      end)
+      |> Repo.stream_preload(200, [:user, :delegate, :certification])
       |> Enum.to_list()
     end)
   end
