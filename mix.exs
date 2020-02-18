@@ -68,7 +68,6 @@ defmodule Vae.Mixfile do
       {:postgrex, "~> 0.15.3"},
       {:plug_cowboy, "~> 2.0"},
       {:pow, "~> 1.0.18"},
-      # {:comeonin, "~> 4.1.2"},
       {:bcrypt_elixir, "~> 1.1.1"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.3.1"},
