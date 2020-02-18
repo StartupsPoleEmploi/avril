@@ -14,6 +14,7 @@ defmodule Vae do
     server_children = %{
       should_start: Phoenix.Endpoint.server?(:vae, Vae.Endpoint),
       children: [
+        Pow.Store.Backend.MnesiaCache,
         supervisor(Vae.Endpoint, []),
         supervisor(Vae.Event.EventSupervisor, []),
         supervisor(Vae.Statistics.StatisticsSupervisor, []),

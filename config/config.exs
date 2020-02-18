@@ -101,6 +101,7 @@ config :vae, Vae.Mailer,
 config :vae, :pow,
   repo: Vae.Repo,
   user: Vae.User,
+  cache_store_backend: Pow.Store.Backend.MnesiaCache,
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   extensions: [PowEmailConfirmation, PowResetPassword, PowPersistentSession],
   mailer_backend: Vae.PowMailer,
@@ -154,6 +155,8 @@ config :gettext, :default_locale, "fr"
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :mnesia, :dir, './priv/mnesia'
 
 config :phoenix, :json_library, Jason
 
