@@ -57,6 +57,7 @@ defmodule Vae.Endpoint do
 
   # After plug Plug.Session
   plug Pow.Plug.Session, otp_app: :vae
+  plug PowPersistentSession.Plug.Cookie
 
   plug(CORSPlug)
   plug(Vae.Router)

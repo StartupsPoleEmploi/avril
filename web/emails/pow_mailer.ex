@@ -20,17 +20,18 @@ defmodule Vae.PowMailer do
   # @override_to System.get_env("DEV_EMAILS")
 
   def cast(email) do
-    Vae.Mailer.build_email(:template, email.from, email.to)
-    # %Email{}
-    # |> from({"My App", "myapp@example.com"})
-    # |> to({"", email.user.email})
-    # |> subject(email.subject)
-    # |> text_body(email.text)
-    # |> html_body(email.html)
+    Vae.Mailer.build_email(subject_to_template(email.subject), :avril, email.user, Map.merge(%{
+      subject: email.subject,
+      name: Vae.User.fullname(email.user)
+    }, Enum.into(email.assigns, %{})))
   end
 
   def process(email), do: Vae.Mailer.send(email)
 
-  # def process(email), do: deliver(email)
-
+  defp subject_to_template(subject) do
+    case subject do
+      "Confirm your email address" -> "user/confirmation.html"
+      "Reset password link" -> "user/password.html"
+    end
+  end
 end

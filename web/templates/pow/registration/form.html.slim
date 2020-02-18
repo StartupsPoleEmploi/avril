@@ -2,17 +2,18 @@
   = if @changeset.action do
     .alert.alert-danger.mb-4
       ' Une erreur est survenue:
-      = for field <- [:email, :password] do
-        - IO.inspect(f.errors)
-        = for error <- Keyword.get_values(f.errors, field) do
-          = content_tag :span, "#{field} #{Vae.ErrorHelpers.translate_error(error)}", class: "help-block"
+      ul style="margin-bottom: 0"
+        = for {key, error} <- f.errors do
+          = content_tag :li, "#{key} #{Vae.ErrorHelpers.translate_error(error)}", class: ""
+
   .form-group
     = label f, "Email", class: "control-label"
     = text_input f, :email, class: "form-control", required: "required"
     = error_tag f, :email
   .form-group
     = label f, "Mot de passe", class: "control-label"
-    = password_input f, :password, class: "form-control", required: "required"
+    = password_input f, :password, class: "form-control", required: "required", onchange: "document.getElementById('password_confirmation').value = this.value"
+    = hidden_input f, :password_confirmation, required: "required", id: "password_confirmation"
     = error_tag f, :password
   .form-check
     label

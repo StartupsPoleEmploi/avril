@@ -3,7 +3,9 @@ defmodule Vae.Router do
   use Plug.ErrorHandler
   use Sentry.Plug
   use Pow.Phoenix.Router
-  use Pow.Extension.Phoenix.Router, otp_app: :vae
+  use Pow.Extension.Phoenix.Router, otp_app: :vae,
+    extensions: [PowResetPassword, PowEmailConfirmation]
+
   use ExAdmin.Router
 
   pipeline :browser do
@@ -114,8 +116,6 @@ defmodule Vae.Router do
 
   scope "/" do
     pipe_through([:browser, :pow_layout])
-    # Sessions routes
-    # coherence_routes()
     pow_routes()
     pow_extension_routes()
   end

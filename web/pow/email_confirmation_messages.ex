@@ -1,0 +1,28 @@
+defmodule Vae.Pow.Messages.PowEmailConfirmation.Phoenix.Messages do
+    @moduledoc """
+  Module that handles messages for PowEmailConfirmation.
+  See `Pow.Extension.Phoenix.Messages` for more.
+  """
+
+  @doc """
+  Flash message to show when email has been confirmed.
+  """
+  def email_has_been_confirmed(_conn), do: "L'email a bien été confirmé."
+
+  @doc """
+  Flash message to show when email couldn't be confirmed.
+  """
+  def email_confirmation_failed(_conn), do: "L'email n'a pas pu être confirmé."
+
+  @doc """
+  Flash message to show when user is signs in or registers but e-mail is yet
+  to be confirmed.
+  """
+  def email_confirmation_required(_conn), do: "Merci de confirmer votre adresse email : vérifiez votre boîte de réception."
+
+  @doc """
+  Flash message to show when user updates their e-mail and requires
+  confirmation.
+  """
+  def email_confirmation_required_for_update(_conn), do: "Merci de confirmer votre adresse email : vérifiez votre boîte de réception."
+end

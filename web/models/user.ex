@@ -6,9 +6,6 @@ defmodule Vae.User do
   use Pow.Ecto.Schema,
     password_hash_methods: {&Bcrypt.hash_pwd_salt/1,
                             &Bcrypt.verify_pass/2}
-  # use Pow.Ecto.Schema,
-  #   password_hash_methods: {&Comeonin.Bcrypt.hashpwsalt/1,
-  #                           &Comeonin.Bcrypt.checkpw/2}
   use Pow.Extension.Ecto.Schema,
     extensions: [PowEmailConfirmation, PowResetPassword]
 

@@ -6,6 +6,12 @@ msgid ""
 msgstr ""
 "Language: fr\n"
 
+msgid "password"
+msgstr "Mot de passe"
+
+msgid "password_confirmation"
+msgstr "Confirmation du mot de passe"
+
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr "est requis"
