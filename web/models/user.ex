@@ -210,6 +210,7 @@ defmodule Vae.User do
       if include_create_fields,
         do: %{
           email: String.downcase(api_fields["email"]),
+          current_password: nil,
           password: tmp_password,
           password_confirmation: tmp_password
         },
