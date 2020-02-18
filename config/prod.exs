@@ -14,14 +14,14 @@ config :vae, Vae.Scheduler,
   jobs: [
     registered_campaign_task: [
       timezone: "Europe/Paris",
-      schedule: "0 17 * * 2",
+      schedule: "30 10 * * 2",
       task: &Vae.CampaignDiffuser.Handler.execute_registered/0
     ],
-    #    new_registered_campaign_task: [
-    #      timezone: "Europe/Paris",
-    #      schedule: "0 14 * * 2",
-    #      task: &Vae.CampaignDiffuser.Handler.execute_new_registered/0
-    #    ],
+    new_registered_campaign_task: [
+      timezone: "Europe/Paris",
+      schedule: "30 14 * * 2",
+      task: &Vae.CampaignDiffuser.Handler.execute_new_registered/0
+    ],
     crm_monthly_task: [
       timezone: "Europe/Paris",
       schedule: "15 11 * * *",
