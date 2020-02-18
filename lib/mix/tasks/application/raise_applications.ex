@@ -29,7 +29,7 @@ defmodule Mix.Tasks.RaiseApplications do
           Logger.info("#{length(emails_sent)} emails sent")
         else
           {:error, error} ->
-            Logger.error(fn -> "Error while attempting sent emails: inspect(error)" end)
+            Logger.error(fn -> "Error while attempting to send emails: #{inspect(error)}" end)
         end
 
         {[], []}
