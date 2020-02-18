@@ -5,7 +5,7 @@ defmodule Vae.User do
   use Vae.Web, :model
   use Pow.Ecto.Schema,
     password_hash_methods: {&Bcrypt.hash_pwd_salt/1,
-                            &Bcrypt.functionverify_pass/2}
+                            &Bcrypt.verify_pass/2}
   # use Pow.Ecto.Schema,
   #   password_hash_methods: {&Comeonin.Bcrypt.hashpwsalt/1,
   #                           &Comeonin.Bcrypt.checkpw/2}

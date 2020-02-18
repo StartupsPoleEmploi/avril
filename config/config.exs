@@ -107,8 +107,6 @@ config :vae, :pow,
   messages_backend: Vae.Pow.Messages,
   web_module: Vae
 
-
-
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),
