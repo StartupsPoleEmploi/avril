@@ -51,14 +51,14 @@ defmodule Vae.ExAdmin.Application do
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae. Application, id)
       if application.booklet_1 do
-        action_item_link "Fill Booklet", href: Vae.Application.booklet_url(application), target: "_blank"
+        action_item_link "Fill Booklet", href: Vae.Application.booklet_url(Vae.Endpoint, application), target: "_blank"
       end
     end
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae. Application, id)
       if application.booklet_1 do
-        action_item_link "Check CERFA", href: Vae.Application.booklet_url(application, "/cerfa"), target: "_blank"
+        action_item_link "Check CERFA", href: Vae.Application.booklet_url(Vae.Endpoint, application, "/cerfa"), target: "_blank"
       end
     end
 

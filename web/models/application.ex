@@ -185,7 +185,7 @@ defmodule Vae.Application do
     |> Map.get(:name)
   end
 
-  def booklet_url(application, path \\ '/') do
+  def booklet_url(endpoint, application, path \\ nil) do
     application = application |> Repo.preload(:delegate)
 
     cond do
@@ -193,21 +193,21 @@ defmodule Vae.Application do
         "https://vaedem.asp-public.fr/vaedem/creationCompte.html"
 
       Delegate.is_educ_nat?(application.delegate) ->
-        booklet_url!(application, path)
+        booklet_url!(endpoint, application, path)
 
       true ->
         nil
     end
   end
 
-  def booklet_url!(application, path \\ '/') do
-    if not is_nil(System.get_env("NUXT_URL")) and
-         not is_nil(System.get_env("NUXT_PATH")),
-       do:
-         "#{System.get_env("NUXT_URL")}#{System.get_env("NUXT_PATH")}#{path}?hash=#{
-           application.booklet_hash
-         }",
-       else: Logger.warn("NUXT_* environment variables are not set")
+  def booklet_url!(endpoint, application, path \\ nil) do
+    if is_nil(System.get_env("NUXT_PATH")) do
+      Logger.warn("NUXT_PATH environment variables not set")
+    end
+    URI.merge(Vae.URI.conn_or_endpoint_to_uri(endpoint), %URI{
+      path: "#{System.get_env("NUXT_PATH")}#{path}",
+      query: "hash=#{application.booklet_hash}"
+    }) |> URI.to_string()
   end
 
   defp generate_hash(length) do

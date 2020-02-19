@@ -69,10 +69,11 @@ defmodule Mix.Tasks.RaiseApplications do
   end
 
   def build_deliver(application) do
-    path = %URI{
-      scheme: "https",
-      host: System.get_env("WHOST")
-    }
+    # path = %URI{
+    #   scheme: "https",
+    #   host: System.get_env("WHOST")
+    # }
+    path = struct(URI, Application.get_env(:vae, Vae.Endpoint)[:url])
 
     application
     |> Vae.ApplicationEmail.user_raise(path)

@@ -1,15 +1,9 @@
 use Mix.Config
 require Logger
 
-config :vae,
-  mailjet: [
-    override_to:
-      System.get_env("DEV_EMAILS") || "contact@avril.pole-emploi.fr"
-  ]
-
 config :vae, Vae.Endpoint,
-  http: [port: System.get_env("PORT") || 4000],
-  url: [host: System.get_env("WHOST") || "localhost"],
+  http: [port: 4000],
+  url: [scheme: "http", host: System.get_env("WHOST") || "localhost"],
   secret_key_base: "akyL4W53VWMOrzMxWNJP9Y1ofAIkm9dpvp1KLHJhWQUolRUVlCbOdRrr/0UmcjZx",
   debug_errors: true,
   code_reloader: true,
