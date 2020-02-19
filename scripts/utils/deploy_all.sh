@@ -1,4 +1,6 @@
 #!/bin/bash
 
-./deploy_local.sh --need-change avril-livret1 && \
-./deploy_local.sh --need-change avril
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+$DIR/deploy_local.sh --need-change avril-livret1 && \
+$DIR/deploy_local.sh --need-change avril
