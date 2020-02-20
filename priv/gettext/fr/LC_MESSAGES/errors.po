@@ -6,6 +6,12 @@ msgid ""
 msgstr ""
 "Language: fr\n"
 
+msgid "password"
+msgstr "Mot de passe"
+
+msgid "password_confirmation"
+msgstr "Confirmation du mot de passe"
+
 ## From Ecto.Changeset.cast/4
 msgid "can't be blank"
 msgstr "est requis"
@@ -44,33 +50,33 @@ msgstr "sont actuellement associées à cette entrée"
 ## From Ecto.Changeset.validate_length/3
 msgid "should be %{count} character(s)"
 msgid_plural "should be %{count} character(s)"
-msgstr[0] "devrait être de %{count} caractère(s)"
-msgstr[1] "devrait être de %{count} caractère(s)"
+msgstr[0] "doit être de %{count} caractère(s)"
+msgstr[1] "doit être de %{count} caractère(s)"
 
 msgid "should have %{count} item(s)"
 msgid_plural "should have %{count} item(s)"
-msgstr[0] "devrait avoir %{count} objet(s)"
-msgstr[1] "devrait avoir %{count} objet(s)"
+msgstr[0] "doit avoir %{count} objet(s)"
+msgstr[1] "doit avoir %{count} objet(s)"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] "devrait être au minimum de %{count} caractère(s)"
-msgstr[1] "devrait être au minimum de %{count} caractère(s)"
+msgstr[0] "doit être au minimum de %{count} caractère(s)"
+msgstr[1] "doit être au minimum de %{count} caractère(s)"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] "devrait avoir au minimum %{count} objet(s)"
-msgstr[1] "devrait avoir au minimum %{count} objet(s)"
+msgstr[0] "doit avoir au minimum %{count} objet(s)"
+msgstr[1] "doit avoir au minimum %{count} objet(s)"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
-msgstr[0] "devrait avoir au maximum %{count} caractère(s)"
-msgstr[1] "devrait avoir au maximum %{count} caractère(s)"
+msgstr[0] "doit avoir au maximum %{count} caractère(s)"
+msgstr[1] "doit avoir au maximum %{count} caractère(s)"
 
 msgid "should have at most %{count} item(s)"
 msgid_plural "dshould have at most %{count} item(s)"
-msgstr[0] "devrait avoir au maximum %{count} objet(s)"
-msgstr[1] "devrait avoir au maximum %{count} objet(s)"
+msgstr[0] "doit avoir au maximum %{count} objet(s)"
+msgstr[1] "doit avoir au maximum %{count} objet(s)"
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"

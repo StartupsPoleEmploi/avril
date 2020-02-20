@@ -2,11 +2,11 @@ defmodule Vae.Router do
   use Vae.Web, :router
   use Plug.ErrorHandler
   use Sentry.Plug
-  use ExAdmin.Router
-  use Coherence.Router
+  use Pow.Phoenix.Router
+  use Pow.Extension.Phoenix.Router, otp_app: :vae,
+    extensions: [PowResetPassword, PowEmailConfirmation]
 
-  @user_schema Application.get_env(:coherence, :user_schema)
-  @id_key Application.get_env(:coherence, :schema_key)
+  use ExAdmin.Router
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -15,21 +15,15 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-
-    plug(Coherence.Authentication.Session,
-      store: Coherence.CredentialStore.Session,
-      db_model: @user_schema,
-      id_key: @id_key
-    )
   end
 
   pipeline :protected do
-    plug(Coherence.Authentication.Session,
-      protected: true,
-      store: Coherence.CredentialStore.Session,
-      db_model: @user_schema,
-      id_key: @id_key
-    )
+    plug Pow.Plug.RequireAuthenticated,
+      error_handler: Pow.Phoenix.PlugErrorHandler
+  end
+
+  pipeline :pow_layout do
+    plug :put_layout, {Vae.LayoutView, "pow.html"}
   end
 
   pipeline :admin do
@@ -49,9 +43,6 @@ defmodule Vae.Router do
     pipe_through(:browser)
 
     forward "/healthcheck", HealthCheckup
-
-    # Sessions routes
-    coherence_routes()
 
     # Landing pages
     get("/", Vae.PageController, :index, as: :root)
@@ -118,9 +109,15 @@ defmodule Vae.Router do
   end
 
   # Private pages
+  # scope "/" do
+  #   pipe_through([:browser, :protected])
+  #   coherence_routes(:protected)
+  # end
+
   scope "/" do
-    pipe_through([:browser, :protected])
-    coherence_routes(:protected)
+    pipe_through([:browser, :pow_layout])
+    pow_routes()
+    pow_extension_routes()
   end
 
   scope "/api" do

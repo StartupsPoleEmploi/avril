@@ -14,17 +14,17 @@ nav.navbar.dm-navbar.navbar-expand-md
           = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "nav-link p-0", to: Routes.page_path(@conn, :financement), conn: @conn
         li.nav-item
           = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "nav-link p-0", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
-      = if Coherence.current_user(@conn) do
+      = if Pow.Plug.current_user(@conn) do
         li.nav-item.dropdown
-          a#navbarDropdown.nav-link.dropdown-toggle aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" href="#" role="button" data-id="#{Coherence.current_user(@conn).id}"
-            = Vae.User.fullname(Coherence.current_user(@conn))
+          a#navbarDropdown.nav-link.dropdown-toggle aria-expanded="false" aria-haspopup="true" data-toggle="dropdown" href="#" role="button" data-id="#{Pow.Plug.current_user(@conn).id}"
+            = Vae.User.fullname(Pow.Plug.current_user(@conn))
           .dropdown-menu.dropdown-menu-right aria-labelledby="navbarDropdown"
-            - current_user = Repo.preload(Coherence.current_user(@conn), applications: :certification)
+            - current_user = Repo.preload(Pow.Plug.current_user(@conn), applications: :certification)
             = for application <- current_user.applications do
               = render Vae.ComponentView, "active_link.html", text: (if length(current_user.applications) == 1, do: "Voir ma candidature", else: "Candidature pour #{Vae.Certification.name(application.certification)}"), class: "dropdown-item", to: Routes.application_path(@conn, :show, application), conn: @conn
               .dropdown-divider
-            = link(to: Routes.session_path(@conn, :delete), method: :delete, class: "dropdown-item", data: [analytics: "?bouton=logout"]) do
+            = link(to: Routes.pow_session_path(@conn, :delete), method: :delete, class: "dropdown-item", data: [analytics: "?bouton=logout"]) do
               span.text Me déconnecter
       - else
         li.nav-item
-          = link "Mon dossier VAE", to: Routes.session_path(@conn, :new), class: "btn btn-primary"
+          = link "Mon dossier VAE", to: Routes.pow_session_path(@conn, :new), class: "btn btn-primary"

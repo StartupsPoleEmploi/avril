@@ -97,54 +97,24 @@ config :vae, Vae.Mailer,
   avril_from: "contact@avril.pole-emploi.fr",
   avril_to: "avril@pole-emploi.fr"
 
+config :vae, :pow,
+  repo: Vae.Repo,
+  user: Vae.User,
+  allow_unconfirmed_access: true,
+  cache_store_backend: Pow.Store.Backend.MnesiaCache,
+  controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
+  extensions: [PowEmailConfirmation, PowResetPassword, PowPersistentSession],
+  mailer_backend: Vae.PowMailer,
+  # web_mailer_module: Vae.PowMailer,
+  messages_backend: Vae.Pow.Messages,
+  password_min_length: 8,
+  routes_backend: Vae.Pow.Routes,
+  web_module: Vae
+
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),
   search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
-
-config :coherence,
-  allow_unconfirmed_access_for: 365,
-  email_from_email: "contact@avril.pole-emploi.fr",
-  email_from_name: "Avril",
-  # default_routes: %{
-  #   registrations_new:  "/souscription/nouvelle",
-  #   registrations:      "/souscription",
-  #   passwords:          "/mot-de-passe",
-  #   confirmations:      "/confirmations",
-  #   unlocks:            "/debloquage",
-  #   invitations:        "/invitations",
-  #   invitations_create: "/invitations/create",
-  #   invitations_resend: "/invitations/:id/renvoyer",
-  #   sessions:           "/connexions",
-  #   registrations_edit: "/souscription/edition"
-  #   },
-  messages_backend: Vae.Coherence.Messages,
-  opts: [
-    :authenticatable,
-    :confirmable,
-    :registerable,
-    :recoverable,
-    # :rememberable,
-    :lockable,
-    :trackable,
-    :unlockable_with_token
-  ],
-  repo: Vae.Repo,
-  router: Vae.Router,
-  session_model: Vae.Session,
-  session_repo: Vae.Repo,
-  schema_key: :id,
-  user_schema: Vae.User,
-  web_module: Vae
-
-config :coherence, :layout, {Vae.LayoutView, :coherence}
-
-config :coherence, :mailer, Vae.Mailer
-
-config :coherence, Vae.Coherence.Mailer,
-  adapter: Swoosh.Adapters.Mailjet,
-  api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
-  secret: System.get_env("MAILJET_PRIVATE_API_KEY")
 
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},
@@ -180,6 +150,8 @@ config :gettext, :default_locale, "fr"
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
+
+config :mnesia, :dir, './priv/mnesia'
 
 config :phoenix, :json_library, Jason
 

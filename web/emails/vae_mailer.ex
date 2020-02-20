@@ -24,7 +24,7 @@ defmodule Vae.Mailer do
     |> reply_to_if_present_or_from_avril(Map.get(params, :reply_to), from)
     |> custom_id_if_present(Map.get(params, :custom_id))
     |> attach_if_attachment(Map.get(params, :attachment))
-    |> render_body_or_template_id(template_name_or_id, params)
+    |> render_body_or_template_id(template_name_or_id, params, to)
   end
 
   def send(email), do: __MODULE__.send(email, [])
@@ -120,11 +120,11 @@ defmodule Vae.Mailer do
   defp attach_if_attachment(email, nil), do: email
   defp attach_if_attachment(email, attachment), do: attachment(email, attachment)
 
-  defp render_body_or_template_id(email, template_name_or_id, params) do
+  defp render_body_or_template_id(email, template_name_or_id, params, to) do
     if is_integer(template_name_or_id) do
       render_template(email, template_name_or_id, params)
     else
-      render_body_and_subject(email, template_name_or_id, params)
+      render_body_and_subject(email, template_name_or_id, params, to)
     end
   end
 
@@ -139,20 +139,27 @@ defmodule Vae.Mailer do
     )
   end
 
-  defp render_body_and_subject(email, template_name, params) do
+  defp render_body_and_subject(email, template_name, params, to) do
     email
     |> render_body(template_name, params)
-    |> render_text_and_extract_subject(template_name, params)
+    |> render_text_and_extract_subject(template_name, params, to)
   end
 
-  defp render_text_and_extract_subject(email, _template_name, params) do
+  defp render_text_and_extract_subject(email, _template_name, params, to) do
     # {:ok, file_content} = File.read(IO.inspect("#{Application.app_dir(:vae)}/web/templates/email/#{template_name}.md"))
     # processed_content = EEx.eval_string(file_content, params)
     # {subject, rest} = String.split(file_content, "\n---\n", parts: 2)
     # email
     # |> subject(subject)
     # |> Map.put(:text_body, rest)
-    email |> subject(Map.get(params, :subject) |> String.slice(0, 255))
+    subject = "#{environment_prefix(to)}#{Map.get(params, :subject)}" |> String.slice(0, 255)
+    email |> subject(subject)
+  end
+
+  defp environment_prefix(to) do
+    if @override_to do
+      "[Avril][#{Mix.env()}] #{inspect(format_mailer!(to))} - "
+    end
   end
 
   # defp _extract_subject(_template_name) do

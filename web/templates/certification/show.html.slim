@@ -27,7 +27,7 @@
 
         .col-md-8
           .form-label-group
-            = text_input f, :email, class: "form-control form-control-lg form-control-avril bg-white", required: true, placeholder: "ex: la.classe@americaine.com", value: if Coherence.logged_in?(@conn), do: Coherence.current_user(@conn).email
+            = text_input f, :email, class: "form-control form-control-lg form-control-avril bg-white", required: true, placeholder: "ex: la.classe@americaine.com", value: if Pow.Plug.current_user(@conn), do: Pow.Plug.current_user(@conn).email
             = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
             = error_tag f, :email
         .col-md-4
@@ -66,4 +66,4 @@ button.d-none.d-md-block.btn.btn-link.no-print.px-0.pull-right.steps-print-butto
       h2.h2 Et vous ?
   .row
     .col-md-12.text-center
-      = link "Démarrer un projet de VAE", to: Routes.registration_path(@conn, :new), class: "btn btn-primary"
+      = link "Démarrer un projet de VAE", to: Routes.pow_registration_path(@conn, :new), class: "btn btn-primary"

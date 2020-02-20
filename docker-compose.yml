@@ -16,7 +16,6 @@ services:
       start_period: 30s
     volumes:
       - .:/app
-      - /mnt/datalakepe/depuis_datalake/:/datalake
       - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
     working_dir: /app
   nginx:

@@ -1,11 +1,11 @@
 defmodule Vae.UserController do
   use Vae.Web, :controller
-  plug Coherence.Authentication.Session, protected: true
+  # plug Coherence.Authentication.Session, protected: true
 
   alias Vae.User
 
   def update(conn, %{"id" => _id, "user" => user_params}) do
-    current_user = Coherence.current_user(conn) |> Vae.Repo.preload(:applications)
+    current_user = Pow.Plug.current_user(conn) |> Vae.Repo.preload(:applications)
     current_application = List.first(current_user.applications)
     default_route = Routes.application_path(conn, :show, current_application)
 
@@ -13,10 +13,10 @@ defmodule Vae.UserController do
     |> User.changeset(user_params)
     |> Repo.update()
     |> case do
-      {:ok, user} ->
+      {:ok, _user} ->
         conn
         |> put_flash(:success, "Vos données de profil ont bien été enregistrées")
-        |> Coherence.Authentication.Session.update_login(user)
+        # |> Coherence.Authentication.Session.update_login(user)
         |> redirect_back(default: default_route)
       {:error, _changeset} ->
         conn

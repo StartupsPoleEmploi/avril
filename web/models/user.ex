@@ -1,19 +1,37 @@
 defmodule Vae.User do
-  use Vae.Web, :model
-
-  @moduledoc false
-  # use Ecto.Schema
-  use Coherence.Schema
   require Logger
 
-  alias Vae.{Application, Experience, JobSeeker, ProvenExperience, Repo, Skill}
+  @moduledoc false
+  use Vae.Web, :model
+  use Pow.Ecto.Schema,
+    password_hash_methods: {&Bcrypt.hash_pwd_salt/1,
+                            &Bcrypt.verify_pass/2}
+  use Pow.Extension.Ecto.Schema,
+    extensions: [PowEmailConfirmation, PowResetPassword]
+
+  import Pow.Ecto.Schema.Changeset, only: [new_password_changeset: 3, confirm_password_changeset: 3]
+
+  alias Vae.{
+    Application,
+    Experience,
+    JobSeeker,
+    ProvenExperience,
+    Repo,
+    Skill
+  }
 
   schema "users" do
+    pow_user_fields()
+
+    # Legacy fields to keep data
+    field :confirmation_token, :string
+    field :confirmed_at, :utc_datetime
+
     field(:gender, :string, default: "female")
     field(:name, :string)
     field(:first_name, :string)
     field(:last_name, :string)
-    field(:email, :string)
+    # field(:email, :string)
     field(:phone_number, :string)
     field(:is_admin, :boolean)
     field(:postal_code, :string)
@@ -54,8 +72,6 @@ defmodule Vae.User do
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
 
-    coherence_schema()
-
     timestamps()
   end
 
@@ -81,6 +97,12 @@ defmodule Vae.User do
     is_admin
   )a
 
+  @password_fields ~w(
+    password
+    password_confirmation
+    current_password
+  )
+
   @application_submit_fields ~w(
     first_name
     last_name
@@ -92,9 +114,21 @@ defmodule Vae.User do
     confirmed_at
   )a
 
-  def changeset(model, params \\ %{}) do
+  def changeset(model, params \\ %{})
+
+  def changeset(model, %{"password" => _pw} = params) do
     model
-    |> cast(params, @fields ++ Enum.map(coherence_fields(), &String.to_atom/1)) # Ecto 3 expects atom while coherence brings strings
+    |> pow_user_id_field_changeset(params)
+    |> pow_current_password_changeset(params)
+    |> new_password_changeset(params, @pow_config)
+    |> maybe_confirm_password(params)
+    |> changeset(Map.drop(params, @password_fields))
+  end
+
+  def changeset(model, params) do
+    model
+    |> cast(params, @fields)
+    |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
@@ -104,24 +138,13 @@ defmodule Vae.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-    |> validate_coherence(params)
   end
+
+  defp maybe_confirm_password(changeset, %{"password_confirmation" => _password_confirmation} = attrs), do: confirm_password_changeset(changeset, attrs, @pow_config)
+  defp maybe_confirm_password(changeset, _attrs), do: changeset
 
   defp put_job_seeker(changeset, nil), do: changeset
   defp put_job_seeker(changeset, job_seeker), do: put_assoc(changeset, :job_seeker, job_seeker)
-
-  def changeset(model, params, :registration) do
-    changeset(model, params)
-  end
-
-  def changeset(model, params, :password) do
-    model
-    |> cast(
-      params,
-      ~w(password password_confirmation reset_password_token reset_password_sent_at)a
-    )
-    |> validate_coherence_password_reset(params)
-  end
 
   def put_embed_if_necessary(changeset, params, key, _options \\ []) do
     klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
@@ -195,7 +218,7 @@ defmodule Vae.User do
 
       _data, {:error, changeset} ->
         Logger.error(fn -> inspect(changeset) end)
-        Repo.get(__MODULE__, user.id)
+        {:ok, Repo.get(__MODULE__, user.id)}
     end)
   end
 
@@ -208,6 +231,7 @@ defmodule Vae.User do
       if include_create_fields,
         do: %{
           email: String.downcase(api_fields["email"]),
+          current_password: nil,
           password: tmp_password,
           password_confirmation: tmp_password
         },

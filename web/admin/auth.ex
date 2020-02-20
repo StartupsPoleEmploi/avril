@@ -6,7 +6,7 @@ defmodule Vae.CheckAdmin do
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    current_user = Coherence.current_user(conn)
+    current_user = Pow.Plug.current_user(conn)
 
     if current_user do
       if current_user.is_admin do

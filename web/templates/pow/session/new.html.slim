@@ -6,23 +6,24 @@
         .text-center
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
         p.text-center.mb-2.mt-4 - OU -
-        = form_for @conn, Routes.session_path(@conn, :create), [as: :session], fn f ->
-          - login_field = Coherence.Config.login_field
+        = form_for @changeset, @action, [as: :user], fn f ->
+          - login_field = Pow.Ecto.Schema.user_id_field(@changeset)
           .form-group
             = label f, login_field, class: "control-label"
             = text_input f, login_field, class: "form-control", required: "required"
             = error_tag f, login_field
           .form-group
-            = label f, dgettext("coherence", "Password"), class: "control-label"
+            = label f, "Mot de passe", class: "control-label"
             = password_input f, :password, class: "form-control", required: "required"
             = error_tag f, :password
-          = if @remember do
-            .form-group
-              input#remember name="remember" type="checkbox" /
-              label for="remember" = dgettext "coherence", "Remember Me?"
-          .form-group.d-flex.justify-content-around
-            = submit dgettext("coherence", "Me connecter"), class: "btn btn-primary"
           .form-group
-            = coherence_links(@conn, :new_session)
+            .form-check
+              = checkbox f, :persistent_session, class: "form-check-input"
+              = label f, :persistent_session, "Rester connecté", class: "form-check-label"
+          .form-group.d-flex.justify-content-around
+            = submit "Me connecter", class: "btn btn-primary"
+          .form-group
+            = link("Mot de passe oublié ?", to: Routes.pow_reset_password_reset_password_path(@conn, :new))
+            /= coherence_links(@conn, :new_session)
     .col-md-6.bg-primary.d-flex.align-items-center.justify-content-around
-      = link("J'ai besoin d'un compte Avril", to: Routes.registration_path(@conn, :new), class: "btn btn-link")
+      = link("J'ai besoin d'un compte Avril", to: Routes.pow_registration_path(@conn, :new), class: "btn btn-link")

@@ -4,7 +4,7 @@ defmodule Vae.Plugs.ApplicationAccess do
 
   alias Vae.Application
   alias Vae.Repo
-  alias Vae.Router.Helpers
+  alias Vae.Router.Helpers, as: Routes
 
   def init(options \\ []), do: options
 
@@ -21,7 +21,7 @@ defmodule Vae.Plugs.ApplicationAccess do
   def call(conn, _params) do
     conn
     |> put_flash(:error, "Une erreur est survenue")
-    |> redirect(to: Helpers.root_path(conn, :index))
+    |> redirect(to: Routes.root_path(conn, :index))
     |> halt()
   end
 
@@ -58,14 +58,14 @@ defmodule Vae.Plugs.ApplicationAccess do
   defp has_access?(conn, application, nil) do
     application = application |> Repo.preload(:user)
 
-    if Coherence.logged_in?(conn) &&
-         (Coherence.current_user(conn).id == application.user.id ||
-            Coherence.current_user(conn).is_admin) do
+    if Pow.Plug.current_user(conn) &&
+         (Pow.Plug.current_user(conn).id == application.user.id ||
+            Pow.Plug.current_user(conn).is_admin) do
       {:ok, application}
     else
       {:error,
        %{
-         to: Helpers.session_path(conn, :new),
+         to: Routes.pow_session_path(conn, :new),
          msg: "Vous devez vous connecter"
        }}
     end
@@ -80,7 +80,7 @@ defmodule Vae.Plugs.ApplicationAccess do
     else
       {:error,
        %{
-         to: Helpers.root_path(conn, :index),
+         to: Routes.root_path(conn, :index),
          msg:
            if(Map.get(application, hash_key) == hash_value,
              do: "Accès expiré",
