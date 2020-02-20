@@ -9,6 +9,8 @@ defmodule Vae.User do
   use Pow.Extension.Ecto.Schema,
     extensions: [PowEmailConfirmation, PowResetPassword]
 
+  import Pow.Ecto.Schema.Changeset, only: [new_password_changeset: 3, confirm_password_changeset: 3]
+
   alias Vae.{
     Application,
     Experience,
@@ -95,6 +97,12 @@ defmodule Vae.User do
     is_admin
   )a
 
+  @password_fields ~w(
+    password
+    password_confirmation
+    current_password
+  )
+
   @application_submit_fields ~w(
     first_name
     last_name
@@ -106,10 +114,20 @@ defmodule Vae.User do
     confirmed_at
   )a
 
-  def changeset(model, params \\ %{}) do
+  def changeset(model, params \\ %{})
+
+  def changeset(model, %{"password" => _pw} = params) do
+    model
+    |> pow_user_id_field_changeset(params)
+    |> pow_current_password_changeset(params)
+    |> new_password_changeset(params, @pow_config)
+    |> maybe_confirm_password(params)
+    |> changeset(Map.drop(params, @password_fields))
+  end
+
+  def changeset(model, params) do
     model
     |> cast(params, @fields)
-    |> pow_changeset(params)
     |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
     |> put_embed_if_necessary(params, :skills)
@@ -121,6 +139,9 @@ defmodule Vae.User do
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
   end
+
+  defp maybe_confirm_password(changeset, %{"password_confirmation" => _password_confirmation} = attrs), do: confirm_password_changeset(changeset, attrs, @pow_config)
+  defp maybe_confirm_password(changeset, _attrs), do: changeset
 
   defp put_job_seeker(changeset, nil), do: changeset
   defp put_job_seeker(changeset, job_seeker), do: put_assoc(changeset, :job_seeker, job_seeker)
