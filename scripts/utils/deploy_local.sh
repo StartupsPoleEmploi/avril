@@ -30,7 +30,8 @@ if [ "$CURRENT_BRANCH" != "$BRANCH_NAME" ]; then
   git checkout $BRANCH_NAME
 fi
 
-git fetch
+git pull origin $BRANCH_NAME
+
 HEADHASH=$(git rev-parse HEAD)
 UPSTREAMHASH=$(git rev-parse master@{upstream})
 
