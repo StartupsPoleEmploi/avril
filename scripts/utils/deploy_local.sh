@@ -1,6 +1,13 @@
 #!/bin/bash
 
-REPO_NAME=${1?"Usage: deploy <REPO_NAME> <BRANCH_NAME || master>"}
+IF_CHANGE_OPT="--if-change"
+
+if [ "$1" == "$IF_CHANGE_OPT" ]; then
+  DEPLOY_IF_CHANGE=true;
+  shift;
+fi
+
+REPO_NAME=${1?"Usage: deploy_local.sh $IF_CHANGE_OPT <REPO_NAME> <BRANCH_NAME || master>"}
 BRANCH_NAME=${2:-master}
 
 declare -A REPO_TO_SERVICE
@@ -14,11 +21,22 @@ if test -z "$SERVICE_NAME"; then
   exit 1;
 fi
 
-echo "Pulling $BRANCH_NAME of $REPO_NAME to update $SERVICE_NAME"
+echo "Pulling $BRANCH_NAME of $REPO_NAME to deploy $SERVICE_NAME..."
 
 cd /home/docker/$REPO_NAME
 
-git checkout $BRANCH_NAME
-git pull origin $BRANCH_NAME
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "$CURRENT_BRANCH" != "$BRANCH_NAME" ]; then
+  git checkout $BRANCH_NAME
+fi
 
-../avril/scripts/utils/docker_update.sh $SERVICE_NAME
+git fetch
+HEADHASH=$(git rev-parse HEAD)
+UPSTREAMHASH=$(git rev-parse master@{upstream})
+
+if [[ "$DEPLOY_IF_CHANGE" == "true" && "$HEADHASH" == "$UPSTREAMHASH" ]]; then
+  echo "$REPO_NAME hasn't changed, no need to deploy $SERVICE_NAME"
+else
+  echo "Deploying $SERVICE_NAME..."
+  ../avril/scripts/utils/docker_update.sh $SERVICE_NAME
+fi

@@ -20,6 +20,7 @@ defmodule Vae.ExAdmin.Process do
       selectable_column()
       column(:id)
       column(:name)
+      column(:booklet_address)
       actions()
     end
 
@@ -41,6 +42,7 @@ defmodule Vae.ExAdmin.Process do
         input(process, :name)
         input(process, :booklet_1)
         input(process, :booklet_2)
+        input(process, :booklet_address)
 
         input(process, :step_1, type: :text)
         input(process, :step_2, type: :text)

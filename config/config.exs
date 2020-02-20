@@ -95,8 +95,7 @@ config :vae, Vae.Mailer,
   template_error_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr",
   avril_name: "Avril - la VAE facile - service numérique de Pôle emploi",
   avril_from: "contact@avril.pole-emploi.fr",
-  avril_to: "avril@pole-emploi.fr",
-  override_to: System.get_env("DEV_EMAILS")
+  avril_to: "avril@pole-emploi.fr"
 
 config :vae, :pow,
   repo: Vae.Repo,
@@ -114,12 +113,6 @@ config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),
   search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
-
-config :cors_plug,
-  origin: [System.get_env("NUXT_URL")],
-  max_age: 86400,
-  methods: ["GET", "POST", "PUT"],
-  headers: ["*"]
 
 config :ex_admin,
   head_template: {Vae.AdminView, "admin_layout.html"},

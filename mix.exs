@@ -108,7 +108,6 @@ defmodule Vae.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sentry, "~> 6.4"},
-      {:cors_plug, "~> 2.0"},
       {:phoenix_markdown, "~> 1.0"},
       {:health_checkup, "~> 0.1.0"}
     ]

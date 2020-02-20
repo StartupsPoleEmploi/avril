@@ -45,17 +45,9 @@ defmodule Vae.ComponentView do
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,'script','https://www.google-analytics.com/analytics#{if Mix.env == :dev, do: "_debug"}.js','ga');
       """,
-      (if System.get_env("NUXT_URL") do
-        """
-          ga('create', '#{@tracking_config[:analytics]}', 'auto', {'allowLinker': true});
-          ga('require', 'linker');
-          ga('linker:autoLink', ['#{System.get_env("NUXT_URL")}'.replace(/^https?:\\\/\\\//i, '')] );
-        """
-      else
-        """
-          ga('create', '#{@tracking_config[:analytics]}', 'auto');
-        """
-      end),
+      """
+        ga('create', '#{@tracking_config[:analytics]}', 'auto');
+      """,
       (if @tracking_config[:analytics_bis], do: "ga('create', '#{@tracking_config[:analytics_bis]}', 'auto');"),
       (if @tracking_config[:optimize], do: "ga('require', '#{@tracking_config[:optimize]}');"),
       """

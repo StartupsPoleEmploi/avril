@@ -62,7 +62,7 @@ defmodule Vae.ApplicationController do
     tabs = [
       :profile,
       (if length(meetings) > 0, do: :meetings),
-      (if edit_mode && Application.booklet_url(application), do: :booklet)
+      (if edit_mode && Application.booklet_url(conn, application), do: :booklet)
     ] |> Enum.reject(&is_nil/1)
 
     render(conn, "show.html", %{
