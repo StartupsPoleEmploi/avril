@@ -1,6 +1,5 @@
 defmodule Vae.Pow.Messages do
   use Pow.Phoenix.Messages
-  import Vae.Gettext
 
   @doc """
   Message for when user is not authenticated.

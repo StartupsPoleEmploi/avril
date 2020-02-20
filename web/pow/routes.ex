@@ -14,7 +14,7 @@ defmodule Vae.Pow.Routes do
   # Example usage
   # Uncomment the following line to return the user to the login form after logging out
   def after_sign_out_path(conn) do
-    case Pow.Plug.current_user(conn).pe_id do
+    case Pow.Plug.current_user(conn) && Pow.Plug.current_user(conn).pe_id do
       nil ->
         redirect(conn, to: Routes.root_path(conn, :index))
 

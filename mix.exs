@@ -67,7 +67,9 @@ defmodule Vae.Mixfile do
       {:ecto_sql, "~> 3.3.4"},
       {:postgrex, "~> 0.15.3"},
       {:plug_cowboy, "~> 2.0"},
-      {:pow, "~> 1.0.18"},
+      # {:pow, "~> 1.0.18"},
+      # {:pow, path: "../pow", in_umbrella: true}, # When debugging ex_admin locally
+      {:pow, github: "augnustin/pow"},
       {:bcrypt_elixir, "~> 1.1.1"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.3.1"},
@@ -80,8 +82,8 @@ defmodule Vae.Mixfile do
       # TODO: remove dependency: not needed anymore
       {:poison, "~> 3.1", override: true},
       {:phoenix_slime, "~> 0.12.0"},
-      {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
-      # {:ex_admin, github: "augnustin/ex_admin"},
+      # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
+      {:ex_admin, github: "augnustin/ex_admin"},
       # {:coherence, "~> 0.5.2"}, # TODO: move to POW
       # {:coherence, git: "https://github.com/johannesE/coherence", branch: "#394"}, # Ecto 3.0 compatible
       {:phoenix_live_reload, "~> 1.0", only: :dev},
