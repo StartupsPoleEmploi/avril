@@ -30,7 +30,7 @@ defmodule Vae.Process do
     process
     |> cast(
       params,
-      ~w(name booklet_1 booklet_2 step_1 step_2 step_3 step_4 step_5 step_6 step_7 step_8)a
+      ~w(name booklet_address booklet_1 booklet_2 step_1 step_2 step_3 step_4 step_5 step_6 step_7 step_8)a
     )
     |> validate_required([:name])
     |> unique_constraint(:name)
