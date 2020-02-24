@@ -29,5 +29,5 @@ Quelques équivalents :
 - Trouver un enregistrement par id : `User.find(:id)` -> `Repo.get(User, :id)`
 - Trouver un enregistrement par un autre champs : `User.find_by(email: 'me@example.com')` -> `Repo.get_by(User, email: "me@example.com")`
 - Supprimer un enregistremnt : `user.destroy` -> `Repo.delete(user)`
-- Trouver plusieurs enregistrements : `User.where('confirmed_at IS NOT NULL')` -> `Repo.all(from(u in User, where: not is_nil(u.confirmed_at)))`
+- Trouver plusieurs enregistrements : `User.where('email_confirmed_at IS NOT NULL')` -> `Repo.all(from(u in User, where: not is_nil(u.email_confirmed_at)))`
 - Charger une association : `User.includes(:billing_information).find(:id)` -> `Repo.get(User, :id) |> Repo.preload(:billing_information)`

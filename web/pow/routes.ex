@@ -36,6 +36,10 @@ defmodule Vae.Pow.Routes do
     create_or_get_application(conn, Pow.Plug.current_user(conn))
   end
 
+  def after_email_confirmed_path(conn) do
+    create_or_get_application(conn, Pow.Plug.current_user(conn))
+  end
+
   def create_or_get_application(conn, user) do
     certification_id = Plug.Conn.get_session(conn, :certification_id)
     delegate_id = Plug.Conn.get_session(conn, :delegate_id)
@@ -67,7 +71,8 @@ defmodule Vae.Pow.Routes do
   def redirect_to_user_application(conn, user, application) do
     if application do
       conn
-        # |> update_current_user()
+        # |> Pow.Plug.refresh_current_user()
+        |> reload_user()
         |> welcome_message_if_necessary(user)
         |> redirect(to: Routes.application_path(conn, :show, application.id))
     else
@@ -79,7 +84,7 @@ defmodule Vae.Pow.Routes do
   def welcome_message_if_necessary(conn, user) do
     todos = [
       (unless User.address(user), do: "compléter vos informations"),
-      (unless user.confirmed_at, do: "confirmer votre adresse email")
+      (unless user.email_confirmed_at, do: "confirmer votre adresse email")
     ] |> Enum.filter(&(&1))
     if length(todos) > 0 do
       message = "Bienvenue sur votre page de candidature. Merci de #{todos |> Enum.join(" et ")} avant de transmettre votre profil."
@@ -90,13 +95,11 @@ defmodule Vae.Pow.Routes do
     end
   end
 
-  # def update_current_user(conn) do
-  #   if (Pow.Plug.current_user(conn)) do
-  #     current_user = Repo.get(User, Pow.Plug.current_user(conn).id)
-  #     Coherence.Authentication.Session.update_login(conn, current_user)
-  #     Plug.Conn.assign(conn, :current_user, current_user)
-  #   else
-  #     conn
-  #   end
-  # end
+  def reload_user(conn) do
+    config = Pow.Plug.fetch_config(conn)
+    user = Pow.Plug.current_user(conn, config)
+    reloaded_user = Repo.get!(User, user.id)
+
+    Pow.Plug.assign_current_user(conn, reloaded_user, config)
+  end
 end

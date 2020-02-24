@@ -31,6 +31,12 @@
           = link((if @edit_mode, do: "Télécharger les étapes", else: "Télécharger le dossier du candidat"), to: Routes.application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profil#Telecharger recap #{if @edit_mode, do: "DE", else: "certificateur"}"], download: "Synthese VAE #{@application.user.name}.pdf")
 
     - else
+      - current_user = Pow.Plug.current_user(@conn)
+      - user_confirmed = current_user.email_confirmed_at
+      = unless user_confirmed do
+        p.alert.alert-secondary style="margin-bottom: 1rem;"
+          | Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre dossier.
+          = link("Recevoir à nouveau l'email de confirmation", to: Routes.user_user_path(@conn, :resend_confirmation_email, current_user), method: :post, class: "btn btn-link")
       p
         = if Enum.member?(@tabs, :meetings) do
           button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#meetings-tab').trigger('click')});"
@@ -39,12 +45,9 @@
             = unless @application.submitted_at do
               = " et transmettre mon dossier"
         - else
-          = button to: Routes.application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", data: [analytics: "?bouton=soumettre-candidature"] do
+          = button to: Routes.application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: !user_confirmed, title: (unless user_confirmed, do: "Vous devez d'abord confirmer votre adresse email"), data: [analytics: "?bouton=soumettre-candidature"] do
             = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
             | Transmettre mon dossier
-      = unless Pow.Plug.current_user(@conn).confirmed_at do
-        .alert.alert-secondary
-          p Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre profil.
 
 - else
   button.btn.btn-primary.print-button onclick="window.print();"

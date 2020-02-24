@@ -24,8 +24,8 @@ defmodule Vae.User do
     pow_user_fields()
 
     # Legacy fields to keep data
-    field :confirmation_token, :string
-    field :confirmed_at, :utc_datetime
+    # field :confirmation_token, :string
+    # field :confirmed_at, :utc_datetime
 
     field(:gender, :string, default: "female")
     field(:name, :string)
@@ -111,7 +111,7 @@ defmodule Vae.User do
     city_label
     country_label
     birthday
-    confirmed_at
+    email_confirmed_at
   )a
 
   def changeset(model, params \\ %{})

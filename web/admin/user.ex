@@ -13,7 +13,7 @@ defmodule Vae.ExAdmin.User do
       column(:city_label)
       column(:sign_in_count)
       column(:is_admin)
-      column(:confirmed_at)
+      column(:email_confirmed_at)
 
       actions()
     end
@@ -35,7 +35,7 @@ defmodule Vae.ExAdmin.User do
         input(user, :country_label)
         input(user, :pe_id)
         input(user, :pe_connect_token)
-        input(user, :confirmed_at)
+        input(user, :email_confirmed_at)
       end
     end
 

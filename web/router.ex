@@ -97,7 +97,9 @@ defmodule Vae.Router do
     get("/candidats/:id/admissible", Vae.JobSeekerController, :admissible)
     get("/candidats/:id/inadmissible", Vae.JobSeekerController, :inadmissible)
 
-    resources("/profil", Vae.UserController, only: [:update])
+    resources("/profil", Vae.UserController, only: [:update]) do
+      post("/resend_confirmation_email", Vae.UserController, :resend_confirmation_email)
+    end
 
     # Old URL redirections
     get("/professions", Vae.Redirector, to: "/metiers")
