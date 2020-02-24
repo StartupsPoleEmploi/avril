@@ -51,8 +51,8 @@ defmodule Vae.CampaignDiffuser.Worker do
 
           {inserted_job_seekers, []}
         end)
-        |> Flow.shuffle(window: Flow.Window.count(50))
-        |> Flow.reduce(fn -> pending_emails end, fn job_seeker, acc ->
+        |> Flow.shuffle(window: Flow.Window.count(30))
+        |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
           email =
             build_email(job_seeker)
             |> persist()

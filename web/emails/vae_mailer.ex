@@ -45,9 +45,9 @@ defmodule Vae.Mailer do
 
             {:ok, [sent_email | sent_emails]}
 
-          {:error, {error_code, body}} ->
+          {:error, _error} ->
             Logger.error(fn ->
-              "Error code: #{inspect(error_code)} for body: #{inspect(body)}"
+              "Error while sending #{inspect(email.to)}"
             end)
 
             {:ok, sent_emails}
