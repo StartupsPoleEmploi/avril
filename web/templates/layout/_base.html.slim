@@ -5,6 +5,7 @@ html lang="fr"
     meta content="IE=edge" http-equiv="X-UA-Compatible"
     meta content="width=device-width, initial-scale=1" name="viewport"
     link rel="icon" type="image/x-icon" href=Routes.static_path(@conn,"/favicon.ico")
+    link rel="apple-touch-icon" href=Routes.static_path(@conn,"/apple-touch-icon.png")
 
     - %{title: title, description: description} = meta_data(@assigns)
     meta name="description" content=description
