@@ -29,6 +29,7 @@ defmodule Vae.Date do
     Timex.Interval.new(from: start_date, until: Date.add(end_date, 1))
     |> Enum.filter(&(!weekend?(&1)))
     |> Enum.count()
+    |> max(1)
   end
 
   def weekend?(date) do
