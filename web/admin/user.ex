@@ -23,6 +23,7 @@ defmodule Vae.ExAdmin.User do
         input(user, :first_name)
         input(user, :last_name)
         input(user, :email)
+        input(user, :email_confirmed_at)
         input(user, :is_admin)
         input(user, :postal_code)
         input(user, :address1)
@@ -35,7 +36,6 @@ defmodule Vae.ExAdmin.User do
         input(user, :country_label)
         input(user, :pe_id)
         input(user, :pe_connect_token)
-        input(user, :email_confirmed_at)
       end
     end
 
@@ -56,10 +56,13 @@ defmodule Vae.ExAdmin.User do
     show user do
       attributes_table(
         only: [
+          :gender,
           :first_name,
           :last_name,
           :email,
+          :email_confirmed_at,
           :is_admin,
+          :phone_number,
           :postal_code,
           :address1,
           :address2,
@@ -69,8 +72,9 @@ defmodule Vae.ExAdmin.User do
           :country_code,
           :city_label,
           :country_label,
-          :pe_id,
-          :pe_connect_token
+          :birthday,
+          :birth_place,
+          :pe_id
         ]
       )
 
