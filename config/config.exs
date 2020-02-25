@@ -132,7 +132,8 @@ config :ex_admin,
     Vae.ExAdmin.Resume,
     Vae.ExAdmin.Rome,
     Vae.ExAdmin.User
-  ]
+  ],
+  title: "Avril, la VAE Facile | Admin "
 
 config :ex_aws,
   access_key_id: [System.get_env("AWS_ACCESS_KEY_ID"), :instance_role],

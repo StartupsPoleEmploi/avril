@@ -53,6 +53,29 @@ defmodule Vae.ExAdmin.User do
       :pe_id
     ])
 
+    csv do
+      column(:id)
+      column(:first_name)
+      column(:last_name)
+      column(:email)
+      column(:email_confirmed_at)
+      column(:is_admin)
+      column(:gender)
+      column(:phone_number)
+      column(:postal_code)
+      column(:address1)
+      column(:address2)
+      column(:address3)
+      column(:address4)
+      column(:insee_code)
+      column(:country_code)
+      column(:city_label)
+      column(:country_label)
+      column(:birthday)
+      column(:birth_place)
+      column(:pe_id)
+    end
+
     show user do
       attributes_table(
         only: [
