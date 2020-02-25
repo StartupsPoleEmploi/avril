@@ -94,6 +94,7 @@ defmodule Vae.User do
     birth_place
     pe_id
     pe_connect_token
+    email_confirmed_at
     is_admin
   )a
 
