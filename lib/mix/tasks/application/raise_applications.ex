@@ -17,7 +17,7 @@ defmodule Mix.Tasks.RaiseApplications do
 
     with {:ok, emails} <- select_applications() do
       emails
-      |> Flow.from_enumerable(window: Flow.Window.count(100))
+      |> Flow.from_enumerable(window: Flow.Window.count(30))
       |> Flow.reduce(fn -> [] end, fn application, acc ->
         [
           build_deliver(application)
@@ -69,13 +69,9 @@ defmodule Mix.Tasks.RaiseApplications do
   end
 
   def build_deliver(application) do
-    # path = %URI{
-    #   scheme: "https",
-    #   host: System.get_env("WHOST")
-    # }
-    path = struct(URI, Application.get_env(:vae, Vae.Endpoint)[:url])
+    endpoint = struct(URI, Application.get_env(:vae, Vae.Endpoint)[:url])
 
     application
-    |> Vae.ApplicationEmail.user_raise(path)
+    |> Vae.ApplicationEmail.user_raise(endpoint)
   end
 end

@@ -204,10 +204,12 @@ defmodule Vae.Application do
     if is_nil(System.get_env("NUXT_PATH")) do
       Logger.warn("NUXT_PATH environment variables not set")
     end
-    URI.merge(Vae.URI.conn_or_endpoint_to_uri(endpoint), %URI{
+
+    %URI{
       path: "#{System.get_env("NUXT_PATH")}#{path}",
       query: "hash=#{application.booklet_hash}"
-    }) |> URI.to_string()
+    }
+    |> Vae.URI.to_absolute_string(endpoint)
   end
 
   defp generate_hash(length) do
