@@ -49,7 +49,7 @@ defmodule Mix.Tasks.RaiseApplications do
     stream =
       from(a in AvrilApplication,
         join: u in User,
-        on: a.user_id == u.id and (u.id == 12667 or u.id == 15581),
+        on: a.user_id == u.id,
         join: d in Delegate,
         on: a.delegate_id == d.id,
         join: c in Certification,

@@ -30,7 +30,7 @@ Une VAE ça coûte combien ? Où trouver les financements ? Vous avez des questi
 
 
 
-Surtout n'attendez pas le printemps, si vous êtes perdus, [contactez notre équipe](contact@avril.pole-emploi.fr) !
+Surtout n'attendez pas le printemps, si vous êtes perdus, [contactez notre équipe](mailto:contact@avril.pole-emploi.fr?subject=Suite%20aux%20conseils%20d%27Avril%2C%20voici%20comment%20vous%20pourriez%20m%27aider) !
 
 Bonne chance,
 
