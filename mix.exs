@@ -74,6 +74,7 @@ defmodule Vae.Mixfile do
       # - allow unconfirmed access: https://github.com/danschultzer/pow/issues/428
       # - resend_confirmation_email (should come with the above)
       # - custom after_sign_in(conn)::conn https://github.com/danschultzer/pow/issues/440
+      # - get the disconnected user in after_sign_out_path https://github.com/danschultzer/pow/issues/433
       {:bcrypt_elixir, "~> 1.1.1"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.3.1"},

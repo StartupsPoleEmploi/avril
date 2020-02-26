@@ -13,40 +13,27 @@ defmodule Vae.Pow.Routes do
 
   # Example usage
   # Uncomment the following line to return the user to the login form after logging out
-  def after_sign_out_path(conn) do
-    case Pow.Plug.current_user(conn) && Pow.Plug.current_user(conn).pe_id do
-      nil ->
-        redirect(conn, to: Routes.root_path(conn, :index))
-
-      token ->
+  def after_sign_out(conn, user) do
+    case user do
+      %User{pe_id: pe_id} when not is_nil(pe_id) ->
         url =
           "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{
-            token
+            pe_id
           }&redirect_uri=#{Routes.root_url(conn, :index)}"
 
         redirect(conn, external: url)
+
+      _ ->
+        redirect(conn, to: Routes.root_path(conn, :index))
     end
   end
 
   def after_sign_in(conn) do
-    IO.inspect("YOUPI DANSONS LA CARIOCA")
     create_or_get_application(conn)
-  end
-
-  def after_sign_in_path(conn) do
-    current_application_path(conn)
   end
 
   def after_registration(conn) do
     create_or_get_application(conn)
-  end
-
-  def after_registration_path(conn) do
-    current_application_path(conn)
-  end
-
-  def after_email_confirmed_path(conn) do
-    current_application_path(conn)
   end
 
   def create_or_get_application(conn) do

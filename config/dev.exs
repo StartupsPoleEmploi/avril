@@ -3,7 +3,7 @@ require Logger
 
 config :vae, Vae.Endpoint,
   http: [port: 4000],
-  url: [scheme: "http", host: System.get_env("WHOST") || "localhost"],
+  url: [scheme: "http", host: System.get_env("WHOST") || "localhost", port: 80],
   secret_key_base: "akyL4W53VWMOrzMxWNJP9Y1ofAIkm9dpvp1KLHJhWQUolRUVlCbOdRrr/0UmcjZx",
   debug_errors: true,
   code_reloader: true,
