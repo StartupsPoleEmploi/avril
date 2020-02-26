@@ -244,7 +244,7 @@ defmodule Vae.User do
       last_name: Vae.String.capitalize(api_fields["family_name"]),
       pe_id: api_fields["idIdentiteExterne"],
       job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"])),
-      confirmed_at: Timex.now()
+      email_confirmed_at: Timex.now()
     })
     |> Enum.reject(fn {_, v} -> is_nil(v) end)
     |> Map.new()

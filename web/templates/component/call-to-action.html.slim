@@ -36,7 +36,7 @@
       = unless user_confirmed do
         p.alert.alert-secondary style="margin-bottom: 1rem;"
           | Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre dossier.
-          = link("Recevoir à nouveau l'email de confirmation", to: Routes.user_user_path(@conn, :resend_confirmation_email, current_user), method: :post, class: "btn btn-link")
+          = link("Recevoir à nouveau l'email de confirmation", to: Routes.pow_email_confirmation_confirmation_path(@conn, :resend_confirmation), method: :post, class: "btn btn-link")
       p
         = if Enum.member?(@tabs, :meetings) do
           button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#meetings-tab').trigger('click')});"

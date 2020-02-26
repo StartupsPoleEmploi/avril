@@ -56,4 +56,5 @@ defmodule Vae.Pow.Messages do
   Message for when account could not be deleted.
   """
   def user_could_not_be_deleted(_conn), do: "Votre compte n'a pas pu être supprimé. Merci de nous contacter."
+
 end

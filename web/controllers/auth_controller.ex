@@ -43,7 +43,7 @@ defmodule Vae.AuthController do
         {:ok, user} ->
           Pow.Plug.create(conn, user)
           # Coherence.Authentication.Session.create_login(conn, user)
-          |> Vae.Pow.Routes.create_or_get_application(user)
+          |> Vae.Pow.Routes.create_or_get_application()
         {:error, msg} -> handle_error(conn, msg)
       end
 

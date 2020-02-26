@@ -16,24 +16,12 @@ defmodule Vae.UserController do
       {:ok, _user} ->
         conn
         |> put_flash(:success, "Vos données de profil ont bien été enregistrées")
-        |> Vae.Pow.Routes.reload_user()
+        |> Pow.Plug.refresh_current_user()
         |> redirect_back(default: default_route)
       {:error, _changeset} ->
         conn
         |> put_flash(:error, "Une erreur est survenue")
         |> redirect_back(default: default_route)
     end
-  end
-
-  def resend_confirmation_email(conn, _params) do
-    current_user = Pow.Plug.current_user(conn) |> Vae.Repo.preload(:applications)
-    current_application = List.first(current_user.applications)
-    default_route = Routes.application_path(conn, :show, current_application)
-
-    PowEmailConfirmation.Phoenix.ControllerCallbacks.send_confirmation_email(current_user, conn, :create)
-
-    conn
-    |> put_flash(:success, "L'email de confirmation vient de vous être renvoyé.")
-    |> redirect_back(default: default_route)
   end
 end

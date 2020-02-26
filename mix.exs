@@ -68,12 +68,15 @@ defmodule Vae.Mixfile do
       {:postgrex, "~> 0.15.3"},
       {:plug_cowboy, "~> 2.0"},
       # {:pow, "~> 1.0.18"},
-      # {:pow, path: "../pow", in_umbrella: true}, # When debugging ex_admin locally
       {:pow, github: "augnustin/pow"},
+      # {:pow, path: "../pow", in_umbrella: true}, # When debugging pow locally
+      # Pow added features in own version:
+      # - allow unconfirmed access: https://github.com/danschultzer/pow/issues/428
+      # - resend_confirmation_email (should come with the above)
+      # - custom after_sign_in(conn)::conn https://github.com/danschultzer/pow/issues/440
       {:bcrypt_elixir, "~> 1.1.1"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.3.1"},
-      {:csvlixir, "~> 2.0.3"},
       {:scrivener_ecto, "~> 2.0"},
       {:scrivener_html, "~> 1.8"},
       {:jason, "~> 1.0"},
