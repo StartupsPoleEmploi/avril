@@ -125,16 +125,3 @@ li.nav-item > a.nav-link[href^='mailto:']:before {
 .breadcrumb .breadcrumb-item::before {
   color: $gray;
 }
-
-.cookies.alert.alert-warning {
-  border: 1px solid #EFEF97;
-  background: no-repeat #FFFFD5 top right url("/images/cookie.jpg");
-  color: #2E5266;
-  @include media-breakpoint-up(md) {
-    line-height: 36px;
-  }
-
-  @media print {
-    display: none;
-  }
-}

@@ -1,0 +1,8 @@
+.card
+  .card-header
+    h4.is-title= Vae.Certification.name(@certification)
+    p= @certification.level
+  .card-content
+    p= raw @certification.description
+  .card-footer
+    = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification

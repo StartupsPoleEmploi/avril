@@ -6,6 +6,8 @@ import 'bootstrap';
 import 'bootstrap-select';
 import 'url-search-params';
 
+import './layout/index';
+
 import './analytics';
 import './tools/smooth_scroll';
 import './components/searchbar';
@@ -116,20 +118,6 @@ $(() => {
     }
     return false;
   });
-
-  if (!localStorage.getItem('cookies_choice')) $('.cookies').removeClass('d-none');
-  if (localStorage.getItem('cookies_choice') == 'reject') window.disableGa();
-
-  $('.cookies .btn-reject').click(function() {
-    localStorage.setItem('cookies_choice', 'reject')
-    $('.cookies').addClass('d-none');
-    window.disableGa();
-  })
-
-  $('.cookies .btn-primary').click(function() {
-    localStorage.setItem('cookies_choice', 'accept');
-    $('.cookies').addClass('d-none');
-  })
 
   $('.app-status button.close').on('click', e => {
     $.ajax('/close-app-status', {

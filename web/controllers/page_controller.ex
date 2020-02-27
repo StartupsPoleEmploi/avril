@@ -4,6 +4,10 @@ defmodule Vae.PageController do
   def index(conn, _params) do
     render(conn, "index.html",
       title: "Comment faire une VAE ?",
+      certification_examples: [
+        Repo.get(Vae.Certification, 2887),
+        Repo.get(Vae.Certification, 1895)
+      ],
       no_container: true,
       body_class: 'home'
     )

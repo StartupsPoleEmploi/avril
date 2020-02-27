@@ -3,18 +3,6 @@ defmodule Vae.ComponentView do
 
   @tracking_config Application.get_env(:vae, :tracking)
 
-  def render("user_token", %{conn: conn}) do
-    if is_nil(conn.assigns[:user_token]) do
-      {:safe, ""}
-    else
-      {:safe, """
-        <script>
-        window.userToken = "#{conn.assigns[:user_token]}";
-        </script>
-      """}
-    end
-  end
-
   def render("analytics", %{conn: conn}) do
     dimension1 =
       case conn.remote_ip do

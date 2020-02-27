@@ -1,0 +1,17 @@
+@import 'variables';
+@import 'mixins';
+
+@import '~font-awesome/scss/font-awesome';
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-select/sass/bootstrap-select';
+
+@import './icons/nucleo';
+
+// Rules that apply everywhere
+@import 'layout/index';
+
+// Component-specific rules
+@import 'components/index';
+
+// Page specific rules
+@import 'pages/index';

@@ -1,18 +1,18 @@
-= form_for @conn, Routes.search_path(@conn, :search), [as: :search, id: "rome_form", class: "dm-search-box d-flex flex-md-row flex-column align-items-stretch text-left"], fn f ->
+= form_for @conn, Routes.search_path(@conn, :search), [as: :search, id: "certification_finder"], fn f ->
   .input-group.suggest
-    = search_input(f, :query, class: "form-control form-control-lg form-control-avril", required: true, value: Plug.Conn.get_session(@conn, :search_query), placeholder: 'Assistante maternelle, cariste...')
+    = search_input(f, :query, class: "input is-large", required: true, value: Plug.Conn.get_session(@conn, :search_query), placeholder: 'Assistante maternelle, cariste...')
     = hidden_input(f, :profession, value: Plug.Conn.get_session(@conn, :search_profession))
     = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
     = hidden_input(f, :certification, value: Plug.Conn.get_session(@conn, :search_certification))
-  .input-group.geolocation
-    = search_input(f, :geolocation_text, class: "form-control form-control-lg form-control-avril", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Paris')
-    = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
-    = hidden_input(f, :lng, value: Plug.Conn.get_session(@conn, :search_lng))
-    = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
-    = hidden_input(f, :postcode, value: Plug.Conn.get_session(@conn, :search_postcode))
-    = hidden_input(f, :administrative, value: Plug.Conn.get_session(@conn, :search_administrative))
+  / .input-group.geolocation
+  /   = search_input(f, :geolocation_text, class: "form-control form-control-lg form-control-avril", required: true, value: Plug.Conn.get_session(@conn, :search_geo), placeholder: 'Paris')
+  /   = hidden_input(f, :lat, value: Plug.Conn.get_session(@conn, :search_lat))
+  /   = hidden_input(f, :lng, value: Plug.Conn.get_session(@conn, :search_lng))
+  /   = hidden_input(f, :county, value: Plug.Conn.get_session(@conn, :search_county))
+  /   = hidden_input(f, :postcode, value: Plug.Conn.get_session(@conn, :search_postcode))
+  /   = hidden_input(f, :administrative, value: Plug.Conn.get_session(@conn, :search_administrative))
     button#locate-me.position-absolute.btn.btn-outline-secondary.p-2.d-flex.align-items-center.justify-content-center type="button" style="height:36px;width:36px;top:29%;right:14px"
       span.ic-icon.ic-crosshair
       span.fa.fa-refresh.fa-spin.d-none
-  = submit class: "btn btn-outline-primary btn-lg d-flex align-items-center justify-content-center my-md-0 my-2", title: 'Valider la recherche' do
-    span.ic-icon.ic-zoom-bold
+  / = submit class: "button is-large", title: 'Valider la recherche' do
+  /   span.ic-icon.ic-zoom-bold

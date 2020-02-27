@@ -199,7 +199,7 @@ const setupLabelsAndAccessibility = () => {
 }
 
 $(() => {
-  if ($('.dm-search-box').length) {
+  if ($('#certification_finder').length) {
     let needProxy = false;
     $.get('https://api.ipify.org')
     .done(ip => {
@@ -211,7 +211,7 @@ $(() => {
     .always(() => {
       console.log('Proxy set ? ', needProxy);
       setupSearchBar(needProxy);
-      setupPlaces('city', 'search', 'geolocation_text', needProxy);
+      // setupPlaces('city', 'search', 'geolocation_text', needProxy);
       setupLabelsAndAccessibility();
     });
 

@@ -1,71 +1,14 @@
-@import '~bootstrap/scss/functions', '~bootstrap/scss/variables';
-
-$spacers: (
-  6: 8rem,
-  7: 16rem
-);
-
-$form-group-margin-bottom: 1.25rem;
-
-$dm-primary-green: #20D7A4;
-$dm-primary-green-light: #c2ffee;
-$dm-primary-blue: #2E5266;
-$dm-primary-purple: #443C77;
-$dm-primary-red: #FA3877;
-$dm-primary-pink: #DF286E;
-
-$dm-primary-light-grey: #F7F7F7;
-$dm-primary-grey: #ECECEC;
-
-$dm-logo: #004687;
-
-$dm-font-nuito: 'Nunito Sans', sans-serif;
-$dm-font-lato: 'Lato', sans-serif;
-
-// BS4
-$theme-colors: (
-  primary: $dm-primary-green,
-  secondary: $dm-primary-blue,
-  info: #5D5C5B,
-  light: #F6F6F6
-);
-
-// VAE
-$brand-light: #7B81C1;
-$body-bg: #F7F8FA;
-$header-margin: 10rem;
-
-// Bootstrap
-// TODO: exists in bs4 ?
-$brand-primary: theme-color('primary');
-// $brand-secondary: theme-color('secondary');
-$brand-secondary: $dm-primary-blue;
-$brand-info: theme-color('info');
-$gray-light: theme-color('light');
-
-$gray: #292b2c;
-$teal: #05CFA8;
 $white: white;
-$black: black;
+$light-gray: #f5f9fb;
+$black: #46484e;
 
-$jumbotron-bg: #F5F3F5;
-// $jumbotron-color: $brand-primary;
+$green: #a2fed5;
+$yellow: #ffffa5;
+$blue: #c7eeff;
+$dark-blue: #18495e;
 
-//buttons
-$btn-info-color: $brand-primary;
-$btn-border-radius: 38.5px;
-$btn-padding-y: 10px;
-$btn-padding-x: 36px;
-$btn-line-height: 24px;
-$btn-font-weight: bold;
+$primary: $green;
 
-//$btn-primary-color: #fff;
-$headings-small-color: $brand-light !important;
-
-// Breadcrumbs
-$breadcrumb-active-color: theme-color('secondary');
-
-//Suggest
-$suggest-color: #59fbdc;
-
-$fa-font-path: '/fonts';
+$scheme-main: $light-gray;
+// $background: $light-gray;
+$navbar-background-color: transparent;

@@ -1,4 +1,28 @@
-.container
+section#search
+  .container
+    .notification.is-primary
+      .columns
+        .column
+          h1.title Nous avons accéléré la VAE
+          p La VAE est un moyen simple et rapide d'obtenir un diplôme. C'est d'ailleurs plus de 300 000 diplômes obtenus en France grâce à cette voie. Pour vous, nous avons souahité simplifier ce moyen et c'est de cette idée simple qu'est née Avril.
+          = render Vae.ComponentView, "searchbar.html", conn: @conn
+        .column.is-one-quarter
+          = img_tag '/images/marie-cecile.jpg', alt: 'Photo de Marie-Cécile'
+    ul
+      li= link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-link")
+      li= link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-link")
+      li= link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-link")
+section#examples
+  .container
+    .columns
+      = for certification <- @certification_examples do
+        .column
+          = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification
+      .column.is-half
+        h1.title Vous qui voulez que l'on reconnaisse vos compétences
+        p Comme plus de 300 000 français, faites une VAE. Avril vous accompagne jusqu'à l'obtention du diplôme.
+
+
   .my-md-6.my-5.text-center
     .row
       .col-lg-8.offset-lg-2
@@ -8,7 +32,6 @@
         p.dm-sub-title Trouvez votre diplôme, trouvez votre contact VAE
     .row.my-5
       .col-lg-10.offset-lg-1
-        = render Vae.ComponentView, "searchbar.html", conn: @conn
         .text-left.pt-2
           = link("Je ne trouve pas mon métier", to: "https://avril_la_vae_facile.typeform.com/to/ZMi91e", class: "btn btn-link target-self", data: [analytics: "Certification#metier non trouve"])
     .row

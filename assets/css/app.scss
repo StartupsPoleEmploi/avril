@@ -1,17 +1,12 @@
-@import 'variables';
-@import 'mixins';
+// @import '~bulma/sass/utilities/initial-variables';
+// @import '~bulma/sass/utilities/functions';
+// @import '~bulma/sass/utilities/derived-variables';
 
-@import '~font-awesome/scss/font-awesome';
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-select/sass/bootstrap-select';
 
-@import './icons/nucleo';
+@import './variables';
+// @import "~bulma/sass/utilities/_all.sass";
+@import "~bulma/bulma";
 
-// Rules that apply everywhere
-@import 'layout/index';
+@import '~bulma/bulma';
 
-// Component-specific rules
-@import 'components/index';
-
-// Page specific rules
-@import 'pages/index';
+@import './layout';

@@ -15,7 +15,6 @@ html lang="fr"
       = render ComponentView, "analytics", conn: @conn
     link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
-    = render Vae.ComponentView, "user_token", conn: @conn
 
   body class="#{if @assigns[:is_landing], do: "landing-page"} #{@assigns[:body_class]}"
     = @contents
