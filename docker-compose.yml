@@ -21,7 +21,8 @@ services:
   nginx:
     depends_on:
       - phoenix
-      - nuxt
+      - nuxt_booklet
+      - nuxt_profile
     image: nginx:latest
     healthcheck:
       test: service nginx status
@@ -32,7 +33,7 @@ services:
     volumes:
       - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/default.conf
       - /var/log/nginx:/var/log/nginx
-  nuxt:
+  nuxt_booklet:
     command: yarn setup
     env_file:
       - ./.env
@@ -45,6 +46,21 @@ services:
     image: node:latest
     volumes:
       - ../avril-livret1:/app
+      - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
+    working_dir: /app
+  nuxt_profile:
+    command: yarn setup
+    env_file:
+      - ./.env
+    healthcheck:
+      test: /healthcheck_retry.sh curl -fsS localhost:3000/healthcheck
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 1m
+    image: node:latest
+    volumes:
+      - ../avril-profil:/app
       - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
     working_dir: /app
   postgres:
