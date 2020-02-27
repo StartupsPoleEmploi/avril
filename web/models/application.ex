@@ -192,11 +192,8 @@ defmodule Vae.Application do
       Delegate.is_asp?(application.delegate) ->
         "https://vaedem.asp-public.fr/vaedem/creationCompte.html"
 
-      Delegate.is_educ_nat?(application.delegate) ->
-        booklet_url!(endpoint, application, path)
-
       true ->
-        nil
+        booklet_url!(endpoint, application, path)
     end
   end
 
