@@ -1,6 +1,14 @@
+@import 'buttons.scss';
 @import 'cookies.scss';
+@import 'footer.scss';
 @import 'navbar.scss';
 
 // html {
 //   background: $background;
 // }
+
+.notification {
+  &.is-hero {
+    padding: 5rem;
+  }
+}

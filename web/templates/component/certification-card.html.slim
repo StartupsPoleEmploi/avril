@@ -1,8 +1,8 @@
-.card
+.card.certification-card
   .card-header
     h4.is-title= Vae.Certification.name(@certification)
-    p= @certification.level
+    p.is-description= level_info_by_level(@certification.level)
   .card-content
-    p= raw @certification.description
+    = raw @certification.description
   .card-footer
-    = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification
+    = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button has-text-weight-bold is-transparent"

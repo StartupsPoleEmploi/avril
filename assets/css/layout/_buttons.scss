@@ -1,0 +1,13 @@
+.button {
+  &.is-transparent {
+    background: transparent;
+    border: none;
+    padding: 0;
+    height: auto;
+    line-height: 2;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

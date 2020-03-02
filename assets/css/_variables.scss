@@ -1,14 +1,50 @@
 $white: white;
-$light-gray: #f5f9fb;
 $black: #46484e;
 
-$green: #a2fed5;
-$yellow: #ffffa5;
-$blue: #c7eeff;
-$dark-blue: #18495e;
+$palette: (
+  default: (
+    background: #f5f9fb,
+    text: #848f93,
+    title: #18495e,
+  ),
+  blue: (
+    background: #c7eeff,
+    text: #357692,
+    title: #18495e
+  ),
+  green: (
+    background: #d6ffed,
+    text: #69897b,
+    title: #445c51
+  ),
+  yellow: (
+    background: #ffffa5,
+    text: #41413c,
+    title: #41413c
+  )
+);
 
-$primary: $green;
+@function palette($color: 'default', $type: 'text') {
+  @return map-get(map-get($palette, $color), $type);
+}
 
-$scheme-main: $light-gray;
-// $background: $light-gray;
+$text-color: palette();
+
+$scheme-main: palette(default, background);
+$footer-background-color: $white;
 $navbar-background-color: transparent;
+$navbar-breakpoint: $radius-rounded;
+
+$radius: 5px;
+
+@each $key, $value in $palette {
+  .is-#{$key} {
+    color: palette($key, text) !important;
+    background: palette($key, background) !important;
+
+    .title {
+      color: palette($key, title) !important;
+    }
+  }
+}
+

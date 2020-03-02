@@ -1,14 +1,25 @@
-footer
-  .container.d-flex.align-items-center
-    = link to: Routes.root_path(@conn, :index), do: img_tag '/images/avril-beta.svg', class: 'logo', alt: 'Avril'
-    ul.nav.dm-nav.ml-auto
-      li.nav-item
-        = render "active_link.html", text: "Mentions légales", class: "nav-link", to: Routes.page_path(@conn, :terms_of_use), conn: @conn
-      li.nav-item
-        = render "active_link.html", text: "Justificatifs", class: "nav-link", to: Routes.page_path(@conn, :receipts), conn: @conn
-      li.nav-item
-        = render "active_link.html", text: "Métiers", class: "nav-link", to: Routes.profession_path(@conn, :index), conn: @conn
-      li.nav-item
-        = render "active_link.html", text: "Diplômes", class: "nav-link", to: Routes.certification_path(@conn, :index), conn: @conn
-      li.nav-item
-        = render "active_link.html", text: "Certificateurs", class: "nav-link", to: Routes.delegate_path(@conn, :index), conn: @conn
+footer.footer
+  .container
+    .columns
+      .column.is-one-quarter
+        h5.title.is-6 Notions essentielles VAE
+        ul
+          li= render "active_link.html", text: "C'est quoi la VAE ?", class: "button is-transparent", to: Routes.page_path(@conn, :vae), conn: @conn
+          li= render "active_link.html", text: "Bien choisir son diplôme", class: "button is-transparent", to: Routes.page_path(@conn, :choose_certification), conn: @conn
+          li= render "active_link.html", text: "Comment financer ma VAE?", class: "button is-transparent", to: Routes.page_path(@conn, :financement), conn: @conn
+          li= render "active_link.html", text: "C'est quoi un certificateur ?", class: "button is-transparent", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
+          li= render "active_link.html", text: "Qui sont les Points Relais Conseil ?", class: "button is-transparent", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+      .column.is-one-quarter
+        h5.title.is-6 Autres outils pour la VAE
+        ul
+          li= link "Portail de la VAE", to: "http://www.vae.gouv.fr/", class: "button is-transparent", target: "_blank", rel: "noopener noreferrer"
+          li= link "France-VAE", to: "https://www.francevae.fr/", class: "button is-transparent", target: "_blank", rel: "noopener noreferrer"
+          li= link "Défi métiers", to: "https://www.defi-metiers.fr/dossiers/vae-mode-demploi", class: "button is-transparent", target: "_blank", rel: "noopener noreferrer"
+      .column.is-one-quarter
+        h5.title.is-6 Support
+        ul
+          li= link("CRISP", to: "#", class: "button is-transparent")
+          li= render "active_link.html", text: "Nous contacter", class: "button is-transparent", to: Routes.page_path(@conn, :contact), conn: @conn
+      .column.is-one-quarter
+        = link to: Routes.root_path(@conn, :index), do: img_tag "/images/republique-francaise.png", alt: "République Française"
+        = link to: "https://www.pole-emploi.fr", do: img_tag "/images/pole-emploi.jpg", alt: "Pôle emploi"

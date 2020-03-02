@@ -1,0 +1,25 @@
+.card.certification-card {
+  background: $white;
+  border-radius: $radius;
+  .card-header {
+    height: 6rem;
+    padding: 1rem 1.5rem;
+    box-shadow: none;
+    display: block;
+
+    .is-title, .is-description {
+      color: palette(default, title);
+    }
+  }
+
+  .card-content {
+    height: 15rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    padding: 1rem 1.5rem;
+    border: none;
+  }
+}

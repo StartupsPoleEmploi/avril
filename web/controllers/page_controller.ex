@@ -8,6 +8,10 @@ defmodule Vae.PageController do
         Repo.get(Vae.Certification, 2887),
         Repo.get(Vae.Certification, 1895)
       ],
+      delegate_examples: [
+        Repo.get(Vae.Delegate, 2),
+        Repo.get(Vae.Delegate, 12)
+      ],
       no_container: true,
       body_class: 'home'
     )

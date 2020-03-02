@@ -1,0 +1,9 @@
+.card
+  .card-header
+    h4.is-title= @delegate.name
+    = if length(Vae.Meetings.get(@delegate)) > 0 do
+      p Réunion d'informations
+  .card-content
+    p= @delegate.address
+  .card-footer
+    button.button.is-primary Trouver le mien

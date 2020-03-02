@@ -10,7 +10,7 @@
           span aria-hidden="true"
           span aria-hidden="true"
         | Menu
-    #navbar.navbar-menu
+    .navbar-menu
       .navbar-start
         = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :vae), conn: @conn
         = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :financement), conn: @conn
@@ -29,4 +29,4 @@
                 span.text Me déconnecter
         - else
           li.navbar-item
-            = link "Mon dossier VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-primary"
+            = link "Me connecter", to: Routes.pow_session_path(@conn, :new), class: "button is-primary"
