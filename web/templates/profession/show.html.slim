@@ -1,0 +1,5 @@
+.section#result
+  = link("<-- Recherche", to: Routes.page_path(@conn, :index))
+  h1.title.is-1
+    | VAE pour le métier
+    = Profession.name(@profession)

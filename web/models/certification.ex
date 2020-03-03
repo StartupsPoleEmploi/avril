@@ -70,14 +70,14 @@ defmodule Vae.Certification do
     |> add_delegates(params)
   end
 
-  def get(nil), do: nil
-  def get(id), do: Repo.get(Certification, id)
+  # def get(nil), do: nil
+  # def get(id), do: Repo.get(Certification, id)
 
-  def get_certification(%{"rncp_id" => rncp_id}), do: Repo.get_by(Certification, rncp_id: rncp_id)
+  # def get_certification(%{"rncp_id" => rncp_id}), do: Repo.get_by(Certification, rncp_id: rncp_id)
 
-  def get_certification(nil), do: nil
+  # def get_certification(nil), do: nil
 
-  def get_certification(certification_id), do: Repo.get(Certification, certification_id)
+  # def get_certification(certification_id), do: Repo.get(Certification, certification_id)
 
   def find_by_acronym_and_label(certification_label) do
     from(
@@ -195,11 +195,11 @@ defmodule Vae.Certification do
     |> Map.drop([:inserted_at, :updated_at, :description])
   end
 
-  def name(%__MODULE__{} = certification), do: "#{certification.acronym} #{certification.label}"
+  def name(%Certification{acronym: acronym, label: label}) do
+    [acronym, label] |> Enum.reject(&is_nil/1) |> Enum.join(" ")
+  end
 
-  def display_name(%__MODULE__{} = certification), do: name(certification)
-
-  def to_slug(%__MODULE__{} = certification) do
+  def to_slug(%Certification{} = certification) do
     Vae.String.parameterize(name(certification))
   end
 

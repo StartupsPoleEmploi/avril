@@ -72,12 +72,8 @@ defmodule Vae.ViewHelpers do
 
   def not_nil?(map, term), do: Map.get(map, term) != nil
 
-  def format_certification_label(%{acronym: nil, label: label}) do
-    label
-  end
-
-  def format_certification_label(%{acronym: acronym, label: label}) do
-    "#{acronym} #{label}"
+  def format_certification_label(%Vae.Certification{} = certification) do
+    Vae.Certification.name(certification)
   end
 
   def meta_certification(%{rome: r, delegate: d}) when not is_nil(r) and not is_nil(d) do

@@ -1,6 +1,8 @@
 defmodule Vae.Profession do
   use Vae.Web, :model
 
+  alias __MODULE__
+
   schema "professions" do
     field(:slug, :string)
     field(:label, :string)
@@ -30,8 +32,12 @@ defmodule Vae.Profession do
     |> Map.drop([:inserted_at, :updated_at])
   end
 
-  def to_slug(profession) do
-    Vae.String.parameterize(profession.label)
+  def get_certifications(%Profession{} = profession) do
+    profession |> Repo.preload(rome: :certifications) |> Map.get(:rome) |> Map.get(:certifications)
+  end
+
+  def to_slug(%Profession{label: label} = _profession) do
+    Vae.String.parameterize(label)
   end
 
   def slugify(changeset) do

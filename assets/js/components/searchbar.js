@@ -32,6 +32,11 @@ const setupSearchBar = needProxy => {
   );
   const professions = client.initIndex('profession');
   const certifications = client.initIndex('certification');
+
+  const professionToPath = suggestion => `/metiers/${suggestion.id}-${suggestion.slug}`
+  // const professionToPath = suggestion => `/diplomes?rome_code=${suggestion.rome_code}`
+  const certificationToPath = suggestion => `/diplomes/${suggestion.id}-${suggestion.slug}`
+
   autocomplete('#search_query', {
     autoselect: true,
     autoselectOnBlur: true,
@@ -44,7 +49,7 @@ const setupSearchBar = needProxy => {
     debounce: 500,
     templates: {
       header: '<h5 class="title">Métiers</div>',
-      suggestion: suggestion => `<a href="/metiers/${suggestion.id}">${suggestion._highlightResult.label.value}</a>`,
+      suggestion: suggestion => `<a href="${professionToPath(suggestion)}">${suggestion._highlightResult.label.value}</a>`,
     }
   }, {
     source: autocomplete.sources.hits(certifications, { hitsPerPage: 3, queryType: 'prefixAll' }),
@@ -60,18 +65,22 @@ const setupSearchBar = needProxy => {
         const acronym = suggestion._highlightResult.acronym && suggestion._highlightResult.acronym.value;
         const label = suggestion._highlightResult.label.value;
         const value = acronym ? `${acronym} ${label}` : label;
-        return `<a href="/diplomes/${suggestion.id}">${value}</a>`;
+        return `<a href="${certificationToPath(suggestion)}">${value}</a>`;
       }
     }
   }]).on('autocomplete:selected', (event, suggestion, datasetIndex) => {
-     if(datasetIndex === 1) {
-      $('#search_rome_code').val(suggestion.rome_code);
-       $('#search_certification').val('');
-     }
-     if(datasetIndex === 2) {
-      $('#search_rome_code').val('');
-       $('#search_certification').val(suggestion.id);
-     }
+    window.location.href = datasetIndex === 1 ? professionToPath(suggestion) : certificationToPath(suggestion);
+    // console.log(event);
+    // console.log(event.target);
+    // console.log(suggestion);
+    //  if(datasetIndex === 1) {
+    //   $('#search_rome_code').val(suggestion.rome_code);
+    //    $('#search_certification').val('');
+    //  }
+    //  if(datasetIndex === 2) {
+    //   $('#search_rome_code').val('');
+    //    $('#search_certification').val(suggestion.id);
+    //  }
   });
 
   // const places = algoliasearch.initPlaces(
