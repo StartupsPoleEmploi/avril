@@ -98,6 +98,27 @@ const Aggregate = ({data}) => {
   );
 }
 
+const getLines = type => {
+  if (type == 'submissions') {
+    return [{
+      label: 'Relance à 30 jours',
+      color: 'red',
+      date: moment().add(-30, 'days'),
+    }]
+  }
+  if (type == 'booklet') {
+    return [{
+      label: 'MEP Livret 1 Educ nat',
+      color: '#3498db',
+      date: moment('2019-12-11'),
+    }, {
+      label: 'MEP Livret 1 pour tous',
+      color: '#3498db',
+      date: moment('2020-02-26'),
+    }]
+  }
+}
+
 const renderChart = name => {
   const $container = document.querySelector(`#${name}-plot`);
   if ($container && $container.dataset.url) {
@@ -118,16 +139,11 @@ const renderChart = name => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="semaine" tickFormatter={formatWeekNumber} interval="preserveStartEnd" minTickGap={30} />
                 <YAxis />
-                { (data.query.type == 'submissions') &&
-                  <ReferenceLine x={moment().add(-30, 'days').format('YYYY-w')} stroke="red">
-                    <Label value="Relance à 30 jours" angle={90} position="left"/>
+                {getLines(data.query.type).map(line =>
+                  <ReferenceLine x={line.date.format('YYYY-ww')} stroke={line.color}>
+                    <Label value={line.label} angle={90} position="left"/>
                   </ReferenceLine>
-                }
-                { (data.query.type == 'booklet') &&
-                  <ReferenceLine x={moment('2019-12-11').format('YYYY-w')} stroke="#3498db">
-                    <Label value="MEP Livret 1" angle={90} position="left"/>
-                  </ReferenceLine>
-                }
+                )}
                 <Tooltip labelFormatter={weekNumberToString} formatter={formatValueWithPercent} />
                 <Legend wrapperStyle={{bottom: -5}} />
                 { formatDataToBar(data).map(c =>
