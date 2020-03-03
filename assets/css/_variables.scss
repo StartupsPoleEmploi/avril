@@ -28,8 +28,9 @@ $palette: (
   @return map-get(map-get($palette, $color), $type);
 }
 
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+$family-sans-serif: 'Nunito', sans-serif;
 $text-color: palette();
-
 $scheme-main: palette(default, background);
 $footer-background-color: $white;
 $navbar-background-color: transparent;
