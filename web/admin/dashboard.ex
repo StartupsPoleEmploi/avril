@@ -4,6 +4,11 @@ defmodule Vae.ExAdmin.Dashboard do
   register_page "Dashboard" do
     menu priority: 1, label: "Statistiques"
     content do
+      query = from c in Vae.Certifier, select: [:id, :name], order_by: [:id]
+
+      certifier_id = Vae.String.blank_is_nil(conn.query_params["certifier_id"], &String.to_integer/1)
+      certifiers = Vae.Repo.all(query)
+      certifier = if certifier_id, do: Vae.Repo.get(Vae.Certifier, certifier_id)
       start_date = Vae.String.blank_is_nil(conn.query_params["start_date"])
       end_date = Vae.String.blank_is_nil(conn.query_params["end_date"])
       type = conn.query_params["type"] || "submissions"
@@ -13,32 +18,51 @@ defmodule Vae.ExAdmin.Dashboard do
       hr()
 
       div ".text-center" do
-        p "Voir les chiffres sur une période données :"
         Xain.form ".form-inline", [method: "GET", style: "margin-bottom: 1rem;"] do
           Xain.input type: "hidden", name: "type", value: type
-          div ".form-group" do
-            label "Date de début :", [for: "start_date", style: "padding-right: 0.5rem;"]
-            div ".input-group" do
-              div ".input-group-addon" do
-                i ".fa.fa-calendar"
+          div ".row", [style: "margin-bottom: 1rem"] do
+            p "NB: Une semaine démarre le lundi et termine le dimanche."
+            div ".form-group" do
+              label "Date de début :", [for: "start_date", style: "padding-right: 0.5rem;"]
+              div ".input-group" do
+                div ".input-group-addon" do
+                  i ".fa.fa-calendar"
+                end
+                Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off", "data-date-week-start": 1]
               end
-              Xain.input ".datepicker.form-control#start_date", [name: "start_date", value: start_date, autocomplete: "off", "data-date-week-start": 1]
+            end
+            div ".form-group" do
+              label "Date de fin : ", [for: "end_date", style: "padding-right: 0.5rem;"]
+              div ".input-group" do
+                div ".input-group-addon" do
+                  i ".fa.fa-calendar"
+                end
+                Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off", "data-date-week-start": 1]
+              end
             end
           end
-          div ".form-group" do
-            label "Date de fin : ", [for: "end_date", style: "padding-right: 0.5rem;"]
-            div ".input-group" do
-              div ".input-group-addon" do
-                i ".fa.fa-calendar"
+          div ".row", [style: "margin-bottom: 1rem"] do
+            div ".form-group" do
+              label "Certifier : ", [for: "certifier_id", style: "padding-right: 0.5rem;"]
+              div ".input-group" do
+                div ".input-group-addon" do
+                  i ".fa.fa-user"
+                end
+                Xain.select ".form-control#certifier_id", [name: "certifier_id"] do
+                  Xain.option "Sélectionnez un certifier"
+                  Enum.map(certifiers, fn c ->
+                    Xain.option(c.name, [value: c.id] ++ (if c.id == certifier_id, do: [selected: "selected"], else: []))
+                  end)
+                end
               end
-              Xain.input ".datepicker.form-control#end_date", [name: "end_date", value: end_date, autocomplete: "off", "data-date-week-start": 1]
             end
           end
-          div ".form-group" do
-            button "Filtrer sur les dates", [class: "btn btn-primary", type: "submit"]
+          div ".row", [style: "margin-bottom: 1rem"] do
+            div ".form-group" do
+              button "Filtrer", [class: "btn btn-primary", type: "submit"]
+            end
           end
         end
-        p "NB: Une semaine démarre le lundi et termine le dimanche."
       end
       hr()
       div ".section" do
@@ -46,22 +70,23 @@ defmodule Vae.ExAdmin.Dashboard do
           Xain.form [method: "GET"] do
             Xain.input type: "hidden", name: "start_date", value: start_date
             Xain.input type: "hidden", name: "end_date", value: end_date
+            Xain.input type: "hidden", name: "certifier_id", value: certifier_id
             Xain.button (if type == "submissions",  do: "Vue Livret 1", else: "Vue Transmissions"), [type: "submit", name: "type", value: (if type == "submissions",  do: "booklet", else: "submissions"), class: "btn btn-primary"]
           end
         end
-        h2 "Candidatures #{if type == "booklet", do: "éducation nationnale "}par semaines", [class: "text-center"]
+        h2 "Candidatures #{if certifier, do: certifier.name} par semaines", [class: "text-center"]
         h4 between_dates_string(start_date, end_date)
-        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}"]
+        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}&certifier_id=#{certifier_id}"]
       end
       hr()
       div ".section" do
-        h2 "Candidatures par certificateurs"
+        h2 "Candidatures par delegate"
         h4 between_dates_string(start_date, end_date)
         div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}"]
       end
       hr()
       div ".section" do
-        h2 "Candidatures par certifications"
+        h2 "Candidatures par certification"
         h4 between_dates_string(start_date, end_date)
         div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}"]
       end
