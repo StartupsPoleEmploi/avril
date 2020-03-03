@@ -36,88 +36,86 @@ const setupSearchBar = needProxy => {
     autoselect: true,
     autoselectOnBlur: true,
     cssClasses: {
-      prefix: 'ap'
+      prefix: 'avril'
     }
   }, [{
     source: autocomplete.sources.hits(professions, { hitsPerPage: 5, queryType: 'prefixAll' }),
     displayKey: suggestion => suggestion.label,
+    debounce: 500,
     templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">Métiers</div>',
-      suggestion: suggestion => suggestion._highlightResult.label.value,
+      header: '<h5 class="title">Métiers</div>',
+      suggestion: suggestion => `<a href="/metiers/${suggestion.id}">${suggestion._highlightResult.label.value}</a>`,
     }
   }, {
     source: autocomplete.sources.hits(certifications, { hitsPerPage: 3, queryType: 'prefixAll' }),
+    debounce: 500,
     displayKey: suggestion => {
       const acronym = suggestion.acronym;
       const label = suggestion.label;
       return acronym ? `${acronym} ${label}` : label;
     },
     templates: {
-      header: '<h5 class="m-0 ap-suggestions-category">Dîplomes</div>',
+      header: '<h5 class="title">Dîplomes</div>',
       suggestion: suggestion => {
         const acronym = suggestion._highlightResult.acronym && suggestion._highlightResult.acronym.value;
         const label = suggestion._highlightResult.label.value;
-        return acronym ? `${acronym} ${label}` : label;
+        const value = acronym ? `${acronym} ${label}` : label;
+        return `<a href="/diplomes/${suggestion.id}">${value}</a>`;
       }
     }
-
-  }]).on('autocomplete:selected', (event, suggestion, dataset) => {
-     if(dataset === 1) {
+  }]).on('autocomplete:selected', (event, suggestion, datasetIndex) => {
+     if(datasetIndex === 1) {
       $('#search_rome_code').val(suggestion.rome_code);
        $('#search_certification').val('');
      }
-     if(dataset === 3) {
-      $('#search_rome_code').val(suggestion.code);
-       $('#search_certification').val('');
-     }
-     if(dataset === 2) {
+     if(datasetIndex === 2) {
       $('#search_rome_code').val('');
        $('#search_certification').val(suggestion.id);
      }
   });
 
-  const places = algoliasearch.initPlaces(
-    window.algolia_places_app_id,
-    window.algolia_places_api_key,
-    clientOptionsWithProxy('places', needProxy)
-  );
+  // const places = algoliasearch.initPlaces(
+  //   window.algolia_places_app_id,
+  //   window.algolia_places_api_key,
+  //   clientOptionsWithProxy('places', needProxy)
+  // );
 
-  const updateForm = response => {
-    const hits = response.hits;
-    const suggestion = hits[0];
+  // const updateForm = response => {
+  //   const hits = response.hits;
+  //   const suggestion = hits[0];
 
-    if (suggestion && suggestion.locale_names && suggestion.city) {
-      $('#search_geolocation_text').val(suggestion.is_city ? suggestion.locale_names[0] : suggestion.city[0]);
-      $('#search_county').val(suggestion.county || suggestion.city || suggestion.name);
-      $('#search_postcode').val(suggestion.postcode);
-      $('#search_administrative').val(suggestion.administrative);
-    }
+  //   if (suggestion && suggestion.locale_names && suggestion.city) {
+  //     $('#search_geolocation_text').val(suggestion.is_city ? suggestion.locale_names[0] : suggestion.city[0]);
+  //     $('#search_county').val(suggestion.county || suggestion.city || suggestion.name);
+  //     $('#search_postcode').val(suggestion.postcode);
+  //     $('#search_administrative').val(suggestion.administrative);
+  //   }
 
-    $('#locate-me .fa-refresh').addClass('d-none');
-    $('#locate-me .ic-icon').removeClass('d-none');
-  }
+  //   $('#locate-me .fa-refresh').addClass('d-none');
+  //   $('#locate-me .ic-icon').removeClass('d-none');
+  // }
 
-  $('#locate-me').on('click', () => {
-    $('#locate-me .fa-refresh').removeClass('d-none');
-    $('#locate-me .ic-icon').addClass('d-none');
-    navigator.geolocation.getCurrentPosition(response => {
-      const coords = response.coords;
-      const lat = coords.latitude.toFixed(6);
-      const lng = coords.longitude.toFixed(6);
+  // $('#locate-me').on('click', () => {
+  //   $('#locate-me .fa-refresh').removeClass('d-none');
+  //   $('#locate-me .ic-icon').addClass('d-none');
+  //   navigator.geolocation.getCurrentPosition(response => {
+  //     const coords = response.coords;
+  //     const lat = coords.latitude.toFixed(6);
+  //     const lng = coords.longitude.toFixed(6);
 
-      $('#search_lat').val(lat);
-      $('#search_lng').val(lng);
+  //     $('#search_lat').val(lat);
+  //     $('#search_lng').val(lng);
 
-      places.reverse({
-        aroundLatLng: `${lat},${lng}`,
-        language: 'fr',
-        hitsPerPage: 1
-      }).then(updateForm);
-    }, () => {
-      $('#locate-me').addClass('d-none');
-      $('#locate-me').removeClass('d-flex');
-    });
-  });
+  //     places.reverse({
+  //       aroundLatLng: `${lat},${lng}`,
+  //       language: 'fr',
+  //       hitsPerPage: 1
+  //     }).then(updateForm);
+  //   }, () => {
+  //     $('#locate-me').addClass('d-none');
+  //     $('#locate-me').removeClass('d-flex');
+  //   });
+  // });
 }
 
 const setupPlaces = (type, prefix, tag, needProxy) => {
@@ -193,9 +191,9 @@ const setupLabelsAndAccessibility = () => {
     $('#algolia-autocomplete-listbox-0').attr('aria-selected', 'false');
   }, 200);
 
-  $(window).on('resize', e => {
-    $('#label_search_query').text(stepLabel());
-  });
+  // $(window).on('resize', e => {
+  //   $('#label_search_query').text(stepLabel());
+  // });
 }
 
 $(() => {
