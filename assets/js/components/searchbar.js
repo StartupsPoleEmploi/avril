@@ -161,19 +161,19 @@ const setupPlaces = (type, prefix, tag, needProxy) => {
 
 const setupLabelsAndAccessibility = () => {
 
-  const stepLabel = () => {
-    if ($(window).width() < 768) {
-      return 'Votre métier';
-    } else {
-      return 'Tapez le métier pour lequel vous souhaitez obtenir un diplôme';
-    }
-  }
+  // const stepLabel = () => {
+  //   if ($(window).width() < 768) {
+  //     return 'Votre métier';
+  //   } else {
+  //     return 'Tapez le métier pour lequel vous souhaitez obtenir un diplôme';
+  //   }
+  // }
 
     // Search labels
-  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel() + "</label>").insertAfter("#search_query");
-  $("#search_query").parent().addClass('form-label-group');
-  $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
-  $("#search_geolocation_text").parent().addClass('form-label-group');
+  // $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_query' id='label_search_query'>" + stepLabel() + "</label>").insertAfter("#search_query");
+  // $("#search_query").parent().addClass('form-label-group');
+  // $("<label class='form-control-placeholder form-control-lg-placeholder' for='search_geolocation_text' id='residence'>Votre ville de résidence</label>").insertAfter("#search_geolocation_text");
+  // $("#search_geolocation_text").parent().addClass('form-label-group');
 
   // accessibility
   setTimeout(function() {

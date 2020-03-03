@@ -51,7 +51,6 @@ defmodule ExAdmin.ApiController do
   end
 
   def sql(conn, %{"query" => query} = params) do
-    IO.inspect(params)
     start_date = Vae.String.blank_is_nil(params["start_date"])
     end_date = Vae.String.blank_is_nil(params["end_date"])
     type = Vae.String.blank_is_nil(params["type"])

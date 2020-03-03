@@ -2,12 +2,12 @@ section.section#search
   .container
     .notification.is-green.is-hero
       .columns
-        .column
+        .column.content
           h1.title.is-1 Nous avons accéléré la VAE
           p La VAE est un moyen simple et rapide d'obtenir un diplôme. C'est d'ailleurs plus de 300 000 diplômes obtenus en France grâce à cette voie. Pour vous, nous avons souahité simplifier ce moyen et c'est de cette idée simple qu'est née Avril.
           = render Vae.ComponentView, "searchbar.html", conn: @conn
-        .column.is-one-quarter
-          = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", style: "transform: scale(2) translateX(20px) translateY(20px); height: 250px;"
+        .column.is-4
+          = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", style: "float: right;transform: scale(2) translateX(1rem) translateY(20px);height: 17rem;transform-origin: right;"
     = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text")
     = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text")
     = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text")
@@ -15,43 +15,47 @@ section.section#examples
   .container
     .columns
       = for certification <- @certification_examples do
-        .column
+        .column.is-3
           = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification
-      .column.is-half
-        h1.title Vous qui voulez que l'on reconnaisse vos compétences
+      .column.is-4.is-offset-1.section
+        h2.title.is-2 Vous qui voulez que l'on reconnaisse vos compétences
         p Comme plus de 300 000 français, faites une VAE. Avril vous accompagne jusqu'à l'obtention du diplôme.
 section#online
   .container
     .columns
-      .column.is-three-quarter
-        .section
+      .column.is-6.section.is-vertical.is-medium
+
+        .section.is-small.is-vertical
           h2.title.is-2 Avril a créé la candidature en ligne
           p Avril vous offre toute son expérience de candidature en ligne. Remplissez votre dossier en ligne et transmettez le directement au certificateur près de chez vous. C'est ça la révolution Avril.
 
-        .section
-          a.button.is-primary.is-large.is-rounded.is-yellow href="#search" Rechercher mon diplôme
+        .section.is-small.is-vertical
+          a.button.is-primary.is-medium.is-rounded.is-yellow href="#search" Rechercher mon diplôme
 
-        .section
+        .section.is-small.is-vertical
           h2.title.is-2 Mettez toutes les chances de votre côté
 
           = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text")
           = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text")
           = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text")
-      .column.is-one-quarter style="flex-direction: column-reverse; display: flex;"
-        = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "transform: scale(1.3); transform-origin: bottom right;"
+      .column.is-4.is-offset-2 style="flex-direction: column-reverse; display: flex;"
+        = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "transform-origin: bottom right;"
 
-section.section.is-blue#delegates
+section.section.is-blue.is-medium#delegates
   .container
     .columns
-      .column.is-half
+      .column.is-6
         .columns
           = for delegate <- @delegate_examples do
             .column
               = render Vae.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
-      .column.is-half
-        h2.title Votre certificateur n'a jamais été aussi proche de vous
+        = link("Trouver le mien", to: "#", class: "button is-yellow is-rounded is-medium")
+      .column.is-4.is-offset-1
+        h2.title.is-2 Votre certificateur n'a jamais été aussi proche de vous
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-section.section#callback
+        .section.is-vertical
+          = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text is-medium")
+section.section.is-medium#callback
   .container
     .columns
       .column.is-4.is-offset-2
@@ -60,5 +64,6 @@ section.section#callback
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
       .column
     .has-text-centered
-      h1.title La VAE n'aura jamais été aussi simple
-      = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new))
+      .section
+        h1.title.is-2 La VAE n'aura jamais été aussi simple
+      = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")

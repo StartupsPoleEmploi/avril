@@ -1,7 +1,8 @@
-@import 'buttons.scss';
-@import 'cookies.scss';
-@import 'footer.scss';
-@import 'navbar.scss';
+@import 'section';
+@import 'buttons';
+@import 'cookies';
+@import 'footer';
+@import 'navbar';
 
 .notification {
   &.is-hero {
