@@ -29,8 +29,14 @@ $palette: (
 }
 
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
-$family-sans-serif: 'Nunito', sans-serif;
-$text-color: palette();
+@import url('https://use.typekit.net/zip3jhj.css');
+
+$family-sans-serif: Nunito, sans-serif;
+$family-serif: ff-tisa-web-pro, serif;
+$title-family: $family-serif;
+
+$text-color: palette(default, text);
+$title-color: palette(default, title);
 $scheme-main: palette(default, background);
 $footer-background-color: $white;
 $navbar-background-color: transparent;
@@ -42,6 +48,12 @@ $radius: 5px;
   .is-#{$key} {
     color: palette($key, text) !important;
     background: palette($key, background) !important;
+
+    &.button {
+      &:hover {
+        opacity: 0.8;
+      }
+    }
 
     .title {
       color: palette($key, title) !important;

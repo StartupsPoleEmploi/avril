@@ -1,7 +1,8 @@
-.card.certification-card
+.card.selector-card.certification-card
   .card-header
-    h4.is-title= Vae.Certification.name(@certification)
-    p.is-description= level_info_by_level(@certification.level)
+    h4.title= Vae.Certification.name(@certification)
+    p.description
+      span.tag= level_info_by_level(@certification.level)
   .card-content
     = raw @certification.description
   .card-footer

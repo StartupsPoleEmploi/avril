@@ -1,13 +1,26 @@
-.card.certification-card {
+.card.selector-card {
   background: $white;
   border-radius: $radius;
+
+  &.delegate-card {
+    .card-header {
+      min-height: 0;
+      h4 {
+        font-size: 1.5rem;
+      }
+    }
+    .card-content {
+      height: auto;
+    }
+  }
+
   .card-header {
-    height: 6rem;
+    min-height: 6rem;
     padding: 1rem 1.5rem;
     box-shadow: none;
     display: block;
 
-    .is-title, .is-description {
+    .title, .description {
       color: palette(default, title);
     }
   }

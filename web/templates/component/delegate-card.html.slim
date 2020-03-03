@@ -1,9 +1,10 @@
-.card
+.card.selector-card.delegate-card
   .card-header
-    h4.is-title= @delegate.name
+    h4.title= @delegate.name
     = if length(Vae.Meetings.get(@delegate)) > 0 do
-      p Réunion d'informations
+      p.description
+        span.tag Réunion d'informations
   .card-content
     p= @delegate.address
   .card-footer
-    button.button.is-primary Trouver le mien
+    button.button.has-text-weight-bold.is-transparent Trouver le mien
