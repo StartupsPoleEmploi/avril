@@ -51,19 +51,23 @@ defmodule ExAdmin.ApiController do
   end
 
   def sql(conn, %{"query" => query} = params) do
-    start_date = unless Vae.String.is_blank?(params["start_date"]), do: params["start_date"]
-    end_date = unless Vae.String.is_blank?(params["end_date"]), do: params["end_date"]
-    type = unless Vae.String.is_blank?(params["type"]), do: params["type"]
+    IO.inspect(params)
+    start_date = Vae.String.blank_is_nil(params["start_date"])
+    end_date = Vae.String.blank_is_nil(params["end_date"])
+    type = Vae.String.blank_is_nil(params["type"])
+    certifier_id = Vae.String.blank_is_nil(params["certifier_id"], &String.to_integer/1)
     query = apply(__MODULE__, :"#{query}_query", [
       start_date,
       end_date,
-      type
+      type,
+      certifier_id
     ])
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
     json(conn, Map.merge(
       Map.from_struct(result),
       %{
         query: %{
+          certifier_id: certifier_id,
           start_date: start_date,
           end_date: end_date,
           type: type
@@ -89,29 +93,30 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def educ_nat_only("booklet") do
+  def join_certifier(certifier_id, base_name \\ "delegate")
+  def join_certifier(certifier_id, base_name) when not is_nil(certifier_id) do
     """
-    INNER JOIN certifiers_delegates
-    ON certifiers_delegates.delegate_id = applications.delegate_id
-    AND certifiers_delegates.certifier_id = 2
+    INNER JOIN certifiers_#{base_name}s
+    ON certifiers_#{base_name}s.#{base_name}_id = applications.#{base_name}_id
+    AND certifiers_#{base_name}s.certifier_id = #{certifier_id}
     """
   end
-  def educ_nat_only(_), do: ""
+  def join_certifier(_, _), do: ""
 
-  def applications_query(start_date, end_date, type) do
+  def applications_query(start_date, end_date, type, certifier_id) do
     """
     SELECT
       to_char(applications.inserted_at, 'IYYY-IW') AS week_number,
       #{applications_select(type)}
     FROM applications
-    #{educ_nat_only(type)}
+    #{join_certifier(certifier_id)}
     #{where_applications_date_filter(start_date, end_date)}
     GROUP BY week_number
     ORDER BY week_number
     """
   end
 
-  def delegates_query(start_date, end_date, _type) do
+  def delegates_query(start_date, end_date, _type, _certifier_id) do
     """
     SELECT
       q.delegate_name,
@@ -134,7 +139,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def certifications_query(start_date, end_date, _type) do
+  def certifications_query(start_date, end_date, _type, _certifier_id) do
     """
     SELECT
       q.certification_name,
