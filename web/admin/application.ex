@@ -18,7 +18,7 @@ defmodule Vae.ExAdmin.Application do
       column(:certifier, fn a ->
         Enum.map(a.certifiers, &Helpers.link_to_resource/1)
       end)
-      column(:administrative, fn a -> a.delegate.administrative end)
+      column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:status, &application_status/1)
       column(:meeting)
       column(:booklet_1)

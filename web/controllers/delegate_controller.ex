@@ -30,6 +30,28 @@ defmodule Vae.DelegateController do
     end
   end
 
+  def show(conn, %{"id" => id} = _params) do
+    with(
+      {id, rest} <- Integer.parse(id),
+      slug <- Regex.replace(~r/^\-/, rest, ""),
+      delegate when not is_nil(delegate) <- Repo.get(Delegate, id)
+    ) do
+      if delegate.slug != slug do
+        # Slug is not up-to-date
+        redirect(conn, to: Routes.delegate_path(conn, :show, delegate, conn.query_params))
+      else
+        render(conn, "show.html",
+          delegate: delegate,
+          certifications: Delegate.get_certifications(delegate)
+        )
+      end
+    else
+      _error ->
+        raise Ecto.NoResultsError, queryable: Delegate
+    end
+
+  end
+
   defp enrich_filter_values(filter_values) do
     with {_get, updated_values} <-
            Map.get_and_update(filter_values, :certification, &update_certification/1) do

@@ -1,7 +1,18 @@
-section.section#result
-  = link("<-- Recherche", to: Routes.root_path(@conn, :index))
-  h1.title.is-1
-    | Diplômes disponibles en VAE pour le métier
-    =< @profession.label
-    = for level <- [1..5] do
-      span.tag= level_info_by_level(level)
+section.section#title
+  .container
+    = link("<-- Recherche", to: Routes.root_path(@conn, :index))
+    h1.title.is-1
+      | Diplômes disponibles en VAE pour le métier
+      =< @profession.label
+    p
+      button.button.is-rounded.is-info.is-togglable.active Toutes les équivalences
+      = for level <- 5..1 do
+        | &nbsp;
+        button.button.is-rounded.is-info.is-togglable= level_info_by_level(level)
+section.section#results
+  .container
+    = for chunk <- Enum.chunk_every(@certifications, 3) do
+      .columns
+        = for certification <- chunk do
+          .column.is-4
+            = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification

@@ -1,4 +1,27 @@
 nav.navbar {
+  padding: 1.5rem 0;
+
+  .navbar-item img {
+    max-height: none;
+  }
+
+  .permanent-burger {
+    @include hamburger($navbar-height);
+    background: none;
+    border: none;
+    width: auto;
+    padding-left: 2rem;
+    padding-right: 6px;
+    font-size: initial;
+    line-height: 3.25rem;
+    &:hover {
+      background: none;
+    }
+    span {
+      left: 6px;
+    }
+  }
+
   .screen-accessibility-helper {
     position: absolute;
     top: -1000em;

@@ -10,4 +10,12 @@
       text-decoration: underline;
     }
   }
+  &.is-togglable:not(.active) {
+    background: transparent;
+    color: initial;
+
+    &:hover {
+      border: thin solid;
+    }
+  }
 }

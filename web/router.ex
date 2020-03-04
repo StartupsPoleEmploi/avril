@@ -62,7 +62,7 @@ defmodule Vae.Router do
 
     # Basic navigation
     resources("/metiers", Vae.ProfessionController, only: [:index, :show])
-    resources("/certificateurs", Vae.DelegateController, only: [:index])
+    resources("/certificateurs", Vae.DelegateController, only: [:index, :show])
     resources("/diplomes", Vae.CertificationController, only: [:index, :show]) do
       put("/select", Vae.CertificationController, :select, as: :select)
     end

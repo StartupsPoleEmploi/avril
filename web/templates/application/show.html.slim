@@ -4,8 +4,9 @@
       p Diplôme demandé :
       h3.mb-4= Vae.Certification.name(@certification)
     .col-md-6.my-auto
-      .pull-right
-        = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
+      = if @delegate do
+        .pull-right
+          = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
   .jumbotron
     = if length(@tabs) > 1 do
       .row

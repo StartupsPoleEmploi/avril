@@ -40,9 +40,10 @@ $title-color: palette(default, title);
 $scheme-main: palette(default, background);
 $footer-background-color: $white;
 $navbar-background-color: transparent;
-$navbar-breakpoint: $radius-rounded;
+// $navbar-breakpoint: $radius-rounded;
 
 $primary: palette(blue, title);
+$info: palette(blue, background);
 
 $radius: 5px;
 

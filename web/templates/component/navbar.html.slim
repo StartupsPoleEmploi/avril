@@ -1,5 +1,5 @@
 .container
-  nav.navbar.is-spaced aria-label="main navigation" role="navigation"
+  nav.navbar aria-label="main navigation" role="navigation"
     = link "Aller au contenu principal", to: "#content", class: "screen-accessibility-helper"
     .navbar-brand
       = link to: Routes.root_path(@conn, :index), class: "navbar-item", title: "Retour à la page d'accueil" do
@@ -9,24 +9,25 @@
           span aria-hidden="true"
           span aria-hidden="true"
           span aria-hidden="true"
-        | Menu
     .navbar-menu
-      .navbar-start
-        = render Vae.ComponentView, "active_link.html", text: "C’est quoi une VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :vae), conn: @conn
-        = render Vae.ComponentView, "active_link.html", text: "Comment financer ma VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :financement), conn: @conn
-        = render Vae.ComponentView, "active_link.html", text: "Pourquoi une certification ?", class: "navbar-item", to: Routes.page_path(@conn, :pourquoi_une_certification), conn: @conn
+      - current_user = Pow.Plug.current_user(@conn)
+      - profile_path = System.get_env("NUXT_PROFIL_PATH")
       .navbar-end
-        = if Pow.Plug.current_user(@conn) do
-          - current_user = Repo.preload(Pow.Plug.current_user(@conn), applications: :certification)
-          .navbar-item.has-dropdown.is-hoverable
-            a.navbar-link= Vae.User.fullname(current_user)
-            .navbar-dropdown
-              = for application <- current_user.applications do
-                = render Vae.ComponentView, "active_link.html", text: (if length(current_user.applications) == 1, do: "Voir ma candidature", else: "Candidature pour #{Vae.Certification.name(application.certification)}"), class: "navbar-item", to: Routes.application_path(@conn, :show, application), conn: @conn
-              = if length(current_user.applications) > 0 do
-                hr.navbar-divider/
-              = link(to: Routes.pow_session_path(@conn, :delete), method: :delete, class: "navbar-item", data: [analytics: "?bouton=logout"]) do
-                span.text Me déconnecter
-        - else
-          li.navbar-item
-            = link "Me connecter", to: Routes.pow_session_path(@conn, :new), class: "button is-primary"
+        = render Vae.ComponentView, "active_link.html", text: "C’est quoi la VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :vae), conn: @conn
+        li.navbar-item
+          = if current_user && profile_path do
+            = link "Mon espace VAE", to: profile_path, class: "button is-primary is-rounded"
+          - else
+            = link "Me connecter", to: Routes.pow_session_path(@conn, :new)
+        li.navbar-item.is-hoverable
+          .permanent-burger aria-expanded="false" aria-label="menu" data-target="navbar" role="button"
+            span aria-hidden="true"
+            span aria-hidden="true"
+            span aria-hidden="true"
+            | Menu
+          .navbar-dropdown.is-right
+            h6.title.is-6.has-text-centered style="padding: 0 0.5rem; margin: 0;"
+              | Connecté en tant que #{Vae.User.fullname(current_user)}
+            .dropdown-divider
+            = link(to: Routes.pow_session_path(@conn, :delete), method: :delete, class: "navbar-item", data: [analytics: "?bouton=logout"]) do
+              span.text Me déconnecter

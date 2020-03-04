@@ -54,10 +54,13 @@ defmodule Vae.Application do
   end
 
   def find_or_create_with_params(
-        %{user_id: user_id, delegate_id: delegate_id, certification_id: certification_id} = params
+        %{user_id: user_id, certification_id: certification_id} = params
       )
-      when not is_nil(user_id) and not is_nil(delegate_id) and not is_nil(certification_id) do
-    case Repo.get_by(__MODULE__, params) do
+      when not is_nil(user_id) and not is_nil(certification_id) do
+    case Repo.get_by(__MODULE__, %{
+      user_id: user_id,
+      certification_id: certification_id
+    }) do
       nil -> Repo.insert(changeset(%__MODULE__{}, params))
       application -> {:ok, application}
     end
@@ -189,7 +192,7 @@ defmodule Vae.Application do
     application = application |> Repo.preload(:delegate)
 
     cond do
-      Delegate.is_asp?(application.delegate) ->
+      application.delegate && Delegate.is_asp?(application.delegate) ->
         "https://vaedem.asp-public.fr/vaedem/creationCompte.html"
 
       true ->

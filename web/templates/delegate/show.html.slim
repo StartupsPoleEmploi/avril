@@ -32,12 +32,3 @@
             button.btn.btn-outline-secondary.no-print onclick="javascript:window.print()"
               ' Imprimer
               .fa.fa-print
-
-      .col-md-8
-        h2.mb-4 Votre parcours V.A.E
-          = if @certification do
-            = " - #{@certification.label}"
-        .steps
-          = for i <- 1..8 do
-            .step.mb-5
-              = if not is_nil(@delegate.process), do: raw Map.get(@delegate.process, :"step_#{i}")

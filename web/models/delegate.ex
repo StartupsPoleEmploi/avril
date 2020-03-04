@@ -255,6 +255,10 @@ defmodule Vae.Delegate do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
+  def get_certifications(%Delegate{} = delegate) do
+    delegate |> Repo.preload(:certifications) |> Map.get(:certifications)
+  end
+
   defimpl Phoenix.Param, for: Vae.Delegate do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"
