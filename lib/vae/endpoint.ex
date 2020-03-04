@@ -17,7 +17,8 @@ defmodule Vae.Endpoint do
     at: "/",
     from: :vae,
     gzip: true,
-    only: ~w(css fonts images js favicon.ico apple-touch-icon.png robots.txt)
+    only: ~w(css fonts images js),
+    only_matching: ~w(favicon apple-touch-icon robots)
   )
 
   # Code reloading can be explicitly enabled under the
