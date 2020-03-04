@@ -1,5 +1,7 @@
-.section#result
-  = link("<-- Recherche", to: Routes.page_path(@conn, :index))
+section.section#result
+  = link("<-- Recherche", to: Routes.root_path(@conn, :index))
   h1.title.is-1
-    | VAE pour le métier
-    = Profession.name(@profession)
+    | Diplômes disponibles en VAE pour le métier
+    =< @profession.label
+    = for level <- [1..5] do
+      span.tag= level_info_by_level(level)
