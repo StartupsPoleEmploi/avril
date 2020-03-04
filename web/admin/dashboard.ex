@@ -49,7 +49,7 @@ defmodule Vae.ExAdmin.Dashboard do
                   i ".fa.fa-user"
                 end
                 Xain.select ".form-control#certifier_id", [name: "certifier_id"] do
-                  Xain.option "Sélectionnez un certifier"
+                  Xain.option "Sélectionnez un certifier", [value: ""]
                   Enum.map(certifiers, fn c ->
                     Xain.option(c.name, [value: c.id] ++ (if c.id == certifier_id, do: [selected: "selected"], else: []))
                   end)
