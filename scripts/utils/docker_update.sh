@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 cd "$(dirname "$0")/.."
 
 SERVICE_NAME=${1?"Usage: docker_update <SERVICE_NAME>"}
@@ -21,7 +20,6 @@ docker logs --tail=10 -f $NEW_CONTAINER_ID &
 LOGS_PID=$!
 
 until [[ $(docker ps -a -f "id=$NEW_CONTAINER_ID" -f "health=healthy" -q) ]]; do
-  # echo -ne "\r[WAIT] New instance $NEW_CONTAINER_NAME is not healthy yet ...";
   sleep 1
 done
 echo ""
@@ -30,8 +28,8 @@ wait $LOGS_PID 2>/dev/null
 
 echo "[DONE] $NEW_CONTAINER_NAME is healthy!"
 
-echo "[DONE] Restarting nginx..."
-docker-compose restart nginx
+echo "[DONE] Reloading nginx..."
+docker-compose exec nginx nginx -s reload
 
 echo -n "[INIT] Stoping $OLD_CONTAINER_NAME: "
 docker stop $OLD_CONTAINER_ID

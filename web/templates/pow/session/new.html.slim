@@ -6,11 +6,11 @@
         .text-center
           = render Vae.ComponentView, "pe-connect-button.html", conn: @conn
         p.text-center.mb-2.mt-4 - OU -
-        = form_for @changeset, @action, [as: :user], fn f ->
+        = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
           - login_field = Pow.Ecto.Schema.user_id_field(@changeset)
           .form-group
             = label f, login_field, class: "control-label"
-            = text_input f, login_field, class: "form-control", required: "required"
+            = text_input f, login_field, class: "form-control", required: "required", autocomplete: "off"
             = error_tag f, login_field
           .form-group
             = label f, "Mot de passe", class: "control-label"
