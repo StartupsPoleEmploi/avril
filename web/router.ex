@@ -22,10 +22,6 @@ defmodule Vae.Router do
       error_handler: Pow.Phoenix.PlugErrorHandler
   end
 
-  pipeline :pow_layout do
-    plug :put_layout, {Vae.LayoutView, "pow.html"}
-  end
-
   pipeline :admin do
     plug(Vae.CheckAdmin)
   end
@@ -59,6 +55,9 @@ defmodule Vae.Router do
     get("/financement-vae", Vae.PageController, :financement)
     post("/close-app-status", Vae.PageController, :close_status)
     get("/stats", Vae.PageController, :stats)
+
+    pow_routes()
+    pow_extension_routes()
 
     # Basic navigation
     resources("/metiers", Vae.ProfessionController, only: [:index, :show])
@@ -108,18 +107,6 @@ defmodule Vae.Router do
     get("/certifications/:id", Vae.Redirector, to: "/diplomes/:id")
     get("/certifiers/:id", Vae.Redirector, to: "/certificateurs?organisme=:id")
     get("/processes/:id", Vae.Redirector, to: "/", msg: "La page demandée n'existe plus.")
-  end
-
-  # Private pages
-  # scope "/" do
-  #   pipe_through([:browser, :protected])
-  #   coherence_routes(:protected)
-  # end
-
-  scope "/" do
-    pipe_through([:browser, :pow_layout])
-    pow_routes()
-    pow_extension_routes()
   end
 
   scope "/api" do

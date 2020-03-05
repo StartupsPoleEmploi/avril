@@ -1,61 +1,19 @@
-.my-5.d-flex.flex-row.align-items-center
-  button.btn-history-back style="background: no-repeat;border: none;margin-right: 1rem;line-height: 1rem;color: inherit;font-size: 1rem;"
-    span.ic-icon.ic-tail-left
-  .d-flex.flex-column
-    h1.h2.m-0 #{format_certification_label(@certification)}
-.my-5
-  #register.card.mb-5
-    .card-header.bg-secondary.text-white
-      .row.align-items-center
-        .col-md-6
-          h3.mb-0 Les étapes de votre VAE
-        .col-md-6
-          / = render Vae.ComponentView, "delegate_infos.html", delegate: @delegate
-    .card-footer.bg-primary.text-secondary
-      h5 Besoin de réfléchir avant de rencontrer votre conseiller VAE ?
-      p Laissez-nous votre email pour recevoir une synthèse des étapes VAE à venir et pouvoir être relancé.
-      / = form_for @job_seeker_changeset, Routes.job_seeker_path(@conn, :create), [class: "row align-items-center", data: [analytics: "Certification#synthese"]], fn f  ->
-      /   = hidden_input f, :certification_id, value: @certification.id
-
-      /   .col-md-8
-      /     .form-label-group
-      /       = text_input f, :email, class: "form-control form-control-lg form-control-avril bg-white", required: true, placeholder: "ex: la.classe@americaine.com", value: if Pow.Plug.current_user(@conn), do: Pow.Plug.current_user(@conn).email
-      /       = label f, dgettext("coherence", "email"), class: "form-control-placeholder", required: true
-      /       = error_tag f, :email
-      /   .col-md-4
-      /     = submit "Recevoir ma synthèse", class: "btn btn-secondary btn-block", data: [disable: true]
-button.d-none.d-md-block.btn.btn-link.no-print.px-0.pull-right.steps-print-button onclick="javascript:window.print()" data-analytics="Steps#print"
-  = img_tag '/images/printer.svg', alt: 'imprimer'
-  |  Imprimer
-
-.my-5
-  .row.my-5.align-items-center
-    .col-md
-      = img_tag '/images/step1-recevabilite.svg', alt: 'recevabilite', class: 'img-fluid my-4'
-    .col-md
-      h2.h2 Dossier de recevabilité
-      p Vous allez préparer votre candidature à la VAE. Si celui-ci est recevable, vous pourrez la démarrer.
-      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: Routes.page_path(@conn, :vae)
-  .row.my-5.align-items-center
-    .col-md.order-2.order-md-1
-      h2.h2 Dossier VAE
-      p Vous décrirez votre expérience dans un dossier, ce qui permettra à un jury d'évaluer vos compétences.
-      p Durant cette étape, un expert pourra vous accompagner et vous préparer au jury.
-      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un accompagnateur ?", duration: "4 minutes", color: "#8FE0FF", to: Routes.page_path(@conn, :vae)
-    .col-md.order-1.order-md-2
-      = img_tag '/images/step2-dossier-vae.svg', alt: 'dossier-vae', class: 'img-fluid my-4'
-  .row.my-5.align-items-center
-    .col-md
-      = img_tag '/images/step3-jury.svg', alt: 'jury', class: 'img-fluid my-4'
-    .col-md
-      h2.h2 Entretien avec un jury
-      p Un jury composé de professionnels du métier du diplôme visé, évaluera avec vous, lors d’un entretien, si vos compétences correspondent aux compétences attendues.
-      / = render Vae.ComponentView, "reading-time.html", title: "C’est quoi un certificateur ?", duration: "4 minutes", color: "#8FE0FF", to: Routes.page_path(@conn, :vae)
-  .row.my-5
-    .col-md-6.offset-md-3.text-center
-      h2.h2 Félicitations pour votre nouveau diplôme !
-      = img_tag '/images/step4-diplome-ok.svg', alt: 'diplome-ok', class: 'img-fluid my-4'
-      h2.h2 Et vous ?
-  .row
-    .col-md-12.text-center
-      = link "Démarrer un projet de VAE", to: Routes.pow_registration_path(@conn, :new), class: "btn btn-primary"
+.container
+  section.section#header
+    .columns
+      .column.is-10.is-offset-1
+        = link("<-- Diplômes", to: Routes.root_path(@conn, :index))
+        h1.title.is-1= Vae.Certification.name(@certification)
+        p
+          span.tag.is-highlighted.is-large= level_info_by_level(@certification.level)
+  section.section#call-to-action
+    .notification.is-blue
+      .columns
+        .column.is-8.is-offset-2.has-text-centered.content
+          h2.title.is-2 Commencer en douceur ma VAE
+          p Texte pour rassurer sur le niveau d'engagement. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
+  section.section#description
+    .columns
+      .column.is-10.is-offset-1.content
+        = raw @certification.description

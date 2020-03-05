@@ -63,7 +63,7 @@ const algoliaAutocompleteDelegateAddress = () => {
 const textareaToSimditor = () => {
   Simditor.locale = 'fr-FR';
 
-  $('textarea[id^=process_step_]').each((i, $el) => {
+  $('textarea').each((i, $el) => {
     $($el).val(he.decode($($el).val()))
     new Simditor({
       textarea: $($el),

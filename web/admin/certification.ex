@@ -60,6 +60,7 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym)
         input(certification, :level)
         input(certification, :rncp_id)
+        input(certification, :description, type: :text)
 
         certifier_option_tags =
           Certifier
