@@ -192,7 +192,17 @@ defmodule Vae.Delegate do
     |> put_change(:geolocation, geolocation)
   end
 
-  defp add_geolocation(changeset, _params), do: changeset
+  defp add_geolocation(
+         changeset,
+         %{geolocation: %{"city" => city, "administrative" => administrative}} = geolocation
+       ) do
+    changeset
+    |> put_change(:city, List.first(city))
+    |> put_change(:administrative, List.first(administrative))
+    |> put_change(:geolocation, geolocation)
+  end
+
+  defp add_geolocation(changeset, params), do: changeset
 
   def format_for_index(nil), do: nil
 
