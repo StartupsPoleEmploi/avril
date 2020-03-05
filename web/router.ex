@@ -126,7 +126,11 @@ defmodule Vae.Router do
     pipe_through([:api])
     get("/booklet", Vae.ApiController, :get_booklet)
     put("/booklet", Vae.ApiController, :set_booklet)
+  end
 
+  scope "/api2" do
+    pipe_through([:api, :protected])
+    get("/profile", Vae.Api.ProfileController, :index)
   end
 
   # Admin

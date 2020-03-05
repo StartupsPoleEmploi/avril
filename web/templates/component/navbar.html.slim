@@ -25,9 +25,10 @@
             span aria-hidden="true"
             span aria-hidden="true"
             | Menu
-          .navbar-dropdown.is-right
-            h6.title.is-6.has-text-centered style="padding: 0 0.5rem; margin: 0;"
-              | Connecté en tant que #{Vae.User.fullname(current_user)}
-            .dropdown-divider
-            = link(to: Routes.pow_session_path(@conn, :delete), method: :delete, class: "navbar-item", data: [analytics: "?bouton=logout"]) do
-              span.text Me déconnecter
+          = if current_user do
+            .navbar-dropdown.is-right
+              h6.title.is-6.has-text-centered style="padding: 0 0.5rem; margin: 0;"
+                | Connecté en tant que #{Vae.User.fullname(current_user)}
+              .dropdown-divider
+              = link(to: Routes.pow_session_path(@conn, :delete), method: :delete, class: "navbar-item", data: [analytics: "?bouton=logout"]) do
+                span.text Me déconnecter

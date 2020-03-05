@@ -17,7 +17,7 @@ defmodule Vae.Endpoint do
     at: "/",
     from: :vae,
     gzip: true,
-    only: ~w(css fonts images js),
+    only: ~w(css fonts images icons js),
     only_matching: ~w(favicon apple-touch-icon robots)
   )
 

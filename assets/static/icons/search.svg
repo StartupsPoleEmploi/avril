@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <defs>
+    <style>.a{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;}</style>
+  </defs>
+  <title>search</title>
+  <circle class="a" cx="8.5" cy="8.5" r="8"></circle>
+  <line class="a" x1="14.156" y1="14.156" x2="23.5" y2="23.5"></line>
+</svg>

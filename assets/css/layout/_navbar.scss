@@ -5,6 +5,10 @@ nav.navbar {
     max-height: none;
   }
 
+  .navbar-dropdown {
+    width: 200px;
+  }
+
   .permanent-burger {
     @include hamburger($navbar-height);
     background: none;
