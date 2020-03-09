@@ -122,7 +122,7 @@ defmodule Vae.Router do
     pipe_through([:api, :protected])
     # get("/booklet", Vae.Api.BookletController, :get_booklet)
     # put("/booklet", Vae.Api.BookletController, :set_booklet)
-    get("/profile", Vae.Api.ProfileController, :get_profile)
+    get("/profile", Vae.Api.ProfileController, :index)
 
     get("/applications", Vae.Api.ApplicationController, :list)
   end

@@ -1,6 +1,8 @@
 defmodule Vae.Api.ApplicationController do
   use Vae.Web, :controller
 
+  alias Vae.Application
+
   def list(conn, params) do
     current_user =
       conn.assigns[:current_user]
@@ -17,8 +19,8 @@ defmodule Vae.Api.ApplicationController do
     |> Enum.map(fn application ->
       %{
         id: application.id,
-        delegate_name: Vae.Application.delegate_name(application),
-        certification_name: Vae.Application.certification_name(application),
+        delegate_name: Application.delegate_name(application),
+        certification_name: Application.certification_name(application),
         created_at: application.inserted_at
       }
     end)
