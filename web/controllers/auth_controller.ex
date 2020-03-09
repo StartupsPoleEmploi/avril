@@ -42,8 +42,7 @@ defmodule Vae.AuthController do
       case result do
         {:ok, user} ->
           Pow.Plug.create(conn, user)
-          # Coherence.Authentication.Session.create_login(conn, user)
-          |> Vae.Pow.Routes.create_or_get_application()
+          |> Vae.Pow.Routes.maybe_create_application_and_redirect()
         {:error, msg} -> handle_error(conn, msg)
       end
 
@@ -60,7 +59,7 @@ defmodule Vae.AuthController do
 
   defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.") do
     conn
-    |> put_flash(:error, if(is_binary(msg), do: msg, else: inspect(msg)))
+    |> put_flash(:danger, if(is_binary(msg), do: msg, else: inspect(msg)))
     |> redirect(external: get_session(conn, :referer))
   end
 end

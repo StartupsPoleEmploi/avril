@@ -19,7 +19,7 @@ defmodule Vae.ApplicationController.ResumeController do
 
         {:error, msg} ->
           conn
-          |> put_flash(:error, msg)
+          |> put_flash(:danger, msg)
           |> redirect_back(default: Routes.application_path(conn, :show, application))
       end
     else
@@ -44,7 +44,7 @@ defmodule Vae.ApplicationController.ResumeController do
 
       {:error, _msg} ->
         conn
-        |> put_flash(:error, "Le CV n'a pas pu être supprimé, merci de réessayer plus tard.")
+        |> put_flash(:danger, "Le CV n'a pas pu être supprimé, merci de réessayer plus tard.")
         |> redirect_back(default: Routes.application_path(conn, :show, application))
     end
   end

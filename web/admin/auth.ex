@@ -13,7 +13,7 @@ defmodule Vae.CheckAdmin do
         conn
       else
         conn
-        |> put_flash(:error, "Vous n'avez pas accès.")
+        |> put_flash(:danger, "Vous n'avez pas accès.")
         |> redirect(to: Routes.root_path(conn, :index))
       end
     else

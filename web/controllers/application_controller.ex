@@ -17,14 +17,14 @@ defmodule Vae.ApplicationController do
           |> Enum.find(fn a -> a.booklet_hash == params["hash"] end)
     ) do
       case params["msg"] do
-        "request_failed" -> put_flash(conn, :error, "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard.")
-        "not_allowed" -> put_flash(conn, :error, "Vous n'avez pas accès.")
+        "request_failed" -> put_flash(conn, :danger, "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard.")
+        "not_allowed" -> put_flash(conn, :danger, "Vous n'avez pas accès.")
         _ -> conn
       end |> redirect(to: "#{Routes.application_path(conn, :show, current_application)}#booklet")
     else
       _error ->
         conn
-          |> put_flash(:error, "Vous n'avez pas accès")
+          |> put_flash(:danger, "Vous n'avez pas accès")
           |> redirect(to: Routes.root_path(conn, :index))
     end
   end
@@ -124,7 +124,7 @@ defmodule Vae.ApplicationController do
         Logger.error(fn -> inspect(msg) end)
 
         conn
-          |> put_flash(:error, "Une erreur est survenue, merci de réessayer plus tard")
+          |> put_flash(:danger, "Une erreur est survenue, merci de réessayer plus tard")
           |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end
@@ -146,7 +146,7 @@ defmodule Vae.ApplicationController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "Une erreur est survenue: #{msg}. Merci de réessayer plus tard.")
+        |> put_flash(:danger, "Une erreur est survenue: #{msg}. Merci de réessayer plus tard.")
         |> redirect(to: Routes.application_path(conn, :show, application))
     end
   end

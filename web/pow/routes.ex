@@ -28,17 +28,15 @@ defmodule Vae.Pow.Routes do
 
   def after_sign_in(conn) do
     conn
-    |> maybe_create_application()
-    |> redirect_to_user_space()
+    |> maybe_create_application_and_redirect()
   end
 
   def after_registration(conn) do
     conn
-    |> maybe_create_application()
-    |> redirect_to_user_space()
+    |> maybe_create_application_and_redirect()
   end
 
-  def maybe_create_application(conn) do
+  def maybe_create_application_and_redirect(conn) do
     with(
       current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
       certification_id when not is_nil(certification_id) <- Plug.Conn.get_session(conn, :certification_id),
@@ -53,9 +51,10 @@ defmodule Vae.Pow.Routes do
         Logger.warn("Application not created: #{inspect(error)}")
         conn
     end
+    |> redirect_to_user_space()
   end
 
-  def redirect_to_user_space(conn) do
+  defp redirect_to_user_space(conn) do
     if Pow.Plug.current_user(conn) do
       user_space_path = System.get_env("NUXT_PROFIL_PATH")
       if user_space_path do

@@ -20,7 +20,7 @@ defmodule Vae.UserController do
         |> redirect_back(default: default_route)
       {:error, _changeset} ->
         conn
-        |> put_flash(:error, "Une erreur est survenue")
+        |> put_flash(:danger, "Une erreur est survenue")
         |> redirect_back(default: default_route)
     end
   end

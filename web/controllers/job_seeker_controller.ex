@@ -34,7 +34,7 @@ defmodule Vae.JobSeekerController do
     else
       _ ->
         conn
-        |> put_flash(:error, "Une erreur est survenue, merci de réessayer plus tard.")
+        |> put_flash(:danger, "Une erreur est survenue, merci de réessayer plus tard.")
         |> redirect(to: Routes.certification_path(
           conn,
           :show,
