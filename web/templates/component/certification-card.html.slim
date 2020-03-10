@@ -4,7 +4,7 @@
       = link(Vae.Certification.name(@certification), to: Routes.certification_path(@conn, :show, @certification), class: "title is-4")
     p.description
       span.tag.is-highlighted= level_info_by_level(@certification.level)
-  .card-content
+  .card-content.content
     = raw @certification.description
   .card-footer
     = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button has-text-weight-bold is-transparent"

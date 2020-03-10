@@ -1,4 +1,20 @@
 .button {
+  border: transparent;
+  &.is-text {
+    position: relative;
+    left: -1em;
+
+    &.is-blue-hover:hover {
+      background-color: palette(blue, background);
+    }
+    &.is-green-hover:hover {
+      background-color: palette(green, background);
+    }
+    &.is-yellow-hover:hover {
+      background-color: palette(yellow, background);
+    }
+  }
+
   &.is-transparent {
     background: transparent;
     border: none;
@@ -20,7 +36,7 @@
   }
   &.is-pe-connect {
     // font-size: 14px;
-    font-family: "Lato", sans-serif !important;
+    font-family: Lato, sans-serif !important;
     display: inline-block;
     padding: 6px 10px 5px 13px;
     border-radius: 100px;

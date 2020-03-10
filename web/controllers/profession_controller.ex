@@ -13,19 +13,13 @@ defmodule Vae.ProfessionController do
     filter search(query, %{sort: field, order: order}, _conn) do
       order_by(query, [{^order, ^field}])
     end
-  end
 
-  def index(conn, params) do
-    with {:ok, query, filter_values} <- apply_filters(Profession, conn),
-      page <- Repo.paginate(query, params),
-     do:
-
-      render(conn, "index.html",
-        professions: Repo.preload(page.entries, :rome),
-        meta: filter_values,
-        page: page,
-        with_search: false
-      )
+    # @options param: :levels,
+    #          default: [1, 2, 3, 4, 5],
+    #          cast: &(String.split(&1, ","))
+    # filter levels(query, value, _conn) do
+    #   query |> where([c], c.level in ^value)
+    # end
   end
 
   def show(conn, %{"id" => id} = params) do

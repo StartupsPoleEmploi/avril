@@ -9,18 +9,27 @@ section.section#search
             = render Vae.ComponentView, "searchbar.html", conn: @conn
         .column.is-4
           = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", style: "float: right;transform: scale(2) translateX(1rem) translateY(20px);height: 17rem;transform-origin: right;"
-    = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text")
-    = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text")
-    = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text")
+    p
+      = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-green-hover")
+      = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-green-hover")
+      = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-green-hover")
 section.section#examples
   .container
     .columns
       = for certification <- @certification_examples do
         .column.is-3
           = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification
-      .column.is-4.is-offset-1.section
-        h2.title.is-2 Vous qui voulez que l'on reconnaisse vos compétences
-        p Comme plus de 300 000 français, faites une VAE. Avril vous accompagne jusqu'à l'obtention du diplôme.
+      .column.is-4.is-offset-1
+        .section.is-horizontal
+          h2.title.is-2 Vous qui voulez que l'on reconnaisse vos compétences
+          p Comme plus de 300 000 français, faites une VAE. Avril vous accompagne jusqu'à l'obtention du diplôme.
+        .section
+          p
+            = link("Parcourir les métiers", to: Routes.rome_path(@conn, :index), class: "button is-text is-blue-hover")
+            = link("Parcourir les diplômes", to: Routes.certification_path(@conn, :index), class: "button is-text is-blue-hover")
+
+
+
 section#online
   .container
     .columns
@@ -36,9 +45,9 @@ section#online
         .section.is-small.is-vertical
           h2.title.is-2 Mettez toutes les chances de votre côté
 
-          = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text")
-          = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text")
-          = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text")
+          = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-yellow-hover")
+          = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-yellow-hover")
+          = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-yellow-hover")
       .column.is-4.is-offset-2 style="flex-direction: column-reverse; display: flex;"
         = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "transform-origin: bottom right;"
 
@@ -50,7 +59,8 @@ section.section.is-blue.is-medium#delegates
           = for delegate <- @delegate_examples do
             .column
               = render Vae.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
-        = link("Trouver le mien", to: "#", class: "button is-yellow is-rounded is-medium")
+        .section.is-vertical
+          = link("Trouver le mien", to: "#", class: "button is-yellow is-rounded is-medium")
       .column.is-4.is-offset-1
         h2.title.is-2 Votre certificateur n'a jamais été aussi proche de vous
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.

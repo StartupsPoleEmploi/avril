@@ -1,60 +1,30 @@
-div
-  = if !(assigns[:no_results] && @no_results) do
-    .my-5
-      h1.h3 Diplômes compatibles avec la VAE #{meta_certification(@meta)}
-
-    .m-4.d-flex.flex-column
-      select.selectpicker id="level-selector" multiple="multiple"
+= if length(@certifications) == 0 do
+  = render("no-results.html")
+- else
+  section.section#title
+    .container
+      = if assigns[:rome] do
+        = render Vae.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
+      h1.title.is-1
+        | Diplômes disponibles en VAE
+        = if assigns[:profession] do
+          |  pour le métier #{@profession.label}
+        - else
+          = if assigns[:rome] do
+            |  pour les métiers de #{@rome.label}
+      p
+        button.button.is-rounded.is-info.is-togglable.active Toutes les équivalences
         = for level <- 5..1 do
-          option value="#{level}" #{level_info_by_level(level)}
-      em Le niveau indiqué est celui que vous obtiendrez.
-
-  .row
-    .col-md-9
-      = if assigns[:no_results] && @no_results do
-        = render("_no-results.html")
-      - else
-        = if @page.total_entries == 0 do
-          p Aucun résultat pour le niveau sélectionné
-      = for certification <- @certifications do
-        .my-4.card.p-0.p-md-2
-          .card-body
-            h2.h5.card-title
-              = link(format_certification_label(certification), to: to_delegate(@conn, certification, @conn.params["certificateur"]))
-            h3.h6.card-subtitle.my-3
-              span.font-weight-normal> Niveau obtenu :
-              a href="#" #{level_info_by_level(certification.level)}
-            = if certification.description do
-              .card-text.my-3
-                .truncate
-                  = raw certification.description
-            .row
-              .col-lg-6.d-flex.justify-content-around.justify-content-lg-between
-                = link("Quelles vont être les étapes ?", to: to_delegate(@conn, certification, @conn.params["certificateur"]), aria_label: "Les étapes VAE pour #{format_certification_label(certification)}", class: "btn btn-link")
-              .col-lg-6.d-flex.justify-content-around.justify-content-lg-between.flex-row-reverse
-                = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: certification
-    .col
-      = link to: Routes.page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Comment bien choisir son diplôme ?
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: Routes.page_path(@conn, :financement), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Comment financer ma VAE ?
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: Routes.page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Les Points Relais Conseil
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
+          | &nbsp;
+          button.button.is-rounded.is-info.is-togglable href="?"
+            = level_info_by_level(level)
+  section.section#results
+    .container
+      = for chunk <- Enum.chunk_every(@certifications, 3) do
+        .columns
+          = for certification <- chunk do
+            .column.is-4
+              = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
 

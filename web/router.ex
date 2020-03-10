@@ -62,7 +62,8 @@ defmodule Vae.Router do
     pow_extension_routes()
 
     # Basic navigation
-    resources("/metiers", Vae.ProfessionController, only: [:index, :show])
+    resources("/rome", Vae.RomeController, only: [:index, :show])
+    # resources("/metiers", Vae.ProfessionController, only: [:show])
     resources("/certificateurs", Vae.DelegateController, only: [:index, :show])
 
     resources("/diplomes", Vae.CertificationController, only: [:index, :show]) do

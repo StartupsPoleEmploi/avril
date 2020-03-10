@@ -1,0 +1,13 @@
+section.section#title
+  .container
+    = render "breadcrumbs.html", conn: @conn, assigns: assigns
+    h1.title.is-3
+      = if assigns[:rome] do
+        = "Sous-catégories de #{@rome.label}"
+      - else
+        | Catégories disponibles dans le référentiel ROME
+section.section#results
+  .container.content
+    ul
+      = for rome <- @romes do
+        li= link(rome.label, to: Routes.rome_path(@conn, :show, rome))

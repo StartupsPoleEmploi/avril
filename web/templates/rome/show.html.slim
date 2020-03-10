@@ -1,0 +1,12 @@
+section.section#title
+  .container
+    = render "breadcrumbs.html", conn: @conn, assigns: assigns
+    .content
+      h1.title.is-3 Métiers disponibles pour #{@rome.label}
+      ul
+        = for profession <- @rome.professions do
+          li= link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
+= if length(@rome.certifications) do
+  .section.has-text-centered
+    .container
+      = link("Voir les diplômes associés", to: Routes.certification_path(@conn, :index, rome_code: @rome.code), class: "button is-primary is-rounded is-medium")

@@ -29,6 +29,11 @@ defmodule Vae.Certification do
     )
 
     has_many(
+      :professions,
+      through: [:romes, :professions]
+    )
+
+    has_many(
       :certifications_delegates,
       CertificationDelegate,
       on_delete: :delete_all,

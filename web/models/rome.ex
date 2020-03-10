@@ -31,12 +31,6 @@ defmodule Vae.Rome do
     |> unique_constraint(:slug)
   end
 
-  # def all() do
-  #   Rome
-  #   |> order_by(:code)
-  #   |> Repo.all()
-  # end
-
   def format_for_index(struct) do
     struct
     |> Map.take(__schema__(:fields))
@@ -65,34 +59,50 @@ defmodule Vae.Rome do
     Regex.match?(~r/^[A-Z]\d\d$/, rome.code)
   end
 
+  def categories() do
+    query = from m in Rome, where: like(m.code, ^("_"))
+    Repo.all(query)
+  end
+
   def category(rome) do
-    %{category: category} = __MODULE__.code_parts(rome)
+    %{category: category} = code_parts(rome)
     if category != rome.code do
-      Repo.get_by(__MODULE__, code: category)
+      Repo.get_by(Rome, code: category)
     end
   end
 
   def subcategory(rome) do
-    %{subcategory: subcategory} = __MODULE__.code_parts(rome)
+    %{subcategory: subcategory} = code_parts(rome)
     if subcategory != rome.code do
-      Repo.get_by(__MODULE__, code: subcategory)
+      Repo.get_by(Rome, code: subcategory)
     end
   end
 
+  def subcategories() do
+    query = from m in Rome, where: like(m.code, ^("___")), order_by: [asc: :code]
+    Repo.all(query)
+  end
+
   def subcategories(rome) do
-    %{category: category} = __MODULE__.code_parts(rome)
-    query = from m in __MODULE__, where: like(m.code, ^("#{category}__"))
+    %{category: category} = code_parts(rome)
+    query = from m in Rome, where: like(m.code, ^("#{category}__")), order_by: [asc: :code]
     Repo.all(query)
   end
 
   def romes(rome) do
-    %{subcategory: subcategory} = __MODULE__.code_parts(rome)
-    query = from m in __MODULE__, where: like(m.code, ^("#{String.pad_trailing(subcategory, 5, "_")}"))
+    %{subcategory: subcategory} = code_parts(rome)
+    query = from m in Rome, where: like(m.code, ^("#{String.pad_trailing(subcategory, 5, "_")}")), order_by: [asc: :code]
     Repo.all(query)
   end
 
-  def to_slug(rome) do
-    Vae.String.parameterize(rome.label)
+  def name(%Rome{label: label}) do
+    label
+  end
+
+  def to_slug(%Rome{} = rome) do
+    rome
+    |> name()
+    |> Vae.String.parameterize()
   end
 
   def slugify(changeset) do
@@ -100,8 +110,8 @@ defmodule Vae.Rome do
   end
 
   defimpl Phoenix.Param, for: Vae.Rome do
-    def to_param(%{id: id, slug: slug}) do
-      "#{id}-#{slug}"
+    def to_param(%{code: code, slug: slug}) do
+      "#{code}-#{slug}"
     end
   end
 end

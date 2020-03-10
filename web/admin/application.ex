@@ -78,7 +78,7 @@ defmodule Vae.ExAdmin.Application do
       end
 
       panel "Resumes" do
-        table_for Vae.Repo.preload(application, [:resumes]).resumes do
+        table_for application.resumes do
           column(:id, fn r -> Helpers.link_to_resource(r, namify: fn r -> r.id end) end)
           column(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url) end)
           column(:inserted_at)
@@ -122,13 +122,18 @@ defmodule Vae.ExAdmin.Application do
     filter(:delegate, order_by: :name)
     filter [:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at]
 
+    @all_preloads [ :delegate, :user, :certification, :certifiers]
+
     query do
       %{
-        all: [
-          preload: [ :delegate, :user, :certification, :certifiers]
-        ],
         index: [
           default_sort: [desc: :inserted_at]
+        ],
+        show: [
+          preload: @all_preloads ++ [:resumes]
+        ],
+        all: [
+          preload: @all_preloads
         ]
       }
     end

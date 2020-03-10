@@ -31,9 +31,10 @@ defmodule Vae.ExAdmin.Helpers do
     end
   end
 
-  def csv_espace(string) do
+  def csv_espace(string) when is_binary(string) do
     string |> String.replace(~r/\"/, "\"\"")
   end
+  def csv_espace(other), do: other
 
   def print_in_json(nil), do: nil
   def print_in_json(data) do
