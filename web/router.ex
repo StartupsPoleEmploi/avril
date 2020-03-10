@@ -3,7 +3,9 @@ defmodule Vae.Router do
   use Plug.ErrorHandler
   use Sentry.Plug
   use Pow.Phoenix.Router
-  use Pow.Extension.Phoenix.Router, otp_app: :vae,
+
+  use Pow.Extension.Phoenix.Router,
+    otp_app: :vae,
     extensions: [PowResetPassword, PowEmailConfirmation]
 
   use ExAdmin.Router
@@ -62,6 +64,7 @@ defmodule Vae.Router do
     # Basic navigation
     resources("/metiers", Vae.ProfessionController, only: [:index, :show])
     resources("/certificateurs", Vae.DelegateController, only: [:index, :show])
+
     resources("/diplomes", Vae.CertificationController, only: [:index, :show]) do
       put("/select", Vae.CertificationController, :select, as: :select)
     end
@@ -115,9 +118,13 @@ defmodule Vae.Router do
     put("/booklet", Vae.ApiController, :set_booklet)
   end
 
-  scope "/api2" do
+  scope "/api2", as: :api do
     pipe_through([:api, :protected])
+    # get("/booklet", Vae.Api.BookletController, :get_booklet)
+    # put("/booklet", Vae.Api.BookletController, :set_booklet)
     get("/profile", Vae.Api.ProfileController, :index)
+
+    get("/applications", Vae.Api.ApplicationController, :list)
   end
 
   # Admin
@@ -132,10 +139,13 @@ defmodule Vae.Router do
 
   defp fetch_app_status(conn, _opts) do
     status = GenServer.call(Status, :get)
-    if status && # There is a status
-      get_session(conn, :app_status_closed) != Vae.String.encode(status.message) && # not closed
-      (is_nil(status.starts_at) || (Timex.before?(status.starts_at, Timex.now()))) && # in interval
-      (is_nil(status.ends_at) || (Timex.after?(status.ends_at, Timex.now()))) do
+    # There is a status
+    # not closed
+    # in interval
+    if status &&
+         get_session(conn, :app_status_closed) != Vae.String.encode(status.message) &&
+         (is_nil(status.starts_at) || Timex.before?(status.starts_at, Timex.now())) &&
+         (is_nil(status.ends_at) || Timex.after?(status.ends_at, Timex.now())) do
       Map.merge(conn, %{app_status: status})
     else
       conn

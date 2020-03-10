@@ -188,6 +188,20 @@ defmodule Vae.Application do
     |> Map.get(:name)
   end
 
+  def delegate_name(application) do
+    application
+    |> Repo.preload(:delegate)
+    |> get_in([Access.key(:delegate)])
+    |> Map.get(:name)
+  end
+
+  def certification_name(application) do
+    application
+    |> Repo.preload(:certification)
+    |> get_in([Access.key(:certification)])
+    |> Map.get(:label)
+  end
+
   def booklet_url(endpoint, application, path \\ nil) do
     application = application |> Repo.preload(:delegate)
 
