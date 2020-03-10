@@ -23,6 +23,8 @@ defmodule Vae.Places.Client.Algolia do
     get(%{query: city}, @algolia_places_query)
   end
 
+  def get_geoloc_from_address(address) when address in [nil, ""], do: nil
+
   def get_geoloc_from_address(address) do
     get(%{query: address}, @algolia_places_query)
   end
