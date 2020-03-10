@@ -11,9 +11,7 @@ defmodule Vae.PageController do
       delegate_examples: [
         Repo.get(Vae.Delegate, 2),
         Repo.get(Vae.Delegate, 12)
-      ],
-      no_container: true,
-      body_class: 'home'
+      ]
     )
   end
 
@@ -37,8 +35,7 @@ defmodule Vae.PageController do
     render(conn, "receipts.html",
       title: "Les justificatifs de la VAE",
       description: "La liste des justificatifs à fournir peut varier grandement selon la situation du candidat : voici le détail.",
-      return_button: true,
-      body_class: 'home'
+      is_landing: true
     )
   end
 
@@ -70,8 +67,7 @@ defmodule Vae.PageController do
     render(conn, "certificateur-vae-definition.html",
       title: "C'est quoi un certificateur VAE ?",
       description: "Tout comprendre sur le certificateur VAE, l'organisme qui vous délivrera votre diplôme. DAVA, CAVA, ASP n'auront plus de secret pour vous.",
-      is_landing: true,
-      no_wrapper: true
+      is_landing: true
     )
   end
 
@@ -86,8 +82,7 @@ defmodule Vae.PageController do
   def financement(conn, _params) do
     render(conn, "financement.html",
       title: "Comment financer ma VAE ?",
-      description: "Il existe de nombreuses solutions de financement pour votre projet de VAE. Decouvrez comment cela fonctionne.",
-      body_class: "bg-white"
+      description: "Il existe de nombreuses solutions de financement pour votre projet de VAE. Decouvrez comment cela fonctionne."
     )
   end
 

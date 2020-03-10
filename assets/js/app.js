@@ -119,7 +119,8 @@ $(() => {
     return false;
   });
 
-  $('.app-status button.close').on('click', e => {
+  $('.app-status button.delete').on('click', e => {
+    $(e.target).parents('.app-status').hide();
     $.ajax('/close-app-status', {
       method: 'POST',
       data: {

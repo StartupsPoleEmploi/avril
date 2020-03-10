@@ -1,6 +1,6 @@
 = if Map.has_key?(@conn, :app_status) do
   - %{message: message, level: level} = @conn.app_status
-  .app-status.notification role="alert" class="is-#{level}"
-    button.close aria-label="Close" type="button" data-dismiss="alert" data-csrf=Plug.CSRFProtection.get_csrf_token()
-      span aria-hidden="true" &times;
-    = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw
+  .app-status.notification.is-top role="alert" class="is-#{level}"
+    button.delete aria-label="Fermer" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token()
+    .container
+      = message |> String.trim() |> Earmark.as_html!() |> IO.inspect() |> Phoenix.HTML.raw

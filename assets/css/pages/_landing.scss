@@ -1,0 +1,59 @@
+body.landing-page {
+  background: $white;
+
+  .content {
+
+    h1, h2, h3 {
+      @extend .title;
+      em {
+        text-align: center;
+        display: block;
+        font-style: normal;
+      }
+    }
+
+    h1 {
+      @extend .is-1;
+      text-align: center;
+      // padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    h2 {
+      @extend .is-2;
+      margin-top: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    h3 {
+      @extend .is-3;
+    }
+
+    strong {
+      em {
+        font-size: 2em;
+        color: $primary;
+        font-style: normal;
+        display: block;
+        text-align: center;
+        font-weight: normal;
+      }
+      a {
+        display: block;
+        max-width: 300px;
+        margin: 3rem auto;
+
+        @extend .button;
+        @extend .is-primary;
+        @extend .is-medium;
+        @extend .is-rounded;
+      }
+    }
+
+    img {
+      max-width: 100%;
+      margin: 3rem auto;
+      display: block;
+    }
+  }
+}

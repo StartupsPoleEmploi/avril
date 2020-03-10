@@ -1,28 +1,6 @@
 - flashes_types = [:danger, :warning, :success, :info]
 = for type <- flashes_types do
   = if message = get_flash(@conn, type) do
-    p.notification class="is-#{type}" role="alert"
-      = message
-      button.delete aria-label="Close" type="button"
-
-/ = if error = get_flash(@conn, :error) do
-/   - level = :danger
-/   - else
-/   p.notification.is-danger role="alert"
-/     = error
-/ - else
-/   = if warning = get_flash(@conn, :warning) do
-/     p.notificaton.is-warning role="alert"
-/       = warning
-/       button.delete aria-label="Close" type="button"
-/   - else
-/     = if success = get_flash(@conn, :success) do
-/       p.notificaton.is-success role="alert"
-/         = success
-/         button.delete aria-label="Close" type="button"
-/     - else
-/       = if info = get_flash(@conn, :info) do
-/         p.notificaton.is-info role="alert"
-/           = info
-/           button.delete aria-label="Close" type="button"
-
+    .flash.notification.is-top class="is-#{type}" role="alert"
+      button.delete aria-label="Fermer" type="button"
+      p= message

@@ -1,31 +1,45 @@
-.row
-  .col-lg-8.offset-lg-2.col-md-10.offset-md-1
-
-    h1.text-center.mb-5 Contactez-nous
-
-    .message.infos.collapse.show
-      = render "_contact.html", assigns
-
-      .text-center.mt-5
-        button.btn.btn-primary data-toggle="collapse" data-target=".message" J'ai compris, mon message concerne un problème technique
-
-    .message.form.collapse
-      = form_for @contact_changeset, Routes.page_path(@conn, :submit_contact), [id: "contact-form"], fn f ->
-        .row
-          .col-md-6
-            .form-group
-              = label f, :name, "Votre nom :"
-              = text_input f, :name, class: "form-control", placeholder: "Nom", required: true
-          .col-md-6
-            .form-group
-              = label f, :email, "Votre adresse e-mail :"
-              = email_input f, :email, class: "form-control", placeholder: "Email", required: true
-        .form-group
-          = label f, :object, "Votre message :"
-          = text_input f, :object, class: "form-control", placeholder: "Objet", required: true
-        .form-group
-          = textarea f, :body, class: "form-control", placeholder: "Contenu", required: true, rows: 5
-        .form-group
-          = submit class: "btn btn-primary" do
-            span.fa.fa-envelope
-            |  Envoyer
+section.section.container
+  .columns
+    .column.is-8.is-offset-2
+      h1.title.is-1.has-text-centered Contactez-nous
+section.section.container#warning
+  .columns
+    .column.is-8.is-offset-2
+      .content
+        = render "_contact.html", assigns
+        .section.has-text-centered
+          button.button.is-primary.is-medium.is-rounded onclick="$('#form').removeClass('is-hidden');$('#warning').addClass('is-hidden');" J'ai compris, mon message concerne un problème technique
+section.section.container#form.is-hidden
+  .columns
+    .column.is-8.is-offset-2
+      = form_for @contact_changeset, Routes.page_path(@conn, :submit_contact), [class: "form"], fn f ->
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :name, "Votre nom :", class: "label"
+          .field-body
+            .field
+              = text_input f, :name, class: "input", placeholder: "Nom", required: true
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :email, "Votre adresse e-mail :", class: "label"
+          .field-body
+            .field
+              = email_input f, :email, class: "input", placeholder: "Email", required: true
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :object, "Objet :", class: "label"
+          .field-body
+            .field
+              = text_input f, :object, class: "input", placeholder: "Objet", required: true
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :body, "Votre message :", class: "label"
+          .field-body
+            .field
+              = textarea f, :body, class: "textarea", placeholder: "Contenu", required: true, rows: 5
+        .field.is-horizontal
+          .field-label
+          .field-body
+            .field
+              .control
+                = submit "Envoyer", class: "button is-primary"
