@@ -11,7 +11,7 @@ defmodule Vae.ExAdmin.Helpers do
       true -> resource.name
     end
     path = ExAdmin.Utils.admin_resource_path(resource)
-    {name, path}
+    {csv_espace(name), path}
   end
 
   def path_to_url(path), do: "#{Vae.Endpoint.static_url}#{path}"
@@ -26,8 +26,13 @@ defmodule Vae.ExAdmin.Helpers do
   def csv_link_to_resource(resource, opts \\ []) do
     case resource_name_and_link(resource, opts) do
       nil -> nil
-      {name, path} -> "=HYPERLINK(\"#{path_to_url(path)}\";\"#{name}\")"
+      # {name, path} -> "[[hyperlink URL link=#{path_to_url(path)} display=#{name}]]"
+      {name, path} -> "=HYPERLINK(\"#{path_to_url(path)}\",\"#{name}\")"
     end
+  end
+
+  def csv_espace(string) do
+    string |> String.replace(~r/\"/, "\"\"")
   end
 
   def print_in_json(nil), do: nil
