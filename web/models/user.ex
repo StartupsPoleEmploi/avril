@@ -283,6 +283,10 @@ defmodule Vae.User do
     user.email
   end
 
+  def name(user) do
+    fullname(user)
+  end
+
   def formatted_email(user) do
     cond do
       fullname(user) == user.email -> user.email
