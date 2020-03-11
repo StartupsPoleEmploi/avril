@@ -56,6 +56,7 @@ defmodule Vae.Api.ApplicationController do
         full_address: application.delegate.address
       },
       certification: %{
+        id: application.certification.id,
         label: application.certification.label,
         level: application.certification.level
       },
