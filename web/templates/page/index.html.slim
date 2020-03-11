@@ -60,12 +60,13 @@ section.section.is-blue.is-medium#delegates
             .column
               = render Vae.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
         .section.is-vertical
-          = link("Trouver le mien", to: "#", class: "button is-yellow is-rounded is-medium")
+          = link("Trouver le mien", to: Routes.delegate_path(@conn, :index), class: "button is-yellow is-rounded is-medium")
       .column.is-4.is-offset-1
         h2.title.is-2 Votre certificateur n'a jamais été aussi proche de vous
         p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
         .section.is-vertical
-          = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text is-medium")
+          = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text")
+
 section.section.is-medium#callback
   .container
     .columns

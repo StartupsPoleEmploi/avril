@@ -1,5 +1,6 @@
 section.section#title
   .container
+    = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
     = render "breadcrumbs.html", conn: @conn, assigns: assigns
     h1.title.is-2.has-text-centered
       = if assigns[:rome] do

@@ -1,34 +1,28 @@
-.container
-  .row
-    .col-md-12
-      h1.m-2.m-sm-5.text-center Découvrez votre parcours VAE
-  .delegate
-    .row
-      .col-md-4
-        .card.mb-4
-          .card-body
-            .card-title
-              h2= @delegate.name
-            .card-text
-              ul.delegate-details.list-unstyled.pl-0
-                = if @delegate.person_name && @delegate.person_name != "" do
-                  li
-                    i.fa.fa-user aria-hidden="true"
-                    '
-                    = @delegate.person_name
+section.section
+  .container
+    = link("Certificateurs", to: Routes.delegate_path(@conn, :index), class: "button is-back")
+    .has-text-centered
+      h2.subtitle.is-2 Démarrez votre VAE avec le certificateur
+      h1.title.is-1= @delegate.name
 
-                = if @delegate.telephone && @delegate.telephone != "" do
-                  li
-                    i.fa.fa-phone aria-hidden="true"
-                    '
-                    = @delegate.telephone
-
-                = if @delegate.website && @delegate.website do
-                  li= link @delegate.website, to: @delegate.website, target: '_blank', data: [analytics: "Delegates#website"]
-                li
-                  i.fa.fa-map-marker
-                  '
-                  = @delegate.address
-            button.btn.btn-outline-secondary.no-print onclick="javascript:window.print()"
-              ' Imprimer
-              .fa.fa-print
+  .container
+    .columns
+      .column.is-6.is-offset-3.content
+        .section.is-small.has-text-centered
+          p
+            button.button.is-info.is-rounded.is-small onclick="javascript:window.print()"
+              | Imprimer
+        ul
+          li
+            strong= @delegate.name
+          li= @delegate.address
+          = if @delegate.person_name do
+            li Nom du contact : #{@delegate.person_name}
+          = if @delegate.telephone do
+            li Téléphone : #{@delegate.telephone}
+          = if @delegate.website do
+            li
+              span Site internet :
+              =< link(@delegate.website, to: @delegate.website, target: "_blank")
+        .section.is-small.has-text-centered
+          = link("Démarrez votre VAE avec ce certificateur", to: Routes.pow_session_path(@conn, :new), class: "button is-primary is-rounded")

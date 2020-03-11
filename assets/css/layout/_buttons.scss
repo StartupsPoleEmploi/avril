@@ -26,6 +26,29 @@
       text-decoration: underline;
     }
   }
+
+  &.is-back {
+    color: palette(default, text);
+    left: -1rem;
+    margin-bottom: 1rem;
+    background: transparent;
+    @extend .is-medium;
+
+    &:before {
+      content: '⟵';
+      padding-right: 0.5rem;
+      position: relative;
+      left: 0;
+      transition: left 0.25s ease;
+    }
+
+    &:hover {
+      &:before {
+        left: -1rem;
+      }
+    }
+  }
+
   &.is-pe-connect {
     // font-size: 14px;
     font-family: Lato, sans-serif !important;

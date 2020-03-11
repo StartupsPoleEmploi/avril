@@ -1,37 +1,33 @@
-div
-  = if length(@delegates) > 0 do
-    .my-5
-      h1.h3 Certificateurs possibles#{meta_delegate(@meta)}
-
-  .row
-    .col-md-9
-      = if length(@delegates) == 0 do
-        = render("_no-results.html")
-      = for delegate <- @delegates do
-        .my-4.card.p-0.p-md-2
-          .card-body
-            h2.h5.card-title
-              = link(delegate.name, to: to_certification(@conn, delegate, @conn.params["diplome"]))
-            .d-flex
-              .ml-auto
-                = link(to: to_certification(@conn, delegate, @conn.params["diplome"]), aria_label: "Les diplômes à #{delegate.name}", class: "btn btn-sm btn-primary d-flex align-items-center") do
-                  span.ic-icon.ic-tail-right-2.mr-2
-                  span #{to_certification_label(@conn.params["diplome"])}
-    .col
-      h4.h6.my-4 Vous ne trouvez pas votre diplôme ?
-      = link to: Routes.page_path(@conn, :choose_certification), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Comment bien choisir son diplôme ?
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
-      = link to: Routes.page_path(@conn, :point_relais_conseil), class: "card card-pages p-4 my-4" do
-        h5.mb-5 Les Points Relais Conseil
-        div.d-flex
-          div.mr-4
-            span.ic-icon.ic-time-clock.mr-2
-            | 4 minutes
-          = img_tag '/images/play.svg', alt: 'lecture'
+= if length(@delegates) == 0 do
+  = render("no-results.html")
+- else
+  section.section#title
+    .container
+      = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
+      h1.title.is-1 Certificateurs VAE
+      / form method="get" class="toggler"
+      /   = for {key, value} <- Map.delete(@conn.query_params, "levels") do
+      /     input type="hidden" name=key value=value
+      /   input type="hidden" name="levels"
+      /   - possible_levels = 1..5 |> Enum.to_list()
+      /   - is_all = possible_levels == @levels
+      /   ul
+      /     li
+      /       input type="checkbox" value="all" id="all_levels" checked=is_all
+      /       label.button.is-rounded.is-info.is-togglable for="all_levels"
+      /         | Toutes les équivalences
+      /     = for level <- possible_levels |> Enum.reverse() do
+      /       li
+      /         input type="checkbox" value=level id="level_#{level}" checked=(!is_all && Enum.member?(@levels, level))
+      /         label.button.is-rounded.is-info.is-togglable for="level_#{level}"
+      /           = level_info_by_level(level)
+  section.section#results
+    .container
+      = for chunk <- Enum.chunk_every(@delegates, 3) do
+        .columns
+          = for delegate <- chunk do
+            .column.is-4
+              = render Vae.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.delegate_path/3
+

@@ -6,9 +6,10 @@
     = render ComponentView, "flash.html", conn: @conn
     = if assigns[:is_landing] do
       section.section
-        .container.content
+        .container
+          = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
           .columns
-            .column.is-8.is-offset-2
+            .column.is-8.is-offset-2.content
               = render @view_module, @view_template, assigns
     - else
       = render @view_module, @view_template, assigns
