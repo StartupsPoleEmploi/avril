@@ -53,14 +53,12 @@ defmodule Vae.Application do
     change(changeset, booklet_hash: changeset.data.booklet_hash || generate_hash(64))
   end
 
-  def find_or_create_with_params(
-        %{user_id: user_id, certification_id: certification_id} = params
-      )
+  def find_or_create_with_params(%{user_id: user_id, certification_id: certification_id} = params)
       when not is_nil(user_id) and not is_nil(certification_id) do
     case Repo.get_by(__MODULE__, %{
-      user_id: user_id,
-      certification_id: certification_id
-    }) do
+           user_id: user_id,
+           certification_id: certification_id
+         }) do
       nil -> Repo.insert(changeset(%__MODULE__{}, params))
       application -> {:ok, application}
     end
@@ -172,6 +170,19 @@ defmodule Vae.Application do
   #   |> put_embed(:booklet_1, booklet)
   #   |> Repo.update()
   # end
+  #
+  def from_application_id_and_user_id(application_id, user_id) do
+    from(
+      a in __MODULE__,
+      join: c in Certification,
+      on: a.certification_id == c.id,
+      join: d in Delegate,
+      on: a.delegate_id == d.id,
+      where: a.id == ^application_id and a.user_id == ^user_id,
+      preload: [certification: c, delegate: d]
+    )
+    |> Repo.one()
+  end
 
   def reset_booklet(application) do
     application

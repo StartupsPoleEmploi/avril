@@ -126,6 +126,7 @@ defmodule Vae.Router do
     get("/profile", Vae.Api.ProfileController, :index)
 
     get("/applications", Vae.Api.ApplicationController, :list)
+    get("/applications/:id", Vae.Api.ApplicationController, :dashboard)
   end
 
   # Admin
