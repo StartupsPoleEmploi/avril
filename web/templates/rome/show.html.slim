@@ -1,12 +1,23 @@
 section.section#title
   .container
     = render "breadcrumbs.html", conn: @conn, assigns: assigns
-    .content
-      h1.title.is-3 Métiers disponibles pour #{@rome.label}
-      ul
-        = for profession <- @rome.professions do
-          li= link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
-= if length(@rome.certifications) do
-  .section.has-text-centered
-    .container
-      = link("Voir les diplômes associés", to: Routes.certification_path(@conn, :index, rome_code: @rome.code), class: "button is-primary is-rounded is-medium")
+    h1.title.is-2.has-text-centered= Vae.Rome.code_name(@rome)
+    .columns
+      .column.is-8.is-offset-2
+        .section.is-small.has-text-centered
+          = if length(@rome.certifications) > 1 do
+            = link(to: Routes.certification_path(@conn, :index, rome_code: @rome), class: "button is-primary is-rounded is-medium") do
+              | Voir #{Inflex.inflect("le", length(@rome.certifications))} #{if length(@rome.certifications) > 1, do: length(@rome.certifications)} #{Inflex.inflect("diplôme", length(@rome.certifications))} #{Inflex.inflect("associé", length(@rome.certifications))} à #{@rome.label}
+          - else
+            h2.title.is-4 Il n'y a pas de diplômes disponibles pour #{@rome.label} :(
+            = img_tag "/images/recevabilite.svg", alt: "Représentation symbolique de l'étape de recevabilité."
+        .section.is-small
+          h2.title.is-4 Métiers disponibles pour #{@rome.label}
+          .content
+            ul
+              = for profession <- @rome.professions do
+                li
+                  = if length(@rome.certifications) > 0 do
+                    = link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
+                  - else
+                    = profession.label

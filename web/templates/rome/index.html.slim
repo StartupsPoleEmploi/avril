@@ -1,13 +1,17 @@
 section.section#title
   .container
     = render "breadcrumbs.html", conn: @conn, assigns: assigns
-    h1.title.is-3
+    h1.title.is-2.has-text-centered
       = if assigns[:rome] do
-        = "Sous-catégories de #{@rome.label}"
+        = Vae.Rome.code_name(@rome)
       - else
-        | Catégories disponibles dans le référentiel ROME
-section.section#results
-  .container.content
-    ul
-      = for rome <- @romes do
-        li= link(rome.label, to: Routes.rome_path(@conn, :show, rome))
+        | Référentiel ROME
+    .columns
+      .column.is-6.is-offset-3
+        .section.is-small
+          h2.title.is-4= "#{length(@romes)} sous-#{Inflex.inflect("catégorie", length(@romes))} #{Inflex.inflect("disponible", length(@romes))} :"
+          .content
+            ul
+              = for rome <- @romes do
+                li= link(Vae.Rome.code_name(rome), to: Routes.rome_path(@conn, :show, rome))
+

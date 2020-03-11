@@ -1,28 +1,18 @@
-- first_page = @page.page_number <= 1
-- last_page = @page.page_number >= @page.total_pages
-- params_previous = Map.merge(@conn.params, %{ page: @page.page_number - 1 })
-- params_next = Map.merge(@conn.params, %{ page: @page.page_number + 1 })
 = if(@page.total_pages > 1) do
-  .container.mt-auto
-    .my-4.d-flex.align-items-center
-      .dropdown
-        button.dropdown-toggle.btn.btn-link.p-0.d-flex.align-items-center type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-          h5.m-0 Page : #{@page.page_number}
-        .dropdown-menu aria-labelledby="dropdownMenuButton"
-          = for {label, number} <- Scrivener.HTML.raw_pagination_links(@page, [distance: 1, next: false, previous: false, first: true, last: true, ellipsis: 0]) do
-            = if(number == 0) do
-              .dropdown-divider
+  - is_first_page = @page.page_number <= 1
+  - is_last_page = @page.page_number >= @page.total_pages
+  - params_with_page = fn page -> Map.merge(@conn.params, %{ page: page }) end
+  - page_buttons = [1] ++ (Enum.to_list(@page.page_number-2..@page.page_number+2)) ++ [@page.total_pages] |> Enum.reject(fn i -> (i < 1 || i > @page.total_pages) end) |> Enum.uniq()
+  section.section.is-vertical.container
+    nav.pagination.is-centered aria-label="pagination" role="navigation"
+      = link("Précédent", to: (if is_first_page, do: "#", else: @path.(@conn, :index, params_with_page.(@page.page_number - 1))), aria_label: "Précédent", class: "pagination-previous", disabled: is_first_page)
+      = link("Suivant", to: (if is_last_page, do: "#", else: @path.(@conn, :index, params_with_page.(@page.page_number + 1))), aria_label: "Suivant", class: "pagination-next", disabled: is_last_page)
+      ul.pagination-list
+        = for {button_nb, i} <- Enum.with_index(page_buttons) do
+          = if i > 0 && Enum.at(page_buttons, i - 1) != button_nb - 1 do
+            span.pagination-ellipsis &hellip;
+          li
+            = if button_nb == @page.page_number do
+              = link(button_nb, to: "#", class: "pagination-link is-current", aria_label: "Page #{button_nb}")
             - else
-              - params = Map.merge(@conn.params, %{ page: number })
-              = link("Page #{label}", class: "dropdown-item", to: @path.(@conn, :index, params), aria_label: "Page #{label}")
-
-      nav.ml-auto aria-label="Pages"
-        ul.pagination id="pagination"
-          li.page-item class="#{if first_page, do: "disabled", else: ""}"
-            = link(class: "page-link", to: (if first_page, do: "#", else: @path.(@conn, :index, params_previous)), aria_label: "Précédent") do
-              span.ic-icon.ic-tail-left aria-hidden="true"
-              .sr-only Précédent
-          li.page-item class="#{if last_page, do: "disabled", else: ""}"
-            = link(class: "page-link", to: (if last_page, do: "#", else: @path.(@conn, :index, params_next)), aria_label: "Suivant") do
-              span.ic-icon.ic-tail-right-2 aria-hidden="true"
-              .sr-only Suivant
+              = link(button_nb, to: @path.(@conn, :index, params_with_page.(button_nb)), class: "pagination-link", aria_label: "Aller page #{button_nb}")

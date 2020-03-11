@@ -26,14 +26,6 @@
       text-decoration: underline;
     }
   }
-  &.is-togglable:not(.active) {
-    background: transparent;
-    color: initial;
-
-    &:hover {
-      border: thin solid;
-    }
-  }
   &.is-pe-connect {
     // font-size: 14px;
     font-family: Lato, sans-serif !important;

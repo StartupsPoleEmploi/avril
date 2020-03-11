@@ -1,13 +1,13 @@
-nav.breadcrumb.has-succeeds-separator aria-label="breadcrumbs"
+nav.breadcrumb aria-label="breadcrumbs"
   ul
     li class="#{if is_nil(@assigns[:rome]), do: "is-active"}"
       = link("Référentiel ROME", to: Routes.rome_path(@conn, :index))
     = if @assigns[:category] do
-      li= link(@assigns[:category].label, to: Routes.rome_path(@conn, :show, @assigns[:category]))
+      li= link(Vae.Rome.code_name(@assigns[:category]), to: Routes.rome_path(@conn, :show, @assigns[:category]))
       = if @assigns[:subcategory] do
-        li= link(@assigns[:subcategory].label, to: Routes.rome_path(@conn, :show, @assigns[:subcategory]))
+        li= link(Vae.Rome.code_name(@assigns[:subcategory]), to: Routes.rome_path(@conn, :show, @assigns[:subcategory]))
     = if @assigns[:rome] do
       li class="#{unless @assigns[:profession], do: "is-active"}"
-        = link(@assigns[:rome].label, to: (if @assigns[:profession], do: Routes.rome_path(@conn, :show, @assigns[:subcategory]), else: "#"))
+        = link(Vae.Rome.code_name(@assigns[:rome]), to: (if @assigns[:profession], do: Routes.rome_path(@conn, :show, @assigns[:subcategory]), else: "#"))
     = if @assigns[:profession] do
       li.is-active= link(@assigns[:profession].label, to: "#")

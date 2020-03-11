@@ -1,0 +1,21 @@
+form {
+  &.toggler {
+    ul li {
+      display: inline-block;
+      &:not(:first-child) {
+        margin-left: 1rem;
+      }
+    }
+    input[type=checkbox] {
+      display: none;
+      visibility: hidden;
+      &:not(:checked) ~ label.button.is-togglable {
+        background: transparent;
+        color: initial;
+        &:hover {
+          background: rgba(black, 0.1);
+        }
+      }
+    }
+  }
+}

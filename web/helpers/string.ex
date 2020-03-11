@@ -38,10 +38,9 @@ defmodule Vae.String do
   end
 
   def to_id(param) when is_binary(param) do
-    case Integer.parse(param) do
-      {int, _rest} -> int
-      :error -> nil
-    end
+    param
+    |> String.split("-")
+    |> List.first()
   end
 
   def to_id(_param), do: nil

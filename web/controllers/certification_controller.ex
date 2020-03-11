@@ -14,7 +14,7 @@ defmodule Vae.CertificationController do
     User
   }
 
-  def cast_array(str), do: String.split(str, ",")
+  def cast_array(str), do: String.split(str, ",") |> Enum.map(&String.to_integer/1)
 
   filterable do
     @options param: :levels,
@@ -24,12 +24,12 @@ defmodule Vae.CertificationController do
       query |> where([c], c.level in ^value)
     end
 
-    @options param: :certificateur
-    filter delegate(query, value, _conn) do
-      query
-      |> join(:inner, [d], d in assoc(d, :delegates))
-      |> where([c, d], d.id == ^Vae.String.to_id(value))
-    end
+    # @options param: :certificateur
+    # filter delegate(query, value, _conn) do
+    #   query
+    #   |> join(:inner, [d], d in assoc(d, :delegates))
+    #   |> where([c, d], d.id == ^Vae.String.to_id(value))
+    # end
 
     @options param: :metier
     filter profession(query, value, _conn) do
@@ -42,7 +42,7 @@ defmodule Vae.CertificationController do
     filter rome_code(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.code == ^value)
+      |> where([c, r], r.code == ^Vae.String.to_id(value))
     end
   end
 
@@ -105,26 +105,26 @@ defmodule Vae.CertificationController do
     end
   end
 
-  defp enrich_filter_values(%{rome_code: rome_code}) do
-    rome = Repo.get_by(Rome, code: rome_code)
-    %{
-      rome: Repo.get_by(Rome, code: rome_code),
+  defp enrich_filter_values(%{rome_code: rome_code} = filters) do
+    rome = Repo.get_by(Rome, code: Vae.String.to_id(rome_code))
+    Map.merge(filters, %{
+      rome: rome,
       subcategory: Rome.subcategory(rome),
       category: Rome.category(rome)
-    }
+    })
   end
 
-  defp enrich_filter_values(%{profession: profession_id}) do
+  defp enrich_filter_values(%{profession: profession_id} = filters) do
     profession = Repo.get(Profession, Vae.String.to_id(profession_id)) |> Repo.preload(:rome)
-    %{
+    Map.merge(filters, %{
       profession: profession,
       rome: profession.rome,
       subcategory: Rome.subcategory(profession.rome),
       category: Rome.category(profession.rome)
-    }
+    })
   end
 
-  defp enrich_filter_values(_), do: %{}
+  defp enrich_filter_values(filters), do: filters
 
   defp count_without_level_filter(params) do
     conn_without_filter_level = %Plug.Conn{

@@ -99,6 +99,10 @@ defmodule Vae.Rome do
     label
   end
 
+  def code_name(%Rome{code: code} = rome) do
+    "#{code} - #{name(rome)}"
+  end
+
   def to_slug(%Rome{} = rome) do
     rome
     |> name()
