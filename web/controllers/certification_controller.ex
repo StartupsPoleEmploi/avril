@@ -72,10 +72,24 @@ defmodule Vae.CertificationController do
         # Slug is not up-to-date
         redirect(conn, to: Routes.certification_path(conn, :show, certification, conn.query_params))
       else
+        certification = Repo.preload(certification, [:certifiers, romes: [certifications: :certifiers]])
+        similars =
+          certification
+          |> Map.get(:romes)
+          |> Enum.flat_map(fn r -> r.certifications end)
+          |> Enum.reject(fn c -> c.id == certification.id end)
+          |> Enum.sort_by(fn c ->
+            common_certifiers = Enum.filter(certification.certifiers, fn el -> Enum.member?(c.certifiers, el) end)
+            level_diff_ratio = (4 - abs(certification.level - c.level)) / 4
+            length(common_certifiers) + level_diff_ratio
+          end, &>=/2)
+          |> Enum.take(3)
+
         render(
           conn,
           "show.html",
-          certification: certification
+          certification: certification,
+          similars: similars
         )
       end
     else

@@ -7,7 +7,7 @@ section.section#title
         .section.is-small.has-text-centered
           = if length(@rome.certifications) > 1 do
             = link(to: Routes.certification_path(@conn, :index, rome_code: @rome), class: "button is-primary is-rounded is-medium") do
-              | Voir #{Inflex.inflect("le", length(@rome.certifications))} #{if length(@rome.certifications) > 1, do: length(@rome.certifications)} #{Inflex.inflect("diplôme", length(@rome.certifications))} #{Inflex.inflect("associé", length(@rome.certifications))} à #{@rome.label}
+              | Voir #{Vae.String.inflect("le #{length(@rome.certifications)} diplôme associé", length(@rome.certifications))} à #{@rome.label}
           - else
             h2.title.is-4 Il n'y a pas de diplômes disponibles pour #{@rome.label} :(
             = img_tag "/images/recevabilite.svg", alt: "Représentation symbolique de l'étape de recevabilité."
@@ -16,8 +16,9 @@ section.section#title
           .content
             ul
               = for profession <- @rome.professions do
-                li
-                  = if length(@rome.certifications) > 0 do
-                    = link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
-                  - else
+                = if profession.label != @rome.label do
+                  li
+                    / = if length(@rome.certifications) > 0 do
+                    /   = link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
+                    / - else
                     = profession.label

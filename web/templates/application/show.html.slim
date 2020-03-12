@@ -204,7 +204,7 @@
                   .card
                     .card-body
                       strong= company_name
-                      = " : #{length(experiences)} #{Inflex.inflect("expérience", length(experiences))} "
+                      = " : #{Vae.String.inflect(length(experiences), "expérience")} "
                       = if label != "Métier indéterminé" do
                         = "en tant que #{label} "
                       = "totalisant #{Enum.sum(Enum.map(experiences, &(&1.work_duration)))} heures "
@@ -252,7 +252,7 @@
                         div
                           h5.strong
                             = place
-                            small= " (#{length(meetings)} #{Inflex.inflect("date", length(meetings))} #{Inflex.inflect("disponible", length(meetings))})"
+                            small= " (#{Vae.String.inflect(length(meetings), "date disponible")})"
                           p= address
                 = if @preselected_place && (length(@meetings) - 1 > 0) do
                   .text-right

@@ -1,24 +1,26 @@
 = if length(@certifications) == 0 do
   = render("no-results.html")
 - else
+  - possible_levels = 1..5 |> Enum.to_list()
+  - is_all = possible_levels == @levels
   section.section#title
     .container
-      = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
+      = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
       = if assigns[:rome] do
         = render Vae.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
       h1.title.is-1
-        | Diplômes disponibles en VAE
+        | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE
+        = unless is_all do
+          = " #{Vae.String.inflect("au niveau", length(@levels))} #{Enum.map(@levels, &level_info_by_level/1) |> Enum.join(", ")}"
         = if assigns[:profession] do
           |  pour le métier #{@profession.label}
         - else
           = if assigns[:rome] do
-            |  pour les métiers de #{@rome.label}
+            |  pour les métiers #{@rome.label}
       form method="get" class="toggler"
         = for {key, value} <- Map.delete(@conn.query_params, "levels") do
           input type="hidden" name=key value=value
         input type="hidden" name="levels"
-        - possible_levels = 1..5 |> Enum.to_list()
-        - is_all = possible_levels == @levels
         ul
           li
             input type="checkbox" value="all" id="all_levels" checked=is_all
@@ -31,11 +33,19 @@
                 = level_info_by_level(level)
   section.section#results
     .container
-      = for chunk <- Enum.chunk_every(@certifications, 3) do
+      = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
         .columns
           = for certification <- chunk do
             .column.is-4
               = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification
+        = if i == 0 do
+          .notification.is-green.section
+            .columns.content.is-medium
+              .column.is-4.is-offset-1
+                h2.title.is-2 Comment bien choisir son diplôme
+                = link("Bien choisir un diplôme VAE", to: Routes.page_path(@conn, :choose_certification), class: "button is-dark is-rounded is-medium")
+              .column.is-6.is-offset-1
+                p Apprenez-en plus sur les diplômes disponibles et comment choisir le plus adapté à votre profil, vos expériences et vos compétences.
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
 

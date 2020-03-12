@@ -10,7 +10,7 @@
   section.section#call-to-action
     .notification.is-blue
       .columns
-        .column.is-8.is-offset-2.has-text-centered.content
+        .column.is-8.is-offset-2.has-text-centered.content.is-medium
           h2.title.is-2 Commencer en douceur ma VAE
           p Texte pour rassurer sur le niveau d'engagement. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
           = render Vae.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
@@ -18,3 +18,10 @@
     .columns
       .column.is-10.is-offset-1.content
         = raw @certification.description
+  = if length(@similars) > 0 do
+    section.section#similars
+      h2.title.is-2 Diplômes similaires
+      .columns
+        = for similar <- @similars do
+          .column.is-4
+            = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: similar

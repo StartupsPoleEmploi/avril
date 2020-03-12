@@ -7,7 +7,11 @@ nav.breadcrumb aria-label="breadcrumbs"
       = if @assigns[:subcategory] do
         li= link(Vae.Rome.code_name(@assigns[:subcategory]), to: Routes.rome_path(@conn, :show, @assigns[:subcategory]))
     = if @assigns[:rome] do
-      li class="#{unless @assigns[:profession], do: "is-active"}"
-        = link(Vae.Rome.code_name(@assigns[:rome]), to: (if @assigns[:profession], do: Routes.rome_path(@conn, :show, @assigns[:subcategory]), else: "#"))
-    = if @assigns[:profession] do
-      li.is-active= link(@assigns[:profession].label, to: "#")
+      - is_current = is_nil(@assigns[:profession]) && is_nil(@assigns[:certifications])
+      li class=(if is_current, do: "is-active")
+        = link(Vae.Rome.code_name(@assigns[:rome]), to: (if is_current, do: "#", else: Routes.rome_path(@conn, :show, @assigns[:rome])))
+    = if @assigns[:certifications] do
+      li.is-active= link("Diplômes disponibles", to: "#")
+    - else
+      = if @assigns[:profession] do
+        li.is-active= link(@assigns[:profession].label, to: "#")

@@ -14,6 +14,14 @@ defmodule Vae.String do
     :crypto.hash(:md5, string |> Base.encode16())
   end
 
+  def to_id(param) when is_binary(param) do
+    param
+    |> String.split("-")
+    |> List.first()
+  end
+
+  def to_id(_param), do: nil
+
   def titleize(string) do
     cond do
       String.upcase(string || "") == string ->
@@ -23,6 +31,9 @@ defmodule Vae.String do
         string
     end
   end
+
+  def capitalize(nil), do: nil
+  def capitalize(s), do: String.capitalize(s)
 
   def parameterize(string, separator \\ "-")
   def parameterize(nil, _), do: nil
@@ -37,14 +48,35 @@ defmodule Vae.String do
     |> String.replace(~r/\s+/, separator)
   end
 
-  def to_id(param) when is_binary(param) do
-    param
-    |> String.split("-")
-    |> List.first()
+  defp plural_letter(word) do
+    cond do
+      String.ends_with?(word, "au") -> "x"
+      Regex.match?(~r/\d+/, word) -> ""
+      true -> "s"
+    end
   end
 
-  def to_id(_param), do: nil
+  defp pluralize_word(word) do
+    unless is_blank?(word) do
+      "#{word}#{plural_letter(word)}"
+    else
+      word
+    end
+  end
 
-  def capitalize(nil), do: nil
-  def capitalize(s), do: String.capitalize(s)
+  def pluralize(words) do
+    String.split(words, " ") |> Enum.map(&pluralize_word/1) |> Enum.join(" ")
+  end
+
+  def inflect(words, count) when is_binary(words) and is_integer(count) do
+    if count > 1 do
+      pluralize(words)
+    else
+      words
+    end
+  end
+
+  def inflect(count, words) when is_binary(words) and is_integer(count) do
+    "#{count} #{inflect(words, count)}"
+  end
 end

@@ -91,11 +91,12 @@ $(() => {
     }
   });
 
-  $('.btn-history-back').on('click', e => {
-    if (document.referrer.indexOf(window.location.host) > -1) {
+  $('a.is-back').on('click', e => {
+    if (document.referrer === e.target.href) {
+      console.log('Going back');
       history.back();
-    } else {
-      window.location.href = '/';
+      e.preventDefault();
+      return false;
     }
   })
 
