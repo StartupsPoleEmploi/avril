@@ -78,4 +78,7 @@ section.section.is-medium#callback
     .has-text-centered
       .section
         h1.title.is-2 La VAE n'aura jamais été aussi simple
-      = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")
+      = if Pow.Plug.current_user(@conn) do
+        = link("Accéder à mon espace VAE", to: System.get_env("NUXT_PROFIL_PATH"), class: "button is-rounded is-primary is-medium")
+      - else
+        = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")

@@ -36,10 +36,10 @@ defmodule Vae.Pow.Routes do
     |> maybe_create_application_and_redirect()
   end
 
-  def maybe_create_application_and_redirect(conn) do
+  def maybe_create_application_and_redirect(conn, certification_id \\ nil) do
     with(
       current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
-      certification_id when not is_nil(certification_id) <- Plug.Conn.get_session(conn, :certification_id),
+      certification_id when not is_nil(certification_id) <- certification_id || Plug.Conn.get_session(conn, :certification_id),
       {:ok, application} <- Application.find_or_create_with_params(%{
         user_id: current_user.id,
         certification_id: certification_id

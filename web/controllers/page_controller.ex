@@ -4,14 +4,8 @@ defmodule Vae.PageController do
   def index(conn, _params) do
     render(conn, "index.html",
       title: "Comment faire une VAE ?",
-      certification_examples: [
-        Repo.get(Vae.Certification, 2887),
-        Repo.get(Vae.Certification, 1895)
-      ],
-      delegate_examples: [
-        Repo.get(Vae.Delegate, 2),
-        Repo.get(Vae.Delegate, 12)
-      ]
+      certification_examples: Vae.Certification.get_popular() |> Enum.take_random(2),
+      delegate_examples: Vae.Delegate.get_popular() |> Enum.take_random(2),
     )
   end
 

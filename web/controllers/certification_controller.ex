@@ -86,23 +86,7 @@ defmodule Vae.CertificationController do
 
   def select(conn, %{"certification_id" => certification_id} = params) do
     certification_id = Vae.String.to_id(certification_id)
-
-    if Pow.Plug.current_user(conn) do
-      {:ok, application} = Application.find_or_create_with_params(%{
-        certification_id: certification_id,
-        user_id: Pow.Plug.current_user(conn).id
-      })
-      conn
-      |> put_flash(
-          :success,
-          "Votre candidature a bien été créée. Nous vous invitons désormais à compléter et transmettre votre profil."
-        )
-      |> redirect(to: Routes.application_path(conn, :show, application))
-    else
-      conn
-      |> put_session(:certification_id, certification_id)
-      |> redirect(to: Routes.pow_registration_path(conn, :new))
-    end
+    Vae.Pow.Routes.maybe_create_application_and_redirect(conn, certification_id)
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do

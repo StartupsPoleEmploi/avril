@@ -269,6 +269,17 @@ defmodule Vae.Delegate do
     delegate |> Repo.preload(:certifications) |> Map.get(:certifications)
   end
 
+  def get_popular() do
+    query = from d in Delegate, [
+      join: a in Application,
+      on: d.id == a.delegate_id,
+      group_by: d.id,
+      order_by: [desc: count(a.id)],
+      limit: 10
+    ]
+    Repo.all(query)
+  end
+
   defimpl Phoenix.Param, for: Vae.Delegate do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"

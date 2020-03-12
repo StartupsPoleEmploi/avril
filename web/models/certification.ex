@@ -212,6 +212,17 @@ defmodule Vae.Certification do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
+  def get_popular() do
+    query = from c in Certification, [
+      join: a in Application,
+      on: c.id == a.certification_id,
+      group_by: c.id,
+      order_by: [desc: count(a.id)],
+      limit: 10
+    ]
+    Repo.all(query)
+  end
+
   defimpl Phoenix.Param, for: Vae.Certification do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"

@@ -2,5 +2,5 @@
 = for type <- flashes_types do
   = if message = get_flash(@conn, type) do
     .flash.notification.is-top class="is-#{type}" role="alert"
-      button.delete aria-label="Fermer" type="button"
+      button.delete aria-label="Fermer" type="button" onclick="$(event.target).parents('.notification').remove();"
       p= message
