@@ -12,6 +12,18 @@ defmodule Vae.Api.ProfileController do
     })
   end
 
+  def update(conn, params) do
+    user =
+      conn.assigns[:current_user]
+      |> User.update_changeset(params)
+      |> Repo.update!()
+
+    json(conn, %{
+      status: :ok,
+      data: to_view(user)
+    })
+  end
+
   defp to_view(user) do
     %{
       civility: %{

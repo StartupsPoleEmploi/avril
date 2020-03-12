@@ -17,11 +17,17 @@ defmodule Vae.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+    plug(Pow.Plug.Session, otp_app: :vae)
   end
 
   pipeline :protected do
     plug Pow.Plug.RequireAuthenticated,
       error_handler: Pow.Phoenix.PlugErrorHandler
+  end
+
+  pipeline :api_protected do
+    plug Pow.Plug.RequireAuthenticated,
+      error_handler: Vae.APIAuthErrorHandler
   end
 
   pipeline :admin do
@@ -30,6 +36,7 @@ defmodule Vae.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug(Vae.APIAuthPlug, otp_app: :vae)
     plug(:fetch_session)
     plug(:fetch_flash)
 
@@ -119,15 +126,23 @@ defmodule Vae.Router do
     put("/booklet", Vae.ApiController, :set_booklet)
   end
 
-  scope "/api2", as: :api do
-    pipe_through([:api, :protected])
+  scope "/api/v1", as: :api_v1 do
+    pipe_through([:api])
+
+    resources("/session", Vae.Api.SessionController, singleton: true, only: [:create, :delete])
+  end
+
+  scope "/api/v1", as: :api_v1 do
+    pipe_through([:api, :api_protected])
     # get("/booklet", Vae.Api.BookletController, :get_booklet)
     # put("/booklet", Vae.Api.BookletController, :set_booklet)
     get("/profile", Vae.Api.ProfileController, :index)
+    put("/profile", Vae.Api.ProfileController, :update)
 
     get("/applications", Vae.Api.ApplicationController, :list)
     get("/applications/:id", Vae.Api.ApplicationController, :dashboard)
     get("/applications/:id/delegates", Vae.Api.ApplicationController, :delegates_search)
+
     get("/delegates/search", Vae.Api.DelegateController, :search)
   end
 
