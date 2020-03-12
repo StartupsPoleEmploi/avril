@@ -9,71 +9,74 @@ section.section#search
             = render Vae.ComponentView, "searchbar.html", conn: @conn
         .column.is-4
           = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", style: "float: right;transform: scale(2) translateX(1rem) translateY(20px);height: 17rem;transform-origin: right;"
-    p
-      = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-green-hover")
-      = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-green-hover")
-      = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-green-hover")
+    .columns
+      .column.is-9.has-text-centered
+        = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-green-hover")
+        = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-green-hover")
+        = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-green-hover")
 section.section#examples
   .container
     .columns
       = for certification <- @certification_examples do
         .column.is-3
           = render Vae.ComponentView, "certification-card.html", conn: @conn, certification: certification
-      .column.is-4.is-offset-1
-        .section.is-horizontal
-          h2.title.is-2 Vous qui voulez que l'on reconnaisse vos compétences
-          p Comme plus de 300 000 français, faites une VAE. Avril vous accompagne jusqu'à l'obtention du diplôme.
-        .section
-          p
-            = link("Parcourir les métiers", to: Routes.rome_path(@conn, :index), class: "button is-text is-blue-hover")
-            = link("Parcourir les diplômes", to: Routes.certification_path(@conn, :index), class: "button is-text is-blue-hover")
+      .column.is-6
+        .section.is-horizontal.is-large.is-default
+          .content.is-medium
+            h2.title.is-1 Vous qui voulez que l'on reconnaisse vos compétences
+            p Comme plus de 300 000 français, faites une VAE. Avril vous accompagne jusqu'à l'obtention du diplôme.
+        .section.has-text-centered
+            = link("Parcourir les métiers", to: Routes.rome_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
+            = link("Parcourir les diplômes", to: Routes.certification_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
 
 
 
 section#online
   .container
     .columns
-      .column.is-6.section.is-vertical.is-medium
+      .column.is-7.is-offset-1.section.is-vertical.is-medium
 
-        .section.is-small.is-vertical
-          h2.title.is-2 Avril a créé la candidature en ligne
-          p Avril vous offre toute son expérience de candidature en ligne. Remplissez votre dossier en ligne et transmettez le directement au certificateur près de chez vous. C'est ça la révolution Avril.
+        .section.is-small.is-vertical.is-default
+          .content.is-medium
+            h2.title.is-2 Avril a créé la candidature en ligne
+            p Avril vous offre toute son expérience de candidature en ligne. Remplissez votre dossier en ligne et transmettez le directement au certificateur près de chez vous. C'est ça la révolution Avril.
 
         .section.is-small.is-vertical
           a.button.is-primary.is-medium.is-rounded.is-yellow href="#search" Rechercher mon diplôme
 
-        .section.is-small.is-vertical
-          h2.title.is-2 Mettez toutes les chances de votre côté
-
-          = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-yellow-hover")
-          = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-yellow-hover")
-          = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-yellow-hover")
-      .column.is-4.is-offset-2 style="flex-direction: column-reverse; display: flex;"
+        .section.is-small.is-vertical.is-default
+          .content.is-medium
+            h2.title.is-2 Mettez toutes les chances de votre côté
+            = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-yellow-hover")
+            = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-yellow-hover")
+            = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-yellow-hover")
+      .column.is-4 style="flex-direction: column-reverse; display: flex;"
         = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "transform-origin: bottom right;"
 
 section.section.is-blue.is-medium#delegates
   .container
     .columns
       .column.is-6
-        .columns
-          = for delegate <- @delegate_examples do
-            .column
-              = render Vae.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
         .section.is-vertical
+          .columns
+            = for delegate <- @delegate_examples do
+              .column
+                = render Vae.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
+        .section.is-vertical.is-small
           = link("Trouver le mien", to: Routes.delegate_path(@conn, :index), class: "button is-yellow is-rounded is-medium")
-      .column.is-4.is-offset-1
+      .column.is-4.is-offset-1.content.is-medium
         h2.title.is-2 Votre certificateur n'a jamais été aussi proche de vous
-        p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
         .section.is-vertical
           = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text")
 
 section.section.is-medium#callback
-  .container
+  .container.content.is-medium
     .columns
       .column.is-4.is-offset-2
-        p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
       .column.is-4
-        p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        p Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
       .column
     .has-text-centered
       .section
