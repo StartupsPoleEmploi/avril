@@ -7,20 +7,19 @@ defmodule Vae.SearchDelegate do
   @search_client Application.get_env(:vae, :search_client)
 
   def get_delegate(certification, geo, postcode, administrative) do
-    case get_delegates(certification, geo) do
+    case get_delegates(certification, geo, postcode) do
       [head | _tail = []] ->
         preload_process(head)
 
       delegates ->
         delegates
-        |> filter_delegates_from_postalcode(postcode)
         |> filter_delegates_from_administrative_if_no_postcode_found(administrative)
         |> select_near_delegate()
     end
   end
 
-  defp get_delegates(certification, params) do
-    geo = Map.take(params, ["lat", "lng"])
+  def get_delegates(certification, geo, postcode \\ nil) do
+    geo = Map.take(geo, ["lat", "lng"])
 
     certification
     |> Ecto.assoc(:certifiers)
@@ -29,6 +28,7 @@ defmodule Vae.SearchDelegate do
     |> case do
       {:ok, delegates} ->
         delegates
+        |> filter_delegates_from_postalcode(postcode)
 
       {:error, msg} ->
         Logger.error("Error on searching delegates: #{msg}")
