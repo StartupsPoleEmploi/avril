@@ -3,13 +3,15 @@ defmodule Vae.User do
 
   @moduledoc false
   use Vae.Web, :model
+
   use Pow.Ecto.Schema,
-    password_hash_methods: {&Bcrypt.hash_pwd_salt/1,
-                            &Bcrypt.verify_pass/2}
+    password_hash_methods: {&Bcrypt.hash_pwd_salt/1, &Bcrypt.verify_pass/2}
+
   use Pow.Extension.Ecto.Schema,
     extensions: [PowEmailConfirmation, PowResetPassword]
 
-  import Pow.Ecto.Schema.Changeset, only: [new_password_changeset: 3, confirm_password_changeset: 3]
+  import Pow.Ecto.Schema.Changeset,
+    only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
   alias Vae.{
     Application,
@@ -141,7 +143,20 @@ defmodule Vae.User do
     |> unique_constraint(:email)
   end
 
-  defp maybe_confirm_password(changeset, %{"password_confirmation" => _password_confirmation} = attrs), do: confirm_password_changeset(changeset, attrs, @pow_config)
+  def update_changeset(model, params) do
+    model
+    |> cast(params, @fields)
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
+  end
+
+  defp maybe_confirm_password(
+         changeset,
+         %{"password_confirmation" => _password_confirmation} = attrs
+       ),
+       do: confirm_password_changeset(changeset, attrs, @pow_config)
+
   defp maybe_confirm_password(changeset, _attrs), do: changeset
 
   defp put_job_seeker(changeset, nil), do: changeset
@@ -279,8 +294,8 @@ defmodule Vae.User do
 
   def fullname(user) do
     Vae.String.blank_is_nil(user.name) ||
-    Vae.String.blank_is_nil("#{user.first_name} #{user.last_name}") ||
-    user.email
+      Vae.String.blank_is_nil("#{user.first_name} #{user.last_name}") ||
+      user.email
   end
 
   def name(user) do
