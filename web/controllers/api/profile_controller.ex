@@ -26,23 +26,21 @@ defmodule Vae.Api.ProfileController do
 
   defp to_view(user) do
     %{
-      civility: %{
-        gender: if(user.gender, do: user.gender |> String.downcase()),
-        birthday: user.birthday,
-        birth_place: %{
-          city: user.birth_place
-        },
-        is_handicapped: false,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        mobile_phone: user.phone_number,
-        full_address: %{
-          city: user.city_label,
-          country: user.country_label,
-          postal_code: user.postal_code,
-          street: User.address_street(user)
-        }
+      gender: if(user.gender, do: user.gender |> String.downcase()),
+      birthday: user.birthday,
+      birth_place: %{
+        city: user.birth_place
+      },
+      is_handicapped: false,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      mobile_phone: user.phone_number,
+      full_address: %{
+        city: user.city_label,
+        country: user.country_label,
+        postal_code: user.postal_code,
+        street: User.address_street(user)
       }
     }
   end
