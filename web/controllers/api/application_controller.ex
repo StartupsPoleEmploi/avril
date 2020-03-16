@@ -62,6 +62,7 @@ defmodule Vae.Api.ApplicationController do
     |> Enum.map(fn application ->
       %{
         id: application.id,
+        certifier_name: Application.certifier_name(application),
         delegate_name: Application.delegate_name(application),
         certification_name: Application.certification_name(application),
         created_at: application.inserted_at

@@ -4,7 +4,9 @@ defmodule Vae.Application do
   use Vae.Web, :model
 
   alias Vae.{
+    Application,
     ApplicationEmail,
+    Certifier,
     Certification,
     Delegate,
     Meetings.Meeting,
@@ -191,26 +193,31 @@ defmodule Vae.Application do
     |> Repo.update()
   end
 
-  def certifier_name(application) do
+  def certifier_name(%Application{} = application) do
     application
     |> Repo.preload(delegate: :certifiers)
-    |> get_in([Access.key(:delegate), Access.key(:certifiers)])
-    |> hd()
-    |> Map.get(:name)
+    |> case do
+      %Application{delegate: %Delegate{certifiers: [%Certifier{name: name} | rest]}} -> name
+      _ -> nil
+    end
   end
 
-  def delegate_name(application) do
+  def delegate_name(%Application{} = application) do
     application
     |> Repo.preload(:delegate)
-    |> get_in([Access.key(:delegate)])
-    |> Map.get(:name)
+    |> case do
+      %Application{delegate: %Delegate{name: name}} -> name
+      _ -> nil
+    end
   end
 
-  def certification_name(application) do
+  def certification_name(%Application{} = application) do
     application
     |> Repo.preload(:certification)
-    |> get_in([Access.key(:certification)])
-    |> Map.get(:label)
+    |> case do
+      %Application{certification: %Certification{label: label}} -> label
+      _ -> nil
+    end
   end
 
   def booklet_url(endpoint, application, path \\ nil) do
