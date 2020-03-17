@@ -6,8 +6,6 @@ defmodule Vae.Api.MeetingController do
   alias Vae.Meetings
 
   def search(conn, %{"delegate_id" => delegate_id} = params) do
-    user = conn.assigns[:current_user]
-
     delegate =
       Repo.get(Vae.Delegate, delegate_id)
       |> Repo.preload(:certifiers)
