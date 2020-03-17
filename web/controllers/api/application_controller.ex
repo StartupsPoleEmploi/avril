@@ -18,7 +18,7 @@ defmodule Vae.Api.ApplicationController do
   def dashboard(conn, %{"id" => id} = params) do
     user = conn.assigns[:current_user]
 
-    application = Vae.Application.from_application_id_and_user_id(id, user.id)
+    application = Application.from_application_id_and_user_id(id, user.id)
 
     json(conn, %{
       status: :ok,
@@ -32,7 +32,7 @@ defmodule Vae.Api.ApplicationController do
     %{"_geoloc" => geoloc, "postcode" => [postal_code]} =
       Vae.Places.get_geoloc_from_postal_code(user.postal_code)
 
-    application = Vae.Application.from_application_id_and_user_id(id, user.id)
+    application = Application.from_application_id_and_user_id(id, user.id)
 
     certification = Repo.get(Certification, application.certification_id)
 

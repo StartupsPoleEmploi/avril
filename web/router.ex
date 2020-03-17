@@ -143,7 +143,9 @@ defmodule Vae.Router do
     get("/applications/:id", Vae.Api.ApplicationController, :dashboard)
     get("/applications/:id/delegates", Vae.Api.ApplicationController, :delegates_search)
 
-    get("/delegates/search", Vae.Api.DelegateController, :search)
+    post("/delegates/search", Vae.Api.DelegateController, :search)
+
+    post("/meetings/search", Vae.Api.MeetingController, :search)
   end
 
   # Admin
