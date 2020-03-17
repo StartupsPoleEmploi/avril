@@ -2,12 +2,12 @@ defmodule Vae.Api.ApplicationController do
   use Vae.Web, :controller
 
   alias Vae.SearchDelegate
-  alias Vae.{Application, Certification, User}
+  alias Vae.{Application, Certification, Delegate, User}
 
-  def list(conn, params) do
+  def index(conn, params) do
     current_user =
       conn.assigns[:current_user]
-      |> Repo.preload(:applications)
+      |> Repo.preload(applications: [[delegate: :certifiers], :certification])
 
     json(conn, %{
       status: :ok,
@@ -15,35 +15,49 @@ defmodule Vae.Api.ApplicationController do
     })
   end
 
-  def dashboard(conn, %{"id" => id} = params) do
-    user = conn.assigns[:current_user]
+  def show(conn, %{"slug" => slug} = params) do
+    current_user =
+      conn.assigns[:current_user]
+      |> Repo.preload(applications: [[delegate: :certifiers], :certification])
 
-    application = Vae.Application.from_application_id_and_user_id(id, user.id)
+    application = current_user.applications
+      |> Enum.find(fn %{certification: %Certification{slug: slug}} -> slug == slug end)
 
-    json(conn, %{
-      status: :ok,
-      data: to_dashboard_view(application, user)
-    })
+    unless is_nil(application) do
+      json(conn, %{
+        status: :ok,
+        data: to_dashboard_view(application)
+      })
+    else
+      conn
+      |> put_status(404)
+      |> json(%{error: %{
+        code: 404,
+        message: "Not found"
+      }})
+    end
+
   end
 
-  def delegates_search(conn, %{"id" => id} = params) do
-    user = conn.assigns[:current_user]
+  def delegates_search(conn, %{"slug" => slug} = params) do
+    current_user = conn.assigns[:current_user]
+      |> Repo.preload(applications: [[delegate: :certifiers], :certification])
+
+    application = current_user.applications
+      |> Enum.find(fn %{certification: %Certification{slug: slug}} -> slug == slug end)
 
     %{"_geoloc" => geoloc, "postcode" => [postal_code]} =
-      Vae.Places.get_geoloc_from_postal_code(user.postal_code)
+      Vae.Places.get_geoloc_from_postal_code(current_user.postal_code)
 
-    application = Vae.Application.from_application_id_and_user_id(id, user.id)
 
-    certification = Repo.get(Certification, application.certification_id)
-
-    {_meta, delegates} = SearchDelegate.get_delegates(certification, geoloc, postal_code)
+    {_meta, delegates} = SearchDelegate.get_delegates(application.certification, geoloc, postal_code)
 
     json(
       conn,
       %{
         status: :ok,
         data: %{
-          application_id: id,
+          # application_id: id,
           delegates:
             Enum.map(delegates, fn delegate ->
               %{
@@ -61,38 +75,33 @@ defmodule Vae.Api.ApplicationController do
     applications
     |> Enum.map(fn application ->
       %{
-        id: application.id,
-        certifier_name: Application.certifier_name(application),
-        delegate_name: Application.delegate_name(application),
-        certification_name: Application.certification_name(application),
+        # id: application.id,
+        certification: application.certification |> Maybe.map(& %{
+          slug: &1.slug,
+          name: Certification.name(&1),
+          level: Vae.ViewHelpers.level_info_by_level(&1.level)
+        }),
+        delegate: application.delegate |> Maybe.map(& %{
+          name: &1.name,
+          certifier_name: &1.certifiers |> hd() |> Maybe.map(fn c -> c.name end),
+          address: &1.address
+        }),
         created_at: application.inserted_at
       }
     end)
   end
 
-  defp to_dashboard_view(application, user) do
+  defp to_dashboard_view(application) do
     %{
-      civility: %{
-        gender: if(user.gender, do: user.gender |> String.downcase()),
-        first_name: user.first_name,
-        last_name: user.last_name,
-        full_address: %{
-          city: user.city_label,
-          country: user.country_label,
-          postal_code: user.postal_code,
-          street: User.address_street(user)
-        }
-      },
       booklet_hash: application.booklet_hash,
-      delegate: %{
-        name: application.delegate.name,
-        full_address: application.delegate.address
-      },
-      certification: %{
-        id: application.certification.id,
-        label: application.certification.label,
-        level: application.certification.level
-      },
+      delegate: application.delegate |> Maybe.map(& %{
+        name: &1.name,
+        address: &1.address
+      }),
+      certification: application.certification |> Maybe.map(& %{
+        name: Certification.name(&1),
+        level: Vae.ViewHelpers.level_info_by_level(&1.level)
+      }),
       receipts: []
     }
   end

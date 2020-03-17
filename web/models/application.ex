@@ -178,10 +178,10 @@ defmodule Vae.Application do
       a in __MODULE__,
       join: c in Certification,
       on: a.certification_id == c.id,
-      join: d in Delegate,
-      on: a.delegate_id == d.id,
+      # join: d in Delegate,
+      # on: a.delegate_id == d.id,
       where: a.id == ^application_id and a.user_id == ^user_id,
-      preload: [certification: c, delegate: d]
+      preload: [certification: c]
     )
     |> Repo.one()
   end
@@ -193,32 +193,47 @@ defmodule Vae.Application do
     |> Repo.update()
   end
 
-  def certifier_name(%Application{} = application) do
-    application
-    |> Repo.preload(delegate: :certifiers)
-    |> case do
-      %Application{delegate: %Delegate{certifiers: [%Certifier{name: name} | rest]}} -> name
-      _ -> nil
-    end
-  end
+  # def assoc_field(%Application{} = application, assoc, field) do
+  #   applications
+  #   |> Repo.preload(assoc)
+  #   |> get_in([Access.key(assoc, %{}), Access.key(:field)])
+  # end
 
-  def delegate_name(%Application{} = application) do
-    application
-    |> Repo.preload(:delegate)
-    |> case do
-      %Application{delegate: %Delegate{name: name}} -> name
-      _ -> nil
-    end
-  end
+  # def certifier_name(%Application{} = application) do
+  #   application
+  #   |> Repo.preload(delegate: :certifiers)
+  #   |> case do
+  #     %Application{delegate: %Delegate{certifiers: [%Certifier{name: name} | rest]}} -> name
+  #     _ -> nil
+  #   end
+  # end
 
-  def certification_name(%Application{} = application) do
-    application
-    |> Repo.preload(:certification)
-    |> case do
-      %Application{certification: %Certification{label: label}} -> label
-      _ -> nil
-    end
-  end
+  # def delegate_name(%Application{} = application) do
+  #   application
+  #   |> Repo.preload(:delegate)
+  #   |> case do
+  #     %Application{delegate: %Delegate{name: name}} -> name
+  #     _ -> nil
+  #   end
+  # end
+
+  # def delegate_address(%Application{} = application) do
+  #   application
+  #   |> Repo.preload(:delegate)
+  #   |> case do
+  #     %Application{delegate: %Delegate{address: address}} -> address
+  #     _ -> nil
+  #   end
+  # end
+
+  # def certification_name(%Application{} = application) do
+  #   application
+  #   |> Repo.preload(:certification)
+  #   |> case do
+  #     %Application{certification: %Certification{} = c} -> Certification.name(c)
+  #     _ -> nil
+  #   end
+  # end
 
   def booklet_url(endpoint, application, path \\ nil) do
     application = application |> Repo.preload(:delegate)
