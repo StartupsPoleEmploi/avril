@@ -135,34 +135,8 @@ defmodule Vae.Meetings.StateHolder do
 
   @impl true
   def handle_call({:get, delegate}, _from, state) do
-    case AlgoliaClient.get_meetings(delegate) do
-      {:ok, places} ->
-        meetings =
-          places
-          |> Enum.map(fn %{id: id, place: place, address: address} ->
-            meetings =
-              state
-              |> from_delegates()
-              |> Enum.find(&(&1[:id] == id))
-              |> case do
-                nil ->
-                  []
-
-                delegate ->
-                  delegate
-                  |> Map.get(:meetings)
-                  |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
-              end
-
-            {{place, address, Vae.String.parameterize(place)}, meetings}
-          end)
-
-        {:reply, meetings, state}
-
-      {:error, msg} ->
-        Logger.error(msg)
-        {:reply, [], state}
-    end
+    AlgoliaClient.get_meetings(delegate)
+    |> handle_meetings_result(state)
   end
 
   @impl true
@@ -196,7 +170,10 @@ defmodule Vae.Meetings.StateHolder do
       ])
     catch
       :exit, {:noproc, _infos} ->
-        Logger.warn("Meetings process not available. Set ALGOLIA_MEETINGS_INDICE environment variable.")
+        Logger.warn(
+          "Meetings process not available. Set ALGOLIA_MEETINGS_INDICE environment variable."
+        )
+
         []
     end
   end
@@ -218,8 +195,6 @@ defmodule Vae.Meetings.StateHolder do
 
   def get(delegate) do
     safe_send_to_genserver(:call, {:get, delegate})
-    # GenServer.call(@name, {:get, delegate})
-    |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) end)
   end
 
   def get_by_meeting_id(meeting_id) do
@@ -350,5 +325,35 @@ defmodule Vae.Meetings.StateHolder do
 
   defp persist(delegate, name) do
     :ets.insert(:meetings, {name, delegate.updated_at, delegate})
+  end
+
+  defp handle_meetings_result({:ok, places}, state) do
+    meetings =
+      places
+      |> Enum.map(fn %{id: id, place: place, address: address} ->
+        meetings =
+          state
+          |> from_delegates()
+          |> Enum.find(&(&1[:id] == id))
+          |> case do
+            nil ->
+              []
+
+            delegate ->
+              delegate
+              |> Map.get(:meetings)
+              |> Enum.sort_by(fn meeting -> meeting.start_date end, &Timex.before?/2)
+          end
+
+        {{place, address, Vae.String.parameterize(place)}, meetings}
+      end)
+      |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) end)
+
+    {:reply, meetings, state}
+  end
+
+  defp handle_meetings_result({:error, msg}, state) do
+    Logger.error(msg)
+    {:reply, [], state}
   end
 end

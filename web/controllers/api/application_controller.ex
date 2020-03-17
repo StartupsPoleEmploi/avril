@@ -49,7 +49,6 @@ defmodule Vae.Api.ApplicationController do
     %{"_geoloc" => geoloc, "postcode" => [postal_code]} =
       Vae.Places.get_geoloc_from_postal_code(current_user.postal_code)
 
-
     {_meta, delegates} = SearchDelegate.get_delegates(application.certification, geoloc, postal_code)
 
     json(
