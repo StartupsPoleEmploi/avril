@@ -34,8 +34,8 @@ const setupSearchBar = needProxy => {
   const certifications = client.initIndex('certification');
 
   // const professionToPath = suggestion => `/metiers/${suggestion.id}-${suggestion.slug}`
-  // const professionToPath = suggestion => `/diplomes?metier=${suggestion.id}-${suggestion.slug}`
-  const professionToPath = suggestion => `/diplomes?rome_code=${suggestion.rome_code}`
+  const professionToPath = suggestion => `/diplomes?metier=${suggestion.id}-${suggestion.slug}`
+  // const professionToPath = suggestion => `/diplomes?rome_code=${suggestion.rome_code}`
   const certificationToPath = suggestion => `/diplomes/${suggestion.id}-${suggestion.slug}`
 
   autocomplete('#search_query', {

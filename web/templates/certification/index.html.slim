@@ -3,20 +3,22 @@
 - else
   - possible_levels = 1..5 |> Enum.to_list()
   - is_all = possible_levels == @levels
+  - level_label = unless is_all, do: " #{Vae.String.inflect("au niveau", length(@levels))} #{Enum.map(@levels, &level_info_by_level/1) |> Enum.join(", ")}"
+  - filter_object = assigns[:profession] || assigns[:rome]
   section.section#title
     .container
-      = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
-      = if assigns[:rome] do
-        = render Vae.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
-      h1.title.is-1
-        | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE
-        = unless is_all do
-          = " #{Vae.String.inflect("au niveau", length(@levels))} #{Enum.map(@levels, &level_info_by_level/1) |> Enum.join(", ")}"
-        = if assigns[:profession] do
-          |  pour le métier #{@profession.label}
-        - else
-          = if assigns[:rome] do
-            |  pour les métiers #{@rome.label}
+      .section.is-vertical.is-small
+        = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
+        = if filter_object do
+          = render Vae.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
+      = if filter_object do
+        h2.subtitle.is-5
+          | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour #{Vae.String.inflect("le métier", (if assigns[:profession], do: 1, else: 2))} :
+        h1.title.is-1
+          = filter_object.label
+      - else
+        h1.title.is-1
+          | Parcourir les diplômes disponibles en VAE #{level_label}
       form method="get" class="toggler"
         = for {key, value} <- Map.delete(@conn.query_params, "levels") do
           input type="hidden" name=key value=value
@@ -44,8 +46,8 @@
               .column.is-4.is-offset-1
                 h2.title.is-2 Comment bien choisir son diplôme
                 = link("Bien choisir un diplôme VAE", to: Routes.page_path(@conn, :choose_certification), class: "button is-dark is-rounded is-medium")
-              .column.is-6.is-offset-1
-                p Apprenez-en plus sur les diplômes disponibles et comment choisir le plus adapté à votre profil, vos expériences et vos compétences.
+              .column.is-7
+                p Choisir le diplôme qui correspond le mieux à votre expérience peut-être compliqué. N'hésitez pas à consulter notre rubrique de conseils sur le sujet ! Vous y apprendrez par exemple que même si vous n'avez aucun diplôme vous pouvez obtenir directement une licence par la VAE, si votre expérience le justifie !
 
 = render Vae.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
 

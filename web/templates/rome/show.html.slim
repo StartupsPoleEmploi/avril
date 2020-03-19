@@ -18,7 +18,7 @@ section.section#title
               = for profession <- @rome.professions do
                 = if profession.label != @rome.label do
                   li
-                    / = if length(@rome.certifications) > 0 do
-                    /   = link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
-                    / - else
-                    = profession.label
+                    = if length(@rome.certifications) > 0 do
+                      = link("Diplômes disponibles en VAE pour le métier #{profession.label}", to: Routes.certification_path(@conn, :index, metier: profession))
+                    - else
+                      = profession.label
