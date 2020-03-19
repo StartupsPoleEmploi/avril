@@ -12,7 +12,8 @@ BRANCH_NAME=${2:-master}
 
 declare -A REPO_TO_SERVICE
 REPO_TO_SERVICE[avril]=phoenix
-REPO_TO_SERVICE[avril-livret1]=nuxt
+REPO_TO_SERVICE[avril-livret1]=nuxt_booklet
+REPO_TO_SERVICE[avril-profil]=nuxt_profile
 
 SERVICE_NAME=${REPO_TO_SERVICE[$REPO_NAME]}
 
