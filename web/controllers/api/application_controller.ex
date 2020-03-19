@@ -75,6 +75,7 @@ defmodule Vae.Api.ApplicationController do
     |> Enum.map(fn application ->
       %{
         # id: application.id,
+        booklet_hash: application.booklet_hash,
         certification: application.certification |> Maybe.map(& %{
           slug: &1.slug,
           name: Certification.name(&1),
