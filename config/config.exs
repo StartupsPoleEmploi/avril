@@ -117,9 +117,9 @@ config :algolia,
   search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
 
 config :ex_admin,
-  head_template: {Vae.AdminView, "admin_layout.html"},
+  head_template: {VaeWeb.AdminView, "admin_layout.html"},
   repo: Vae.Repo,
-  module: Vae,
+  module: VaeWeb,
   modules: [
     Vae.ExAdmin.UserApplication,
     Vae.ExAdmin.AppStatus,

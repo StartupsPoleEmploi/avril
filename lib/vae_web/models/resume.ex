@@ -3,11 +3,10 @@ defmodule Vae.Resume do
   import Ecto.Changeset
   alias Vae.Repo
 
-
   schema "resumes" do
-    field :content_type, :string
-    field :filename, :string
-    field :url, :string
+    field(:content_type, :string)
+    field(:filename, :string)
+    field(:url, :string)
 
     timestamps()
 
@@ -31,37 +30,51 @@ defmodule Vae.Resume do
         Application.get_env(:ex_aws, :bucket_name),
         __MODULE__.to_s3_path(application.id, filename),
         binary,
-        [
-          content_type: params.content_type,
-          content_disposition: "attachment; filename=#{params.filename}"
-        ]
-      ) |> ExAws.request
+        content_type: params.content_type,
+        content_disposition: "attachment; filename=#{params.filename}"
+      )
+      |> ExAws.request()
 
     case result do
       {:ok, _body} ->
-        Repo.insert(__MODULE__.changeset(%__MODULE__{}, %{
-          application: application,
-          content_type: params.content_type,
-          filename: params.filename,
-          url: "https://#{Application.get_env(:ex_aws, :bucket_name)}.s3.#{Application.get_env(:ex_aws, :region)}.amazonaws.com/#{Application.get_env(:ex_aws, :bucket_name)}#{__MODULE__.to_s3_path(application.id, filename)}"
-        }))
-      error -> error
+        Repo.insert(
+          __MODULE__.changeset(%__MODULE__{}, %{
+            application: application,
+            content_type: params.content_type,
+            filename: params.filename,
+            url:
+              "https://#{Application.get_env(:ex_aws, :bucket_name)}.s3.#{
+                Application.get_env(:ex_aws, :region)
+              }.amazonaws.com/#{Application.get_env(:ex_aws, :bucket_name)}#{
+                __MODULE__.to_s3_path(application.id, filename)
+              }"
+          })
+        )
+
+      error ->
+        error
     end
   end
 
   def delete(resume) do
     result =
-      ExAws.S3.delete_object(Application.get_env(:ex_aws, :bucket_name), __MODULE__.to_s3_path(resume))
-      |> ExAws.request
+      ExAws.S3.delete_object(
+        Application.get_env(:ex_aws, :bucket_name),
+        __MODULE__.to_s3_path(resume)
+      )
+      |> ExAws.request()
 
     case result do
       {:ok, _body} ->
         Repo.delete(resume)
-      error -> error
+
+      error ->
+        error
     end
   end
 
   def to_s3_path(application_id, filename), do: "/#{application_id}/#{filename}"
-  def to_s3_path(%__MODULE__{application_id: application_id, url: url}), do: to_s3_path(application_id, List.last(String.split(url, "/")))
 
+  def to_s3_path(%__MODULE__{application_id: application_id, url: url}),
+    do: to_s3_path(application_id, List.last(String.split(url, "/")))
 end
