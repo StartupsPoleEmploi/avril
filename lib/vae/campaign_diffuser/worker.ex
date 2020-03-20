@@ -1,7 +1,9 @@
 defmodule Vae.CampaignDiffuser.Worker do
   require Logger
 
-  alias Vae.{JobSeeker, JobSeekerEmail, Mailer}
+  alias Vae.JobSeeker
+  alias VaeWeb.Mailer
+  alias VaeWeb.JobSeekerEmail
 
   @extractor Vae.CampaignDiffuser.FileExtractor.CsvExtractor
 
@@ -31,7 +33,7 @@ defmodule Vae.CampaignDiffuser.Worker do
     end
   end
 
-  def execute(pending_emails, type, from) do
+  def execute(_pending_emails, type, from) do
     Logger.info("Start extracting job seekers")
 
     @extractor.build_enumerable(type, from)

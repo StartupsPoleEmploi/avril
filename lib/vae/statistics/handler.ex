@@ -3,7 +3,8 @@ defmodule Vae.Statistics.Handler do
 
   # Unused ? Or should be moved to a mix task?
 
-  alias Vae.{AdminEmail, Certification, JobSeeker}
+  alias VaeWeb.AdminEmail
+  alias Vae.{Certification, JobSeeker}
 
   @tab_name 'priv/tabs/romes.tab'
   @csv_headers [
@@ -47,7 +48,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   def init(_state) do
-    :dets.open_file(@tab_name, [type: :set])
+    :dets.open_file(@tab_name, type: :set)
   end
 
   def handle_call({:execute, datetime}, _from, _state) do
@@ -198,7 +199,7 @@ defmodule Vae.Statistics.Handler do
   end
 
   defp send_email(file) do
-    AdminEmail.stats(file) |> Vae.Mailer.send()
+    AdminEmail.stats(file) |> VaeWeb.Mailer.send()
   end
 
   defp time_to_string(%DateTime{

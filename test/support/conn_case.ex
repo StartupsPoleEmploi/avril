@@ -1,4 +1,4 @@
-defmodule Vae.ConnCase do
+defmodule VaeWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -25,10 +25,10 @@ defmodule Vae.ConnCase do
       import Ecto.Changeset
       import Ecto.Query
 
-      import Vae.Router.Helpers
+      alias VaeWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint Vae.Endpoint
+      @endpoint VaeWeb.Endpoint
     end
   end
 

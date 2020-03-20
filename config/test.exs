@@ -2,9 +2,10 @@ use Mix.Config
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :vae, Vae.Endpoint,
+config :vae, VaeWeb.Endpoint,
   http: [port: 4001],
-  server: false
+  server: false,
+  secret_key_base: "CPBIsZXHKo41NCrQGS/S3zaVhZrPeH/EtkS/nR2+uf7gFQaEXpd1SM92za61ZO1V"
 
 # Print only warnings and errors during test
 config :logger, level: :warn
@@ -37,6 +38,3 @@ config :vae,
     # from_email: "contact@avril.pole-emploi.fr"
     override_to: [%{Email: "x@gmail.com"}]
   }
-
-config :vae, Vae.Endpoint,
-  secret_key_base: "CPBIsZXHKo41NCrQGS/S3zaVhZrPeH/EtkS/nR2+uf7gFQaEXpd1SM92za61ZO1V"

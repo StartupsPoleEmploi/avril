@@ -1,0 +1,55 @@
+= if @edit_mode do
+  div style="margin: auto;"
+    = if @application.submitted_at do
+      p
+        strong Profil transmis #{Timex.format!(@application.submitted_at, "le %d/%m/%Y", :strftime)}
+        | .
+      = if @application.meeting do
+        p Bravo pour ce premier pas dans votre projet! Nous vous confirmons que vous avez choisi l'atelier collectif du
+        p
+          strong
+            = " #{String.capitalize(Timex.lformat!(@application.meeting.start_date, "%A %e %B ", "fr", :strftime))}"
+            = " de #{Timex.lformat!(@application.meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(@application.meeting.end_date, "%H:%M", "fr", :strftime)}"
+        p
+          = "qui aura lieu à : "
+        p
+          strong
+            = @application.meeting.place
+            br
+            = @application.meeting.address
+      = if Enum.member?(@tabs, :booklet) do
+        p Pour poursuivre :
+        button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#booklet-tab').trigger('click')});"
+          = if @application.booklet_1 && @application.booklet_1.completed_at do
+            | Envoyer ma candidature
+          - else
+            | Compléter ma candidature
+      - else
+        .my-3
+          = link("Imprimer mon dossier", to: "#", class: "small print", onclick: "window.print();", data: [analytics: "Profil#Imprimer recap DE"])
+        .mt-3
+          = link((if @edit_mode, do: "Télécharger les étapes", else: "Télécharger le dossier du candidat"), to: Routes.user_application_download_path(@conn, :download, @application), class: "small", data: [analytics: "Profil#Telecharger recap #{if @edit_mode, do: "DE", else: "certificateur"}"], download: "Synthese VAE #{@application.user.name}.pdf")
+
+    - else
+      - current_user = Pow.Plug.current_user(@conn)
+      - user_confirmed = current_user.email_confirmed_at
+      = unless user_confirmed do
+        p.alert.alert-secondary style="margin-bottom: 1rem;"
+          | Un email de confirmation vous a été adressé. Merci de le consulter pour pouvoir transmettre votre dossier.
+          = link("Recevoir à nouveau l'email de confirmation", to: Routes.pow_email_confirmation_confirmation_path(@conn, :resend_confirmation), method: :post, class: "btn btn-link")
+      p
+        = if Enum.member?(@tabs, :meetings) do
+          button.btn.btn-primary onclick="$('body, html').animate({scrollTop: 0}, function(){$('#meetings-tab').trigger('click')});"
+            = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+            | Prendre rendez-vous
+            = unless @application.submitted_at do
+              = " et transmettre mon dossier"
+        - else
+          = button to: Routes.user_application_path(@conn, :update, @application), method: :put, class: "btn btn-primary", disabled: !user_confirmed, title: (unless user_confirmed, do: "Vous devez d'abord confirmer votre adresse email"), data: [analytics: "?bouton=soumettre-candidature"] do
+            = img_tag "/images/conseillere.svg", style: "width: 2em;vertical-align: middle;position: relative;left: -15px;", alt: "Votre conseillère VAE"
+            | Transmettre mon dossier
+
+- else
+  button.btn.btn-primary.print-button onclick="window.print();"
+    span.fa.fa-print
+    = " Imprimer la candidature"

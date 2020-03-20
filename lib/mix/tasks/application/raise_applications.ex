@@ -4,10 +4,10 @@ defmodule Mix.Tasks.RaiseApplications do
 
   import Ecto.Query
 
-  alias Vae.Mailer
+  alias VaeWeb.Mailer
   alias Vae.Repo
 
-  alias Vae.Application, as: AvrilApplication
+  alias Vae.UserApplication, as: AvrilApplication
   alias Vae.{Certification, Delegate, User}
 
   def run(_args) do
@@ -25,7 +25,7 @@ defmodule Mix.Tasks.RaiseApplications do
         ]
       end)
       |> Flow.on_trigger(fn emails ->
-        with {:ok, emails_sent} = Mailer.send(emails) do
+        with {:ok, emails_sent} <- Mailer.send(emails) do
           Logger.info("#{length(emails_sent)} emails sent")
         else
           {:error, error} ->
@@ -69,9 +69,9 @@ defmodule Mix.Tasks.RaiseApplications do
   end
 
   def build_deliver(application) do
-    endpoint = struct(URI, Application.get_env(:vae, Vae.Endpoint)[:url])
+    endpoint = struct(URI, Application.get_env(:vae, VaeWeb.Endpoint)[:url])
 
     application
-    |> Vae.ApplicationEmail.user_raise(endpoint)
+    |> VaeWeb.ApplicationEmail.user_raise(endpoint)
   end
 end

@@ -3,12 +3,12 @@ defmodule Vae.Repo.Migrations.MigrateMeetingIdFromApplications do
 
   import Ecto.Query
 
-  alias Vae.Application
+  alias Vae.UserApplication
   alias Vae.Repo
 
   def change do
     from(
-      a in Application,
+      a in UserApplication,
       where: not is_nil(a.meeting)
     )
     |> Repo.all()

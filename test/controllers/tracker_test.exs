@@ -1,5 +1,5 @@
-defmodule Vae.TrackerTest do
-  use Vae.ConnCase
+defmodule VaeWeb.TrackerTest do
+  use VaeWeb.ConnCase
 
   alias Vae.JobSeeker
 

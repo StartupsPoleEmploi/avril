@@ -1,5 +1,5 @@
-defmodule Vae.MailEventsControllerTest do
-  use Vae.ConnCase
+defmodule VaeWeb.MailEventsControllerTest do
+  use VaeWeb.ConnCase
 
   test "new_event/2 updates job_seeker events" do
     conn = build_conn()

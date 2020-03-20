@@ -1,0 +1,53 @@
+= if length(@certifications) == 0 do
+  = render("no-results.html")
+- else
+  - possible_levels = 1..5 |> Enum.to_list()
+  - is_all = possible_levels == @levels
+  - level_label = unless is_all, do: " #{Vae.String.inflect("au niveau", length(@levels))} #{Enum.map(@levels, &level_info_by_level/1) |> Enum.join(", ")}"
+  - filter_object = assigns[:profession] || assigns[:rome]
+  section.section#title
+    .container
+      .section.is-vertical.is-small
+        = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
+        = if filter_object do
+          = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
+      = if filter_object do
+        h2.subtitle.is-5
+          | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour #{Vae.String.inflect("le métier", (if assigns[:profession], do: 1, else: 2))} :
+        h1.title.is-1
+          = filter_object.label
+      - else
+        h1.title.is-1
+          | Parcourir les diplômes disponibles en VAE #{level_label}
+      form method="get" class="toggler"
+        = for {key, value} <- Map.delete(@conn.query_params, "levels") do
+          input type="hidden" name=key value=value
+        input type="hidden" name="levels"
+        ul
+          li
+            input type="checkbox" value="all" id="all_levels" checked=is_all
+            label.button.is-rounded.is-info.is-togglable for="all_levels"
+              | Toutes les équivalences
+          = for level <- possible_levels |> Enum.reverse() do
+            li
+              input type="checkbox" value=level id="level_#{level}" checked=(!is_all && Enum.member?(@levels, level))
+              label.button.is-rounded.is-info.is-togglable for="level_#{level}"
+                = level_info_by_level(level)
+  section.section#results
+    .container
+      = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
+        .columns
+          = for certification <- chunk do
+            .column.is-4
+              = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: certification
+        = if i == 0 do
+          .notification.is-green.section
+            .columns.content.is-medium
+              .column.is-4.is-offset-1
+                h2.title.is-2 Comment bien choisir son diplôme
+                = link("Bien choisir un diplôme VAE", to: Routes.page_path(@conn, :choose_certification), class: "button is-dark is-rounded is-medium")
+              .column.is-7
+                p Choisir le diplôme qui correspond le mieux à votre expérience peut-être compliqué. N'hésitez pas à consulter notre rubrique de conseils sur le sujet ! Vous y apprendrez par exemple que même si vous n'avez aucun diplôme vous pouvez obtenir directement une licence par la VAE, si votre expérience le justifie !
+
+= render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
+

@@ -2,7 +2,10 @@ defmodule Mix.Tasks.Crm.StockReminder do
   require Logger
   use Mix.Task
 
-  alias Vae.{JobSeeker, Repo}
+  alias Vae.Repo
+  alias Vae.JobSeeker
+  alias VaeWeb.Mailer
+  alias VaeWeb.JobSeekerEmail
 
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
@@ -10,12 +13,10 @@ defmodule Mix.Tasks.Crm.StockReminder do
     job_seekers()
     |> build_records()
     |> build_emails()
-    |> Vae.Mailer.send()
-    |> (
-      fn {:ok, emails} ->
-        Logger.info(fn -> "stock_reminder: #{Kernel.length(emails)} emails sent" end)
-      end
-    ).()
+    |> Mailer.send()
+    |> (fn {:ok, emails} ->
+          Logger.info(fn -> "stock_reminder: #{Kernel.length(emails)} emails sent" end)
+        end).()
   end
 
   def job_seekers() do
@@ -84,7 +85,7 @@ defmodule Mix.Tasks.Crm.StockReminder do
   def build_emails(job_seekers) do
     job_seekers
     |> Enum.map(fn {_job_seeker_id, payload} ->
-      Vae.JobSeekerEmail.stock(payload)
+      JobSeekerEmail.stock(payload)
     end)
   end
 end

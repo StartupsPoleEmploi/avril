@@ -1,5 +1,5 @@
-defmodule Vae.ApiControllerTest do
-  use Vae.ConnCase
+defmodule VaeWeb.ApiControllerTest do
+  use VaeWeb.ConnCase
 
   import Vae.Factory
 
@@ -342,7 +342,7 @@ defmodule Vae.ApiControllerTest do
     |> json_response(200)
 
     updated_booklet =
-      Repo.get(Vae.Application, application.id)
+      Repo.get(Vae.UserApplication, application.id)
       |> Map.get(:booklet_1)
 
     assert_struct_by_params(updated_booklet, params, :civility)
@@ -393,7 +393,7 @@ defmodule Vae.ApiControllerTest do
     |> json_response(200)
 
     updated_booklet =
-      Repo.get(Vae.Application, application.id)
+      Repo.get(Vae.UserApplication, application.id)
       |> Map.get(:booklet_1)
 
     assert_struct_by_params(updated_booklet, params, :civility)
@@ -493,7 +493,7 @@ defmodule Vae.ApiControllerTest do
     |> json_response(200)
 
     updated_booklet =
-      Repo.get(Vae.Application, application.id)
+      Repo.get(Vae.UserApplication, application.id)
       |> Map.get(:booklet_1)
 
     assert_classifications(updated_booklet, params, :education)
@@ -520,7 +520,7 @@ defmodule Vae.ApiControllerTest do
     |> json_response(200)
 
     updated_booklet =
-      Repo.get(Vae.Application, application.id)
+      Repo.get(Vae.UserApplication, application.id)
       |> Map.get(:booklet_1)
 
     assert_classifications(updated_booklet, params, :education)
@@ -618,7 +618,7 @@ defmodule Vae.ApiControllerTest do
     |> json_response(200)
 
     updated_booklet =
-      Repo.get(Vae.Application, application.id)
+      Repo.get(Vae.UserApplication, application.id)
       |> Map.get(:booklet_1)
 
     assert Kernel.length(updated_booklet.experiences) == Kernel.length(params["experiences"])
@@ -767,7 +767,7 @@ defmodule Vae.ApiControllerTest do
     |> json_response(200)
 
     updated_booklet =
-      Repo.get(Vae.Application, application.id)
+      Repo.get(Vae.UserApplication, application.id)
       |> Map.get(:booklet_1)
 
     assert Kernel.length(updated_booklet.experiences) == Kernel.length(params["experiences"])

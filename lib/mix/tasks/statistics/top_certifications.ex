@@ -5,7 +5,7 @@ defmodule Mix.Tasks.Statistics.TopCertifications do
 
   import Ecto.Query
 
-  alias Vae.Application, as: JsApplication
+  alias Vae.UserApplication, as: JsApplication
   alias Vae.Certification
   alias Vae.JobSeeker
   alias Vae.Repo

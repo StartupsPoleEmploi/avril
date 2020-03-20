@@ -2,11 +2,11 @@ defmodule Mix.Tasks.AddCciCertifications do
   require Logger
   use Mix.Task
 
-  import Mix.Ecto
   import Ecto.Query
   import SweetXml
 
-  alias Vae.Repo
+  alias Vae.{Certification, Certifier, Delegate}
+  alias Vae.{Places, Repo}
 
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
@@ -15,10 +15,10 @@ defmodule Mix.Tasks.AddCciCertifications do
 
     certifiers =
       from(
-        c in Vae.Certifier,
+        c in Certifier,
         where: like(c.name, "CCI%")
       )
-      |> Vae.Repo.all()
+      |> Repo.all()
       |> Enum.map(& &1.id)
 
     File.stream!("priv/fixtures/cci_delegates.csv")
@@ -42,11 +42,11 @@ defmodule Mix.Tasks.AddCciCertifications do
                      "last_name" => last_name,
                      "Mail" => email,
                      "Telephone" => phone
-                   } = line ->
-      params = %{
+                   } ->
+      %{
         name: name,
         address: address,
-        geolocation: Vae.Places.get_geoloc_from_address(address),
+        geolocation: Places.get_geoloc_from_address(address),
         person_name: "#{first_name} #{last_name}",
         email: email,
         telephone: "0#{phone}",
@@ -57,14 +57,14 @@ defmodule Mix.Tasks.AddCciCertifications do
 
   def build_delegate_changesets(delegates) do
     Enum.map(delegates, fn delegate ->
-      %Vae.Delegate{}
-      |> Vae.Delegate.changeset_update(delegate)
+      %Delegate{}
+      |> Delegate.changeset_update(delegate)
     end)
   end
 
   def insert!(changesets) do
     Enum.map(changesets, fn changeset ->
-      Vae.Repo.insert!(changeset)
+      Repo.insert!(changeset)
     end)
   end
 
@@ -106,8 +106,8 @@ defmodule Mix.Tasks.AddCciCertifications do
 
   def build_certification_changesets(certifications) do
     Enum.map(certifications, fn certification ->
-      %Vae.Certification{}
-      |> Vae.Certification.changeset(certification)
+      %Certification{}
+      |> Certification.changeset(certification)
     end)
   end
 

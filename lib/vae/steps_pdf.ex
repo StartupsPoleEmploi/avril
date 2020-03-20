@@ -1,5 +1,5 @@
 defmodule Vae.StepsPdf do
-  alias Vae.CertificationView
+  alias VaeWeb.CertificationView
 
   def create_pdf(process) do
     process

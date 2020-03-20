@@ -23,7 +23,7 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
             reunion: nil,
             commentaire: nil
 
-  def from_application(application = %Vae.Application{}) do
+  def from_application(application = %Vae.UserApplication{}) do
     user = application.user
 
     Map.merge(

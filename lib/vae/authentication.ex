@@ -1,5 +1,5 @@
 defimpl ExAdmin.Authentication, for: Plug.Conn do
-  alias Vae.Router.Helpers, as: Routes
+  alias VaeWeb.Router.Helpers, as: Routes
 
   def use_authentication?(_), do: true
   def current_user(conn), do: Pow.Plug.current_user(conn)

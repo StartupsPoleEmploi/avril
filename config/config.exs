@@ -71,9 +71,9 @@ config :vae,
     ]
   ]
 
-config :vae, Vae.Endpoint,
+config :vae, VaeWeb.Endpoint,
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
-  render_errors: [view: Vae.ErrorView, accepts: ~w(html email json)],
+  render_errors: [view: VaeWeb.ErrorView, accepts: ~w(html email json)],
   pubsub: [name: Vae.PubSub, adapter: Phoenix.PubSub.PG2]
 
 config :vae, Vae.Repo,
@@ -87,7 +87,7 @@ config :vae, Vae.Repo,
   ssl: false,
   timeout: 60_000
 
-config :vae, Vae.Mailer,
+config :vae, VaeWeb.Mailer,
   adapter: Swoosh.Adapters.Mailjet,
   api_key: System.get_env("MAILJET_PUBLIC_API_KEY"),
   secret: System.get_env("MAILJET_PRIVATE_API_KEY"),
@@ -104,12 +104,12 @@ config :vae, :pow,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   extensions: [PowEmailConfirmation, PowResetPassword, PowPersistentSession],
-  mailer_backend: Vae.PowMailer,
+  mailer_backend: VaeWeb.PowMailer,
   # web_mailer_module: Vae.PowMailer,
-  messages_backend: Vae.Pow.Messages,
+  messages_backend: VaeWeb.Pow.Messages,
   password_min_length: 8,
-  routes_backend: Vae.Pow.Routes,
-  web_module: Vae
+  routes_backend: VaeWeb.Pow.Routes,
+  web_module: VaeWeb
 
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
@@ -121,7 +121,7 @@ config :ex_admin,
   repo: Vae.Repo,
   module: Vae,
   modules: [
-    Vae.ExAdmin.Application,
+    Vae.ExAdmin.UserApplication,
     Vae.ExAdmin.AppStatus,
     Vae.ExAdmin.Dashboard,
     Vae.ExAdmin.Certification,
@@ -172,7 +172,7 @@ config :phoenix_markdown, :earmark, %{
 config :phoenix_markdown, :server_tags, :all
 
 config :scrivener_html,
-  routes_helper: Vae.Router.Helpers,
+  routes_helper: VaeWeb.Router.Helpers,
   view_style: :bootstrap_v4
 
 config :sentry,

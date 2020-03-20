@@ -33,7 +33,7 @@ defmodule Vae.Factory do
   end
 
   def build(:application, date) do
-    %Vae.Application{
+    %Vae.UserApplication{
       user: build({:user, date}),
       certification: build(:certification),
       booklet_hash: "123456"

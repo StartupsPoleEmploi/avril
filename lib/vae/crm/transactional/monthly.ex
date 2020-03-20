@@ -1,8 +1,10 @@
 defmodule Vae.Crm.Transactional.Monthly do
-  alias Vae.{Application, ApplicationEmail, Mailer}
+  alias VaeWeb.Mailer
+  alias VaeWeb.ApplicationEmail
+  alias Vae.UserApplication
 
   def execute(date \\ Date.utc_today()) do
-    Application.list_from_last_month(date)
+    UserApplication.list_from_last_month(date)
     |> Enum.map(&ApplicationEmail.monthly_status(&1))
     |> Mailer.send()
   end

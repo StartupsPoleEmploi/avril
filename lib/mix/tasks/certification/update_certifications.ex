@@ -165,7 +165,7 @@ defmodule Mix.Tasks.UpdateCertifications do
     if Enum.member?(certification_ids, keep_certification_id) do
       # This is the clean way to merge associations
       applications_to_update_query =
-        from(a in Vae.Application, where: a.certification_id in ^remove_certification_ids)
+        from(a in Vae.UserApplication, where: a.certification_id in ^remove_certification_ids)
 
       {nb_updated, _} =
         Repo.update_all(applications_to_update_query,

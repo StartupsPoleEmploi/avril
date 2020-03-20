@@ -1,7 +1,7 @@
 use Mix.Config
 require Logger
 
-config :vae, Vae.Endpoint,
+config :vae, VaeWeb.Endpoint,
   http: [port: 4000],
   url: [scheme: "http", host: System.get_env("WHOST") || "localhost", port: 80],
   secret_key_base: "akyL4W53VWMOrzMxWNJP9Y1ofAIkm9dpvp1KLHJhWQUolRUVlCbOdRrr/0UmcjZx",
@@ -12,8 +12,8 @@ config :vae, Vae.Endpoint,
     patterns: [
       ~r{priv/static/.*(html|js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
-      ~r{web/views/.*(ex)$},
-      ~r{web/templates/.*(eex|slime|slim|md)$}
+      ~r{lib/vae_web/views/.*(ex)$},
+      ~r{lib/vae_web/templates/.*(eex|slime|slim|md)$}
     ]
   ],
   watchers: [
@@ -31,7 +31,7 @@ config :vae, Vae.Scheduler,
     campaign_task: [
       timezone: "Europe/Paris",
       schedule: "30 14 17 7 *",
-      task: &Vae.Mailer.execute/0
+      task: &VaeWeb.Mailer.execute/0
     ],
     statistics_task: [
       timezone: "Europe/Paris",

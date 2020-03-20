@@ -1,5 +1,5 @@
-defmodule Vae.CertificationControllerTest do
-  use Vae.ConnCase
+defmodule VaeWeb.CertificationControllerTest do
+  use VaeWeb.ConnCase
 
   import Vae.Factory
 
