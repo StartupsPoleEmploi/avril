@@ -49,5 +49,8 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
     response = json_response(conn, 200)
 
     assert length(response["data"]["applications"]) == length(applications)
+
+    assert Enum.map(applications, &"#{&1.id}") --
+             Enum.map(response["data"]["applications"], & &1["id"]) == []
   end
 end
