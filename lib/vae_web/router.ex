@@ -102,9 +102,7 @@ defmodule VaeWeb.Router do
         as: :france_vae_registered
       )
 
-      resources("/resume", VaeWeb.UserApplicationController.ResumeController,
-        only: [:create, :delete]
-      )
+      resources("/resume", VaeWeb.UserApplication.ResumeController, only: [:create, :delete])
     end
 
     get("/candidatures/:id/admissible", VaeWeb.UserApplicationController, :admissible)
