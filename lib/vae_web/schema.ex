@@ -1,7 +1,7 @@
 defmodule VaeWeb.Schema do
   use Absinthe.Schema
 
-  alias Vae.Applications
+  alias Vae.{Applications, Authorities}
 
   import_types(Absinthe.Type.Custom)
 
@@ -18,29 +18,36 @@ defmodule VaeWeb.Schema do
     field(:id, :id)
     field(:booklet_hash, :string)
     field(:inserted_at, :naive_datetime)
+    field(:submitted_at, :naive_datetime)
+
+    field(:delegate, :delegate)
+    field(:certification, :certification)
   end
 
-  #        %{
-  #        # id: application.id,
-  #        booklet_hash: application.booklet_hash,
-  #        certification:
-  #          application.certification
-  #          |> Maybe.map(
-  #            &%{
-  #              slug: &1.slug,
-  #              name: Certification.name(&1),
-  #              level: ViewHelpers.level_info_by_level(&1.level)
-  #            }
-  #          ),
-  #        delegate:
-  #          application.delegate
-  #          |> Maybe.map(
-  #            &%{
-  #              name: &1.name,
-  #              certifier_name: &1.certifiers |> hd() |> Maybe.map(fn c -> c.name end),
-  #              address: &1.address
-  #            }
-  #          ),
-  #        created_at: application.inserted_at
-  #      }
+  object :delegate do
+    field(:id, :id)
+    field(:name, :string)
+    field(:person_name, :string)
+    field(:email, :string)
+    field(:address, :string)
+    field(:telephone, :string)
+
+    field(:certifier, :certifier) do
+      resolve(fn delegate, _, _ ->
+        {:ok, Authorities.get_first_certifier_from_delegate(delegate)}
+      end)
+    end
+  end
+
+  object :certification do
+    field(:id, :id)
+    field(:slug, :string)
+    field(:acronym, :string)
+    field(:label, :string)
+    field(:level, :string)
+  end
+
+  object :certifier do
+    field(:name, :string)
+  end
 end
