@@ -114,7 +114,10 @@ defmodule Vae.Mixfile do
       {:hackney, "~> 1.9"},
       {:sentry, "~> 6.4"},
       {:phoenix_markdown, "~> 1.0"},
-      {:health_checkup, "~> 0.1.0"}
+      {:health_checkup, "~> 0.1.0"},
+      {:absinthe, "~> 1.4.0"},
+      {:absinthe_plug, "~> 1.4"},
+      {:ex_machina, "~> 2.3", only: :test}
     ]
   end
 
