@@ -3,18 +3,25 @@ defmodule Vae.ExAdmin.Helpers do
 
   def resource_name_and_link(resource, opts \\ [])
   def resource_name_and_link(nil, _opts), do: nil
+
   def resource_name_and_link(resource, opts) do
-    name = cond do
-      opts[:namify] -> opts[:namify].(resource)
-      Keyword.has_key?(resource.__struct__.__info__(:functions), :name) ->
-        resource.__struct__.name(resource)
-      true -> resource.name
-    end
+    name =
+      cond do
+        opts[:namify] ->
+          opts[:namify].(resource)
+
+        Keyword.has_key?(resource.__struct__.__info__(:functions), :name) ->
+          resource.__struct__.name(resource)
+
+        true ->
+          resource.name
+      end
+
     path = ExAdmin.Utils.admin_resource_path(resource)
     {csv_espace(name), path}
   end
 
-  def path_to_url(path), do: "#{VaeWeb.Endpoint.static_url}#{path}"
+  def path_to_url(path), do: "#{VaeWeb.Endpoint.static_url()}#{path}"
 
   def link_to_resource(resource, opts \\ []) do
     case resource_name_and_link(resource, opts) do
@@ -36,7 +43,10 @@ defmodule Vae.ExAdmin.Helpers do
   end
   def csv_espace(other), do: other
 
+  def csv_espace(term), do: term
+
   def print_in_json(nil), do: nil
+
   def print_in_json(data) do
     markup do
       pre(Jason.encode!(Map.from_struct(data), pretty: true))
