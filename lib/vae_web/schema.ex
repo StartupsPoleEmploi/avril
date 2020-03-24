@@ -2,15 +2,14 @@ defmodule VaeWeb.Schema do
   use Absinthe.Schema
 
   alias Vae.{Applications, Authorities}
+  alias VaeWeb.Resolvers
 
   import_types(Absinthe.Type.Custom)
 
   @desc "List user applications"
   query do
     field(:applications, list_of(:application)) do
-      resolve(fn _, _, %{context: %{current_user: user}} ->
-        {:ok, Applications.get_applications(user.id)}
-      end)
+      resolve(&Resolvers.Application.application_items/3)
     end
   end
 
@@ -33,9 +32,7 @@ defmodule VaeWeb.Schema do
     field(:telephone, :string)
 
     field(:certifier, :certifier) do
-      resolve(fn delegate, _, _ ->
-        {:ok, Authorities.get_first_certifier_from_delegate(delegate)}
-      end)
+      resolve(&Resolvers.Certifier.certifier_item/3)
     end
   end
 
