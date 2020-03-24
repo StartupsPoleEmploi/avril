@@ -20,12 +20,9 @@ defmodule VaeWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      alias Vae.Repo
-      import Ecto
-      import Ecto.Changeset
-      import Ecto.Query
-
       alias VaeWeb.Router.Helpers, as: Routes
+
+      import Vae.ExFactory
 
       # The default endpoint for testing
       @endpoint VaeWeb.Endpoint

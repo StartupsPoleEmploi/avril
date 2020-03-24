@@ -27,7 +27,7 @@ defmodule VaeWeb.Router do
 
   pipeline :api_protected do
     plug Pow.Plug.RequireAuthenticated,
-      error_handler: Vae.APIAuthErrorHandler
+      error_handler: VaeWeb.APIAuthErrorHandler
   end
 
   pipeline :admin do
@@ -41,6 +41,12 @@ defmodule VaeWeb.Router do
     plug(:fetch_flash)
 
     post("/mail_events", VaeWeb.MailEventsController, :new_event)
+  end
+
+  pipeline :gapi do
+    plug(:accepts, ["json"])
+    plug(VaeWeb.APIAuthPlug, otp_app: :vae)
+    plug VaeWeb.Context
   end
 
   # Public Pages
@@ -146,6 +152,18 @@ defmodule VaeWeb.Router do
     post("/delegates/search", VaeWeb.Api.DelegateController, :search)
 
     post("/meetings/search", VaeWeb.Api.MeetingController, :search)
+  end
+
+  scope "/" do
+    pipe_through [:gapi, :api_protected]
+
+    forward "/api/v2", Absinthe.Plug,
+      schema: VaeWeb.Schema,
+      json_codec: Jason
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: VaeWeb.Schema,
+      json_codec: Jason
   end
 
   # Admin
