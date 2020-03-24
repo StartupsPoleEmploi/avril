@@ -11,6 +11,11 @@ defmodule VaeWeb.Schema do
     field(:applications, list_of(:application)) do
       resolve(&Resolvers.Application.application_items/3)
     end
+
+    field(:application, :application) do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Application.application/3)
+    end
   end
 
   object :application do

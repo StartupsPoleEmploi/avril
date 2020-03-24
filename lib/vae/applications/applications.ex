@@ -15,4 +15,11 @@ defmodule Vae.Applications do
     )
     |> Repo.all()
   end
+
+  def get_application_from_id_and_user_id(id, user_id) do
+    from(a in UserApplication,
+      where: a.id == ^id and a.user_id == ^user_id
+    )
+    |> Repo.one()
+  end
 end
