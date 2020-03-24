@@ -1,42 +1,51 @@
 defmodule Vae.ExFactory do
   use ExMachina.Ecto, repo: Vae.Repo
 
+  alias Vae.String
+  alias Vae.{Certification, Certifier, Delegate, User, UserApplication}
+
   def user_factory() do
-    %Vae.User{
+    %User{
       first_name: "Jane",
       last_name: "Doe"
     }
   end
 
   def delegate_factory() do
-    %Vae.Delegate{
+    %Delegate{
       name: "Delegate 1",
       person_name: "Marc Aurele",
       address: "3001  Meadowbrook Mall Road, 90025, West Los Angeles",
       city: "West Los Angeles",
+      telephone: "0000000000",
+      email: "marcorl@gladia.tor",
       certifiers: [build(:certifier)]
     }
   end
 
   def certification_factory() do
-    %Vae.Certification{
-      label: generate_certification_label(),
-      acronym: generate_certification_acronym(),
+    label = generate_certification_label()
+    acronym = generate_certification_acronym()
+
+    %Certification{
+      label: label,
+      acronym: acronym,
       level: "1",
       description:
         "My name is Maximus Decimus Meridius, commander of the Armies of the North, General of the Felix Legions and loyal servant to the true emperor, Marcus Aurelius. Father to a murdered son, husband to a murdered wife. And I will have my vengeance, in this life or the next.",
-      delegates: [build(:delegate)]
+      slug: generate_certification_slug([label, acronym])
     }
   end
 
   def certifier_factory() do
-    %Vae.Certifier{
+    %Certifier{
       name: generate_certifier_name()
     }
   end
 
   def application_factory() do
-    %Vae.UserApplication{
+    %UserApplication{
+      booklet_hash: :crypto.strong_rand_bytes(64) |> Base.url_encode64() |> binary_part(0, 64),
       delegate: build(:delegate),
       certification: build(:certification)
     }
@@ -50,5 +59,12 @@ defmodule Vae.ExFactory do
 
   defp generate_random_string(length) do
     :crypto.strong_rand_bytes(length) |> Base.encode64() |> binary_part(0, length)
+  end
+
+  defp generate_certification_slug(params) do
+    params
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" ")
+    |> String.parameterize()
   end
 end
