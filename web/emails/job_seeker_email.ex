@@ -37,7 +37,8 @@ defmodule Vae.JobSeekerEmail do
       :avril,
       job_seeker,
       %{
-        subject: "Ajoutez un nouveau diplôme sur votre CV",
+        subject:
+          "Malgré les évènements, restons tournés vers l'avenir. Avec Avril obtenez un diplôme sans suivre de formation, c'est votre expérience qui compte.",
         url:
           Routes.root_url(
             Vae.Endpoint,
