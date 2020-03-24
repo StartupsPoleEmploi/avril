@@ -20,24 +20,20 @@ defmodule VaeWeb.RomeController do
       Rome.is_category?(rome) ->
         render(conn, "index.html",
           rome: rome,
-          romes: Rome.subcategories(rome)
+          romes: Rome.subcategories(rome),
+          category: rome
         )
 
       Rome.is_subcategory?(rome) ->
         render(conn, "index.html",
           rome: rome,
-          romes: Rome.romes(rome),
-          category: Rome.category(rome)
+          romes: Rome.romes(rome, [preload: [:certifications]]),
+          category: Rome.category(rome),
+          subcategory: rome
         )
 
       true ->
-        rome = Repo.preload(rome, [:professions, :certifications])
-
-        render(conn, "show.html",
-          rome: rome,
-          subcategory: Rome.subcategory(rome),
-          category: Rome.category(rome)
-        )
+        redirect(conn, to: Routes.certification_path(conn, :index, rome_code: rome))
     end
   end
 end

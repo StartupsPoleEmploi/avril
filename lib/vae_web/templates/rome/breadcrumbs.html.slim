@@ -1,15 +1,18 @@
 nav.breadcrumb aria-label="breadcrumbs"
   ul
     li class="#{if is_nil(@assigns[:rome]), do: "is-active"}"
-      = link("Référentiel ROME", to: Routes.rome_path(@conn, :index))
+      = link("Classification ROME", to: Routes.rome_path(@conn, :index))
     = if @assigns[:category] do
-      li= link(Vae.Rome.code_name(@assigns[:category]), to: Routes.rome_path(@conn, :show, @assigns[:category]))
-      = if @assigns[:subcategory] do
-        li= link(Vae.Rome.code_name(@assigns[:subcategory]), to: Routes.rome_path(@conn, :show, @assigns[:subcategory]))
-    = if @assigns[:rome] do
-      - is_current = is_nil(@assigns[:profession]) && is_nil(@assigns[:certifications])
+      - is_current = @assigns[:category] == @assigns[:rome]
       li class=(if is_current, do: "is-active")
-        = link(Vae.Rome.code_name(@assigns[:rome]), to: (if is_current, do: "#", else: Routes.rome_path(@conn, :show, @assigns[:rome])))
+        = link(@assigns[:category].label, to: (if is_current, do: "#", else: Routes.rome_path(@conn, :show, @assigns[:category])))
+      = if @assigns[:subcategory] do
+        - is_current = @assigns[:subcategory] == @assigns[:rome]
+        li class=(if is_current, do: "is-active")
+          = link(@assigns[:subcategory].label, to: (if is_current, do: "#", else: Routes.rome_path(@conn, :show, @assigns[:subcategory])))
+    / = if @assigns[:rome] do
+    /   li class=(if is_current, do: "is-active")
+    /     = link(@assigns[:rome].label, to: (if is_current, do: "#", else: Routes.rome_path(@conn, :show, @assigns[:rome])))
     = if @assigns[:certifications] do
       li.is-active= link("Diplômes disponibles", to: "#")
     - else

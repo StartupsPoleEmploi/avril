@@ -59,6 +59,10 @@ defmodule Vae.Rome do
     Regex.match?(~r/^[A-Z]\d\d$/, rome.code)
   end
 
+  def is_rome?(rome) do
+    Regex.match?(~r/^[A-Z]\d{4}$/, rome.code)
+  end
+
   def categories() do
     query = from m in Rome, where: like(m.code, ^("_"))
     Repo.all(query)
@@ -89,10 +93,15 @@ defmodule Vae.Rome do
     Repo.all(query)
   end
 
-  def romes(rome) do
+  def romes(rome, options \\ []) do
     %{subcategory: subcategory} = code_parts(rome)
-    query = from m in Rome, where: like(m.code, ^("#{String.pad_trailing(subcategory, 5, "_")}")), order_by: [asc: :code]
+    query = from m in Rome, [
+      where: like(m.code, ^("#{String.pad_trailing(subcategory, 5, "_")}")),
+      order_by: [asc: :code],
+      preload: ^(options[:preload] || [])
+    ]
     Repo.all(query)
+
   end
 
   def name(%Rome{label: label}) do

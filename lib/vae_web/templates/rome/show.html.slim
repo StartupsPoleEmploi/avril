@@ -1,7 +1,7 @@
 section.section#title
   .container
     = render "breadcrumbs.html", conn: @conn, assigns: assigns
-    h1.title.is-2.has-text-centered= Vae.Rome.code_name(@rome)
+    h1.title.is-2.has-text-centered= @rome.label
     .columns
       .column.is-8.is-offset-2
         .section.is-small.has-text-centered

@@ -9,11 +9,13 @@
     .container
       .section.is-vertical.is-small
         = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
-        = if filter_object do
+        = if assigns[:rome] do
           = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
       = if filter_object do
-        h2.subtitle.is-5
-          | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour #{Vae.String.inflect("le métier", (if assigns[:profession], do: 1, else: 2))} :
+        = if assigns[:rome] do
+          h2.subtitle.is-5
+            | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour les métiers :
+            / =< @rome.professions |> Enum.map(&Map.get(&1, :label)) |> Enum.join(", ")
         h1.title.is-1
           = filter_object.label
       - else

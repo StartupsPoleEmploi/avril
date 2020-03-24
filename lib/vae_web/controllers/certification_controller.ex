@@ -104,7 +104,7 @@ defmodule VaeWeb.CertificationController do
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do
-    rome = Repo.get_by(Rome, code: Vae.String.to_id(rome_code))
+    rome = Repo.get_by(Rome, code: Vae.String.to_id(rome_code)) |> Repo.preload(:professions)
 
     Map.merge(filters, %{
       rome: rome,
@@ -114,13 +114,13 @@ defmodule VaeWeb.CertificationController do
   end
 
   defp enrich_filter_values(%{profession: profession_id} = filters) do
-    profession = Repo.get(Profession, Vae.String.to_id(profession_id)) |> Repo.preload(:rome)
+    profession = Repo.get(Profession, Vae.String.to_id(profession_id))
 
     Map.merge(filters, %{
       profession: profession,
-      rome: profession.rome,
-      subcategory: Rome.subcategory(profession.rome),
-      category: Rome.category(profession.rome)
+      # rome: profession.rome,
+      # subcategory: Rome.subcategory(profession.rome),
+      # category: Rome.category(profession.rome)
     })
   end
 

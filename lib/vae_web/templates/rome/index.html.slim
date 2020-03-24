@@ -3,18 +3,29 @@ section.section#title
     = render "breadcrumbs.html", conn: @conn, assigns: assigns
     h1.title.is-2.has-text-centered
       = if assigns[:rome] do
-        = Vae.Rome.code_name(@rome)
+        = @rome.label
       - else
         | Sélectionnez le secteur du métier de votre VAE
     .columns
       .column.is-6.is-offset-3
         .section.is-small
-          h2.title.is-4.has-text-centered= "#{Vae.String.inflect(length(@romes), "secteur disponible")} "
+          h2.title.is-4.has-text-centered= "#{Vae.String.inflect(length(@romes), "#{if assigns[:rome], do: "sous-"}secteur disponible")} "
           p.subtitle.has-text-centered
             | dans la classification
             =< link("ROME", to: "https://www.data.gouv.fr/fr/datasets/repertoire-operationnel-des-metiers-et-des-emplois-rome/")
           .content
             ul
               = for rome <- @romes do
-                li= link(Vae.Rome.code_name(rome), to: Routes.rome_path(@conn, :show, rome))
+                = if assigns[:rome] && Vae.Rome.is_subcategory?(@rome) do
+                  = if length(rome.certifications) >= 1 do
+                    li
+                      = link(to: Routes.certification_path(@conn, :index, rome_code: rome)) do
+                        = rome.label
+                        |  (#{Vae.String.inflect("#{length(rome.certifications)} diplôme associé", length(rome.certifications))})
+                  - else
+                    li
+                      = rome.label
+                      |  : aucun diplôme disponible
+                - else
+                  li= link(rome.label, to: Routes.rome_path(@conn, :show, rome))
 
