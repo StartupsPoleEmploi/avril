@@ -5,11 +5,14 @@ section.section#title
       = if assigns[:rome] do
         = Vae.Rome.code_name(@rome)
       - else
-        | Référentiel ROME
+        | Sélectionnez le secteur du métier de votre VAE
     .columns
       .column.is-6.is-offset-3
         .section.is-small
-          h2.title.is-4= "#{Vae.String.inflect(length(@romes), "sous-catégorie disponible")} :"
+          h2.title.is-4.has-text-centered= "#{Vae.String.inflect(length(@romes), "secteur disponible")} "
+          p.subtitle.has-text-centered
+            | dans la classification
+            =< link("ROME", to: "https://www.data.gouv.fr/fr/datasets/repertoire-operationnel-des-metiers-et-des-emplois-rome/")
           .content
             ul
               = for rome <- @romes do
