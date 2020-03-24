@@ -26,6 +26,10 @@ section.section#title
                     li
                       = rome.label
                       |  : aucun diplôme disponible
+                  / p Métiers associés :
+                  / ul
+                  /   = for profession <- rome.professions do
+                  /     li= profession.label
                 - else
                   li= link(rome.label, to: Routes.rome_path(@conn, :show, rome))
 

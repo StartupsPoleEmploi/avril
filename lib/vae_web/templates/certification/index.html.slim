@@ -15,7 +15,8 @@
         = if assigns[:rome] do
           h2.subtitle.is-5
             | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour les métiers :
-            / =< @rome.professions |> Enum.map(&Map.get(&1, :label)) |> Enum.join(", ")
+            / = for profession <- @rome.professions do
+            /   =< link(profession.label, to: Routes.certification_path(@conn, :index, metier: profession))
         h1.title.is-1
           = filter_object.label
       - else

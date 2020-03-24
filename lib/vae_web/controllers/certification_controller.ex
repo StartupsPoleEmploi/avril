@@ -48,7 +48,7 @@ defmodule VaeWeb.CertificationController do
           no_results: count_without_level_filter(params) == 0,
           page: page
         }
-        |> Map.merge(enrich_filter_values(IO.inspect(filter_values)))
+        |> Map.merge(enrich_filter_values(filter_values))
       )
     end
   end
