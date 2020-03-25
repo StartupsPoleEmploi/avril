@@ -4,12 +4,14 @@ defmodule Vae.Applications do
   alias Vae.{Certification, Delegate, UserApplication}
   alias Vae.Repo
 
+  @doc "List applications from a User ID"
   def get_applications(user_id) do
     base_query()
     |> build_query(user_id: user_id)
     |> Repo.all()
   end
 
+  @doc "Returns an application from its ID and user ID"
   def get_application_from_id_and_user_id(application_id, user_id) do
     base_query()
     |> build_query(application_id: application_id, user_id: user_id)
