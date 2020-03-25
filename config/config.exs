@@ -9,6 +9,7 @@ use Mix.Config
 config :vae,
   ecto_repos: [Vae.Repo],
   places_client: Vae.Places.Client.Algolia,
+  places_cache: Vae.Places.Cache,
   search_client: Vae.Search.Client.Algolia,
   meetings_indice: System.get_env("ALGOLIA_MEETINGS_INDICE"),
   places_ets_table_name: :places_dev,

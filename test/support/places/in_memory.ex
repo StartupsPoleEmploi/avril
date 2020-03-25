@@ -32,7 +32,11 @@ defmodule Vae.Places.Client.InMemory do
     end)
   end
 
-  def get_geoloc_from_postal_code(nil), do: nil
+  def get_geoloc_from_geo(_), do: %{}
+
+  def get_geoloc_from_city(_), do: %{}
+
+  def get_geoloc_from_postal_code(nil), do: %{}
 
   def get_geoloc_from_postal_code(_value) do
     %{
@@ -52,7 +56,7 @@ defmodule Vae.Places.Client.InMemory do
       "county" => ["Paris"],
       "is_city" => true,
       "locale_names" => ["Paris 17e Arrondissement"],
-      "postcode" => ["75017"]
+      "postcode" => ["35000"]
     }
   end
 

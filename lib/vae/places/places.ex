@@ -1,7 +1,6 @@
 defmodule Vae.Places do
-  @places_client Vae.Places.Client.Algolia
-  @places_cache Vae.Places.Cache
-
+  @places_client Application.get_env(:vae, :places_client)
+  @places_cache Application.get_env(:vae, :places_cache)
 
   defdelegate get_geoloc_from_address(address), to: @places_client
 

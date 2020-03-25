@@ -20,7 +20,7 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
     field(:telephone, :string)
 
     field(:certifier, :certifier) do
-      resolve(&Resolvers.Certifier.certifier_item/3)
+      resolve(&Resolvers.Authorities.certifier_item/3)
     end
   end
 

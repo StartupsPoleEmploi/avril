@@ -1,8 +1,6 @@
 defmodule VaeWeb.Schema do
   use Absinthe.Schema
 
-  alias VaeWeb.Resolvers
-
   import_types(Absinthe.Type.Custom)
   import_types(__MODULE__.ApplicationTypes)
   import_types(__MODULE__.AuthoritiesTypes)

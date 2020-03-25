@@ -30,6 +30,7 @@ config :vae, Vae.Repo,
 
 config :vae,
   places_client: Vae.Places.Client.InMemory,
+  places_cache: Vae.Places.Client.InMemory,
   search_client: Vae.Search.Client.InMemory,
   places_ets_table_name: :places_test,
   mailjet: %{

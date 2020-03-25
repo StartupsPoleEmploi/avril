@@ -40,11 +40,12 @@ defmodule Vae.SearchDelegate do
     filtered_delegates =
       Enum.filter(delegates, fn delegate ->
         case delegate.geolocation["postcode"] do
-          [] ->
-            false
-
           [postcode | _tail] ->
-            String.slice(postcode, 0..1) == String.slice(search_postcode, 0..1)
+            String.slice(postcode, 0..1) ==
+              String.slice(search_postcode, 0..1)
+
+          v when v in [[], nil] ->
+            false
         end
       end)
 

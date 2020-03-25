@@ -7,7 +7,8 @@ defmodule Vae.ExFactory do
   def user_factory() do
     %User{
       first_name: "Jane",
-      last_name: "Doe"
+      last_name: "Doe",
+      postal_code: "35000"
     }
   end
 

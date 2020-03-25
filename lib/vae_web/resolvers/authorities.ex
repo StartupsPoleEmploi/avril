@@ -1,4 +1,4 @@
-defmodule VaeWeb.Resolvers.Certifier do
+defmodule VaeWeb.Resolvers.Authorities do
   alias Vae.Authorities
   alias Vae.Delegate
 

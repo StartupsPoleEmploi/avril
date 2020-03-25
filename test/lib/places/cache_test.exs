@@ -27,14 +27,14 @@ defmodule Vae.Places.CacheTest do
       "county" => ["Paris"],
       "is_city" => true,
       "locale_names" => ["Paris 17e Arrondissement"],
-      "postcode" => ["75017"]
+      "postcode" => ["35000"]
     }
 
     # Cache response
-    assert expected_response === Cache.get_geoloc_from_postal_code("75017")
+    assert expected_response === Cache.get_geoloc_from_postal_code("35000")
 
     # Cache storage
-    entries = :ets.lookup(@places_ets_table_name, "75017")
+    entries = :ets.lookup(@places_ets_table_name, "35000")
     assert length(entries) === 1
 
     {_key, entry} = hd(entries)

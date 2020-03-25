@@ -19,8 +19,18 @@ defmodule VaeWeb.Resolvers.Application do
 
     application = Applications.get_application_from_id_and_user_id(application_id, user.id)
 
-    {_meta, delegates} =
+    delegates =
       Vae.SearchDelegate.get_delegates(application.certification, geoloc, postal_code)
+      |> case do
+        {_meta, []} ->
+          []
+
+        {_meta, delegates} ->
+          delegates
+          |> Enum.map(fn delegate ->
+            Vae.Repo.get(Vae.Delegate, delegate.id) |> Vae.Repo.preload(:certifiers)
+          end)
+      end
 
     {:ok, delegates}
   end
