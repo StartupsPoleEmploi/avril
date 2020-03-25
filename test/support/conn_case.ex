@@ -24,6 +24,9 @@ defmodule VaeWeb.ConnCase do
 
       import Vae.ExFactory
 
+      defp to_iso8601(nil), do: nil
+      defp to_iso8601(naive_datetime), do: "#{NaiveDateTime.to_iso8601(naive_datetime)}"
+
       # The default endpoint for testing
       @endpoint VaeWeb.Endpoint
     end

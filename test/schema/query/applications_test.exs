@@ -121,7 +121,4 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
              }
            }
   end
-
-  defp to_iso8601(nil), do: nil
-  defp to_iso8601(naive_datetime), do: "#{NaiveDateTime.to_iso8601(naive_datetime)}"
 end

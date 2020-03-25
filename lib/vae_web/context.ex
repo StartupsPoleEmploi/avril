@@ -1,6 +1,8 @@
 defmodule VaeWeb.Context do
   @behaviour Plug
 
+  alias Vae.User
+
   def init(opts), do: opts
 
   def call(conn, _) do
@@ -10,7 +12,7 @@ defmodule VaeWeb.Context do
 
   defp build_context(conn) do
     case conn.assigns[:current_user] do
-      user -> %{current_user: user}
+      %User{} = user -> %{current_user: user}
       _ -> %{}
     end
   end
