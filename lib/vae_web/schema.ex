@@ -8,8 +8,12 @@ defmodule VaeWeb.Schema do
   import_types(__MODULE__.CertificationTypes)
 
   query do
+    import_fields(:account_queries)
     import_fields(:application_queries)
     import_fields(:authorities_queries)
-    import_fields(:account_queries)
+  end
+
+  mutation do
+    import_fields(:account_mutations)
   end
 end
