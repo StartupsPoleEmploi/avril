@@ -101,7 +101,7 @@
                   .col
                     .form-group.address-component.mb-1
                       .input-group
-                        = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: Vae.User.address_street(@user)
+                        = text_input f, :address4, class: "form-control", placeholder: "Voie", disabled: Vae.Account.address_street(@user)
                         .input-group-append
                           button class="btn btn-outline-secondary btn-sm toggle-address" type="button" title="Préciser l'adresse" disabled="disabled" +
                       = error_tag f, :address4

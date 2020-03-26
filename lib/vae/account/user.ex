@@ -309,11 +309,6 @@ defmodule Vae.User do
     end
   end
 
-  def address_street(user) do
-    [user.address1, user.address2, user.address3, user.address4]
-    |> Vae.Enum.join_keep_nil(", ")
-  end
-
   def address_city(user) do
     [
       Vae.Enum.join_keep_nil([user.postal_code, user.city_label], " "),
@@ -324,7 +319,7 @@ defmodule Vae.User do
 
   def address(user) do
     [
-      address_street(user),
+      Vae.Account.address_street(user),
       address_city(user)
     ]
     |> Vae.Enum.join_keep_nil("\n")
@@ -332,7 +327,7 @@ defmodule Vae.User do
 
   def address_inline(user) do
     [
-      address_street(user),
+      Vae.Account.address_street(user),
       address_city(user)
     ]
     |> Enum.join(", ")

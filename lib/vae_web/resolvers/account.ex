@@ -1,4 +1,6 @@
 defmodule VaeWeb.Resolvers.Account do
+  alias Vae.Account
+
   def profile_item(_, _, %{context: %{current_user: user}}) do
     {:ok, to_graphql(user)}
   end
@@ -14,7 +16,7 @@ defmodule VaeWeb.Resolvers.Account do
       city: user.city_label,
       country: user.country_label,
       postal_code: user.postal_code,
-      street: Vae.User.address_street(user)
+      street: Account.address_street(user)
     })
   end
 

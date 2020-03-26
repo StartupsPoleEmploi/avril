@@ -68,7 +68,7 @@ defmodule VaeWeb.ApiController do
           city: user.city_label,
           country: user.country_label,
           postal_code: user.postal_code,
-          street: User.address_street(user)
+          street: Vae.Account.address_street(user)
         }
       },
       experiences: user.proven_experiences |> group_experiences() |> map_experiences()
