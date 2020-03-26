@@ -268,7 +268,7 @@
                   h3.text-center Quand ?
                   = for {{_place, _address, slug} = place_infos, meetings} <- @meetings do
                     div.tab-pane.fade role="tabpanel" aria-labelledby="tab-#{slug}" id="place-#{slug}" class="#{if place_infos == @preselected_place, do: "show active"}"
-                      = select(f, :meeting_id, Enum.map(meetings, fn meeting -> [value: meeting.meeting_id2, key: "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))} de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)} #{if meeting.remaining_places <= 20, do: "(#{meeting.remaining_places} places disponibles)"}"] end), class: "custom-select custom-select-lg date-select", id: "select-#{slug}", disabled: place_infos != @preselected_place)
+                      = select(f, :meeting_id, Enum.map(meetings, fn meeting -> [value: meeting.meeting_id, key: "#{String.capitalize(Timex.lformat!(meeting.start_date, "%A %e %B ", "fr", :strftime))} de #{Timex.lformat!(meeting.start_date, "%H:%M", "fr", :strftime)} à #{Timex.lformat!(meeting.end_date, "%H:%M", "fr", :strftime)} #{if meeting.remaining_places <= 20, do: "(#{meeting.remaining_places} places disponibles)"}"] end), class: "custom-select custom-select-lg date-select", id: "select-#{slug}", disabled: place_infos != @preselected_place)
             .row
               .col-sm-12.text-center.my-5
                 button.btn.btn-primary type="submit" name="book" value="on" disabled=!@preselected_place data-analytics="Profil#Avec Reunion information"

@@ -7,7 +7,7 @@ defmodule Vae.Meetings.Meeting do
   embedded_schema do
     field(:name, :string)
     field(:academy_id, :integer)
-    field(:meeting_id, :integer)
+    field(:meeting_id, Vae.Meetings.EctoTypeAny)
     field(:meeting_id2, :string)
     field(:place, :string)
     field(:address, :string)
@@ -20,7 +20,7 @@ defmodule Vae.Meetings.Meeting do
     field(:end_date, :naive_datetime)
   end
 
-  @fields ~w(name academy_id meeting_id meeting_id2 place address postal_code geolocation target start_date end_date)a
+  @fields ~w(name academy_id meeting_id place address postal_code geolocation target start_date end_date)a
 
   def changeset(module, params) do
     module
@@ -35,11 +35,6 @@ defmodule Vae.Meetings.Meeting do
       :start_date,
       :end_date
     ])
-    |> fill_meeting_id2(params[:meeting_id])
-  end
-
-  def fill_meeting_id2(changeset, meeting_id) do
-    put_change(changeset, :meeting_id2, Integer.to_string(meeting_id))
   end
 
   defimpl ExAdmin.Render, for: __MODULE__ do

@@ -22,7 +22,23 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:inserted_at, :naive_datetime)
     field(:submitted_at, :naive_datetime)
 
+    field(:meeting, :meeting)
+
     field(:delegate, :delegate)
     field(:certification, :certification)
+  end
+
+  object :meeting do
+    field(:name, :string)
+    field(:academy_id, :integer)
+    field(:meeting_id, :integer)
+    field(:place, :string)
+    field(:address, :string)
+    field(:postal_code, :string)
+    field(:city, :string)
+    field(:target, :string)
+    field(:remaining_places, :integer)
+    field(:start_date, :naive_datetime)
+    field(:end_date, :naive_datetime)
   end
 end

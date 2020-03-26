@@ -145,7 +145,7 @@ defmodule Vae.Meetings.StateHolder do
       state
       |> from_delegates()
       |> Enum.flat_map(& &1[:meetings])
-      |> Enum.find(fn meeting -> meeting.meeting_id2 == meeting_id end)
+      |> Enum.find(fn meeting -> meeting.meeting_id == meeting_id end)
 
     {:reply, meeting, state}
   end

@@ -139,4 +139,70 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
              }
            }
   end
+
+  @query """
+    query ($id: ID!) {
+      application(id: $id) {
+        meeting {
+          name
+          academy_id
+          meeting_id
+          place
+          address
+          postal_code
+          city
+          target
+          remaining_places
+          start_date
+          end_date
+        }
+      }
+    }
+  """
+  test "Application fields return a meeting if there is", %{conn: conn} do
+    start_date = NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
+    end_date = Timex.shift(start_date, hours: 3)
+
+    meeting = %{
+      name: "Meeting name",
+      academy_id: 2,
+      meeting_id: 122,
+      place: "Meeting place",
+      address: "meeting address",
+      postal_code: "12345",
+      city: "Meeting's city",
+      target: "You",
+      remaining_places: "5",
+      start_date: start_date,
+      end_date: end_date
+    }
+
+    application =
+      insert(:application, %{
+        user: conn.assigns[:current_user],
+        meeting: meeting
+      })
+
+    conn = get conn, "/api/v2", query: @query, variables: %{"id" => application.id}
+
+    assert json_response(conn, 200) == %{
+             "data" => %{
+               "application" => %{
+                 "meeting" => %{
+                   "academy_id" => 2,
+                   "address" => "meeting address",
+                   "city" => "Meeting's city",
+                   "end_date" => NaiveDateTime.to_iso8601(end_date),
+                   "meeting_id" => 122,
+                   "name" => "Meeting name",
+                   "place" => "Meeting place",
+                   "postal_code" => "12345",
+                   "remaining_places" => 5,
+                   "start_date" => NaiveDateTime.to_iso8601(start_date),
+                   "target" => "You"
+                 }
+               }
+             }
+           }
+  end
 end

@@ -10,7 +10,26 @@ defmodule VaeWeb.Schema.AccountTypes do
     end
   end
 
+  object :profile do
+    field(:gender, :string)
+    field(:birthday, :date)
+    field(:birth_place, :address)
+    field(:first_name, :string)
+    field(:last_name, :string)
+    field(:email, :string)
+    field(:phone_number, :string)
+    field(:full_address, :address)
+  end
+
+  object :address do
+    field(:street, :string)
+    field(:postal_code, :string)
+    field(:city, :string)
+    field(:country, :string)
+  end
+
   object :account_mutations do
+    @desc "Updates the current user profile"
     field :update_profile, :profile do
       arg(:input, non_null(:profile_input))
       resolve(&Resolvers.Account.update_item/3)
@@ -29,24 +48,6 @@ defmodule VaeWeb.Schema.AccountTypes do
   end
 
   input_object :address_input do
-    field(:street, :string)
-    field(:postal_code, :string)
-    field(:city, :string)
-    field(:country, :string)
-  end
-
-  object :profile do
-    field(:gender, :string)
-    field(:birthday, :date)
-    field(:birth_place, :address)
-    field(:first_name, :string)
-    field(:last_name, :string)
-    field(:email, :string)
-    field(:phone_number, :string)
-    field(:full_address, :address)
-  end
-
-  object :address do
     field(:street, :string)
     field(:postal_code, :string)
     field(:city, :string)

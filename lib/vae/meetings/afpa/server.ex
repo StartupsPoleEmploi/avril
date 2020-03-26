@@ -64,7 +64,7 @@ defmodule Vae.Meetings.Afpa.Server do
         [
           %{
             struct(%Meeting{}, meeting)
-            | meeting_id2:
+            | meeting_id:
                 UUID.uuid5(
                   nil,
                   "#{meeting[:place]} #{meeting[:start_date]}"

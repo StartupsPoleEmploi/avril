@@ -16,9 +16,11 @@ defmodule Vae.ExAdmin.Delegate do
       column(:id)
       column(:name)
       column(:process)
+
       column(:certifiers, fn d ->
         Enum.map(d.certifiers, &Helpers.link_to_resource/1)
       end)
+
       column(:is_active)
       column(:administrative)
       column(:city)
@@ -62,7 +64,9 @@ defmodule Vae.ExAdmin.Delegate do
         table_for delegate.applications do
           column(:id)
           column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
+
           column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+
           column(:submitted_at)
           column(:admissible_at)
           column(:inadmissible_at)
@@ -70,9 +74,8 @@ defmodule Vae.ExAdmin.Delegate do
       end
 
       panel "Meetings" do
-        table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&(elem(&1, 1))) do
+        table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&elem(&1, 1)) do
           column(:meeting_id)
-          column(:meeting_id2)
           column(:name)
           column(:target)
           column(:place)
@@ -84,7 +87,6 @@ defmodule Vae.ExAdmin.Delegate do
           column(:end_date)
         end
       end
-
     end
 
     form delegate do
@@ -96,7 +98,10 @@ defmodule Vae.ExAdmin.Delegate do
           |> Enum.sort_by(& &1["nom"])
           |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
 
-        academies_options_tags = if length(academies_options_tags) > 0, do: academies_options_tags, else: [{nil, "No academies: France VAE not connected"}]
+        academies_options_tags =
+          if length(academies_options_tags) > 0,
+            do: academies_options_tags,
+            else: [{nil, "No academies: France VAE not connected"}]
 
         input(delegate, :academy_id,
           label: "Académies",
@@ -133,7 +138,7 @@ defmodule Vae.ExAdmin.Delegate do
       end
     end
 
-    filter [:id, :slug, :is_active, :city, :administrative]
+    filter([:id, :slug, :is_active, :city, :administrative])
 
     query do
       %{
@@ -144,7 +149,14 @@ defmodule Vae.ExAdmin.Delegate do
           ]
         ],
         index: [default_sort: [asc: :id]],
-        show: [preload: [:process, :certifiers, :certifications, applications: [ :delegate, :user, :certification, :certifiers]]]
+        show: [
+          preload: [
+            :process,
+            :certifiers,
+            :certifications,
+            applications: [:delegate, :user, :certification, :certifiers]
+          ]
+        ]
       }
     end
   end
