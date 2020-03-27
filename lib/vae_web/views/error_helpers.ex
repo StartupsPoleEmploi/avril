@@ -32,9 +32,9 @@ defmodule VaeWeb.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(Vae.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(VaeWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(Vae.Gettext, "errors", msg, opts)
+      Gettext.dgettext(VaeWeb.Gettext, "errors", msg, opts)
     end
   end
 end

@@ -100,7 +100,9 @@ defmodule VaeWeb.CertificationController do
 
   def select(conn, %{"certification_id" => certification_id} = _params) do
     certification_id = Vae.String.to_id(certification_id)
-    PowRoutes.maybe_create_application_and_redirect(conn, certification_id)
+    conn
+    |> Plug.Conn.put_session(:certification_id, certification_id)
+    |> PowRoutes.maybe_create_application_and_redirect(certification_id)
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do

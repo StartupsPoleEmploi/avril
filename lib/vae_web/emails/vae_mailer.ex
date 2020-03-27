@@ -4,8 +4,8 @@ defmodule VaeWeb.Mailer do
   use Swoosh.Mailer, otp_app: :vae
 
   use Phoenix.Swoosh,
-    view: Vae.EmailView,
-    layout: {Vae.EmailView, :layout}
+    view: VaeWeb.EmailView,
+    layout: {VaeWeb.EmailView, :layout}
 
   alias Swoosh.Email
   alias Vae.{JobSeeker, User}
@@ -171,7 +171,7 @@ defmodule VaeWeb.Mailer do
   # defp _render_markdown_bodies(email, template_name, params) do
   #   email
   #     # |> Map.put(:"html_body", "Hello you")
-  #   |> Map.put(:html_body, Phoenix.View.render_to_string(Vae.EmailView, template_name, params))
-  #   # |> Map.put(:"text_body", Phoenix.View.render_to_string(Vae.EmailView, template_name, params))
+  #   |> Map.put(:html_body, Phoenix.View.render_to_string(VaeWeb.EmailView, template_name, params))
+  #   # |> Map.put(:"text_body", Phoenix.View.render_to_string(VaeWeb.EmailView, template_name, params))
   # end
 end

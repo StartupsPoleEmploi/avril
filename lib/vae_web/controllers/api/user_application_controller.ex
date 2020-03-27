@@ -5,6 +5,7 @@ defmodule VaeWeb.Api.UserApplicationController do
   alias Vae.Certification
   alias Vae.SearchDelegate
   alias VaeWeb.ViewHelpers
+  alias Vae.UserApplication, as: Application
 
   def index(conn, _params) do
     current_user =
@@ -43,7 +44,32 @@ defmodule VaeWeb.Api.UserApplicationController do
     end
   end
 
-  def delegates_search(conn, %{"slug" => slug_param} = _params) do
+  def update(conn, %{"slug" => slug_param} = _params) do
+    IO.inspect(_params)
+    delegate_id = nil
+    with(
+      current_user when not is_nil(current_user) <- conn.assigns[:current_user]
+      |> Repo.preload(:applications),
+      application when not is_nil(application) <- current_user.applications
+        |> Enum.find(fn %{certification: %Certification{slug: slug}} -> slug == slug_param end),
+      delegate when not is_nil(delegate) <- Repo.get(Delegate, delegate_id),
+      {:ok, application} = Application.set_delegate(application, delegate)
+    ) do
+      redirect(conn, to: Routes.api_v1_user_application_path(conn, :show, application))
+    else
+      error ->
+        conn
+        |> put_status(404)
+        |> json(%{
+          error: %{
+            code: 404,
+            message: "Not found"
+          }
+        })
+    end
+  end
+
+  def delegates_search(conn, %{"slug" => slug_param, "lat" => lat, "lng" => lng} = params) do
     current_user =
       conn.assigns[:current_user]
       |> Repo.preload(applications: [[delegate: :certifiers], :certification])
@@ -52,11 +78,11 @@ defmodule VaeWeb.Api.UserApplicationController do
       current_user.applications
       |> Enum.find(fn %{certification: %Certification{slug: slug}} -> slug == slug_param end)
 
-    %{"_geoloc" => geoloc, "postcode" => [postal_code]} =
-      Vae.Places.get_geoloc_from_postal_code(current_user.postal_code)
-
     {_meta, delegates} =
-      SearchDelegate.get_delegates(application.certification, geoloc, postal_code)
+      SearchDelegate.get_delegates(application.certification, %{
+        lat: lat,
+        lng: lng
+      }, params["postal_code"])
 
     json(
       conn,

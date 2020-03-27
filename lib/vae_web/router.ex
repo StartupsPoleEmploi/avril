@@ -147,6 +147,7 @@ defmodule VaeWeb.Router do
 
     get("/applications", VaeWeb.Api.UserApplicationController, :index)
     get("/applications/:slug", VaeWeb.Api.UserApplicationController, :show)
+    put("/applications/:slug", VaeWeb.Api.UserApplicationController, :update)
     get("/applications/:slug/delegates", VaeWeb.Api.UserApplicationController, :delegates_search)
 
     post("/delegates/search", VaeWeb.Api.DelegateController, :search)

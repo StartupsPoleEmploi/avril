@@ -67,7 +67,7 @@ defmodule VaeWeb.Pow.Routes do
         |> redirect(to: Routes.root_path(conn, :index))
       end
     else
-      redirect(conn, to: Routes.pow_session_path(conn, :new))
+      redirect(conn, to: Routes.pow_registration_path(conn, :new))
     end
   end
 end

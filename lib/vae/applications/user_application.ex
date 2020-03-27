@@ -69,6 +69,12 @@ defmodule Vae.UserApplication do
     end
   end
 
+  def set_delegate(%UserApplication{} = application, %Delegate{id: id} = _delegate) do
+    application
+    |> change(%{delegate_id: id})
+    |> Repo.update()
+  end
+
   def submit(application, auto_submitted \\ false) do
     application = Repo.preload(application, [:user, :delegate])
 
