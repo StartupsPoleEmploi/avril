@@ -12,6 +12,12 @@ defmodule Vae.ExFactory do
     }
   end
 
+  def set_password(user, password) do
+    user
+    |> User.changeset(%{"password" => password})
+    |> Ecto.Changeset.apply_changes()
+  end
+
   def delegate_factory() do
     %Delegate{
       name: "Delegate 1",

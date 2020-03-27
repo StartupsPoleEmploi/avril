@@ -16,4 +16,9 @@ defmodule Vae.Account do
     |> User.update_changeset(attrs)
     |> Repo.update()
   end
+
+  def update_user_password(%User{} = user, attrs) do
+    User.update_password_changeset(user, attrs)
+    |> Repo.update()
+  end
 end

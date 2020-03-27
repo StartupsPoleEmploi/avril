@@ -1,5 +1,10 @@
 defmodule VaeWeb.Resolvers.Account do
+  import VaeWeb.Resolvers.ErrorHandler
+
   alias Vae.Account
+
+  @update_profile_error "Erreur de mise à jour du profile"
+  @update_password_error "Erreur lors de la mise à jour du mot de passe"
 
   def profile_item(_, _, %{context: %{current_user: user}}) do
     {:ok, to_graphql(user)}
@@ -10,8 +15,18 @@ defmodule VaeWeb.Resolvers.Account do
     |> from_graphql()
     |> Account.update_profile_item(user)
     |> case do
-      {:error, _} ->
-        {:error, "Erreur de mise à jour du profile"}
+      {:error, changeset} ->
+        error_response(@update_profile_error, changeset)
+
+      {:ok, user} ->
+        {:ok, to_graphql(user)}
+    end
+  end
+
+  def update_password(_, %{input: params}, %{context: %{current_user: user}}) do
+    case Vae.Account.update_user_password(user, params) do
+      {:error, changeset} ->
+        error_response(@update_password_error, changeset)
 
       {:ok, user} ->
         {:ok, to_graphql(user)}
