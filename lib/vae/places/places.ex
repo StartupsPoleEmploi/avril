@@ -17,6 +17,12 @@ defmodule Vae.Places do
     end
   end
 
+  def get_administrative_from_postal_code(postal_code) do
+    postal_code
+    |> __MODULE__.get_geoloc_from_postal_code()
+    |> get_administrative()
+  end
+
   def get_cities(%{"is_city" => true} = params), do: params["locale_names"]
   def get_cities(params), do: params["city"]
 

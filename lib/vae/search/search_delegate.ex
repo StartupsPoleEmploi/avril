@@ -13,7 +13,6 @@ defmodule Vae.SearchDelegate do
 
       delegates ->
         delegates
-        |> filter_delegates_from_administrative_if_no_postcode_found(administrative)
         |> select_near_delegate()
     end
   end
@@ -27,12 +26,19 @@ defmodule Vae.SearchDelegate do
     |> @search_client.get_delegates(geo)
     |> case do
       {:ok, delegates} ->
+        administrative = Vae.Places.get_administrative_from_postal_code(postcode)
+
         delegates
         |> filter_delegates_from_postalcode(postcode)
+        |> filter_delegates_from_administrative_if_no_postcode_found(administrative)
 
       {:error, msg} ->
         Logger.error("Error on searching delegates: #{msg}")
-        certification |> Delegate.from_certification() |> Repo.all()
+        {[], certification |> Delegate.from_certification() |> Repo.all()}
+    end
+    |> case do
+      {[], delegates} -> delegates
+      {filtered_delegates, _delegates} -> filtered_delegates
     end
   end
 
@@ -60,8 +66,11 @@ defmodule Vae.SearchDelegate do
       Enum.filter(delegates, fn delegate ->
         get_in(delegate, [Access.key(:geolocation), "administrative"])
         |> case do
-          [admin | []] -> admin == administrative
-          _ -> false
+          [admin | []] ->
+            admin == administrative
+
+          _ ->
+            false
         end
       end)
 

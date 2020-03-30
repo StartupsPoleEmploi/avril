@@ -47,10 +47,13 @@ defmodule VaeWeb.Api.UserApplicationController do
   def update(conn, %{"slug" => slug_param} = _params) do
     IO.inspect(_params)
     delegate_id = nil
+
     with(
-      current_user when not is_nil(current_user) <- conn.assigns[:current_user]
-      |> Repo.preload(:applications),
-      application when not is_nil(application) <- current_user.applications
+      current_user when not is_nil(current_user) <-
+        conn.assigns[:current_user]
+        |> Repo.preload(:applications),
+      application when not is_nil(application) <-
+        current_user.applications
         |> Enum.find(fn %{certification: %Certification{slug: slug}} -> slug == slug_param end),
       delegate when not is_nil(delegate) <- Repo.get(Delegate, delegate_id),
       {:ok, application} = Application.set_delegate(application, delegate)
@@ -78,11 +81,15 @@ defmodule VaeWeb.Api.UserApplicationController do
       current_user.applications
       |> Enum.find(fn %{certification: %Certification{slug: slug}} -> slug == slug_param end)
 
-    {_meta, delegates} =
-      SearchDelegate.get_delegates(application.certification, %{
-        lat: lat,
-        lng: lng
-      }, params["postal_code"])
+    delegates =
+      SearchDelegate.get_delegates(
+        application.certification,
+        %{
+          "lat" => lat,
+          "lng" => lng
+        },
+        params["postal_code"]
+      )
 
     json(
       conn,
