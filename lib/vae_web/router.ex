@@ -45,7 +45,6 @@ defmodule VaeWeb.Router do
 
   pipeline :gapi do
     plug(:accepts, ["json"])
-    plug(VaeWeb.APIAuthPlug, otp_app: :vae)
     plug VaeWeb.Context
   end
 

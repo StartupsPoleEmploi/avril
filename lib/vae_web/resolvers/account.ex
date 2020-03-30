@@ -55,8 +55,8 @@ defmodule VaeWeb.Resolvers.Account do
   defp from_graphql(params) do
     params
     |> get_user_params()
-    |> flatten_address(params)
-    |> flatten_birth_place(params)
+    |> maybe_flatten_address(params[:full_address])
+    |> maybe_flatten_birth_place(params[:birth_place])
   end
 
   defp get_user_params(params) do
@@ -70,14 +70,30 @@ defmodule VaeWeb.Resolvers.Account do
     ])
   end
 
-  defp flatten_address(user_params, params) do
-    Map.merge(user_params, %{
-      city_label: params[:full_address][:city],
-      country_label: params[:full_address][:country],
-      postal_code: params[:full_address][:postal_code]
-    })
-    |> maybe_reset_street_address(params[:full_address][:street])
+  defp maybe_flatten_address(user_params, nil), do: user_params
+
+  defp maybe_flatten_address(user_params, full_address) do
+    user_params
+    |> maybe_flatten_city_label(full_address[:city])
+    |> maybe_flatten_country_label(full_address[:country])
+    |> maybe_flatten_postal_code(full_address[:postal_code])
+    |> maybe_reset_street_address(full_address[:street])
   end
+
+  defp maybe_flatten_city_label(user_params, nil), do: user_params
+
+  defp maybe_flatten_city_label(user_params, city),
+    do: Map.merge(user_params, %{city_label: city})
+
+  defp maybe_flatten_country_label(user_params, nil), do: user_params
+
+  defp maybe_flatten_country_label(user_params, country),
+    do: Map.merge(user_params, %{country_label: country})
+
+  defp maybe_flatten_postal_code(user_params, nil), do: user_params
+
+  defp maybe_flatten_postal_code(user_params, postal_code),
+    do: Map.merge(user_params, %{postal_code: postal_code})
 
   defp maybe_reset_street_address(user_params, nil), do: user_params
 
@@ -90,7 +106,9 @@ defmodule VaeWeb.Resolvers.Account do
     })
   end
 
-  defp flatten_birth_place(user_params, params) do
-    Map.merge(user_params, %{birth_place: params[:birth_place][:city]})
+  defp maybe_flatten_birth_place(user_params, nil), do: user_params
+
+  defp maybe_flatten_birth_place(user_params, %{city: city}) do
+    Map.merge(user_params, %{birth_place: city})
   end
 end

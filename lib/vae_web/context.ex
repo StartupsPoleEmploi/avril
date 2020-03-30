@@ -12,10 +12,19 @@ defmodule VaeWeb.Context do
 
   defp build_context(conn) do
     case conn.assigns[:current_user] do
-      %User{} = user -> %{current_user: user}
-      _ -> %{}
+      %User{} = user ->
+        %{current_user: refresh_and_retrieve(conn, user)}
+
+      _ ->
+        %{}
     end
   end
 
   defp build_context(_), do: %{}
+
+  defp refresh_and_retrieve(conn, user) do
+    conn
+    |> Pow.Plug.create(Vae.Account.get_user(user.id))
+    |> Pow.Plug.current_user()
+  end
 end
