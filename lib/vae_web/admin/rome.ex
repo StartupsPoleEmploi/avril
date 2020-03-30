@@ -23,10 +23,15 @@ defmodule Vae.ExAdmin.Rome do
         row :url
       end
 
+      panel "Certifications" do
+        table_for application.certifications do
+          column(:label, fn r -> Helpers.link_to_resource(r) end)
+        end
+      end
+
       panel "Professions" do
-        table_for rome.professions do
-          column(:id, fn p -> Helpers.link_to_resource(p, namify: fn p -> p.id end) end)
-          column(:label)
+        table_for application.professions do
+          column(:label, fn r -> Helpers.link_to_resource(r, namify: fn p -> p.label end) end)
         end
       end
     end
