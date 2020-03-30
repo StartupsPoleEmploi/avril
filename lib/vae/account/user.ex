@@ -336,4 +336,10 @@ defmodule Vae.User do
   def submit_application_required_missing_fields(user) do
     Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
   end
+
+  def update_password_changeset(user, attrs) do
+    user
+    |> pow_password_changeset(attrs)
+    |> pow_current_password_changeset(attrs)
+  end
 end

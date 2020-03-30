@@ -34,6 +34,12 @@ defmodule VaeWeb.Schema.AccountTypes do
       arg(:input, non_null(:profile_input))
       resolve(&Resolvers.Account.update_item/3)
     end
+
+    @desc "Updates the current user's password"
+    field :update_password, :profile do
+      arg(:input, non_null(:password_input))
+      resolve(&Resolvers.Account.update_password/3)
+    end
   end
 
   input_object :profile_input do
@@ -52,5 +58,11 @@ defmodule VaeWeb.Schema.AccountTypes do
     field(:postal_code, :string)
     field(:city, :string)
     field(:country, :string)
+  end
+
+  input_object :password_input do
+    field(:current_password, non_null(:string))
+    field(:password, non_null(:string))
+    field(:confirm_password, non_null(:string))
   end
 end
