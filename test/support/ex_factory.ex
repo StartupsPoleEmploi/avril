@@ -8,7 +8,8 @@ defmodule Vae.ExFactory do
     %User{
       first_name: "Jane",
       last_name: "Doe",
-      postal_code: "35000"
+      postal_code: "35000",
+      email: "foo@bar.com"
     }
   end
 

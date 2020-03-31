@@ -183,7 +183,7 @@ defmodule VaeWeb.Schema.Mutation.AccountTest do
   """
   test "Updating a password with a wrong current password fails", %{conn: conn} do
     password_item = %{
-      current_password: "foo",
+      current_password: "wrong",
       password: "new_password",
       confirm_password: "new_password"
     }
