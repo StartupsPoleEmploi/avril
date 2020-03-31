@@ -140,7 +140,7 @@ defmodule Vae.User do
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
-    |> put_embed_if_necessary(params, :booklet_data, is_single: true)
+    # |> put_embed_if_necessary(params, :booklet_data, is_single: true)
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)

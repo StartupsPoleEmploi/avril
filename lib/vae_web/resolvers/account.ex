@@ -6,8 +6,8 @@ defmodule VaeWeb.Resolvers.Account do
   @update_profile_error "Erreur de mise à jour du profile"
   @update_password_error "Erreur lors de la mise à jour du mot de passe"
 
-  def profile_item(_, _, %{context: %{current_user: user}}) do
-    {:ok, to_graphql(user)}
+  def identity_item(_, _, %{context: %{current_user: user}}) do
+    {:ok, user.identity}
   end
 
   def update_item(_, %{input: params}, %{context: %{current_user: user}}) do
