@@ -17,6 +17,12 @@ defmodule Vae.Account do
     |> Repo.update!()
   end
 
+  def update_identity_item(attrs \\ %{}, %User{} = user) do
+    user
+    |> User.update_identity_changeset(attrs)
+    |> Repo.update()
+  end
+
   def update_profile_item(attrs \\ %{}, %User{} = user) do
     user
     |> User.update_changeset(attrs)

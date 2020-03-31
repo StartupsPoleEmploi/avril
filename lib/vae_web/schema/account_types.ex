@@ -27,16 +27,19 @@ defmodule VaeWeb.Schema.AccountTypes do
   end
 
   object :address do
+    field(:city, :string)
+    field(:county, :string)
+    field(:country, :string)
+    field(:lat, :float)
+    field(:lng, :float)
     field(:street, :string)
     field(:postal_code, :string)
-    field(:city, :string)
-    field(:country, :string)
   end
 
   object :current_situation do
     field(:status, :string)
     field(:employment_type, :string)
-    field(:register_to_emploi, :boolean)
+    field(:register_to_pole_emploi, :boolean)
     field(:register_to_pole_emploi_since, :date)
     field(:compensation_type, :string)
   end
@@ -77,16 +80,19 @@ defmodule VaeWeb.Schema.AccountTypes do
   end
 
   input_object :address_input do
+    field(:city, :string)
+    field(:county, :string)
+    field(:country, :string)
+    field(:lat, :float)
+    field(:lng, :float)
     field(:street, :string)
     field(:postal_code, :string)
-    field(:city, :string)
-    field(:country, :string)
   end
 
   input_object :current_situation_input do
     field(:status, :string)
     field(:employment_type, :string)
-    field(:register_to_emploi, :boolean)
+    field(:register_to_pole_emploi, :boolean)
     field(:register_to_pole_emploi_since, :date)
     field(:compensation_type, :string)
   end

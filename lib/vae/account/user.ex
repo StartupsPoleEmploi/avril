@@ -76,7 +76,7 @@ defmodule Vae.User do
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
 
-    embeds_one(:identity, Civility, on_replace: :delete)
+    embeds_one(:identity, Civility, on_replace: :update)
 
     timestamps()
   end

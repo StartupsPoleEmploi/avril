@@ -6,20 +6,40 @@ defmodule VaeWeb.Schema.Mutation.AccountTest do
 
     user =
       build(:user, %{
-        gender: "M",
-        birthday: ~D[1981-06-24],
-        birth_place: "Paris",
-        first_name: "John",
-        last_name: "Smith",
-        email: "john@smith.com",
-        phone_number: "0000000000",
-        city_label: "Beaune",
-        country_label: "France",
-        postal_code: "21200",
-        address1: "13 rue de la pie qui chante",
-        address2: "Rue de droite",
-        address3: "Face à la mer",
-        address4: "Derrière l'arbre"
+        identity: %{
+          gender: "M",
+          birthday: ~D[1981-06-24],
+          first_name: "John",
+          last_name: "Smith",
+          usage_name: "Doe",
+          email: "john@smith.com",
+          home_phone: "0100000000",
+          mobile_phone: "0600000000",
+          is_handicapped: false,
+          birth_place: %{
+            city: "Paris",
+            country: "France"
+          },
+          full_address: %{
+            city: "Toulouse",
+            postal_code: "31000",
+            country: "France",
+            street: "1, rue de la Bergerie",
+            lat: "43.600000",
+            lng: "1.433333"
+          },
+          current_situation: %{
+            status: "job_seeker",
+            employment_type: "employee",
+            register_to_pole_emploi: true,
+            register_to_pole_emploi_since: ~D[2019-02-01],
+            compensation_type: "pole-emploi"
+          },
+          nationality: %{
+            country: "France",
+            country_code: "FR"
+          }
+        }
       })
       |> set_password("1234567890")
       |> insert
@@ -30,68 +50,128 @@ defmodule VaeWeb.Schema.Mutation.AccountTest do
   end
 
   @query """
-  mutation UpdateProfile($profileItem: ProfileInput){
-    profile: updateProfile(input: $profileItem) {
+  mutation UpdateIdentity($input: IdentityInput){
+    identity: updateIdentity(input: $input) {
       gender
       birthday
-      birthPlace {
-        city
-      }
       firstName
       lastName
+      usageName
       email
-      phoneNumber
-      fullAddress {
+      homePhone
+      mobilePhone
+      isHandicapped
+      birthPlace {
+        city
+        county
+        country
+        lat
+        lng
         street
         postalCode
+      }
+      fullAddress {
         city
+        county
         country
+        lat
+        lng
+        street
+        postalCode
+      }
+      currentSituation {
+        status
+        employmentType
+        registerToPoleEmploi
+        registerToPoleEmploiSince
+        compensationType
+      }
+      nationality {
+        country
+        countryCode
       }
     }
   }
   """
-  test "update user's profile", %{conn: conn} do
-    profile_item = %{
+  test "update the identity of a user's profile", %{conn: conn} do
+    identity_item = %{
       "gender" => "F",
       "birthday" => "1960-05-31",
+      "firstName" => "Jane",
+      "lastName" => "Doe",
+      "usageName" => "Josh",
+      "email" => "jane@doe.com",
+      "homePhone" => "0102030405",
+      "mobilePhone" => "0102030405",
+      "isHandicapped" => true,
       "birthPlace" => %{
         "city" => "Berlin"
       },
-      "firstName" => "Jane",
-      "lastName" => "Doe",
-      "email" => "jane@doe.com",
-      "phoneNumber" => "0102030405",
       "fullAddress" => %{
-        "street" => "3868  Stuart Street",
-        "postalCode" => "15222",
         "city" => "Pittsburgh",
-        "country" => "US"
+        "postalCode" => "15222",
+        "country" => "US",
+        "street" => "3868  Stuart Street",
+        "lat" => 68.929735,
+        "lng" => -29.977452
+      },
+      "currentSituation" => %{
+        "status" => "worker",
+        "employmentType" => "full-time",
+        "registerToPoleEmploi" => false,
+        "registerToPoleEmploiSince" => nil,
+        "compensationType" => nil
+      },
+      "nationality" => %{
+        "country" => "Etats-Unis",
+        "country_code" => "US"
       }
     }
 
-    conn = post conn, "/api/v2", query: @query, variables: %{"profileItem" => profile_item}
+    conn = post conn, "/api/v2", query: @query, variables: %{"input" => identity_item}
 
-    assert json_response(conn, 200) == %{
-             "data" => %{
-               "profile" => %{
-                 "gender" => profile_item["gender"],
-                 "birthday" => profile_item["birthday"],
-                 "birthPlace" => %{
-                   "city" => profile_item["birthPlace"]["city"]
-                 },
-                 "firstName" => profile_item["firstName"],
-                 "lastName" => profile_item["lastName"],
-                 "email" => profile_item["email"],
-                 "phoneNumber" => profile_item["phoneNumber"],
-                 "fullAddress" => %{
-                   "street" => profile_item["fullAddress"]["street"],
-                   "postalCode" => profile_item["fullAddress"]["postalCode"],
-                   "city" => profile_item["fullAddress"]["city"],
-                   "country" => profile_item["fullAddress"]["country"]
+    assert json_response(conn, 200) ==
+             %{
+               "data" => %{
+                 "identity" => %{
+                   "birthPlace" => %{
+                     "city" => "Berlin",
+                     "country" => nil,
+                     "county" => nil,
+                     "lat" => nil,
+                     "lng" => nil,
+                     "postalCode" => nil,
+                     "street" => nil
+                   },
+                   "birthday" => "1960-05-31",
+                   "currentSituation" => %{
+                     "compensationType" => nil,
+                     "employmentType" => "full-time",
+                     "registerToPoleEmploi" => false,
+                     "registerToPoleEmploiSince" => nil,
+                     "status" => "worker"
+                   },
+                   "email" => "jane@doe.com",
+                   "firstName" => "Jane",
+                   "fullAddress" => %{
+                     "city" => "Pittsburgh",
+                     "country" => "US",
+                     "county" => nil,
+                     "lat" => 68.929735,
+                     "lng" => -29.977452,
+                     "postalCode" => "15222",
+                     "street" => "3868  Stuart Street"
+                   },
+                   "gender" => "F",
+                   "homePhone" => "0102030405",
+                   "isHandicapped" => true,
+                   "lastName" => "Doe",
+                   "mobilePhone" => "0102030405",
+                   "nationality" => %{"country" => "Etats-Unis", "countryCode" => "US"},
+                   "usageName" => "Josh"
                  }
                }
              }
-           }
   end
 
   @query """
@@ -112,15 +192,15 @@ defmodule VaeWeb.Schema.Mutation.AccountTest do
 
     assert json_response(conn, 200) ==
              %{
+               "data" => %{"updatePassword" => nil},
                "errors" => [
                  %{
+                   "details" => [%{"key" => "current_password", "message" => ["is invalid"]}],
                    "locations" => [%{"column" => 0, "line" => 2}],
                    "message" => "Erreur lors de la mise à jour du mot de passe",
-                   "details" => [%{"key" => "current_password", "message" => ["is invalid"]}],
                    "path" => ["updatePassword"]
                  }
-               ],
-               "data" => %{"updatePassword" => nil}
+               ]
              }
   end
 
