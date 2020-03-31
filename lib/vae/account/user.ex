@@ -13,6 +13,8 @@ defmodule Vae.User do
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
+  alias Vae.Booklet.Civility
+
   alias Vae.{
     UserApplication,
     Experience,
@@ -73,6 +75,8 @@ defmodule Vae.User do
     embeds_many(:experiences, Experience, on_replace: :delete)
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
+
+    embeds_one(:identity, Civility, on_replace: :delete)
 
     timestamps()
   end
@@ -149,6 +153,12 @@ defmodule Vae.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
+  end
+
+  def update_identity_changeset(model, params) do
+    model
+    |> cast(params, [])
+    |> cast_embed(:identity)
   end
 
   defp maybe_confirm_password(

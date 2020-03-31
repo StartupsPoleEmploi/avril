@@ -11,6 +11,12 @@ defmodule Vae.Account do
     |> Vae.Enum.join_keep_nil(", ")
   end
 
+  def update_identity(attrs \\ %{}, %User{} = user) do
+    user
+    |> User.update_identity_changeset(attrs)
+    |> Repo.update!()
+  end
+
   def update_profile_item(attrs \\ %{}, %User{} = user) do
     user
     |> User.update_changeset(attrs)
