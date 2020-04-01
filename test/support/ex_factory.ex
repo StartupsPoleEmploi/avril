@@ -51,6 +51,13 @@ defmodule Vae.ExFactory do
     }
   end
 
+  def application_without_delegate_factory() do
+    %UserApplication{
+      booklet_hash: :crypto.strong_rand_bytes(64) |> Base.url_encode64() |> binary_part(0, 64),
+      certification: build(:certification)
+    }
+  end
+
   def application_factory() do
     %UserApplication{
       booklet_hash: :crypto.strong_rand_bytes(64) |> Base.url_encode64() |> binary_part(0, 64),

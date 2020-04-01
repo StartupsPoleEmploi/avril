@@ -28,4 +28,8 @@ defmodule Vae.Authorities do
     )
     |> Repo.all()
   end
+
+  def get_delegate(id) do
+    Repo.get(Delegate, id)
+  end
 end

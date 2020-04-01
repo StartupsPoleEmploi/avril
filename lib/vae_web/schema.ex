@@ -15,5 +15,6 @@ defmodule VaeWeb.Schema do
 
   mutation do
     import_fields(:account_mutations)
+    import_fields(:application_mutations)
   end
 end
