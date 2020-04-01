@@ -12,8 +12,8 @@ defmodule VaeWeb.Schema.Query.AuthoritiesTest do
   end
 
   @query """
-  query ($applicationId: ID!) {
-    delegateSearch(applicationId: $applicationId) {
+  query ($applicationId: ID!, $geo: GeoInput!, $postalCode: String!) {
+    delegatesSearch(applicationId: $applicationId, geo: $geo, postalCode: $postalCode) {
       name
       address
       email
@@ -28,21 +28,30 @@ defmodule VaeWeb.Schema.Query.AuthoritiesTest do
   test "search delegates from an application ID return a delegate list", %{conn: conn} do
     application = insert(:application, %{user: conn.assigns[:current_user]})
 
+    filters = %{
+      "applicationId" => application.id,
+      "geo" => %{
+        "lat" => 43.6043,
+        "lng" => 1.44199
+      },
+      "postalCode" => "31000"
+    }
+
     response =
       get(conn, "/api/v2",
         query: @query,
-        variables: %{"applicationId" => application.id}
+        variables: filters
       )
       |> json_response(200)
 
-    response["data"]["delegateSearch"]
+    response["data"]["delegatesSearch"]
     |> Enum.map(&assert_fields_are_not_nil/1)
   end
 
   def assert_fields_are_not_nil(delegate) do
     ["address", "certifier", "email", "name", "personName", "telephone"]
     |> Enum.map(fn field ->
-      assert not is_nil(delegate[field])
+      assert not is_nil(delegate[field]), "#{field} field is nil"
     end)
   end
 end

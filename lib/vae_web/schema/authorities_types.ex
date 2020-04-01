@@ -5,9 +5,12 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
 
   object :authorities_queries do
     @desc "Returns the list of delegates from the closest to the furthest from the postal code of the user and the application ID"
-    field(:delegate_search, list_of(:delegate)) do
+    field(:delegates_search, list_of(:delegate)) do
       arg(:application_id, non_null(:id))
-      resolve(&Resolvers.Application.get_delegates/3)
+      arg(:geo, non_null(:geo_input))
+      arg(:postal_code, non_null(:string))
+
+      resolve(&Resolvers.Application.delegates_search/3)
     end
   end
 
@@ -26,5 +29,10 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
 
   object :certifier do
     field(:name, :string)
+  end
+
+  input_object :geo_input do
+    field(:lat, non_null(:float))
+    field(:lng, non_null(:float))
   end
 end

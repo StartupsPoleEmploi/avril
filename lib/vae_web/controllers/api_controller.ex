@@ -2,7 +2,7 @@ defmodule VaeWeb.ApiController do
   use VaeWeb, :controller
   require Logger
 
-  alias Vae.{UserApplication, Certification, User}
+  alias Vae.{UserApplication, Certification}
 
   plug VaeWeb.Plugs.ApplicationAccess, find_with_hash: :booklet_hash
 

@@ -1,4 +1,7 @@
 defmodule VaeWeb.Resolvers.ErrorHandler do
+  def error_response(message, details) when is_binary(details),
+    do: {:error, message: message, details: details}
+
   def error_response(message, changeset) do
     {:error, message: message, details: transform_errors(changeset)}
   end

@@ -44,8 +44,7 @@ defmodule VaeWeb.Api.UserApplicationController do
     end
   end
 
-  def update(conn, %{"slug" => slug_param} = _params) do
-    IO.inspect(_params)
+  def update(conn, %{"slug" => slug_param}) do
     delegate_id = nil
 
     with(
@@ -60,7 +59,7 @@ defmodule VaeWeb.Api.UserApplicationController do
     ) do
       redirect(conn, to: Routes.api_v1_user_application_path(conn, :show, application))
     else
-      error ->
+      _error ->
         conn
         |> put_status(404)
         |> json(%{
