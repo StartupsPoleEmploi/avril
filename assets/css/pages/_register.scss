@@ -1,9 +1,16 @@
+.pow-page {
+  .field {
+    margin-bottom: 1.5rem;
+  }
+}
+
 .register-page {
   ul.feature-checklist {
     display: inline-block;
     list-style: none;
     font-weight: bold;
     text-align: left;
+    font-size: 1.5rem;
     li {
       padding: 0.5rem;
       &:before {
