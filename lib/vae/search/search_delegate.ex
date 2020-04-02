@@ -17,7 +17,7 @@ defmodule Vae.SearchDelegate do
     end
   end
 
-  def get_delegates(certification, geo, postcode \\ nil) do
+  def get_delegates(certification, geo, postcode) do
     geo = Map.take(geo, ["lat", "lng"])
 
     certification

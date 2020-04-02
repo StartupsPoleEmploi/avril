@@ -41,4 +41,17 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:start_date, :naive_datetime)
     field(:end_date, :naive_datetime)
   end
+
+  object :application_mutations do
+    @desc "Attach a delegate to an application"
+    field(:attach_delegate, :application) do
+      arg(:input, non_null(:attach_delegate_input))
+      resolve(&Resolvers.Application.attach_delegate/3)
+    end
+  end
+
+  input_object :attach_delegate_input do
+    field(:application_id, non_null(:id))
+    field(:delegate_id, non_null(:id))
+  end
 end

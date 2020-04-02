@@ -54,6 +54,12 @@ defmodule Vae.UserApplication do
     |> init_booklet_hash()
   end
 
+  def attach_delegate_changeset(struct, %Delegate{} = delegate) do
+    struct
+    |> change()
+    |> put_assoc(:delegate, delegate)
+  end
+
   def init_booklet_hash(changeset) do
     change(changeset, booklet_hash: changeset.data.booklet_hash || generate_hash(64))
   end
