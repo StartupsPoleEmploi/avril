@@ -1,5 +1,48 @@
 .footer {
+  text-align: center;
+
+  a {
+    color: palette(default, title);
+    margin: 0.5rem 0;
+    display: block;
+  }
+
+  .links {
+    @include tablet {
+      display: flex;
+      justify-content: space-between;
+    }
+    ul {
+      margin: 0 1rem;
+      li {
+        @include tablet {
+          text-align: left;
+        }
+        .title {
+          margin-bottom: 1rem;
+        }
+        a {
+        }
+      }
+    }
+  }
+
+  ul.is-horizontal {
+    @include tablet {
+      text-align: left;
+      li {
+        display: inline-block;
+        &:not(:last-child) {
+          margin-right: 3rem;
+        }
+      }
+    }
+    margin-top: 3rem;
+  }
+
+
   img {
     max-height: 5rem;
+    margin: 1rem;
   }
 }
