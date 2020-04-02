@@ -3,6 +3,6 @@
   = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
   = hidden_input(f, :certification, value: Plug.Conn.get_session(@conn, :search_certification))
   p.control.has-icons-left
-    = search_input(f, :query, class: "input is-large", required: true, placeholder: 'Assistante maternelle, cariste...')
-    span.icon.is-left.is-large style="height: 100%;margin-left: 0.5rem;"
+    = search_input(f, :query, class: "input is-xlarge", required: true, placeholder: 'Assistante maternelle, cariste...')
+    span.icon.is-left.is-xlarge
       = img_tag Routes.static_path(@conn, "/icons/search.svg")

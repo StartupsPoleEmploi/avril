@@ -1,0 +1,15 @@
+.home-page {
+  #search {
+    img.search-img {
+      z-index: 1;
+      position: relative;
+
+      @include widescreen {
+        float: right;
+        transform: scale(2) translateX(1rem) translateY(20px);
+        height: 17rem;
+        transform-origin: right;
+      }
+    }
+  }
+}

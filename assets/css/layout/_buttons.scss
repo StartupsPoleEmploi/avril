@@ -1,8 +1,8 @@
 .button {
   border: transparent;
   &.is-text {
-    position: relative;
-    left: -1em;
+    // position: relative;
+    // left: -1em;
 
     &.is-blue-hover:hover {
       background-color: palette(blue, background);

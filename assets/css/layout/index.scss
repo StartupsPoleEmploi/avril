@@ -1,3 +1,4 @@
+@import 'columns';
 @import 'section';
 @import 'buttons';
 @import 'top-notifications';
@@ -7,7 +8,10 @@
 
 .notification {
   &.is-hero {
-    padding: 5rem;
+    padding: 2rem;
+    @include tablet {
+      padding: 5rem;
+    }
   }
 }
 

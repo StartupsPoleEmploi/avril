@@ -42,7 +42,7 @@ $input-background-color: $white;
 $footer-background-color: $white;
 $navbar-background-color: transparent;
 $title-line-height: 1.5;
-// $navbar-breakpoint: $radius-rounded;
+$navbar-breakpoint: $tablet;
 
 $primary: palette(blue, title);
 $info: palette(blue, background);

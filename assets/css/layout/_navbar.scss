@@ -1,5 +1,7 @@
 nav.navbar {
-  padding: 1.5rem 0;
+  @include tablet {
+    padding: 1.5rem;
+  }
 
   .navbar-item img {
     max-height: none;

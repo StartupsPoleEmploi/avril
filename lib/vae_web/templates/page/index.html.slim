@@ -1,87 +1,93 @@
-section.section#search
-  .container
-    .notification.is-green.is-hero
-      .columns
-        .column.content.is-medium
-          h1.title.is-1 Nous avons accéléré la VAE
-          p La VAE (Validation de Acquis de l'Expérience) est un autre moyen d'obtenir un diplôme qui est reconnu de la même façon que les autres diplômes. C'est d'ailleurs plus de 350&nbsp;000 diplômes obtenus en France grâce à cette voie. Pour vous, nous avons voulu simplifier ce moyen et c'est de cette idée simple qu'est né Avril.
-          .section.is-vertical.is-small
+.home-page
+  section.section#search
+    .container
+      #search.notification.is-green.is-hero
+        .columns.is-vcentered
+          .column.is-8
+            h1.title.is-spaced.is-1 Nous avons accéléré la VAE
+            p.subtitle La VAE (Validation de Acquis de l'Expérience) est un autre moyen d'obtenir un diplôme qui est reconnu de la même façon que les autres diplômes. C'est d'ailleurs plus de 350&nbsp;000 diplômes obtenus en France grâce à cette voie. Pour vous, nous avons voulu simplifier ce moyen et c'est de cette idée simple qu'est né Avril.
+          .column.is-4
+            = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", class: "search-img is-hidden-mobile"
+        .columns
+          .column.is-8-desktop
             = render VaeWeb.ComponentView, "searchbar.html", conn: @conn
-        .column.is-4
-          = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", style: "float: right;transform: scale(2) translateX(1rem) translateY(20px);height: 17rem;transform-origin: right;"
-    .columns
-      .column.is-9.has-text-centered
-        = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-green-hover")
-        = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-green-hover")
-        = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-green-hover")
-section.section#examples
-  .container
-    .columns
-      = for certification <- @certification_examples do
-        .column.is-3
-          = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: certification
-      .column.is-6
-        .section.is-horizontal.is-large.is-default
-          .content.is-medium
-            h2.title.is-1 Vous qui voulez que l'on reconnaisse vos compétences
-            p Comme plus de 350&nbsp;000 candidats certifiés par la VAE, lancez vous ! Avril vous aide à identifier un projet qui correspond à votre expérience et vous dirige vers le bon contact.
-        .section.has-text-centered
-            = link("Parcourir les métiers", to: Routes.rome_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
-            = link("Parcourir les diplômes", to: Routes.certification_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
+      .columns
+        .column.is-8.has-text-centered
+          = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-green-hover")
+          = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-green-hover")
+          = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-green-hover")
+  section.section#examples
+    .container
+      .columns.is-reverse-tablet
+        .column.is-6
+          .section.is-horizontal.is-large.is-default
+            .content.is-medium
+              h2.title.is-1 Vous qui voulez que l'on reconnaisse vos compétences
+              p Comme plus de 350&nbsp;000 candidats certifiés par la VAE, lancez vous ! Avril vous aide à identifier un projet qui correspond à votre expérience et vous dirige vers le bon contact.
+          .section.has-text-centered
+              = link("Parcourir les métiers", to: Routes.rome_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
+              = link("Parcourir les diplômes", to: Routes.certification_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
+        .column.is-6
+          .columns.is-multiline
+            = for certification <- @certification_examples do
+              .column.is-6-desktop.is-12
+                = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: certification
 
 
 
-section#online
-  .container
-    .columns
-      .column.is-7.is-offset-1.section.is-vertical.is-medium
+  section.section.is-horizontal#online.is-default
+    .container
+      .columns.is-vcentered.has-text-centered-mobile
+        .column.is-7
 
-        .section.is-small.is-vertical.is-default
-          .content.is-medium
-            h2.title.is-2 Avril a créé la candidature en ligne
-            p Remplissez en quelques minutes seulement votre dossier en ligne : nous l'avons aussi simplifié pour vous ! Transmettez-le ensuite directement au certificateur de proximité: nous vous disons tout !
+          .section.is-small.is-vertical
+            .content.is-medium
+              h2.title.is-2 Avril a créé la candidature en ligne
+              p Remplissez en quelques minutes seulement votre dossier en ligne : nous l'avons aussi simplifié pour vous ! Transmettez-le ensuite directement au certificateur en un clic.
 
-        .section.is-small.is-vertical
-          a.button.is-primary.is-medium.is-rounded.is-yellow href="#search" Rechercher mon diplôme
+          .section.is-small.is-vertical
+            a.button.is-primary.is-medium.is-rounded.is-yellow href="#search" Rechercher mon diplôme
 
-        .section.is-small.is-vertical.is-default
-          .content.is-medium
-            h2.title.is-2 Parce que vos compétences méritent un diplôme !
-            = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-yellow-hover")
-            = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-yellow-hover")
-            = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-yellow-hover")
-      .column.is-4 style="flex-direction: column-reverse; display: flex;"
-        = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "transform-origin: bottom right;"
+          .section.is-small.is-vertical
+            .content.is-medium
+              h2.title.is-2 Parce que vos compétences méritent un diplôme !
+              = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-yellow-hover")
+              = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-yellow-hover")
+              = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-yellow-hover")
+        .column.is-4.is-offset-1 style="flex-direction: column-reverse; display: flex;"
+          = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "max-width: 500px; margin: auto; width: 100%;"
 
-section.section.is-blue.is-medium#delegates
-  .container
-    .columns
-      .column.is-6
-        .section.is-vertical
+  section.section.is-blue.is-medium#delegates
+    .container
+      .columns.is-vcentered.is-reverse-tablet
+        .column.is-6
           .columns
+            .column.is-8-desktop.is-offset-2-desktop
+              .content.is-medium
+                h2.title.is-2 Votre certificateur n'a jamais été aussi proche de vous
+                p Le certificateur est l'organisme ou son représentant qui est habilité à délivrer un diplôme, un titre ou un CQP.. Celà peut être un Ministère, une chambre consulaire, une branche professionnelle ...
+                .section.is-vertical
+                  = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text is-medium")
+        .column.is-6
+          .columns.is-multiline
             = for delegate <- @delegate_examples do
-              .column
+              .column.is-6-desktop
                 = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
-        .section.is-vertical.is-small
-          = link("Parcourir l'ensemble des certificateurs", to: Routes.delegate_path(@conn, :index), class: "button is-yellow is-rounded is-medium")
-      .column.is-4.is-offset-1.content.is-medium
-        h2.title.is-2 Votre certificateur n'a jamais été aussi proche de vous
-        p Le certificateur est l'organisme ou son représentant qui est habilité à délivrer un diplôme, un titre ou un CQP.. Celà peut être un Ministère, une chambre consulaire, une branche professionnelle ...
-        .section.is-vertical
-          = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text is-medium")
+          .section.is-vertical.is-small.has-text-centered
+            = link("Explorer les certificateurs", to: Routes.delegate_path(@conn, :index), class: "button is-yellow is-rounded is-medium")
 
-section.section.is-medium#callback
-  .container.content.is-medium
-    .columns
-      .column.is-5.is-offset-1
-        p La VAE est le 3ème moyen en France pour obtenir un diplôme. C'est le moyen d'obtenir la reconnaissance officielle de vos compétences ! Que vous soyez déjà ou non titulaire d'un diplôme, si vous avez au moins 1 ans d'expérience à faire reconnaitre, alors, la VAE est possible pour vous ! Le diplôme obtenu a exactement la même valeur qu'un diplôme obtenu en parcours scolaire ou en formation continue.
-      .column.is-5
-        p Par le dispositif VAE, la loi a reconnu que l'expérience permet d'obtenir des compétences qui ont la même valeur que celles obtenues en formation. Il suffit de rédiger un dossier (fourni par le certificateur) et d'y décrire vos expériences et ce que vous en avez appris. Un simple entretien avec un jury vous permettra ensuite de valider définitivement votre diplôme. Il existe des spécialistes de la VAE (Point Conseil, DAVA, AFPA, Pôle emploi, accompagnateurs....) qui peuvent vous en dire plus au besoin.
-      .column
-    .has-text-centered
-      .section
-        h1.title.is-2 La VAE n'aura jamais été aussi simple
-      = if Pow.Plug.current_user(@conn) do
-        = link("Accéder à mon espace VAE", to: System.get_env("NUXT_PROFIL_PATH"), class: "button is-rounded is-primary is-medium")
-      - else
-        = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")
+  section.section.is-medium#callback
+    .container.content.is-medium
+      .columns
+        .column.is-5.is-offset-1
+          p La VAE est le 3ème moyen en France pour obtenir un diplôme. C'est le moyen d'obtenir la reconnaissance officielle de vos compétences ! Que vous soyez déjà ou non titulaire d'un diplôme, si vous avez au moins 1 ans d'expérience à faire reconnaitre, alors, la VAE est possible pour vous ! Le diplôme obtenu a exactement la même valeur qu'un diplôme obtenu en parcours scolaire ou en formation continue.
+        .column.is-5
+          p Par le dispositif VAE, la loi a reconnu que l'expérience permet d'obtenir des compétences qui ont la même valeur que celles obtenues en formation. Il suffit de rédiger un dossier (fourni par le certificateur) et d'y décrire vos expériences et ce que vous en avez appris. Un simple entretien avec un jury vous permettra ensuite de valider définitivement votre diplôme. Il existe des spécialistes de la VAE (Point Conseil, DAVA, AFPA, Pôle emploi, accompagnateurs....) qui peuvent vous en dire plus au besoin.
+        .column
+      .has-text-centered
+        .section
+          h1.title.is-2 La VAE n'aura jamais été aussi simple
+        = if Pow.Plug.current_user(@conn) do
+          = link("Accéder à mon espace VAE", to: System.get_env("NUXT_PROFIL_PATH"), class: "button is-rounded is-primary is-medium")
+        - else
+          = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")

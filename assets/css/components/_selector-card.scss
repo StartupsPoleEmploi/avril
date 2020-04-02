@@ -1,38 +1,56 @@
 .card.selector-card {
   background: $white;
   border-radius: $radius;
-
-  &.delegate-card {
-    .card-header {
-      min-height: 0;
-      h4 {
-        font-size: 1.5rem;
-      }
-    }
-    .card-content {
-      height: auto;
-    }
-  }
+  height: 30rem;
+  display: flex;
+  flex-direction: column;
 
   .card-header {
-    min-height: 6rem;
+    flex: 0 0 6rem;
     padding: 1rem 1.5rem;
+    padding-bottom: 0;
     box-shadow: none;
     display: block;
 
     .title, .description {
       color: palette(default, title);
     }
+    .title {
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .description {
+      .tag {
+        font-size: 1rem;
+      }
+    }
   }
 
   .card-content {
-    height: 15rem;
     text-overflow: ellipsis;
     overflow: hidden;
+    flex-grow: 1;
   }
 
   .card-footer {
+    flex: 0 0 2rem;
     padding: 1rem 1.5rem;
+    padding-top: 0;
     border: none;
+  }
+
+  &.delegate-card {
+    min-height: 10rem;
+    @include tablet {
+      min-height: 15rem;
+    }
+    height: auto;
+
+    .card-header {
+      flex-basis: 3rem;
+      h4 {
+        font-size: 1.5rem;
+      }
+    }
   }
 }
