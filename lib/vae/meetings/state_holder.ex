@@ -347,7 +347,7 @@ defmodule Vae.Meetings.StateHolder do
 
         {{place, address, Vae.String.parameterize(place)}, meetings}
       end)
-      |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) end)
+      |> Enum.filter(fn {_places, meetings} -> not is_nil(meetings) and meetings != [] end)
 
     {:reply, meetings, state}
   end

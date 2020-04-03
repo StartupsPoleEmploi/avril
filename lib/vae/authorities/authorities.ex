@@ -31,5 +31,6 @@ defmodule Vae.Authorities do
 
   def get_delegate(id) do
     Repo.get(Delegate, id)
+    |> Repo.preload(:certifiers)
   end
 end
