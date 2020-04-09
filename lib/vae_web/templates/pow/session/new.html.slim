@@ -1,9 +1,9 @@
-section.pow-page
+section.section.pow-page
   .container
-    .columns
-      .column.is-6.is-offset-3.is-4-widescreen.is-offset-4-widescreen.has-text-centered
+    .columns.is-centered
+      .column.is-7.is-6-desktop.is-5-widescreen.is-4-fullhd
         h2.title.is-2 Me connecter
-        = form_for @changeset, @action, [as: :user, autocomplete: "off", class: "section  "], fn f ->
+        = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
           = if @changeset.action do
             .notification.is-danger
               ' Une erreur est survenue:
@@ -26,9 +26,13 @@ section.pow-page
           .field
             label.checkbox
               = checkbox f, :persistent_session
-              |  Rester connecté à la prochaine visite
+              |  Me connecter à la prochaine visite
           .field
             = submit "Me connecter", class: "button is-primary is-rounded is-medium"
           .field
-            = link("Mot de passe oublié ?", to: Routes.pow_reset_password_reset_password_path(@conn, :new), class: "button is-text")
-            = link("J'ai besoin d'un compte", to: Routes.pow_registration_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
+            .level
+              .level-left
+                = link("J'ai besoin d'un compte", to: Routes.pow_registration_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
+              .level-right
+                = link("Mot de passe oublié ?", to: Routes.pow_reset_password_reset_password_path(@conn, :new), class: "button is-text")
+    = img_tag("/images/couple.svg", class: "couple")

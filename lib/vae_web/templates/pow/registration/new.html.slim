@@ -1,42 +1,45 @@
-section.section.register-page.pow-page
+section.section.is-vertical.register-page.pow-page
   .container
     .columns.is-reverse-tablet.is-vcentered
-      .column.is-6.is-5-desktop.section.is-horizontal.is-large.has-text-centered
-        h2.title.is-2 Ouvrir mon compte VAE
-        = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
-          = if @changeset.action do
-            .notification.is-danger
-              ' Une erreur est survenue:
-              ul
-                = for {key, error} <- f.errors do
-                  li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
-                  / = content_tag :li, "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}", class: ""
-          .field
-            .control
-              = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
-              / = error_tag f, :email
-          .field
-            .control
-              = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
-              / = error_tag f, :password
-          .field
-            label.checkbox
-              input type="checkbox" value="true" id="consent" required="required"
-              strong
-                '  J'ai lu et j'accepte les
-                = link("conditions d'utilisation", to: Routes.page_path(@conn, :terms_of_use))
-          .field
-            = submit class: "button is-primary is-rounded is-medium", data: [analytics: "Profil#sans pe connect"] do
-              span Créer mon compte
-              span.is-hidden-mobile  gratuit maintenant
-          .field
-            = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
-          .field.has-text-right
-            = link("J'ai déjà un compte", to: Routes.pow_session_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
-      .column.is-6.is-5-desktop.is-offset-1-desktop.section.is-green.has-text-centered
-        ul.feature-checklist
-          li Votre candidature remplie à votre rythme
-          li Votre candidature gratuite
-          li Votre profil modifiable et réutilisables
-          li Votre dossier de recevabilité en ligne
-          li Vos réunions avec le certificateur
+      .column.is-6.is-5-widescreen
+        .section.is-horizontal.is-large
+          h2.title.is-2 Ouvrir mon compte VAE
+          = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
+            = if @changeset.action do
+              .notification.is-danger
+                ' Une erreur est survenue:
+                ul
+                  = for {key, error} <- f.errors do
+                    li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
+                    / = content_tag :li, "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}", class: ""
+            .field
+              .control
+                = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
+                / = error_tag f, :email
+            .field
+              .control
+                = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
+                / = error_tag f, :password
+            .field
+              label.checkbox
+                input type="checkbox" value="true" id="consent" required="required"
+                strong
+                  '  J'ai lu et j'accepte les
+                  = link("conditions d'utilisation", to: Routes.page_path(@conn, :terms_of_use))
+            .field
+              = submit class: "button is-primary is-rounded is-medium", data: [analytics: "Profil#sans pe connect"] do
+                span Créer mon compte
+                span.is-hidden-mobile &nbsp;gratuit maintenant
+            .field
+              = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
+            .field.has-text-right
+              = link("J'ai déjà un compte", to: Routes.pow_session_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
+      .column.is-6.is-5-widescreen.is-offset-1-widescreen
+        .section.is-green.has-text-centered.features
+          ul.feature-checklist
+            li Votre candidature remplie à votre rythme
+            li Votre candidature gratuite
+            li Votre profil modifiable et réutilisables
+            li Votre dossier de recevabilité en ligne
+            li Vos réunions avec le certificateur
+    = img_tag("/images/couple.svg", class: "couple")
