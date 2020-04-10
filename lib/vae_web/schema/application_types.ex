@@ -34,10 +34,21 @@ defmodule VaeWeb.Schema.ApplicationTypes do
       arg(:input, non_null(:attach_delegate_input))
       resolve(&Resolvers.Application.attach_delegate/3)
     end
+
+    @desc "Register a meeting to an application"
+    field(:register_meeting, :application) do
+      arg(:input, non_null(:register_meeting_input))
+      resolve(&Resolvers.Application.register_meeting/3)
+    end
   end
 
   input_object :attach_delegate_input do
     field(:application_id, non_null(:id))
     field(:delegate_id, non_null(:id))
+  end
+
+  input_object :register_meeting_input do
+    field(:application_id, non_null(:id))
+    field(:meeting_id, non_null(:id))
   end
 end

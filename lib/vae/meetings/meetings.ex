@@ -2,21 +2,19 @@ defmodule Vae.Meetings do
   require Logger
   alias Vae.Meetings.StateHolder
 
-  def get(nil), do: []
+  @state_holder Application.get_env(:vae, :meetings_state_holder)
 
-  defdelegate get(delegate), to: StateHolder
+  defdelegate get(delegate), to: @state_holder
 
-  defdelegate all(), to: StateHolder
+  defdelegate all(), to: @state_holder
 
-  defdelegate fetch(name), to: StateHolder
+  defdelegate fetch(name), to: @state_holder
 
-  defdelegate fetch_all(), to: StateHolder
+  defdelegate fetch_all(), to: @state_holder
 
-  defdelegate register(meeting, application), to: StateHolder
+  defdelegate register(meeting_id, application), to: @state_holder
 
-  def get_by_meeting_id(nil), do: %Vae.Meetings.Meeting{}
-
-  defdelegate get_by_meeting_id(meeting_id), to: StateHolder
+  defdelegate get_by_meeting_id(meeting_id), to: @state_holder
 
   def get_france_vae_academies() do
     if Process.whereis(:france_vae) do

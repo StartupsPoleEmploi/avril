@@ -1,6 +1,8 @@
 defmodule VaeWeb.Mutation.ApplicationTest do
   use VaeWeb.ConnCase, async: true
 
+  import Swoosh.TestAssertions
+
   setup %{conn: conn} do
     ExMachina.Sequence.reset()
 
@@ -134,5 +136,163 @@ defmodule VaeWeb.Mutation.ApplicationTest do
                  }
                ]
              }
+  end
+
+  @query """
+  mutation RegisterMeeting ($input: RegisterMeetingInput!) {
+    registerMeeting(input: $input) {
+      id
+      meeting {
+        name
+        meetingId
+        place
+        address
+        postalCode
+        city
+        startDate
+        endDate
+      }
+    }
+  }
+  """
+  test "Register to a meeting with no meeting id fails", %{conn: conn} do
+    application =
+      insert(
+        :application,
+        %{user: conn.assigns[:current_user]}
+      )
+
+    conn =
+      post(conn, "/api/v2",
+        query: @query,
+        variables: %{"input" => %{"applicationId" => application.id, "meetingId" => ""}}
+      )
+
+    assert json_response(conn, 200) ==
+             %{
+               "data" => %{"registerMeeting" => nil},
+               "errors" => [
+                 %{
+                   "details" => "Meeting ID must be provided",
+                   "locations" => [%{"column" => 0, "line" => 2}],
+                   "message" => "La prise de rendez-vous a échoué",
+                   "path" => ["registerMeeting"]
+                 }
+               ]
+             }
+  end
+
+  @query """
+  mutation RegisterMeeting ($input: RegisterMeetingInput!) {
+    registerMeeting(input: $input) {
+      id
+      meeting {
+        name
+        meetingId
+        place
+        address
+        postalCode
+        city
+        startDate
+        endDate
+      }
+    }
+  }
+  """
+  test "Register to a meeting with incomplete user informations fails", %{conn: conn} do
+    application =
+      insert(
+        :application,
+        %{user: conn.assigns[:current_user]}
+      )
+
+    conn =
+      post(conn, "/api/v2",
+        query: @query,
+        variables: %{"input" => %{"applicationId" => application.id, "meetingId" => "success"}}
+      )
+
+    assert json_response(conn, 200) ==
+             %{
+               "data" => %{"registerMeeting" => nil},
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 0, "line" => 2}],
+                   "message" => "La prise de rendez-vous a échoué",
+                   "path" => ["registerMeeting"],
+                   "details" => [
+                     %{"key" => "birthday", "message" => ["can't be blank"]},
+                     %{"key" => "city_label", "message" => ["can't be blank"]},
+                     %{"key" => "country_label", "message" => ["can't be blank"]},
+                     %{"key" => "email_confirmed_at", "message" => ["can't be blank"]}
+                   ]
+                 }
+               ]
+             }
+  end
+
+  @query """
+  mutation RegisterMeeting ($input: RegisterMeetingInput!) {
+    registerMeeting(input: $input) {
+      id
+      meeting {
+        name
+        meetingId
+        place
+        address
+        postalCode
+        city
+        startDate
+        endDate
+      }
+    }
+  }
+  """
+  test "Register to a meeting", %{conn: conn} do
+    user =
+      conn.assigns[:current_user]
+      |> Ecto.Changeset.change(%{
+        birthday: ~D[2002-04-05],
+        city_label: "Paris",
+        country_label: "FR",
+        email_confirmed_at: Timex.now() |> DateTime.truncate(:second)
+      })
+      |> Vae.Repo.update!()
+
+    application =
+      insert(
+        :application,
+        %{user: user}
+      )
+
+    conn =
+      post(conn, "/api/v2",
+        query: @query,
+        variables: %{"input" => %{"applicationId" => application.id, "meetingId" => "success"}}
+      )
+
+    assert json_response(conn, 200) ==
+             %{
+               "data" => %{
+                 "registerMeeting" => %{
+                   "id" => "#{application.id}",
+                   "meeting" => %{
+                     "address" => "502  Raccoon Run",
+                     "city" => "Seattle",
+                     "endDate" => "2020-04-01T12:30:00",
+                     "meetingId" => "12345",
+                     "name" => "The place 2 be",
+                     "place" => "Serioulsy this is the place 2 be",
+                     "postalCode" => "98115",
+                     "startDate" => "2020-04-01T10:00:00"
+                   }
+                 }
+               }
+             }
+
+    assert_email_sent(
+      Vae.Repo.get(Vae.UserApplication, application.id)
+      |> VaeWeb.ApplicationEmail.user_submission_confirmation()
+    )
   end
 end

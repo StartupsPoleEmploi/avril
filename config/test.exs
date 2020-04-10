@@ -32,6 +32,7 @@ config :vae,
   places_client: Vae.Places.Client.InMemory,
   places_cache: Vae.Places.Client.InMemory,
   search_client: Vae.Search.Client.InMemory,
+  meetings_state_holder: Vae.Meetings.StateHolderMock,
   places_ets_table_name: :places_test,
   mailjet: %{
     from_email: "x@gmail.com",
@@ -39,3 +40,5 @@ config :vae,
     # from_email: "contact@avril.pole-emploi.fr"
     override_to: [%{Email: "x@gmail.com"}]
   }
+
+config :vae, VaeWeb.Mailer, adapter: Swoosh.Adapters.Test

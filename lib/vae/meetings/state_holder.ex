@@ -134,9 +134,19 @@ defmodule Vae.Meetings.StateHolder do
   def handle_call(:all, _from, state), do: {:reply, state, state}
 
   @impl true
+  def handle_call({:get, nil}, _from, state) do
+    {:reply, [], state}
+  end
+
+  @impl true
   def handle_call({:get, delegate}, _from, state) do
     AlgoliaClient.get_meetings(delegate)
     |> handle_meetings_result(state)
+  end
+
+  @impl true
+  def handle_call({:get_by_meeting_id, nil}, _from, state) do
+    {:reply, %Meeting{}, state}
   end
 
   @impl true

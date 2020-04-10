@@ -33,4 +33,14 @@ defmodule Vae.Account do
     User.update_password_changeset(user, attrs)
     |> Repo.update()
   end
+
+  def validate_required_fields_to_register_meeting(user) do
+    changeset = User.submit_changeset_fields_required(user)
+
+    if changeset.valid? do
+      {:ok, changeset}
+    else
+      {:error, changeset}
+    end
+  end
 end

@@ -1,7 +1,7 @@
 defmodule Vae.Applications do
   import Ecto.Query
 
-  alias Vae.{Certification, Delegate, UserApplication}
+  alias Vae.{Account, Certification, Delegate, Meetings, UserApplication}
   alias Vae.Repo
 
   @doc "Lists applications from a User ID"
@@ -22,6 +22,42 @@ defmodule Vae.Applications do
   def attach_delegate(application, delegate) do
     application
     |> UserApplication.attach_delegate_changeset(delegate)
+    |> Repo.update()
+  end
+
+  @doc "Register a user's application to a meeting"
+  def register_to_a_meeting(application, meeting_id) when meeting_id in [nil, ""],
+    do: {:error, "You must provide a meeting_id"}
+
+  def register_to_a_meeting(application, meeting_id) do
+    with user <- Account.get_user(application.user_id),
+         {:ok, valid} <-
+           Account.validate_required_fields_to_register_meeting(user),
+         {:ok, meeting} <-
+           Meetings.register(meeting_id, application) do
+      application
+      |> UserApplication.register_meeting_changeset(meeting)
+      |> Repo.update()
+    else
+      {:error, _msg} = error ->
+        error
+
+      error ->
+        {:error, error}
+    end
+  end
+
+  @doc "Generate an hash access to an application for a delegate"
+  def generate_delegate_access_hash(application) do
+    application
+    |> UserApplication.generate_delegate_access_hash_changeset()
+    |> Repo.update()
+  end
+
+  @doc "Set the date and time at which the confirmation was sent"
+  def set_meeting_submitted_at(application) do
+    application
+    |> UserApplication.meeting_submitted_at_changeset()
     |> Repo.update()
   end
 

@@ -161,6 +161,12 @@ defmodule Vae.User do
     |> cast_embed(:identity)
   end
 
+  def submit_changeset_fields_required(model, params \\ %{}) do
+    model
+    |> cast(params, [])
+    |> validate_required(@application_submit_fields)
+  end
+
   defp maybe_confirm_password(
          changeset,
          %{"password_confirmation" => _password_confirmation} = attrs

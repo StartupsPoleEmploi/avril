@@ -60,6 +60,12 @@ defmodule Vae.UserApplication do
     |> put_assoc(:delegate, delegate)
   end
 
+  def register_meeting_changeset(struct, params) do
+    struct
+    |> change()
+    |> put_embed(:meeting, params)
+  end
+
   def init_booklet_hash(changeset) do
     change(changeset, booklet_hash: changeset.data.booklet_hash || generate_hash(64))
   end
@@ -79,6 +85,19 @@ defmodule Vae.UserApplication do
     application
     |> change(%{delegate_id: id})
     |> Repo.update()
+  end
+
+  def generate_delegate_access_hash_changeset(application) do
+    change(application, %{
+      delegate_access_hash: generate_hash(64),
+      delegate_access_refreshed_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    })
+  end
+
+  def meeting_submitted_at_changeset(application) do
+    change(application, %{
+      submitted_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    })
   end
 
   def submit(application, auto_submitted \\ false) do

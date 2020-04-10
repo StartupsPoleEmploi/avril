@@ -139,7 +139,6 @@ defmodule Vae.Meetings.FranceVae do
   defp to_meeting(params, academy_id) do
     %Meeting{
       academy_id: academy_id,
-      meeting_id: params["id"],
       meeting_id: Integer.to_string(params["id"]),
       place: params["lieu"],
       address: params["addresse"],

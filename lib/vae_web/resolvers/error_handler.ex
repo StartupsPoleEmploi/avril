@@ -1,9 +1,18 @@
 defmodule VaeWeb.Resolvers.ErrorHandler do
+  require Logger
+
+  @global_error "Une erreur est survenue"
+
   def error_response(message, details) when is_binary(details),
     do: {:error, message: message, details: details}
 
-  def error_response(message, changeset) do
+  def error_response(message, %Ecto.Changeset{} = changeset) do
     {:error, message: message, details: transform_errors(changeset)}
+  end
+
+  def error_response(_message, error) do
+    Logger.error(fn -> inspect(error, limit: :infinity) end)
+    {:error, message: @global_error, details: ""}
   end
 
   defp transform_errors(changeset) do

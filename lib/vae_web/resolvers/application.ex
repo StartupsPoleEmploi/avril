@@ -1,4 +1,6 @@
 defmodule VaeWeb.Resolvers.Application do
+  require Logger
+
   import VaeWeb.Resolvers.ErrorHandler
 
   alias Vae.{Applications, Authorities}
@@ -6,6 +8,7 @@ defmodule VaeWeb.Resolvers.Application do
   @application_not_found "La candidature est introuvable"
   @delegate_not_found "Le certificateur est introuvable"
   @attach_delegate_error "L'ajout du certificateur à votre candidature a échoué"
+  @register_meeting_error "La prise de rendez-vous a échoué"
 
   def application_items(_, _args, %{context: %{current_user: user}}) do
     {:ok, Applications.get_applications(user.id)}
@@ -63,6 +66,39 @@ defmodule VaeWeb.Resolvers.Application do
 
       {:delegate, _error} ->
         error_response(@delegate_not_found, format_delegate_error_message(delegate_id))
+    end
+  end
+
+  def register_meeting(_, %{input: %{meeting_id: ""}}, _),
+    do: error_response(@register_meeting_error, "Meeting ID must be provided")
+
+  def register_meeting(
+        _,
+        %{input: %{application_id: application_id, meeting_id: meeting_id}},
+        %{context: %{current_user: user}}
+      ) do
+    with application <-
+           Applications.get_application_from_id_and_user_id(application_id, user.id),
+         {:ok, registered_application} <-
+           Applications.register_to_a_meeting(application, meeting_id),
+         {:ok, access_application} <-
+           Applications.generate_delegate_access_hash(registered_application) do
+      case VaeWeb.Emails.send_user_meeting_confirmation(access_application) do
+        {:ok, _object} ->
+          Applications.set_meeting_submitted_at(access_application)
+
+        {:error, error} ->
+          error_response(@register_meeting_error, error)
+
+        error ->
+          error_response(@register_meeting_error, error)
+      end
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@register_meeting_error, changeset)
+
+      _ ->
+        error_response(@application_not_found, format_application_error_message(application_id))
     end
   end
 

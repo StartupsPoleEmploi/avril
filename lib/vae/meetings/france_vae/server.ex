@@ -2,9 +2,10 @@ defmodule Vae.Meetings.FranceVae.Server do
   require Logger
   use GenServer
 
-  alias Vae.Meetings.StateHolder
   alias Vae.Meetings.FranceVae
   alias Vae.Meetings.{Delegate, Meeting}
+
+  @state_holder Application.get_env(:vae, :meetings_state_holder)
 
   @name :france_vae
 
@@ -17,7 +18,7 @@ defmodule Vae.Meetings.FranceVae.Server do
   def init(state) do
     Logger.info("[DAVA] Init #{@name} server")
 
-    StateHolder.subscribe(@name)
+    @state_holder.subscribe(@name)
 
     {:ok, state}
   end
