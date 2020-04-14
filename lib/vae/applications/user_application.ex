@@ -30,7 +30,7 @@ defmodule Vae.UserApplication do
     field(:booklet_hash, :string)
 
     belongs_to(:user, User, foreign_key: :user_id)
-    belongs_to(:delegate, Delegate, foreign_key: :delegate_id)
+    belongs_to(:delegate, Delegate, foreign_key: :delegate_id, on_replace: :nilify)
     belongs_to(:certification, Certification, foreign_key: :certification_id)
 
     has_many(:resumes, Resume, on_delete: :delete_all, foreign_key: :application_id)

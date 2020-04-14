@@ -16,6 +16,12 @@ defmodule Vae.Search.Client.Algolia do
     execute(:delegate, query)
   end
 
+  def get_meetings(%Vae.Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
+    delegate
+    |> Vae.Repo.preload(:certifiers)
+    |> get_meetings()
+  end
+
   def get_meetings(%{
         certifiers: certifiers,
         academy_id: academy_id,
