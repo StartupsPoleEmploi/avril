@@ -28,6 +28,10 @@ defmodule VaeWeb.Resolvers.Meeting do
         meetings:
           Enum.map(meetings, fn meeting ->
             %{
+              name: meeting[:name],
+              place: meeting[:place],
+              academy_id: meeting[:academy_id],
+              target: meeting[:target],
               meeting_id: meeting[:meeting_id],
               start_date: meeting[:start_date],
               end_date: meeting[:end_date],
