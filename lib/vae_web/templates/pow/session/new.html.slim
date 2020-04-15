@@ -12,10 +12,6 @@ section.section.pow-page
                   / = content_tag :li, "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}", class: ""
                   li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
           .field
-            = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
-          .field
-            p Ou bien
-          .field
             .control
               = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
               = error_tag f, :email
@@ -29,6 +25,10 @@ section.section.pow-page
               |  Me connecter à la prochaine visite
           .field
             = submit "Me connecter", class: "button is-primary is-rounded is-medium"
+          .field
+            p Ou bien
+          .field
+            = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
           .field
             .level
               .level-left
