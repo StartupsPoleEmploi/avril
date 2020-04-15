@@ -1,12 +1,10 @@
 .container
   section.section#header
-    .columns
-      .column.is-10.is-offset-1
-        = link("Diplômes", to: Routes.certification_path(@conn, :index), class: "button is-back")
+    = link("Diplômes", to: Routes.certification_path(@conn, :index), class: "button is-back")
 
-        h1.title.is-1= Vae.Certification.name(@certification)
-        p
-          span.tag.is-highlighted.is-large= level_info_by_level(@certification.level)
+    h1.title.is-1= Vae.Certification.name(@certification)
+    p
+      span.tag.is-highlighted.is-large= level_info_by_level(@certification.level)
   section.section#call-to-action
     .notification.is-blue
       .columns

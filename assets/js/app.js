@@ -92,7 +92,7 @@ $(() => {
   });
 
   $('a.is-back').on('click', e => {
-    if (document.referrer === e.target.href) {
+    if (document.referrer.indexOf(e.target.href) === 0) {
       console.log('Going back');
       history.back();
       e.preventDefault();

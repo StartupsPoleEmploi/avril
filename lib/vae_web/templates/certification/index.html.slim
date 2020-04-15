@@ -5,12 +5,11 @@
   - is_all = possible_levels == @levels
   - level_label = unless is_all, do: " #{Vae.String.inflect("au niveau", length(@levels))} #{Enum.map(@levels, &level_info_by_level/1) |> Enum.join(", ")}"
   - filter_object = assigns[:profession] || assigns[:rome]
-  section.section#title
-    .container
-      .section.is-vertical.is-small
-        = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
-        = if assigns[:rome] do
-          = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
+  .container
+    section.section#title
+      = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
+      = if assigns[:rome] do
+        = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
       = if filter_object do
         = if assigns[:rome] do
           h2.subtitle.is-5
@@ -36,8 +35,7 @@
               input type="checkbox" value=level id="level_#{level}" checked=(!is_all && Enum.member?(@levels, level))
               label.button.is-rounded.is-info.is-togglable for="level_#{level}"
                 = level_info_by_level(level)
-  section.section#results
-    .container
+    section.section#results
       = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
         .columns
           = for certification <- chunk do
