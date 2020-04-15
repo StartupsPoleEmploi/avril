@@ -31,6 +31,8 @@ section.section.is-vertical.register-page.pow-page
                 span Créer mon compte
                 span.is-hidden-mobile &nbsp;gratuit maintenant
             .field
+              p Ou bien
+            .field
               = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
             .field.has-text-right
               = link("J'ai déjà un compte", to: Routes.pow_session_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
