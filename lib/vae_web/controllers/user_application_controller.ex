@@ -33,7 +33,7 @@ defmodule VaeWeb.UserApplicationController do
         _ ->
           conn
       end
-      |> redirect(to: "#{Routes.user_application_path(conn, :show, current_application)}#booklet")
+      |> redirect(to: System.get_env("NUXT_PROFIL_PATH"))
     else
       _error ->
         conn
