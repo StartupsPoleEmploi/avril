@@ -26,6 +26,11 @@ defmodule VaeWeb.Schema.ApplicationTypes do
 
     field(:delegate, :delegate)
     field(:certification, :certification)
+    field(:booklet_1, :booklet)
+  end
+
+  object :booklet do
+    field(:completed_at, :naive_datetime)
   end
 
   object :application_mutations do

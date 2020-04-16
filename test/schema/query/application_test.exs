@@ -25,7 +25,15 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
     assert json_response(conn, 200) == %{
              "data" => %{
                "application" => nil
-             }
+             },
+             "errors" => [
+               %{
+                 "details" => "Application id 0 not found",
+                 "locations" => [%{"column" => 0, "line" => 2}],
+                 "message" => "La candidature est introuvable",
+                 "path" => ["application"]
+               }
+             ]
            }
   end
 
@@ -93,18 +101,25 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
           name
         }
       }
+      booklet_1 {
+        completedAt
+      }
     }
   }
   """
   test "Returns a complete representation of an application", %{conn: conn} do
     submitted_at = NaiveDateTime.utc_now()
+    completed_at = Timex.shift(submitted_at, days: +3)
     inserted_at = Timex.shift(submitted_at, days: -5)
 
     application =
       insert(:application, %{
         user: conn.assigns[:current_user],
         inserted_at: inserted_at,
-        submitted_at: submitted_at
+        submitted_at: submitted_at,
+        booklet_1: %{
+          completed_at: completed_at
+        }
       })
 
     conn = get conn, "/api/v2", query: @query, variables: %{"id" => application.id}
@@ -134,6 +149,9 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
                      "name" =>
                        Vae.Authorities.get_first_certifier_from_delegate(application.delegate).name
                    }
+                 },
+                 "booklet_1" => %{
+                   "completedAt" => to_iso8601(application.booklet_1.completed_at)
                  }
                }
              }
