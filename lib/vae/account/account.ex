@@ -35,7 +35,7 @@ defmodule Vae.Account do
   end
 
   def validate_required_fields_to_register_meeting(user) do
-    changeset = User.submit_changeset_fields_required(user)
+    changeset = User.register_fields_required_changeset(user)
 
     if changeset.valid? do
       {:ok, changeset}

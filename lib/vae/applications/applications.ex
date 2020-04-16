@@ -26,12 +26,12 @@ defmodule Vae.Applications do
   end
 
   @doc "Register a user's application to a meeting"
-  def register_to_a_meeting(application, meeting_id) when meeting_id in [nil, ""],
+  def register_to_a_meeting(_application, meeting_id) when meeting_id in [nil, ""],
     do: {:error, "You must provide a meeting_id"}
 
   def register_to_a_meeting(application, meeting_id) do
     with user <- Account.get_user(application.user_id),
-         {:ok, valid} <-
+         {:ok, _valid} <-
            Account.validate_required_fields_to_register_meeting(user),
          {:ok, meeting} <-
            Meetings.register(meeting_id, application) do

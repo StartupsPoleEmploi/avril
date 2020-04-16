@@ -111,6 +111,7 @@ defmodule Vae.User do
   )
 
   @application_submit_fields ~w(
+    gender
     first_name
     last_name
     email
@@ -161,7 +162,7 @@ defmodule Vae.User do
     |> cast_embed(:identity)
   end
 
-  def submit_changeset_fields_required(model, params \\ %{}) do
+  def register_fields_required_changeset(model, params \\ %{}) do
     model
     |> cast(params, [])
     |> validate_required(@application_submit_fields)
