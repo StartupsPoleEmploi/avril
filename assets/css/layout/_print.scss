@@ -1,0 +1,39 @@
+@media print {
+  nav.navbar {
+    margin-bottom: 100px;
+    height: 0;
+    // position: relative;
+    .navbar-brand {
+      a.navbar-item {
+        width: 100%;
+      }
+      img {
+        height: 80px;
+        position: absolute;
+        margin: auto;
+        left: 0;
+        right: 0;
+      }
+    }
+    .navbar-burger {
+      display: none;
+    }
+  }
+
+  body.landing-page {
+    section.section {
+      padding: 0;
+      .button.is-back {
+        display: none;
+      }
+      .column.content {
+        width: 100%;
+        margin: 0;
+      }
+    }
+  }
+
+  footer.footer {
+    display: none;
+  }
+}

@@ -93,6 +93,14 @@ defmodule VaeWeb.PageController do
     )
   end
 
+  def synthesis(conn, _params) do
+    render(conn, "synthesis.html",
+      title: "Synthèse VAE",
+      description: "Les différentes étapes d'une VAE expliquées en détail.",
+      is_landing: true
+    )
+  end
+
   def contact(conn, _params) do
     render(conn, "contact.html",
       title: "Contacter l'équipe Avril",
