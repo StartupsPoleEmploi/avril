@@ -21,9 +21,9 @@
           = link("Me déconnecter", to: Routes.pow_session_path(@conn, :delete), method: :delete, data: [analytics: "?bouton=logout"], class: "navbar-item")
         - else
           = link "Me connecter", to: Routes.pow_session_path(@conn, :new), class: "navbar-item"
-        li.navbar-item.is-hoverable
-          .permanent-burger aria-expanded="false" aria-label="menu" data-target="navbar" role="button"
-            span aria-hidden="true"
-            span aria-hidden="true"
-            span aria-hidden="true"
-            | Menu
+        / li.navbar-item.is-hoverable
+        /   .permanent-burger aria-expanded="false" aria-label="menu" data-target="navbar" role="button"
+        /     span aria-hidden="true"
+        /     span aria-hidden="true"
+        /     span aria-hidden="true"
+        /     | Menu
