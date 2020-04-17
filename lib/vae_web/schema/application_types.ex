@@ -30,6 +30,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
   end
 
   object :booklet do
+    field(:inserted_at, :naive_datetime)
     field(:completed_at, :naive_datetime)
   end
 

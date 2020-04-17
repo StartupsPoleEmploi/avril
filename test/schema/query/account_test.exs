@@ -69,7 +69,7 @@ defmodule VaeWeb.Schema.Query.AccountTest do
         postalCode
       }
       fullAddress {
-         city
+        city
         county
         country
         lat

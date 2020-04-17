@@ -103,12 +103,14 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
       }
       booklet_1 {
         completedAt
+        insertedAt
       }
     }
   }
   """
   test "Returns a complete representation of an application", %{conn: conn} do
     submitted_at = NaiveDateTime.utc_now()
+    inserted_at = Timex.shift(submitted_at, days: -4)
     completed_at = Timex.shift(submitted_at, days: +3)
     inserted_at = Timex.shift(submitted_at, days: -5)
 
@@ -118,7 +120,8 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
         inserted_at: inserted_at,
         submitted_at: submitted_at,
         booklet_1: %{
-          completed_at: completed_at
+          completed_at: completed_at,
+          inserted_at: inserted_at
         }
       })
 
@@ -151,7 +154,8 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
                    }
                  },
                  "booklet_1" => %{
-                   "completedAt" => to_iso8601(application.booklet_1.completed_at)
+                   "completedAt" => to_iso8601(application.booklet_1.completed_at),
+                   "insertedAt" => to_iso8601(application.booklet_1.inserted_at)
                  }
                }
              }
