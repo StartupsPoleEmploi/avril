@@ -37,7 +37,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
       {:ok, nil} ->
         conn
         |> put_status(:not_found)
-        |> put_view(Vae.ErrorView)
+        |> put_view(VaeWeb.ErrorView)
         |> render("404.html", layout: false)
         |> halt()
 

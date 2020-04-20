@@ -28,10 +28,12 @@
   }
 
   &.is-back {
-    color: palette(default, text);
+    &:not(.is-primary) {
+      color: palette(default, text);
+      background: transparent;
+    }
     left: -1rem;
     margin-bottom: 1rem;
-    background: transparent;
     @extend .is-medium;
 
     &:before {

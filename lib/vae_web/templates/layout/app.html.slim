@@ -1,16 +1,16 @@
 = base_layout @conn, assigns do
   main
-    = render ComponentView, "app_status.html", conn: @conn
-    = render ComponentView, "cookies.html", conn: @conn
-    = render ComponentView, "navbar.html", conn: @conn
-    = render ComponentView, "flash.html", conn: @conn
+    = render VaeWeb.ComponentView, "app_status.html", conn: @conn
+    = render VaeWeb.ComponentView, "cookies.html", conn: @conn
+    = render VaeWeb.ComponentView, "navbar.html", conn: @conn
+    = render VaeWeb.ComponentView, "flash.html", conn: @conn
     = if assigns[:is_landing] do
       section.section
         .container
-          = render ComponentView, "back_button.html", conn: @conn
+          = render VaeWeb.ComponentView, "back_button.html", conn: @conn
           .columns
             .column.is-8.is-offset-2.content
               = render @view_module, @view_template, assigns
     - else
       = render @view_module, @view_template, assigns
-  = render ComponentView, "footer.html", conn: @conn
+  = render VaeWeb.ComponentView, "footer.html", conn: @conn
