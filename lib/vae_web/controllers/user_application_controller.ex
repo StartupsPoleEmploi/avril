@@ -52,10 +52,6 @@ defmodule VaeWeb.UserApplicationController do
         :resumes
       ])
 
-    edit_mode =
-      params["mode"] != "certificateur" &&
-        Pow.Plug.current_user(conn) && Pow.Plug.current_user(conn).id == application.user.id
-
     grouped_experiences =
       application.user.proven_experiences
       |> Enum.group_by(fn exp -> {exp.company_name, exp.label} end)
@@ -65,40 +61,17 @@ defmodule VaeWeb.UserApplicationController do
       |> Map.to_list()
       |> Enum.sort_by(fn {_k, v} -> Date.to_erl(List.first(v).start_date) end, &>/2)
 
-    meetings =
-      if application.meeting || !edit_mode,
-        do: [],
-        else: Vae.Meetings.get(application.delegate)
-
-    preselected_place =
-      if length(meetings) > 0,
-        do: meetings |> List.first() |> elem(0)
-
-    tabs =
-      [
-        :profile,
-        if(length(meetings) > 0, do: :meetings),
-        if(edit_mode && UserApplication.booklet_url(conn, application), do: :booklet)
-      ]
-      |> Enum.reject(&is_nil/1)
-
     render(conn, "show.html", %{
       title:
         "Candidature VAE de #{application.user.name} pour un diplôme de #{
           application.certification.label
         }",
+      remove_navbar: true,
       application: application,
       delegate: application.delegate,
       certification: application.certification,
       user: application.user,
-      grouped_experiences: grouped_experiences,
-      edit_mode: edit_mode,
-      user_changeset: User.changeset(application.user, %{}),
-      resume_changeset: Resume.changeset(%Resume{}, %{}),
-      application_changeset: UserApplication.changeset(application, %{}),
-      preselected_place: preselected_place,
-      meetings: meetings,
-      tabs: tabs
+      grouped_experiences: grouped_experiences
     })
   end
 

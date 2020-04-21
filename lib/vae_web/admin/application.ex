@@ -44,12 +44,6 @@ defmodule Vae.ExAdmin.UserApplication do
 
     action_item :show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
-      href = VaeWeb.Router.Helpers.user_application_download_path(VaeWeb.Endpoint, :download, application)
-      action_item_link "Download Application Recap", href: href, download: "Synthese VAE.pdf"
-    end
-
-    action_item :show, fn id ->
-      application = Vae.Repo.get(Vae.UserApplication, id)
       if application.booklet_1 do
         action_item_link "Fill Booklet", href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application), target: "_blank"
       end

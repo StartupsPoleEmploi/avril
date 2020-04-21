@@ -1,5 +1,5 @@
 .container
-  nav.navbar aria-label="main navigation" role="navigation"
+  nav.navbar aria-label="main navigation" role="navigation" class="#{if @remove_navbar, do: "has-no-content"}"
     = link "Aller au contenu principal", to: "#content", class: "screen-accessibility-helper"
     .navbar-brand
       = link to: Routes.root_path(@conn, :index), class: "navbar-item", title: "Retour à la page d'accueil" do

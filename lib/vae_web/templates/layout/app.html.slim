@@ -2,7 +2,7 @@
   main
     = render VaeWeb.ComponentView, "app_status.html", conn: @conn
     = render VaeWeb.ComponentView, "cookies.html", conn: @conn
-    = render VaeWeb.ComponentView, "navbar.html", conn: @conn
+    = render VaeWeb.ComponentView, "navbar.html", conn: @conn, remove_navbar: assigns[:remove_navbar]
     = render VaeWeb.ComponentView, "flash.html", conn: @conn
     = if assigns[:is_landing] do
       section.section
