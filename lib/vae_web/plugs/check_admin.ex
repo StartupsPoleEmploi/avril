@@ -1,4 +1,4 @@
-defmodule Vae.CheckAdmin do
+defmodule VaeWeb.Plugs.CheckAdmin do
   import Phoenix.Controller
   import Plug.Conn
   alias VaeWeb.Router.Helpers, as: Routes

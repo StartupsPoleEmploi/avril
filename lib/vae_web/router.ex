@@ -3,11 +3,9 @@ defmodule VaeWeb.Router do
   use Plug.ErrorHandler
   use Sentry.Plug
   use Pow.Phoenix.Router
-
   use Pow.Extension.Phoenix.Router,
     otp_app: :vae,
     extensions: [PowResetPassword, PowEmailConfirmation]
-
   use ExAdmin.Router
 
   pipeline :browser do
@@ -25,27 +23,29 @@ defmodule VaeWeb.Router do
       error_handler: Pow.Phoenix.PlugErrorHandler
   end
 
-  pipeline :api_protected do
-    plug Pow.Plug.RequireAuthenticated,
-      error_handler: VaeWeb.APIAuthErrorHandler
-  end
-
   pipeline :admin do
-    plug(Vae.CheckAdmin)
+    plug(VaeWeb.Plugs.CheckAdmin)
   end
 
-  pipeline :api do
+  pipeline :accepts_json do
     plug(:accepts, ["json"])
-    plug(VaeWeb.APIAuthPlug, otp_app: :vae)
-    plug(:fetch_session)
-    plug(:fetch_flash)
-
-    post("/mail_events", VaeWeb.MailEventsController, :new_event)
+    # plug(VaeWeb.APIAuthPlug, otp_app: :vae)
+    # plug(:fetch_session)
+    # plug(:fetch_flash)
   end
 
-  pipeline :gapi do
-    plug(:accepts, ["json"])
+  pipeline :graphql do
     plug VaeWeb.Context
+  end
+
+  pipeline :api_protected_login_only do
+    plug VaeWeb.Plugs.ApiProtected
+    # plug Pow.Plug.RequireAuthenticated,
+    #   error_handler: VaeWeb.APIAuthErrorHandler
+  end
+
+  pipeline :api_protected_login_or_server do
+    plug VaeWeb.Plugs.ApiProtected, allow_server_side: true
   end
 
   # Public Pages
@@ -126,51 +126,6 @@ defmodule VaeWeb.Router do
     get("/processes/:id", VaeWeb.Redirector, to: "/", msg: "La page demandée n'existe plus.")
   end
 
-  scope "/api" do
-    pipe_through([:api])
-    get("/booklet", VaeWeb.ApiController, :get_booklet)
-  end
-
-  scope "/api" do
-    pipe_through([:api, :api_protected])
-    put("/booklet", VaeWeb.ApiController, :set_booklet)
-  end
-
-  # scope "/api/v1", as: :api_v1 do
-  #   pipe_through([:api])
-
-  #   resources("/session", VaeWeb.Api.SessionController, singleton: true, only: [:create, :delete])
-  # end
-
-  # scope "/api/v1", as: :api_v1 do
-  #   pipe_through([:api, :api_protected])
-  #   # get("/booklet", VaeWeb.Api.BookletController, :get_booklet)
-  #   # put("/booklet", VaeWeb.Api.BookletController, :set_booklet)
-  #   get("/profile", VaeWeb.Api.ProfileController, :index)
-  #   put("/profile", VaeWeb.Api.ProfileController, :update)
-
-  #   get("/applications", VaeWeb.Api.UserApplicationController, :index)
-  #   get("/applications/:slug", VaeWeb.Api.UserApplicationController, :show)
-  #   put("/applications/:slug", VaeWeb.Api.UserApplicationController, :update)
-  #   get("/applications/:slug/delegates", VaeWeb.Api.UserApplicationController, :delegates_search)
-
-  #   post("/delegates/search", VaeWeb.Api.DelegateController, :search)
-
-  #   post("/meetings/search", VaeWeb.Api.MeetingController, :search)
-  # end
-
-  scope "/" do
-    pipe_through [:gapi, :api_protected]
-
-    forward "/api/v2", Absinthe.Plug,
-      schema: VaeWeb.Schema,
-      json_codec: Jason
-
-    forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: VaeWeb.Schema,
-      json_codec: Jason
-  end
-
   # Admin
   scope "/admin", ExAdmin do
     pipe_through([:browser, :protected, :admin])
@@ -179,6 +134,34 @@ defmodule VaeWeb.Router do
     post("/status", ApiController, :put_status)
     delete("/status", ApiController, :delete_status)
     admin_routes()
+  end
+
+  scope "/" do
+    pipe_through [:accepts_json]
+    post("/mail_events", VaeWeb.MailEventsController, :new_event)
+
+  end
+
+  scope "/api" do
+    pipe_through [:accepts_json, :api_protected_login_or_server, :graphql]
+
+    forward "/v2", Absinthe.Plug,
+      schema: VaeWeb.Schema,
+      json_codec: Jason
+
+    forward "/graphiql", Absinthe.Plug.GraphiQL,
+      schema: VaeWeb.Schema,
+      json_codec: Jason
+  end
+
+  scope "/" do
+    pipe_through([:accepts_json, :api_protected_login_or_server])
+    get("/booklet", VaeWeb.ApiController, :get_booklet)
+  end
+
+  scope "/" do
+    pipe_through([:accepts_json, :api_protected_login_only])
+    put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
 
   defp fetch_app_status(conn, _opts) do
