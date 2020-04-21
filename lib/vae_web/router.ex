@@ -129,31 +129,35 @@ defmodule VaeWeb.Router do
   scope "/api" do
     pipe_through([:api])
     get("/booklet", VaeWeb.ApiController, :get_booklet)
+  end
+
+  scope "/api" do
+    pipe_through([:api, :api_protected])
     put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
 
-  scope "/api/v1", as: :api_v1 do
-    pipe_through([:api])
+  # scope "/api/v1", as: :api_v1 do
+  #   pipe_through([:api])
 
-    resources("/session", VaeWeb.Api.SessionController, singleton: true, only: [:create, :delete])
-  end
+  #   resources("/session", VaeWeb.Api.SessionController, singleton: true, only: [:create, :delete])
+  # end
 
-  scope "/api/v1", as: :api_v1 do
-    pipe_through([:api, :api_protected])
-    # get("/booklet", VaeWeb.Api.BookletController, :get_booklet)
-    # put("/booklet", VaeWeb.Api.BookletController, :set_booklet)
-    get("/profile", VaeWeb.Api.ProfileController, :index)
-    put("/profile", VaeWeb.Api.ProfileController, :update)
+  # scope "/api/v1", as: :api_v1 do
+  #   pipe_through([:api, :api_protected])
+  #   # get("/booklet", VaeWeb.Api.BookletController, :get_booklet)
+  #   # put("/booklet", VaeWeb.Api.BookletController, :set_booklet)
+  #   get("/profile", VaeWeb.Api.ProfileController, :index)
+  #   put("/profile", VaeWeb.Api.ProfileController, :update)
 
-    get("/applications", VaeWeb.Api.UserApplicationController, :index)
-    get("/applications/:slug", VaeWeb.Api.UserApplicationController, :show)
-    put("/applications/:slug", VaeWeb.Api.UserApplicationController, :update)
-    get("/applications/:slug/delegates", VaeWeb.Api.UserApplicationController, :delegates_search)
+  #   get("/applications", VaeWeb.Api.UserApplicationController, :index)
+  #   get("/applications/:slug", VaeWeb.Api.UserApplicationController, :show)
+  #   put("/applications/:slug", VaeWeb.Api.UserApplicationController, :update)
+  #   get("/applications/:slug/delegates", VaeWeb.Api.UserApplicationController, :delegates_search)
 
-    post("/delegates/search", VaeWeb.Api.DelegateController, :search)
+  #   post("/delegates/search", VaeWeb.Api.DelegateController, :search)
 
-    post("/meetings/search", VaeWeb.Api.MeetingController, :search)
-  end
+  #   post("/meetings/search", VaeWeb.Api.MeetingController, :search)
+  # end
 
   scope "/" do
     pipe_through [:gapi, :api_protected]
