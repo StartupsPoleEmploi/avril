@@ -2,8 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplication, Repo, Resume, User}
-  alias Vae.Crm.Polls
+  alias Vae.{Crm.Polls, UserApplication, Repo}
 
   plug VaeWeb.Plugs.ApplicationAccess
        when action not in [:index, :show, :admissible, :inadmissible]
@@ -42,7 +41,7 @@ defmodule VaeWeb.UserApplicationController do
     end
   end
 
-  def show(conn, %{"id" => _id} = params) do
+  def show(conn, _params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
