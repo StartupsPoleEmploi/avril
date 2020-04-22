@@ -1,4 +1,4 @@
-defmodule VaeWeb.APIAuthErrorHandler do
+defmodule VaeWeb.Plugs.APIAuthErrorHandler do
   use VaeWeb, :controller
   alias Plug.Conn
   alias VaeWeb.Router.Helpers, as: Routes

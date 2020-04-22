@@ -1,4 +1,5 @@
-defmodule VaeWeb.APIAuthPlug do
+# Unused ?
+defmodule VaeWeb.Plugs.APIAuthPlug do
   @moduledoc false
   use Pow.Plug.Base
 

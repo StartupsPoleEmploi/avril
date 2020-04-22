@@ -1,4 +1,4 @@
-defmodule VaeWeb.Context do
+defmodule VaeWeb.Plugs.AddGraphqlContext do
   @behaviour Plug
 
   alias Vae.User

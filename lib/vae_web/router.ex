@@ -2,11 +2,14 @@ defmodule VaeWeb.Router do
   use VaeWeb, :router
   use Plug.ErrorHandler
   use Sentry.Plug
+  use ExAdmin.Router
   use Pow.Phoenix.Router
   use Pow.Extension.Phoenix.Router,
     otp_app: :vae,
-    extensions: [PowResetPassword, PowEmailConfirmation]
-  use ExAdmin.Router
+    extensions: [
+      PowResetPassword,
+      PowEmailConfirmation
+  ]
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -19,8 +22,8 @@ defmodule VaeWeb.Router do
   end
 
   pipeline :protected do
-    plug Pow.Plug.RequireAuthenticated,
-      error_handler: Pow.Phoenix.PlugErrorHandler
+    plug(Pow.Plug.RequireAuthenticated,
+      error_handler: Pow.Phoenix.PlugErrorHandler)
   end
 
   pipeline :admin do
@@ -29,23 +32,21 @@ defmodule VaeWeb.Router do
 
   pipeline :accepts_json do
     plug(:accepts, ["json"])
-    # plug(VaeWeb.APIAuthPlug, otp_app: :vae)
+    # plug(VaeWeb.Plugs.APIAuthPlug, otp_app: :vae)
     # plug(:fetch_session)
     # plug(:fetch_flash)
   end
 
   pipeline :graphql do
-    plug VaeWeb.Context
+    plug(VaeWeb.Plugs.AddGraphqlContext)
   end
 
   pipeline :api_protected_login_only do
-    plug VaeWeb.Plugs.ApiProtected
-    # plug Pow.Plug.RequireAuthenticated,
-    #   error_handler: VaeWeb.APIAuthErrorHandler
+    plug(VaeWeb.Plugs.ApiProtected)
   end
 
   pipeline :api_protected_login_or_server do
-    plug VaeWeb.Plugs.ApiProtected, allow_server_side: true
+    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: true)
   end
 
   # Public Pages
