@@ -43,8 +43,6 @@ defmodule Vae.ExAdmin.Helpers do
   end
   def csv_espace(other), do: other
 
-  def csv_espace(term), do: term
-
   def print_in_json(nil), do: nil
 
   def print_in_json(data) do

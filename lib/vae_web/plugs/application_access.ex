@@ -1,13 +1,9 @@
 defmodule VaeWeb.Plugs.ApplicationAccess do
-  import Plug.Conn
-  import Phoenix.Controller
+  @query_param "hash"
 
-  alias Vae.UserApplication
-  alias Vae.Repo
-
-  alias VaeWeb.Router.Helpers, as: Routes
-
-  def init(options \\ []), do: options
+  def init(options \\ []) do
+    Keyword.merge(options, [error_handler: options[:error_handler] || VaeWeb.Plugs.BrowserErrorHandler])
+  end
 
   def call(%{params: %{"application_id" => application_id}} = conn, options),
     do: execute(conn, {:id, application_id}, options)
@@ -16,78 +12,64 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
     execute(conn, {:id, application_id}, options)
   end
 
-  def call(%{params: %{"hash" => hash_value}} = conn, [find_with_hash: hash_key] = options),
+  def call(%{params: %{@query_param => hash_value}} = conn, [find_with_hash: hash_key] = options),
     do: execute(conn, {hash_key, hash_value}, options)
 
-  def call(conn, _params) do
+  def call(conn, [error_handler: handler]) do
     conn
-    |> put_flash(:error, "Une erreur est survenue")
-    |> redirect(to: Routes.root_path(conn, :index))
-    |> halt()
+    |> handler.call(:internal_server_error)
+    |> Plug.Conn.halt()
   end
 
-  def execute(conn, finder, options \\ []) do
-    application = Repo.get_by(UserApplication, List.wrap(finder))
+  def execute(conn, finder, options) do
+    application = Vae.Repo.get_by(Vae.UserApplication, List.wrap(finder))
+    current_user = Pow.Plug.current_user(conn)
 
-    verify_hash =
-      if key = options[:verify_with_hash] || options[:find_with_hash],
-        do: {key, get_in(conn, [Access.key(:params), "hash"])}
+    IO.inspect("##############################")
+    IO.inspect("##############################")
+    IO.inspect(conn.assigns)
+    IO.inspect("##############################")
+    IO.inspect("##############################")
 
-    case has_access?(conn, application, verify_hash) do
-      {:ok, nil} ->
-        conn
-        |> put_status(:not_found)
-        |> put_view(VaeWeb.ErrorView)
-        |> render("404.html", layout: false)
-        |> halt()
+    verification_func = cond do
+      conn.assigns[:server_side_authenticated] ->
+        fn _a ->
+          true
+        end
+      options[:verify_with_hash] ->
+        fn a ->
+          Map.get(a, options[:verify_with_hash]) ==
+          get_in(conn, [Access.key(:params), @query_param])
+        end
+    end
 
+    case has_access?(application, current_user, verification_func) do
       {:ok, application} ->
         Plug.Conn.assign(conn, :current_application, application)
 
-      {:error, %{to: to, msg: msg}} ->
+      {:error, error} ->
         conn
-        |> put_flash(:error, msg)
-        |> redirect(to: to)
-        |> halt()
+        |> options[:error_handler].call(error)
+        |> Plug.Conn.halt()
     end
   end
 
-  defp has_access?(conn, application, opts \\ nil)
-
-  defp has_access?(_conn, nil, _opts), do: {:ok, nil}
-
-  defp has_access?(conn, application, nil) do
-    application = application |> Repo.preload(:user)
-
-    if Pow.Plug.current_user(conn) &&
-         (Pow.Plug.current_user(conn).id == application.user.id ||
-            Pow.Plug.current_user(conn).is_admin) do
+  defp has_access?(nil, _user, _verification), do: {:error, :not_found}
+  defp has_access?(application, user, verification_func) when not is_nil(verification_func) do
+    if verification_func.(application) do
       {:ok, application}
     else
-      {:error,
-       %{
-         to: Routes.pow_session_path(conn, :new),
-         msg: "Vous devez vous connecter"
-       }}
+      has_access?(application, user, nil)
     end
   end
+  defp has_access?(_application, nil, _verification_func), do: {:error, :not_authenticated}
+  defp has_access?(application, user, _verification_func) do
+    application = application |> Vae.Repo.preload(:user)
 
-  defp has_access?(conn, application, {_hash_key, nil}), do: has_access?(conn, application)
-
-  defp has_access?(conn, application, {hash_key, hash_value}) do
-    # && Timex.before?(Timex.today, Timex.shift(application.delegate_access_refreshed_at, days: 10))
-    if Map.get(application, hash_key) == hash_value do
+    if user == application.user || user.is_admin do
       {:ok, application}
     else
-      {:error,
-       %{
-         to: Routes.root_path(conn, :index),
-         msg:
-           if(Map.get(application, hash_key) == hash_value,
-             do: "Accès expiré",
-             else: "Vous n'avez pas accès"
-           )
-       }}
+      {:error, :unauthorized}
     end
   end
 end

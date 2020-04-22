@@ -6,7 +6,7 @@ defmodule Vae.SearchDelegate do
 
   @search_client Application.get_env(:vae, :search_client)
 
-  def get_delegate(certification, geo, postcode, administrative) do
+  def get_delegate(certification, geo, postcode, _administrative) do
     case get_delegates(certification, geo, postcode) do
       [head | _tail = []] ->
         preload_process(head)

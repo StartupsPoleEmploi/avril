@@ -155,12 +155,12 @@ defmodule VaeWeb.Router do
       json_codec: Jason
   end
 
-  scope "/" do
+  scope "/api" do
     pipe_through([:accepts_json, :api_protected_login_or_server])
     get("/booklet", VaeWeb.ApiController, :get_booklet)
   end
 
-  scope "/" do
+  scope "/api" do
     pipe_through([:accepts_json, :api_protected_login_only])
     put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
