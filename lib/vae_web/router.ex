@@ -32,13 +32,6 @@ defmodule VaeWeb.Router do
 
   pipeline :accepts_json do
     plug(:accepts, ["json"])
-    # plug(VaeWeb.Plugs.APIAuthPlug, otp_app: :vae)
-    # plug(:fetch_session)
-    # plug(:fetch_flash)
-  end
-
-  pipeline :graphql do
-    plug(VaeWeb.Plugs.AddGraphqlContext)
   end
 
   pipeline :api_protected_login_only do
@@ -47,6 +40,27 @@ defmodule VaeWeb.Router do
 
   pipeline :api_protected_login_or_server do
     plug(VaeWeb.Plugs.ApiProtected, allow_server_side: true)
+  end
+
+  pipeline :maybe_set_current_application do
+    plug(
+      VaeWeb.Plugs.ApplicationAccess,
+      find_with_hash: :booklet_hash,
+      optional: true,
+      error_handler: VaeWeb.Plugs.APIErrorHandler
+    )
+  end
+
+  pipeline :set_current_application do
+    plug(
+      VaeWeb.Plugs.ApplicationAccess,
+      find_with_hash: :booklet_hash,
+      error_handler: VaeWeb.Plugs.APIErrorHandler
+    )
+  end
+
+  pipeline :set_graphql_context do
+    plug(VaeWeb.Plugs.AddGraphqlContext)
   end
 
   # Public Pages
@@ -144,7 +158,7 @@ defmodule VaeWeb.Router do
   end
 
   scope "/api" do
-    pipe_through [:accepts_json, :api_protected_login_or_server, :graphql]
+    pipe_through [:accepts_json, :api_protected_login_or_server, :maybe_set_current_application, :set_graphql_context]
 
     forward "/v2", Absinthe.Plug,
       schema: VaeWeb.Schema,
@@ -156,12 +170,8 @@ defmodule VaeWeb.Router do
   end
 
   scope "/api" do
-    pipe_through([:accepts_json, :api_protected_login_or_server])
+    pipe_through([:accepts_json, :api_protected_login_or_server, :set_current_application])
     get("/booklet", VaeWeb.ApiController, :get_booklet)
-  end
-
-  scope "/api" do
-    pipe_through([:accepts_json, :api_protected_login_only])
     put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
 

@@ -1,22 +1,21 @@
 defmodule VaeWeb.Plugs.AddGraphqlContext do
   @behaviour Plug
 
-  alias Vae.User
+  alias Vae.{UserApplication, User}
 
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
-    Absinthe.Plug.put_options(conn, context: context)
+    Absinthe.Plug.put_options(conn, context: get_user(conn) |> (fn u -> if u, do: %{current_user: u}, else: %{} end).())
   end
 
-  defp build_context(conn) do
-    case conn.assigns[:current_user] do
-      %User{} = user ->
-        %{current_user: refresh_and_retrieve(conn, user)}
-
-      _ ->
-        %{}
+  defp get_user(conn) do
+    if conn.assigns[:current_application] do
+      Vae.Repo.preload(conn.assigns[:current_application], :user).user
+    else
+      if conn.assigns[:current_user] do
+        refresh_and_retrieve(conn, conn.assigns[:current_user])
+      end
     end
   end
 

@@ -12,24 +12,19 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
     execute(conn, {:id, application_id}, options)
   end
 
-  def call(%{params: %{@query_param => hash_value}} = conn, [find_with_hash: hash_key] = options),
-    do: execute(conn, {hash_key, hash_value}, options)
-
-  def call(conn, [error_handler: handler]) do
-    conn
-    |> handler.call(:internal_server_error)
-    |> Plug.Conn.halt()
+  def call(conn, options) do
+    hash_key = options[:find_with_hash]
+    hash_value= Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params["hash"]
+    if hash_key && hash_value do
+      execute(conn, {hash_key, hash_value}, options)
+    else
+      call_error(conn, options, :internal_server_error)
+    end
   end
 
   def execute(conn, finder, options) do
     application = Vae.Repo.get_by(Vae.UserApplication, List.wrap(finder))
     current_user = Pow.Plug.current_user(conn)
-
-    IO.inspect("##############################")
-    IO.inspect("##############################")
-    IO.inspect(conn.assigns)
-    IO.inspect("##############################")
-    IO.inspect("##############################")
 
     verification_func = cond do
       conn.assigns[:server_side_authenticated] ->
@@ -48,9 +43,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
         Plug.Conn.assign(conn, :current_application, application)
 
       {:error, error} ->
-        conn
-        |> options[:error_handler].call(error)
-        |> Plug.Conn.halt()
+        call_error(conn, options, error)
     end
   end
 
@@ -70,6 +63,16 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
       {:ok, application}
     else
       {:error, :unauthorized}
+    end
+  end
+
+  defp call_error(conn, options, error) do
+    if options[:optional] do
+      conn
+    else
+      conn
+      |> options[:error_handler].call(error)
+      |> Plug.Conn.halt()
     end
   end
 end
