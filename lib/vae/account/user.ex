@@ -131,23 +131,25 @@ defmodule Vae.User do
     |> new_password_changeset(params, @pow_config)
     |> maybe_confirm_password(params)
     |> changeset(Map.drop(params, @password_fields))
-    |> put_identity(params)
   end
 
   # @TODO Remove in favor of create_changeset
   def changeset(model, params) do
+    # @TODO Can do better ....
+    params = Map.put(params, "identity", params)
+
     model
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
-    |> put_embed_if_necessary(params, :skills)
-    |> put_embed_if_necessary(params, :experiences)
-    |> put_embed_if_necessary(params, :proven_experiences)
-    # |> put_embed_if_necessary(params, :booklet_data, is_single: true)
-    |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
+    |> cast_embed(:identity)
+    |> put_job_seeker(params[:job_seeker])
   end
 
   def create_changeset(model, params) do
@@ -226,11 +228,6 @@ defmodule Vae.User do
     model
     |> cast(params, [])
     |> validate_required(@application_submit_fields)
-  end
-
-  defp put_identity(changeset, params) do
-    changeset
-    |> cast_embed(:identity, %{email: params[:email]})
   end
 
   defp maybe_confirm_password(
