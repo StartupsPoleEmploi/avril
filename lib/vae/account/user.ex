@@ -359,4 +359,22 @@ defmodule Vae.User do
     |> pow_password_changeset(attrs)
     |> pow_current_password_changeset(attrs)
   end
+
+  def profile_url(endpoint, path \\ nil)
+
+  def profile_url(endpoint, %UserApplication{} = application) do
+    application = Repo.preload(application, :certification)
+    profile_url(endpoint, "/mes-candidatures/#{application.certification.slug}")
+  end
+
+  def profile_url(endpoint, path) do
+    if is_nil(System.get_env("NUXT_PROFIL_PATH")) do
+      Logger.warn("NUXT_PATH environment variables not set")
+    end
+
+    %URI{
+      path: "#{System.get_env("NUXT_PROFIL_PATH")}#{path}",
+    }
+    |> Vae.URI.to_absolute_string(endpoint)
+  end
 end

@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{Crm.Polls, UserApplication, Repo}
+  alias Vae.{Crm.Polls, User, UserApplication, Repo}
 
   plug VaeWeb.Plugs.ApplicationAccess
        when action not in [:index, :show, :admissible, :inadmissible]
@@ -32,7 +32,7 @@ defmodule VaeWeb.UserApplicationController do
         _ ->
           conn
       end
-      |> redirect(to: System.get_env("NUXT_PROFIL_PATH"))
+      |> redirect(external: User.profile_url(conn, current_application))
     else
       _error ->
         conn

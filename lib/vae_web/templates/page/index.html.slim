@@ -30,7 +30,7 @@
         .column.is-6
           .columns.is-multiline
             = for certification <- @certification_examples do
-              .column.is-6-desktop.is-12
+              .column.is-6-desktop.is-12.is-flex
                 = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: certification
 
 
@@ -71,7 +71,7 @@
         .column.is-6
           .columns.is-multiline
             = for delegate <- @delegate_examples do
-              .column.is-6-desktop
+              .column.is-6-desktop.is-flex
                 = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
           .section.is-vertical.is-small.has-text-centered
             = link("Explorer les certificateurs", to: Routes.delegate_path(@conn, :index), class: "button is-yellow is-rounded is-medium")
@@ -88,6 +88,6 @@
         .section
           h1.title.is-2 La VAE n'aura jamais été aussi simple
         = if Pow.Plug.current_user(@conn) do
-          = link("Accéder à mon espace VAE", to: System.get_env("NUXT_PROFIL_PATH"), class: "button is-rounded is-primary is-medium")
+          = link("Accéder à mon espace VAE", to: User.profile_url(@conn), class: "button is-rounded is-primary is-medium")
         - else
           = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")

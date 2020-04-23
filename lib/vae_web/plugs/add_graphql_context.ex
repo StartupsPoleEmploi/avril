@@ -6,7 +6,12 @@ defmodule VaeWeb.Plugs.AddGraphqlContext do
   def init(opts), do: opts
 
   def call(conn, _) do
-    Absinthe.Plug.put_options(conn, context: get_user(conn) |> (fn u -> if u, do: %{current_user: u}, else: %{} end).())
+    current_user = get_user(conn)
+    if current_user do
+      Absinthe.Plug.put_options(conn, context: %{current_user: current_user})
+    else
+      VaeWeb.Plugs.APIErrorHandler.call(conn, :not_authenticated)
+    end
   end
 
   defp get_user(conn) do

@@ -36,6 +36,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
           Map.get(a, options[:verify_with_hash]) ==
           get_in(conn, [Access.key(:params), @query_param])
         end
+      true -> nil
     end
 
     case has_access?(application, current_user, verification_func) do
