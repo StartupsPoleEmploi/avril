@@ -14,7 +14,7 @@
         = render VaeWeb.ComponentView, "active_link.html", text: "C’est quoi la VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :vae), conn: @conn
         = if Pow.Plug.current_user(@conn) do
           li.navbar-item
-            = link "Mon espace VAE", to: User.profile_url(@conn), class: "button is-primary is-rounded"
+            = link "Mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-primary is-rounded"
           = link("Me déconnecter", to: Routes.pow_session_path(@conn, :delete), method: :delete, data: [analytics: "?bouton=logout"], class: "navbar-item")
         - else
           = link "Me connecter", to: Routes.pow_session_path(@conn, :new), class: "navbar-item"
