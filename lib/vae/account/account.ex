@@ -82,7 +82,7 @@ defmodule Vae.Account do
         |> Repo.update()
 
       _data, {:error, _changeset} ->
-        {:ok, Repo.get(__MODULE__, user.id)}
+        {:ok, get_user(user.id)}
     end)
   end
 end
