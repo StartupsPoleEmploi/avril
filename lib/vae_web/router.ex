@@ -2,13 +2,14 @@ defmodule VaeWeb.Router do
   use VaeWeb, :router
   use Plug.ErrorHandler
   use Sentry.Plug
+  use ExAdmin.Router
   use Pow.Phoenix.Router
-
   use Pow.Extension.Phoenix.Router,
     otp_app: :vae,
-    extensions: [PowResetPassword, PowEmailConfirmation]
-
-  use ExAdmin.Router
+    extensions: [
+      PowResetPassword,
+      PowEmailConfirmation
+  ]
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -21,31 +22,45 @@ defmodule VaeWeb.Router do
   end
 
   pipeline :protected do
-    plug Pow.Plug.RequireAuthenticated,
-      error_handler: Pow.Phoenix.PlugErrorHandler
-  end
-
-  pipeline :api_protected do
-    plug Pow.Plug.RequireAuthenticated,
-      error_handler: VaeWeb.APIAuthErrorHandler
+    plug(Pow.Plug.RequireAuthenticated,
+      error_handler: Pow.Phoenix.PlugErrorHandler)
   end
 
   pipeline :admin do
-    plug(Vae.CheckAdmin)
+    plug(VaeWeb.Plugs.CheckAdmin)
   end
 
-  pipeline :api do
+  pipeline :accepts_json do
     plug(:accepts, ["json"])
-    plug(VaeWeb.APIAuthPlug, otp_app: :vae)
-    plug(:fetch_session)
-    plug(:fetch_flash)
-
-    post("/mail_events", VaeWeb.MailEventsController, :new_event)
   end
 
-  pipeline :gapi do
-    plug(:accepts, ["json"])
-    plug VaeWeb.Context
+  pipeline :api_protected_login_only do
+    plug(VaeWeb.Plugs.ApiProtected)
+  end
+
+  pipeline :api_protected_login_or_server do
+    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: true)
+  end
+
+  pipeline :maybe_set_current_application do
+    plug(
+      VaeWeb.Plugs.ApplicationAccess,
+      find_with_hash: :booklet_hash,
+      optional: true,
+      error_handler: VaeWeb.Plugs.APIErrorHandler
+    )
+  end
+
+  pipeline :set_current_application do
+    plug(
+      VaeWeb.Plugs.ApplicationAccess,
+      find_with_hash: :booklet_hash,
+      error_handler: VaeWeb.Plugs.APIErrorHandler
+    )
+  end
+
+  pipeline :set_graphql_context do
+    plug(VaeWeb.Plugs.AddGraphqlContext)
   end
 
   # Public Pages
@@ -126,39 +141,26 @@ defmodule VaeWeb.Router do
     get("/processes/:id", VaeWeb.Redirector, to: "/", msg: "La page demandée n'existe plus.")
   end
 
-  scope "/api" do
-    pipe_through([:api])
-    get("/booklet", VaeWeb.ApiController, :get_booklet)
-    put("/booklet", VaeWeb.ApiController, :set_booklet)
-  end
-
-  scope "/api/v1", as: :api_v1 do
-    pipe_through([:api])
-
-    resources("/session", VaeWeb.Api.SessionController, singleton: true, only: [:create, :delete])
-  end
-
-  scope "/api/v1", as: :api_v1 do
-    pipe_through([:api, :api_protected])
-    # get("/booklet", VaeWeb.Api.BookletController, :get_booklet)
-    # put("/booklet", VaeWeb.Api.BookletController, :set_booklet)
-    get("/profile", VaeWeb.Api.ProfileController, :index)
-    put("/profile", VaeWeb.Api.ProfileController, :update)
-
-    get("/applications", VaeWeb.Api.UserApplicationController, :index)
-    get("/applications/:slug", VaeWeb.Api.UserApplicationController, :show)
-    put("/applications/:slug", VaeWeb.Api.UserApplicationController, :update)
-    get("/applications/:slug/delegates", VaeWeb.Api.UserApplicationController, :delegates_search)
-
-    post("/delegates/search", VaeWeb.Api.DelegateController, :search)
-
-    post("/meetings/search", VaeWeb.Api.MeetingController, :search)
+  # Admin
+  scope "/admin", ExAdmin do
+    pipe_through([:browser, :protected, :admin])
+    get("/sql", ApiController, :sql)
+    get("/status", ApiController, :get_status)
+    post("/status", ApiController, :put_status)
+    delete("/status", ApiController, :delete_status)
+    admin_routes()
   end
 
   scope "/" do
-    pipe_through [:gapi, :api_protected]
+    pipe_through [:accepts_json]
+    post("/mail_events", VaeWeb.MailEventsController, :new_event)
 
-    forward "/api/v2", Absinthe.Plug,
+  end
+
+  scope "/api" do
+    pipe_through [:accepts_json, :api_protected_login_or_server, :maybe_set_current_application, :set_graphql_context]
+
+    forward "/v2", Absinthe.Plug,
       schema: VaeWeb.Schema,
       json_codec: Jason
 
@@ -168,14 +170,10 @@ defmodule VaeWeb.Router do
       json_codec: Jason
   end
 
-  # Admin
-  scope "/admin", ExAdmin do
-    pipe_through([:browser, :protected, :admin])
-    get("/sql", ApiController, :sql)
-    get("/status", ApiController, :get_status)
-    post("/status", ApiController, :put_status)
-    delete("/status", ApiController, :delete_status)
-    admin_routes()
+  scope "/api" do
+    pipe_through([:accepts_json, :api_protected_login_or_server, :set_current_application])
+    get("/booklet", VaeWeb.ApiController, :get_booklet)
+    put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
 
   defp fetch_app_status(conn, _opts) do

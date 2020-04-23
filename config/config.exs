@@ -113,6 +113,9 @@ config :vae, :pow,
   routes_backend: VaeWeb.Pow.Routes,
   web_module: VaeWeb
 
+config :absinthe,
+  log: false
+
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),
@@ -151,6 +154,7 @@ config :ex_aws,
 config :gettext, :default_locale, "fr"
 
 config :logger, :console,
+  level: :info,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 

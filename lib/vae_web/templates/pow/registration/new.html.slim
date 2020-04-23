@@ -27,7 +27,7 @@ section.section.is-vertical.register-page.pow-page
                   '  J'ai lu et j'accepte les
                   = link("conditions d'utilisation", to: Routes.page_path(@conn, :terms_of_use))
             .field
-              = submit class: "button is-primary is-rounded is-medium", data: [analytics: "Profil#sans pe connect"] do
+              = submit class: "button is-primary is-rounded is-medium", data: [analytics: "Profil#sans pe connect", "disable-with": "Connexion ..."] do
                 span Créer mon compte
                 span.is-hidden-mobile &nbsp;gratuit maintenant
             .field

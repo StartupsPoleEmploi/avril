@@ -1,0 +1,107 @@
+.container.user-application
+  .columns
+    .column.is-8
+      p.subtitle Diplôme demandé
+      h2.title.is-2= Vae.Certification.name(@certification)
+
+    .column.is-4.has-text-right.is-hidden-print
+      .field
+        button.button.is-primary.is-rounded.is-medium.is-print onclick="window.print();"
+          span.fa.fa-print
+          |  Imprimer cette page
+      = if @application.booklet_1 && @application.booklet_1.completed_at do
+        .field
+          = link("Télécharger son livret de recevabilité (L1)", to: Vae.UserApplication.booklet_url(@conn, @application, "/cerfa"), class: "button is-info is-rounded is-medium")
+
+  section.section style="background: white; margin: 2rem 0;"
+    .columns
+      .column.is-6
+        p.subtitle Le candidat
+        h3.title.is-3 =Vae.User.fullname(@user)
+        .field
+          p Adresse : #{Vae.User.address(@user)}
+        .field
+          ' Email :
+          = link(@user.email, to: "mailto:#{@user.email}")
+        .field
+          ' Tél :
+          = if @user.phone_number do
+            = link(@user.phone_number, to: "tel:#{@user.phone_number}")
+          - else
+            span Non renseigné par le candidat
+      .column.is-6
+        p.subtitle Le certificateur
+        h3.title.is-3= @delegate.name
+        .field
+          p Adresse : #{@delegate.address}
+        .field
+          ' Email :
+          = link(@delegate.email, to: "mailto:#{@delegate.email}")
+        .field
+          ' Tél :
+          = if @delegate.telephone do
+            = link(@delegate.telephone, to: "tel:#{@delegate.telephone}")
+          - else
+            span Non renseigné
+
+    section.section.is-vertical.is-hidden-print
+      h4.title.is-4 Ses CVs
+      = if length(@application.resumes) > 0 do
+        .notification
+          ul
+            = for resume <- @application.resumes do
+              li.document
+                = link to: resume.url, class: "download", data: [analytics: "CV#download certificateur"] do
+                  span.fa.fa-download
+                  = resume.filename
+      - else
+        p Le candidat n'a pas encore déposé de CV.
+
+    = if length(@user.experiences) > 0 do
+      section.section.is-vertical
+        h4.title.is-4 Ses expériences professionnelles
+        p.subtitle Il s'agit des expériences que le candidat a déclarées dans son espace personnel Pôle emploi. Elles ont donc une valeur indicative.
+        .columns.is-multiline
+          = for experience <- Enum.reverse(@user.experiences) do
+            .column.is-4.is-flex.is-12-print
+              .card
+                .card-header
+                  .title.is-6= experience.company
+                .card-content
+                  p= experience.label
+                  p= render VaeWeb.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
+
+    = if length(@user.proven_experiences) > 0 do
+      section.section.is-vertical
+        h4.title.is-4
+          | Ses expériences attestées
+          = img_tag "/images/pole_emploi.svg", style: "height: 3rem; margin: 0 0.5rem; position: relative; top: 1px;"
+          |  des 10 dernières années
+        p.subtitle Il s'agit des expériences professionnelles enregistrées dans le dossier informatique Pôle emploi du candidat, relative aux 10 dernières années. Ces expériences ont fait l'objet d'un contrôle et peuvent donc avoir valeur de preuve pour le traitement de la recevabilité
+        .columns.is-multiline
+          = for {{company_name, label}, experiences} <- @grouped_experiences do
+            .column.is-4.is-flex.is-12-print
+              .card
+                .card-header
+                  .title.is-6= company_name
+                .card-content.content
+                  p
+                    = Vae.String.inflect(length(experiences), "expérience")
+                    = if label != "Métier indéterminé" do
+                      = "en tant que #{label} "
+                    '  totalisant #{Enum.sum(Enum.map(experiences, &(&1.work_duration)))} heures
+                    = render VaeWeb.ComponentView, "date-range.html", conn: @conn, start_date: Enum.min_by(experiences, &(Date.to_erl(&1.start_date))).start_date, end_date: Enum.max_by(experiences, &(Date.to_erl(&1.end_date))).end_date
+                    = " : "
+                  ul
+                    = for exp <- experiences do
+                      li
+                        = "#{exp.work_duration} heures en #{exp.contract_type}, "
+                        = render VaeWeb.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
+
+    = if length(@user.skills) > 0 do
+      section.section.is-vertical
+        h4.title.is-4 Ses compétences
+        .content
+          ul
+            = for skill <- @user.skills do
+              li= skill.label

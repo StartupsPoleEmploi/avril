@@ -1,4 +1,12 @@
 nav.navbar {
+
+  &.has-no-content {
+    justify-content: center;
+    .navbar-menu {
+      display: none;
+    }
+  }
+
   @include tablet {
     padding: 1.5rem;
   }

@@ -1,6 +1,5 @@
 defmodule Vae.Meetings do
   require Logger
-  alias Vae.Meetings.StateHolder
 
   @state_holder Application.get_env(:vae, :meetings_state_holder)
 

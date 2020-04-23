@@ -54,18 +54,7 @@ defmodule VaeWeb.Pow.Routes do
 
   defp redirect_to_user_space(conn) do
     if Pow.Plug.current_user(conn) do
-      user_space_path = System.get_env("NUXT_PROFIL_PATH")
-
-      if user_space_path do
-        redirect(conn, external: user_space_path)
-      else
-        conn
-        |> put_flash(
-          :warning,
-          "Votre profil utilisateur n'est pas accessible, merci de revenir plus tard."
-        )
-        |> redirect(to: Routes.root_path(conn, :index))
-      end
+      redirect(conn, external: User.profile_url(conn))
     else
       redirect(conn, to: Routes.pow_registration_path(conn, :new))
     end

@@ -70,26 +70,6 @@ $(() => {
     }
   });
 
-  var showChar = 300;
-  var ellipsestext = "...";
-
-  $(".truncate").each(function() {
-    var content = $(this).html();
-    if (content.length > showChar) {
-      var c = content.substr(0, showChar);
-      var h = content;
-      var html =
-          '<div class="truncate-text" style="display:block">' +
-          c +
-          '<span class="moreellipses">' +
-          ellipsestext +
-          '<br /><a href="" class="moreless more">Afficher la description <span class="ic-icon ic-small-triangle-down align-middle" /></a></span></span></div><div class="truncate-text" style="display:none">' +
-          h +
-          '<br /><a href="" class="moreless less">Masquer la description <span class="ic-icon rotate-180 ic-small-triangle-down align-middle" /></a></span></div>';
-
-      $(this).html(html);
-    }
-  });
 
   $('a.is-back').on('click', e => {
     if (document.referrer !== document.location.href && document.referrer.indexOf(e.target.href) === 0) {
@@ -99,27 +79,6 @@ $(() => {
       return false;
     }
   })
-
-  $(".moreless").click(function() {
-    var thisEl = $(this);
-    var cT = thisEl.closest(".truncate-text");
-
-    var tX = ".truncate-text";
-
-    if (thisEl.hasClass("less")) {
-      cT.prev(tX).toggle();
-      cT.slideToggle(500);
-
-      $('html, body').animate({
-        scrollTop: thisEl.closest(".card-body").offset().top - 130
-      }, 500);
-
-    } else {
-      cT.toggle();
-      cT.next(tX).fadeToggle();
-    }
-    return false;
-  });
 
   $('.app-status button.delete').on('click', e => {
     $(e.target).parents('.app-status').hide();
@@ -131,13 +90,15 @@ $(() => {
     });
   });
 
-})
+  $('.navbar-burger.burger').on('click', e => {
+    const $navbarMenu = $('.navbar-menu');
+    if ($navbarMenu.hasClass('is-active')) {
+      $navbarMenu.removeClass('is-active');
+      $(e.target).removeClass('is-active');
+    } else {
+      $navbarMenu.addClass('is-active');
+      $(e.target).addClass('is-active');
+    }
+  });
 
-$(window).scroll(function() {
-  var y = $(window).scrollTop();
-  if (y > 0) {
-    $('.sticky-top').addClass('--not-top');
-  } else {
-    $('.sticky-top').removeClass('--not-top');
-  }
-});
+})

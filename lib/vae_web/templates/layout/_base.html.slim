@@ -12,7 +12,7 @@ html lang="fr"
     title= title
 
     = if Mix.env == :prod do
-      = render ComponentView, "analytics", conn: @conn
+      = render VaeWeb.ComponentView, "analytics", conn: @conn
     link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
     link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
 
@@ -22,5 +22,5 @@ html lang="fr"
     = render VaeWeb.ComponentView, "algolia_credentials", conn: @conn
     script src=Routes.static_path(@conn,"/js/app.js") async=true
     = if Mix.env == :prod do
-      = render ComponentView, "hotjar", conn: @conn
-      = render ComponentView, "crisp", conn: @conn
+      = render VaeWeb.ComponentView, "hotjar", conn: @conn
+      = render VaeWeb.ComponentView, "crisp", conn: @conn
