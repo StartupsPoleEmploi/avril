@@ -164,6 +164,7 @@ defmodule VaeWeb.Router do
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,
       schema: VaeWeb.Schema,
+      interface: :playground,
       json_codec: Jason
   end
 

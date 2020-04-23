@@ -22,14 +22,4 @@ defmodule Vae.Skill do
   def unique_key(skill) do
     skill.code
   end
-
-  def competences_api_map(api_fields) do
-    %__MODULE__{
-      code: String.to_integer(api_fields["code"] || "0"),
-      label: api_fields["libelle"],
-      type: api_fields["type"],
-      level_code: String.to_integer(api_fields["niveau"]["code"] || "0"),
-      level_label: api_fields["niveau"]["libelle"]
-    }
-  end
 end

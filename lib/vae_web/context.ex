@@ -20,8 +20,6 @@ defmodule VaeWeb.Context do
     end
   end
 
-  defp build_context(_), do: %{}
-
   defp refresh_and_retrieve(conn, user) do
     conn
     |> Pow.Plug.create(Vae.Account.get_user(user.id))

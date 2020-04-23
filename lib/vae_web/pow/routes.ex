@@ -57,7 +57,7 @@ defmodule VaeWeb.Pow.Routes do
       user_space_path = System.get_env("NUXT_PROFIL_PATH")
 
       if user_space_path do
-        redirect(conn, to: user_space_path)
+        redirect(conn, external: user_space_path)
       else
         conn
         |> put_flash(

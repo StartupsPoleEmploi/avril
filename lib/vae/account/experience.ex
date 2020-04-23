@@ -22,18 +22,8 @@ defmodule Vae.Experience do
   end
 
   def unique_key(experience) do
-    "#{experience.company}-#{experience.label}-#{Vae.Date.format_for_unique_key(experience.start_date)}-#{Vae.Date.format_for_unique_key(experience.end_date)}"
-  end
-
-  def experiences_api_map(api_fields) do
-    %__MODULE__{
-      company: Vae.String.titleize(api_fields["entreprise"]),
-      start_date: Vae.Date.format(api_fields["date"]["debut"]),
-      end_date: Vae.Date.format(api_fields["date"]["fin"]),
-      is_current_job: api_fields["enPoste"],
-      is_abroad: api_fields["etranger"],
-      label: Vae.String.titleize(api_fields["intitule"]),
-      duration: api_fields["duree"]
-    }
+    "#{experience.company}-#{experience.label}-#{
+      Vae.Date.format_for_unique_key(experience.start_date)
+    }-#{Vae.Date.format_for_unique_key(experience.end_date)}"
   end
 end
