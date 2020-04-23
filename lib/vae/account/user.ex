@@ -13,7 +13,7 @@ defmodule Vae.User do
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
-  alias Vae.Booklet.Civility
+  alias Vae.Account.Identity
 
   alias Vae.{
     UserApplication,
@@ -76,7 +76,7 @@ defmodule Vae.User do
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
 
-    embeds_one(:identity, Civility, on_replace: :update)
+    embeds_one(:identity, Identity, on_replace: :update)
 
     timestamps()
   end
@@ -173,8 +173,18 @@ defmodule Vae.User do
   end
 
   def create_user_from_pe_changeset(user_info) do
-    %__MODULE__{}
-    |> create_changeset(map_params_from_pe(user_info))
+    params = map_params_from_pe(user_info)
+
+    __MODULE__
+    |> create_changeset(params)
+  end
+
+  def update_user_from_pe_changeset(user, user_info) do
+    params = map_params_from_pe(user_info)
+
+    user
+    |> Repo.preload(:job_seeker)
+    |> create_changeset(params)
   end
 
   def map_params_from_pe(user_info) do
@@ -195,7 +205,7 @@ defmodule Vae.User do
     |> Map.new()
   end
 
-  def extra_fields_for_create(%{"peIdentiteExterne" => pe_id, "email" => email}) do
+  def extra_fields_for_create(%{"idIdentiteExterne" => pe_id, "email" => email}) do
     tmp_password = "AVRIL_#{pe_id}_TMP_PASSWORD"
 
     %{
@@ -221,38 +231,6 @@ defmodule Vae.User do
   defp put_identity(changeset, params) do
     changeset
     |> cast_embed(:identity, %{email: params[:email]})
-  end
-
-  defp identity_map(u) do
-    %{
-      gender: u.gender,
-      birthday: u.birthday,
-      first_name: u.first_name,
-      last_name: u.last_name,
-      usage_name: nil,
-      email: u.email,
-      home_phone: nil,
-      mobile_phone: u.phone_number,
-      is_handicapped: false,
-      birth_place: %{
-        city: u.birth_place,
-        county: nil
-      },
-      full_address: %{
-        city: u.city_label,
-        county: nil,
-        country: u.country_label,
-        lat: nil,
-        lng: nil,
-        street: Vae.Account.address_street(u),
-        postal_code: u.postal_code
-      },
-      current_situation: %{},
-      nationality: %{
-        country: nil,
-        country_code: nil
-      }
-    }
   end
 
   defp maybe_confirm_password(
@@ -287,27 +265,6 @@ defmodule Vae.User do
       value ->
         put_embed(changeset, key, value)
     end
-  end
-
-  def create_or_update_with_pe_connect_data(%{"email" => email} = userinfo_api_result)
-      when is_binary(email) do
-    case Repo.get_by(__MODULE__, email: String.downcase(email)) do
-      nil ->
-        Repo.insert(changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result)))
-
-      user ->
-        update_with_pe_connect_data(user, userinfo_api_result)
-    end
-  end
-
-  def create_or_update_with_pe_connect_data(_userinfo_api_result),
-    do: {:error, "No email in API results"}
-
-  def update_with_pe_connect_data(user, userinfo_api_result) do
-    user
-    |> Repo.preload(:job_seeker)
-    |> changeset(userinfo_api_map(userinfo_api_result, false))
-    |> Repo.update()
   end
 
   def fill_with_api_fields({:error, _msg} = error, _client_with_token), do: error

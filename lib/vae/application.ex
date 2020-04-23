@@ -25,7 +25,7 @@ defmodule Vae.Application do
         worker(Vae.Status.Server, []),
         worker(Vae.Scheduler, []),
         worker(Vae.Places.Cache, []),
-        Vae.OAuth.Clients
+        Vae.PoleEmploi.OAuth.Clients
       ]
     }
 

@@ -3,14 +3,14 @@ defmodule Vae.PoleEmploi.Mappers.ProvenExperiencesMapper do
     %{
       proven_experiences:
         Enum.map(
-          clean_proven_experiences(experiences),
+          clean_experiences(experiences),
           &to_proven_experience/1
         )
     }
   end
 
   # Always update ?
-  def is_data_missing(_map), do: true
+  def is_missing?(_map), do: true
 
   defp clean_experiences(experiences) do
     experiences

@@ -13,5 +13,5 @@ defmodule Vae.PoleEmploi.Mappers.ContactMapper do
     }
   end
 
-  def is_data_missing(map), do: is_nil(map[:postal_code])
+  def is_missing?(map), do: is_nil(map[:postal_code])
 end
