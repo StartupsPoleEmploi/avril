@@ -69,14 +69,6 @@ defmodule Vae.Account do
     |> Repo.update()
   end
 
-  def complete_user_profile({:ok, _user} = upsert, token) do
-    user = fill_with_api_fields(upsert, token)
-    identity_params = %{identity: Identity.from_user(user)}
-
-    User.update_identity_changeset(user, identity_params)
-    |> Repo.update()
-  end
-
   def fill_with_api_fields({:ok, user} = initial_status, client_with_token) do
     user
     |> Map.from_struct()
@@ -86,7 +78,7 @@ defmodule Vae.Account do
         user
 
       data, {:ok, user} ->
-        User.changeset(user, data)
+        User.update_changeset(user, data)
         |> Repo.update()
 
       _data, {:error, _changeset} ->
