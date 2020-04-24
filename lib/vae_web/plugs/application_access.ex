@@ -5,7 +5,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
     Keyword.merge(options, [error_handler: options[:error_handler] || VaeWeb.Plugs.BrowserErrorHandler])
   end
 
-  def call(%{params: %{"application_id" => application_id}} = conn, options),
+  def call(%{params: %{"user_application_id" => application_id}} = conn, options),
     do: execute(conn, {:id, application_id}, options)
 
   def call(%{params: %{"id" => application_id}} = conn, options) do
@@ -35,6 +35,10 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
         fn a ->
           Map.get(a, options[:verify_with_hash]) ==
           get_in(conn, [Access.key(:params), @query_param])
+        end
+      current_user.is_admin ->
+        fn _a ->
+          true
         end
       true -> nil
     end
@@ -68,6 +72,8 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   end
 
   defp call_error(conn, options, error) do
+    IO.inspect("error")
+    IO.inspect(error)
     if options[:optional] do
       conn
     else

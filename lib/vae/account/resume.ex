@@ -3,6 +3,8 @@ defmodule Vae.Resume do
   import Ecto.Changeset
   alias Vae.Repo
 
+  alias __MODULE__
+
   schema "resumes" do
     field(:content_type, :string)
     field(:filename, :string)
@@ -27,8 +29,8 @@ defmodule Vae.Resume do
 
     result =
       ExAws.S3.put_object(
-        Application.get_env(:ex_aws, :bucket_name),
-        __MODULE__.to_s3_path(application.id, filename),
+        Application.get_env(:ex_aws, :s3)[:bucket],
+        to_s3_path(application.id, filename),
         binary,
         content_type: params.content_type,
         content_disposition: "attachment; filename=#{params.filename}"
@@ -36,17 +38,15 @@ defmodule Vae.Resume do
       |> ExAws.request()
 
     case result do
-      {:ok, _body} ->
+      {:ok, body} ->
         Repo.insert(
-          __MODULE__.changeset(%__MODULE__{}, %{
+          Resume.changeset(%Resume{}, %{
             application: application,
             content_type: params.content_type,
             filename: params.filename,
             url:
-              "https://#{Application.get_env(:ex_aws, :bucket_name)}.s3.#{
-                Application.get_env(:ex_aws, :region)
-              }.amazonaws.com/#{Application.get_env(:ex_aws, :bucket_name)}#{
-                __MODULE__.to_s3_path(application.id, filename)
+              "http://localhost:9000/#{Application.get_env(:ex_aws, :s3)[:bucket]}#{
+                to_s3_path(application.id, filename)
               }"
           })
         )
@@ -59,8 +59,8 @@ defmodule Vae.Resume do
   def delete(resume) do
     result =
       ExAws.S3.delete_object(
-        Application.get_env(:ex_aws, :bucket_name),
-        __MODULE__.to_s3_path(resume)
+        Application.get_env(:ex_aws, :s3)[:bucket],
+        to_s3_path(resume)
       )
       |> ExAws.request()
 
@@ -75,6 +75,6 @@ defmodule Vae.Resume do
 
   def to_s3_path(application_id, filename), do: "/#{application_id}/#{filename}"
 
-  def to_s3_path(%__MODULE__{application_id: application_id, url: url}),
+  def to_s3_path(%Resume{application_id: application_id, url: url}),
     do: to_s3_path(application_id, List.last(String.split(url, "/")))
 end

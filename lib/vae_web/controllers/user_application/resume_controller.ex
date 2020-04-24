@@ -6,7 +6,7 @@ defmodule VaeWeb.UserApplication.ResumeController do
 
   alias Vae.{Resume}
 
-  def create(conn, %{"application_id" => _application_id} = params) do
+  def create(conn, params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
@@ -30,7 +30,7 @@ defmodule VaeWeb.UserApplication.ResumeController do
     end
   end
 
-  def delete(conn, %{"application_id" => _application_id, "id" => id}) do
+  def delete(conn, %{"id" => id}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
