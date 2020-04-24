@@ -1,7 +1,7 @@
 defmodule VaeWeb.Resolvers.Account do
   import VaeWeb.Resolvers.ErrorHandler
 
-  alias Vae.{Account, User}
+  alias Vae.Account
 
   @update_profile_error "Erreur de mise à jour du profile"
   @update_password_error "Erreur lors de la mise à jour du mot de passe"

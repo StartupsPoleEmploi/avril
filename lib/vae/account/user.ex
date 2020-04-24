@@ -13,7 +13,7 @@ defmodule Vae.User do
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
-  alias Vae.Booklet.Civility
+  alias Vae.Account.Identity
 
   alias Vae.{
     UserApplication,
@@ -76,7 +76,7 @@ defmodule Vae.User do
 
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
 
-    embeds_one(:identity, Civility, on_replace: :update)
+    embeds_one(:identity, Identity, on_replace: :update)
 
     timestamps()
   end
@@ -133,7 +133,26 @@ defmodule Vae.User do
     |> changeset(Map.drop(params, @password_fields))
   end
 
+  # @TODO Remove in favor of create_changeset
   def changeset(model, params) do
+    # @TODO Can do better ....
+    params = Map.put(params, "identity", params)
+
+    model
+    |> cast(params, @fields)
+    |> pow_extension_changeset(params)
+    |> sync_name_with_first_and_last(params)
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
+    |> cast_embed(:identity)
+    |> put_job_seeker(params[:job_seeker])
+  end
+
+  def create_changeset(model, params) do
     model
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
@@ -141,7 +160,6 @@ defmodule Vae.User do
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
-    # |> put_embed_if_necessary(params, :booklet_data, is_single: true)
     |> put_job_seeker(params[:job_seeker])
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -154,6 +172,55 @@ defmodule Vae.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
+  end
+
+  def create_user_from_pe_changeset(user_info) do
+    params = map_params_from_pe(user_info)
+
+    __MODULE__
+    |> create_changeset(params)
+  end
+
+  def update_user_from_pe_changeset(user, user_info) do
+    params = map_params_from_pe(user_info)
+
+    user
+    |> Repo.preload(:job_seeker)
+    |> create_changeset(params)
+  end
+
+  def update_user_email_changeset(changeset, email) do
+    changeset
+    |> change(%{email: email})
+  end
+
+  def map_params_from_pe(user_info) do
+    user_info
+    |> extra_fields_for_create()
+    |> Map.merge(%{
+      gender: user_info["gender"],
+      first_name: Vae.String.capitalize(user_info["given_name"]),
+      last_name: Vae.String.capitalize(user_info["family_name"]),
+      pe_id: user_info["idIdentiteExterne"],
+      job_seeker:
+        Repo.get_by(JobSeeker,
+          email: String.downcase(user_info["email"])
+        ),
+      email_confirmed_at: Timex.now()
+    })
+    |> Enum.reject(fn {_, v} -> is_nil(v) end)
+    |> Map.new()
+  end
+
+  def extra_fields_for_create(%{"idIdentiteExterne" => pe_id, "email" => email}) do
+    tmp_password = "AVRIL_#{pe_id}_TMP_PASSWORD"
+
+    %{
+      email: String.downcase(email),
+      current_password: nil,
+      password: tmp_password,
+      password_confirmatin: tmp_password
+    }
   end
 
   def update_identity_changeset(model, params) do
@@ -202,99 +269,7 @@ defmodule Vae.User do
     end
   end
 
-  def create_or_update_with_pe_connect_data(%{"email" => email} = userinfo_api_result)
-      when is_binary(email) do
-    case Repo.get_by(__MODULE__, email: String.downcase(email)) do
-      nil ->
-        Repo.insert(changeset(%__MODULE__{}, userinfo_api_map(userinfo_api_result)))
-
-      user ->
-        update_with_pe_connect_data(user, userinfo_api_result)
-    end
-  end
-
-  def create_or_update_with_pe_connect_data(_userinfo_api_result),
-    do: {:error, "No email in API results"}
-
-  def update_with_pe_connect_data(user, userinfo_api_result) do
-    user
-    |> Repo.preload(:job_seeker)
-    |> changeset(userinfo_api_map(userinfo_api_result, false))
-    |> Repo.update()
-  end
-
-  def fill_with_api_fields({:ok, user} = initial_status, client_with_token) do
-    [
-      Vae.Profile.ProvenExperiences,
-      Vae.Profile.Experiences,
-      Vae.Profile.ContactInfo,
-      Vae.Profile.Civility,
-      Vae.Profile.Skills
-    ]
-    |> Enum.map(fn mod ->
-      Task.async(fn ->
-        if(mod.is_data_missing(user)) do
-          mod.execute(client_with_token)
-        else
-          %{}
-        end
-      end)
-    end)
-    |> Enum.map(&Task.await(&1, 15_000))
-    |> Enum.reduce(initial_status, fn
-      map, user when map == %{} ->
-        user
-
-      data, {:ok, user} ->
-        __MODULE__.changeset(user, data)
-        |> Repo.update()
-
-      _data, {:error, changeset} ->
-        Logger.error(fn -> inspect(changeset) end)
-        {:ok, Repo.get(__MODULE__, user.id)}
-    end)
-  end
-
   def fill_with_api_fields({:error, _msg} = error, _client_with_token), do: error
-
-  def userinfo_api_map(api_fields, include_create_fields \\ true) do
-    tmp_password = "AVRIL_#{api_fields["idIdentiteExterne"]}_TMP_PASSWORD"
-
-    extra_fields =
-      if include_create_fields,
-        do: %{
-          email: String.downcase(api_fields["email"]),
-          current_password: nil,
-          password: tmp_password,
-          password_confirmation: tmp_password
-        },
-        else: %{}
-
-    Map.merge(extra_fields, %{
-      gender: api_fields["gender"],
-      first_name: Vae.String.capitalize(api_fields["given_name"]),
-      last_name: Vae.String.capitalize(api_fields["family_name"]),
-      pe_id: api_fields["idIdentiteExterne"],
-      job_seeker: Repo.get_by(JobSeeker, email: String.downcase(api_fields["email"])),
-      email_confirmed_at: Timex.now()
-    })
-    |> Enum.reject(fn {_, v} -> is_nil(v) end)
-    |> Map.new()
-  end
-
-  def coordonnees_api_map(api_fields) do
-    %{
-      postal_code: api_fields["codePostal"],
-      address1: Vae.String.titleize(api_fields["adresse1"]),
-      address2: Vae.String.titleize(api_fields["adresse2"]),
-      address3: Vae.String.titleize(api_fields["adresse3"]),
-      address4: Vae.String.titleize(api_fields["adresse4"]),
-      insee_code: api_fields["codeINSEE"],
-      country_code: api_fields["codePays"],
-      city_label: Vae.String.titleize(api_fields["libelleCommune"]),
-      country_label: Vae.String.titleize(api_fields["libellePays"])
-    }
-  end
 
   def sync_name_with_first_and_last(user_changeset, params) do
     first_name = params[:first_name] || user_changeset.data.first_name
@@ -373,7 +348,7 @@ defmodule Vae.User do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_PROFIL_PATH")}#{path}",
+      path: "#{System.get_env("NUXT_PROFIL_PATH")}#{path}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end

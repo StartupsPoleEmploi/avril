@@ -1,4 +1,4 @@
-defmodule Vae.OAuth.Clients do
+defmodule Vae.PoleEmploi.OAuth.Clients do
   use Agent
 
   def start_link(_args) do

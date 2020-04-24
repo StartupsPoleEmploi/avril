@@ -3,8 +3,10 @@ defmodule VaeWeb.AuthController do
 
   require Logger
 
-  alias Vae.{OAuth, User}
-  alias Vae.OAuth.Clients
+  alias Vae.Account
+  alias Vae.PoleEmploi
+  alias Vae.PoleEmploi.OAuth
+  alias Vae.PoleEmploi.OAuth.Clients
   alias VaeWeb.Pow.Routes, as: PowRoutes
 
   def save_session_and_redirect(conn, _params) do
@@ -21,39 +23,26 @@ defmodule VaeWeb.AuthController do
   end
 
   def callback(conn, %{"code" => code, "state" => state}) do
-    client = Clients.get_client(state)
+    with {:ok, {token, user_info}} <- PoleEmploi.get_user_info(state, code) do
+      case Account.get_user_by_pe(user_info["idIdentiteExterne"]) do
+        nil ->
+          user_info
+          |> Account.create_user_from_pe()
+          |> Account.complete_user_profile(token)
 
-    with(
-      {:ok, client_with_token} <- OAuth.generate_access_token(client, code),
-      %OAuth2.Response{body: userinfo_api_result_body} <-
-        OAuth.get(
-          client_with_token,
-          "https://api.emploi-store.fr/partenaire/peconnect-individu/v1/userinfo"
-        )
-    ) do
-      result =
-        case Repo.get_by(User, pe_id: userinfo_api_result_body["idIdentiteExterne"]) do
-          nil ->
-            User.create_or_update_with_pe_connect_data(userinfo_api_result_body)
-
-          user ->
-            if is_nil(user.gender),
-              do: User.update_with_pe_connect_data(user, userinfo_api_result_body),
-              else: {:ok, user}
-        end
-        |> User.fill_with_api_fields(client_with_token)
-
-      case result do
-        {:ok, user} ->
-          Pow.Plug.create(conn, user)
+        user ->
+          {:ok, user}
+      end
+      |> case do
+        {:ok, upserted_user} ->
+          Pow.Plug.create(conn, upserted_user)
           |> PowRoutes.maybe_create_application_and_redirect()
 
-        {:error, msg} ->
-          handle_error(conn, msg)
+        {:error, changeset} ->
+          handle_error(conn, changeset)
       end
     else
-      error ->
-        Logger.error(inspect(error))
+      {:error, _error} ->
         handle_error(conn)
     end
   end
@@ -62,7 +51,22 @@ defmodule VaeWeb.AuthController do
     redirect(conn, external: get_session(conn, :referer))
   end
 
-  defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.") do
+  defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.")
+
+  defp handle_error(conn, %Ecto.Changeset{} = changeset) do
+    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+      error =
+        Enum.reduce(opts, msg, fn {key, value}, acc ->
+          String.replace(acc, "%{#{key}}", to_string(value))
+        end)
+
+      Logger.error(fn -> inspect(error) end)
+    end)
+
+    handle_error(conn)
+  end
+
+  defp handle_error(conn, msg) do
     conn
     |> put_flash(:danger, if(is_binary(msg), do: msg, else: inspect(msg)))
     |> redirect(external: get_session(conn, :referer))

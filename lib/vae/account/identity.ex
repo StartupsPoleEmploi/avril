@@ -1,4 +1,4 @@
-defmodule Vae.Booklet.Civility do
+defmodule Vae.Account.Identity do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -52,5 +52,37 @@ defmodule Vae.Booklet.Civility do
     |> cast_embed(:full_address)
     |> cast_embed(:current_situation)
     |> cast_embed(:nationality)
+  end
+
+  def from_user(user) do
+    %{
+      gender: user.gender,
+      birthday: user.birthday,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      usage_name: nil,
+      email: user.email,
+      home_phone: nil,
+      mobile_phone: user.phone_number,
+      is_handicapped: false,
+      birth_place: %{
+        city: user.birth_place,
+        county: nil
+      },
+      full_address: %{
+        city: user.city_label,
+        county: nil,
+        country: user.country_label,
+        lat: nil,
+        lng: nil,
+        street: Vae.Account.address_street(user),
+        postal_code: user.postal_code
+      },
+      current_situation: %{},
+      nationality: %{
+        country: nil,
+        country_code: nil
+      }
+    }
   end
 end

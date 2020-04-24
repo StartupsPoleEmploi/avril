@@ -31,21 +31,4 @@ defmodule Vae.ProvenExperience do
       Vae.Date.format_for_unique_key(experience.start_date)
     }-#{Vae.Date.format_for_unique_key(experience.end_date)}"
   end
-
-  def experiencesprofessionellesdeclareesparlemployeur_api_map(api_fields) do
-    %__MODULE__{
-      start_date: Vae.Date.format(api_fields["dateDebut"]),
-      end_date: Vae.Date.format(api_fields["dateFin"]),
-      duration: api_fields["dureeContrat"],
-      label: Vae.String.titleize(api_fields["intitulePoste"]),
-      contract_type: api_fields["natureContrat"],
-      is_manager: api_fields["niveauQualification"] == "Cadre",
-      work_duration: api_fields["quantiteTravail"],
-      company_ape: api_fields["entreprise"]["codeApe"],
-      company_name: Vae.String.titleize(api_fields["entreprise"]["nom"]),
-      company_category: api_fields["entreprise"]["regime"],
-      company_state_owned: api_fields["entreprise"]["secteur"] == "Public",
-      company_uid: api_fields["entreprise"]["siret"]
-    }
-  end
 end
