@@ -25,10 +25,14 @@ defmodule VaeWeb.AuthController do
   def callback(conn, %{"code" => code, "state" => state}) do
     with {:ok, {token, user_info}} <- PoleEmploi.get_user_info(state, code) do
       case Account.get_user_by_pe(user_info["idIdentiteExterne"]) do
-        nil -> Account.create_user_from_pe(user_info)
-        user -> Account.maybe_update_user_from_pe(user, user_info)
+        nil ->
+          user_info
+          |> Account.create_user_from_pe()
+          |> Account.complete_user_profile(token)
+
+        user ->
+          {:ok, user}
       end
-      |> Account.complete_user_profile(token)
       |> case do
         {:ok, upserted_user} ->
           Pow.Plug.create(conn, upserted_user)
