@@ -41,7 +41,7 @@ defmodule VaeWeb.UserApplicationController do
     end
   end
 
-  def show(conn, _params) do
+  def show(conn, %{"hash" => hash}) when not is_nil(hash) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -72,6 +72,14 @@ defmodule VaeWeb.UserApplicationController do
       user: application.user,
       grouped_experiences: grouped_experiences
     })
+  end
+
+  def show(conn, _params) do
+    if Pow.Plug.current_user(conn) == conn.assigns[:current_application].user do
+      redirect(conn, external: Vae.User.profile_url(conn, conn.assigns[:current_application]))
+    else
+      redirect(conn, external: Vae.User.profile_url(conn))
+    end
   end
 
   # TODO: change to submit
