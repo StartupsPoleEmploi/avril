@@ -212,13 +212,13 @@ defmodule Vae.Certification do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
-  def get_popular() do
+  def get_popular(limit \\ 10) do
     query = from c in Certification, [
       join: a in UserApplication,
       on: c.id == a.certification_id,
       group_by: c.id,
       order_by: [desc: count(a.id)],
-      limit: 10
+      limit: ^limit
     ]
     Repo.all(query)
   end

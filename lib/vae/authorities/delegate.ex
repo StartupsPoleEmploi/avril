@@ -278,14 +278,14 @@ defmodule Vae.Delegate do
     delegate |> Repo.preload(:certifications) |> Map.get(:certifications)
   end
 
-  def get_popular() do
+  def get_popular(limit \\ 10) do
     query =
       from(d in Delegate,
         join: a in UserApplication,
         on: d.id == a.delegate_id,
         group_by: d.id,
         order_by: [desc: count(a.id)],
-        limit: 10
+        limit: ^limit
       )
 
     Repo.all(query)

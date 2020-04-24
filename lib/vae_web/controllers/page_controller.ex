@@ -8,8 +8,8 @@ defmodule VaeWeb.PageController do
   def index(conn, _params) do
     render(conn, "index.html",
       title: "Comment faire une VAE ?",
-      certification_examples: Certification.get_popular() |> Enum.take_random(2),
-      delegate_examples: Delegate.get_popular() |> Enum.take_random(2)
+      certification_examples: Certification.get_popular(10) |> Enum.take_random(2),
+      delegate_examples: Delegate.get_popular(10) |> Enum.take_random(2)
     )
   end
 

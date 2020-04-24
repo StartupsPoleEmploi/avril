@@ -28,6 +28,7 @@
               = link("Parcourir les métiers", to: Routes.rome_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
               = link("Parcourir les diplômes", to: Routes.certification_path(@conn, :index), class: "button is-text is-medium is-blue-hover")
         .column.is-6
+          h5.title.is-5 Exemples de diplômes parmi les 10 plus demandés :
           .columns.is-multiline
             = for certification <- @certification_examples do
               .column.is-6-desktop.is-12.is-flex
@@ -69,6 +70,7 @@
                 .section.is-vertical
                   = link("C'est quoi un certificateur ?", to: Routes.page_path(@conn, :certificateur_vae_definition), class: "button is-text is-medium")
         .column.is-6
+          h5.title.is-5 Exemples de certificateurs parmi les 10 plus sollicités :
           .columns.is-multiline
             = for delegate <- @delegate_examples do
               .column.is-6-desktop.is-flex
