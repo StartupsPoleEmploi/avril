@@ -90,4 +90,4 @@
         = if Pow.Plug.current_user(@conn) do
           = link("Accéder à mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-rounded is-primary is-medium")
         - else
-          = link("Créer mon compte gratuit maintenant", to: Routes.pow_session_path(@conn, :new), class: "button is-rounded is-primary is-medium")
+          = link("Créer mon compte gratuit maintenant", to: Routes.pow_registration_path(@conn, :new), class: "button is-rounded is-primary is-medium")

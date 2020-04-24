@@ -1,5 +1,7 @@
 .pow-page {
-  padding-bottom: 0;
+  &.section {
+    padding-bottom: 0;
+  }
   .field {
     margin-bottom: 2rem;
   }
