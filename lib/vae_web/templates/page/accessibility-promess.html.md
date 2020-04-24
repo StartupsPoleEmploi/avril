@@ -10,7 +10,7 @@ C'est fort de cette énergie que notre équipe participe tous les jours à amél
 - Déclaration d'accessibilité (en cours de rédaction) pour expliquer en toute transparence notre démarche
 - Mise à jour de cette page pour vous tenir informé de notre progression
 
-Rappelez-vous que la VAE, c’est une autre façon d’obtenir un diplôme ! <br/>Depuis 2002, + de 330000 diplômes ont été délivrés par le biais de la VAE !
+Rappelez-vous que la VAE, c’est une autre façon d’obtenir un diplôme ! <br/>Depuis 2002, + de 350&nbsp;000 diplômes ont été délivrés par le biais de la VAE !
 
 Nous pouvons encore faire mieux et permettre d'inscrire la VAE comme un moyen actif pour obtenir un diplôme.
 

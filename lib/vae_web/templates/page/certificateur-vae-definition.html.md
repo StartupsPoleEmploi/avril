@@ -6,7 +6,7 @@ Le certificateur définit le contenu des certifications et la procédure  VAE de
 
 ![Représentation symbolique d'un certificateur sous la forme d'une maison.](/images/certificateur.svg)
 
-## 330000 diplômes délivrés
+## 350&nbsp;000 diplômes délivrés
 
 
 Le certificateur peut être un ministère (Education Nationale, Emploi, Agriculture, Santé….), une chambre consulaire (CCI, CMA…), un organisme de formation privé ou public, une université, le CNAM, une branche professionnelle …..
