@@ -25,8 +25,32 @@ defmodule Vae.Account do
   def update_identity_item(attrs \\ %{}, %User{} = user) do
     user
     |> User.update_identity_changeset(attrs)
+    |> maybe_update_user_email(attrs)
     |> Repo.update()
   end
+
+  def maybe_update_user_email(changeset, _attrs) do
+    if changeset.valid? && email_change?(changeset) do
+      changeset
+      |> User.update_user_email_changeset(get_identity_email_change(changeset))
+    else
+      changeset
+    end
+  end
+
+  def email_change?(changeset) do
+    changeset
+    |> get_identity_email_change()
+    |> Kernel.!=(nil)
+  end
+
+  def get_identity_email_change(changeset) do
+    changeset
+    |> get_identity_changes()
+    |> Ecto.Changeset.get_change(:email)
+  end
+
+  def get_identity_changes(changeset), do: Ecto.Changeset.get_change(changeset, :identity)
 
   def update_profile_item(attrs \\ %{}, %User{} = user) do
     user

@@ -189,6 +189,11 @@ defmodule Vae.User do
     |> create_changeset(params)
   end
 
+  def update_user_email_changeset(changeset, email) do
+    changeset
+    |> change(%{email: email})
+  end
+
   def map_params_from_pe(user_info) do
     user_info
     |> extra_fields_for_create()
