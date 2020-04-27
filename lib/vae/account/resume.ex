@@ -23,14 +23,14 @@ defmodule Vae.Resume do
     |> validate_required([:filename, :content_type, :url, :application])
   end
 
-  def create(application, params) do
+  def create(application, params, conn) do
     filename = "#{UUID.uuid4(:hex)}#{Path.extname(params.filename)}"
     {:ok, binary} = File.read(params.path)
 
     result =
       ExAws.S3.put_object(
         Application.get_env(:ex_aws, :s3)[:bucket],
-        to_s3_path(application.id, filename),
+        file_path(application.id, filename),
         binary,
         content_type: params.content_type,
         content_disposition: "attachment; filename=#{params.filename}"
@@ -44,10 +44,7 @@ defmodule Vae.Resume do
             application: application,
             content_type: params.content_type,
             filename: params.filename,
-            url:
-              "http://localhost:9000/#{Application.get_env(:ex_aws, :s3)[:bucket]}#{
-                to_s3_path(application.id, filename)
-              }"
+            url: file_url(conn, application.id, filename)
           })
         )
 
@@ -60,7 +57,7 @@ defmodule Vae.Resume do
     result =
       ExAws.S3.delete_object(
         Application.get_env(:ex_aws, :s3)[:bucket],
-        to_s3_path(resume)
+        file_path(resume)
       )
       |> ExAws.request()
 
@@ -73,8 +70,19 @@ defmodule Vae.Resume do
     end
   end
 
-  def to_s3_path(application_id, filename), do: "/#{application_id}/#{filename}"
+  defp file_path(%Resume{application_id: application_id, url: url}),
+    do: file_path(application_id, List.last(String.split(url, "/")))
+  defp file_path(application_id, filename),
+    do: "#{application_id}/#{filename}"
 
-  def to_s3_path(%Resume{application_id: application_id, url: url}),
-    do: to_s3_path(application_id, List.last(String.split(url, "/")))
+  defp file_url(endpoint, %Resume{application_id: application_id, url: url}),
+    do: file_url(endpoint, application_id, List.last(String.split(url, "/")))
+
+  defp file_url(endpoint, application_id, filename) do
+    %URI{
+      path: "#{System.get_env("FILES_PATH")}/#{file_path(application_id, filename)}"
+    }
+    |> Vae.URI.to_absolute_string(endpoint)
+  end
+
 end

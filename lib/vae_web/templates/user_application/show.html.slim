@@ -1,4 +1,15 @@
 .container.user-application
+
+  = form_for Vae.Resume.changeset(%Vae.Resume{}, %{}), Routes.user_application_resume_path(@conn, :create, @application), [multipart: true, method: :post, class: "resume-upload", data: [analytics: "CV#upload"]], fn f ->
+    label.file-upload-zone for="resume"
+      div
+        span.fa.fa-upload
+        p.label Ajouter un CV
+      = file_input f, :file, class: "form-control-file", id: "resume", required: true
+    = submit "Envoyer", class: "btn btn-primary btn-sm", disabled: 'disabled', data: ["disable-with": "Envoi ..."]
+
+
+
   .columns
     .column.is-8
       p.subtitle Diplôme demandé
