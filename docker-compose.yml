@@ -6,6 +6,7 @@ services:
     command: /app/scripts/init-phoenix.sh
     depends_on:
       - postgres
+      - minio
     env_file:
       - ./.env
     healthcheck:
@@ -23,6 +24,7 @@ services:
       - phoenix
       - nuxt_booklet
       - nuxt_profile
+      - minio
     image: nginx:latest
     healthcheck:
       test: service nginx status
@@ -77,3 +79,15 @@ services:
       - ./db/data:/var/lib/postgresql/data
       - ./scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
       - ./db/dumps:/pg-dump
+  minio:
+    image: minio/minio
+    command: server /data
+    env_file:
+      - ./.env
+    healthcheck:
+      test: /healthcheck_retry.sh curl -fsS localhost:9000
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 1m
+

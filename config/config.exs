@@ -140,21 +140,33 @@ config :ex_admin,
   ],
   title: "Avril, la VAE Facile | Admin "
 
-config :ex_aws,
-  access_key_id: [System.get_env("AWS_ACCESS_KEY_ID"), :instance_role],
-  secret_access_key: [System.get_env("AWS_SECRET_ACCESS_KEY"), :instance_role],
-  bucket_name: System.get_env("AWS_S3_BUCKET_NAME"),
-  region: "eu-west-3",
-  s3: [
-    scheme: "https://",
-    host: "#{System.get_env("AWS_S3_BUCKET_NAME")}.s3.amazonaws.com",
-    region: "eu-west-3"
-  ]
+# config :ex_aws,
+#   access_key_id: [System.get_env("MINIO_ACCESS_KEY"), :instance_role],
+#   secret_access_key: [System.get_env("MINIO_SECRET_KEY"), :instance_role],
+#   bucket_name: System.get_env("BUCKET_NAME"),
+#   region: "eu-west-3",
+#   s3: [
+#     scheme: "http://",
+#     host: "minio",
+#     port: 9000
+#     # normalize_path: true
+#     # region: "eu-west-3"
+#   ]
+
+config :ex_aws, :s3,
+  access_key_id: System.get_env("MINIO_ACCESS_KEY"),
+  secret_access_key: System.get_env("MINIO_SECRET_KEY"),
+  region: "local",
+  bucket: System.get_env("BUCKET_NAME"),
+  scope: "store",
+  scheme: "http://",
+  port: 9000,
+  host: "minio"
 
 config :gettext, :default_locale, "fr"
 
 config :logger, :console,
-  level: :info,
+  # level: :info,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 

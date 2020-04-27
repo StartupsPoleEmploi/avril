@@ -3,6 +3,8 @@ defmodule Vae.Resume do
   import Ecto.Changeset
   alias Vae.Repo
 
+  alias __MODULE__
+
   schema "resumes" do
     field(:content_type, :string)
     field(:filename, :string)
@@ -14,21 +16,24 @@ defmodule Vae.Resume do
   end
 
   @doc false
-  def changeset(resume, attrs) do
+  def changeset(resume, params) do
     resume
-    |> cast(attrs, [:filename, :content_type, :url])
-    |> put_assoc(:application, attrs[:application])
+    |> cast(params, [:filename, :content_type, :url])
+    |> put_assoc_if_present(:application, params[:application])
     |> validate_required([:filename, :content_type, :url, :application])
   end
 
-  def create(application, params) do
+  def put_assoc_if_present(changeset, key, nil), do: changeset
+  def put_assoc_if_present(changeset, key, assoc), do: put_assoc(changeset, key, assoc)
+
+  def create(application, params, conn) do
     filename = "#{UUID.uuid4(:hex)}#{Path.extname(params.filename)}"
     {:ok, binary} = File.read(params.path)
 
     result =
       ExAws.S3.put_object(
-        Application.get_env(:ex_aws, :bucket_name),
-        __MODULE__.to_s3_path(application.id, filename),
+        Application.get_env(:ex_aws, :s3)[:bucket],
+        file_path(application.id, filename),
         binary,
         content_type: params.content_type,
         content_disposition: "attachment; filename=#{params.filename}"
@@ -36,18 +41,13 @@ defmodule Vae.Resume do
       |> ExAws.request()
 
     case result do
-      {:ok, _body} ->
+      {:ok, body} ->
         Repo.insert(
-          __MODULE__.changeset(%__MODULE__{}, %{
+          Resume.changeset(%Resume{}, %{
             application: application,
             content_type: params.content_type,
             filename: params.filename,
-            url:
-              "https://#{Application.get_env(:ex_aws, :bucket_name)}.s3.#{
-                Application.get_env(:ex_aws, :region)
-              }.amazonaws.com/#{Application.get_env(:ex_aws, :bucket_name)}#{
-                __MODULE__.to_s3_path(application.id, filename)
-              }"
+            url: file_url(conn, application.id, filename)
           })
         )
 
@@ -59,8 +59,8 @@ defmodule Vae.Resume do
   def delete(resume) do
     result =
       ExAws.S3.delete_object(
-        Application.get_env(:ex_aws, :bucket_name),
-        __MODULE__.to_s3_path(resume)
+        Application.get_env(:ex_aws, :s3)[:bucket],
+        file_path(resume)
       )
       |> ExAws.request()
 
@@ -73,8 +73,18 @@ defmodule Vae.Resume do
     end
   end
 
-  def to_s3_path(application_id, filename), do: "/#{application_id}/#{filename}"
+  def file_url(endpoint, %Resume{application_id: application_id, url: url}),
+    do: file_url(endpoint, application_id, List.last(String.split(url, "/")))
 
-  def to_s3_path(%__MODULE__{application_id: application_id, url: url}),
-    do: to_s3_path(application_id, List.last(String.split(url, "/")))
+  def file_url(endpoint, application_id, filename) do
+    %URI{
+      path: "#{System.get_env("FILES_PATH")}/#{file_path(application_id, filename)}"
+    }
+    |> Vae.URI.to_absolute_string(endpoint)
+  end
+
+  defp file_path(%Resume{application_id: application_id, url: url}),
+    do: file_path(application_id, List.last(String.split(url, "/")))
+  defp file_path(application_id, filename),
+    do: "#{application_id}/#{filename}"
 end

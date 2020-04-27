@@ -6,13 +6,13 @@ defmodule VaeWeb.UserApplication.ResumeController do
 
   alias Vae.{Resume}
 
-  def create(conn, %{"application_id" => _application_id} = params) do
+  def create(conn, params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
 
     if resume_params = params["resume"]["file"] do
-      case Resume.create(application, resume_params) do
+      case Resume.create(application, resume_params, conn) do
         {:ok, _resume} ->
           conn
           |> put_flash(:success, "CV uploadé avec succès.")
@@ -30,7 +30,7 @@ defmodule VaeWeb.UserApplication.ResumeController do
     end
   end
 
-  def delete(conn, %{"application_id" => _application_id, "id" => id}) do
+  def delete(conn, %{"id" => id}) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user])
@@ -41,12 +41,12 @@ defmodule VaeWeb.UserApplication.ResumeController do
       {:ok, _resume} ->
         conn
         |> put_flash(:success, "CV supprimé avec succès.")
-        |> redirect_back(default: Routes.user_application_path(conn, :show, application))
+        |> redirect(to: Routes.admin_resource_path(conn, :index, :resumes))
 
       {:error, _msg} ->
         conn
         |> put_flash(:danger, "Le CV n'a pas pu être supprimé, merci de réessayer plus tard.")
-        |> redirect_back(default: Routes.user_application_path(conn, :show, application))
+        |> redirect(to: Routes.admin_resource_path(conn, :index, Resume))
     end
   end
 end

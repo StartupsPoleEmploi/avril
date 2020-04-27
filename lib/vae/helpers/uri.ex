@@ -1,6 +1,10 @@
 defmodule Vae.URI do
   require Logger
 
+  def endpoint() do
+    struct(URI, Application.get_env(:vae, VaeWeb.Endpoint)[:url])
+  end
+
   def to_absolute_string(%URI{} = query_path, %URI{} = base) do
     Map.merge(base, query_path, fn
       _k, nil, v -> v

@@ -46,6 +46,10 @@ RUN mix local.rebar --force
 RUN mix deps.get
 RUN yarn --cwd ./assets install
 
+# Install min.io client
+RUN wget -P /usr/bin https://dl.min.io/client/mc/release/linux-amd64/mc
+RUN chmod +x /usr/bin/mc
+
 # Setup DB
 # RUN mix ecto.create && mix ecto.migrate # Note: run once the db is connected
 # RUN mix run priv/repo/seeds.exs
