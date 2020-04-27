@@ -16,12 +16,15 @@ defmodule Vae.Resume do
   end
 
   @doc false
-  def changeset(resume, attrs) do
+  def changeset(resume, params) do
     resume
-    |> cast(attrs, [:filename, :content_type, :url])
-    |> put_assoc(:application, attrs[:application])
+    |> cast(params, [:filename, :content_type, :url])
+    |> put_assoc_if_present(:application, params[:application])
     |> validate_required([:filename, :content_type, :url, :application])
   end
+
+  def put_assoc_if_present(changeset, key, nil), do: changeset
+  def put_assoc_if_present(changeset, key, assoc), do: put_assoc(changeset, key, assoc)
 
   def create(application, params, conn) do
     filename = "#{UUID.uuid4(:hex)}#{Path.extname(params.filename)}"
@@ -70,19 +73,18 @@ defmodule Vae.Resume do
     end
   end
 
-  defp file_path(%Resume{application_id: application_id, url: url}),
-    do: file_path(application_id, List.last(String.split(url, "/")))
-  defp file_path(application_id, filename),
-    do: "#{application_id}/#{filename}"
-
-  defp file_url(endpoint, %Resume{application_id: application_id, url: url}),
+  def file_url(endpoint, %Resume{application_id: application_id, url: url}),
     do: file_url(endpoint, application_id, List.last(String.split(url, "/")))
 
-  defp file_url(endpoint, application_id, filename) do
+  def file_url(endpoint, application_id, filename) do
     %URI{
       path: "#{System.get_env("FILES_PATH")}/#{file_path(application_id, filename)}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end
 
+  defp file_path(%Resume{application_id: application_id, url: url}),
+    do: file_path(application_id, List.last(String.split(url, "/")))
+  defp file_path(application_id, filename),
+    do: "#{application_id}/#{filename}"
 end

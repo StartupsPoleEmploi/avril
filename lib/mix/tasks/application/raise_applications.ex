@@ -69,7 +69,7 @@ defmodule Mix.Tasks.RaiseApplications do
   end
 
   def build_deliver(application) do
-    endpoint = struct(URI, Application.get_env(:vae, VaeWeb.Endpoint)[:url])
+    endpoint = Vae.URI.endpoint()
 
     application
     |> VaeWeb.ApplicationEmail.user_raise(endpoint)
