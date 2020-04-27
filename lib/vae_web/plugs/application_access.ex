@@ -72,8 +72,6 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   end
 
   defp call_error(conn, options, error) do
-    IO.inspect("error")
-    IO.inspect(error)
     if options[:optional] do
       conn
     else
