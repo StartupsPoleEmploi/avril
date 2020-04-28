@@ -51,15 +51,16 @@ defmodule Vae.String do
     cond do
       String.ends_with?(word, "au") -> "x"
       Regex.match?(~r/\d+/, word) -> ""
+      String.ends_with?(word, "s") -> ""
       true -> "s"
     end
   end
 
   defp pluralize_word(word) do
-    unless is_blank?(word) do
-      "#{word}#{plural_letter(word)}"
-    else
-      word
+    cond do
+      is_blank?(word) -> word
+      word == "Son" -> "Ses"
+      true -> "#{word}#{plural_letter(word)}"
     end
   end
 

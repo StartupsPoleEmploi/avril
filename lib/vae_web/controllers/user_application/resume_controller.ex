@@ -31,10 +31,6 @@ defmodule VaeWeb.UserApplication.ResumeController do
   end
 
   def delete(conn, %{"id" => id}) do
-    application =
-      conn.assigns[:current_application]
-      |> Repo.preload([:user])
-
     resume = Repo.get(Resume, id)
 
     case Resume.delete(resume) do

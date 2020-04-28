@@ -1,10 +1,10 @@
 .container.user-application
   .columns
-    .column.is-8
+    .column.is-7.is-8-fullhd
       p.subtitle Diplôme demandé
       h2.title.is-2= Vae.Certification.name(@certification)
 
-    .column.is-4.has-text-right.is-hidden-print
+    .column.is-5.is-4-fullhd.has-text-right.is-hidden-print
       .field
         button.button.is-primary.is-rounded.is-medium.is-print onclick="window.print();"
           span.fa.fa-print
@@ -18,34 +18,74 @@
       .column.is-6
         p.subtitle Le candidat
         h3.title.is-3 =Vae.User.fullname(@user)
-        .field
-          p Adresse : #{Vae.User.address(@user)}
-        .field
-          ' Email :
-          = link(@user.email, to: "mailto:#{@user.email}")
-        .field
-          ' Tél :
-          = if @user.phone_number do
-            = link(@user.phone_number, to: "tel:#{@user.phone_number}")
-          - else
-            span Non renseigné par le candidat
+        .field.is-horizontal
+          .field-label.is-normal
+            label.label Adresse :
+          .field-body
+            .field
+              .control
+                .fake-input= Vae.User.address(@user)
+        .field.is-horizontal
+          .field-label.is-normal
+            label.label Email :
+          .field-body
+            .field
+              .control
+                .fake-input= link(@user.email, to: "mailto:#{@user.email}")
+        .field.is-horizontal
+          .field-label.is-normal
+            label.label Tél :
+          .field-body
+            .field
+              .control
+                .fake-input
+                  = if @user.phone_number do
+                    = link(@user.phone_number, to: "tel:#{@user.phone_number}")
+                  - else
+                    span Non renseigné par le candidat
       .column.is-6
         p.subtitle Le certificateur
         h3.title.is-3= @delegate.name
-        .field
-          p Adresse : #{@delegate.address}
-        .field
-          ' Email :
-          = link(@delegate.email, to: "mailto:#{@delegate.email}")
-        .field
-          ' Tél :
-          = if @delegate.telephone do
-            = link(@delegate.telephone, to: "tel:#{@delegate.telephone}")
-          - else
-            span Non renseigné
+        = form_for @delegate_changeset, Routes.delegate_path(@conn, :update, @delegate), [class: "form is-togglable"], fn f ->
+          = hidden_input f, :hash, value: @application.delegate_access_hash, name: "hash"
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Adresse :
+            .field-body
+              .field
+                .control
+                  = text_input f, :address, class: "input", placeholder: "Adresse", readonly: true, required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Email :
+            .field-body
+              .field
+                .control
+                  = email_input f, :email, class: "input", placeholder: "Email", readonly: true, required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Tél :
+            .field-body
+              .field
+                .control
+                  = telephone_input f, :telephone, class: "input", placeholder: "Tél", readonly: true, required: true
+          .is-edit-mode
+            .field.is-horizontal
+              .field-label
+              .field-body
+                .field
+                  .control
+                    .buttons style="justify-content: space-between;"
+                      = submit "Enregistrer", class: "button is-primary is-rounded"
+                      button.button.is-text.is-rounded.toggle-mode Annuler
+          .field.is-readonly-mode
+            p
+              ' Ces coordonnées ne sont plus à jour ? Vous pouvez les
+              a.toggle-mode modifier directement ici
+              | .
 
     section.section.is-vertical.is-hidden-print
-      h4.title.is-4 Ses CVs
+      h4.title.is-4= Vae.String.inflect("Son CV", length(@application.resumes))
       = if length(@application.resumes) > 0 do
         .notification
           ul

@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{Crm.Polls, User, UserApplication, Repo}
+  alias Vae.{Crm.Polls, Delegate, User, UserApplication, Repo}
 
   plug VaeWeb.Plugs.ApplicationAccess
        when action not in [:index, :show, :admissible, :inadmissible]
@@ -68,6 +68,7 @@ defmodule VaeWeb.UserApplicationController do
       remove_navbar: true,
       application: application,
       delegate: application.delegate,
+      delegate_changeset: Delegate.changeset(application.delegate, %{}),
       certification: application.certification,
       user: application.user,
       grouped_experiences: grouped_experiences

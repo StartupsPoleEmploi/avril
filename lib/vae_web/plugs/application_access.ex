@@ -5,18 +5,22 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
     Keyword.merge(options, [error_handler: options[:error_handler] || VaeWeb.Plugs.BrowserErrorHandler])
   end
 
-  def call(%{params: %{"user_application_id" => application_id}} = conn, options),
-    do: execute(conn, {:id, application_id}, options)
+  # def call(%{params: %{"user_application_id" => application_id}} = conn, options),
+  #   do: execute(conn, {:id, application_id}, options)
 
-  def call(%{params: %{"id" => application_id}} = conn, options) do
-    execute(conn, {:id, application_id}, options)
-  end
+  # def call(%{params: %{"id" => application_id}} = conn, options) do
+  #   execute(conn, {:id, application_id}, options)
+  # end
 
   def call(conn, options) do
-    hash_key = options[:find_with_hash]
-    hash_value= Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params["hash"]
-    if hash_key && hash_value do
-      execute(conn, {hash_key, hash_value}, options)
+    finder = cond do
+      key = options[:find_with_hash] -> {key, Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params["hash"]}
+      value = conn.params["id"] || conn.params["user_application_id"] -> {:id, value}
+      true -> nil
+    end
+
+    if finder do
+      execute(conn, finder, options)
     else
       call_error(conn, options, :internal_server_error)
     end
@@ -36,10 +40,6 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
           Map.get(a, options[:verify_with_hash]) ==
           get_in(conn, [Access.key(:params), @query_param])
         end
-      current_user.is_admin ->
-        fn _a ->
-          true
-        end
       true -> nil
     end
 
@@ -51,6 +51,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
         call_error(conn, options, error)
     end
   end
+
 
   defp has_access?(nil, _user, _verification), do: {:error, :not_found}
   defp has_access?(application, user, verification_func) when not is_nil(verification_func) do
@@ -64,7 +65,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   defp has_access?(application, user, _verification_func) do
     application = application |> Vae.Repo.preload(:user)
 
-    if user == application.user || user.is_admin do
+    if user && (user == application.user || user.is_admin) do
       {:ok, application}
     else
       {:error, :unauthorized}

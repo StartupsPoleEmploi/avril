@@ -101,4 +101,21 @@ $(() => {
     }
   });
 
+  $('.form.is-togglable').on('click', '.toggle-mode', e => {
+    const $button = $(e.target);
+    const $form = $(e.delegateTarget);
+    $form.toggleClass('is-edit');
+    if ($form.hasClass('is-edit')) {
+      $form.find(':input[readonly]').removeAttr('readonly').each((i, el) => {
+        $(el).attr('data-original-value', $(el).val())
+      });
+    } else {
+      $form.find(':input').attr('readonly', 'readonly').each((i, el) => {
+        $(el).val($(el).attr('data-original-value'))
+      });
+    }
+    e.preventDefault();
+    return
+  })
+
 })

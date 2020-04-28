@@ -38,4 +38,34 @@ form {
       }
     }
   }
+
+  &.is-togglable {
+    .is-readonly-mode {
+
+    }
+    .is-edit-mode {
+      display: none;
+    }
+    &.is-edit {
+      .is-readonly-mode {
+        display: none;
+      }
+      .is-edit-mode {
+        display: block;
+      }
+
+    }
+  }
+}
+
+.fake-input {
+  @extend .input;
+}
+
+.fake-input, input.input[readonly] {
+  // padding-left: 0;
+  &, &:focus {
+    border: none;
+    box-shadow: none;
+  }
 }
