@@ -1,7 +1,7 @@
 .container.user-application
   .columns
     .column.is-7.is-8-fullhd
-      p.subtitle Diplôme demandé
+      p.subtitle Diplôme demandé :
       h2.title.is-2= Vae.Certification.name(@certification)
 
     .column.is-5.is-4-fullhd.has-text-right.is-hidden-print
@@ -16,7 +16,7 @@
   section.section style="background: white; margin: 2rem 0;"
     .columns
       .column.is-6
-        p.subtitle Le candidat
+        p.subtitle Le candidat :
         h3.title.is-3 =Vae.User.fullname(@user)
         .field.is-horizontal
           .field-label.is-normal
@@ -44,10 +44,17 @@
                   - else
                     span Non renseigné par le candidat
       .column.is-6
-        p.subtitle Le certificateur
+        p.subtitle Le certificateur :
         h3.title.is-3= @delegate.name
         = form_for @delegate_changeset, Routes.delegate_path(@conn, :update, @delegate), [class: "form is-togglable"], fn f ->
           = hidden_input f, :hash, value: @application.delegate_access_hash, name: "hash"
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Nom du contact :
+            .field-body
+              .field
+                .control
+                  = text_input f, :person_name, class: "input", placeholder: "Nom du contact", readonly: true, required: true
           .field.is-horizontal
             .field-label.is-normal
               label.label Adresse :
@@ -69,6 +76,13 @@
               .field
                 .control
                   = telephone_input f, :telephone, class: "input", placeholder: "Tél", readonly: true, required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Site internet :
+            .field-body
+              .field
+                .control
+                  = text_input f, :website, class: "input", placeholder: "https://www.exemple.fr", readonly: true, required: true
           .is-edit-mode
             .field.is-horizontal
               .field-label
