@@ -102,6 +102,27 @@ defmodule VaeWeb.Resolvers.Application do
     end
   end
 
+  def submit_application(_, %{id: application_id}, %{context: %{current_user: user}}) do
+    with application <-
+           Applications.get_application_from_id_and_user_id(application_id, user.id),
+         {:ok, application} <- Applications.prepare_submit(application) do
+      case VaeWeb.Emails.send_submission_confirmations(application) do
+        {:ok, application} ->
+          Applications.set_submitted_now(application)
+
+        {:error, msg} ->
+          Logger.error(fn -> "Error, while sending application #{inspect(msg)}" end)
+          error_response("Une erreur est survenue", "")
+      end
+    else
+      {:application, _error} ->
+        error_response(@application_not_found, format_application_error_message(application_id))
+
+      _ ->
+        error_response("Une erreur est survenue", "")
+    end
+  end
+
   defp format_application_error_message(application_id),
     do: "Application id #{application_id} not found"
 

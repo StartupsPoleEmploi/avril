@@ -158,6 +158,10 @@ defmodule Vae.UserApplication do
     |> Repo.update!()
   end
 
+  def submitted_now_changeset(application) do
+    change(application, %{submitted_at: DateTime.truncate(DateTime.utc_now(), :second)})
+  end
+
   def admissible_now(application) do
     application
     |> change(admissible_at: DateTime.truncate(DateTime.utc_now(), :second))
@@ -200,13 +204,6 @@ defmodule Vae.UserApplication do
     |> Repo.update()
   end
 
-  # def put_booklet(application, booklet) do
-  #   application
-  #   |> change()
-  #   |> put_embed(:booklet_1, booklet)
-  #   |> Repo.update()
-  # end
-  #
   def from_application_id_and_user_id(application_id, user_id) do
     from(
       a in __MODULE__,
@@ -227,12 +224,6 @@ defmodule Vae.UserApplication do
     |> Repo.update()
   end
 
-  # def assoc_field(%UserApplication{} = application, assoc, field) do
-  #   applications
-  #   |> Repo.preload(assoc)
-  #   |> get_in([Access.key(assoc, %{}), Access.key(:field)])
-  # end
-
   def certifier_name(%UserApplication{} = application) do
     application
     |> Repo.preload(delegate: :certifiers)
@@ -241,33 +232,6 @@ defmodule Vae.UserApplication do
       _ -> nil
     end
   end
-
-  # def delegate_name(%UserApplication{} = application) do
-  #   application
-  #   |> Repo.preload(:delegate)
-  #   |> case do
-  #     %UserApplication{delegate: %Delegate{name: name}} -> name
-  #     _ -> nil
-  #   end
-  # end
-
-  # def delegate_address(%UserApplication{} = application) do
-  #   application
-  #   |> Repo.preload(:delegate)
-  #   |> case do
-  #     %UserApplication{delegate: %Delegate{address: address}} -> address
-  #     _ -> nil
-  #   end
-  # end
-
-  # def certification_name(%UserApplication{} = application) do
-  #   application
-  #   |> Repo.preload(:certification)
-  #   |> case do
-  #     %UserApplication{certification: %Certification{} = c} -> Certification.name(c)
-  #     _ -> nil
-  #   end
-  # end
 
   def booklet_url(endpoint, application, path \\ nil) do
     application = application |> Repo.preload(:delegate)

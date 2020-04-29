@@ -1,7 +1,7 @@
 defmodule Vae.Applications do
   import Ecto.Query
 
-  alias Vae.{Account, Certification, Delegate, Meetings, UserApplication}
+  alias Vae.{Account, Certification, Delegate, Meetings, User, UserApplication}
   alias Vae.Repo
 
   @doc "Lists applications from a User ID"
@@ -48,11 +48,13 @@ defmodule Vae.Applications do
   end
 
   @doc "Generate an hash access to an application for a delegate"
-  def generate_delegate_access_hash(application) do
+  def generate_delegate_access_hash(%UserApplication{delegate_access_hash: nil} = application) do
     application
     |> UserApplication.generate_delegate_access_hash_changeset()
     |> Repo.update()
   end
+
+  def generate_delegate_access_hash(application), do: {:ok, application}
 
   @doc "Set the date and time at which the confirmation was sent"
   def set_meeting_submitted_at(application) do
@@ -61,13 +63,36 @@ defmodule Vae.Applications do
     |> Repo.update()
   end
 
+  @doc "Prepare the application before sending to the delegate"
+  def prepare_submit(%UserApplication{submitted_at: nil} = application) do
+    with {:ok, _valid} <- Account.validate_required_fields_to_register_meeting(application.user) do
+      generate_delegate_access_hash(application)
+    else
+      error ->
+        error
+    end
+  end
+
+  def prepare_submit(application), do: {:ok, application}
+
+  @doc "Set submitted at"
+  def set_submitted_now(%UserApplication{submitted_at: nil} = application) do
+    application
+    |> UserApplication.submitted_now_changeset()
+    |> Repo.update()
+  end
+
+  def set_submitted_now(application), do: {:ok, application}
+
   defp base_query() do
     from(a in UserApplication,
       join: c in Certification,
       on: a.certification_id == c.id,
       left_join: d in Delegate,
       on: a.delegate_id == d.id,
-      preload: [delegate: d, certification: c]
+      left_join: u in User,
+      on: a.user_id == u.id,
+      preload: [delegate: d, certification: c, user: u]
     )
   end
 

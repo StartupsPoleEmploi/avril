@@ -46,6 +46,12 @@ defmodule VaeWeb.Schema.ApplicationTypes do
       arg(:input, non_null(:register_meeting_input))
       resolve(&Resolvers.Application.register_meeting/3)
     end
+
+    @desc "Submit an application to a delegate"
+    field(:submit_application, :application) do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Application.submit_application/3)
+    end
   end
 
   input_object :attach_delegate_input do
