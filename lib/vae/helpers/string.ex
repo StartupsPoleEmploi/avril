@@ -40,7 +40,7 @@ defmodule Vae.String do
   def parameterize(string, separator) do
     string
     |> :unicode.characters_to_nfd_binary()
-    |> String.replace(~r/[\'’\"\-]/u, " ")
+    |> String.replace(~r/[\\"\-]/u, " ")
     |> String.replace(~r/[^A-z\s0-9]/u, "")
     |> String.downcase()
     |> String.trim()
@@ -60,6 +60,7 @@ defmodule Vae.String do
     cond do
       is_blank?(word) -> word
       word == "Son" -> "Ses"
+      word == "la" -> "les"
       true -> "#{word}#{plural_letter(word)}"
     end
   end

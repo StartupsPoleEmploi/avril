@@ -3,8 +3,8 @@
 - else
   section.section#title
     .container
-      = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
-      h1.title.is-1 Certificateurs VAE
+      = link("Villes de la région #{@administrative}", to: Routes.delegate_path(@conn, :geo, Vae.String.parameterize(@administrative)), class: "button is-back")
+      h1.title.is-1 #{Vae.String.inflect("Certificateur", length(@delegates))} VAE à #{@city}, #{@administrative}
       / form method="get" class="toggler"
       /   = for {key, value} <- Map.delete(@conn.query_params, "levels") do
       /     input type="hidden" name=key value=value
@@ -26,7 +26,7 @@
       = for chunk <- Enum.chunk_every(@delegates, 3) do
         .columns
           = for delegate <- chunk do
-            .column.is-4
+            .column.is-4 style="display: flex;"
               = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
 
 = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.delegate_path/3

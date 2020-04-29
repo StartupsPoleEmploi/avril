@@ -39,7 +39,7 @@
       = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
         .columns
           = for certification <- chunk do
-            .column.is-4
+            .column.is-4 style="display: flex;"
               = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: certification
         = if i == 0 do
           .notification.is-green.section

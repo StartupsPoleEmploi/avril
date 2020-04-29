@@ -1,0 +1,25 @@
+section.section
+  .container
+    = if assigns[:administrative] do
+      = link("Régions", to: Routes.delegate_path(@conn, :geo), class: "button is-back")
+    - else
+      = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
+    .results.has-text-centered
+      h1.title.is-1
+        | Explorer les certificateurs VAE
+        = if assigns[:administrative] do
+          |  de la région #{assigns[:administrative]}
+        - else
+          |  par région
+      - elements = assigns[:cities] || assigns[:administratives]
+      p.subtitle Nous avous identifié des certificateurs dans #{Vae.String.inflect("la #{if assigns[:cities], do: "ville", else: "région"} suivante", length(elements))} :
+
+      = if assigns[:administratives] do
+        ul
+          = for administrative <- @administratives do
+            li= link(administrative, to: Routes.delegate_path(@conn, :geo, Vae.String.parameterize(administrative)))
+      = if assigns[:cities] do
+        ul
+          = for city <- @cities do
+            li= link(city, to: Routes.delegate_path(@conn, :index, Vae.String.parameterize(assigns[:administrative]), Vae.String.parameterize(city)))
+

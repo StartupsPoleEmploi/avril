@@ -7,32 +7,78 @@ defmodule VaeWeb.DelegateController do
        [find_with_hash: :delegate_access_hash] when action in [:update]
 
   filterable do
-    @options param: :diplome
-    filter certification(query, value, _conn) do
+    @options param: :organismes
+    filter certifier(query, value, _conn) do
       query
-      |> join(:inner, [c], d in assoc(c, :certifications))
+      |> join(:inner, [c], d in assoc(c, :certifiers))
       |> where([d, c], c.id == ^Vae.String.to_id(value))
     end
   end
 
-  def index(conn, params) do
-    query =
-      Delegate
+  def geo(conn, %{"administrative" => administrative}) do
+    cities = Delegate
       |> where(is_active: true)
-      |> order_by(asc: :name)
+      |> where([f], fragment("lower(?)", f.administrative) == ^administrative)
+      |> distinct([f], f.city)
+      |> select([f], [f.administrative, f.city])
+      |> order_by([f], f.city)
+      |> Repo.all()
 
-    with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
-         page <- Repo.paginate(filtered_query, params),
-         meta <- filter_values do
-      render(conn, "index.html",
-        delegates: page.entries,
-        page: page,
-        meta: meta
+    if length(cities) > 0 do
+      render(conn, "geo.html",
+        administrative: cities |> List.first() |> List.first(),
+        cities: cities |> Enum.map(fn [_a, c] -> c end)
       )
+    else
+      raise Ecto.NoResultsError, queryable: Delegate
+    end
+  end
+  def geo(conn, params) do
+    administratives = Delegate
+      |> where(is_active: true)
+      |> distinct([f], f.administrative)
+      |> select([f], f.administrative)
+      |> order_by([f], f.administrative)
+      |> Repo.all()
+      |> Enum.filter(&(not is_nil(&1)))
+
+    if length(administratives) > 0 do
+      render(conn, "geo.html",
+        administratives: administratives
+      )
+    else
+      raise Ecto.NoResultsError, queryable: Delegate
     end
   end
 
-  def show(conn, %{"id" => id} = _params) do
+  def index(conn, %{"administrative" => administrative, "city" => city} = params) do
+    query =
+      Delegate
+      |> where(is_active: true)
+      |> where([f], fragment("lower(?)", f.administrative) == ^administrative)
+      |> where([f], fragment("lower(?)", f.city) == ^city)
+      |> order_by(asc: :name)
+
+    first_result = Repo.all(query |> limit(1)) |> List.first()
+
+    if first_result do
+      with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
+           page <- Repo.paginate(filtered_query, params),
+           meta <- filter_values do
+        render(conn, "index.html",
+          administrative: first_result.administrative,
+          city: first_result.city,
+          delegates: page.entries,
+          page: page,
+          meta: meta
+        )
+      end
+    else
+      raise Ecto.NoResultsError, queryable: Delegate
+    end
+  end
+
+  def show(conn, %{"administrative" => administrative, "city" => city, "id" => id} = _params) do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),

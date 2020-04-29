@@ -76,7 +76,7 @@
               .column.is-6-desktop.is-flex
                 = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
           .section.is-vertical.is-small.has-text-centered
-            = link("Explorer les certificateurs", to: Routes.delegate_path(@conn, :index), class: "button is-yellow is-rounded is-medium")
+            = link("Explorer les certificateurs", to: Routes.delegate_path(@conn, :geo), class: "button is-yellow is-rounded is-medium")
 
   section.section.is-medium#callback
     .container.content.is-medium

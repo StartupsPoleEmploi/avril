@@ -92,7 +92,9 @@ defmodule VaeWeb.Router do
     # Basic navigation
     resources("/rome", VaeWeb.RomeController, only: [:index, :show])
     # resources("/metiers", VaeWeb.ProfessionController, only: [:show])
-    resources("/certificateurs", VaeWeb.DelegateController, only: [:index, :show, :update])
+    get("/certificateurs", VaeWeb.DelegateController, :geo)
+    get("/certificateurs/:administrative", VaeWeb.DelegateController, :geo)
+    resources("/certificateurs/:administrative/:city", VaeWeb.DelegateController, only: [:index, :show, :update])
 
     resources("/diplomes", VaeWeb.CertificationController, only: [:index, :show]) do
       put("/select", VaeWeb.CertificationController, :select, as: :select)
