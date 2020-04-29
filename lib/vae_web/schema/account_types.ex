@@ -8,6 +8,16 @@ defmodule VaeWeb.Schema.AccountTypes do
     field :identity, :identity do
       resolve(&Resolvers.Account.identity_item/3)
     end
+
+    field :logout, :boolean do
+      middleware(fn res, _ ->
+        %{res | context: Map.delete(res.context, :current_user)}
+      end)
+
+      resolve(fn _, _, _ ->
+        {:ok, true}
+      end)
+    end
   end
 
   object :identity do

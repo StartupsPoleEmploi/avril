@@ -1,12 +1,11 @@
 defmodule VaeWeb.Plugs.AddGraphqlContext do
   @behaviour Plug
 
-  alias Vae.{UserApplication, User}
-
   def init(opts), do: opts
 
   def call(conn, _) do
     current_user = get_user(conn)
+
     if current_user do
       Absinthe.Plug.put_options(conn, context: %{current_user: current_user})
     else

@@ -4,12 +4,13 @@ defmodule VaeWeb.Router do
   use Sentry.Plug
   use ExAdmin.Router
   use Pow.Phoenix.Router
+
   use Pow.Extension.Phoenix.Router,
     otp_app: :vae,
     extensions: [
       PowResetPassword,
       PowEmailConfirmation
-  ]
+    ]
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -23,7 +24,8 @@ defmodule VaeWeb.Router do
 
   pipeline :protected do
     plug(Pow.Plug.RequireAuthenticated,
-      error_handler: Pow.Phoenix.PlugErrorHandler)
+      error_handler: Pow.Phoenix.PlugErrorHandler
+    )
   end
 
   pipeline :admin do
@@ -156,18 +158,24 @@ defmodule VaeWeb.Router do
   scope "/" do
     pipe_through [:accepts_json]
     post("/mail_events", VaeWeb.MailEventsController, :new_event)
-
   end
 
   scope "/api" do
-    pipe_through [:accepts_json, :api_protected_login_or_server, :maybe_set_current_application, :set_graphql_context]
+    pipe_through [
+      :accepts_json,
+      :api_protected_login_or_server,
+      :maybe_set_current_application,
+      :set_graphql_context
+    ]
 
     forward "/v2", Absinthe.Plug,
       schema: VaeWeb.Schema,
+      before_send: {__MODULE__, :logout?},
       json_codec: Jason
 
     forward "/graphiql", Absinthe.Plug.GraphiQL,
       schema: VaeWeb.Schema,
+      before_send: {__MODULE__, :logout?},
       interface: :playground,
       json_codec: Jason
   end
@@ -176,6 +184,16 @@ defmodule VaeWeb.Router do
     pipe_through([:accepts_json, :api_protected_login_or_server, :set_current_application])
     get("/booklet", VaeWeb.ApiController, :get_booklet)
     put("/booklet", VaeWeb.ApiController, :set_booklet)
+  end
+
+  def logout?(conn, %Absinthe.Blueprint{} = blueprint) do
+    if blueprint.execution.context[:current_user] do
+      conn
+    else
+      conn
+      |> Plug.Conn.assign(:signed_out_user, Pow.Plug.current_user(conn))
+      |> Pow.Plug.delete()
+    end
   end
 
   defp fetch_app_status(conn, _opts) do
