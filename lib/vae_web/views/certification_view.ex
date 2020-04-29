@@ -2,39 +2,6 @@ defmodule VaeWeb.CertificationView do
   use VaeWeb, :view
   use Scrivener.HTML
 
-  def to_delegate(conn, certification, nil) do
-    if is_nil(Plug.Conn.get_session(conn, :search_lat)) ||
-         is_nil(Plug.Conn.get_session(conn, :search_lng)) do
-      Routes.delegate_path(conn, :index, diplome: certification)
-    else
-      Routes.certification_path(
-        conn,
-        :show,
-        certification
-      )
-    end
-  end
-
-  def to_delegate(conn, certification, delegate) do
-    Routes.certification_path(
-      conn,
-      :show,
-      certification,
-      certificateur: delegate
-    )
-  end
-
-  def to_delegate_label(conn, nil) do
-    if is_nil(Plug.Conn.get_session(conn, :search_lat)) ||
-         is_nil(Plug.Conn.get_session(conn, :search_lng)) do
-      "Les certificateurs"
-    else
-      "Étapes VAE"
-    end
-  end
-
-  def to_delegate_label(_conn, _delegate), do: "Étapes VAE"
-
   def render_steps(process, opts \\ []) do
     process
     |> Map.take(Enum.map(1..8, &:"step_#{&1}"))

@@ -7,18 +7,18 @@ defmodule VaeWeb.DelegateController do
        [find_with_hash: :delegate_access_hash] when action in [:update]
 
   filterable do
-    @options param: :organismes
-    filter certifier(query, value, _conn) do
-      query
-      |> join(:inner, [c], d in assoc(c, :certifiers))
-      |> where([d, c], c.id == ^Vae.String.to_id(value))
-    end
+    # @options param: :organismes
+    # filter certifier(query, value, _conn) do
+    #   query
+    #   |> join(:inner, [c], d in assoc(c, :certifiers))
+    #   |> where([d, c], c.id == ^Vae.String.to_id(value))
+    # end
   end
 
-  def geo(conn, %{"administrative" => administrative}) do
+  def geo(conn, %{"administrative" => administratives_lug}) do
     cities = Delegate
       |> where(is_active: true)
-      |> where([f], fragment("lower(?)", f.administrative) == ^administrative)
+      |> where([f], fragment("slugify(?)", f.administrative) == ^administratives_lug)
       |> distinct([f], f.city)
       |> select([f], [f.administrative, f.city])
       |> order_by([f], f.city)
@@ -51,12 +51,12 @@ defmodule VaeWeb.DelegateController do
     end
   end
 
-  def index(conn, %{"administrative" => administrative, "city" => city} = params) do
+  def index(conn, %{"administrative" => administrative_slug, "city" => city_slug} = params) do
     query =
       Delegate
       |> where(is_active: true)
-      |> where([f], fragment("lower(?)", f.administrative) == ^administrative)
-      |> where([f], fragment("lower(?)", f.city) == ^city)
+      |> where([f], fragment("slugify(?)", f.administrative) == ^administrative_slug)
+      |> where([f], fragment("slugify(?)", f.city) == ^city_slug)
       |> order_by(asc: :name)
 
     first_result = Repo.all(query |> limit(1)) |> List.first()
@@ -66,6 +66,8 @@ defmodule VaeWeb.DelegateController do
            page <- Repo.paginate(filtered_query, params),
            meta <- filter_values do
         render(conn, "index.html",
+          administrative_slug: administrative_slug,
+          city_slug: city_slug,
           administrative: first_result.administrative,
           city: first_result.city,
           delegates: page.entries,
@@ -78,20 +80,25 @@ defmodule VaeWeb.DelegateController do
     end
   end
 
-  def show(conn, %{"administrative" => administrative, "city" => city, "id" => id} = _params) do
+  def show(conn, %{"administrative" => administrative_slug, "city" => city_slug, "id" => id} = _params) do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
-      delegate when not is_nil(delegate) <- Repo.get(Delegate, Vae.String.to_id(id))
+      delegate when not is_nil(delegate) <- Repo.get(Delegate, id)
     ) do
-      if delegate.slug != slug do
-        # Slug is not up-to-date
-        redirect(conn, to: Routes.delegate_path(conn, :show, delegate, conn.query_params))
+      real_administrative_slug = Vae.String.parameterize(delegate.administrative)
+      real_city_slug = Vae.String.parameterize(delegate.city)
+      if(
+        delegate.slug == slug &&
+        real_administrative_slug == administrative_slug &&
+        real_city_slug == city_slug) do
+          render(conn, "show.html",
+            delegate: delegate,
+            certifications: Delegate.get_certifications(delegate)
+          )
       else
-        render(conn, "show.html",
-          delegate: delegate,
-          certifications: Delegate.get_certifications(delegate)
-        )
+        # Metadata is not up-to-date
+        redirect(conn, to: Routes.delegate_path(conn, :show, real_administrative_slug, real_city_slug, delegate, conn.query_params))
       end
     else
       _error ->
@@ -112,7 +119,7 @@ defmodule VaeWeb.DelegateController do
         end
       conn
       |> put_flash(level, msg)
-      |> redirect(to: IO.inspect(Routes.user_application_path(conn, :show, application, %{hash: application.delegate_access_hash})))
+      |> redirect(to: Routes.user_application_path(conn, :show, application, %{hash: application.delegate_access_hash}))
     else
       _error ->
         raise Ecto.NoResultsError, queryable: Delegate
