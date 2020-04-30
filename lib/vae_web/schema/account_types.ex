@@ -14,8 +14,12 @@ defmodule VaeWeb.Schema.AccountTypes do
         %{res | context: Map.delete(res.context, :current_user)}
       end)
 
-      resolve(fn _, _, _ ->
-        {:ok, true}
+      resolve(fn
+        _, _, %{context: %{current_user: _user}} ->
+          {:ok, false}
+
+        _, _, _ ->
+          {:ok, true}
       end)
     end
   end
