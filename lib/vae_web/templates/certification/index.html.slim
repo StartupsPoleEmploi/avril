@@ -1,9 +1,7 @@
 = if length(@certifications) == 0 do
   = render("no-results.html")
 - else
-  - possible_levels = 1..5 |> Enum.to_list()
-  - is_all = possible_levels == @levels
-  - level_label = unless is_all, do: " #{Vae.String.inflect("au niveau", length(@levels))} #{Enum.map(@levels, &level_info_by_level/1) |> Enum.join(", ")}"
+  - level_label = if @level, do: "au niveau #{level_info_by_level(@level)}"
   - filter_object = assigns[:profession] || assigns[:rome]
   .container
     section.section#title
@@ -22,18 +20,15 @@
         h1.title.is-1
           | Parcourir les diplômes disponibles en VAE #{level_label}
       form method="get" class="toggler"
-        = for {key, value} <- Map.delete(@conn.query_params, "levels") do
+        = for {key, value} <- Map.delete(@conn.query_params, "level") do
           input type="hidden" name=key value=value
-        input type="hidden" name="levels"
         ul
           li
-            input type="checkbox" value="all" id="all_levels" checked=is_all
-            label.button.is-rounded.is-info.is-togglable for="all_levels"
+            button name="level" type="submit" value="" id="level_all" class="button is-rounded is-info is-togglable #{if is_nil(@level), do: "is-active"}"
               | Toutes les équivalences
-          = for level <- possible_levels |> Enum.reverse() do
+          = for level <- 1..5 |> Enum.to_list() |> Enum.reverse() do
             li
-              input type="checkbox" value=level id="level_#{level}" checked=(!is_all && Enum.member?(@levels, level))
-              label.button.is-rounded.is-info.is-togglable for="level_#{level}"
+              button name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
                 = level_info_by_level(level)
     section.section#results
       = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do

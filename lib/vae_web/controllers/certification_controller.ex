@@ -13,11 +13,11 @@ defmodule VaeWeb.CertificationController do
   def cast_array(str), do: String.split(str, ",") |> Enum.map(&String.to_integer/1)
 
   filterable do
-    @options param: :levels,
-             default: [1, 2, 3, 4, 5],
-             cast: &VaeWeb.CertificationController.cast_array/1
-    filter levels(query, value, _conn) do
-      query |> where([c], c.level in ^value)
+    @options param: :level,
+             default: nil,
+             cast: &String.to_integer/1
+    filter level(query, value, _conn) do
+      query |> where([c], c.level == ^value)
     end
 
     @options param: :metier
@@ -46,7 +46,8 @@ defmodule VaeWeb.CertificationController do
         %{
           certifications: page.entries,
           no_results: count_without_level_filter(params) == 0,
-          page: page
+          page: page,
+          level: nil
         }
         |> Map.merge(enrich_filter_values(filter_values))
       )

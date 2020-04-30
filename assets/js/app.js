@@ -10,7 +10,6 @@ import './layout/index';
 
 import './analytics';
 import './tools/smooth_scroll';
-import './components/button-toggle';
 import './components/searchbar';
 import './components/pagination';
 import './components/level-selector';

@@ -24,17 +24,13 @@ form {
         margin-left: 1rem;
       }
     }
-    input {
-      &[type=checkbox] {
-        display: none;
-        visibility: hidden;
-        &:not(:checked) ~ label.button.is-togglable {
-          background: transparent;
-          color: initial;
-          &:hover {
-            background: rgba(black, 0.1);
-          }
-        }
+    button.button {
+      &:not(.is-active) {
+        background: transparent;
+        color: initial;
+      }
+      &:hover {
+        background: rgba(black, 0.1);
       }
     }
   }
