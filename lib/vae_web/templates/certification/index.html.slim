@@ -1,5 +1,5 @@
 = if length(@certifications) == 0 do
-  = render("no-results.html")
+  = render("no-results.html", level: @level)
 - else
   - level_label = if @level, do: "au niveau #{level_info_by_level(@level)}"
   - filter_object = assigns[:profession] || assigns[:rome]

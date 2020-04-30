@@ -71,7 +71,7 @@ $(() => {
 
 
   $('a.is-back').on('click', e => {
-    if (document.referrer !== document.location.href && document.referrer == e.target.href) {
+    if (e.target.href === document.referrer || e.target.getAttribute('href') === '#') {
       console.log('Going back');
       history.back();
       e.preventDefault();
