@@ -82,7 +82,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
     form application do
       inputs do
-        input application, :user, collection: Repo.all(User)
+        input application, :user, collection: [application.user]
         input application, :certification, collection: Repo.all(Certification)
         input application, :delegate, collection: Repo.all(Delegate)
         input application, :submitted_at

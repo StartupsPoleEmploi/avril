@@ -143,6 +143,11 @@ defmodule VaeWeb.Router do
     get("/processes/:id", VaeWeb.Redirector, to: "/", msg: "La page demandée n'existe plus.")
   end
 
+  scope "/" do
+    pipe_through([:browser, :protected])
+    get("/disconnect", Pow.Phoenix.SessionController, :delete)
+  end
+
   # Admin
   scope "/admin", ExAdmin do
     pipe_through([:browser, :protected, :admin])
