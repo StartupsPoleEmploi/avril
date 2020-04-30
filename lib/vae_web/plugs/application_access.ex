@@ -26,7 +26,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
   def define_finder(conn, options \\ %{})
   def define_finder(conn, %{find_with_hash: key}),
-    do: {key, Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params["hash"]}
+    do: {key, Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params[@query_param]}
 
   def define_finder(%Plug.Conn{params: %{"id" => id}}, _options) when not is_nil(id), do: {:id, id}
   def define_finder(%Plug.Conn{params: %{"user_application_id" => id}}, _options)  when not is_nil(id), do: {:id, id}
@@ -45,8 +45,12 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
         options[:verify_with_hash] ->
           fn a ->
-            Map.get(a, options[:verify_with_hash]) ==
-              get_in(conn, [Access.key(:params), @query_param])
+            Map.get(a, options[:verify_with_hash]) == conn.params[@query_param]
+          end
+
+        options[:find_with_hash] ->
+          fn a ->
+            Map.get(a, options[:find_with_hash]) == conn.params[@query_param]
           end
 
         true ->
