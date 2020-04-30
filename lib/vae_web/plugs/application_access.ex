@@ -15,7 +15,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   # end
 
   def call(conn, options) do
-    finder = define_finder(conn, options)
+    finder = define_finder(conn, Enum.into(options, %{}))
 
     if finder do
       execute(conn, finder, options)
@@ -25,12 +25,11 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   end
 
   def define_finder(conn, options \\ %{})
-
   def define_finder(conn, %{find_with_hash: key}),
     do: {key, Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params["hash"]}
 
-  def define_finder(%Plug.Conn{params: %{"id" => id}}, _options), do: {:id, id}
-  def define_finder(%Plug.Conn{params: %{"user_application_id" => id}}, _options), do: {:id, id}
+  def define_finder(%Plug.Conn{params: %{"id" => id}}, _options) when not is_nil(id), do: {:id, id}
+  def define_finder(%Plug.Conn{params: %{"user_application_id" => id}}, _options)  when not is_nil(id), do: {:id, id}
   def define_finder(_conn, _options), do: nil
 
   def execute(conn, finder, options) do
