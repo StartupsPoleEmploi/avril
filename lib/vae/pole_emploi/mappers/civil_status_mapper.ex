@@ -1,5 +1,5 @@
 defmodule Vae.PoleEmploi.Mappers.CivilStatusMapper do
-  def format(%OAuth2.Response{body: body}) do
+  def map(%OAuth2.Response{body: body}) do
     %{
       birthday: Timex.parse!(body["dateDeNaissance"], "{ISO:Extended}")
     }

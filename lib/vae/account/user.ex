@@ -177,7 +177,7 @@ defmodule Vae.User do
   def create_user_from_pe_changeset(user_info) do
     params = map_params_from_pe(user_info)
 
-    __MODULE__
+    %__MODULE__{}
     |> create_changeset(params)
   end
 
