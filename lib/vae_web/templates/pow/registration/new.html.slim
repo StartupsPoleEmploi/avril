@@ -15,11 +15,11 @@ section.section.is-vertical.register-page.pow-page
             .field
               .control
                 = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
-                / = error_tag f, :email
+                = error_tag f, :email
             .field
               .control
                 = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
-                / = error_tag f, :password
+                = error_tag f, :password
             .field
               label.checkbox
                 input type="checkbox" value="true" id="consent" required="required"

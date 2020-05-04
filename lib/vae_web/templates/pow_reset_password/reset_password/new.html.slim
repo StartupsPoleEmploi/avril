@@ -1,0 +1,20 @@
+section.section.pow-page
+  .container
+    .columns.is-centered
+      .column.is-7.is-6-desktop.is-5-widescreen.is-4-fullhd
+        h2.title.is-2.has-text-centered Réinitialiser mon mot de passe
+        = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
+          = if @changeset.action do
+            .notification.is-danger
+              ' Une erreur est survenue:
+              ul
+                = for {key, error} <- f.errors do
+                  / = content_tag :li, "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}", class: ""
+                  li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
+          .field
+            .control
+              = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
+              = error_tag f, :email
+          .field.has-text-centered
+            = submit "Recevoir par email un lien de réinitialisation", class: "button is-primary is-rounded is-medium", data: ["disable-with": "Envoi ..."]
+    = img_tag("/images/couple.svg", class: "couple")
