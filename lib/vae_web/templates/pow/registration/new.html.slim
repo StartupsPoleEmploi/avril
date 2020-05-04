@@ -8,18 +8,16 @@ section.section.is-vertical.register-page.pow-page
             = if @changeset.action do
               .notification.is-danger
                 ' Une erreur est survenue:
-                ul
-                  = for {key, error} <- f.errors do
-                    li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
-                    / = content_tag :li, "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}", class: ""
+                = for {key, error} <- f.errors do
+                  span= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
             .field
               .control
                 = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
-                = error_tag f, :email
+                / = error_tag f, :email
             .field
               .control
-                = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
-                = error_tag f, :password
+                = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe", minlength: Application.get_env(:vae, :pow)[:password_min_length]
+                / = error_tag f, :password
             .field
               label.checkbox
                 input type="checkbox" value="true" id="consent" required="required"

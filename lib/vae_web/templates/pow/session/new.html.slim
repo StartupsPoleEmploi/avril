@@ -4,13 +4,16 @@ section.section.pow-page
       .column.is-7.is-6-desktop.is-5-widescreen.is-4-fullhd
         h2.title.is-2 Me connecter
         = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
-          = if @changeset.action do
+          = if @changeset.action || Phoenix.Controller.action_name(@conn) == :create do
             .notification.is-danger
-              ' Une erreur est survenue:
-              ul
+              = if length(f.errors) > 0 do
+                ' Une erreur est survenue:
                 = for {key, error} <- f.errors do
-                  / = content_tag :li, "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}", class: ""
-                  li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
+                  span= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
+              - else
+                p
+                  strong L'authentification a échoué.
+                p Merci de réessayer ou de cliquer sur réinitialiser votre mot de passe si vous ne parvenez pas à le retrouver.
           .field
             .control
               = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
