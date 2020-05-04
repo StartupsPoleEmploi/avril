@@ -112,14 +112,14 @@ defmodule VaeWeb.Resolvers.Application do
 
         {:error, msg} ->
           Logger.error(fn -> "Error, while sending application #{inspect(msg)}" end)
-          error_response("Une erreur est survenue", "")
+          error_response("Une erreur est survenue", inspect(msg))
       end
     else
       {:application, _error} ->
         error_response(@application_not_found, format_application_error_message(application_id))
 
-      _ ->
-        error_response("Une erreur est survenue", "")
+      error ->
+        error_response("Une erreur est survenue", "#{inspect(error)}")
     end
   end
 

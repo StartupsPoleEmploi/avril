@@ -232,7 +232,7 @@ defmodule Vae.User do
   def register_fields_required_changeset(model, params \\ %{}) do
     model
     |> cast(params, [])
-    |> validate_required(@application_submit_fields)
+    # |> validate_required(@application_submit_fields)
   end
 
   defp maybe_confirm_password(
