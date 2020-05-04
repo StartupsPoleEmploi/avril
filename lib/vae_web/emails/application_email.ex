@@ -35,7 +35,7 @@ defmodule VaeWeb.ApplicationEmail do
       :avril,
       application.user,
       %{
-        url: Routes.user_application_url(Endpoint, :show, application),
+        url: User.profile_url(Endpoint, application),
         user_name: User.fullname(application.user),
         meeting: application.meeting,
         date_format: "%d/%m/%Y à %H:%M",
@@ -63,7 +63,7 @@ defmodule VaeWeb.ApplicationEmail do
       :avril,
       application.user,
       %{
-        url: Routes.user_application_url(Endpoint, :show, application),
+        url: User.profile_url(Endpoint, application),
         user_name: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_person_name: application.delegate.person_name,

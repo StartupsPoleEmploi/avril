@@ -16,7 +16,7 @@ Contactez dès maintenant votre centre VAE au <%= @delegate_phone_number %> ou p
 
 Vous retrouverez dans votre profil les éléments transmis à votre centre VAE.
 
-**[Voir mon profil](<%= @url %>)**
+**[Voir ma candidature](<%= @url %>)**
 
 <%= if @is_france_vae do %>
 Surveillez votre boite mail, vous allez recevoir un email de confirmation de la part de notre partenaire France VAE.

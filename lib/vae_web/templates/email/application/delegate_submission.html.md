@@ -2,9 +2,11 @@
 
 ### <%= @user_name %> souhaite démarrer une VAE pour le diplôme <%= @certification_name %>. Soutenez sa démarche !
 
-Avril - la VAE Facile l'a informé des étapes à suivre (inscription en ligne ou à une réunion d'information, etc.) mais nous savons qu'un candidat sur deux a besoin d'être encouragé dans son projet de VAE.
+Avril - la VAE Facile l'a accompagné dans la complétion de son livret 1
+<%= if @meeting do %> et à l'inscription à une réunion d'information <% end %>
+mais nous savons qu'un candidat sur deux a besoin d'être encouragé dans son projet de VAE.
 
-**[Consulter son parcours](<%= @url %>)**
+**[Voir sa candidature et télécharger son dossier de recevabilité](<%= @url %>)**
 
 <%= if @meeting do %>
 <%= @user_name %> s'est positionné sur la réunion d'information :
