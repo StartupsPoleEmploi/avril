@@ -1,36 +1,37 @@
-= if length(@certifications) == 0 do
-  = render("no-results.html", level: @level)
-- else
-  - level_label = if @level, do: "au niveau #{level_info_by_level(@level)}"
-  - filter_object = assigns[:profession] || assigns[:rome]
-  .container
-    section.section#title
+- level_label = if assigns[:level], do: "au niveau #{level_info_by_level(assigns[:level])}"
+- filter_object = assigns[:profession] || assigns[:rome]
+.container
+  section.section#title
+    = if @level do
+      = link("Retirer le filtre", to: Phoenix.Controller.current_path(@conn, Map.drop(@params, ["level"])), class: "button is-back")
+    - else
       = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
+    = if assigns[:rome] do
+      = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
+    = if filter_object do
       = if assigns[:rome] do
-        = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
-      = if filter_object do
-        = if assigns[:rome] do
-          h2.subtitle.is-5
-            | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour les métiers :
-            / = for profession <- @rome.professions do
-            /   =< link(profession.label, to: Routes.certification_path(@conn, :index, metier: profession))
-        h1.title.is-1
-          = filter_object.label
-      - else
-        h1.title.is-1
-          | Parcourir les diplômes disponibles en VAE #{level_label}
-      form method="get" class="toggler"
-        = for {key, value} <- Map.delete(@conn.query_params, "level") do
-          input type="hidden" name=key value=value
-        ul
+        h2.subtitle.is-5
+          | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour les métiers :
+      h1.title.is-1
+        = filter_object.label
+    - else
+      h1.title.is-1
+        | Parcourir les diplômes disponibles en VAE #{level_label}
+    form method="get" class="toggler"
+      = for {key, value} <- Map.delete(@conn.query_params, "level") do
+        input type="hidden" name=key value=value
+      ul
+        li
+          button name="level" type="submit" value="" id="level_all" class="button is-rounded is-info is-togglable #{if is_nil(@level), do: "is-active"}"
+            | Toutes les équivalences
+        = for level <- 1..5 |> Enum.to_list() |> Enum.reverse() do
           li
-            button name="level" type="submit" value="" id="level_all" class="button is-rounded is-info is-togglable #{if is_nil(@level), do: "is-active"}"
-              | Toutes les équivalences
-          = for level <- 1..5 |> Enum.to_list() |> Enum.reverse() do
-            li
-              button name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
-                = level_info_by_level(level)
-    section.section#results
+            button name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
+              = level_info_by_level(level)
+  section.section#results
+    = if length(@certifications) == 0 do
+      = render("no-results.html", level: @level)
+    - else
       = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
         .columns
           = for certification <- chunk do
@@ -45,5 +46,5 @@
               .column.is-7
                 p Choisir le diplôme qui correspond le mieux à votre expérience peut-être compliqué. N'hésitez pas à consulter notre rubrique de conseils sur le sujet ! Vous y apprendrez par exemple que même si vous n'avez aucun diplôme vous pouvez obtenir directement une licence par la VAE, si votre expérience le justifie !
 
-= render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
+    = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
 
