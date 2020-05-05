@@ -98,7 +98,7 @@ defmodule Vae.Account do
         user
 
       data, {:ok, user} ->
-        User.update_changeset(user, data)
+        User.update_user_from_pe_changeset(user, data)
         |> Repo.update()
 
       _data, {:error, _changeset} ->

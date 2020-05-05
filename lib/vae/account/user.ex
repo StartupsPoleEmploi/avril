@@ -181,12 +181,12 @@ defmodule Vae.User do
     |> create_changeset(params)
   end
 
-  def update_user_from_pe_changeset(user, user_info) do
-    params = map_params_from_pe(user_info)
-
+  def update_user_from_pe_changeset(user, params) do
     user
-    |> Repo.preload(:job_seeker)
-    |> create_changeset(params)
+    |> cast(params, @fields)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
   end
 
   def update_user_email_changeset(changeset, email) do
