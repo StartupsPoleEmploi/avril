@@ -109,4 +109,6 @@ defmodule Vae.Account do
         {:ok, get_user(user.id)}
     end)
   end
+
+  def fullname(user), do: Identity.fullname(user)
 end

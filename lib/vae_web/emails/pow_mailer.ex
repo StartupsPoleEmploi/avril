@@ -1,7 +1,7 @@
 defmodule VaeWeb.PowMailer do
   require Logger
 
-  alias Vae.User
+  alias Vae.Account
   alias VaeWeb.Mailer
 
   def cast(email) do
@@ -14,7 +14,7 @@ defmodule VaeWeb.PowMailer do
       Map.merge(
         %{
           subject: subject,
-          name: User.fullname(email.user)
+          name: Account.fullname(email.user)
         },
         Enum.into(email.assigns, %{})
       )
