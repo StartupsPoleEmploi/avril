@@ -11,6 +11,10 @@ section.section.is-vertical.register-page.pow-page
                 = for {key, error} <- f.errors do
                   span= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
             .field
+              = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
+            .field
+              p Ou bien
+            .field
               .control
                 = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
                 / = error_tag f, :email
@@ -28,10 +32,6 @@ section.section.is-vertical.register-page.pow-page
               = submit class: "button is-primary is-rounded is-medium", data: [analytics: "Profil#sans pe connect", "disable-with": "Connexion ..."] do
                 span Créer mon compte
                 span.is-hidden-mobile &nbsp;gratuit maintenant
-            .field
-              p Ou bien
-            .field
-              = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
             .field.has-text-right
               = link("J'ai déjà un compte", to: Routes.pow_session_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
       .column.is-6.is-5-widescreen.is-offset-1-widescreen

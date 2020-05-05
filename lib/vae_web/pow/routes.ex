@@ -37,24 +37,24 @@ defmodule VaeWeb.Pow.Routes do
       current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
       certification_id when not is_nil(certification_id) <-
         certification_id || Plug.Conn.get_session(conn, :certification_id),
-      {:ok, _application} <-
+      {:ok, application} <-
         UserApplication.find_or_create_with_params(%{
           user_id: current_user.id,
           certification_id: certification_id
         })
     ) do
       Plug.Conn.delete_session(conn, :certification_id)
+      |> redirect_to_user_space(application)
     else
       error ->
         Logger.warn("Application not created: #{inspect(error)}")
-        conn
+        redirect_to_user_space(conn)
     end
-    |> redirect_to_user_space()
   end
 
-  defp redirect_to_user_space(conn) do
+  defp redirect_to_user_space(conn, application \\ nil) do
     if Pow.Plug.current_user(conn) do
-      redirect(conn, external: User.profile_url(conn))
+      redirect(conn, external: User.profile_url(conn, application))
     else
       redirect(conn, to: Routes.pow_registration_path(conn, :new))
     end

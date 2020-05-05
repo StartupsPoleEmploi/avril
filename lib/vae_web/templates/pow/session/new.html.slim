@@ -15,6 +15,10 @@ section.section.pow-page
                   strong L'authentification a échoué.
                 p Merci de réessayer ou de cliquer sur réinitialiser votre mot de passe si vous ne parvenez pas à le retrouver.
           .field
+            = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
+          .field
+            p Ou bien
+          .field
             .control
               = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
               = error_tag f, :email
@@ -28,10 +32,6 @@ section.section.pow-page
               |  Me connecter à la prochaine visite
           .field
             = submit "Me connecter", class: "button is-primary is-rounded is-medium", data: ["disable-with": "Connexion ..."]
-          .field
-            p Ou bien
-          .field
-            = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
           .field
             .level
               .level-left
