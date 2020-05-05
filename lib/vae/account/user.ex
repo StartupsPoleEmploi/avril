@@ -293,14 +293,6 @@ defmodule Vae.User do
     |> Vae.Enum.join_keep_nil("\n")
   end
 
-  def address_inline(user) do
-    [
-      Vae.Account.address_street(user),
-      Vae.Account.address_city(user)
-    ]
-    |> Enum.join(", ")
-  end
-
   def submit_application_required_missing_fields(user) do
     Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
   end
