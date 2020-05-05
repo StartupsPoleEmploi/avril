@@ -24,3 +24,5 @@ docker-compose.override.yml
 /priv/rncp*.xml
 
 !/**/.gitkeep
+/.elixir_ls/
+/.tool-versions
