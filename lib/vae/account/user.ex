@@ -285,24 +285,10 @@ defmodule Vae.User do
     )
   end
 
-  def fullname(user) do
-    Vae.String.blank_is_nil(user.name) ||
-      Vae.String.blank_is_nil("#{user.first_name} #{user.last_name}") ||
-      user.email
-  end
-
-  def address_city(user) do
-    [
-      Vae.Enum.join_keep_nil([user.postal_code, user.city_label], " "),
-      user.country_label
-    ]
-    |> Vae.Enum.join_keep_nil(", ")
-  end
-
   def address(user) do
     [
       Vae.Account.address_street(user),
-      address_city(user)
+      Vae.Account.address_city(user)
     ]
     |> Vae.Enum.join_keep_nil("\n")
   end
@@ -310,7 +296,7 @@ defmodule Vae.User do
   def address_inline(user) do
     [
       Vae.Account.address_street(user),
-      address_city(user)
+      Vae.Account.address_city(user)
     ]
     |> Enum.join(", ")
   end

@@ -29,4 +29,25 @@ defmodule Vae.Booklet.Address do
     |> cast(params, [])
     |> validate_required(@required_fields_for_submission)
   end
+
+  def address_city(%{}), do: ""
+
+  def address_city(%__MODULE__{} = address) do
+    [
+      Vae.Enum.join_keep_nil([address.postal_code, address.city], " "),
+      address.country
+    ]
+    |> Vae.Enum.join_keep_nil(", ")
+  end
+
+  def address(%__MODULE__{} = address) do
+    [
+      address_street(address),
+      address_city(address)
+    ]
+    |> Vae.Enum.join_keep_nil("\n")
+  end
+
+  def address_street(%{}), do: ""
+  def address_street(address), do: address.street
 end
