@@ -229,10 +229,11 @@ defmodule Vae.User do
     |> cast_embed(:identity)
   end
 
-  def register_fields_required_changeset(model, params \\ %{}) do
+  def register_identity_fields_required_changeset(model, _params \\ %{}) do
     model
-    |> cast(params, [])
-    # |> validate_required(@application_submit_fields)
+    |> cast(%{identity: %{}}, [])
+    |> validate_required(:email_confirmed_at)
+    |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
   end
 
   defp maybe_confirm_password(

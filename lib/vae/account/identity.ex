@@ -54,6 +54,20 @@ defmodule Vae.Account.Identity do
     |> cast_embed(:nationality)
   end
 
+  @required_fields_for_submission ~w(
+    gender
+    first_name
+    last_name
+    email
+    birthday
+  )a
+  def validate_required_fields(struct, _params \\ %{}) do
+    struct
+    |> cast(%{full_address: %{}}, [])
+    |> validate_required(@required_fields_for_submission)
+    |> cast_embed(:full_address, with: &Address.validate_required_fields/2)
+  end
+
   def from_user(user) do
     %{
       gender: user.gender,
