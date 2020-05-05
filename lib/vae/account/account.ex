@@ -111,4 +111,5 @@ defmodule Vae.Account do
   end
 
   def fullname(user), do: Identity.fullname(user)
+  def formatted_email(user), do: Identity.formatted_email(user)
 end

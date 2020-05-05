@@ -106,4 +106,14 @@ defmodule Vae.Account.Identity do
     Vae.String.blank_is_nil("#{identity.first_name} #{identity.last_name}") ||
       identity.email
   end
+
+  def formatted_email(%{identity: %{}} = user), do: user.email
+
+  def formatted_email(%{identity: identity} = user) do
+    if fullname(user) == identity.email do
+      identity.email
+    else
+      {fullname(user), identity.email}
+    end
+  end
 end

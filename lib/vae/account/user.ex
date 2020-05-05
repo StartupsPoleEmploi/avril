@@ -291,17 +291,6 @@ defmodule Vae.User do
       user.email
   end
 
-  def name(user) do
-    fullname(user)
-  end
-
-  def formatted_email(user) do
-    cond do
-      fullname(user) == user.email -> user.email
-      true -> {fullname(user), user.email}
-    end
-  end
-
   def address_city(user) do
     [
       Vae.Enum.join_keep_nil([user.postal_code, user.city_label], " "),
