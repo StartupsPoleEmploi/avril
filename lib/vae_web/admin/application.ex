@@ -3,21 +3,22 @@ defmodule Vae.ExAdmin.UserApplication do
   alias Vae.ExAdmin.Helpers
 
   # Note: Vae.UserApplication cannot be aliased here: ex_admin fails
-  alias Vae.{Certification, Delegate, Repo, User}
+  alias Vae.{Account, Certification, Delegate, Repo}
 
   require Ecto.Query
 
   register_resource Vae.UserApplication do
-
     index do
       selectable_column()
       column(:id)
-      column(:user, fn a -> User.fullname(a.user) end)
+      column(:user, fn a -> Account.fullname(a.user) end)
       column(:certification)
       column(:delegate)
+
       column(:certifier, fn a ->
         Enum.map(a.certifiers, &Helpers.link_to_resource/1)
       end)
+
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:status, &application_status/1)
       column(:meeting)
@@ -26,49 +27,61 @@ defmodule Vae.ExAdmin.UserApplication do
       actions()
     end
 
-    action_item :show, fn id ->
+    action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
-      href = VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :show, application,
-        hash: application.delegate_access_hash
-      )
-      action_item_link "View Delegate Application", href: href, target: "_blank"
-    end
 
-    action_item :show, fn id ->
+      href =
+        VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :show, application,
+          hash: application.delegate_access_hash
+        )
+
+      action_item_link("View Delegate Application", href: href, target: "_blank")
+    end)
+
+    action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
+
       if !application.submitted_at do
         href = VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :update, application)
-        action_item_link "Submit Application", href: href, "data-method": :put
+        action_item_link("Submit Application", href: href, "data-method": :put)
       end
-    end
+    end)
 
-    action_item :show, fn id ->
+    action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
-      if application.booklet_1 do
-        action_item_link "Fill Booklet", href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application), target: "_blank"
-      end
-    end
 
-    action_item :show, fn id ->
-      application = Vae.Repo.get(Vae.UserApplication, id)
       if application.booklet_1 do
-        action_item_link "Check CERFA", href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, "/cerfa"), target: "_blank"
+        action_item_link("Fill Booklet",
+          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application),
+          target: "_blank"
+        )
       end
-    end
+    end)
+
+    action_item(:show, fn id ->
+      application = Vae.Repo.get(Vae.UserApplication, id)
+
+      if application.booklet_1 do
+        action_item_link("Check CERFA",
+          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, "/cerfa"),
+          target: "_blank"
+        )
+      end
+    end)
 
     show application do
       attributes_table do
-        row(:user, fn a -> User.fullname(a.user) end)
-        row :certification
-        row :delegate
-        row :inserted_at
-        row :submitted_at
-        row :admissible_at
-        row :inadmissible_at
-        row :updated_at
+        row(:user, fn a -> Account.fullname(a.user) end)
+        row(:certification)
+        row(:delegate)
+        row(:inserted_at)
+        row(:submitted_at)
+        row(:admissible_at)
+        row(:inadmissible_at)
+        row(:updated_at)
         row(:meeting, fn a -> Helpers.print_in_json(a.meeting) end)
         row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
-        row :booklet_hash
+        row(:booklet_hash)
       end
 
       panel "Resumes" do
@@ -82,11 +95,11 @@ defmodule Vae.ExAdmin.UserApplication do
 
     form application do
       inputs do
-        input application, :user, collection: [application.user]
-        input application, :certification, collection: Repo.all(Certification)
-        input application, :delegate, collection: Repo.all(Delegate)
-        input application, :submitted_at
-        input application, :meeting
+        input(application, :user, collection: [application.user])
+        input(application, :certification, collection: Repo.all(Certification))
+        input(application, :delegate, collection: Repo.all(Delegate))
+        input(application, :submitted_at)
+        input(application, :meeting)
       end
     end
 
@@ -95,9 +108,11 @@ defmodule Vae.ExAdmin.UserApplication do
       column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
       column(:email, fn a -> a.user.email end)
       column(:certification, fn a -> Helpers.csv_link_to_resource(a.certification) end)
+
       column(:certifier, fn a ->
         Enum.join(Enum.map(a.certification.certifiers, fn c -> c.name end), ",")
       end)
+
       column(:delegate, fn a -> Helpers.csv_link_to_resource(a.delegate) end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:inserted_at)
@@ -111,12 +126,12 @@ defmodule Vae.ExAdmin.UserApplication do
       column(:booklet_1@completed_at, fn a -> a.booklet_1 && a.booklet_1.completed_at end)
     end
 
-    filter [:meeting, :booklet_1, :booklet_hash]
+    filter([:meeting, :booklet_1, :booklet_hash])
     filter(:certification, order_by: [:acronym, :label])
     filter(:delegate, order_by: :name)
-    filter [:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at]
+    filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
 
-    @all_preloads [ :delegate, :user, :certification, :certifiers]
+    @all_preloads [:delegate, :user, :certification, :certifiers]
 
     query do
       %{
@@ -135,10 +150,19 @@ defmodule Vae.ExAdmin.UserApplication do
 
   defp application_status(application) do
     cond do
-      application.admissible_at -> "Admissible le #{application.admissible_at |> Timex.format!("%d/%m/%Y", :strftime)}"
-      application.inadmissible_at -> "Pas encore admissible au #{application.inadmissible_at |> Timex.format!("%d/%m/%Y", :strftime)}"
-      application.submitted_at -> "Transmise le #{application.submitted_at |> Timex.format!("%d/%m/%Y", :strftime)}"
-      true -> nil
+      application.admissible_at ->
+        "Admissible le #{application.admissible_at |> Timex.format!("%d/%m/%Y", :strftime)}"
+
+      application.inadmissible_at ->
+        "Pas encore admissible au #{
+          application.inadmissible_at |> Timex.format!("%d/%m/%Y", :strftime)
+        }"
+
+      application.submitted_at ->
+        "Transmise le #{application.submitted_at |> Timex.format!("%d/%m/%Y", :strftime)}"
+
+      true ->
+        nil
     end
   end
 end

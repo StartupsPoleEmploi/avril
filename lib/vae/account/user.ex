@@ -181,12 +181,12 @@ defmodule Vae.User do
     |> create_changeset(params)
   end
 
-  def update_user_from_pe_changeset(user, user_info) do
-    params = map_params_from_pe(user_info)
-
+  def update_user_from_pe_changeset(user, params) do
     user
-    |> Repo.preload(:job_seeker)
-    |> create_changeset(params)
+    |> cast(params, @fields)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
   end
 
   def update_user_email_changeset(changeset, email) do
@@ -229,10 +229,11 @@ defmodule Vae.User do
     |> cast_embed(:identity)
   end
 
-  def register_fields_required_changeset(model, params \\ %{}) do
+  def register_identity_fields_required_changeset(model, _params \\ %{}) do
     model
-    |> cast(params, [])
-    # |> validate_required(@application_submit_fields)
+    |> cast(%{identity: %{}}, [])
+    |> validate_required(:email_confirmed_at)
+    |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
   end
 
   defp maybe_confirm_password(
@@ -284,45 +285,12 @@ defmodule Vae.User do
     )
   end
 
-  def fullname(user) do
-    Vae.String.blank_is_nil(user.name) ||
-      Vae.String.blank_is_nil("#{user.first_name} #{user.last_name}") ||
-      user.email
-  end
-
-  def name(user) do
-    fullname(user)
-  end
-
-  def formatted_email(user) do
-    cond do
-      fullname(user) == user.email -> user.email
-      true -> {fullname(user), user.email}
-    end
-  end
-
-  def address_city(user) do
-    [
-      Vae.Enum.join_keep_nil([user.postal_code, user.city_label], " "),
-      user.country_label
-    ]
-    |> Vae.Enum.join_keep_nil(", ")
-  end
-
   def address(user) do
     [
       Vae.Account.address_street(user),
-      address_city(user)
+      Vae.Account.address_city(user)
     ]
     |> Vae.Enum.join_keep_nil("\n")
-  end
-
-  def address_inline(user) do
-    [
-      Vae.Account.address_street(user),
-      address_city(user)
-    ]
-    |> Enum.join(", ")
   end
 
   def submit_application_required_missing_fields(user) do

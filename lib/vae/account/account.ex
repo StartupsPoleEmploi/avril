@@ -1,6 +1,7 @@
 defmodule Vae.Account do
   alias Vae.Repo
   alias Vae.Account.Identity
+  alias Vae.Booklet.Address
   alias Vae.User
 
   def get_user(user_id) do
@@ -9,11 +10,6 @@ defmodule Vae.Account do
 
   def get_user_by_pe(pe_id) do
     Repo.get_by(User, pe_id: pe_id)
-  end
-
-  def address_street(user) do
-    [user.address1, user.address2, user.address3, user.address4]
-    |> Vae.Enum.join_keep_nil(", ")
   end
 
   def update_identity(attrs \\ %{}, %User{} = user) do
@@ -64,7 +60,7 @@ defmodule Vae.Account do
   end
 
   def validate_required_fields_to_register_meeting(user) do
-    changeset = User.register_fields_required_changeset(user)
+    changeset = User.register_identity_fields_required_changeset(user)
 
     if changeset.valid? do
       {:ok, changeset}
@@ -102,11 +98,22 @@ defmodule Vae.Account do
         user
 
       data, {:ok, user} ->
-        User.update_changeset(user, data)
+        User.update_user_from_pe_changeset(user, data)
         |> Repo.update()
 
       _data, {:error, _changeset} ->
         {:ok, get_user(user.id)}
     end)
   end
+
+  def fullname(user), do: Identity.fullname(user)
+  def formatted_email(user), do: Identity.formatted_email(user)
+  def address_city(%{identity: %{address: address}}), do: Address.address_city(address)
+
+  def address_street(%User{} = user) do
+    [user.address1, user.address2, user.address3, user.address4]
+    |> Vae.Enum.join_keep_nil(", ")
+  end
+
+  def address_street(address), do: Address.address_street(address)
 end

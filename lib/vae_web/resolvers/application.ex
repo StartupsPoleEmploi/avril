@@ -9,6 +9,7 @@ defmodule VaeWeb.Resolvers.Application do
   @delegate_not_found "Le certificateur est introuvable"
   @attach_delegate_error "L'ajout du certificateur à votre candidature a échoué"
   @register_meeting_error "La prise de rendez-vous a échoué"
+  @submit_error "Une erreur est survenue lors de l'envoi de la candidature"
 
   def application_items(_, _args, %{context: %{current_user: user}}) do
     {:ok, Applications.get_applications(user.id)}
@@ -118,8 +119,11 @@ defmodule VaeWeb.Resolvers.Application do
       {:application, _error} ->
         error_response(@application_not_found, format_application_error_message(application_id))
 
-      error ->
-        error_response("Une erreur est survenue", "#{inspect(error)}")
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@submit_error, changeset)
+
+      _ ->
+        error_response("Une erreur est survenue", "")
     end
   end
 

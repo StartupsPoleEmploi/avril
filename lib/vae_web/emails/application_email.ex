@@ -1,7 +1,7 @@
 defmodule VaeWeb.ApplicationEmail do
   alias VaeWeb.Mailer
 
-  alias Vae.{Certification, Repo, User}
+  alias Vae.{Account, Certification, Repo, User}
   alias VaeWeb.Endpoint
   alias VaeWeb.Router.Helpers, as: Routes
 
@@ -17,12 +17,12 @@ defmodule VaeWeb.ApplicationEmail do
           Routes.user_application_url(Endpoint, :show, application,
             hash: application.delegate_access_hash
           ),
-        user_name: User.fullname(application.user),
+        user_name: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
         date_format: "%d/%m/%Y à %H:%M",
         meeting: application.meeting,
         subject:
-          "#{User.fullname(application.user)} souhaite faire une VAE et attend un contact de votre part !"
+          "#{Account.fullname(application.user)} souhaite faire une VAE et attend un contact de votre part !"
       }
     )
   end
@@ -36,7 +36,7 @@ defmodule VaeWeb.ApplicationEmail do
       application.user,
       %{
         url: User.profile_url(Endpoint, application),
-        user_name: User.fullname(application.user),
+        user_name: Account.fullname(application.user),
         meeting: application.meeting,
         date_format: "%d/%m/%Y à %H:%M",
         is_france_vae: not is_nil(application.delegate.academy_id),
@@ -46,7 +46,7 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
         subject:
-          "#{User.fullname(application.user)}, voici comment obtenir votre #{
+          "#{Account.fullname(application.user)}, voici comment obtenir votre #{
             Certification.name(application.certification)
           }",
         image_url: Routes.static_url(Endpoint, "/images/group.png"),
@@ -64,14 +64,14 @@ defmodule VaeWeb.ApplicationEmail do
       application.user,
       %{
         url: User.profile_url(Endpoint, application),
-        user_name: User.fullname(application.user),
+        user_name: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
         delegate_website: application.delegate.website,
         subject:
-          "#{User.fullname(application.user)}, voici comment obtenir votre #{
+          "#{Account.fullname(application.user)}, voici comment obtenir votre #{
             Certification.name(application.certification)
           }",
         image_url: Routes.static_url(Endpoint, "/images/group.png"),
@@ -94,10 +94,10 @@ defmodule VaeWeb.ApplicationEmail do
         booklet_url: Vae.UserApplication.booklet_url(path, application),
         registration_url: Routes.pow_registration_url(path, :new),
         funding_url: Routes.page_url(path, :financement),
-        user_name: User.fullname(application.user),
+        user_name: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
         subject:
-          "#{User.fullname(application.user)}, pour votre #{
+          "#{Account.fullname(application.user)}, pour votre #{
             Certification.name(application.certification)
           } en VAE : on vous aide",
         footer_note: :inscrit_avril
