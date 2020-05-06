@@ -19,7 +19,7 @@ defmodule VaeWeb.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug(Pow.Plug.Session, otp_app: :vae)
+    # plug(Pow.Plug.Session, otp_app: :vae)
   end
 
   pipeline :protected do

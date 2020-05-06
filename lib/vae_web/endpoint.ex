@@ -59,8 +59,11 @@ defmodule VaeWeb.Endpoint do
   plug(
     Pow.Plug.Session,
     otp_app: :vae,
-    session_ttl_renewal: :timer.minutes(1),
-    credentials_cache_store: {Pow.Store.CredentialsCache, ttl: :timer.minutes(15)}
+    session_ttl_renewal: :timer.hours(24),
+    credentials_cache_store: {
+      Pow.Store.CredentialsCache,
+      ttl: :timer.minutes(15)
+    }
   )
 
   plug(PowPersistentSession.Plug.Cookie)
