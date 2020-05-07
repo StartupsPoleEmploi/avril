@@ -2,7 +2,7 @@ defmodule VaeWeb.Plugs.ApiProtected do
   # import Plug.Conn
 
   @authenticate_current_user Pow.Plug.RequireAuthenticated
-  @api_error_handler VaeWeb.Plugs.APIErrorHandler
+  @api_error_handler VaeWeb.Plugs.ErrorHandlers.API
 
   def init(opts), do: opts
 

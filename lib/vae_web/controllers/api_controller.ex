@@ -4,12 +4,6 @@ defmodule VaeWeb.ApiController do
 
   alias Vae.{UserApplication, Certification}
 
-  # plug(
-  #   VaeWeb.Plugs.ApplicationAccess,
-  #   find_with_hash: :booklet_hash,
-  #   error_handler: VaeWeb.Plugs.APIErrorHandler
-  # )
-
   def get_booklet(conn, %{"hash" => _hash}) do
     application =
       conn.assigns[:current_application]

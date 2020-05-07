@@ -7,7 +7,6 @@ defmodule VaeWeb.AuthController do
   alias Vae.PoleEmploi
   alias Vae.PoleEmploi.OAuth
   alias Vae.PoleEmploi.OAuth.Clients
-  alias VaeWeb.Pow.Routes, as: PowRoutes
 
   def save_session_and_redirect(conn, _params) do
     referer = List.first(get_req_header(conn, "referer"))
@@ -36,7 +35,7 @@ defmodule VaeWeb.AuthController do
       |> case do
         {:ok, upserted_user} ->
           Pow.Plug.create(conn, upserted_user)
-          |> PowRoutes.maybe_create_application_and_redirect()
+          |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
 
         {:error, changeset} ->
           handle_error(conn, changeset)

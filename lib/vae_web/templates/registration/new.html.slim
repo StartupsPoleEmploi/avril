@@ -4,7 +4,7 @@ section.section.is-vertical.register-page.pow-page
       .column.is-6.is-5-widescreen
         .section.is-horizontal.is-large
           h2.title.is-2 Ouvrir mon compte VAE
-          = form_for @changeset, @action, [as: :user, autocomplete: "off"], fn f ->
+          = form_for @changeset, Routes.signup_path(@conn, :create), [as: :user, autocomplete: "off"], fn f ->
             = if @changeset.action do
               .notification.is-danger
                 ' Une erreur est survenue:
@@ -33,7 +33,7 @@ section.section.is-vertical.register-page.pow-page
                 span Créer mon compte
                 span.is-hidden-mobile &nbsp;gratuit maintenant
             .field.has-text-right
-              = link("J'ai déjà un compte", to: Routes.pow_session_path(@conn, :new), class: "button is-text", data: [analytics: "Profil#deja"])
+              = link("J'ai déjà un compte", to: Routes.login_path(@conn, :new), class: "button is-text is-rounded", data: [analytics: "Profil#deja"])
       .column.is-6.is-5-widescreen.is-offset-1-widescreen
         .section.is-green.has-text-centered.features
           ul.feature-checklist

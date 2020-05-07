@@ -8,8 +8,6 @@ defmodule VaeWeb.CertificationController do
     Rome
   }
 
-  alias VaeWeb.Pow.Routes, as: PowRoutes
-
   def cast_array(str), do: String.split(str, ",") |> Enum.map(&String.to_integer/1)
 
   filterable do
@@ -104,7 +102,7 @@ defmodule VaeWeb.CertificationController do
     certification_id = Vae.String.to_id(certification_id)
     conn
     |> Plug.Conn.put_session(:certification_id, certification_id)
-    |> PowRoutes.maybe_create_application_and_redirect(certification_id)
+    |> VaeWeb.RegistrationController.maybe_create_application_and_redirect(certification_id)
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do

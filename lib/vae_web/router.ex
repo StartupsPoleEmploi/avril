@@ -19,12 +19,16 @@ defmodule VaeWeb.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    # plug(Pow.Plug.Session, otp_app: :vae)
+  end
+
+  pipeline :not_authenticated do
+    plug Pow.Plug.RequireNotAuthenticated,
+      error_handler: VaeWeb.Plugs.ErrorHandlers.Browser
   end
 
   pipeline :protected do
     plug(Pow.Plug.RequireAuthenticated,
-      error_handler: Pow.Phoenix.PlugErrorHandler
+      error_handler: VaeWeb.Plugs.ErrorHandlers.Browser
     )
   end
 
@@ -49,7 +53,7 @@ defmodule VaeWeb.Router do
       VaeWeb.Plugs.ApplicationAccess,
       find_with_hash: :booklet_hash,
       optional: true,
-      error_handler: VaeWeb.Plugs.APIErrorHandler
+      error_handler: VaeWeb.Plugs.ErrorHandlers.API
     )
   end
 
@@ -57,7 +61,7 @@ defmodule VaeWeb.Router do
     plug(
       VaeWeb.Plugs.ApplicationAccess,
       find_with_hash: :booklet_hash,
-      error_handler: VaeWeb.Plugs.APIErrorHandler
+      error_handler: VaeWeb.Plugs.ErrorHandlers.API
     )
   end
 
@@ -87,9 +91,6 @@ defmodule VaeWeb.Router do
     get("/financement-vae", VaeWeb.PageController, :financement)
     post("/close-app-status", VaeWeb.PageController, :close_status)
     get("/stats", VaeWeb.PageController, :stats)
-
-    pow_routes()
-    pow_extension_routes()
 
     # Basic navigation
     resources("/rome", VaeWeb.RomeController, only: [:index, :show])
@@ -145,9 +146,23 @@ defmodule VaeWeb.Router do
     get("/processes/:id", VaeWeb.Redirector, to: "/", msg: "La page demandée n'existe plus.")
   end
 
-  scope "/" do
-    pipe_through([:browser, :protected])
-    get("/disconnect", Pow.Phoenix.SessionController, :delete)
+  scope "/", VaeWeb do
+    pipe_through [:browser, :not_authenticated]
+
+    get("/signup", RegistrationController, :new, as: :signup)
+    post("/signup", RegistrationController, :create, as: :signup)
+    get("/login", SessionController, :new, as: :login)
+    post("/login", SessionController, :create, as: :login)
+    resources("/reset-password", ResetPasswordController, as: :reset_password, only: [:new, :create, :update])
+    # post("/reset-password", ResetPasswordController, :create, as: :reset_password)
+    # put("/reset-password", ResetPasswordController, :update, as: :reset_password)
+  end
+
+  scope "/", VaeWeb do
+    pipe_through [:browser, :protected]
+
+    delete("/logout", SessionController, :delete, as: :logout)
+    get("/disconnect", SessionController, :delete) # For nuxt_profile
   end
 
   # Admin
@@ -185,8 +200,13 @@ defmodule VaeWeb.Router do
       json_codec: Jason
   end
 
+  # deprecated: should be moved to Absinthe
   scope "/api" do
-    pipe_through([:accepts_json, :api_protected_login_or_server, :set_current_application])
+    pipe_through([
+      :accepts_json,
+      :api_protected_login_or_server,
+      :set_current_application
+    ])
     get("/booklet", VaeWeb.ApiController, :get_booklet)
     put("/booklet", VaeWeb.ApiController, :set_booklet)
   end

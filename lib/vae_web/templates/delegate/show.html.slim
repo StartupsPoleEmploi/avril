@@ -23,7 +23,7 @@ section.section
                 =< link(@delegate.website, to: @delegate.website, target: "_blank")
         .section.is-small.has-text-centered
           .field
-            = link("Démarrez votre VAE avec ce certificateur", to: Routes.pow_session_path(@conn, :new), class: "button is-primary is-rounded")
+            = link("Démarrez votre VAE avec ce certificateur", to: Routes.signup_path(@conn, :new), class: "button is-primary is-rounded")
           .field
             button.button.is-info.is-rounded.is-small.is-print onclick="javascript:window.print()"
               | Imprimer

@@ -15,9 +15,9 @@
         = if Pow.Plug.current_user(@conn) do
           li.navbar-item
             = link "Mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-primary is-rounded"
-          = link("Me déconnecter", to: Routes.pow_session_path(@conn, :delete), method: :delete, data: [analytics: "?bouton=logout"], class: "navbar-item")
+          = link("Me déconnecter", to: Routes.logout_path(@conn, :delete), method: :delete, data: [analytics: "?bouton=logout"], class: "navbar-item")
         - else
-          = link "Me connecter", to: Routes.pow_session_path(@conn, :new), class: "navbar-item"
+          = link "Me connecter", to: Routes.login_path(@conn, :new), class: "navbar-item"
         / li.navbar-item.is-hoverable
         /   .permanent-burger aria-expanded="false" aria-label="menu" data-target="navbar" role="button"
         /     span aria-hidden="true"

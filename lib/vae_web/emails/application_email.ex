@@ -92,7 +92,7 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_email: application.delegate.email,
         application_url: Routes.user_application_url(path, :show, application),
         booklet_url: Vae.UserApplication.booklet_url(path, application),
-        registration_url: Routes.pow_registration_url(path, :new),
+        registration_url: Routes.signup_url(path, :new),
         funding_url: Routes.page_url(path, :financement),
         user_name: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),

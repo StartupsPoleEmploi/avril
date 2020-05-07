@@ -15,7 +15,7 @@
         .column.is-8.has-text-centered
           = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-green-hover")
           = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-green-hover")
-          = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-green-hover")
+          = link("Créer mon compte VAE", to: Routes.signup_path(@conn, :new), class: "button is-text is-medium is-green-hover")
   section.section#examples
     .container
       .columns.is-reverse-tablet
@@ -54,7 +54,7 @@
               h2.title.is-2 Parce que vos compétences méritent un diplôme !
               = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-yellow-hover")
               = link("Bien choisir mon diplôme", to: Routes.page_path(@conn, :choose_certification), class: "button is-text is-medium is-yellow-hover")
-              = link("Créer mon compte VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text is-medium is-yellow-hover")
+              = link("Créer mon compte VAE", to: Routes.signup_path(@conn, :new), class: "button is-text is-medium is-yellow-hover")
         .column.is-4.is-offset-1 style="flex-direction: column-reverse; display: flex;"
           = img_tag "/images/yellowman.png", alt: "Photo de Yellowman", style: "max-width: 500px; margin: auto; width: 100%;"
 
@@ -92,4 +92,4 @@
         = if Pow.Plug.current_user(@conn) do
           = link("Accéder à mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-rounded is-primary is-medium")
         - else
-          = link("Créer mon compte gratuit maintenant", to: Routes.pow_registration_path(@conn, :new), class: "button is-rounded is-primary is-medium")
+          = link("Créer mon compte gratuit maintenant", to: Routes.signup_path(@conn, :new), class: "button is-rounded is-primary is-medium")

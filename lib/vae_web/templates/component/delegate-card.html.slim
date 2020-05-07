@@ -8,4 +8,4 @@
   .card-content
     p= @delegate.address
   .card-footer
-    = link("Démarrez votre VAE", to: Routes.pow_session_path(@conn, :new), class: "button is-text")
+    = link("Démarrez votre VAE", to: Routes.signup_path(@conn, :new), class: "button is-text")

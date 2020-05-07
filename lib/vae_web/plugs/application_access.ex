@@ -3,7 +3,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
   def init(options \\ []) do
     Keyword.merge(options,
-      error_handler: options[:error_handler] || VaeWeb.Plugs.BrowserErrorHandler
+      error_handler: options[:error_handler] || VaeWeb.Plugs.ErrorHandlers.Browser
     )
   end
 

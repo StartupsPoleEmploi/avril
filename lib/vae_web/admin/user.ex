@@ -11,9 +11,7 @@ defmodule Vae.ExAdmin.User do
       column(:last_name)
       column(:email)
       column(:city_label)
-      column(:sign_in_count)
       column(:is_admin)
-      column(:email_confirmed_at)
 
       actions()
     end

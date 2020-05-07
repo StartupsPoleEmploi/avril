@@ -1,4 +1,4 @@
-defmodule VaeWeb.Plugs.APIErrorHandler do
+defmodule VaeWeb.Plugs.ErrorHandlers.API do
   use VaeWeb, :controller
   alias Plug.Conn
   alias VaeWeb.Router.Helpers, as: Routes
@@ -11,10 +11,12 @@ defmodule VaeWeb.Plugs.APIErrorHandler do
       error: %{
         code: 401,
         message: "Not authenticated",
-        redirect_to: Routes.pow_session_url(conn, :new)
+        redirect_to: Routes.login_url(conn, :new)
       }
     })
   end
+
+  @spec call(Conn.t(), :unauthorized) :: Conn.t()
   def call(conn, :unauthorized) do
     conn
     |> put_status(:unauthorized)

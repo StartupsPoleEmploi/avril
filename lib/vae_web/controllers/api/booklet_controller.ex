@@ -7,7 +7,7 @@ defmodule VaeWeb.Api.BookletController do
   plug(
     VaeWeb.Plugs.ApplicationAccess,
     find_with_hash: :booklet_hash,
-    error_handler: VaeWeb.Plugs.APIErrorHandler
+    error_handler: VaeWeb.Plugs.ErrorHandlers.API
   )
 
   def get_booklet(conn, %{"hash" => _hash}) do

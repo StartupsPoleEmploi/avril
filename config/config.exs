@@ -114,7 +114,7 @@ config :vae, :pow,
   # web_mailer_module: Vae.PowMailer,
   messages_backend: VaeWeb.Pow.Messages,
   password_min_length: 8,
-  routes_backend: VaeWeb.Pow.Routes,
+  # routes_backend: VaeWeb.Pow.Routes,
   web_module: VaeWeb
 
 config :absinthe,
