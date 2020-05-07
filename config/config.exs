@@ -105,7 +105,11 @@ config :vae, :pow,
   allow_unconfirmed_access: true,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
-  extensions: [PowEmailConfirmation, PowResetPassword, PowPersistentSession],
+  extensions: [
+    # PowEmailConfirmation,
+    PowResetPassword,
+    PowPersistentSession
+  ],
   mailer_backend: VaeWeb.PowMailer,
   # web_mailer_module: Vae.PowMailer,
   messages_backend: VaeWeb.Pow.Messages,

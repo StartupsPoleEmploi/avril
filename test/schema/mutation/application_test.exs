@@ -224,7 +224,7 @@ defmodule VaeWeb.Mutation.ApplicationTest do
                      %{"key" => "birthday", "message" => ["can't be blank"]},
                      %{"key" => "city_label", "message" => ["can't be blank"]},
                      %{"key" => "country_label", "message" => ["can't be blank"]},
-                     %{"key" => "email_confirmed_at", "message" => ["can't be blank"]}
+                     # %{"key" => "email_confirmed_at", "message" => ["can't be blank"]}
                    ]
                  }
                ]
@@ -255,7 +255,7 @@ defmodule VaeWeb.Mutation.ApplicationTest do
         birthday: ~D[2002-04-05],
         city_label: "Paris",
         country_label: "FR",
-        email_confirmed_at: Timex.now() |> DateTime.truncate(:second)
+        # email_confirmed_at: Timex.now() |> DateTime.truncate(:second)
       })
       |> Vae.Repo.update!()
 

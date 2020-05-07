@@ -8,7 +8,10 @@ defmodule Vae.User do
     password_hash_methods: {&Bcrypt.hash_pwd_salt/1, &Bcrypt.verify_pass/2}
 
   use Pow.Extension.Ecto.Schema,
-    extensions: [PowEmailConfirmation, PowResetPassword]
+    extensions: [
+      # PowEmailConfirmation,
+      PowResetPassword
+    ]
 
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
@@ -36,6 +39,7 @@ defmodule Vae.User do
     field(:first_name, :string)
     field(:last_name, :string)
     # field(:email, :string)
+    field(:email_confirmed_at, :utc_datetime)
     field(:phone_number, :string)
     field(:is_admin, :boolean)
     field(:postal_code, :string)
@@ -86,6 +90,7 @@ defmodule Vae.User do
     first_name
     last_name
     email
+    email_confirmed_at
     phone_number
     postal_code
     address1
@@ -100,7 +105,6 @@ defmodule Vae.User do
     birth_place
     pe_id
     pe_connect_token
-    email_confirmed_at
     is_admin
   )a
 
@@ -119,7 +123,6 @@ defmodule Vae.User do
     city_label
     country_label
     birthday
-    email_confirmed_at
   )a
 
   def changeset(model, params \\ %{})
@@ -232,7 +235,7 @@ defmodule Vae.User do
   def register_identity_fields_required_changeset(model, _params \\ %{}) do
     model
     |> cast(%{identity: %{}}, [])
-    |> validate_required(:email_confirmed_at)
+    # |> validate_required(:email_confirmed_at)
     |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
   end
 

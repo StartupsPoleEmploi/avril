@@ -18,7 +18,8 @@ defmodule VaeWeb.Plugs.AddGraphqlContext do
       Vae.Repo.preload(conn.assigns[:current_application], :user).user
     else
       if conn.assigns[:current_user] do
-        refresh_and_retrieve(conn, conn.assigns[:current_user])
+        Vae.Account.get_user(conn.assigns[:current_user].id)
+        # refresh_and_retrieve(conn, conn.assigns[:current_user])
       end
     end
   end

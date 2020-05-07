@@ -8,8 +8,8 @@ defmodule VaeWeb.Router do
   use Pow.Extension.Phoenix.Router,
     otp_app: :vae,
     extensions: [
-      PowResetPassword,
-      PowEmailConfirmation
+      # PowEmailConfirmation,
+      PowResetPassword
     ]
 
   pipeline :browser do

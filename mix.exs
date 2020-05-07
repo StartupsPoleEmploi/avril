@@ -68,8 +68,8 @@ defmodule Vae.Mixfile do
       {:postgrex, "~> 0.15.3"},
       {:plug_cowboy, "~> 2.0"},
       {:plug, "~> 1.7"},
-      # {:pow, "~> 1.0.18"},
-      {:pow, github: "augnustin/pow"},
+      {:pow, "~> 1.0.20"},
+      # {:pow, github: "augnustin/pow"},
       # {:pow, path: "../pow", in_umbrella: true}, # When debugging pow locally
       # Pow added features in own version:
       # - allow unconfirmed access: https://github.com/danschultzer/pow/issues/428
