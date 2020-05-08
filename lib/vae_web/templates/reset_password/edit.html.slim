@@ -3,7 +3,7 @@ section.section.pow-page
     .columns.is-centered
       .column.is-7.is-6-desktop.is-5-widescreen.is-4-fullhd
         h2.title.is-2 Définissez votre nouveau mot de passe
-        = form_for @changeset, Routes.reset_password_path(@conn, :update), [as: :user, autocomplete: "off"], fn f ->
+        = form_for @changeset, Routes.reset_password_path(@conn, :update, @token), [as: :user, method: :put], fn f ->
           = if @changeset.action do
             .notification.is-danger
               ' Une erreur est survenue:
@@ -14,11 +14,9 @@ section.section.pow-page
           .field
             .control
               = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
-              = error_tag f, :password
           .field
             .control
               = password_input f, :password_confirmation, class: "input is-large", required: "required", placeholder: "Confirmation du mot de passe"
-              = error_tag f, :password_confirmation
           .field
             .buttons
               = submit "Mettre à jour son mot de passe", class: "button is-primary is-rounded is-medium", data: ["disable-with": "Changement ..."]

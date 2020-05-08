@@ -3,7 +3,7 @@ section.section.pow-page
     .columns.is-centered
       .column.is-7.is-6-desktop.is-5-widescreen.is-4-fullhd
         h2.title.is-2.has-text-centered Réinitialiser mon mot de passe
-        = form_for @changeset, Routes.reset_password_path(@conn, :create), [as: :user, autocomplete: "off"], fn f ->
+        = form_for @changeset, Routes.reset_password_path(@conn, :create), [as: :user], fn f ->
           = if @changeset.action do
             .notification.is-danger
               ' Une erreur est survenue:
@@ -13,7 +13,7 @@ section.section.pow-page
                   li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
           .field
             .control
-              = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
+              = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email"
               = error_tag f, :email
           .field.has-text-centered
             = submit "Recevoir par email un lien de réinitialisation", class: "button is-primary is-rounded is-medium", data: ["disable-with": "Envoi ..."]

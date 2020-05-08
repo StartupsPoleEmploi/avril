@@ -3,7 +3,7 @@
   "license": "MIT",
   "scripts": {
     "watch": "webpack --mode development --watch-stdin",
-    "deploy": "webpack --mode production"
+    "deploy": "yarn upgrade avril && webpack --mode production"
   },
   "dependencies": {
     "@babel/core": "^7.6.4",

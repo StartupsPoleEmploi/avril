@@ -4,7 +4,7 @@ section.section.is-vertical.register-page.pow-page
       .column.is-6.is-5-widescreen
         .section.is-horizontal.is-large
           h2.title.is-2 Ouvrir mon compte VAE
-          = form_for @changeset, Routes.signup_path(@conn, :create), [as: :user, autocomplete: "off"], fn f ->
+          = form_for @changeset, Routes.signup_path(@conn, :create), [as: :user], fn f ->
             = if @changeset.action do
               .notification.is-danger
                 ' Une erreur est survenue:
@@ -16,7 +16,7 @@ section.section.is-vertical.register-page.pow-page
               p Ou bien
             .field
               .control
-                = text_input f, :email, class: "input is-large", required: "required", autocomplete: "off", placeholder: "Email"
+                = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email"
                 / = error_tag f, :email
             .field
               .control

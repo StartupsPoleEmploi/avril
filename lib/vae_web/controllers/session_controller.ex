@@ -18,7 +18,7 @@ defmodule VaeWeb.SessionController do
         changeset = Pow.Plug.change_user(conn, conn.params["user"])
 
         conn
-        |> put_flash(:error, "L'authentification a échoué. Merci de réessayer ou de cliquer sur \"Mot de passe oublié?\" si vous ne parvenez pas à le retrouver.")
+        |> put_flash(:danger, "L'authentification a échoué. Merci de réessayer ou de cliquer sur \"Mot de passe oublié ?\" si vous ne parvenez pas à le retrouver.")
         |> render("new.html", changeset: changeset)
     end
   end
@@ -33,7 +33,7 @@ defmodule VaeWeb.SessionController do
 
     conn
     |> Pow.Plug.delete()
-    |> put_flash(:success, "Vous êtes maintenant déconnecté")
+    |> put_flash(:info, "Vous êtes maintenant déconnecté")
     |> redirect([redirect_to])
   end
 end
