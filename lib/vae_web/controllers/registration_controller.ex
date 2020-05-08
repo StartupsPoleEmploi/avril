@@ -12,7 +12,9 @@ defmodule VaeWeb.RegistrationController do
     |> Pow.Plug.create_user(user_params)
     |> case do
       {:ok, user, conn} ->
-        maybe_create_application_and_redirect(conn)
+        conn
+        |> PowPersistentSession.Plug.create(Pow.Plug.current_user(conn))
+        |> maybe_create_application_and_redirect()
 
       {:error, changeset, conn} ->
         render(conn, "new.html", changeset: changeset)

@@ -12,7 +12,9 @@ defmodule VaeWeb.SessionController do
     |> Pow.Plug.authenticate_user(user_params)
     |> case do
       {:ok, conn} ->
-        VaeWeb.RegistrationController.maybe_create_application_and_redirect(conn)
+        conn
+        |> PowPersistentSession.Plug.create(Pow.Plug.current_user(conn))
+        |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
 
       {:error, conn} ->
         changeset = Pow.Plug.change_user(conn, conn.params["user"])
@@ -33,6 +35,7 @@ defmodule VaeWeb.SessionController do
 
     conn
     |> Pow.Plug.delete()
+    |> PowPersistentSession.Plug.delete()
     |> put_flash(:info, "Vous êtes maintenant déconnecté")
     |> redirect([redirect_to])
   end
