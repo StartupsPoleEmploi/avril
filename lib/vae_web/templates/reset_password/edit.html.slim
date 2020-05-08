@@ -13,10 +13,10 @@ section.section.pow-page
                   li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
           .field
             .control
-              = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
+              = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe", minlength: Application.get_env(:vae, :pow)[:password_min_length]
           .field
             .control
-              = password_input f, :password_confirmation, class: "input is-large", required: "required", placeholder: "Confirmation du mot de passe"
+              = password_input f, :password_confirmation, class: "input is-large", required: "required", placeholder: "Confirmation du mot de passe", minlength: Application.get_env(:vae, :pow)[:password_min_length]
           .field
             .buttons
               = submit "Mettre à jour son mot de passe", class: "button is-primary is-rounded is-medium", data: ["disable-with": "Changement ..."]

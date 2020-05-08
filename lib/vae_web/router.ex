@@ -154,8 +154,6 @@ defmodule VaeWeb.Router do
     get("/login", SessionController, :new, as: :login)
     post("/login", SessionController, :create, as: :login)
     resources("/reset-password", ResetPasswordController, as: :reset_password, only: [:new, :create, :edit, :update])
-    # post("/reset-password", ResetPasswordController, :create, as: :reset_password)
-    # put("/reset-password", ResetPasswordController, :update, as: :reset_password)
   end
 
   scope "/", VaeWeb do
