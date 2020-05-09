@@ -59,14 +59,18 @@ defmodule VaeWeb.Endpoint do
   plug(
     Pow.Plug.Session,
     otp_app: :vae,
-    session_ttl_renewal: :timer.minutes(5),
+    session_ttl_renewal: :timer.minutes(1),
     credentials_cache_store: {
       Pow.Store.CredentialsCache,
       ttl: :timer.hours(24)
     }
   )
 
-  plug(PowPersistentSession.Plug.Cookie)
+  plug(
+    PowPersistentSession.Plug.Cookie,
+    cache_store_backend:
+      Application.get_env(:vae, :pow)[:cache_store_backend]
+  )
 
   plug(VaeWeb.Router)
 end
