@@ -13,7 +13,7 @@ defmodule VaeWeb.SessionController do
     |> case do
       {:ok, conn} ->
         conn
-        |> PowPersistentSession.Plug.create(Pow.Plug.current_user(conn))
+        |> VaeWeb.RegistrationController.maybe_make_session_persistent(user_params)
         |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
 
       {:error, conn} ->

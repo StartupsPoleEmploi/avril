@@ -13,12 +13,20 @@ defmodule VaeWeb.RegistrationController do
     |> case do
       {:ok, user, conn} ->
         conn
-        |> PowPersistentSession.Plug.create(Pow.Plug.current_user(conn))
+        |> maybe_make_session_persistent(user_params)
         |> maybe_create_application_and_redirect()
 
       {:error, changeset, conn} ->
         render(conn, "new.html", changeset: changeset)
     end
+  end
+
+  def maybe_make_session_persistent(conn, %{"persistent_session" => "true"}) do
+    PowPersistentSession.Plug.create(conn, Pow.Plug.current_user(conn))
+  end
+
+  def maybe_make_session_persistent(conn, _user_params) do
+    PowPersistentSession.Plug.delete(conn)
   end
 
   def maybe_create_application_and_redirect(conn, certification_id \\ nil) do
