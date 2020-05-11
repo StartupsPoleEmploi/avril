@@ -3,6 +3,8 @@ defmodule VaeWeb.Schema.ApplicationTypes do
 
   alias VaeWeb.Resolvers
 
+  import_types Absinthe.Plug.Types
+
   object :application_queries do
     @desc "List user applications"
     field(:applications, list_of(:application)) do
@@ -51,6 +53,13 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:submit_application, :application) do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Application.submit_application/3)
+    end
+
+    @desc "Upload and attach a resume to an application"
+    field(:upload_resume, :string) do
+      arg(:resume, non_null(:upload))
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Application.upload_resume/2)
     end
   end
 

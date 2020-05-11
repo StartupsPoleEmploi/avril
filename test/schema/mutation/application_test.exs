@@ -223,7 +223,7 @@ defmodule VaeWeb.Mutation.ApplicationTest do
                    "details" => [
                      %{"key" => "birthday", "message" => ["can't be blank"]},
                      %{"key" => "city_label", "message" => ["can't be blank"]},
-                     %{"key" => "country_label", "message" => ["can't be blank"]},
+                     %{"key" => "country_label", "message" => ["can't be blank"]}
                      # %{"key" => "email_confirmed_at", "message" => ["can't be blank"]}
                    ]
                  }
@@ -254,7 +254,7 @@ defmodule VaeWeb.Mutation.ApplicationTest do
       |> Ecto.Changeset.change(%{
         birthday: ~D[2002-04-05],
         city_label: "Paris",
-        country_label: "FR",
+        country_label: "FR"
         # email_confirmed_at: Timex.now() |> DateTime.truncate(:second)
       })
       |> Vae.Repo.update!()
@@ -294,5 +294,34 @@ defmodule VaeWeb.Mutation.ApplicationTest do
       Vae.Repo.get(Vae.UserApplication, application.id)
       |> VaeWeb.ApplicationEmail.user_submission_confirmation()
     )
+  end
+
+  @query """
+    mutation UploadResume($id: ID!){ uploadResume(id: $id, resume: "fake_resume") }
+  """
+  test "Upload Resume", %{conn: conn} do
+    user = conn.assigns[:current_user]
+
+    application =
+      insert(
+        :application,
+        %{user: user}
+      )
+
+    upload = %Plug.Upload{
+      content_type: "application/pdf",
+      filename: "fake_resume.pdf",
+      path: Path.expand("../../fixtures/fake_resume.pdf", __DIR__)
+    }
+
+    conn =
+      conn
+      |> Plug.Conn.put_req_header("content-type", "multipart/form-data")
+      |> post(
+        "/api/v2",
+        %{"query" => @query, "fake_resume" => upload, "variables" => %{"id" => application.id}}
+      )
+
+    assert json_response(conn, 200) == %{"data" => %{"uploadResume" => "success"}}
   end
 end
