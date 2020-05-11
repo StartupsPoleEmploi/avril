@@ -4,11 +4,12 @@ use Mix.Config
 # you can enable the server option below.
 config :vae, VaeWeb.Endpoint,
   http: [port: 4001],
+  url: [scheme: "http", host: System.get_env("WHOST") || "localhost", port: 80],
   server: false,
   secret_key_base: "CPBIsZXHKo41NCrQGS/S3zaVhZrPeH/EtkS/nR2+uf7gFQaEXpd1SM92za61ZO1V"
 
 # Print only warnings and errors during test
-config :logger, level: :warn
+config :logger, :console, format: "[$level] $message\n"
 
 # Configure your database
 # config :vae, Vae.Repo,

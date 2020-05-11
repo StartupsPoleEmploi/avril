@@ -23,8 +23,38 @@ defmodule Vae.Resume do
     |> validate_required([:filename, :content_type, :url, :application])
   end
 
-  def put_assoc_if_present(changeset, key, nil), do: changeset
+  def put_assoc_if_present(changeset, _key, nil), do: changeset
   def put_assoc_if_present(changeset, key, assoc), do: put_assoc(changeset, key, assoc)
+
+  def create(application, file, conn \\ nil)
+
+  def create(application, file, nil) do
+    result =
+      with {:ok, content} <- File.read(file.path) do
+        ExAws.S3.put_object(
+          Application.get_env(:ex_aws, :s3)[:bucket],
+          file_path(application.id, file.filename),
+          content,
+          content_type: file.content_type,
+          content_disposition: "attachment; filename=#{file.filename}"
+        )
+        |> ExAws.request()
+      end
+
+    case result do
+      {:ok, _body} ->
+        %__MODULE__{}
+        |> changeset(%{
+          application: application,
+          content_type: file.content_type,
+          filename: file.filename,
+          url: file_url(Vae.URI.endpoint(), application.id, file.filename)
+        })
+
+      error ->
+        {:error, error}
+    end
+  end
 
   def create(application, params, conn) do
     filename = "#{UUID.uuid4(:hex)}#{Path.extname(params.filename)}"
@@ -85,6 +115,7 @@ defmodule Vae.Resume do
 
   defp file_path(%Resume{application_id: application_id, url: url}),
     do: file_path(application_id, List.last(String.split(url, "/")))
+
   defp file_path(application_id, filename),
     do: "#{application_id}/#{filename}"
 end

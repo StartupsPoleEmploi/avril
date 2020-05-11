@@ -104,8 +104,9 @@ defmodule VaeWeb.Resolvers.Application do
   end
 
   def submit_application(_, %{id: application_id}, %{context: %{current_user: user}}) do
-    with application <-
-           Applications.get_application_from_id_and_user_id(application_id, user.id),
+    with {:application, application} <-
+           {:application,
+            Applications.get_application_from_id_and_user_id(application_id, user.id)},
          {:ok, application} <- Applications.prepare_submit(application) do
       case VaeWeb.Emails.send_submission_confirmations(application) do
         {:ok, application} ->
@@ -123,6 +124,25 @@ defmodule VaeWeb.Resolvers.Application do
         error_response(@submit_error, changeset)
 
       _ ->
+        error_response("Une erreur est survenue", "")
+    end
+  end
+
+  def upload_resume(%{id: application_id, resume: resume}, %{context: %{current_user: user}}) do
+    with {:application, application} <-
+           {:application,
+            Applications.get_application_from_id_and_user_id(application_id, user.id)},
+         {:ok, _resume} <- Applications.add_resume(application, resume) do
+      {:ok, "success"}
+    else
+      {:application, _error} ->
+        error_response(@application_not_found, format_application_error_message(application_id))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@submit_error, changeset)
+
+      error ->
+        Logger.error(fn -> inspect(error) end)
         error_response("Une erreur est survenue", "")
     end
   end
