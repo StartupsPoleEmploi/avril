@@ -18,11 +18,11 @@
     .title {
       margin-bottom: 1rem;
       display: block;
-    }
-    .description {
-      .tag {
-        font-size: 1rem;
-      }
+      max-height: 9rem;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
     }
   }
 
@@ -35,7 +35,7 @@
   .card-footer {
     flex: 0 0 2rem;
     padding: 1rem 1.5rem;
-    padding-top: 0;
+    // padding-top: 0;
     border: none;
   }
 

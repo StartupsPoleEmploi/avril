@@ -16,25 +16,15 @@
   }
 }
 
-span.tag.is-highlighted {
-  position: relative;
-  display: inline-block;
-  z-index: 0;
-  background: none;
-  padding: 0;
-  font-weight: bold;
-  color: palette(blue, title);
-  font-family: $title-family;
-  // font-size: 0.8rem;
-
-  &:after {
-    position: absolute;
-    bottom: 0.4em;
-    left: 0;
-    right: 0;
-    height: 0.75em;
-    content: '';
-    background: palette(yellow, background);
-    z-index: -1;
-  }
-}
+// .label-avril {
+//   font-size: 1rem;
+//   position: relative;
+//   display: inline;
+//   font-weight: bold;
+//   color: palette(blue, title);
+//   font-family: $title-family;
+//   background: linear-gradient(0, palette(yellow, background) 0%, palette(yellow, background) 100%);
+//   background-repeat: no-repeat;
+//   background-size: 100% 0.625em;
+//   background-position: 0 100%;
+// }

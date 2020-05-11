@@ -1,10 +1,11 @@
-.card.selector-card.certification-card
+.card.selector-card.certification-card title=Vae.Certification.name(@certification)
   .card-header
-    h4
-      = link(Vae.Certification.name(@certification), to: Routes.certification_path(@conn, :show, @certification), class: "title is-4")
+    h4.title.is-4
+      = link(Vae.Certification.name(@certification), to: Routes.certification_path(@conn, :show, @certification))
     p.description
-      span.tag.is-highlighted Niveau #{level_info_by_level(@certification.level)}
-  .card-content.content
-    = raw @certification.description
+      span.label-avril Équivalence #{level_info_by_level(@certification.level)}
+  .card-content
+    .content
+      = raw @certification.description
   .card-footer
     = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button has-text-weight-bold is-transparent"

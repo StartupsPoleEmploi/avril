@@ -1,10 +1,7 @@
-.card.selector-card.delegate-card
+.card.selector-card.delegate-card title=@delegate.name
   .card-header
-    h4
-      = link(@delegate.name, to: Routes.delegate_path(@conn, :show, Vae.String.parameterize(@delegate.administrative), Vae.String.parameterize(@delegate.city), @delegate), class: "title is-4")
-    / = if length(Vae.Meetings.get(@delegate)) > 0 do
-    /   p.description
-    /     span.tag.is-highlighted Réunion d'informations
+    h4.title.is-4
+      = link(@delegate.name, to: Routes.delegate_path(@conn, :show, Vae.String.parameterize(@delegate.administrative), Vae.String.parameterize(@delegate.city), @delegate))
   .card-content
     p= @delegate.address
   .card-footer
