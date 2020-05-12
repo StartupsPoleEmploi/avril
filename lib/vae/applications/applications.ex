@@ -98,7 +98,9 @@ defmodule Vae.Applications do
       on: a.delegate_id == d.id,
       left_join: u in User,
       on: a.user_id == u.id,
-      preload: [delegate: d, certification: c, user: u]
+      left_join: r in Resume,
+      on: a.id == r.application_id,
+      preload: [delegate: d, certification: c, user: u, resumes: r]
     )
   end
 
