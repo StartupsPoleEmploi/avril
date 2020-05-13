@@ -12,7 +12,11 @@ defmodule VaeWeb.Mutation.ResumeTest do
   end
 
   @query """
-    mutation DeleteResume($id: ID!){ deleteResume(id: $id) }
+    mutation DeleteResume($id: ID!){
+      deleteResume(id: $id){
+        id
+      }
+    }
   """
   test "Delete Resume", %{conn: conn} do
     user = conn.assigns[:current_user]
@@ -30,7 +34,11 @@ defmodule VaeWeb.Mutation.ResumeTest do
     }
 
     insert_query = """
-      mutation UploadResume($id: ID!){ uploadResume(id: $id, resume: "fake_resume") }
+      mutation UploadResume($id: ID!){
+        uploadResume(id: $id, resume: "fake_resume") {
+          id
+        }
+      }
     """
 
     upload_conn =
@@ -45,7 +53,14 @@ defmodule VaeWeb.Mutation.ResumeTest do
         }
       )
 
-    assert json_response(upload_conn, 200) == %{"data" => %{"uploadResume" => "success"}}
+    assert json_response(upload_conn, 200) ==
+             %{
+               "data" => %{
+                 "uploadResume" => %{
+                   "id" => "#{application.id}"
+                 }
+               }
+             }
 
     resume = Vae.Repo.get_by(Vae.Resume, application_id: application.id)
     assert not is_nil(resume)
@@ -57,7 +72,14 @@ defmodule VaeWeb.Mutation.ResumeTest do
         variables: %{"id" => resume.id}
       )
 
-    assert json_response(delete_conn, 200) == %{"data" => %{"deleteResume" => "success"}}
+    assert json_response(delete_conn, 200) ==
+             %{
+               "data" => %{
+                 "deleteResume" => %{
+                   "id" => "#{resume.id}"
+                 }
+               }
+             }
 
     query = """
         query ($id: ID!){

@@ -22,7 +22,7 @@ defmodule VaeWeb.Schema do
     import_fields(:application_mutations)
 
     @desc "Delete a resume by its id"
-    field(:delete_resume, :string) do
+    field(:delete_resume, :resume) do
       arg(:id, non_null(:id))
       resolve(&Resume.delete_resume/3)
     end

@@ -11,8 +11,8 @@ defmodule VaeWeb.Resolvers.Resume do
   def delete_resume(_, %{id: resume_id}, %{context: %{current_user: user}}) do
     with {_, resume} when not is_nil(resume) <-
            {:resume, Applications.get_resume_from_id_and_user_id(resume_id, user.id)},
-         {:ok, _deleted} <- Applications.delete_resume(resume) do
-      {:ok, "success"}
+         {:ok, deleted} <- Applications.delete_resume(resume) do
+      {:ok, deleted}
     else
       {:resume, _} ->
         error_response(@resume_not_found, "Resume id #{resume_id} not found")
