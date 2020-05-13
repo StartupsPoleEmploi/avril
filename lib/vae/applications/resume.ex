@@ -15,6 +15,14 @@ defmodule Vae.Resume do
     belongs_to(:application, Vae.UserApplication, foreign_key: :application_id)
   end
 
+  def from_file_and_application_id(file, application_id) do
+    %Resume{
+      content_type: file.content_type,
+      filename: file.filename,
+      url: file_url(Vae.URI.endpoint(), application_id, file.filename)
+    }
+  end
+
   @doc false
   def changeset(resume, params) do
     resume
@@ -26,33 +34,16 @@ defmodule Vae.Resume do
   def put_assoc_if_present(changeset, _key, nil), do: changeset
   def put_assoc_if_present(changeset, key, assoc), do: put_assoc(changeset, key, assoc)
 
-  def create(application, file, conn \\ nil)
-
-  def create(application, file, nil) do
-    result =
-      with {:ok, content} <- File.read(file.path) do
-        ExAws.S3.put_object(
-          Application.get_env(:ex_aws, :s3)[:bucket],
-          file_path(application.id, file.filename),
-          content,
-          content_type: file.content_type,
-          content_disposition: "attachment; filename=#{file.filename}"
-        )
-        |> ExAws.request()
-      end
-
-    case result do
-      {:ok, _body} ->
-        %__MODULE__{}
-        |> changeset(%{
-          application: application,
-          content_type: file.content_type,
-          filename: file.filename,
-          url: file_url(Vae.URI.endpoint(), application.id, file.filename)
-        })
-
-      error ->
-        {:error, error}
+  def store(application, file) do
+    with {:ok, content} <- File.read(file.path) do
+      ExAws.S3.put_object(
+        Application.get_env(:ex_aws, :s3)[:bucket],
+        file_path(application.id, file.filename),
+        content,
+        content_type: file.content_type,
+        content_disposition: "attachment; filename=#{file.filename}"
+      )
+      |> ExAws.request()
     end
   end
 
