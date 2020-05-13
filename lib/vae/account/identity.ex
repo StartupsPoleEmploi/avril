@@ -18,7 +18,7 @@ defmodule Vae.Account.Identity do
     field(:is_handicapped, :boolean)
 
     embeds_one(:birth_place, Address, on_replace: :delete)
-    embeds_one(:full_address, Address, on_replace: :delete)
+    embeds_one(:full_address, Address, on_replace: :update)
     embeds_one(:current_situation, CurrentSituation, on_replace: :delete)
 
     embeds_one :nationality, Nationality, primary_key: false, on_replace: :delete do

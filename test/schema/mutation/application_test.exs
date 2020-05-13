@@ -1,6 +1,6 @@
 defmodule VaeWeb.Mutation.ApplicationTest do
   use VaeWeb.ConnCase, async: true
-
+  import Ecto.Query
   import Swoosh.TestAssertions
 
   setup %{conn: conn} do
@@ -221,10 +221,21 @@ defmodule VaeWeb.Mutation.ApplicationTest do
                    "message" => "La prise de rendez-vous a échoué",
                    "path" => ["registerMeeting"],
                    "details" => [
-                     %{"key" => "birthday", "message" => ["can't be blank"]},
-                     %{"key" => "city_label", "message" => ["can't be blank"]},
-                     %{"key" => "country_label", "message" => ["can't be blank"]}
-                     # %{"key" => "email_confirmed_at", "message" => ["can't be blank"]}
+                     %{
+                       "key" => "identity",
+                       "message" => %{
+                         "birthday" => ["can't be blank"],
+                         "email" => ["can't be blank"],
+                         "first_name" => ["can't be blank"],
+                         "full_address" => %{
+                           "city" => ["can't be blank"],
+                           "country" => ["can't be blank"],
+                           "postal_code" => ["can't be blank"]
+                         },
+                         "gender" => ["can't be blank"],
+                         "last_name" => ["can't be blank"]
+                       }
+                     }
                    ]
                  }
                ]
@@ -252,10 +263,18 @@ defmodule VaeWeb.Mutation.ApplicationTest do
     user =
       conn.assigns[:current_user]
       |> Ecto.Changeset.change(%{
-        birthday: ~D[2002-04-05],
-        city_label: "Paris",
-        country_label: "FR"
-        # email_confirmed_at: Timex.now() |> DateTime.truncate(:second)
+        identity: %{
+          gender: "f",
+          birthday: ~D[1992-02-02],
+          email: "foo@bar.com",
+          first_name: "Jane",
+          last_name: "Doe",
+          full_address: %{
+            city: "Saint Malo",
+            country: "FR",
+            postal_code: "35000"
+          }
+        }
       })
       |> Vae.Repo.update!()
 
@@ -297,7 +316,17 @@ defmodule VaeWeb.Mutation.ApplicationTest do
   end
 
   @query """
-    mutation UploadResume($id: ID!){ uploadResume(id: $id, resume: "fake_resume") }
+    mutation UploadResume($id: ID!){
+      uploadResume(id: $id, resume: "fake_resume") {
+        id
+        resumes {
+          id
+          content_type
+          filename
+          url
+        }
+      }
+    }
   """
   test "Upload Resume", %{conn: conn} do
     user = conn.assigns[:current_user]
@@ -322,40 +351,83 @@ defmodule VaeWeb.Mutation.ApplicationTest do
         %{"query" => @query, "fake_resume" => upload, "variables" => %{"id" => application.id}}
       )
 
-    assert json_response(upload_conn, 200) == %{"data" => %{"uploadResume" => "success"}}
-
-    query = """
-        query ($id: ID!){
-          application(id: $id) {
-            id
-            resumes {
-              id
-              content_type
-              filename
-              url
-            }
-          }
-        }
-    """
-
-    conn = get conn, "/api/v2", query: query, variables: %{"id" => application.id}
-
     resume = Vae.Repo.get_by(Vae.Resume, application_id: application.id)
 
-    assert json_response(conn, 200) == %{
-             "data" => %{
-               "application" => %{
-                 "id" => "#{application.id}",
-                 "resumes" => [
-                   %{
-                     "id" => "#{resume.id}",
-                     "content_type" => resume.content_type,
-                     "filename" => resume.filename,
-                     "url" => resume.url
-                   }
-                 ]
+    assert json_response(upload_conn, 200) ==
+             %{
+               "data" => %{
+                 "uploadResume" => %{
+                   "id" => "#{application.id}",
+                   "resumes" => [
+                     %{
+                       "id" => "#{resume.id}",
+                       "content_type" => resume.content_type,
+                       "filename" => resume.filename,
+                       "url" => resume.url
+                     }
+                   ]
+                 }
                }
              }
-           }
+  end
+
+  @query """
+    mutation UploadResume($id: ID!){
+      uploadResume(id: $id, resume: "fake_resume") {
+        id
+        resumes {
+          id
+          content_type
+          filename
+          url
+        }
+      }
+    }
+  """
+  test "Upload ResumeS", %{conn: conn} do
+    user = conn.assigns[:current_user]
+
+    application =
+      insert(
+        :application,
+        %{user: user}
+      )
+
+    upload_1 = %Plug.Upload{
+      content_type: "application/pdf",
+      filename: "fake_resume.pdf",
+      path: Path.expand("../../fixtures/fake_resume.pdf", __DIR__)
+    }
+
+    upload_1_conn =
+      conn
+      |> Plug.Conn.put_req_header("content-type", "multipart/form-data")
+      |> post(
+        "/api/v2",
+        %{"query" => @query, "fake_resume" => upload_1, "variables" => %{"id" => application.id}}
+      )
+
+    upload_2 = %Plug.Upload{
+      content_type: "application/pdf",
+      filename: "fake_resume_2.pdf",
+      path: Path.expand("../../fixtures/fake_resume.pdf", __DIR__)
+    }
+
+    upload_2_conn =
+      conn
+      |> Plug.Conn.put_req_header("content-type", "multipart/form-data")
+      |> post(
+        "/api/v2",
+        %{"query" => @query, "fake_resume" => upload_2, "variables" => %{"id" => application.id}}
+      )
+
+    resumes = from(r in Vae.Resume, where: r.application_id == ^application.id) |> Vae.Repo.all()
+
+    resumes_response =
+      json_response(upload_2_conn, 200)
+      |> get_in(["data", "uploadResume", "resumes"])
+
+    assert length(resumes_response) == 2
+    assert Enum.map(resumes, &"#{&1.id}") -- Enum.map(resumes_response, & &1["id"]) == []
   end
 end

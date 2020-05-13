@@ -235,7 +235,6 @@ defmodule Vae.User do
   def register_identity_fields_required_changeset(model, _params \\ %{}) do
     model
     |> cast(%{identity: %{}}, [])
-    # |> validate_required(:email_confirmed_at)
     |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
   end
 
