@@ -314,7 +314,7 @@ defmodule VaeWeb.Mutation.ApplicationTest do
       path: Path.expand("../../fixtures/fake_resume.pdf", __DIR__)
     }
 
-    conn =
+    upload_conn =
       conn
       |> Plug.Conn.put_req_header("content-type", "multipart/form-data")
       |> post(
@@ -322,6 +322,40 @@ defmodule VaeWeb.Mutation.ApplicationTest do
         %{"query" => @query, "fake_resume" => upload, "variables" => %{"id" => application.id}}
       )
 
-    assert json_response(conn, 200) == %{"data" => %{"uploadResume" => "success"}}
+    assert json_response(upload_conn, 200) == %{"data" => %{"uploadResume" => "success"}}
+
+    query = """
+        query ($id: ID!){
+          application(id: $id) {
+            id
+            resumes {
+              id
+              content_type
+              filename
+              url
+            }
+          }
+        }
+    """
+
+    conn = get conn, "/api/v2", query: query, variables: %{"id" => application.id}
+
+    resume = Vae.Repo.get_by(Vae.Resume, application_id: application.id)
+
+    assert json_response(conn, 200) == %{
+             "data" => %{
+               "application" => %{
+                 "id" => "#{application.id}",
+                 "resumes" => [
+                   %{
+                     "id" => "#{resume.id}",
+                     "content_type" => resume.content_type,
+                     "filename" => resume.filename,
+                     "url" => resume.url
+                   }
+                 ]
+               }
+             }
+           }
   end
 end

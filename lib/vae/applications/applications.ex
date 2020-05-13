@@ -20,6 +20,19 @@ defmodule Vae.Applications do
     |> Repo.preload(:resumes)
   end
 
+  @doc "Retrieve a resume from its ID and user ID"
+  def get_resume_from_id_and_user_id(resume_id, user_id) do
+    from(r in Resume,
+      join: a in UserApplication,
+      on: r.application_id == a.id,
+      join: u in User,
+      on: a.user_id == u.id,
+      where: r.id == ^resume_id and u.id == ^user_id,
+      select: r
+    )
+    |> Repo.one()
+  end
+
   @doc "Attaches a delegate to an application"
   def attach_delegate(application, delegate) do
     application
@@ -92,6 +105,8 @@ defmodule Vae.Applications do
     |> Repo.insert()
   end
 
+  def delete_resume(resume), do: Resume.delete(resume)
+
   defp base_query() do
     from(a in UserApplication,
       join: c in Certification,
@@ -100,7 +115,9 @@ defmodule Vae.Applications do
       on: a.delegate_id == d.id,
       left_join: u in User,
       on: a.user_id == u.id,
-      preload: [delegate: d, certification: c, user: u]
+      left_join: r in Resume,
+      on: a.id == r.application_id,
+      preload: [delegate: d, certification: c, user: u, resumes: r]
     )
   end
 

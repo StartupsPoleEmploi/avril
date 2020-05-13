@@ -3,7 +3,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
 
   alias VaeWeb.Resolvers
 
-  import_types Absinthe.Plug.Types
+  import_types(Absinthe.Plug.Types)
 
   object :application_queries do
     @desc "List user applications"
@@ -39,6 +39,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
 
   object :resume do
     field(:id, :id)
+    field(:content_type, :string)
     field(:filename, :string)
     field(:url, :string)
   end
