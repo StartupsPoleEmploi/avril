@@ -64,7 +64,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     end
 
     @desc "Upload and attach a resume to an application"
-    field(:upload_resume, :string) do
+    field(:upload_resume, :application) do
       arg(:resume, non_null(:upload))
       arg(:id, non_null(:id))
       resolve(&Resolvers.Application.upload_resume/2)

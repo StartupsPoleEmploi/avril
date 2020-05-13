@@ -133,7 +133,7 @@ defmodule VaeWeb.Resolvers.Application do
            {:application,
             Applications.get_application_from_id_and_user_id(application_id, user.id)},
          {:ok, _resume} <- Applications.add_resume(application, resume) do
-      {:ok, "success"}
+      {:ok, Applications.get_application_from_id_and_user_id(application_id, user.id)}
     else
       {:application, _error} ->
         error_response(@application_not_found, format_application_error_message(application_id))
