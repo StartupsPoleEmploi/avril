@@ -8,6 +8,8 @@ defmodule VaeWeb.Schema do
   import_types(__MODULE__.CertificationTypes)
   import_types(__MODULE__.MeetingTypes)
 
+  alias VaeWeb.Resolvers.Resume
+
   query do
     import_fields(:account_queries)
     import_fields(:application_queries)
@@ -18,5 +20,11 @@ defmodule VaeWeb.Schema do
   mutation do
     import_fields(:account_mutations)
     import_fields(:application_mutations)
+
+    @desc "Delete a resume by its id"
+    field(:delete_resume, :string) do
+      arg(:id, non_null(:id))
+      resolve(&Resume.delete_resume/3)
+    end
   end
 end
