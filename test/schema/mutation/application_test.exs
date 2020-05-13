@@ -329,6 +329,7 @@ defmodule VaeWeb.Mutation.ApplicationTest do
           application(id: $id) {
             id
             resumes {
+              id
               content_type
               filename
               url
@@ -339,15 +340,18 @@ defmodule VaeWeb.Mutation.ApplicationTest do
 
     conn = get conn, "/api/v2", query: query, variables: %{"id" => application.id}
 
+    resume = Vae.Repo.get_by(Vae.Resume, application_id: application.id)
+
     assert json_response(conn, 200) == %{
              "data" => %{
                "application" => %{
                  "id" => "#{application.id}",
                  "resumes" => [
                    %{
-                     "content_type" => "application/pdf",
-                     "filename" => "fake_resume.pdf",
-                     "url" => "http://localhost/#{application.id}/fake_resume.pdf"
+                     "id" => "#{resume.id}",
+                     "content_type" => resume.content_type,
+                     "filename" => resume.filename,
+                     "url" => resume.url
                    }
                  ]
                }
