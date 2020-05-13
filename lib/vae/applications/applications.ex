@@ -40,6 +40,20 @@ defmodule Vae.Applications do
     |> Repo.update()
   end
 
+  @doc "Store a resume"
+  def store_resume(application, resume) do
+    Resume.store(application, resume)
+  end
+
+  @doc "Attaches a resume to an application"
+  def attach_resume_to_application(application, resume_file) do
+    resume = Resume.from_file_and_application_id(resume_file, application.id)
+
+    application
+    |> UserApplication.attach_resume_changeset(resume)
+    |> Repo.update()
+  end
+
   @doc "Register a user's application to a meeting"
   def register_to_a_meeting(_application, meeting_id) when meeting_id in [nil, ""],
     do: {:error, "You must provide a meeting_id"}
@@ -98,12 +112,6 @@ defmodule Vae.Applications do
   end
 
   def set_submitted_now(application), do: {:ok, application}
-
-  @doc "Add a resume file to an application"
-  def add_resume(application, resume) do
-    Resume.create(application, resume)
-    |> Repo.insert()
-  end
 
   def delete_resume(resume), do: Resume.delete(resume)
 

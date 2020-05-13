@@ -60,6 +60,12 @@ defmodule Vae.UserApplication do
     |> put_assoc(:delegate, delegate)
   end
 
+  def attach_resume_changeset(struct, %Resume{} = resume) do
+    struct
+    |> change()
+    |> put_assoc(:resumes, [resume | struct.resumes])
+  end
+
   def register_meeting_changeset(struct, params) do
     struct
     |> change()
