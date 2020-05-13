@@ -16,7 +16,7 @@ defmodule Vae.User do
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
-  alias Vae.Account.Identity
+  alias Vae.Identity
 
   alias Vae.{
     UserApplication,

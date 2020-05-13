@@ -1,6 +1,6 @@
 defmodule Vae.Account do
   alias Vae.Repo
-  alias Vae.Account.Identity
+  alias Vae.Identity
   alias Vae.Booklet.Address
   alias Vae.User
 
