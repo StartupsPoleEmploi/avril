@@ -75,29 +75,28 @@ defmodule Vae.ExAdmin.User do
     end
 
     show user do
-      attributes_table(
-        only: [
-          :gender,
-          :first_name,
-          :last_name,
-          :email,
-          :email_confirmed_at,
-          :is_admin,
-          :phone_number,
-          :postal_code,
-          :address1,
-          :address2,
-          :address3,
-          :address4,
-          :insee_code,
-          :country_code,
-          :city_label,
-          :country_label,
-          :birthday,
-          :birth_place,
-          :pe_id
-        ]
-      )
+      attributes_table do
+        row(:gender)
+        row(:first_name)
+        row(:last_name)
+        row(:email)
+        row(:email_confirmed_at)
+        row(:is_admin)
+        row(:phone_number)
+        row(:postal_code)
+        row(:address1)
+        row(:address2)
+        row(:address3)
+        row(:address4)
+        row(:insee_code)
+        row(:country_code)
+        row(:city_label)
+        row(:country_label)
+        row(:birthday)
+        row(:birth_place)
+        row(:pe_id)
+        row(:identity, fn a -> Helpers.print_in_json(a.identity) end)
+      end
 
       panel "Skills" do
         table_for user.skills do
