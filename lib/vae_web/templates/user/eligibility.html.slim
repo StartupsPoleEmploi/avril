@@ -1,0 +1,47 @@
+section.section.eligibility-page
+  .container
+    .columns.is-centered
+      .column.is-8.is-7-desktop.is-6-widescreen.is-5-fullhd.has-text-centered
+        = if @current_user do
+          = if @is_eligible do
+            h1.title.is-1 Excellente nouvelle !
+            h2.title.is-2 #{Vae.Identity.fullname(@current_user)}, vous êtes éligible !
+            p.subtitle Félicitations pour cette bonne nouvelle !
+            p.subtitle Avril va maintenant vous aider à faire rimer expérience et diplôme !
+            p= link("Choisir mon diplôme", to: Routes.root_path(@conn, :index), class: "button is-primary is-medium is-rounded", data: [analytics: "Eligibilite#yes"])
+          - else
+            h1.title.is-1 Vous y êtes presque ...
+            = if @worked_hours > 0 do
+              h4.title.is-4
+                ' #{Vae.Identity.fullname(@current_user)}, depuis ces 13 derniers mois,
+                ' vous justifiez de
+                strong #{Vae.String.inflect(@worked_hours, "heure")} d'expérience professionnelle
+                |  sur les #{@total_hours} requises.
+            - else
+              h4.title.is-4 #{Vae.Identity.fullname(@current_user)}, aucune période d'emploi n'est enregistrée par nos services, la VAE reste quand même accessible !
+            .content
+              p Avez-vous d'autres expériences que celles connues par Pôle emploi ?
+              p Oui ? Alors poursuivez la démarche si vous totalisez au moins 1 an d'expérience !
+              p Non ? Alors la VAE attendra encore quelques temps … Avril sera ravi de vous retrouver à ce moment là !
+              p Et si vous faisiez quand même un test pour connaître les diplômes qui vous seraient destinés ?
+            = link("Chercher un diplôme", to: Routes.root_path(@conn, :index), class: "button is-primary is-medium is-rounded", data: [analytics: "Eligibilite#no"])
+        - else
+          h1.title.is-1 Bonne nouvelle !
+          h2.title.is2 Vous êtes peut-être éligible à l'obtention d'un nouveau diplôme
+          .content
+            p.subtitle Obtenir un diplôme sans suivre de formation ?
+            p.subtitle
+              ' C'est possible avec la
+              = link("VAE", to: Routes.page_path(@conn, :vae))
+              ' .
+            p
+              | Il suffit de justifier d'
+              strong 1 an d’expérience à temps plein
+              ' , soit
+              strong #{@total_hours} h
+              | .
+            p
+              strong Vous êtes demandeur d’emploi ?
+            p  En 3 clics, nous faisons pour vous le compte* !
+            p= link("Tester avec mon compte Pôle emploi", to: Routes.auth_path(@conn, :save_session_and_redirect, :"pole-emploi"), class: "button is-primary is-medium is-rounded", data: [analytics: "Eligibilite#check", disable_with: "Connexion ..."])
+            p * Sur la base des informations carrière dont nous avons les justificatifs

@@ -86,6 +86,9 @@ defmodule Vae.UserApplication do
       application -> {:ok, application}
     end
   end
+  def find_or_create_with_params(_params) do
+    {:ok, nil}
+  end
 
   def set_delegate(%UserApplication{} = application, %Delegate{id: id} = _delegate) do
     application

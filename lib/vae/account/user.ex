@@ -16,6 +16,7 @@ defmodule Vae.User do
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
+  alias __MODULE__
   alias Vae.Identity
 
   alias Vae.{
@@ -293,6 +294,18 @@ defmodule Vae.User do
       Vae.Account.address_city(user)
     ]
     |> Vae.Enum.join_keep_nil("\n")
+  end
+
+  def worked_hours(%User{} = user) do
+    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + pe.work_duration end)
+  end
+
+  def worked_days(%User{} = user) do
+    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + pe.duration end)
+  end
+
+  def is_eligible(%User{} = user) do
+    (worked_hours(user) >= 1607) || (worked_days(user) >= 500)
   end
 
   def submit_application_required_missing_fields(user) do

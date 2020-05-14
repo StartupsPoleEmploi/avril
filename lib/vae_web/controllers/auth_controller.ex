@@ -34,8 +34,12 @@ defmodule VaeWeb.AuthController do
       end
       |> case do
         {:ok, upserted_user} ->
-          Pow.Plug.create(conn, upserted_user)
-          |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
+          conn = Pow.Plug.create(conn, upserted_user)
+          if get_session(conn, :referer) == Routes.user_url(conn, :eligibility) do
+            redirect_to_referer(conn)
+          else
+          VaeWeb.RegistrationController.maybe_create_application_and_redirect(conn)
+          end
 
         {:error, changeset} ->
           handle_error(conn, changeset)
@@ -47,7 +51,7 @@ defmodule VaeWeb.AuthController do
   end
 
   def callback(conn, _params) do
-    redirect(conn, external: get_session(conn, :referer))
+    redirect_to_referer(conn)
   end
 
   defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.")
@@ -73,5 +77,10 @@ defmodule VaeWeb.AuthController do
     conn
     |> put_flash(:danger, if(is_binary(msg), do: msg, else: inspect(msg)))
     |> redirect(external: get_session(conn, :referer))
+  end
+
+  defp redirect_to_referer(conn) do
+    conn
+    |> redirect(external: get_session(conn, :referer) || Routes.root_path(conn, :index))
   end
 end

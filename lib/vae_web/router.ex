@@ -89,6 +89,7 @@ defmodule VaeWeb.Router do
     get("/contact", VaeWeb.PageController, :contact)
     post("/contact", VaeWeb.PageController, :submit_contact)
     get("/financement-vae", VaeWeb.PageController, :financement)
+    get("/tester-mon-eligibilite-vae", VaeWeb.UserController, :eligibility)
     post("/close-app-status", VaeWeb.PageController, :close_status)
     get("/stats", VaeWeb.PageController, :stats)
 
