@@ -51,7 +51,7 @@ defmodule VaeWeb.RegistrationController do
 
   defp redirect_to_user_space(conn, application \\ nil) do
     if Pow.Plug.current_user(conn) do
-      redirect(conn, external: Plug.Conn.get_session(conn, :referer) || Vae.User.profile_url(conn, application))
+      redirect(conn, external: Vae.User.profile_url(conn, application))
     else
       redirect(conn, to: Routes.signup_path(conn, :new))
     end
