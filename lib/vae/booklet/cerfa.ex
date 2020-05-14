@@ -3,7 +3,7 @@ defmodule Vae.Booklet.Cerfa do
   import Ecto.Changeset
 
   alias Vae.Booklet.{Education, Experience}
-  alias Vae.Account.Identity
+  alias Vae.Identity
 
   @primary_key false
   @derive Jason.Encoder

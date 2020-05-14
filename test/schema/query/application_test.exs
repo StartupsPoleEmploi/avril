@@ -1,4 +1,4 @@
-defmodule VaeWeb.Schema.Query.ApplicationsTest do
+defmodule VaeWeb.Schema.Query.ApplicationTest do
   use VaeWeb.ConnCase, async: true
 
   setup %{conn: conn} do
@@ -66,14 +66,21 @@ defmodule VaeWeb.Schema.Query.ApplicationsTest do
   """
   test "application field returns a nil application if the application does not belong to the user",
        %{conn: conn} do
-    application = insert(:application, %{user: insert(:user)})
+    application = insert(:application, %{user: insert(:user, email: "hack@you.org")})
     conn = get conn, "/api/v2", query: @query, variables: %{"id" => application.id}
 
-    assert json_response(conn, 200) == %{
-             "data" => %{
-               "application" => nil
+    assert json_response(conn, 200) ==
+             %{
+               "data" => %{"application" => nil},
+               "errors" => [
+                 %{
+                   "details" => "Application id #{application.id} not found",
+                   "locations" => [%{"column" => 0, "line" => 2}],
+                   "message" => "La candidature est introuvable",
+                   "path" => ["application"]
+                 }
+               ]
              }
-           }
   end
 
   @query """

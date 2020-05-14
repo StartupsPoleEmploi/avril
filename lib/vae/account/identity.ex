@@ -1,4 +1,4 @@
-defmodule Vae.Account.Identity do
+defmodule Vae.Identity do
   use Ecto.Schema
   import Ecto.Changeset
 

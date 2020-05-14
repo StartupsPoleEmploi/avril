@@ -13,6 +13,49 @@ defmodule Vae.ExFactory do
     }
   end
 
+  def user_with_identity_factory() do
+    %User{
+      first_name: "Jane",
+      last_name: "Doe",
+      postal_code: "35000",
+      email: "foo@bar.com",
+      identity: %Vae.Identity{
+        gender: "M",
+        birthday: ~D[1981-06-24],
+        first_name: "John",
+        last_name: "Smith",
+        usage_name: "Doe",
+        email: "john@smith.com",
+        home_phone: "0100000000",
+        mobile_phone: "0600000000",
+        is_handicapped: false,
+        birth_place: %{
+          city: "Paris",
+          country: "France"
+        },
+        full_address: %{
+          city: "Toulouse",
+          postal_code: "31000",
+          country: "France",
+          street: "1, rue de la Bergerie",
+          lat: "43.600000",
+          lng: "1.433333"
+        },
+        current_situation: %{
+          status: "job_seeker",
+          employment_type: "employee",
+          register_to_pole_emploi: true,
+          register_to_pole_emploi_since: ~D[2019-02-01],
+          compensation_type: "pole-emploi"
+        },
+        nationality: %{
+          country: "France",
+          country_code: "FR"
+        }
+      }
+    }
+  end
+
   def set_password(user, password) do
     user
     |> User.changeset(%{"password" => password})
