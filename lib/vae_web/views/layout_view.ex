@@ -30,9 +30,9 @@ defmodule VaeWeb.LayoutView do
          delegate: d
        }) do
     %{
-      title: "Diplôme #{format_certification_label(c)} en VAE à #{d.name}",
+      title: "Diplôme #{Vae.Certification.name(c)} en VAE à #{d.name}",
       description:
-        "Découvrez toutes les étapes VAE pour le diplôme #{format_certification_label(c)} en VAE à #{
+        "Découvrez toutes les étapes VAE pour le diplôme #{Vae.Certification.name(c)} en VAE à #{
           d.name
         } et démarrez un suivi personnalisé."
     }
@@ -44,9 +44,9 @@ defmodule VaeWeb.LayoutView do
          certification: c
        }) do
     %{
-      title: "Diplôme #{format_certification_label(c)} en VAE",
+      title: "Diplôme #{Vae.Certification.name(c)} en VAE",
       description:
-        "Découvrez toutes les étapes VAE pour le diplôme #{format_certification_label(c)} en VAE et trouvez votre centre VAE."
+        "Découvrez toutes les étapes VAE pour le diplôme #{Vae.Certification.name(c)} en VAE et trouvez votre centre VAE."
     }
   end
 

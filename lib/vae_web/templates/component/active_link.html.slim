@@ -1,4 +1,4 @@
 = if current_path(@conn, %{}) == @to do
-  = link @text, to: @to, class: "#{assigns[:class]} active"
+  = link @text, to: @to, class: "#{assigns[:class]} is-active"
 - else
   = link @text, to: @to, class: assigns[:class]
