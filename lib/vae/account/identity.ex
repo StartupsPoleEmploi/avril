@@ -100,7 +100,7 @@ defmodule Vae.Identity do
     }
   end
 
-  def fullname(%{identity: %{first_name: first_name, last_name: last_name, email: email}}) do
+  def fullname(%{first_name: first_name, last_name: last_name, email: email}) do
     Vae.String.blank_is_nil("#{first_name} #{last_name}") || email
   end
 

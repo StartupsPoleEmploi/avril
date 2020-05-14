@@ -106,9 +106,11 @@ defmodule Vae.Account do
     end)
   end
 
+  def fullname(%{identity: identity}), do: Identity.fullname(identity)
   def fullname(user), do: Identity.fullname(user)
   def formatted_email(user), do: Identity.formatted_email(user)
   def address_city(%{identity: %{full_address: address}}), do: Address.address_city(address)
+  def address_city(%{full_address: address}), do: Address.address_city(address)
 
   def address_street(%User{} = user) do
     [user.address1, user.address2, user.address3, user.address4]
