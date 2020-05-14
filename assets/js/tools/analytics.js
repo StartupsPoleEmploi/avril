@@ -51,18 +51,6 @@ import $ from 'jquery';
 
   $('[data-analytics]').listenToAnalyticsEvent();
 
-  $('.request-contact form').submit(() => {
-    const contactData = $(this).serializeJSON();
-    // if (contactData.contact_delegate) {
-    //   handleAnalyticsEvent('Delegates#contact');
-    // } else {
-    //   handleAnalyticsEvent('Steps#email');
-    // }
-    if (contactData.booklet_1) {
-      handleAnalyticsEvent('Steps#dossier inscription');
-    }
-  });
-
   $("#steps :contains('réunion') a").on('click', () => {
     handleAnalyticsEvent('Delegates#information');
   });

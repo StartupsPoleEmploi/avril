@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const RobotstxtPlugin = require("robotstxt-webpack-plugin");
 
 module.exports = (env, options) => ({
   optimization: {
@@ -13,8 +14,14 @@ module.exports = (env, options) => ({
     ]
   },
   entry: {
-    app: ['./js/app.js'],
-    admin: ['./js/admin.js'],
+    app: [
+      './js/app.js',
+      './css/app.scss',
+    ],
+    admin: [
+      './js/admin.js',
+      './css/admin.scss',
+    ],
   },
   output: {
     filename: '[name].js',
@@ -65,10 +72,12 @@ module.exports = (env, options) => ({
       chunkFilename: '[id].css',
     }),
     new CopyWebpackPlugin([
-      { from: 'vendor/simditor', to: '../' },
-      { from: 'vendor/multiselect', to: '../' },
-      { from: 'vendor/ex_admin', to: '../' },
+      { from: 'vendor', to: '../vendor' },
+      { from: 'node_modules/avril/images', to: '../images' },
       { from: 'static/', to: '../' },
-    ])
+    ]),
+    new RobotstxtPlugin({
+      filePath: '../robots.txt',
+    })
   ]
 });

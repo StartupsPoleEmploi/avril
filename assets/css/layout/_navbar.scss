@@ -8,11 +8,17 @@ nav.navbar {
   }
 
   @include tablet {
-    padding: 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
   }
 
-  .navbar-item img {
-    max-height: none;
+  .navbar-brand {
+    .navbar-item {
+      img {
+        max-height: none;
+        height: 2.5rem;
+      }
+    }
   }
 
   .navbar-dropdown {

@@ -1,5 +1,4 @@
 /* global $ */
-import '../css/admin.scss';
 
 import 'chosen-js';
 import 'chosen-js/chosen.css';

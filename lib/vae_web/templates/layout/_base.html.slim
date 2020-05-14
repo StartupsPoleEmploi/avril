@@ -4,8 +4,8 @@ html lang="fr"
     meta charset="UTF-8"
     meta content="IE=edge" http-equiv="X-UA-Compatible"
     meta content="width=device-width, initial-scale=1" name="viewport"
-    link rel="icon" type="image/x-icon" href=Routes.static_path(@conn,"/favicon.ico")
-    link rel="apple-touch-icon" href=Routes.static_path(@conn,"/apple-touch-icon.png")
+    link rel="icon" type="image/x-icon" href=Routes.static_path(@conn, "/images/favicon.ico")
+    link rel="apple-touch-icon" href=Routes.static_path(@conn, "/images/apple-touch-icon.png")
 
     - %{title: title, description: description} = meta_data(@assigns)
     meta name="description" content=description
@@ -14,7 +14,6 @@ html lang="fr"
     = if Mix.env == :prod do
       = render VaeWeb.ComponentView, "analytics", conn: @conn
     link href=Routes.static_path(@conn,"/css/app.css") rel="stylesheet"
-    link href="https://fonts.googleapis.com/css?family=Roboto|Lato|Nunito+Sans" rel="stylesheet"
 
   body class="#{if @assigns[:is_landing], do: "landing-page"} #{@assigns[:body_class]}"
     = @contents
