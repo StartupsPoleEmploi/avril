@@ -1,14 +1,21 @@
 .home-page {
   #search {
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+    }
     img.search-img {
       z-index: 1;
       position: relative;
 
       @include widescreen {
         float: right;
-        transform: scale(2) translateX(1rem) translateY(20px);
         height: 17rem;
         transform-origin: right;
+        transform: scale(2) translateX(1rem) translateY(3rem);
+      }
+      @include fullhd {
+        transform: scale(2.5) translateX(1rem) translateY(3rem);
       }
     }
   }

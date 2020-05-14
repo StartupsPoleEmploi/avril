@@ -37,15 +37,16 @@
           padding-left: 4rem;
           margin-bottom: 0;
           font-size: 1.5em;
+          color: $gray-avril;
           @include tablet {
             font-size: 1em;
           }
           @include widescreen {
             font-size: 1.25em;
           }
-          @include fullhd {
-            font-size: 1.5em;
-          }
+          // @include fullhd {
+          //   font-size: 1em;
+          // }
         }
       }
     }
