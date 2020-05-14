@@ -133,10 +133,6 @@ defmodule VaeWeb.Router do
     get("/candidats/:id/admissible", VaeWeb.JobSeekerController, :admissible)
     get("/candidats/:id/inadmissible", VaeWeb.JobSeekerController, :inadmissible)
 
-    resources("/profil", VaeWeb.UserController, only: [:update]) do
-      post("/resend_confirmation_email", VaeWeb.UserController, :resend_confirmation_email)
-    end
-
     # Old URL redirections
     get("/professions", VaeWeb.Redirector, to: "/metiers")
     get("/delegates/:id", VaeWeb.Redirector, to: "/diplomes?certificateur=:id")

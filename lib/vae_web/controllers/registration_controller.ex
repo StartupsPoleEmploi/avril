@@ -11,7 +11,7 @@ defmodule VaeWeb.RegistrationController do
     conn
     |> Pow.Plug.create_user(user_params)
     |> case do
-      {:ok, user, conn} ->
+      {:ok, _user, conn} ->
         conn
         |> maybe_make_session_persistent(user_params)
         |> maybe_create_application_and_redirect()

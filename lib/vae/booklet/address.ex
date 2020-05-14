@@ -30,15 +30,15 @@ defmodule Vae.Booklet.Address do
     |> validate_required(@required_fields_for_submission)
   end
 
-  def address_city(%{}), do: ""
 
-  def address_city(%__MODULE__{} = address) do
+  def address_city(%{postal_code: postal_code, city: city, country: country}) do
     [
-      Vae.Enum.join_keep_nil([address.postal_code, address.city], " "),
-      address.country
+      Vae.Enum.join_keep_nil([postal_code, city], " "),
+      country
     ]
     |> Vae.Enum.join_keep_nil(", ")
   end
+  def address_city(_), do: ""
 
   def address(%__MODULE__{} = address) do
     [

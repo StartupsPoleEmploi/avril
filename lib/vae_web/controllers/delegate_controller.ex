@@ -33,7 +33,7 @@ defmodule VaeWeb.DelegateController do
       raise Ecto.NoResultsError, queryable: Delegate
     end
   end
-  def geo(conn, params) do
+  def geo(conn, _params) do
     administratives = Delegate
       |> where(is_active: true)
       |> distinct([f], f.administrative)
