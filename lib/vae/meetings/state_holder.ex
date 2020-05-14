@@ -163,7 +163,7 @@ defmodule Vae.Meetings.StateHolder do
   @impl true
   def handle_call({:register, {%{name: name} = meeting, application}}, _from, state) do
     with {:ok, _registered_meeting} <-
-           GenServer.call(name, {:register, {meeting, application}}) do
+           GenServer.call(name, {:register, {meeting, application}}, 15_000) do
       {:reply, {:ok, meeting}, state}
     else
       {:error, msg} ->

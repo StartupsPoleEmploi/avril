@@ -81,6 +81,7 @@ defmodule Vae.Account do
     |> Repo.update()
   end
 
+  def complete_user_profile({:error, _} = error, _token), do: error
   def complete_user_profile({:ok, _user} = upsert, token) do
     {:ok, user} = fill_with_api_fields(upsert, token)
     identity_params = %{identity: Identity.from_user(user)}

@@ -13,16 +13,13 @@ defmodule Vae.PoleEmploi do
   @skills_path "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences"
 
   def get_user_info(state, code) do
-    {:ok, token} = get_token(state, code)
-
-    token
-    |> get(@user_info_path)
-    |> case do
-      {:ok, user_info} ->
-        {:ok, {token, user_info}}
-
-      error ->
-        error
+    with(
+      {:ok, token} <- get_token(state, code),
+      {:ok, user_info} <- get(token, @user_info_path)
+    ) do
+      {:ok, {token, user_info}}
+    else
+      error -> error
     end
   end
 

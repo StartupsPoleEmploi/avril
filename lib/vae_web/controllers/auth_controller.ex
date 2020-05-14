@@ -52,6 +52,10 @@ defmodule VaeWeb.AuthController do
 
   defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.")
 
+  defp handle_error(conn, %Ecto.Changeset{errors: [email: {"has already been taken", _opts}]} = changeset) do
+    handle_error(conn, "Votre email est déjà associé à un compte Avril. Connectez-vous avec votre adresse email + mot de passe.")
+  end
+
   defp handle_error(conn, %Ecto.Changeset{} = changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       error =

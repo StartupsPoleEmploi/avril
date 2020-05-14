@@ -117,7 +117,7 @@ defmodule Vae.ExAdmin.Certification do
 
     query do
       %{
-        all: [preload: [:romes, :certifiers]],
+        all: [preload: [:romes, :certifiers, :certifications_delegates]],
         index: [default_sort: [asc: :id]],
         show: [
           preload: [

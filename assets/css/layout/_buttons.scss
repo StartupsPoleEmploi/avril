@@ -52,13 +52,13 @@
   }
 
   &.is-pe-connect {
-    // font-size: 14px;
-    font-family: Lato, sans-serif !important;
+    font-size: 1rem;
+    font-family: $pe-connect !important;
     display: inline-block;
     padding: 6px 10px 5px 13px;
     border-radius: 100px;
     border: 2px #1b2e57 solid;
-    font-weight: bold;
+    font-weight: 700;
     text-decoration: none;
     height: auto;
     transition: transform 0.2s $easing, box-shadow 0.2s $easing;
