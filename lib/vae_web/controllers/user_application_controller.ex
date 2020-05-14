@@ -182,42 +182,4 @@ defmodule VaeWeb.UserApplicationController do
         |> redirect(external: url_form || Routes.root_path(conn, :index))
     end
   end
-
-  def france_vae_redirect(
-        conn,
-        %{
-          "application_id" => _id,
-          "academy_id" => academy_id
-        } = params
-      ) do
-    application =
-      conn.assigns[:current_application]
-      |> Repo.preload([:user, {:delegate, :process}, :certification])
-
-    meeting_id = params["meeting_id"]
-
-    render(conn, "france-vae-redirect.html", %{
-      container_class: "d-flex flex-grow-1",
-      user_registration: Vae.Meetings.FranceVae.UserRegistration.from_application(application),
-      form_url: Vae.Meetings.FranceVae.Config.get_france_vae_form_url(academy_id, meeting_id)
-    })
-  end
-
-  def france_vae_registered(
-        conn,
-        %{
-          "application_id" => id,
-          "academy_id" => academy_id,
-          "meeting_id" => meeting_id
-        }
-      ) do
-    meeting = Vae.Meetings.get_by_meeting_id(meeting_id)
-
-    render(conn, "france-vae-registered.html", %{
-      container_class: "d-flex flex-grow-1",
-      application_id: id,
-      academy_id: academy_id,
-      meeting: meeting
-    })
-  end
 end
