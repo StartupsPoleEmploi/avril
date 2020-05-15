@@ -38,6 +38,7 @@ defmodule Vae.ExAdmin.User do
     end
 
     filter([
+      :identity,
       :first_name,
       :last_name,
       :email,
