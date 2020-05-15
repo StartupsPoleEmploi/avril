@@ -297,11 +297,11 @@ defmodule Vae.User do
   end
 
   def worked_hours(%User{} = user) do
-    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + pe.work_duration end)
+    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + Vae.Maybe.to_integer(pe.work_duration) end)
   end
 
   def worked_days(%User{} = user) do
-    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + pe.duration end)
+    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + Vae.Maybe.to_integer(pe.duration) end)
   end
 
   def is_eligible(%User{} = user) do
