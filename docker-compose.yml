@@ -90,4 +90,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 1m
+    volumes:
+      - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
 
