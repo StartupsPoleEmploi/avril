@@ -38,7 +38,7 @@ defmodule VaeWeb.AuthController do
           if get_session(conn, :referer) == Routes.user_url(conn, :eligibility) do
             redirect_to_referer(conn)
           else
-          VaeWeb.RegistrationController.maybe_create_application_and_redirect(conn)
+            VaeWeb.RegistrationController.maybe_create_application_and_redirect(conn)
           end
 
         {:error, changeset} ->

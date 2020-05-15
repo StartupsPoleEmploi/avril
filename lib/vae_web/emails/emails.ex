@@ -19,9 +19,10 @@ defmodule VaeWeb.Emails do
   end
 
   defp send_asp_application_submission_confirmation(application) do
-    application
+    {:ok, _sent} = application
     |> ApplicationEmail.asp_user_submission_confirmation()
     |> Mailer.send()
+    {:ok, application}
   end
 
   defp send_user_and_delegate_submission_confirmation(application) do
