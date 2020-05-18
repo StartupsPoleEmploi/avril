@@ -201,31 +201,48 @@ defmodule Vae.User do
   def map_params_from_pe(user_info) do
     user_info
     |> extra_fields_for_create()
-    |> Map.merge(%{
-      gender: user_info["gender"],
-      first_name: Vae.String.capitalize(user_info["given_name"]),
-      last_name: Vae.String.capitalize(user_info["family_name"]),
-      pe_id: user_info["idIdentiteExterne"],
-      job_seeker:
-        Repo.get_by(JobSeeker,
-          email: String.downcase(user_info["email"])
-        ),
-      email_confirmed_at: Timex.now()
-    })
-    |> Enum.reject(fn {_, v} -> is_nil(v) end)
-    |> Map.new()
+    |> case do
+      {:ok, extra_fields} ->
+        Map.merge(extra_fields, %{
+          gender: user_info["gender"],
+          first_name: Vae.String.capitalize(user_info["given_name"]),
+          last_name: Vae.String.capitalize(user_info["family_name"]),
+          pe_id: user_info["idIdentiteExterne"],
+          job_seeker:
+            Repo.get_by(JobSeeker,
+              email: String.downcase(user_info["email"])
+            ),
+          email_confirmed_at: Timex.now()
+        })
+        |> Enum.reject(fn {_, v} -> is_nil(v) end)
+        |> Map.new()
+
+      {:incomplete, _msg} = imcomplete ->
+        imcomplete
+
+      {:error, _msg} = error ->
+        error
+    end
   end
 
   def extra_fields_for_create(%{"idIdentiteExterne" => pe_id, "email" => email}) do
     tmp_password = "AVRIL_#{pe_id}_TMP_PASSWORD"
 
-    %{
-      email: String.downcase(email),
-      current_password: nil,
-      password: tmp_password,
-      password_confirmatin: tmp_password
-    }
+    {:ok,
+     %{
+       email: String.downcase(email),
+       current_password: nil,
+       password: tmp_password,
+       password_confirmatin: tmp_password
+     }}
   end
+
+  def extra_fields_for_create(%{"idIdentiteExterne" => pe_id}) do
+    {:incomplete, "Missing email field for #{pe_id}"}
+  end
+
+  def extra_fields_for_create(_),
+    do: {:error, "Unexpected error encountered while retrieving user info from PE-connect"}
 
   def update_identity_changeset(model, params) do
     model
@@ -305,7 +322,7 @@ defmodule Vae.User do
   end
 
   def is_eligible(%User{} = user) do
-    (worked_hours(user) >= 1607) || (worked_days(user) >= 500)
+    worked_hours(user) >= 1607 || worked_days(user) >= 500
   end
 
   def submit_application_required_missing_fields(user) do
