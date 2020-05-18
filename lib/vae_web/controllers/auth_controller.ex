@@ -46,14 +46,6 @@ defmodule VaeWeb.AuthController do
           handle_error(conn, changeset)
       end
     else
-      {:imcomplete, msg} ->
-        Logger.error(fn -> inspect(msg) end)
-
-        handle_error(
-          conn,
-          "Vous devez accepter de partager votre adresse email depuis votre espace Pôle-Emploi."
-        )
-
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
         handle_error(conn)
