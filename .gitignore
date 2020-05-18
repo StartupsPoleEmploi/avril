@@ -6,7 +6,6 @@
 /deps
 .DS_Store
 erl_crash.dump
-yarn.lock
 docker-compose.override.yml
 
 /assets/.nuxt
