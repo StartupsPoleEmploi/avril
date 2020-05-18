@@ -98,7 +98,10 @@ defmodule VaeWeb.Router do
     # resources("/metiers", VaeWeb.ProfessionController, only: [:show])
     get("/certificateurs", VaeWeb.DelegateController, :geo)
     get("/certificateurs/:administrative", VaeWeb.DelegateController, :geo)
-    resources("/certificateurs/:administrative/:city", VaeWeb.DelegateController, only: [:index, :show, :update])
+
+    resources("/certificateurs/:administrative/:city", VaeWeb.DelegateController,
+      only: [:index, :show, :update]
+    )
 
     resources("/diplomes", VaeWeb.CertificationController, only: [:index, :show]) do
       put("/select", VaeWeb.CertificationController, :select, as: :select)
@@ -150,14 +153,19 @@ defmodule VaeWeb.Router do
     post("/signup", RegistrationController, :create, as: :signup)
     get("/login", SessionController, :new, as: :login)
     post("/login", SessionController, :create, as: :login)
-    resources("/reset-password", ResetPasswordController, as: :reset_password, only: [:new, :create, :edit, :update])
+
+    resources("/reset-password", ResetPasswordController,
+      as: :reset_password,
+      only: [:new, :create, :edit, :update]
+    )
   end
 
   scope "/", VaeWeb do
     pipe_through [:browser, :protected]
 
     delete("/logout", SessionController, :delete, as: :logout)
-    get("/disconnect", SessionController, :delete) # For nuxt_profile
+    # For nuxt_profile
+    get("/disconnect", SessionController, :delete)
   end
 
   # Admin
@@ -202,6 +210,7 @@ defmodule VaeWeb.Router do
       :api_protected_login_or_server,
       :set_current_application
     ])
+
     get("/booklet", VaeWeb.ApiController, :get_booklet)
     put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
