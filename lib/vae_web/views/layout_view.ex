@@ -24,7 +24,31 @@ defmodule VaeWeb.LayoutView do
   defp title_with_suffix(title), do: "#{title} | #{@title_suffix}"
 
   defp dynamic_meta(%{
-         view_module: Vae.CertificationView,
+         view_module: VaeWeb.RomeView,
+         view_template: "index.html",
+         rome: rome,
+       } = assigns) do
+    last_rome = assigns[:subcategory] || assigns[:category] || rome
+    %{
+      title: "Métiers disponibles en VAE pour la catégorie #{last_rome.label}",
+      description:
+        "Découvrez tous les métiers disponibles à la VAE pour la catégorie #{last_rome.label} grâce à la classification ROME."
+    }
+  end
+
+  defp dynamic_meta(%{
+         view_module: VaeWeb.RomeView,
+         view_template: "index.html"
+       }) do
+    %{
+      title: "Métiers disponibles en VAE",
+      description:
+        "Découvrez tous les métiers disponibles à la VAE grâce à la classification ROME."
+    }
+  end
+
+  defp dynamic_meta(%{
+         view_module: VaeWeb.CertificationView,
          view_template: "show.html",
          certification: c,
          delegate: d
@@ -39,7 +63,7 @@ defmodule VaeWeb.LayoutView do
   end
 
   defp dynamic_meta(%{
-         view_module: Vae.CertificationView,
+         view_module: VaeWeb.CertificationView,
          view_template: "show.html",
          certification: c
        }) do
@@ -50,17 +74,30 @@ defmodule VaeWeb.LayoutView do
     }
   end
 
-  defp dynamic_meta(%{view_module: Vae.CertificationView} = assigns) do
+  defp dynamic_meta(%{
+    view_module: VaeWeb.CertificationView,
+    view_template: "index.html",
+    rome: rome
+    }) do
     %{
-      title: "Diplômes compatibles avec la VAE#{meta_certification(Map.get(assigns, :meta))}",
+      title: "Diplômes compatibles avec la VAE pour les métiers #{rome.label}",
       description:
-        "Découvrez l'ensemble des diplômes compatibles avec la VAE#{
-          meta_certification(Map.get(assigns, :meta))
-        } pour vous lancer sans hésiter."
+        "Découvrez l'ensemble des diplômes compatibles avec la VAE pour les métiers #{rome.label} pour vous lancer sans hésiter."
     }
   end
 
-  defp dynamic_meta(%{view_module: Vae.DelegateView} = assigns) do
+  defp dynamic_meta(%{
+    view_module: VaeWeb.CertificationView,
+    view_template: "index.html"
+    }) do
+    %{
+      title: "Diplômes compatibles avec la VAE",
+      description:
+        "Découvrez l'ensemble des diplômes compatibles avec la VAE pour vous lancer sans hésiter."
+    }
+  end
+
+  defp dynamic_meta(%{view_module: VaeWeb.DelegateView} = assigns) do
     %{
       title: "Certificateurs VAE#{meta_delegate(Map.get(assigns, :meta))}",
       description:
@@ -70,7 +107,7 @@ defmodule VaeWeb.LayoutView do
     }
   end
 
-  defp dynamic_meta(%{view_module: Vae.ProfessionView}) do
+  defp dynamic_meta(%{view_module: VaeWeb.ProfessionView}) do
     %{
       title: "Métiers compatibles avec la VAE",
       description:
