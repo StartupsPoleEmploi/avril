@@ -107,12 +107,15 @@ defmodule VaeWeb.CertificationController do
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do
     rome = Repo.get_by(Rome, code: Vae.String.to_id(rome_code)) |> Repo.preload(:professions)
-
-    Map.merge(filters, %{
-      rome: rome,
-      subcategory: Rome.subcategory(rome),
-      category: Rome.category(rome)
-    })
+    if rome do
+      Map.merge(filters, %{
+        rome: rome,
+        subcategory: Rome.subcategory(rome),
+        category: Rome.category(rome)
+      })
+    else
+      filters
+    end
   end
 
   defp enrich_filter_values(%{profession: profession_id} = filters) do
