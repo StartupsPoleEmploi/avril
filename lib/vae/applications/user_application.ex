@@ -255,12 +255,12 @@ defmodule Vae.UserApplication do
   end
 
   def booklet_url!(endpoint, application, path \\ nil) do
-    if is_nil(System.get_env("NUXT_PATH")) do
-      Logger.warn("NUXT_PATH environment variables not set")
+    if is_nil(System.get_env("NUXT_PROFILE_PATH")) do
+      Logger.warn("NUXT_PROFILE_PATH environment variables not set")
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_PATH")}#{path}",
+      path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path}",
       query: "hash=#{application.booklet_hash}"
     }
     |> Vae.URI.to_absolute_string(endpoint)

@@ -85,7 +85,7 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: /healthcheck_retry.sh curl -fsS localhost:9000
+      test: /healthcheck_retry.sh curl -fsS localhost:9000/minio/health/ready
       interval: 5s
       timeout: 3s
       retries: 3

@@ -12,7 +12,7 @@ git_commit_upgrade() {
   if [[ -n "$GIT_FOLDER" ]] ; then
     GIT_DIR_OPTION="--git-dir=../$GIT_FOLDER/.git";
   fi
-  git $GIT_DIR_OPTION add $ASSET_FOLDER/yarn.lock
+  git $GIT_DIR_OPTION add ../$GIT_FOLDER/$ASSET_FOLDER/yarn.lock
   git $GIT_DIR_OPTION commit -m "upgrade avril-shared"
   git $GIT_DIR_OPTION push
 }

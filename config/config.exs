@@ -197,8 +197,7 @@ config :scrivener_html,
   view_style: :bootstrap_v4
 
 config :sentry,
-  dsn: System.get_env("SENTRY_DSN"),
-  release: System.get_env("FLYNN_RELEASE_ID"),
+  dsn: System.get_env("PHOENIX_SENTRY_DSN"),
   included_environments: [:prod],
   environment_name: Mix.env(),
   enable_source_code_context: true,

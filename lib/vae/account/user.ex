@@ -326,12 +326,12 @@ defmodule Vae.User do
   end
 
   def profile_url(endpoint, path) do
-    if is_nil(System.get_env("NUXT_PROFIL_PATH")) do
-      Logger.warn("NUXT_PATH environment variables not set")
+    if is_nil(System.get_env("NUXT_PROFILE_PATH")) do
+      Logger.warn("NUXT_PROFILE_PATH environment variable not set")
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_PROFIL_PATH")}#{path}"
+      path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end
