@@ -1285,7 +1285,7 @@ autocomplete.js@^0.37.0:
 
 avril@StartupsPoleEmploi/avril-shared:
   version "1.0.0"
-  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/53834d8f80938ba7899f99c4977727de360b3b9c"
+  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/b19210e2bdd87bf62d7a1903a8ddfaf7f576375a"
   dependencies:
     "@trevoreyre/autocomplete-vue" "^2.1.1"
     algoliasearch "^3.35.1"
