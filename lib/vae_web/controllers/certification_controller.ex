@@ -2,6 +2,8 @@ defmodule VaeWeb.CertificationController do
   require Logger
   use VaeWeb, :controller
 
+  action_fallback VaeWeb.FallbackController
+
   alias Vae.{
     Certification,
     Profession,
@@ -94,12 +96,13 @@ defmodule VaeWeb.CertificationController do
       end
     else
       _error ->
-        raise Ecto.NoResultsError, queryable: Certification
+        {:error, :not_found}
     end
   end
 
   def select(conn, %{"certification_id" => certification_id} = _params) do
     certification_id = Vae.String.to_id(certification_id)
+
     conn
     |> Plug.Conn.put_session(:certification_id, certification_id)
     |> VaeWeb.RegistrationController.maybe_create_application_and_redirect(certification_id)
@@ -122,7 +125,7 @@ defmodule VaeWeb.CertificationController do
     profession = Repo.get(Profession, Vae.String.to_id(profession_id))
 
     Map.merge(filters, %{
-      profession: profession,
+      profession: profession
       # rome: profession.rome,
       # subcategory: Rome.subcategory(profession.rome),
       # category: Rome.category(profession.rome)

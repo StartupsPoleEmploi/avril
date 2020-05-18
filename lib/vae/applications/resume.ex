@@ -35,45 +35,17 @@ defmodule Vae.Resume do
   def put_assoc_if_present(changeset, key, assoc), do: put_assoc(changeset, key, assoc)
 
   def store(application, file) do
+    filename = "#{UUID.uuid4(:hex)}#{Path.extname(file.filename)}"
+
     with {:ok, content} <- File.read(file.path) do
       ExAws.S3.put_object(
         Application.get_env(:ex_aws, :s3)[:bucket],
-        file_path(application.id, file.filename),
+        file_path(application.id, filename),
         content,
         content_type: file.content_type,
-        content_disposition: "attachment; filename=#{file.filename}"
+        content_disposition: "attachment; filename=#{filename}"
       )
       |> ExAws.request()
-    end
-  end
-
-  def create(application, params, conn) do
-    filename = "#{UUID.uuid4(:hex)}#{Path.extname(params.filename)}"
-    {:ok, binary} = File.read(params.path)
-
-    result =
-      ExAws.S3.put_object(
-        Application.get_env(:ex_aws, :s3)[:bucket],
-        file_path(application.id, filename),
-        binary,
-        content_type: params.content_type,
-        content_disposition: "attachment; filename=#{params.filename}"
-      )
-      |> ExAws.request()
-
-    case result do
-      {:ok, body} ->
-        Repo.insert(
-          Resume.changeset(%Resume{}, %{
-            application: application,
-            content_type: params.content_type,
-            filename: params.filename,
-            url: file_url(conn, application.id, filename)
-          })
-        )
-
-      error ->
-        error
     end
   end
 

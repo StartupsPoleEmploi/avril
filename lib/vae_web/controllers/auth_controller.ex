@@ -35,6 +35,7 @@ defmodule VaeWeb.AuthController do
       |> case do
         {:ok, upserted_user} ->
           conn = Pow.Plug.create(conn, upserted_user)
+
           if get_session(conn, :referer) == Routes.user_url(conn, :eligibility) do
             redirect_to_referer(conn)
           else
@@ -45,7 +46,16 @@ defmodule VaeWeb.AuthController do
           handle_error(conn, changeset)
       end
     else
-      {:error, _error} ->
+      {:imcomplete, msg} ->
+        Logger.error(fn -> inspect(msg) end)
+
+        handle_error(
+          conn,
+          "Vous devez accepter de partager votre adresse email depuis votre espace Pôle-Emploi."
+        )
+
+      {:error, msg} ->
+        Logger.error(fn -> inspect(msg) end)
         handle_error(conn)
     end
   end
@@ -56,8 +66,14 @@ defmodule VaeWeb.AuthController do
 
   defp handle_error(conn, msg \\ "Une erreur est survenue. Veuillez réessayer plus tard.")
 
-  defp handle_error(conn, %Ecto.Changeset{errors: [email: {"has already been taken", _opts}]} = changeset) do
-    handle_error(conn, "Votre email est déjà associé à un compte Avril. Connectez-vous avec votre adresse email + mot de passe.")
+  defp handle_error(
+         conn,
+         %Ecto.Changeset{errors: [email: {"has already been taken", _opts}]} = changeset
+       ) do
+    handle_error(
+      conn,
+      "Votre email est déjà associé à un compte Avril. Connectez-vous avec votre adresse email + mot de passe."
+    )
   end
 
   defp handle_error(conn, %Ecto.Changeset{} = changeset) do
