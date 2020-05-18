@@ -217,11 +217,11 @@ defmodule Vae.User do
         |> Enum.reject(fn {_, v} -> is_nil(v) end)
         |> Map.new()
 
-      {:incomplete, _msg} = imcomplete ->
-        imcomplete
+      {:incomplete, default} ->
+        default
 
-      {:error, _msg} = error ->
-        error
+      {:error, default} ->
+        default
     end
   end
 
@@ -238,11 +238,11 @@ defmodule Vae.User do
   end
 
   def extra_fields_for_create(%{"idIdentiteExterne" => pe_id}) do
-    {:incomplete, "Missing email field for #{pe_id}"}
+    Logger.error(fn -> "Missing email for #{pe_id}" end)
+    {:incomplete, %{}}
   end
 
-  def extra_fields_for_create(_),
-    do: {:error, "Unexpected error encountered while retrieving user info from PE-connect"}
+  def extra_fields_for_create(_), do: {:error, %{}}
 
   def update_identity_changeset(model, params) do
     model
@@ -314,11 +314,13 @@ defmodule Vae.User do
   end
 
   def worked_hours(%User{} = user) do
-    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + Vae.Maybe.to_integer(pe.work_duration) end)
+    user.proven_experiences
+    |> Enum.reduce(0, fn pe, acc -> acc + Vae.Maybe.to_integer(pe.work_duration) end)
   end
 
   def worked_days(%User{} = user) do
-    user.proven_experiences |> Enum.reduce(0, fn pe, acc -> acc + Vae.Maybe.to_integer(pe.duration) end)
+    user.proven_experiences
+    |> Enum.reduce(0, fn pe, acc -> acc + Vae.Maybe.to_integer(pe.duration) end)
   end
 
   def is_eligible(%User{} = user) do
