@@ -43,7 +43,10 @@ defmodule Vae.Account do
   def get_identity_email_change(changeset) do
     changeset
     |> get_identity_changes()
-    |> Ecto.Changeset.get_change(:email)
+    |> case do
+      nil -> nil
+      identity -> Ecto.Changeset.get_change(identity, :email)
+    end
   end
 
   def get_identity_changes(changeset), do: Ecto.Changeset.get_change(changeset, :identity)
@@ -82,6 +85,7 @@ defmodule Vae.Account do
   end
 
   def complete_user_profile({:error, _} = error, _token), do: error
+
   def complete_user_profile({:ok, _user} = upsert, token) do
     {:ok, user} = fill_with_api_fields(upsert, token)
     identity_params = %{identity: Identity.from_user(user)}
