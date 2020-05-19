@@ -28,10 +28,11 @@ defmodule Vae.Booklet.Experience do
       field(:start_date, :date)
       field(:end_date, :date)
       field(:week_hours_duration, :integer)
+      field(:total_hours, :integer)
 
       def changeset(struct, params \\ %{}) do
         struct
-        |> cast(params, [:start_date, :end_date, :week_hours_duration])
+        |> cast(params, [:start_date, :end_date, :week_hours_duration, :total_hours])
       end
     end
 
