@@ -19,7 +19,12 @@ defmodule Vae.PoleEmploi do
     ) do
       {:ok, {token, user_info}}
     else
-      error -> error
+      {:error, :unknown_client} = unknown_client ->
+        Logger.error(fn -> "Unable to retrieve token for state #{state} and code #{code}" end)
+        unknown_client
+
+      error ->
+        error
     end
   end
 
@@ -59,8 +64,12 @@ defmodule Vae.PoleEmploi do
   def get_skills(token), do: get(token, @skills_path, Mappers.SkillsMapper)
 
   defp get_token(state, code) do
-    Clients.get_client(state)
-    |> OAuth.generate_access_token(code)
+    with {:ok, client} <- Clients.get_client(state) do
+      OAuth.generate_access_token(client, code)
+    else
+      {:error, :unknown_client} = error ->
+        error
+    end
   end
 
   defp get(token, path, mapper \\ nil)

@@ -10,8 +10,11 @@ defmodule Vae.PoleEmploi.OAuth.Clients do
       Keyword.get(state, String.to_atom(client_state))
     end)
     |> case do
-      nil -> :unknown_client
-      %{client: client} -> client
+      nil ->
+        {:error, :unknown_client}
+
+      %{client: client} ->
+        {:ok, client}
     end
   end
 
