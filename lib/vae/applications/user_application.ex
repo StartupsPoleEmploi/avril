@@ -242,7 +242,7 @@ defmodule Vae.UserApplication do
     end
   end
 
-  def booklet_url(endpoint, application, path \\ nil) do
+  def booklet_url(endpoint, application, opts \\ []) do
     application = application |> Repo.preload(:delegate)
 
     cond do
@@ -250,18 +250,18 @@ defmodule Vae.UserApplication do
         "https://vaedem.asp-public.fr/vaedem/creationCompte.html"
 
       true ->
-        booklet_url!(endpoint, application, path)
+        booklet_url!(endpoint, application, opts)
     end
   end
 
-  def booklet_url!(endpoint, application, path \\ nil) do
+  def booklet_url!(endpoint, application, opts \\ []) do
     if is_nil(System.get_env("NUXT_BOOKLET_PATH")) do
       Logger.warn("NUXT_BOOKLET_PATH environment variables not set")
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{path}",
-      query: "hash=#{application.booklet_hash}"
+      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path]}",
+      query: (if opts[:delegate_mode], do: "delegate_hash=#{application.delegate_access_hash}", else: "hash=#{application.booklet_hash}")
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end

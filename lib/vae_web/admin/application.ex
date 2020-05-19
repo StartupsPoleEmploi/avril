@@ -63,7 +63,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
       if application.booklet_1 do
         action_item_link("Check CERFA",
-          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, "/cerfa"),
+          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, [path: "/cerfa"]),
           target: "_blank"
         )
       end

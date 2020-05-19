@@ -1,18 +1,11 @@
 defmodule VaeWeb.Plugs.ApplicationAccess do
-  @query_param "hash"
+  @hash_pairs [booklet_hash: "hash", delegate_access_hash: "delegate_hash"]
 
   def init(options \\ []) do
     Keyword.merge(options,
       error_handler: options[:error_handler] || VaeWeb.Plugs.ErrorHandlers.Browser
     )
   end
-
-  # def call(%{params: %{"user_application_id" => application_id}} = conn, options),
-  #   do: execute(conn, {:id, application_id}, options)
-
-  # def call(%{params: %{"id" => application_id}} = conn, options) do
-  #   execute(conn, {:id, application_id}, options)
-  # end
 
   def call(conn, options) do
     finder = define_finder(conn, Enum.into(options, %{}))
@@ -25,9 +18,11 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   end
 
   def define_finder(conn, options \\ %{})
-  def define_finder(conn, %{find_with_hash: key}) do
-    value = Plug.Conn.get_req_header(conn, "x-hash") |> List.first() || conn.params[@query_param]
-    if value, do: {key, value}
+  def define_finder(conn, %{find_with_hash: true}) do
+    Enum.find_value(@hash_pairs, fn {field, query} ->
+      value = Plug.Conn.get_req_header(conn, "x-#{String.replace(query, "_", "-")}") |> List.first() || conn.params[query]
+      if value, do: {field, value}
+    end)
   end
 
   def define_finder(%Plug.Conn{params: %{"id" => id}}, _options) when not is_nil(id), do: {:id, id}
@@ -40,20 +35,21 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
     verification_func =
       cond do
+        options[:verify_with_hash] ->
+          fn a ->
+            Map.get(a, options[:verify_with_hash]) == (conn.params["hash"] || conn.params["delegate_hash"])
+          end
+
         conn.assigns[:server_side_authenticated] ->
           fn _a ->
             true
           end
 
-        options[:verify_with_hash] ->
-          fn a ->
-            Map.get(a, options[:verify_with_hash]) == conn.params[@query_param]
-          end
 
-        options[:find_with_hash] ->
-          fn a ->
-            Map.get(a, options[:find_with_hash]) == conn.params[@query_param]
-          end
+        # options[:find_with_hash] ->
+        #   fn a ->
+        #     Map.get(a, options[:find_with_hash]) == conn.params["hash"]
+        #   end
 
         true ->
           nil
@@ -74,7 +70,8 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
     if verification_func.(application) do
       {:ok, application}
     else
-      has_access?(application, user, nil)
+      {:error, :unauthorized}
+      # has_access?(application, user, nil)
     end
   end
 

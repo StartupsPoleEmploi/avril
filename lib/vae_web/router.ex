@@ -51,7 +51,7 @@ defmodule VaeWeb.Router do
   pipeline :maybe_set_current_application do
     plug(
       VaeWeb.Plugs.ApplicationAccess,
-      find_with_hash: :booklet_hash,
+      find_with_hash: true,
       optional: true,
       error_handler: VaeWeb.Plugs.ErrorHandlers.API
     )
@@ -60,7 +60,7 @@ defmodule VaeWeb.Router do
   pipeline :set_current_application do
     plug(
       VaeWeb.Plugs.ApplicationAccess,
-      find_with_hash: :booklet_hash,
+      find_with_hash: true,
       error_handler: VaeWeb.Plugs.ErrorHandlers.API
     )
   end
@@ -115,19 +115,7 @@ defmodule VaeWeb.Router do
     get("/:provider/redirect", VaeWeb.AuthController, :save_session_and_redirect)
 
     # Loggued in applications
-    resources("/candidatures", VaeWeb.UserApplicationController, only: [:index, :show, :update]) do
-      get("/telecharger", VaeWeb.UserApplicationController, :download, as: :download)
-
-      get("/france-vae-redirect", VaeWeb.UserApplicationController, :france_vae_redirect,
-        as: :france_vae_redirect
-      )
-
-      get("/france-vae-registered", VaeWeb.UserApplicationController, :france_vae_registered,
-        as: :france_vae_registered
-      )
-
-      resources("/resume", VaeWeb.UserApplication.ResumeController, only: [:create, :delete])
-    end
+    resources("/candidatures", VaeWeb.UserApplicationController, only: [:index, :show])
 
     get("/candidatures/:id/admissible", VaeWeb.UserApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", VaeWeb.UserApplicationController, :inadmissible)

@@ -4,7 +4,7 @@ defmodule VaeWeb.ApiController do
 
   alias Vae.{UserApplication, Certification}
 
-  def get_booklet(conn, %{"hash" => _hash}) do
+  def get_booklet(conn, params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([:user, :certification])
