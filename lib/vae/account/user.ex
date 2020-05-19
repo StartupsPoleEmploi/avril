@@ -196,6 +196,7 @@ defmodule Vae.User do
   def update_user_email_changeset(changeset, email) do
     changeset
     |> change(%{email: email})
+    |> unique_constraint(:email)
   end
 
   def map_params_from_pe(user_info) do
