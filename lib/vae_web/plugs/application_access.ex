@@ -9,7 +9,6 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
   def call(conn, options) do
     finder = define_finder(conn, Enum.into(options, %{}))
-
     if finder do
       execute(conn, finder, options)
     else
@@ -40,16 +39,10 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
             Map.get(a, options[:verify_with_hash]) == (conn.params["hash"] || conn.params["delegate_hash"])
           end
 
-        conn.assigns[:server_side_authenticated] ->
+        conn.assigns[:server_side_authenticated] || options[:find_with_hash] ->
           fn _a ->
             true
           end
-
-
-        # options[:find_with_hash] ->
-        #   fn a ->
-        #     Map.get(a, options[:find_with_hash]) == conn.params["hash"]
-        #   end
 
         true ->
           nil

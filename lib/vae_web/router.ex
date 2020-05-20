@@ -195,7 +195,7 @@ defmodule VaeWeb.Router do
   scope "/api" do
     pipe_through([
       :accepts_json,
-      :api_protected_login_or_server,
+      # :api_protected_login_or_server,
       :set_current_application
     ])
 
