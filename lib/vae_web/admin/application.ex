@@ -38,14 +38,14 @@ defmodule Vae.ExAdmin.UserApplication do
       action_item_link("View Delegate Application", href: href, target: "_blank")
     end)
 
-    action_item(:show, fn id ->
-      application = Vae.Repo.get(Vae.UserApplication, id)
+    # action_item(:show, fn id ->
+    #   application = Vae.Repo.get(Vae.UserApplication, id)
 
-      if !application.submitted_at do
-        href = VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :update, application)
-        action_item_link("Submit Application", href: href, "data-method": :put)
-      end
-    end)
+    #   if !application.submitted_at do
+    #     href = VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :update, application)
+    #     action_item_link("Submit Application", href: href, "data-method": :put)
+    #   end
+    # end)
 
     action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
