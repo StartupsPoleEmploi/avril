@@ -35,6 +35,17 @@ defmodule VaeWeb.CertificationController do
     end
   end
 
+  @doc "List certifications from search query parameter"
+  @deprecated "Use index with :level / :metier / :rome_code query parameters"
+  def index(conn, %{"search" => search} = params) do
+    params =
+      params
+      |> Map.delete("search")
+      |> Map.put("rome_code", search["rome_code"])
+
+    redirect(conn, to: Routes.certification_path(conn, :index, params))
+  end
+
   def index(conn, params) do
     with(
       {:ok, filtered_query, filter_values} <- apply_filters(Certification, conn),
@@ -110,6 +121,7 @@ defmodule VaeWeb.CertificationController do
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do
     rome = Repo.get_by(Rome, code: Vae.String.to_id(rome_code)) |> Repo.preload(:professions)
+
     if rome do
       Map.merge(filters, %{
         rome: rome,
