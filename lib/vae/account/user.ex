@@ -156,6 +156,25 @@ defmodule Vae.User do
     |> put_job_seeker(params[:job_seeker])
   end
 
+  @doc "Changeset for update a user from admin"
+  @deprecated "Until we can find a better way"
+  def admin_changeset(model, params) do
+    params = Map.put(params, :identity, params)
+
+    model
+    |> cast(params, @fields)
+    |> pow_extension_changeset(params)
+    |> sync_name_with_first_and_last(params)
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
+    |> cast_embed(:identity)
+    |> put_job_seeker(params[:job_seeker])
+  end
+
   def create_changeset(model, params) do
     model
     |> cast(params, @fields)
