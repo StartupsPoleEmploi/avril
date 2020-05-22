@@ -84,11 +84,19 @@ defmodule VaeWeb.AuthController do
   defp handle_error(conn, msg) do
     conn
     |> put_flash(:danger, if(is_binary(msg), do: msg, else: inspect(msg)))
-    |> redirect(external: get_session(conn, :referer))
+    |> redirect(external: redirect_url(conn))
   end
 
   defp redirect_to_referer(conn) do
     conn
-    |> redirect(external: get_session(conn, :referer) || Routes.root_path(conn, :index))
+    |> redirect(external: redirect_url(conn))
+  end
+
+  defp redirect_url(conn) do
+    with url when not is_nil(url) <- get_session(conn, :referer) do
+      url
+    else
+      nil -> Routes.root_url(conn, :index)
+    end
   end
 end
