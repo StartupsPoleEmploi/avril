@@ -2,9 +2,9 @@
 
 *Chers candidats à la VAE, découvrons ensemble le chemin à parcourir pour obtenir votre diplôme en VAE !
 Parce qu’il est inutile d’apprendre ce que l’on sait déjà, la VAE vous permet d’obtenir le diplôme que votre expérience mérite !
-Pas de formation\* ! Juste un dossier et un entretien !*
+Pas de formation&ast; ! Juste un dossier et un entretien !*
 
-(\* ou presque ! En effet, en cas de diplôme obtenu partiellement, vous pourrez compléter votre diplôme par une formation courte)
+(&ast; ou presque ! En effet, en cas de diplôme obtenu partiellement, vous pourrez compléter votre diplôme par une formation courte)
 
 ## 1. S’informer :
 
