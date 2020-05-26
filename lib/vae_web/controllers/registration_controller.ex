@@ -44,7 +44,6 @@ defmodule VaeWeb.RegistrationController do
       |> redirect_to_user_space(application)
     else
       error ->
-        Logger.warn("Application not created: #{inspect(error)}")
         redirect_to_user_space(conn)
     end
   end
