@@ -95,7 +95,6 @@ defmodule VaeWeb.Router do
 
     # Basic navigation
     resources("/rome", VaeWeb.RomeController, only: [:index, :show])
-    # resources("/metiers", VaeWeb.ProfessionController, only: [:show])
     get("/certificateurs", VaeWeb.DelegateController, :geo)
     get("/certificateurs/:administrative", VaeWeb.DelegateController, :geo)
 

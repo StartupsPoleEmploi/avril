@@ -86,6 +86,7 @@ defmodule VaeWeb.CertificationController do
           |> Map.get(:romes)
           |> Enum.flat_map(fn r -> r.certifications end)
           |> Enum.reject(fn c -> c.id == certification.id end)
+          |> Enum.uniq()
           |> Enum.sort_by(
             fn c ->
               common_certifiers =
