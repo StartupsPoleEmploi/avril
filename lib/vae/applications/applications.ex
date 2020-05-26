@@ -9,7 +9,6 @@ defmodule Vae.Applications do
     base_query()
     |> build_query(user_id: user_id)
     |> Repo.all()
-    |> Repo.preload(:resumes)
   end
 
   @doc "Returns an application from its ID and user ID"
@@ -17,7 +16,6 @@ defmodule Vae.Applications do
     base_query()
     |> build_query(application_id: application_id, user_id: user_id)
     |> Repo.one()
-    |> Repo.preload(:resumes)
   end
 
   @doc "Retrieve a resume from its ID and user ID"

@@ -78,14 +78,29 @@ defmodule Vae.UserApplication do
 
   def find_or_create_with_params(%{user_id: user_id, certification_id: certification_id} = params)
       when not is_nil(user_id) and not is_nil(certification_id) do
-    case Repo.get_by(__MODULE__, %{
-           user_id: user_id,
-           certification_id: certification_id
-         }) do
-      nil -> Repo.insert(changeset(%__MODULE__{}, params))
-      application -> {:ok, application}
+    from(a in UserApplication,
+      where:
+        a.user_id == ^user_id and
+          a.certification_id == ^certification_id and
+          is_nil(a.submitted_at)
+    )
+    |> Repo.all()
+    |> case do
+      [] ->
+        Repo.insert(changeset(%__MODULE__{}, params))
+
+      [application | []] ->
+        {:ok, application}
+
+      [h | t] ->
+        Logger.warn(fn ->
+          "Multiple results found for user: #{user_id} and certification: #{certification_id}"
+        end)
+
+        {:ok, h}
     end
   end
+
   def find_or_create_with_params(_params) do
     {:ok, nil}
   end
@@ -261,7 +276,11 @@ defmodule Vae.UserApplication do
 
     %URI{
       path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path]}",
-      query: (if opts[:delegate_mode], do: "delegate_hash=#{application.delegate_access_hash}", else: "hash=#{application.booklet_hash}")
+      query:
+        if(opts[:delegate_mode],
+          do: "delegate_hash=#{application.delegate_access_hash}",
+          else: "hash=#{application.booklet_hash}"
+        )
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end

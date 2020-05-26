@@ -2,7 +2,6 @@ defmodule Vae.ExAdmin.User do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-
   register_resource Vae.User do
     index do
       selectable_column()
@@ -75,6 +74,8 @@ defmodule Vae.ExAdmin.User do
       column(:pe_id)
     end
 
+    update_changeset(:admin_changeset)
+
     show user do
       attributes_table do
         row(:gender)
@@ -141,11 +142,15 @@ defmodule Vae.ExAdmin.User do
       panel "Applications" do
         table_for user.applications do
           column(:id, fn a -> Helpers.link_to_resource(a, namify: fn a -> a.id end) end)
+
           column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+
           column(:application_delegate, fn a -> Helpers.link_to_resource(a.delegate) end)
+
           column(:application_certifiers, fn a ->
             Enum.map(a.certifiers, &Helpers.link_to_resource/1)
           end)
+
           column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
           column(:submitted_at)
           column(:admissible_at)
@@ -157,7 +162,7 @@ defmodule Vae.ExAdmin.User do
     query do
       %{
         index: [default_sort: [desc: :inserted_at]],
-        show: [preload: [applications: [ :delegate, :user, :certification, :certifiers]]]
+        show: [preload: [applications: [:delegate, :user, :certification, :certifiers]]]
       }
     end
   end
