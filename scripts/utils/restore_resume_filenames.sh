@@ -2,7 +2,8 @@
 
 export COMPOSE_INTERACTIVE_NO_CLI=1
 
-BUCKET_NAME=${1?"BUCKET_NAME required"}
+CONTAINER_ID=${1?"CONTAINER_ID required"}
+BUCKET_NAME=${2?"BUCKET_NAME required"}
 
 update_file_url() {
   RESUME_ID=${1?"RESUME_ID required"}
@@ -15,7 +16,7 @@ resume
 |> Vae.Repo.update()
 EOM
 
-  docker-compose exec phoenix mix run -e "$ELIXIR_UPDATE_COMMAND"
+  docker exec $CONTAINER_ID mix run -e "$ELIXIR_UPDATE_COMMAND"
 }
 
 get_filename() {
@@ -64,7 +65,7 @@ end)
 EOM
 
 
-docker-compose exec phoenix mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUME_INFOS; do
+docker exec $CONTAINER_ID mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUME_INFOS; do
   RESUME_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
   APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
   MODIFICATION_TIME=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
