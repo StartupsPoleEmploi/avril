@@ -20,7 +20,7 @@ defmodule Vae.ExAdmin.Resume do
         row(:content_type)
         row(:inserted_at)
         row(:updated_at)
-        row(:application, fn r -> Helpers.link_to_resource(r.application) end)
+        row(:application)
       end
     end
 
