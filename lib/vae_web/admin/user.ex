@@ -20,19 +20,8 @@ defmodule Vae.ExAdmin.User do
         input(user, :first_name)
         input(user, :last_name)
         input(user, :email)
-        input(user, :email_confirmed_at)
         input(user, :is_admin)
-        input(user, :postal_code)
-        input(user, :address1)
-        input(user, :address2)
-        input(user, :address3)
-        input(user, :address4)
-        input(user, :insee_code)
-        input(user, :country_code)
-        input(user, :city_label)
-        input(user, :country_label)
         input(user, :pe_id)
-        input(user, :pe_connect_token)
       end
     end
 
@@ -74,6 +63,7 @@ defmodule Vae.ExAdmin.User do
       column(:pe_id)
     end
 
+    create_changeset(:admin_changeset)
     update_changeset(:admin_changeset)
 
     show user do
