@@ -38,14 +38,9 @@ defmodule Vae.Applications do
     |> Repo.update()
   end
 
-  @doc "Store a resume"
-  def store_resume(application, resume) do
-    Resume.store(application, resume)
-  end
-
   @doc "Attaches a resume to an application"
   def attach_resume_to_application(application, resume_file) do
-    resume = Resume.from_file_and_application_id(resume_file, application.id)
+    resume = Resume.attach_resume_to_application(application, resume_file)
 
     application
     |> UserApplication.attach_resume_changeset(resume)
