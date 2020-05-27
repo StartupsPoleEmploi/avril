@@ -34,14 +34,13 @@ get_filename() {
   if [ $(echo "$FILENAME" | wc -l) -gt 1 ];
   then
     echo ":( Multiple entries, need to manual match for application_id $APPLICATION_ID"
+  fi
+  FILENAME=${FILENAME//[$'\t\r\n']} # Remove new lines
+  if [[ ! -z "$FILENAME" ]]; then
+    echo ":) $FILENAME found for resume ID: $RESUME_ID"
+    update_file_url "$RESUME_ID" "$FILENAME";
   else
-    FILENAME=${FILENAME//[$'\t\r\n']} # Remove new lines
-    if [[ ! -z "$FILENAME" ]]; then
-      echo ":) $FILENAME found for resume ID: $RESUME_ID"
-      update_file_url "$RESUME_ID" "$FILENAME";
-    else
-      echo ":( File not found for resume ID: $RESUME_ID"
-    fi
+    echo ":( File not found for resume ID: $RESUME_ID"
   fi
 
 }
@@ -50,10 +49,10 @@ read -r -d '' ELIXIR_SELECT_COMMAND << EOM
 import Ecto.Query
 
 date = ~N[2020-05-14 22:51:44]
-query = from r in Vae.Resume, where: r.id >= ^9244
+query = from r in Vae.Resume, [where: r.id >= ^9244, order_by: [desc: :inserted_at]]
 
 Vae.Repo.all(query) |> Enum.each(fn r ->
-  unless Regex.match?(~r/[0-9a-f]{32}\.[a-zA-Z]+/, r.filename) do
+  unless Regex.match?(~r/^[0-9a-f]{32}$/, r.url |> String.split("/") |> List.last() |> String.split(".") |> List.first()) do
     IO.write("|")
     r.id
     |> Integer.to_string()
