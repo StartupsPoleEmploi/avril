@@ -24,7 +24,7 @@ defmodule Vae.Resume do
   end
 
   @doc false
-  def changeset(resume, params) do
+  def changeset(resume, params\\%{}) do
     resume
     |> cast(params, [:filename, :content_type, :url])
     |> put_assoc_if_present(:application, params[:application])

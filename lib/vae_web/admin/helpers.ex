@@ -13,8 +13,11 @@ defmodule Vae.ExAdmin.Helpers do
         Keyword.has_key?(resource.__struct__.__info__(:functions), :name) ->
           resource.__struct__.name(resource)
 
-        true ->
+        Map.has_key?(Map.from_struct(resource.__struct__), :name) ->
           resource.name
+
+        true ->
+          resource.id
       end
 
     path = ExAdmin.Utils.admin_resource_path(resource)

@@ -110,7 +110,7 @@
                 = link("Livret de recevabilité complété (L1)", to: Vae.UserApplication.booklet_url(@conn, @application, [path: "/cerfa", delegate_mode: true]))
             = for resume <- @application.resumes do
               li.document
-                = link to: resume.url, class: "download", data: [analytics: "CV#download certificateur"] do
+                = link to: resume.url, class: "download", download: resume.filename, data: [analytics: "CV#download certificateur"] do
                   span.fa.fa-download
                   = resume.filename
     = if length(@user.experiences) > 0 do
