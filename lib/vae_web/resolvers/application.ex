@@ -132,7 +132,6 @@ defmodule VaeWeb.Resolvers.Application do
     with {:application, application} <-
            {:application,
             Applications.get_application_from_id_and_user_id(application_id, user.id)},
-         {:ok, _result} <- Applications.store_resume(application, resume),
          {:ok, application} <- Applications.attach_resume_to_application(application, resume) do
       {:ok, application}
     else
