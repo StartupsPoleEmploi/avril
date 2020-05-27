@@ -24,7 +24,7 @@ get_filename() {
   APPLICATION_ID=${2?"APPLICATION_ID required"}
   MODIFICATION_TIME=${3?"MODIFICATION_TIME required"}
 
-  COMMAND="ls -Al -t --full-time /data/$BUCKET_NAME/$APPLICATION_ID | grep '$MODIFICATION_TIME' | rev | cut -d' ' -f1 | rev"
+  COMMAND="ls -Al -t --full-time /data/$BUCKET_NAME/$APPLICATION_ID | grep '$MODIFICATION_TIME' | head -n 1 | rev | cut -d' ' -f1 | rev"
 
   docker-compose exec -T minio sh -c "mkdir -p /data/$BUCKET_NAME/$APPLICATION_ID"
   FILENAME=$(docker-compose exec -T minio sh -c "$COMMAND");
@@ -46,21 +46,23 @@ date = ~N[2020-05-14 22:51:44]
 query = from r in Vae.Resume, where: r.id >= ^9244
 
 Vae.Repo.all(query) |> Enum.each(fn r ->
-  IO.write("|")
-  r.id
-  |> Integer.to_string()
-  |> String.replace_suffix("", "|")
-  |> IO.write()
+  unless Regex.match?(~r/[0-9a-f]{32}\.[a-zA-Z]+/, "6ae2d0080fc24720a5bb8264235d18a2.PDF") do
+    IO.write("|")
+    r.id
+    |> Integer.to_string()
+    |> String.replace_suffix("", "|")
+    |> IO.write()
 
-  r.application_id
-  |> Integer.to_string()
-  |> String.replace_suffix("", "|")
-  |> IO.write()
+    r.application_id
+    |> Integer.to_string()
+    |> String.replace_suffix("", "|")
+    |> IO.write()
 
-  r.inserted_at
-  |> Timex.format!("%Y-%m-%d %H:%M:%S", :strftime)
-  |> String.replace_suffix("", "\n")
-  |> IO.write()
+    r.inserted_at
+    |> Timex.format!("%Y-%m-%d %H:%M:%S", :strftime)
+    |> String.replace_suffix("", "\n")
+    |> IO.write()
+  end
 end)
 EOM
 
