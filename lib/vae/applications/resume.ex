@@ -1,4 +1,6 @@
 defmodule Vae.Resume do
+  require Logger
+
   use Ecto.Schema
   import Ecto.Changeset
   alias Vae.Repo
@@ -24,7 +26,7 @@ defmodule Vae.Resume do
   end
 
   @doc false
-  def changeset(resume, params\\%{}) do
+  def changeset(resume, params \\ %{}) do
     resume
     |> cast(params, [:filename, :content_type, :url])
     |> put_assoc_if_present(:application, params[:application])
@@ -44,19 +46,22 @@ defmodule Vae.Resume do
     }
 
     with {:ok, content} <- File.read(file.path),
-         {:ok, _result} <- store(application.id, resume, content) do
+         {:ok, _result} <- store(application.id, filename, resume, content) do
       resume
+    else
+      {:error, error} -> Logger.error(fn -> inspect(error) end)
     end
   end
 
-  def store(application_id, resume, content) do
+  def store(application_id, filename, resume, content) do
     ExAws.S3.put_object(
       Application.get_env(:ex_aws, :s3)[:bucket],
-      file_path(application_id, resume.filename),
+      file_path(application_id, filename),
       content,
       content_type: resume.content_type,
-      content_disposition: "attachment; filename=#{resume.filename}"
+      content_disposition: "attachment; filename=#{filename}"
     )
+    |> IO.inspect()
     |> ExAws.request()
   end
 
