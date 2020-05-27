@@ -15,10 +15,10 @@ defmodule VaeWeb.DelegateController do
     # end
   end
 
-  def geo(conn, %{"administrative" => administratives_lug}) do
+  def geo(conn, %{"administrative" => administrative_slug}) do
     cities = Delegate
       |> where(is_active: true)
-      |> where([f], fragment("slugify(?)", f.administrative) == ^administratives_lug)
+      |> where([f], fragment("slugify(?)", f.administrative) == ^administrative_slug)
       |> distinct([f], f.city)
       |> select([f], [f.administrative, f.city])
       |> order_by([f], f.city)

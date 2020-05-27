@@ -49,28 +49,25 @@ read -r -d '' ELIXIR_SELECT_COMMAND << EOM
 import Ecto.Query
 
 date = ~N[2020-05-14 22:51:44]
-query = from r in Vae.Resume, [where: r.id >= ^9244, order_by: [desc: :inserted_at]]
+query =
+  from r in Vae.Resume, [where: not like(r.url, "https://avril.pole-emploi.fr/files/%/________________________________.%"), order_by: [desc: :inserted_at]]
 
 Vae.Repo.all(query) |> Enum.each(fn r ->
-  unless Regex.match?(~r/^[0-9a-f]{32}$/, r.url |> String.split("/") |> List.last() |> String.split(".") |> List.first()) do
-    IO.write("|")
-    r.id
-    |> Integer.to_string()
-    |> String.replace_suffix("", "|")
-    |> IO.write()
+  IO.write("|")
+  r.id
+  |> Integer.to_string()
+  |> String.replace_suffix("", "|")
+  |> IO.write()
 
-    r.application_id
-    |> Integer.to_string()
-    |> String.replace_suffix("", "|")
-    |> IO.write()
+  r.application_id
+  |> Integer.to_string()
+  |> String.replace_suffix("", "|")
+  |> IO.write()
 
-    r.inserted_at
-    |> Timex.format!("%Y-%m-%d %H:%M:%S", :strftime)
-    |> String.replace_suffix("", "\n")
-    |> IO.write()
-  else
-    IO.write("#{r.filename} has correct format")
-  end
+  r.inserted_at
+  |> Timex.format!("%Y-%m-%d %H:%M:%S", :strftime)
+  |> String.replace_suffix("", "\n")
+  |> IO.write()
 end)
 EOM
 
