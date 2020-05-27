@@ -2,8 +2,10 @@
 
 export COMPOSE_INTERACTIVE_NO_CLI=1
 
-CONTAINER_ID=${1?"CONTAINER_ID required"}
-BUCKET_NAME=${2?"BUCKET_NAME required"}
+BUCKET_NAME=${1?"BUCKET_NAME required"}
+
+PHOENIX_CONTAINER_ID=$(docker ps -a | grep phoenix | cut -d' ' -f1)
+MINIO_CONTAINER_ID=$(docker ps -a | grep minio | cut -d' ' -f1)
 
 update_file_url() {
   RESUME_ID=${1?"RESUME_ID required"}
@@ -16,7 +18,7 @@ resume
 |> Vae.Repo.update()
 EOM
 
-  docker exec $CONTAINER_ID mix run -e "$ELIXIR_UPDATE_COMMAND"
+  docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_UPDATE_COMMAND"
 }
 
 get_filename() {
@@ -24,19 +26,24 @@ get_filename() {
   APPLICATION_ID=${2?"APPLICATION_ID required"}
   MODIFICATION_TIME=${3?"MODIFICATION_TIME required"}
 
-  COMMAND="ls -Al -t --full-time /data/$BUCKET_NAME/$APPLICATION_ID | grep '$MODIFICATION_TIME' | head -n 1 | rev | cut -d' ' -f1 | rev"
+  LIST_FILE_COMMAND="ls -Al -t --full-time /data/$BUCKET_NAME/$APPLICATION_ID | grep '$MODIFICATION_TIME' | rev | cut -d' ' -f1 | rev"
 
-  docker-compose exec -T minio sh -c "mkdir -p /data/$BUCKET_NAME/$APPLICATION_ID"
-  FILENAME=$(docker-compose exec -T minio sh -c "$COMMAND");
-  FILENAME=${FILENAME//[$'\t\r\n']}
+  docker exec $MINIO_CONTAINER_ID sh -c "mkdir -p /data/$BUCKET_NAME/$APPLICATION_ID"
+  FILENAME=$(docker exec $MINIO_CONTAINER_ID sh -c "$LIST_FILE_COMMAND");
 
-  if [[ ! -z "$FILENAME" ]]; then
-    echo "found !"
-    echo ":) $FILENAME found for resume ID: $RESUME_ID"
-    update_file_url "$RESUME_ID" "$FILENAME";
+  if [ $(echo "$FILENAME" | wc -l) -gt 1 ];
+  then
+    echo ":( Multiple entries, need to manual match for application_id $APPLICATION_ID"
   else
-    echo ":( File not found for resume ID: $RESUME_ID"
+    FILENAME=${FILENAME//[$'\t\r\n']} # Remove new lines
+    if [[ ! -z "$FILENAME" ]]; then
+      echo ":) $FILENAME found for resume ID: $RESUME_ID"
+      update_file_url "$RESUME_ID" "$FILENAME";
+    else
+      echo ":( File not found for resume ID: $RESUME_ID"
+    fi
   fi
+
 }
 
 read -r -d '' ELIXIR_SELECT_COMMAND << EOM
@@ -46,7 +53,7 @@ date = ~N[2020-05-14 22:51:44]
 query = from r in Vae.Resume, where: r.id >= ^9244
 
 Vae.Repo.all(query) |> Enum.each(fn r ->
-  unless Regex.match?(~r/[0-9a-f]{32}\.[a-zA-Z]+/, "6ae2d0080fc24720a5bb8264235d18a2.PDF") do
+  unless Regex.match?(~r/[0-9a-f]{32}\.[a-zA-Z]+/, r.filename) do
     IO.write("|")
     r.id
     |> Integer.to_string()
@@ -62,12 +69,13 @@ Vae.Repo.all(query) |> Enum.each(fn r ->
     |> Timex.format!("%Y-%m-%d %H:%M:%S", :strftime)
     |> String.replace_suffix("", "\n")
     |> IO.write()
+  else
+    IO.write("#{r.filename} has correct format")
   end
 end)
 EOM
 
-
-docker exec $CONTAINER_ID mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUME_INFOS; do
+docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUME_INFOS; do
   RESUME_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
   APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
   MODIFICATION_TIME=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
@@ -78,4 +86,4 @@ docker exec $CONTAINER_ID mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUM
   fi
 done
 
-# get_filename "9837" "27818" "2020-05-27 16:45:16"
+# get_filename "9837" "27818" "2020-05-27 16:45:16";
