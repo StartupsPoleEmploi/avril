@@ -65,6 +65,7 @@ Vae.Repo.all(query) |> Enum.each(fn r ->
   |> IO.write()
 
   r.inserted_at
+  |> NaiveDateTime.add(1)
   |> Timex.format!("%Y-%m-%d %H:%M:%S", :strftime)
   |> String.replace_suffix("", "\n")
   |> IO.write()
