@@ -19,39 +19,43 @@ defmodule Vae.ExFactory do
       last_name: "Doe",
       postal_code: "35000",
       email: "foo@bar.com",
-      identity: %Vae.Identity{
-        gender: "M",
-        birthday: ~D[1981-06-24],
-        first_name: "John",
-        last_name: "Smith",
-        usage_name: "Doe",
-        email: "john@smith.com",
-        home_phone: "0100000000",
-        mobile_phone: "0600000000",
-        is_handicapped: false,
-        birth_place: %{
-          city: "Paris",
-          country: "France"
-        },
-        full_address: %{
-          city: "Toulouse",
-          postal_code: "31000",
-          country: "France",
-          street: "1, rue de la Bergerie",
-          lat: "43.600000",
-          lng: "1.433333"
-        },
-        current_situation: %{
-          status: "job_seeker",
-          employment_type: "employee",
-          register_to_pole_emploi: true,
-          register_to_pole_emploi_since: ~D[2019-02-01],
-          compensation_type: "pole-emploi"
-        },
-        nationality: %{
-          country: "France",
-          country_code: "FR"
-        }
+      identity: build(:identity)
+    }
+  end
+
+  def identity_factory() do
+    %Vae.Identity{
+      gender: "M",
+      birthday: ~D[1981-06-24],
+      first_name: "John",
+      last_name: "Smith",
+      usage_name: "Doe",
+      email: "john@smith.com",
+      home_phone: "0100000000",
+      mobile_phone: "0600000000",
+      is_handicapped: false,
+      birth_place: %{
+        city: "Paris",
+        country: "France"
+      },
+      full_address: %{
+        city: "Toulouse",
+        postal_code: "31000",
+        country: "France",
+        street: "1, rue de la Bergerie",
+        lat: "43.600000",
+        lng: "1.433333"
+      },
+      current_situation: %{
+        status: "job_seeker",
+        employment_type: "employee",
+        register_to_pole_emploi: true,
+        register_to_pole_emploi_since: ~D[2019-02-01],
+        compensation_type: "pole-emploi"
+      },
+      nationality: %{
+        country: "France",
+        country_code: "FR"
       }
     }
   end
@@ -106,6 +110,21 @@ defmodule Vae.ExFactory do
       booklet_hash: :crypto.strong_rand_bytes(64) |> Base.url_encode64() |> binary_part(0, 64),
       delegate: build(:delegate),
       certification: build(:certification)
+    }
+  end
+
+  def application_with_booklet_factory() do
+    %UserApplication{
+      booklet_hash: :crypto.strong_rand_bytes(64) |> Base.url_encode64() |> binary_part(0, 64),
+      delegate: build(:delegate),
+      certification: build(:certification),
+      booklet_1: build(:booklet_1)
+    }
+  end
+
+  def booklet_1_factory() do
+    %Vae.Booklet.Cerfa{
+      civility: build(:identity)
     }
   end
 

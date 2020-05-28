@@ -43,6 +43,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:updated_at, :naive_datetime)
     field(:completed_at, :naive_datetime)
     field(:certification_name, :string)
+    field(:certifier_name, :string)
     field(:civility, :identity)
   end
 

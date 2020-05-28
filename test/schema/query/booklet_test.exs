@@ -18,6 +18,7 @@ defmodule VaeWeb.Schema.Query.BookletTest do
       updatedAt
       completedAt
       certificationName
+      certifierName
       civility {
         gender
         birthday
@@ -62,13 +63,19 @@ defmodule VaeWeb.Schema.Query.BookletTest do
   }
   """
   test "booklet field returns a booklet initialized by application", %{conn: conn} do
-    application = insert(:application, %{user: conn.assigns[:current_user]})
+    application =
+      insert(:application, %{
+        user: conn.assigns[:current_user],
+        certifiers: [build(:certifier)]
+      })
+
     conn = get conn, "/api/v2", query: @query, variables: %{"applicationId" => application.id}
 
     assert json_response(conn, 200) == %{
              "data" => %{
                "booklet" => %{
                  "certificationName" => Vae.Certification.name(application.certification),
+                 "certifierName" => Vae.UserApplication.certifier_name(application),
                  "civility" => %{
                    "birthPlace" => %{
                      "city" => "Paris",
