@@ -2,7 +2,7 @@ defmodule Vae.ExFactory do
   use ExMachina.Ecto, repo: Vae.Repo
 
   alias Vae.String
-  alias Vae.{Certification, Certifier, Delegate, User, UserApplication}
+  alias Vae.{Certification, Certifier, Delegate, ProvenExperience, User, UserApplication}
 
   def user_factory() do
     %User{
@@ -20,6 +20,52 @@ defmodule Vae.ExFactory do
       postal_code: "35000",
       email: "foo@bar.com",
       identity: build(:identity)
+    }
+  end
+
+  def user_with_proven_experiences_factory() do
+    struct!(
+      user_with_identity_factory(),
+      proven_experiences: [
+        build(:proven_experience),
+        build(
+          :proven_experience,
+          %{
+            start_date: ~D[2017-10-23],
+            end_date: ~D[2017-10-25],
+            work_duration: "24",
+            duration: "3"
+          }
+        ),
+        build(
+          :proven_experience,
+          %{
+            label: "Réalisateur",
+            company_name: "PE Production",
+            start_date: ~D[2017-11-01],
+            end_date: ~D[2017-11-25],
+            work_duration: "89",
+            duration: "24"
+          }
+        )
+      ]
+    )
+  end
+
+  def proven_experience_factory() do
+    %{
+      label: "Assistant réalisateur adjoint",
+      duration: "17",
+      end_date: ~D[2017-09-20],
+      is_manager: false,
+      start_date: ~D[2017-09-04],
+      company_ape: "5911B",
+      company_uid: "1000",
+      company_name: "Avril Production",
+      contract_type: "CDD",
+      work_duration: "88",
+      company_category: "Employeur du Spectacle",
+      company_state_owned: false
     }
   end
 

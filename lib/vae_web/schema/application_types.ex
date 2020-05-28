@@ -45,6 +45,21 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:certification_name, :string)
     field(:certifier_name, :string)
     field(:civility, :identity)
+    field(:experiences, list_of(:experience))
+  end
+
+  object :experience do
+    field(:title, :string)
+    field(:company_name, :string)
+    field(:full_address, :string)
+    field(:employment_type, :string)
+    field(:periods, list_of(:period))
+  end
+
+  object :period do
+    field(:start_date, :date)
+    field(:end_date, :date)
+    field(:total_hours, :string)
   end
 
   object :resume do

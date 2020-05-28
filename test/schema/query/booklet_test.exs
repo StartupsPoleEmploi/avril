@@ -4,7 +4,7 @@ defmodule VaeWeb.Schema.Query.BookletTest do
   setup %{conn: conn} do
     ExMachina.Sequence.reset()
 
-    user = insert(:user_with_identity)
+    user = insert(:user_with_proven_experiences)
 
     authed_conn = Pow.Plug.assign_current_user(conn, user, otp_app: :vae)
 
@@ -19,6 +19,17 @@ defmodule VaeWeb.Schema.Query.BookletTest do
       completedAt
       certificationName
       certifierName
+      experiences {
+        title
+        company_name
+        full_address
+        employment_type
+        periods {
+          start_date
+          end_date
+          total_hours
+        }
+      }
       civility {
         gender
         birthday
@@ -115,7 +126,40 @@ defmodule VaeWeb.Schema.Query.BookletTest do
                  },
                  "completedAt" => nil,
                  "insertedAt" => nil,
-                 "updatedAt" => nil
+                 "updatedAt" => nil,
+                 "experiences" => [
+                   %{
+                     "company_name" => "Avril Production",
+                     "employment_type" => "1",
+                     "full_address" => nil,
+                     "periods" => [
+                       %{
+                         "end_date" => "2017-10-25",
+                         "start_date" => "2017-10-23",
+                         "total_hours" => "24"
+                       },
+                       %{
+                         "end_date" => "2017-09-20",
+                         "start_date" => "2017-09-04",
+                         "total_hours" => "88"
+                       }
+                     ],
+                     "title" => "Assistant réalisateur adjoint"
+                   },
+                   %{
+                     "company_name" => "PE Production",
+                     "employment_type" => "1",
+                     "full_address" => nil,
+                     "periods" => [
+                       %{
+                         "end_date" => "2017-11-25",
+                         "start_date" => "2017-11-01",
+                         "total_hours" => "89"
+                       }
+                     ],
+                     "title" => "Réalisateur"
+                   }
+                 ]
                }
              }
            }
