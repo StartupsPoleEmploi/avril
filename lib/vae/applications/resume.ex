@@ -61,7 +61,6 @@ defmodule Vae.Resume do
       content_type: resume.content_type,
       content_disposition: "attachment; filename=#{resume.filename}"
     )
-    |> IO.inspect()
     |> ExAws.request()
   end
 
