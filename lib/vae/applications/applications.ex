@@ -1,7 +1,7 @@
 defmodule Vae.Applications do
   import Ecto.Query
 
-  alias Vae.{Account, Certification, Delegate, Meetings, Resume, User, UserApplication}
+  alias Vae.{Account, Booklet, Certification, Delegate, Meetings, Resume, User, UserApplication}
   alias Vae.Repo
 
   @doc "Lists applications from a User ID"
@@ -107,6 +107,16 @@ defmodule Vae.Applications do
   def set_submitted_now(application), do: {:ok, application}
 
   def delete_resume(resume), do: Resume.delete(resume)
+
+  def get_booklet(application) do
+    case application.booklet_1 do
+      nil ->
+        {:ok, Booklet.from_application(application)}
+
+      booklet ->
+        {:ok, booklet}
+    end
+  end
 
   defp base_query() do
     from(a in UserApplication,

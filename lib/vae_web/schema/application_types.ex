@@ -16,6 +16,12 @@ defmodule VaeWeb.Schema.ApplicationTypes do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Application.application/3)
     end
+
+    @desc "Returns a booklet by application id"
+    field(:booklet, :booklet) do
+      arg(:application_id, non_null(:id))
+      resolve(&Resolvers.Application.get_booklet/3)
+    end
   end
 
   object :application do
@@ -34,7 +40,10 @@ defmodule VaeWeb.Schema.ApplicationTypes do
 
   object :booklet do
     field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
     field(:completed_at, :naive_datetime)
+    field(:certification_name, :string)
+    field(:civility, :identity)
   end
 
   object :resume do
