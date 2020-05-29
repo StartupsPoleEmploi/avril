@@ -159,6 +159,7 @@ EOM
       status_code=$(curl --write-out %{http_code} --silent --output /dev/null $URL)
 
       if [[ "$status_code" -ne 200 ]] ; then
+        echo "==============================="
         echo "FILE NOT FOUND"
         echo "APPLICATION_ID: $APPLICATION_ID"
         echo "RESUME_ID: $RESUME_ID"
