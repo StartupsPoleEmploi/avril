@@ -144,6 +144,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
   input_object :booklet_item do
     # field(:certification_name, :string)
     # field(:certifier_name, :string)
+    field(:civility, :identity_input)
     field(:education, :education_input)
     field(:experiences, list_of(:experience_input))
   end

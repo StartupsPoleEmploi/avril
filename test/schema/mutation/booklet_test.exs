@@ -19,6 +19,45 @@ defmodule VaeWeb.Schema.Mutation.BookletTest do
       completedAt
       certificationName
       certifierName
+      civility {
+        gender
+        birthday
+        firstName
+        lastName
+        usageName
+        email
+        homePhone
+        mobilePhone
+        isHandicapped
+        birthPlace {
+          city
+          county
+          country
+          lat
+          lng
+          street
+          postalCode
+        }
+        fullAddress {
+          city
+          county
+          country
+          lat
+          lng
+          street
+          postalCode
+        }
+        currentSituation {
+          status
+          employmentType
+          registerToPoleEmploi
+          compensationType
+        }
+        nationality {
+          country
+          countryCode
+        }
+      }
       experiences {
         uuid
         title
@@ -60,6 +99,45 @@ defmodule VaeWeb.Schema.Mutation.BookletTest do
       completedAt
       certificationName
       certifierName
+      civility {
+        gender
+        birthday
+        firstName
+        lastName
+        usageName
+        email
+        homePhone
+        mobilePhone
+        isHandicapped
+        birthPlace {
+          city
+          county
+          country
+          lat
+          lng
+          street
+          postalCode
+        }
+        fullAddress {
+          city
+          county
+          country
+          lat
+          lng
+          street
+          postalCode
+        }
+        currentSituation {
+          status
+          employmentType
+          registerToPoleEmploi
+          compensationType
+        }
+        nationality {
+          country
+          countryCode
+        }
+      }
       experiences {
         uuid
         title
@@ -102,6 +180,42 @@ defmodule VaeWeb.Schema.Mutation.BookletTest do
     booklet_input = %{
       "applicationId" => application.id,
       "booklet" => %{
+        "civility" => %{
+          "birthPlace" => %{
+            "city" => "Saint-Malo",
+            "country" => "France",
+            "county" => "Ille-et-Vilaine",
+            "lat" => 48.6472,
+            "lng" => -2.00884,
+            "postalCode" => "35400",
+            "street" => "1, rue de la fontaine"
+          },
+          "birthday" => "1991-06-24",
+          "currentSituation" => %{
+            "compensationType" => "0",
+            "employmentType" => "partial",
+            "registerToPoleEmploi" => false,
+            "status" => "CDI"
+          },
+          "email" => "jane@smith.com",
+          "firstName" => "Jane",
+          "fullAddress" => %{
+            "city" => "Saint-Malo",
+            "country" => "France",
+            "county" => "Ille-et-Vilaine",
+            "lat" => 48.6472,
+            "lng" => -2.00884,
+            "postalCode" => "35400",
+            "street" => "1, rue de la fontaine"
+          },
+          "gender" => "F",
+          "homePhone" => "0100000001",
+          "isHandicapped" => false,
+          "lastName" => "Smith",
+          "mobilePhone" => "0600000001",
+          "nationality" => %{"country" => "France", "countryCode" => "FR"},
+          "usageName" => "Dane"
+        },
         "education" => %{
           "grade" => 1,
           "degree" => 2,
@@ -189,6 +303,7 @@ defmodule VaeWeb.Schema.Mutation.BookletTest do
 
     assert given_booklet["experiences"] == expected_booklet["experiences"]
     assert given_booklet["education"] == expected_booklet["education"]
+    assert given_booklet["civility"] == expected_booklet["civility"]
 
     get_conn =
       get(conn, "/api/v2", query: @query, variables: %{"applicationId" => application.id})
@@ -196,5 +311,6 @@ defmodule VaeWeb.Schema.Mutation.BookletTest do
     get_booklet = json_response(get_conn, 200)["data"]["booklet"]
     assert get_booklet["experiences"] == expected_booklet["experiences"]
     assert get_booklet["education"] == expected_booklet["education"]
+    assert get_booklet["civility"] == expected_booklet["civility"]
   end
 end
