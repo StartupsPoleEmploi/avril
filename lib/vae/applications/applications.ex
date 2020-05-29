@@ -118,6 +118,11 @@ defmodule Vae.Applications do
     end
   end
 
+  def set_booklet(application, booklet) do
+    UserApplication.save_booklet(application, booklet)
+    |> Repo.update()
+  end
+
   defp base_query() do
     from(a in UserApplication,
       join: c in Certification,

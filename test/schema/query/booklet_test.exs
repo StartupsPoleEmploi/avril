@@ -22,7 +22,6 @@ defmodule VaeWeb.Schema.Query.BookletTest do
       experiences {
         title
         company_name
-        full_address
         employment_type
         periods {
           start_date
@@ -130,31 +129,29 @@ defmodule VaeWeb.Schema.Query.BookletTest do
                  "experiences" => [
                    %{
                      "company_name" => "Avril Production",
-                     "employment_type" => "1",
-                     "full_address" => nil,
+                     "employment_type" => 1,
                      "periods" => [
                        %{
                          "end_date" => "2017-10-25",
                          "start_date" => "2017-10-23",
-                         "total_hours" => "24"
+                         "total_hours" => 24
                        },
                        %{
                          "end_date" => "2017-09-20",
                          "start_date" => "2017-09-04",
-                         "total_hours" => "88"
+                         "total_hours" => 88
                        }
                      ],
                      "title" => "Assistant réalisateur adjoint"
                    },
                    %{
                      "company_name" => "PE Production",
-                     "employment_type" => "1",
-                     "full_address" => nil,
+                     "employment_type" => 1,
                      "periods" => [
                        %{
                          "end_date" => "2017-11-25",
                          "start_date" => "2017-11-01",
-                         "total_hours" => "89"
+                         "total_hours" => 89
                        }
                      ],
                      "title" => "Réalisateur"

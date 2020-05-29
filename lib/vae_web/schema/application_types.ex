@@ -46,20 +46,44 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:certifier_name, :string)
     field(:civility, :identity)
     field(:experiences, list_of(:experience))
+    field(:education, :education)
   end
 
   object :experience do
+    field(:uuid, :string)
     field(:title, :string)
     field(:company_name, :string)
-    field(:full_address, :string)
-    field(:employment_type, :string)
+    field(:job_industry, :string)
+    field(:full_address, :address)
+    field(:employment_type, :integer)
+    field(:skills, list_of(:skill))
     field(:periods, list_of(:period))
   end
 
   object :period do
     field(:start_date, :date)
     field(:end_date, :date)
-    field(:total_hours, :string)
+    field(:total_hours, :integer)
+    field(:week_hours_duration, :integer)
+  end
+
+  object :skill do
+    field(:label, :string)
+  end
+
+  object :education do
+    field(:grade, :integer)
+    field(:degree, :integer)
+    field(:diplomas, list_of(:diploma))
+    field(:courses, list_of(:course))
+  end
+
+  object :diploma do
+    field(:label, :string)
+  end
+
+  object :course do
+    field(:label, :string)
   end
 
   object :resume do
@@ -94,6 +118,12 @@ defmodule VaeWeb.Schema.ApplicationTypes do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Application.upload_resume/2)
     end
+
+    @desc "Set booklet to an application"
+    field(:set_booklet, :booklet) do
+      arg(:input, non_null(:booklet_input))
+      resolve(&Resolvers.Application.set_booklet/3)
+    end
   end
 
   input_object :attach_delegate_input do
@@ -104,5 +134,64 @@ defmodule VaeWeb.Schema.ApplicationTypes do
   input_object :register_meeting_input do
     field(:application_id, non_null(:id))
     field(:meeting_id, non_null(:id))
+  end
+
+  input_object :booklet_input do
+    field(:application_id, non_null(:id))
+    field(:booklet, non_null(:booklet_item))
+  end
+
+  input_object :booklet_item do
+    # field(:certification_name, :string)
+    # field(:certifier_name, :string)
+    field(:education, :education_input)
+    field(:experiences, list_of(:experience_input))
+  end
+
+  input_object :education_input do
+    field(:grade, :integer)
+    field(:degree, :integer)
+    field(:diplomas, list_of(:diploma_input))
+    field(:courses, list_of(:course_input))
+  end
+
+  input_object :diploma_input do
+    field(:label, :string)
+  end
+
+  input_object :course_input do
+    field(:label, :string)
+  end
+
+  input_object :experience_input do
+    field(:uuid, :string)
+    field(:title, :string)
+    field(:company_name, :string)
+    field(:job_industry, :string)
+    field(:employment_type, :integer)
+    field(:skills, list_of(:skill_input))
+    field(:periods, list_of(:period_input))
+    field(:full_address, :full_address_input)
+  end
+
+  input_object :skill_input do
+    field(:label, :string)
+  end
+
+  input_object :period_input do
+    field(:start_date, :date)
+    field(:end_date, :date)
+    field(:week_hours_duration, :integer)
+    field(:total_hours, :integer)
+  end
+
+  input_object :full_address_input do
+    field(:city, :string)
+    field(:county, :string)
+    field(:country, :string)
+    field(:lat, :float)
+    field(:lng, :float)
+    field(:street, :string)
+    field(:postal_code, :string)
   end
 end

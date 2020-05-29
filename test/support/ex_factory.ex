@@ -160,17 +160,110 @@ defmodule Vae.ExFactory do
   end
 
   def application_with_booklet_factory() do
-    %UserApplication{
-      booklet_hash: :crypto.strong_rand_bytes(64) |> Base.url_encode64() |> binary_part(0, 64),
-      delegate: build(:delegate),
-      certification: build(:certification),
+    struct!(
+      application_factory(),
       booklet_1: build(:booklet_1)
-    }
+    )
+  end
+
+  def application_with_complete_booklet_factory() do
+    struct!(
+      application_factory(),
+      booklet_1: build(:complete_booklet_1)
+    )
   end
 
   def booklet_1_factory() do
     %Vae.Booklet.Cerfa{
       civility: build(:identity)
+    }
+  end
+
+  def complete_booklet_1_factory() do
+    struct!(
+      booklet_1_factory(),
+      certification_name: "Init Certificiation Name",
+      certifier_name: "Init Certifier Name",
+      education: education(),
+      experiences: experiences()
+    )
+  end
+
+  defp education() do
+    %Vae.Booklet.Education{
+      grade: 1,
+      degree: 1,
+      diplomas: diplomas(),
+      courses: courses()
+    }
+  end
+
+  defp diplomas() do
+    [
+      %{label: "Init diploma 1"},
+      %{label: "Init diploma 2"}
+    ]
+  end
+
+  defp courses() do
+    [
+      %{label: "Init course 1"},
+      %{label: "Init course 2"},
+      %{label: "Init course 3"}
+    ]
+  end
+
+  defp experiences() do
+    [
+      %Vae.Booklet.Experience{
+        uuid: "1",
+        title: "init title XP1",
+        company_name: "init company name XP 1",
+        job_industry: "init job_industry XP 1",
+        employment_type: 1,
+        skills: skills(),
+        periods: [period(~D[2019-01-01]), period(~D[2019-03-01])],
+        full_address: full_address()
+      },
+      %Vae.Booklet.Experience{
+        uuid: "2",
+        title: "init title XP2",
+        company_name: "init company name XP 2",
+        job_industry: "init job_industry XP 2",
+        employment_type: 2,
+        skills: skills(),
+        periods: [period(~D[2020-01-01])],
+        full_address: full_address()
+      }
+    ]
+  end
+
+  defp skills() do
+    [
+      %Vae.Booklet.Experience.Skill{label: "init skill 1"},
+      %Vae.Booklet.Experience.Skill{label: "init skill 2"},
+      %Vae.Booklet.Experience.Skill{label: "init skill 3"}
+    ]
+  end
+
+  defp period(start_date) do
+    %{
+      start_date: start_date,
+      end_date: Date.add(start_date, 30),
+      week_hours_duration: 35,
+      total_hours: 174
+    }
+  end
+
+  defp full_address() do
+    %Vae.Booklet.Address{
+      city: "Init city",
+      county: "Init county",
+      country: "Init country",
+      lat: 2.33445,
+      lng: 4.66990,
+      street: "Init Street address",
+      postal_code: "Init Postal Code"
     }
   end
 
