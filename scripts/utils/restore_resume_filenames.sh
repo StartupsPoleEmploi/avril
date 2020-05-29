@@ -135,5 +135,38 @@ EOM
 
 }
 
+check_resumes() {
+  read -r -d '' ELIXIR_CHECK_COMMAND << EOM
+import Ecto.Query
+
+query =
+  from r in Vae.Resume, [
+    order_by: [desc: :inserted_at]
+  ]
+
+Vae.Repo.all(query) |> Enum.each(fn r ->
+  IO.write("|#{r.id}|#{r.application_id}|#{r.url}\n")
+end)
+EOM
+
+  docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_CHECK_COMMAND" | while read RESUME_INFOS; do
+    RESUME_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
+    APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
+    URL=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
+
+    if [[ ! -z "$RESUME_ID" ]] && [[ ! -z "$APPLICATION_ID" ]] && [[ ! -z "$URL" ]]; then
+
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null $URL)
+
+      if [[ "$status_code" -ne 200 ]] ; then
+        echo "FILE NOT FOUND"
+        echo "APPLICATION_ID: $APPLICATION_ID"
+        echo "RESUME_ID: $RESUME_ID"
+      fi
+    fi
+  done
+}
+
 # select_resumes
-rename_resumes
+# rename_resumes
+check_resumes
