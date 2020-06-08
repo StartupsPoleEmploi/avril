@@ -11,7 +11,7 @@ defmodule Vae.ExAdmin.Resume do
       actions()
     end
 
-    action_items except: [:new, :delete]
+    action_items except: [:new]
 
     show resume do
       attributes_table do
