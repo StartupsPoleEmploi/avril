@@ -18,6 +18,10 @@ import {
 
 const KEY_MAP = {
   week_number: 'semaine',
+  created: 'Crée',
+  delegated: 'Avec certificateur',
+  booklet_started: 'Livret 1 démarré',
+  booklet_finished: 'Livret 1 terminé',
   admissible: 'Candidatures transmises admissible après relance',
   inadmissible: 'Candidatures transmises pas encore admissible après relance',
   submitted: 'Candidatures transmises',
@@ -28,6 +32,10 @@ const KEY_MAP = {
 }
 
 const COLORS = {
+  created: '#dddddd',
+  delegated: '#c7eeff',
+  booklet_started: '#3498db',
+  booklet_finished: '#2c3e50',
   admissible: '#27ae60',
   inadmissible: '#d35400',
   submitted: '#f39c12',
