@@ -18,48 +18,62 @@ import {
 
 const KEY_MAP = {
   week_number: 'semaine',
-  created: 'Crée',
+  created: 'Créée',
   delegated: 'Avec certificateur',
   booklet_started: 'Livret 1 démarré',
   booklet_finished: 'Livret 1 terminé',
+  resumed: 'Avec pièce jointe',
   admissible: 'Candidatures transmises admissible après relance',
   inadmissible: 'Candidatures transmises pas encore admissible après relance',
   submitted: 'Candidatures transmises',
-  unsubmitted: 'Candidatures non transmises',
-  finished: 'Livret 1 terminé',
-  started: 'Livret 1 démarré',
-  not_started: 'Livret 1 non démarré',
 }
 
 const COLORS = {
-  created: '#dddddd',
-  delegated: '#c7eeff',
-  booklet_started: '#3498db',
-  booklet_finished: '#2c3e50',
-  admissible: '#27ae60',
-  inadmissible: '#d35400',
-  submitted: '#f39c12',
-  unsubmitted: '#f1c40f',
-  finished: '#2c3e50',
-  started: '#3498db',
-  not_started: '#bdc3c7',
+  'created': '#dddddd',
+  'delegated': '#c7eeff',
+  'booklet_started': '#3498db',
+  'booklet_finished': '#1f6390',
+  'resumed': '#2c3e50',
+  'submitted': '#0aea69',
+  'inadmissible': '#d35400',
+  'admissible': '#06632d',
 }
 
-const arrayToObject = (row, keys) => {
-  return keys.reduce((object, key, i) => {
-    return Object.assign(object, {[KEY_MAP[key] || key]: row[i]})
-  }, {});
+const statusToKey = s => {
+  const withoutNumber = s.replace(/^\d+-/, '');
+  return KEY_MAP[withoutNumber] || withoutNumber;
+}
+
+const statusToColor = s => {
+  const withoutNumber = s.replace(/^\d+-/, '');
+  return COLORS[withoutNumber] || withoutNumber;
+}
+
+const getAvailableStatuses = rows => {
+  return rows.reduce((statuses, row) => {
+    return statuses.concat(statuses.indexOf(row[1]) > -1 ? [] : [row[1]])
+  }, []).sort().map(s => s.replace(/^\d+-/, ''));
 }
 
 const formatDataToChart = ({columns, rows}) => {
-  return rows.map(row => arrayToObject(row, columns));
+  const linearizedData = Object.values(rows.reduce((object, [weekNumber, status, count]) => {
+    return {
+      ...object,
+      [weekNumber]: {
+        ...object[weekNumber],
+        semaine: weekNumber,
+        [statusToKey(status)]: count,
+      }
+    }
+  }, {})).sort((a, b) => b.index - a.index);
+  return linearizedData
 }
 
 const formatDataToBar = ({columns, rows}) => {
-  return columns.filter(c => COLORS[c]).map((c, i, a) => ({
-    color: COLORS[c],
+  return getAvailableStatuses(rows).filter(c => statusToColor(c)).map((c, i, a) => ({
+    color: statusToColor(c),
     key: c,
-    label: KEY_MAP[c],
+    label: statusToKey(c),
     isLast: i === a.length - 1,
   }));
 }
@@ -107,24 +121,23 @@ const Aggregate = ({data}) => {
 }
 
 const getLines = type => {
-  if (type == 'submissions') {
-    return [{
-      label: 'Relance à 30 jours',
-      color: 'red',
-      date: moment().add(-30, 'days'),
-    }]
-  }
-  if (type == 'booklet') {
-    return [{
-      label: 'MEP Livret 1 Educ nat',
-      color: '#3498db',
-      date: moment('2019-12-11'),
-    }, {
-      label: 'MEP Livret 1 pour tous',
-      color: '#3498db',
-      date: moment('2020-02-26'),
-    }]
-  }
+  return [{
+    label: 'Relance à 30 jours',
+    color: 'red',
+    date: moment().add(-30, 'days'),
+  }, {
+    label: 'MEP Livret 1 Educ nat',
+    color: '#3498db',
+    date: moment('2019-12-11'),
+  }, {
+    label: 'MEP Livret 1 pour tous',
+    color: '#3498db',
+    date: moment('2020-02-26'),
+  }, {
+    label: 'MEP 1.2',
+    color: 'green',
+    date: moment('2020-05-15'),
+  }]
 }
 
 const renderChart = name => {
@@ -133,13 +146,13 @@ const renderChart = name => {
     fetch($container.dataset.url)
       .then(res => res.json())
       .then(data => {
-        const formattedData = formatDataToChart(data);
+        const linearizedData = formatDataToChart(data);
         render(
           <div>
-            <Aggregate data={formattedData} />
+            <Aggregate data={linearizedData} />
             <ResponsiveContainer height={500}>
               <BarChart
-                data={formattedData}
+                data={linearizedData}
                 margin={{
                   top: 5, right: 30, left: 20, bottom: 5,
                 }}
