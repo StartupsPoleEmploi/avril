@@ -159,7 +159,7 @@ defmodule Vae.User do
   @doc "Changeset for update a user from admin"
   @deprecated "Until we can find a better way"
   def admin_changeset(model, params) do
-    params = Map.put(params, :identity, params)
+    # params = Map.put(params, :identity, params)
 
     model
     |> cast(params, @fields)

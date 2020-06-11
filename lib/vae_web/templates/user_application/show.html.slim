@@ -48,7 +48,7 @@
         p.subtitle Le certificateur :
         h3.title.is-3= @delegate.name
         = form_for @delegate_changeset, Routes.delegate_path(@conn, :update, Vae.String.parameterize(@delegate.administrative), Vae.String.parameterize(@delegate.city), @delegate), [class: "form is-togglable"], fn f ->
-          = hidden_input f, :hash, value: @application.delegate_access_hash, name: "hash"
+          = hidden_input f, :hash, value: @application.delegate_access_hash, name: "delegate_hash"
           .field.is-horizontal
             .field-label.is-normal
               label.label Nom du contact :
