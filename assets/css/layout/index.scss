@@ -1,5 +1,4 @@
 @import 'columns';
-@import 'section';
 @import 'buttons';
 @import 'top-notifications';
 @import 'footer';
@@ -15,16 +14,3 @@
     }
   }
 }
-
-// .label-avril {
-//   font-size: 1rem;
-//   position: relative;
-//   display: inline;
-//   font-weight: bold;
-//   color: palette(blue, title);
-//   font-family: $title-family;
-//   background: linear-gradient(0, palette(yellow, background) 0%, palette(yellow, background) 100%);
-//   background-repeat: no-repeat;
-//   background-size: 100% 0.625em;
-//   background-position: 0 100%;
-// }
