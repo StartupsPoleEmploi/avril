@@ -10,6 +10,7 @@ defmodule Vae.Delegate do
     Certification,
     CertificationDelegate,
     Certifier,
+    Meetings,
     Places,
     Process,
     Repo
@@ -54,6 +55,8 @@ defmodule Vae.Delegate do
       on_delete: :delete_all,
       on_replace: :delete
     )
+
+    embeds_many(:meetings, Meetings.Meeting, on_replace: :delete)
 
     timestamps()
   end

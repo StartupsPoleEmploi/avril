@@ -77,7 +77,7 @@ defmodule Vae.Meetings.Afpa.Server do
     |> Flow.on_trigger(fn meetings ->
       global = %Delegate{
         req_id: req_id,
-        name: @name,
+        #        name: @name,
         updated_at: DateTime.utc_now(),
         meetings: [
           %{

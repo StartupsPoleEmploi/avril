@@ -15,6 +15,18 @@ defmodule Vae.Meetings do
 
   defdelegate get_by_meeting_id(meeting_id), to: @state_holder
 
+  def fetch_france_vae_meetings(academy_id) do
+    Vae.Meetings.Server.fetch(:fvae, academy_id)
+  end
+
+  def index_france_vae_meetings(meetings) do
+    Vae.Meetings.Server.index(meetings)
+  end
+
+  def get_fvae_meetings(delegate) do
+    Vae.Meetings.Server.get_by_delegate(delegate)
+  end
+
   def get_france_vae_academies() do
     if Process.whereis(:france_vae) do
       GenServer.call(:france_vae, :get_academies)

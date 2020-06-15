@@ -5,21 +5,16 @@ defmodule Vae.Meetings.FranceVae.Server do
   alias Vae.Meetings.FranceVae
   alias Vae.Meetings.{Delegate, Meeting}
 
-  @state_holder Application.get_env(:vae, :meetings_state_holder)
-
   @name :france_vae
 
   @doc false
   def start_link() do
-    GenServer.start_link(__MODULE__, Delegate.new(@name), name: @name)
+    GenServer.start_link(__MODULE__, [], name: @name)
   end
 
   @impl true
   def init(state) do
     Logger.info("[DAVA] Init #{@name} server")
-
-    @state_holder.subscribe(@name)
-
     {:ok, state}
   end
 
@@ -44,26 +39,53 @@ defmodule Vae.Meetings.FranceVae.Server do
   end
 
   @impl true
-  def handle_cast({:fetch, pid, delegate}, state) do
+  def handle_call({:fetch, academy_id}, _from, state) do
+    new_academy_meetings = %{
+      updated_at: DateTime.utc_now(),
+      meetings: get_data(academy_id)
+    }
+
     new_state =
-      Map.merge(
-        state,
-        %{
-          req_id: delegate.req_id,
-          updated_at: DateTime.utc_now(),
-          meetings: get_data()
-        }
-      )
+      Keyword.update(state, :"#{academy_id}", new_academy_meetings, fn
+        %{meetings: meetings, updated_at: datetime} = academy_meetings ->
+          case DateTime.compare(
+                 Timex.add(datetime, Timex.Duration.from_hours(48)),
+                 DateTime.utc_now()
+               ) do
+            :lt ->
+              new_academy_meetings
 
-    GenServer.cast(pid, {:save, @name, new_state})
+            _ ->
+              academy_meetings
+          end
 
-    {:noreply, new_state}
+        _ ->
+          new_academy_meetings
+      end)
+
+    {:reply, get_in(new_state, [:"#{academy_id}", :meetings]), new_state}
   end
 
   @impl true
   def handle_info(msg, state) do
     Logger.error(fn -> inspect("Incoming unknown msg: #{msg}") end)
     {:no_reply, state}
+  end
+
+  defp get_data(academy_id) do
+    FranceVae.get_meetings(academy_id)
+    |> Enum.map(fn
+      %Meeting{postal_code: nil} = meeting ->
+        meeting
+
+      %Meeting{postal_code: postal_code} = meeting ->
+        geolocation = Vae.Places.get_geoloc_from_postal_code(postal_code)
+
+        %{
+          meeting
+          | geolocation: geolocation
+        }
+    end)
   end
 
   defp get_data() do

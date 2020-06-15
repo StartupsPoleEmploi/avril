@@ -108,26 +108,30 @@ defmodule Vae.Meetings.FranceVae do
           {"Content-Type", "application/x-www-form-urlencoded"}
         ]
 
-        {:ok, response} =
-          HTTPoison.post(
-            Config.get_oauth_url(),
-            "client_id=#{Config.get_client_id()}&client_secret=#{Config.get_client_secret()}&grant_type=client_credentials",
-            headers
-          )
+        with {:ok, response} <-
+               HTTPoison.post(
+                 Config.get_oauth_url(),
+                 "client_id=#{Config.get_client_id()}&client_secret=#{Config.get_client_secret()}&grant_type=client_credentials",
+                 headers
+               ) do
+          response.body
+          |> Jason.decode()
+          |> case do
+            {:ok, body} ->
+              with {:ok, access_token} <- Cache.add_token(body, delegate) do
+                access_token
+              else
+                e ->
+                  Logger.error(fn -> inspect(e) end)
+                  {:error, nil}
+              end
 
-        response.body
-        |> Jason.decode()
-        |> case do
-          {:ok, body} ->
-            with {:ok, access_token} <- Cache.add_token(body, delegate) do
-              access_token
-            else
-              e ->
-                Logger.error(fn -> inspect(e) end)
-                {:error, nil}
-            end
-
-          _ ->
+            _ ->
+              nil
+          end
+        else
+          {:error, %HTTPoison.Error{reason: reason}} ->
+            Logger.error(fn -> inspect(reason) end)
             nil
         end
 

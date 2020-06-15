@@ -61,14 +61,15 @@ defmodule Vae.Meetings.StateHolder do
                   stated_delegate
 
                 parsed_delegate ->
-                  %Delegate{
-                    stated_delegate
-                    | grouped_meetings:
-                        parsed_delegate.grouped_meetings ++ stated_delegate.grouped_meetings,
-                      indexed_meetings:
-                        parsed_delegate.indexed_meetings ++ stated_delegate.indexed_meetings,
-                      meetings: parsed_delegate.meetings ++ stated_delegate.meetings
-                  }
+                  nil
+                  #                  %Delegate{
+                  #                    stated_delegate
+                  #                    | grouped_meetings:
+                  #                        parsed_delegate.grouped_meetings ++ stated_delegate.grouped_meetings,
+                  #                      indexed_meetings:
+                  #                        parsed_delegate.indexed_meetings ++ stated_delegate.indexed_meetings,
+                  #                      meetings: parsed_delegate.meetings ++ stated_delegate.meetings
+                  #                  }
               end
             else
               Map.merge(stated_delegate, parsed_delegate)
@@ -290,21 +291,22 @@ defmodule Vae.Meetings.StateHolder do
     %{delegate | grouped_meetings: grouped, indexed_meetings: to_index}
   end
 
-  defp index_and_persist(%Delegate{indexed_meetings: to_index} = delegate, name) do
-    with {:ok, objects} <- AlgoliaClient.save_objects(:meetings, to_index),
-         true <- persist(delegate, name) do
-      Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
-      {:ok, delegate}
-    else
-      {:error, msg} ->
-        Logger.error(fn -> inspect(msg) end)
-        {:error, msg}
-
-      false ->
-        msg = "Error while inserting state into meetings ets table"
-        Logger.error(msg)
-        {:error, msg}
-    end
+  defp index_and_persist(delegate, name) do
+    {:ok, []}
+    #    with {:ok, objects} <- AlgoliaClient.save_objects(:meetings, to_index),
+    #         true <- persist(delegate, name) do
+    #      Logger.info("Saved #{Kernel.length(objects["objectIDs"])} meetings(s) for #{name}")
+    #      {:ok, delegate}
+    #    else
+    #      {:error, msg} ->
+    #        Logger.error(fn -> inspect(msg) end)
+    #        {:error, msg}
+    #
+    #      false ->
+    #        msg = "Error while inserting state into meetings ets table"
+    #        Logger.error(msg)
+    #        {:error, msg}
+    #    end
   end
 
   defp format(
@@ -324,7 +326,7 @@ defmodule Vae.Meetings.StateHolder do
 
   defp from_delegates(delegates) do
     delegates
-    |> Enum.flat_map(& &1.grouped_meetings)
+    # |> Enum.flat_map(& &1.grouped_meetings)
   end
 
   defp from_ets(tab) do
