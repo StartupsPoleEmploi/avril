@@ -8,6 +8,9 @@ defmodule Vae.Meetings.Server do
 
   @name MeetingsServer
 
+  @common_fields ~w(academy_id address city end_date meeting_id place postal_code remaining_places start_date target)a
+  @fields_to_index ~w(_geoloc)a ++ @common_fields
+
   @doc false
   def start_link() do
     start_link([])
@@ -24,7 +27,6 @@ defmodule Vae.Meetings.Server do
   @impl true
   def handle_call({:fetch, academy_id}, _from, state) do
     academy_meetings = GenServer.call(:france_vae, {:fetch, academy_id})
-
     {:reply, academy_meetings, academy_meetings ++ state}
   end
 
@@ -38,8 +40,6 @@ defmodule Vae.Meetings.Server do
         Logger.error(fn -> inspect(msg) end)
         {:reply, meetings, state}
     end
-
-    {:reply, state, state}
   end
 
   @impl true
@@ -48,20 +48,15 @@ defmodule Vae.Meetings.Server do
       with {:ok, meetings} <-
              AlgoliaClient.get_france_vae_meetings(delegate.academy_id, delegate.geolocation) do
         Enum.map(meetings, fn meeting ->
-          Map.take(meeting, [
-            :academy_id,
-            :address,
-            :city,
-            :end_date,
-            :meeting_id,
-            :objectID,
-            :place,
-            :postal_code,
-            :remaining_places,
-            :start_date,
-            :target
-          ])
+          Map.take(meeting, @common_fields)
         end)
+      else
+        error ->
+          Logger.error(fn ->
+            "Error while attempting to retrieve meetings for delegate_id #{inspect(delegate.id)}"
+          end)
+
+          []
       end
       |> Enum.group_by(& &1.place)
       |> Enum.reverse()
@@ -102,38 +97,9 @@ defmodule Vae.Meetings.Server do
   end
 
   defp format_for_index(%{place: place, address: address, geolocation: geoloc} = meeting) do
-    #   %{
-    #    _geoloc: %{"lat" => 48.8504, "lng" => 2.65077},
-    #    academy_id: 24,
-    #    address: "1 promenade du Belvédère",
-    #    city: "Torcy",
-    #    end_date: #DateTime<2020-09-29 12:30:00+02:00 CEST Europe/Paris>,
-    #    id: "861d03e8-01cf-5eba-ad1b-c78cff6064d3",
-    #    meeting_id: "209251",
-    #    name: nil,
-    #    place: "Dava Torcy, Torcy",
-    #    postal_code: "77200",
-    #    remaining_places: 43,
-    #    start_date: #DateTime<2020-09-29 09:30:00+02:00 CEST Europe/Paris>,
-    #    target: "CAP au BTS"
-    #  }
-
     Map.merge(meeting, %{
       _geoloc: geoloc["_geoloc"]
     })
-    |> Map.take([
-      :_geoloc,
-      :academy_id,
-      :address,
-      :city,
-      :end_date,
-      :id,
-      :meeting_id,
-      :place,
-      :postal_code,
-      :remaining_places,
-      :start_date,
-      :target
-    ])
+    |> Map.take(@field_to_index)
   end
 end
