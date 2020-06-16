@@ -10,7 +10,7 @@ defmodule Vae.Delegate do
     Certification,
     CertificationDelegate,
     Certifier,
-    Meetings,
+    Meeting,
     Places,
     Process,
     Repo
@@ -56,7 +56,7 @@ defmodule Vae.Delegate do
       on_replace: :delete
     )
 
-    embeds_many(:meetings, Meetings.Meeting, on_replace: :delete)
+    embeds_many(:meeting_places, Vae.MeetingPlace, on_replace: :delete)
 
     timestamps()
   end
@@ -192,6 +192,12 @@ defmodule Vae.Delegate do
     delegate
     |> change
     |> put_assoc(:certifications, certifications)
+  end
+
+  def put_meeting_places(delegate, meetings) do
+    delegate
+    |> change
+    |> put_embed(:meeting_places, meetings)
   end
 
   defp add_geolocation(%{changes: %{address: _}} = changeset, %{geo: encoded})

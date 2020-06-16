@@ -26,19 +26,19 @@ defmodule Vae.Meetings.Server do
 
   @impl true
   def handle_call({:fetch, academy_id}, _from, state) do
-    academy_meetings = GenServer.call(:france_vae, {:fetch, academy_id})
+    academy_meetings = GenServer.call(:france_vae, {:fetch, academy_id}, 15_000)
     {:reply, academy_meetings, academy_meetings ++ state}
   end
 
   @impl true
   def handle_call({:index, meetings}, _from, state) do
-    with {:ok, objects} <- AlgoliaClient.save_objects(:fvae_meetings, meetings) do
-      Logger.info("Indexed #{Kernel.length(objects.objectIDs)}")
-      {:reply, meetings, state}
+    with {:ok, %{"taskID" => task_id, "indexName" => index}} <-
+           AlgoliaClient.save_objects(:fvae_meetings, meetings) do
+      {:reply, {:ok, %{task_id: task_id, index: index}}, state}
     else
       {:error, msg} ->
         Logger.error(fn -> inspect(msg) end)
-        {:reply, meetings, state}
+        {:reply, {:error}, state}
     end
   end
 
@@ -50,8 +50,6 @@ defmodule Vae.Meetings.Server do
         Enum.reduce(meetings, Keyword.new(), fn meeting, acc ->
           case Keyword.get(acc, :"#{meeting.place}") do
             nil ->
-              IO.inspect(meeting.place)
-
               Keyword.put(acc, :"#{meeting.place}", %{
                 name: "#{meeting.place}",
                 meetings: [Map.take(meeting, @common_fields)]
@@ -107,13 +105,13 @@ defmodule Vae.Meetings.Server do
   end
 
   def get_by_delegate(delegate) do
-    GenServer.call(@name, {:search, delegate})
+    GenServer.call(@name, {:search, delegate}, 15_000)
   end
 
   defp format_for_index(%{place: place, address: address, geolocation: geoloc} = meeting) do
     Map.merge(meeting, %{
       _geoloc: geoloc["_geoloc"]
     })
-    |> Map.take(@field_to_index)
+    |> Map.take(@fields_to_index)
   end
 end

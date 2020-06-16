@@ -68,8 +68,8 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   @impl true
   def handle_info(msg, state) do
-    Logger.error(fn -> inspect("Incoming unknown msg: #{msg}") end)
-    {:no_reply, state}
+    Logger.error(fn -> "Incoming unknown msg: #{inspect(msg)}" end)
+    {:noreply, state}
   end
 
   defp get_data(academy_id) do

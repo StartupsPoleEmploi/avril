@@ -38,7 +38,7 @@ defmodule Vae.Search.Client.Algolia do
       |> build_geoloc(geoloc)
       |> build_query()
 
-    execute(:fvae_meetings, query, aroundRadius: 50_000)
+    execute(:fvae_meetings, query, aroundRadius: :all)
   end
 
   def get_meetings(%{

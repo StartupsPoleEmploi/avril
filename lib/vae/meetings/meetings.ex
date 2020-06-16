@@ -23,7 +23,7 @@ defmodule Vae.Meetings do
     Vae.Meetings.Server.index(meetings)
   end
 
-  def get_fvae_meetings(delegate) do
+  def get_france_vae_meetings(delegate) do
     Vae.Meetings.Server.get_by_delegate(delegate)
   end
 
