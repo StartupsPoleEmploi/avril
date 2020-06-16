@@ -44,27 +44,11 @@ defmodule Vae.Meetings.Server do
 
   @impl true
   def handle_call({:search, delegate}, _from, state) do
-    meetings =
-      with {:ok, meetings} <-
-             AlgoliaClient.get_france_vae_meetings(delegate.academy_id, delegate.geolocation) do
-        Enum.reduce(meetings, Keyword.new(), fn meeting, acc ->
-          case Keyword.get(acc, :"#{meeting.place}") do
-            nil ->
-              Keyword.put(acc, :"#{meeting.place}", %{
-                name: "#{meeting.place}",
-                meetings: [Map.take(meeting, @common_fields)]
-              })
+    meeting_places =
+      case AlgoliaClient.get_france_vae_meetings(delegate.academy_id, delegate.geolocation) do
+        {:ok, meetings} ->
+          to_meeting_places(meetings)
 
-            %{name: _name, meetings: meetings} ->
-              meeting_to_add = Map.take(meeting, @common_fields)
-
-              update_in(acc, [:"#{meeting.place}", :meetings], fn _ ->
-                [meeting_to_add | meetings]
-              end)
-          end
-        end)
-        |> Enum.reverse()
-      else
         error ->
           Logger.error(fn ->
             "Error while attempting to retrieve meetings for delegate_id #{inspect(delegate.id)}"
@@ -73,7 +57,7 @@ defmodule Vae.Meetings.Server do
           []
       end
 
-    {:reply, meetings, state}
+    {:reply, meeting_places, state}
   end
 
   @impl true
@@ -113,5 +97,38 @@ defmodule Vae.Meetings.Server do
       _geoloc: geoloc["_geoloc"]
     })
     |> Map.take(@fields_to_index)
+  end
+
+  defp to_meeting_places(meetings) do
+    Enum.reduce(meetings, Keyword.new(), fn meeting, meeting_places ->
+      case Keyword.get(meeting_places, :"#{meeting.place}") do
+        nil ->
+          new_meeting_place(meeting, meeting_places)
+
+        %{name: _name, meetings: meetings} ->
+          add_meeting_to_meeting_place(meeting, meetings, meeting_places)
+      end
+    end)
+    |> Enum.reverse()
+  end
+
+  defp new_meeting_place(meeting, meeting_places) do
+    Keyword.put(meeting_places, :"#{meeting.place}", %{
+      name: "#{meeting.place}",
+      meetings: [Map.take(meeting, @common_fields)]
+    })
+  end
+
+  defp add_meeting_to_meeting_place(meeting, meetings, meeting_places) do
+    meeting_to_add = Map.take(meeting, @common_fields)
+
+    {_old, place_meetings} =
+      get_and_update_in(
+        meeting_places,
+        [:"#{meeting.place}", :meetings],
+        &{&1, [meeting | &1]}
+      )
+
+    place_meetings
   end
 end
