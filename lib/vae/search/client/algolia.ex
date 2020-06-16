@@ -159,7 +159,6 @@ defmodule Vae.Search.Client.Algolia do
 
   defp search(index_name, query, opts) do
     merged_query = Keyword.merge(query, opts)
-    IO.inspect(merged_query)
 
     Algolia.search(index_name, "", merged_query)
     |> case do

@@ -47,9 +47,25 @@ defmodule Vae.Meetings.Server do
     meetings =
       with {:ok, meetings} <-
              AlgoliaClient.get_france_vae_meetings(delegate.academy_id, delegate.geolocation) do
-        Enum.map(meetings, fn meeting ->
-          Map.take(meeting, @common_fields)
+        Enum.reduce(meetings, Keyword.new(), fn meeting, acc ->
+          case Keyword.get(acc, :"#{meeting.place}") do
+            nil ->
+              IO.inspect(meeting.place)
+
+              Keyword.put(acc, :"#{meeting.place}", %{
+                name: "#{meeting.place}",
+                meetings: [Map.take(meeting, @common_fields)]
+              })
+
+            %{name: _name, meetings: meetings} ->
+              meeting_to_add = Map.take(meeting, @common_fields)
+
+              update_in(acc, [:"#{meeting.place}", :meetings], fn _ ->
+                [meeting_to_add | meetings]
+              end)
+          end
         end)
+        |> Enum.reverse()
       else
         error ->
           Logger.error(fn ->
@@ -58,8 +74,6 @@ defmodule Vae.Meetings.Server do
 
           []
       end
-      |> Enum.group_by(& &1.place)
-      |> Enum.reverse()
 
     {:reply, meetings, state}
   end
