@@ -1,3 +1,5 @@
+[SUJET]: # (<%= @username %>, voici comment obtenir votre <%= @certification_name %>)
+
 # Félicitations pour votre projet VAE !
 
 ### Pour le diplôme <%= @certification_name %>

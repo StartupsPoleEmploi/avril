@@ -7,7 +7,6 @@ defmodule VaeWeb.AdminEmail do
       :avril,
       :avril,
       %{
-        subject: "Hello voici les Stats !",
         attachment:
           Swoosh.Attachment.new(file,
             filename: Path.basename(file),

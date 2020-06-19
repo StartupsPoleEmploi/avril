@@ -186,7 +186,7 @@ config :phoenix, :template_engines,
 
 config :phoenix_markdown, :earmark, %{
   gfm: true,
-  breaks: true,
+  # breaks: true,
   pure_links: true
 }
 
