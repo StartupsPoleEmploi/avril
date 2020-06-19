@@ -55,8 +55,8 @@
       strong a {
         padding: 8px 16px;
         border-radius: 50px;
-        background: #20D7A4;
-        color: #2E5266 !important;
+        background: #18495e;
+        color: #c7eeff !important;
         text-decoration: none;
         margin: 24px 64px;
         display: block;
