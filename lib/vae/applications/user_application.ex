@@ -92,7 +92,7 @@ defmodule Vae.UserApplication do
       [application | []] ->
         {:ok, application}
 
-      [h | t] ->
+      [h | _t] ->
         Logger.warn(fn ->
           "Multiple results found for user: #{user_id} and certification: #{certification_id}"
         end)

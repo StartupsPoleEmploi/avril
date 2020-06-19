@@ -60,7 +60,7 @@ defmodule VaeWeb.AuthController do
 
   defp handle_error(
          conn,
-         %Ecto.Changeset{errors: [email: {"has already been taken", _opts}]} = changeset
+         %Ecto.Changeset{errors: [email: {"has already been taken", _opts}]}
        ) do
     handle_error(
       conn,

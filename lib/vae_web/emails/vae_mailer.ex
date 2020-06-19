@@ -80,8 +80,8 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: IO.inspect(anything)
 
-  def format_mailer(:to, _anything) when not is_nil(@override_to),
-    do: format_mailer!(@override_to)
+  def format_mailer(:to, anything),
+    do: format_mailer!(@override_to || anything)
 
   def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
   def format_mailer(_role, :avril), do: format_mailer!(:avril_from)
@@ -148,13 +148,15 @@ defmodule VaeWeb.Mailer do
     {:ok, file_content} = File.read(Path.join(:code.priv_dir(:vae), "emails/#{template_name}.md"))
     processed_content = EEx.eval_string(file_content, [assigns: params])
     email
-    |> subject(extract_subject(processed_content) || template_name.subject || email.subject)
+    |> subject((extract_subject(processed_content) || template_name.subject || email.subject) |> environment_prefix(to))
     |> Map.put(:text_body, remove_subject(processed_content))
   end
 
-  defp environment_prefix(to) do
+  defp environment_prefix(subject, to) do
     if @override_to do
-      "[Avril][#{Mix.env()}] #{inspect(format_mailer!(to))} - "
+      "[Avril][#{Mix.env()}] #{inspect(format_mailer!(to))} - #{subject}"
+    else
+      subject
     end
   end
 

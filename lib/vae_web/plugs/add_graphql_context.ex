@@ -24,9 +24,9 @@ defmodule VaeWeb.Plugs.AddGraphqlContext do
     end
   end
 
-  defp refresh_and_retrieve(conn, user) do
-    conn
-    |> Pow.Plug.create(Vae.Account.get_user(user.id))
-    |> Pow.Plug.current_user()
-  end
+  # defp refresh_and_retrieve(conn, user) do
+  #   conn
+  #   |> Pow.Plug.create(Vae.Account.get_user(user.id))
+  #   |> Pow.Plug.current_user()
+  # end
 end

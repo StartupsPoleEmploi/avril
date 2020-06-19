@@ -1,6 +1,5 @@
 defmodule Vae.ExAdmin.Resume do
   use ExAdmin.Register
-  alias Vae.ExAdmin.Helpers
 
   register_resource Vae.Resume do
 
@@ -13,7 +12,7 @@ defmodule Vae.ExAdmin.Resume do
 
     action_items except: [:new]
 
-    show resume do
+    show _resume do
       attributes_table do
         row(:id)
         row(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url, target: "_blank", download: r.filename) end)
