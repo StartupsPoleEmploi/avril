@@ -52,21 +52,6 @@
         margin: 13px 0;
       }
 
-      strong a {
-        padding: 8px 16px;
-        border-radius: 50px;
-        background: #18495e;
-        color: #c7eeff !important;
-        text-decoration: none;
-        margin: 24px 64px;
-        display: block;
-        text-align: center;
-      }
-
-      strong a:hover {
-        opacity: 0.8;
-      }
-
     </style>
     <!--[if !mso]><!-->
     <style type="text/css">

@@ -147,9 +147,11 @@ defmodule VaeWeb.Mailer do
   defp render_text_and_extract_subject(email, template_name, params, to) do
     {:ok, file_content} = File.read(Path.join(:code.priv_dir(:vae), "emails/#{template_name}.md"))
     processed_content = EEx.eval_string(file_content, [assigns: params])
+    Earmark.as_html!(processed_content) |> IO.inspect()
     email
     |> subject((extract_subject(processed_content) || template_name.subject || email.subject) |> environment_prefix(to))
     |> Map.put(:text_body, remove_subject(processed_content))
+    |> Map.put(:html_body, call_to_action_inline_style(email.html_body))
   end
 
   defp environment_prefix(subject, to) do
@@ -170,5 +172,19 @@ defmodule VaeWeb.Mailer do
   defp remove_subject(file_content) do
     Regex.replace(~r/\[SUJET\]: # \(.*\)/U, file_content, "")
     |> String.trim()
+  end
+
+  defp call_to_action_inline_style(html_content) do
+    inline_style = """
+      padding: 8px 16px;
+      border-radius: 50px;
+      background: #18495e;
+      color: #c7eeff !important;
+      text-decoration: none;
+      margin: 24px 64px;
+      display: block;
+      text-align: center;
+    """ |> String.replace("\n", "")
+    String.replace(html_content, "<strong><a href", "<strong><a style=\"#{inline_style}\" href")
   end
 end
