@@ -80,8 +80,9 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: IO.inspect(anything)
 
-  def format_mailer(:to, anything) when not is_nil(@override_to)
-    do: format_mailer!(@override_to)
+  def format_mailer(:to, anything) when not is_nil(@override_to) do
+    format_mailer!(@override_to)
+  end
 
   def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
   def format_mailer(_role, :avril), do: format_mailer!(:avril_from)
