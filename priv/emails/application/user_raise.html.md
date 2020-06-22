@@ -18,6 +18,7 @@ Je vous contacte suite à votre visite sur Avril, le diplôme <%= @certification
 La prochaine étape c’est le dossier de recevabilité qui ne vous prendra que quelques minutes et vous permettra de rencontrer le spécialiste VAE de votre diplôme, sans aucun engagement.
 
 C’est parti ?
+
 **[Compléter ma recevabilité](<%= @application_url %>)**
 <% end %>
 

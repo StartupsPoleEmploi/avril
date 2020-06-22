@@ -80,7 +80,7 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: IO.inspect(anything)
 
-  def format_mailer(:to, anything) when not is_nil(@override_to) do
+  def format_mailer(:to, _anything) when not is_nil(@override_to) do
     format_mailer!(@override_to)
   end
 
@@ -148,11 +148,11 @@ defmodule VaeWeb.Mailer do
   defp render_text_and_extract_subject(email, template_name, params, to) do
     {:ok, file_content} = File.read(Path.join(:code.priv_dir(:vae), "emails/#{template_name}.md"))
     processed_content = EEx.eval_string(file_content, [assigns: params])
-    Earmark.as_html!(processed_content) |> IO.inspect()
+    Earmark.as_html!(processed_content)
     email
     |> subject((extract_subject(processed_content) || template_name.subject || email.subject) |> environment_prefix(to))
     |> Map.put(:text_body, remove_subject(processed_content))
-    |> Map.put(:html_body, call_to_action_inline_style(email.html_body))
+    |> Map.put(:html_body, call_to_action_inline_style(email.html_body, params))
   end
 
   defp environment_prefix(subject, to) do
@@ -175,17 +175,29 @@ defmodule VaeWeb.Mailer do
     |> String.trim()
   end
 
-  defp call_to_action_inline_style(html_content) do
-    inline_style = """
+  defp call_to_action_inline_style(html_content, params) do
+    button_inline_style = """
       padding: 8px 16px;
       border-radius: 50px;
+      text-decoration: none;
+      margin: 24px #{if params[:text_center], do: "auto", else: "64px;"};
+      display: #{if params[:text_center], do: "inline-block", else: "block"};
+      text-align: center;
+      font-style: normal;
+      font-weight: bold;
+    """
+    primary_inline_style = """
+      #{button_inline_style}
       background: #18495e;
       color: #c7eeff !important;
-      text-decoration: none;
-      margin: 24px 64px;
-      display: block;
-      text-align: center;
     """ |> String.replace("\n", "")
-    String.replace(html_content, "<strong><a href", "<strong><a style=\"#{inline_style}\" href")
+    secondary_inline_style = """
+      #{button_inline_style}
+      background: #d6ffed;
+      color: #18495e !important;
+    """ |> String.replace("\n", "")
+    html_content
+    |> String.replace("<strong><a href", "<strong><a style=\"#{primary_inline_style}\" href")
+    |> String.replace("<em><a href", "<em><a style=\"#{secondary_inline_style}\" href")
   end
 end

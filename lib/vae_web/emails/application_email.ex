@@ -37,13 +37,14 @@ defmodule VaeWeb.ApplicationEmail do
         username: Account.fullname(application.user),
         meeting: application.meeting,
         date_format: "%d/%m/%Y à %H:%M",
-        is_france_vae: not is_nil(application.delegate.academy_id),
+        is_france_vae: application.delegate && application.delegate.academy_id,
         certification_name: Certification.name(application.certification),
-        delegate_name: application.delegate.name,
-        delegate_person_name: application.delegate.person_name,
-        delegate_phone_number: application.delegate.telephone,
-        delegate_email: application.delegate.email,
+        delegate_name: application.delegate && application.delegate.name,
+        delegate_person_name: application.delegate && application.delegate.person_name,
+        delegate_phone_number: application.delegate && application.delegate.telephone,
+        delegate_email: application.delegate && application.delegate.email,
         image_url: Routes.static_url(Endpoint, "/images/group.png"),
+        text_center: true,
         footer_note: :inscrit_avril
       }
     )
@@ -70,9 +71,9 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
-  def user_raise(application, path \\ Endpoint) do
+  def user_raise(application, endpoint \\ Endpoint) do
     application = Repo.preload(application, [:user, :certification])
-    finish_booklet_todo = not is_nil(application.booklet_1.inserted_at)
+    finish_booklet_todo = application.booklet_1 && application.booklet_1.inserted_at
     certification_name = Certification.name(application.certification)
     username = Account.fullname(application.user)
 
@@ -81,9 +82,10 @@ defmodule VaeWeb.ApplicationEmail do
       :avril,
       application.user,
       %{
-        application_url: User.profile_url(path, application),
-        # booklet_url: Vae.UserApplication.booklet_url(path, application),
+        application_url: User.profile_url(endpoint, application),
+        # booklet_url: Vae.UserApplication.booklet_url(endpoint, application),
         username: username,
+        text_center: true,
         certification_name: certification_name,
         finish_booklet_todo: finish_booklet_todo,
         footer_note: :inscrit_avril
@@ -91,17 +93,19 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
-  def monthly_status(application) do
+  def monthly_status(application, endpoint \\ Endpoint) do
     application = Repo.preload(application, [:user])
 
     Mailer.build_email(
-      Vae.Crm.Config.get_monthly_template_id(),
+      "application/monthly_status.html",
+      # Vae.Crm.Config.get_monthly_template_id(),
       :avril,
       application.user,
       %{
-        custom_id: UUID.uuid5(nil, application.user.email),
-        application_id: application.id,
-        footer_note: :inscrit_avril
+        admissible_url: Routes.user_application_url(endpoint, :admissible, application),
+        inadmissible_url: Routes.user_application_url(endpoint, :inadmissible, application),
+        text_center: true,
+        footer_note: :mise_en_relation
       }
     )
   end
