@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{Crm.Polls, Delegate, User, UserApplication, Repo}
+  alias Vae.{UserApplications.Polls, Delegate, User, UserApplication, Repo}
 
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show]

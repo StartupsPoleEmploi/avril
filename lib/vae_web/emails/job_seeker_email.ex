@@ -65,7 +65,7 @@ defmodule VaeWeb.JobSeekerEmail do
 
   def stock(job_seeker) do
     Mailer.build_email(
-      Vae.Crm.Config.get_stock_template_id(),
+      Vae.UserApplications.Config.get_stock_template_id(),
       :avril,
       job_seeker,
       %{

@@ -98,7 +98,6 @@ defmodule VaeWeb.ApplicationEmail do
 
     Mailer.build_email(
       "application/monthly_status.html",
-      # Vae.Crm.Config.get_monthly_template_id(),
       :avril,
       application.user,
       %{

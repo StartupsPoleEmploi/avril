@@ -42,4 +42,9 @@ defmodule Vae.Date do
   def weekend?(date) do
     Date.day_of_week(date) > 5
   end
+
+  def get_previous_month(date) do
+    Timex.shift(date, months: -1)
+  end
+
 end

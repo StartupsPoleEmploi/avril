@@ -167,7 +167,7 @@ defmodule Vae.UserApplication do
   end
 
   def list_from_last_month(%Date{} = end_date) do
-    start_date = Vae.JobSeeker.get_previous_month(end_date)
+    start_date = Vae.Date.get_previous_month(end_date)
 
     from(a in __MODULE__,
       where: fragment("(?)::timestamp::date", a.submitted_at) == ^start_date,

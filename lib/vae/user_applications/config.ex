@@ -1,8 +1,4 @@
-defmodule Vae.Crm.Config do
-  def get_monthly_template_id() do
-    get_monthly_config()
-    |> get_template_id()
-  end
+defmodule Vae.UserApplications.Config do
 
   def get_monthly_form_urls() do
     get_monthly_config()
