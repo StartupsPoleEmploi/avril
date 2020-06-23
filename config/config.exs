@@ -111,7 +111,6 @@ config :vae, :pow,
   web_module: VaeWeb
 
 config :vae, Vae.Scheduler,
-  timezone: "Europe/Paris",
   jobs: [
     raise_unsubmitted_applications: [
       schedule: "0 7 * * *",
