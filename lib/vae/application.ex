@@ -35,7 +35,7 @@ defmodule Vae.Application do
       children: [
         worker(Vae.Meetings.StateHolder, []),
         worker(Vae.Meetings.FranceVae.Server, []),
-        worker(Vae.Meetings.Afpa.Server, []),
+        # worker(Vae.Meetings.Afpa.Server, []),
         Vae.Meetings.FranceVae.Connection.Cache
       ]
     }
