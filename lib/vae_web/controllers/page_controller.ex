@@ -118,21 +118,14 @@ defmodule VaeWeb.PageController do
              ContactEmail.submit(variables),
              ContactEmail.confirm(variables)
            ]) do
-      json(conn, %{status: :ok, msg: "Votre message a bien été envoyé."})
+      conn
+      |> put_flash(:success, "Votre message a bien été envoyé.")
+      |> redirect(to: Routes.root_path(conn, :index))
     else
       error ->
         conn
-        |> send_resp(
-          500,
-          Poison.encode!(
-            %{
-              status: :error,
-              msg:
-                "Votre message n'a pas pu être envoyé : \n\n #{inspect(error)} \n\n Merci de réessayer plus tard."
-            },
-            pretty: true
-          )
-        )
+        |> put_flash(:danger, "Votre message n'a pas pu être envoyé : #{inspect(error)}. Merci de réessayer plus tard.")
+        |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 
