@@ -148,9 +148,10 @@ defmodule VaeWeb.Mailer do
   defp render_text_and_extract_subject(email, template_name, params, to) do
     {:ok, file_content} = File.read(Path.join(:code.priv_dir(:vae), "emails/#{template_name}.md"))
     processed_content = EEx.eval_string(file_content, [assigns: params])
-    # Earmark.as_html!(processed_content)
+    subject = (extract_subject(processed_content) || params[:subject] || email.subject) |> environment_prefix(to)
+    # md_content = Earmark.as_html!(processed_content)
     email
-    |> subject((extract_subject(processed_content) || template_name.subject || email.subject) |> environment_prefix(to))
+    |> subject(subject)
     |> Map.put(:text_body, remove_subject(processed_content))
     |> Map.put(:html_body, call_to_action_inline_style(email.html_body, params))
   end
@@ -164,7 +165,7 @@ defmodule VaeWeb.Mailer do
   end
 
   defp extract_subject(file_content) do
-    Regex.named_captures(~r/\[SUJET\]: # \((?<subject>.*)\)/U, file_content)
+    (Regex.named_captures(~r/\[SUJET\]: # \((?<subject>.*)\)/U, file_content) || %{})
     |> Map.get("subject", "")
     |> String.trim()
     |> Vae.String.blank_is_nil()
