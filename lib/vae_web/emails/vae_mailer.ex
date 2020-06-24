@@ -147,7 +147,7 @@ defmodule VaeWeb.Mailer do
 
   defp render_text_and_extract_subject(email, template_name, params, to) do
     {:ok, file_content} = File.read(Path.join(:code.priv_dir(:vae), "emails/#{template_name}.md"))
-    processed_content = EEx.eval_string(file_content, [assigns: params])
+    processed_content = EEx.eval_string(IO.inspect(file_content), [assigns: IO.inspect(params)])
     subject = (extract_subject(processed_content) || params[:subject] || email.subject) |> environment_prefix(to)
     # md_content = Earmark.as_html!(processed_content)
     email
