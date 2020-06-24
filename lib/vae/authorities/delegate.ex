@@ -1,10 +1,8 @@
 defmodule Vae.Delegate do
   use VaeWeb, :model
 
-  alias Ecto.Changeset
-
   alias __MODULE__
-
+  alias Ecto.Changeset
   alias Vae.{
     UserApplication,
     Certification,
@@ -41,6 +39,7 @@ defmodule Vae.Delegate do
     has_many(:certifications, through: [:certifications_delegates, :certification])
 
     has_many(:applications, UserApplication, on_replace: :nilify)
+    has_many(:recent_applications, UserApplication, where: [inserted_at: {:fragment, "? > now() - interval '15 days'"}, submitted_at: {:not, nil}])
 
     has_many(
       :users,
