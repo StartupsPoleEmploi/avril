@@ -86,7 +86,6 @@ defmodule VaeWeb.ApplicationEmail do
         application_url: User.profile_url(endpoint, application),
         # booklet_url: Vae.UserApplication.booklet_url(endpoint, application),
         username: username,
-        text_center: true,
         certification_name: certification_name,
         finish_booklet_todo: finish_booklet_todo,
         footer_note: :inscrit_avril
