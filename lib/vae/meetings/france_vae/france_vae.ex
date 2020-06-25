@@ -36,7 +36,9 @@ defmodule Vae.Meetings.FranceVae do
     Logger.info("[DAVA] Retrieve meetings from fvae for academy_id: #{academy_id}")
 
     with {:ok, response} <-
-           HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers),
+           HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers,
+             recv_timeout: 15_000
+           ),
          {:ok, json} <- response.body |> Jason.decode() do
       json
       |> Map.get("reunions")

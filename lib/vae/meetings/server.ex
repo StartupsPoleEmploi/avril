@@ -73,7 +73,7 @@ defmodule Vae.Meetings.Server do
   end
 
   def fetch(:fvae = name, academy_id) do
-    GenServer.call(@name, {:fetch, academy_id})
+    GenServer.call(@name, {:fetch, academy_id}, 15_000)
   end
 
   def register(meeting, application) do
@@ -85,7 +85,7 @@ defmodule Vae.Meetings.Server do
       meetings
       |> Enum.map(&format_for_index/1)
 
-    GenServer.call(@name, {:index, formatted_meetings})
+    GenServer.call(@name, {:index, formatted_meetings}, 15_000)
   end
 
   def get_by_delegate(delegate) do
