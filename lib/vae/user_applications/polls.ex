@@ -1,5 +1,5 @@
-defmodule Vae.Crm.Polls do
-  alias Vae.Crm.Config
+defmodule Vae.UserApplications.Polls do
+  alias Vae.UserApplications.Config
 
   def define_form_url_from_application(application) do
     certifiers = application.delegate.certifiers

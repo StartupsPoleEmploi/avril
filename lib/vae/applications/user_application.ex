@@ -92,7 +92,7 @@ defmodule Vae.UserApplication do
       [application | []] ->
         {:ok, application}
 
-      [h | t] ->
+      [h | _t] ->
         Logger.warn(fn ->
           "Multiple results found for user: #{user_id} and certification: #{certification_id}"
         end)
@@ -167,7 +167,7 @@ defmodule Vae.UserApplication do
   end
 
   def list_from_last_month(%Date{} = end_date) do
-    start_date = Vae.JobSeeker.get_previous_month(end_date)
+    start_date = Vae.Date.get_previous_month(end_date)
 
     from(a in __MODULE__,
       where: fragment("(?)::timestamp::date", a.submitted_at) == ^start_date,

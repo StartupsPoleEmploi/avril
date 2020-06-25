@@ -1,3 +1,5 @@
+[SUJET]: # (<%= @username %>, voici comment obtenir votre <%= @certification_name %>)
+
 # Félicitations pour votre démarche VAE !
 
 ### Vous avez choisi de valider le diplôme <%= @certification_name %> par la VAE.

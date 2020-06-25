@@ -1,0 +1,1 @@
+Vous recevez cet email car vous êtes référencé en tant que certificateur VAE sur la plateforme Avril.

@@ -48,7 +48,6 @@ config :vae,
     ],
     monthly: [
       users: [
-        template_id: 768_365,
         form_urls: [
           certifiers: [
             asp: %{
@@ -105,16 +104,31 @@ config :vae, :pow,
   cache_store_backend: Pow.Store.Backend.MnesiaCache,
   controller_callbacks: Pow.Extension.Phoenix.ControllerCallbacks,
   extensions: [
-    # PowEmailConfirmation,
     PowResetPassword,
     PowPersistentSession
   ],
-  # mailer_backend: VaeWeb.PowMailer,
-  # web_mailer_module: Vae.PowMailer,
-  # messages_backend: VaeWeb.Pow.Messages,
   password_min_length: 8,
-  # routes_backend: VaeWeb.Pow.Routes,
   web_module: VaeWeb
+
+config :vae, Vae.Scheduler,
+  jobs: [
+    raise_unsubmitted_applications: [
+      schedule: "0 7 * * *",
+      task: {Vae.UserApplications.FollowUp, :send_unsubmitted_raise_email, []}
+    ],
+    get_admissibility_updates: [
+      schedule: "30 7 * * *",
+      task: {Vae.UserApplications.FollowUp, :send_admissibility_update_email, []}
+    ],
+    send_delegate_recap: [
+      schedule: "45 7 */16 * *",
+      task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
+    ],
+    meetings_task: [
+      schedule: "0 5 * * *",
+      task: &Vae.Meetings.fetch_all/0
+    ]
+  ]
 
 config :absinthe,
   log: false
@@ -186,7 +200,7 @@ config :phoenix, :template_engines,
 
 config :phoenix_markdown, :earmark, %{
   gfm: true,
-  breaks: true,
+  # breaks: true,
   pure_links: true
 }
 

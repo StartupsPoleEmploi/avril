@@ -2,9 +2,9 @@
 
 Bonjour <%= @name %>,
 
-Vous avez souhaité réinitialiser votre mot de passe sur Avril. Pour poursuivre,
+Vous avez souhaité réinitialiser votre mot de passe sur Avril. Pour poursuivre :
 
-**[cliquez sur ce lien](<%= @url %>)**
+**[Cliquez sur ce lien](<%= @url %>)**
 
 Si vous n'êtes pas à l'origine de cette action, merci d'ignorer cet email.
 

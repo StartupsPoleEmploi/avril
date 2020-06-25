@@ -32,7 +32,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
       href =
         VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :show, application,
-          hash: application.delegate_access_hash
+          delegate_hash: application.delegate_access_hash
         )
 
       action_item_link("View Delegate Application", href: href, target: "_blank")
@@ -63,7 +63,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
       if application.booklet_1 do
         action_item_link("Check CERFA",
-          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, [path: "/cerfa"]),
+          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, [path: "/cerfa", delegate_mode: true]),
           target: "_blank"
         )
       end
@@ -105,15 +105,19 @@ defmodule Vae.ExAdmin.UserApplication do
 
     csv do
       column(:id)
-      column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
+      column(:user@first_name, fn a -> a.user.first_name end)
+      column(:user@last_name, fn a -> a.user.last_name end)
+      # column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
       column(:email, fn a -> a.user.email end)
-      column(:certification, fn a -> Helpers.csv_link_to_resource(a.certification) end)
+      column(:certification, fn a -> Certification.name(a.certification) end)
+      # column(:certification, fn a -> Helpers.csv_link_to_resource(a.certification) end)
 
       column(:certifier, fn a ->
         Enum.join(Enum.map(a.certification.certifiers, fn c -> c.name end), ",")
       end)
 
-      column(:delegate, fn a -> Helpers.csv_link_to_resource(a.delegate) end)
+      column(:delegate, fn a -> a.delegate && a.delegate.name end)
+      # column(:delegate, fn a -> Helpers.csv_link_to_resource(a.delegate) end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:inserted_at)
       column(:submitted_at)
@@ -129,6 +133,7 @@ defmodule Vae.ExAdmin.UserApplication do
     filter([:meeting, :booklet_1, :booklet_hash, :resumes])
     filter(:certification, order_by: [:acronym, :label])
     filter(:delegate, order_by: :name)
+    filter(:certifiers, order_by: :name)
     filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
 
     @all_preloads [:delegate, :user, :certification, :certifiers]

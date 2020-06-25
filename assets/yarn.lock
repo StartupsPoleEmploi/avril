@@ -842,9 +842,9 @@
     to-fast-properties "^2.0.0"
 
 "@trevoreyre/autocomplete-vue@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@trevoreyre/autocomplete-vue/-/autocomplete-vue-2.1.1.tgz#7e6d11da6d04b490444022f089d5e32ec4ab2619"
-  integrity sha512-zeVzjRliM5Yv0oaBNPE3OX4U5K59jwo/OC62Qi6SE1Fd6mwO6q6MXVogmujrOrdalIqDHQo8pUvhTFL4Xr/Rfw==
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@trevoreyre/autocomplete-vue/-/autocomplete-vue-2.2.0.tgz#db1fd94bc001ccba296cdd370fdae122117b311e"
+  integrity sha512-A5j986nM6htTbCpEW9BbwlqCobIMD4+uicAYGCSI8DM1ojK8meCyVI23jK+gAxi+vjhraCBneKI+vbwB8sL0ig==
 
 "@types/minimist@^1.2.0":
   version "1.2.0"
@@ -1285,7 +1285,7 @@ autocomplete.js@^0.37.0:
 
 avril@StartupsPoleEmploi/avril-shared:
   version "1.0.0"
-  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/74538ceb0ab19ed96dc1d992eb84dfc60b6d319f"
+  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/cd5328810c06651d7422c95f5dd7c46ac1c29258"
   dependencies:
     "@trevoreyre/autocomplete-vue" "^2.1.1"
     algoliasearch "^3.35.1"
@@ -1293,6 +1293,7 @@ avril@StartupsPoleEmploi/avril-shared:
     date-fns "^2.11.0"
     debounce "^1.2.0"
     lodash.get "^4.4.2"
+    vue "^2.6.11"
     vue2-datepicker "^3.4.1"
 
 aws-sign2@~0.7.0:
@@ -6654,12 +6655,17 @@ vm-browserify@^1.0.1:
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vue2-datepicker@^3.4.1:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.5.0.tgz#d0dd5d74df866defda3fbaa9d666ac33a7dc609f"
-  integrity sha512-E52TUjf57Qj2ZWtwtplS+BtYfz8wQFHnjux0q2X8N+ENvL3rHjp9pwEs0ukT1rDTouLdPtvACaXXLfDEy39mlw==
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.6.0.tgz#5000bd18aabf66d22b5f412e2537a63a9dc3b30f"
+  integrity sha512-PDGkOIU2LCripjsWsosrHpxUSmR3itkdAHwhh5YU8aEOsc4kUKwR/aBqwn89PYophi1EwNcsPreeY1b8WhiSGg==
   dependencies:
     date-fns "^2.0.1"
     date-format-parse "^0.2.5"
+
+vue@^2.6.11:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
+  integrity sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ==
 
 warning@^4.0.2, warning@^4.0.3:
   version "4.0.3"

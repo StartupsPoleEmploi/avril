@@ -114,7 +114,7 @@ defmodule ExAdmin.ApiController do
 
   def join_certifier(_, _), do: ""
 
-  def applications_query(start_date, end_date, type, certifier_id) do
+  def applications_query(start_date, end_date, _type, certifier_id) do
     # Check Vae.Repo.Migrations.AddApplicationStatusSQLFunction
     # to see status(application) SQL function definition
 

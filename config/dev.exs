@@ -24,29 +24,29 @@ config :vae, VaeWeb.Endpoint,
     ]
   ]
 
-# Unused?
-config :vae, Vae.Scheduler,
-  timeout: :infinity,
-  jobs: [
-    campaign_task: [
-      timezone: "Europe/Paris",
-      schedule: "30 14 17 7 *",
-      task: &VaeWeb.Mailer.execute/0
-    ],
-    statistics_task: [
-      timezone: "Europe/Paris",
-      schedule: "10 12 14 2 *",
-      task: fn ->
-        with pid <- Vae.Statistics.init(),
-             :ok <- Vae.Statistics.execute(pid),
-             :ok <- Vae.Statistics.terminate(pid) do
-          Logger.info("Statistics exported successfully !")
-        else
-          err -> Logger.error(fn -> inspect(err) end)
-        end
-      end
-    ]
-  ]
+# # Unused?
+# config :vae, Vae.Scheduler,
+#   timeout: :infinity,
+#   jobs: [
+#     campaign_task: [
+#       timezone: "Europe/Paris",
+#       schedule: "30 14 17 7 *",
+#       task: &VaeWeb.Mailer.execute/0
+#     ],
+#     statistics_task: [
+#       timezone: "Europe/Paris",
+#       schedule: "10 12 14 2 *",
+#       task: fn ->
+#         with pid <- Vae.Statistics.init(),
+#              :ok <- Vae.Statistics.execute(pid),
+#              :ok <- Vae.Statistics.terminate(pid) do
+#           Logger.info("Statistics exported successfully !")
+#         else
+#           err -> Logger.error(fn -> inspect(err) end)
+#         end
+#       end
+#     ]
+#   ]
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

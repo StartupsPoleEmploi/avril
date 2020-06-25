@@ -1,10 +1,11 @@
 defmodule VaeWeb.Emails do
   require Logger
 
-  alias Vae.Delegate
+  alias Vae.{Delegate, Repo}
   alias VaeWeb.{ApplicationEmail, Mailer}
 
   def send_submission_confirmations(application) do
+    application = Repo.preload(application, :delegate)
     if Delegate.is_asp?(application.delegate) do
       send_asp_application_submission_confirmation(application)
     else

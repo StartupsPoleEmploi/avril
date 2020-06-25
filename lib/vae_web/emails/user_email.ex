@@ -11,9 +11,7 @@ defmodule VaeWeb.UserEmail do
       user,
       %{
         name: Vae.Account.fullname(user),
-        url: Routes.reset_password_url(Endpoint, :edit, token),
-        subject:
-          "Réinitialiser son mot de passe Avril, la VAE facile"
+        url: Routes.reset_password_url(Endpoint, :edit, token)
       }
     )
   end

@@ -95,7 +95,6 @@ defmodule Vae.Mixfile do
       {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.14.0"},
-      {:quantum, "~> 2.2"},
       {:timex, "~> 3.6.1"},
       {:elixir_uuid, "~> 1.2"},
       {:persistent_ets, "~> 0.1.0"},
@@ -117,6 +116,7 @@ defmodule Vae.Mixfile do
       {:health_checkup, "~> 0.1.0"},
       {:absinthe, "~> 1.4.0"},
       {:absinthe_plug, "~> 1.4"},
+      {:quantum, "~> 3.0"},
       {:ex_machina, "~> 2.3", only: :test}
     ]
   end
