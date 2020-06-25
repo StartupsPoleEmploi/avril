@@ -14,8 +14,8 @@ defmodule Vae.Application do
     }
 
     server_children = %{
-      #      should_start: Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
-      should_start: true,
+      should_start: Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
+      # should_start: true,
       children: [
         Vae.Scheduler,
         Pow.Store.Backend.MnesiaCache,
