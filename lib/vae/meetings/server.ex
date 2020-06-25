@@ -61,9 +61,9 @@ defmodule Vae.Meetings.Server do
   end
 
   @impl true
-  def handle_call({:register, {%{name: name} = meeting, application}}, _from, state) do
+  def handle_call({:register, meeting, application}, _from, state) do
     with {:ok, _registered_meeting} <-
-           GenServer.call(name, {:register, {meeting, application}}, 15_000) do
+           GenServer.call(:france_vae, {:register, meeting, application}, 15_000) do
       {:reply, {:ok, meeting}, state}
     else
       {:error, msg} ->
@@ -76,10 +76,6 @@ defmodule Vae.Meetings.Server do
     GenServer.call(@name, {:fetch, academy_id}, 15_000)
   end
 
-  def register(meeting, application) do
-    GenServer.call(@name, {:register, {meeting, application}})
-  end
-
   def index(meetings) do
     formatted_meetings =
       meetings
@@ -90,6 +86,17 @@ defmodule Vae.Meetings.Server do
 
   def get_by_delegate(delegate) do
     GenServer.call(@name, {:search, delegate}, 15_000)
+  end
+
+  def register(meeting_id, %{delegate: %{meeting_places: []}} = application), do: {:ok, nil}
+
+  def register(meeting_id, %{delegate: %{meeting_places: meeting_places}} = application) do
+    meeting =
+      meeting_places
+      |> Enum.flat_map(& &1.meetings)
+      |> Enum.find(fn %{meeting_id: id} -> meeting_id = id end)
+
+    GenServer.call(@name, {:register, meeting, application}, 15_000)
   end
 
   defp format_for_index(%{place: place, address: address, geolocation: geoloc} = meeting) do

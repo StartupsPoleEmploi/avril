@@ -56,7 +56,7 @@ defmodule Vae.Applications do
          {:ok, _valid} <-
            Account.validate_required_fields_to_register_meeting(user),
          {:ok, meeting} <-
-           Meetings.register(meeting_id, application) do
+           Meetings.register_france_vae_meetings(meeting_id, application) do
       application
       |> UserApplication.register_meeting_changeset(meeting)
       |> Repo.update()

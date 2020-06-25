@@ -7,7 +7,7 @@ defmodule Vae.Meetings.Meeting do
   embedded_schema do
     field(:name, :string)
     field(:academy_id, :integer)
-    field(:meeting_id, Vae.Meetings.EctoTypeAny)
+    field(:meeting_id, :integer)
     field(:meeting_id2, :string)
     field(:place, :string)
     field(:address, :string)

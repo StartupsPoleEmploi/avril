@@ -29,12 +29,7 @@ defmodule Vae.Meetings.FranceVae.Server do
   end
 
   @impl true
-  def handle_call({:register_to_meeting, academy_id, meeting_id, user}, _from, state) do
-    {:reply, FranceVae.register(academy_id, meeting_id, user), state}
-  end
-
-  @impl true
-  def handle_call({:register, {meeting, application}}, _from, state) do
+  def handle_call({:register, meeting, application}, _from, state) do
     {:reply, FranceVae.register(meeting, application), state}
   end
 

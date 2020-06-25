@@ -34,7 +34,7 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
   end
 
   object :meeting do
-    field(:academy_id, :string)
+    field(:academy_id, :integer)
     field(:address, :string)
     field(:city, :string)
     field(:start_date, :naive_datetime)

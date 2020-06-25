@@ -11,8 +11,6 @@ defmodule Vae.Meetings do
 
   defdelegate fetch_all(), to: @state_holder
 
-  defdelegate register(meeting_id, application), to: @state_holder
-
   defdelegate get_by_meeting_id(meeting_id), to: @state_holder
 
   def fetch_france_vae_meetings(academy_id) do
@@ -25,6 +23,10 @@ defmodule Vae.Meetings do
 
   def get_france_vae_meetings(delegate) do
     Vae.Meetings.Server.get_by_delegate(delegate)
+  end
+
+  def register_france_vae_meetings(meeting_id, application) do
+    Vae.Meetings.Server.register(meeting_id, application)
   end
 
   def get_france_vae_academies() do

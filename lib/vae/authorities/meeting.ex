@@ -5,7 +5,7 @@ defmodule Vae.Meeting do
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do
-    field(:academy_id, :string)
+    field(:academy_id, :integer)
     field(:address, :string)
     field(:city, :string)
     field(:start_date, :naive_datetime)
@@ -15,5 +15,27 @@ defmodule Vae.Meeting do
     field(:postal_code, :string)
     field(:remaining_places, :integer)
     field(:target, :string)
+  end
+
+  @fields ~w(academy_id meeting_id place address postal_code target start_date end_date)a
+
+  def changeset(module, params) do
+    module
+    |> cast(params, @fields)
+    |> validate_required([
+      :academy_id,
+      :meeting_id,
+      :place,
+      :address,
+      :postal_code,
+      :start_date,
+      :end_date
+    ])
+  end
+
+  defimpl ExAdmin.Render, for: __MODULE__ do
+    def to_string(data) do
+      if data, do: ExAdmin.Render.to_string(data.start_date)
+    end
   end
 end

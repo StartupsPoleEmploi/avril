@@ -10,7 +10,7 @@ defmodule Vae.UserApplication do
     Certifier,
     Certification,
     Delegate,
-    Meetings.Meeting,
+    Meeting,
     Resume,
     User
   }

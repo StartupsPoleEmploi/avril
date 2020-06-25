@@ -65,8 +65,8 @@ defmodule Vae.Meetings.FranceVae do
     end
   end
 
-  def register(meeting, application) do
-    register(meeting[:academy_id], meeting[:meeting_id], application)
+  def register(%{academy_id: academy_id, meeting_id: meeting_id} = _meeting, application) do
+    register(academy_id, meeting_id, application)
   end
 
   def register(academy_id, meeting_id, application) do
