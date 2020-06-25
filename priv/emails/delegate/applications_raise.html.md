@@ -2,7 +2,7 @@
 
 Bonjour <%= @delegate.name %>,
 
-Ces 15 derniers jours <%= length @applications %> utilisateurs d’Avril vous ont transmis une candidature pour les diplômes suivants :
+Ces 15 derniers jours, nous vous avons transmis <%= length @applications %> candidatures à la VAE. Vous pouvez consulter le profil, livret de recevabilité et les justificatifs de chaque candidat en cliquant sur les liens ci-dessous.
 
 <ul>
   <%= for application <- @applications do %>
@@ -10,9 +10,7 @@ Ces 15 derniers jours <%= length @applications %> utilisateurs d’Avril vous on
   <% end %>
 </ul>
 
-Vous pouvez consulter leur profil, livret de recevabilité et justificatifs en cliquant sur les liens ci-dessus.
-
-Voilà de belles VAE en perspectives !
+Voilà de belles VAE en perspective !
 
 Très bonne fin de journée à vous et à votre équipe.
 
