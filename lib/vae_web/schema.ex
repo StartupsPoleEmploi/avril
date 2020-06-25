@@ -6,7 +6,7 @@ defmodule VaeWeb.Schema do
   import_types(__MODULE__.ApplicationTypes)
   import_types(__MODULE__.AuthoritiesTypes)
   import_types(__MODULE__.CertificationTypes)
-  import_types(__MODULE__.MeetingTypes)
+  #  import_types(__MODULE__.MeetingTypes)
 
   alias VaeWeb.Resolvers.Resume
 
@@ -14,7 +14,7 @@ defmodule VaeWeb.Schema do
     import_fields(:account_queries)
     import_fields(:application_queries)
     import_fields(:authorities_queries)
-    import_fields(:meeting_queries)
+    #    import_fields(:meeting_queries)
   end
 
   mutation do

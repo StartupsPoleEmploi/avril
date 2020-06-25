@@ -21,10 +21,29 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
     field(:email, :string)
     field(:address, :string)
     field(:telephone, :string)
+    field(:meeting_places, list_of(:meeting_place))
 
     field(:certifier, :certifier) do
       resolve(&Resolvers.Authorities.certifier_item/3)
     end
+  end
+
+  object :meeting_place do
+    field(:name, :string)
+    field(:meetings, list_of(:meeting))
+  end
+
+  object :meeting do
+    field(:academy_id, :string)
+    field(:address, :string)
+    field(:city, :string)
+    field(:start_date, :naive_datetime)
+    field(:end_date, :naive_datetime)
+    field(:meeting_id, :string)
+    field(:place, :string)
+    field(:postal_code, :string)
+    field(:remaining_places, :integer)
+    field(:target, :string)
   end
 
   object :certifier do
