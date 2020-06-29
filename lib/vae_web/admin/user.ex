@@ -21,6 +21,7 @@ defmodule Vae.ExAdmin.User do
         input(user, :last_name)
         input(user, :email)
         input(user, :is_admin)
+        input(user, :identity)
         input(user, :pe_id)
       end
     end

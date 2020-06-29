@@ -4,8 +4,8 @@ defmodule VaeWeb.Mailer do
   use Swoosh.Mailer, otp_app: :vae
 
   use Phoenix.Swoosh,
-    view: VaeWeb.EmailView,
-    layout: {VaeWeb.EmailView, :layout}
+    view: VaeWeb.EmailsView,
+    layout: {VaeWeb.EmailsView, :layout}
 
   alias Swoosh.Email
   alias Vae.{Account, JobSeeker, User}
@@ -27,8 +27,7 @@ defmodule VaeWeb.Mailer do
     |> render_body_or_template_id(template_name_or_id, params, to)
   end
 
-  def send(email), do: __MODULE__.send(email, [])
-
+  def send(email, config\\[])
   def send(%Email{} = email, config) do
     deliver(email, config)
   end
@@ -81,8 +80,9 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: IO.inspect(anything)
 
-  def format_mailer(:to, _anything) when not is_nil(@override_to),
-    do: format_mailer!(@override_to)
+  def format_mailer(:to, _anything) when not is_nil(@override_to) do
+    format_mailer!(@override_to)
+  end
 
   def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
   def format_mailer(_role, :avril), do: format_mailer!(:avril_from)
@@ -145,33 +145,60 @@ defmodule VaeWeb.Mailer do
     |> render_text_and_extract_subject(template_name, params, to)
   end
 
-  defp render_text_and_extract_subject(email, _template_name, params, to) do
-    # {:ok, file_content} = File.read(IO.inspect("#{Application.app_dir(:vae)}/web/templates/email/#{template_name}.md"))
-    # processed_content = EEx.eval_string(file_content, params)
-    # {subject, rest} = String.split(file_content, "\n---\n", parts: 2)
-    # email
-    # |> subject(subject)
-    # |> Map.put(:text_body, rest)
-    subject = "#{environment_prefix(to)}#{Map.get(params, :subject)}" |> String.slice(0, 255)
-    email |> subject(subject)
+  defp render_text_and_extract_subject(email, template_name, params, to) do
+    {:ok, file_content} = File.read(Path.join(:code.priv_dir(:vae), "emails/#{template_name}.md"))
+    processed_content = EEx.eval_string(IO.inspect(file_content), [assigns: IO.inspect(params)])
+    subject = (extract_subject(processed_content) || params[:subject] || email.subject) |> environment_prefix(to)
+    # md_content = Earmark.as_html!(processed_content)
+    email
+    |> subject(subject)
+    |> Map.put(:text_body, remove_subject(processed_content))
+    |> Map.put(:html_body, call_to_action_inline_style(email.html_body, params))
   end
 
-  defp environment_prefix(to) do
+  defp environment_prefix(subject, to) do
     if @override_to do
-      "[Avril][#{Mix.env()}] #{inspect(format_mailer!(to))} - "
+      "[Avril][#{Mix.env()}] #{inspect(format_mailer!(to))} - #{subject}"
+    else
+      subject
     end
   end
 
-  # defp _extract_subject(_template_name) do
-  #   "Coucou"
-  #   # %{"subject" => subject} = Regex.named_captures(~r/\[SUJET\]: # \((?<subject>.*)\)/, file_content)
-  #   # subject
-  # end
+  defp extract_subject(file_content) do
+    (Regex.named_captures(~r/\[SUJET\]: # \((?<subject>.*)\)/U, file_content) || %{})
+    |> Map.get("subject", "")
+    |> String.trim()
+    |> Vae.String.blank_is_nil()
+  end
 
-  # defp _render_markdown_bodies(email, template_name, params) do
-  #   email
-  #     # |> Map.put(:"html_body", "Hello you")
-  #   |> Map.put(:html_body, Phoenix.View.render_to_string(VaeWeb.EmailView, template_name, params))
-  #   # |> Map.put(:"text_body", Phoenix.View.render_to_string(VaeWeb.EmailView, template_name, params))
-  # end
+  defp remove_subject(file_content) do
+    Regex.replace(~r/\[SUJET\]: # \(.*\)/U, file_content, "")
+    |> String.trim()
+  end
+
+  defp call_to_action_inline_style(html_content, params) do
+    button_inline_style = """
+      padding: 8px 16px;
+      border-radius: 50px;
+      text-decoration: none;
+      margin: 24px #{if params[:text_center], do: "auto", else: "64px;"};
+      display: #{if params[:text_center], do: "inline-block", else: "block"};
+      text-align: center;
+      font-style: normal;
+      font-weight: bold;
+    """
+    primary_inline_style = """
+      #{button_inline_style}
+      background: #18495e;
+      color: #c7eeff !important;
+    """ |> String.replace("\n", "")
+    secondary_inline_style = """
+      #{button_inline_style}
+      background: #d6ffed;
+      color: #18495e !important;
+    """ |> String.replace("\n", "")
+    html_content
+    |> String.replace("<strong><a href", "<strong><a style=\"#{primary_inline_style}\" href")
+    |> String.replace("<em><a href", "<em><a style=\"#{secondary_inline_style}\" href")
+  end
 end

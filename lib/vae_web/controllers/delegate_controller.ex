@@ -4,7 +4,7 @@ defmodule VaeWeb.DelegateController do
   alias Vae.Delegate
 
   plug VaeWeb.Plugs.ApplicationAccess,
-       [find_with_hash: :delegate_access_hash] when action in [:update]
+       [find_with_hash: true] when action in [:update]
 
   filterable do
     # @options param: :organismes

@@ -1,3 +1,3 @@
 defmodule Vae.Scheduler do
-  use Quantum.Scheduler, otp_app: :vae
+  use Quantum, otp_app: :vae
 end

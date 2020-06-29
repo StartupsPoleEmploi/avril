@@ -14,16 +14,15 @@ defmodule Vae.Application do
     }
 
     server_children = %{
-      #      should_start: Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
-      should_start: true,
+      should_start: Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
+      # should_start: true,
       children: [
+        Vae.Scheduler,
         Pow.Store.Backend.MnesiaCache,
         supervisor(VaeWeb.Endpoint, []),
         supervisor(Vae.Event.EventSupervisor, []),
         supervisor(Vae.Statistics.StatisticsSupervisor, []),
-        supervisor(Vae.Crm.CrmSupervisor, []),
         worker(Vae.Status.Server, []),
-        worker(Vae.Scheduler, []),
         worker(Vae.Places.Cache, []),
         Vae.PoleEmploi.OAuth.Clients
       ]
@@ -36,7 +35,7 @@ defmodule Vae.Application do
       children: [
         worker(Vae.Meetings.StateHolder, []),
         worker(Vae.Meetings.FranceVae.Server, []),
-        worker(Vae.Meetings.Afpa.Server, []),
+        # worker(Vae.Meetings.Afpa.Server, []),
         Vae.Meetings.FranceVae.Connection.Cache
       ]
     }

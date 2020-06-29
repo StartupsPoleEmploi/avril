@@ -59,7 +59,7 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
   defp has_access?(nil, _user, _verification), do: {:error, :not_found}
 
-  defp has_access?(application, user, verification_func) when not is_nil(verification_func) do
+  defp has_access?(application, _user, verification_func) when not is_nil(verification_func) do
     if verification_func.(application) do
       {:ok, application}
     else

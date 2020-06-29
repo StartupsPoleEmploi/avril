@@ -43,7 +43,7 @@ defmodule VaeWeb.RegistrationController do
       Plug.Conn.delete_session(conn, :certification_id)
       |> redirect_to_user_space(application)
     else
-      error ->
+      _error ->
         redirect_to_user_space(conn)
     end
   end

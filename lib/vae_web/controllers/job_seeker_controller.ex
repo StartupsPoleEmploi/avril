@@ -2,7 +2,7 @@ defmodule VaeWeb.JobSeekerController do
   use VaeWeb, :controller
 
   alias Vae.Repo
-  alias Vae.Crm.Polls
+  alias Vae.UserApplications.Polls
   alias Vae.{Certification, Delegate, Event, JobSeeker}
   alias VaeWeb.JobSeekerEmail
   alias VaeWeb.Mailer

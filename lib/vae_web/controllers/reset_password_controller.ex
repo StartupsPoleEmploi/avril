@@ -19,7 +19,7 @@ defmodule VaeWeb.ResetPasswordController do
 
         redirect_to_home(conn)
 
-      {:error, error_changeset, conn} ->
+      {:error, _error_changeset, conn} ->
         redirect_to_home(conn)
     end
   end

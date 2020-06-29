@@ -12,7 +12,6 @@ defmodule VaeWeb.ContactEmail do
       :avril,
       :avril,
       %{
-        subject: "[Avril - la VAE Facile] #{object}",
         reply_to: {name, email},
         name: name,
         email_address: email,
@@ -33,7 +32,6 @@ defmodule VaeWeb.ContactEmail do
       :avril,
       {name, email},
       %{
-        subject: "[Avril - la VAE Facile] Confirmation de votre demande de contact : #{object}",
         name: name,
         email: email,
         object: object,

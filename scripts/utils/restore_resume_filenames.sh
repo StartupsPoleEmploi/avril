@@ -45,12 +45,19 @@ get_filename() {
 
 }
 
+select_resumes() {
+
 read -r -d '' ELIXIR_SELECT_COMMAND << EOM
 import Ecto.Query
 
 date = ~N[2020-05-14 22:51:44]
+id_min=9244
+id_max=9529
 query =
-  from r in Vae.Resume, [where: not like(r.url, "https://avril.pole-emploi.fr/files/%/________________________________.%"), order_by: [desc: :inserted_at]]
+  from r in Vae.Resume, [
+    where: not like(r.url, "https://avril.pole-emploi.fr/files/%/________________________________.%") and not like(r.url, "https://avril.pole-emploi.fr/files/%/________________________________"),
+    order_by: [desc: :inserted_at]
+  ]
 
 Vae.Repo.all(query) |> Enum.each(fn r ->
   IO.write("|")
@@ -72,15 +79,95 @@ Vae.Repo.all(query) |> Enum.each(fn r ->
 end)
 EOM
 
-docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUME_INFOS; do
-  RESUME_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
-  APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
-  MODIFICATION_TIME=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
+  docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_SELECT_COMMAND" | while read RESUME_INFOS; do
+    RESUME_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
+    APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
+    MODIFICATION_TIME=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
 
-  if [[ ! -z "$RESUME_ID" ]] && [[ ! -z "$APPLICATION_ID" ]] && [[ ! -z "$MODIFICATION_TIME" ]]; then
-    echo "Searching for : resume ID: $RESUME_ID app_id: $APPLICATION_ID modif_time: $MODIFICATION_TIME";
-    get_filename "$RESUME_ID" "$APPLICATION_ID" "$MODIFICATION_TIME";
-  fi
-done
+    if [[ ! -z "$RESUME_ID" ]] && [[ ! -z "$APPLICATION_ID" ]] && [[ ! -z "$MODIFICATION_TIME" ]]; then
+      echo "Searching for : resume ID: $RESUME_ID app_id: $APPLICATION_ID modif_time: $MODIFICATION_TIME";
+      get_filename "$RESUME_ID" "$APPLICATION_ID" "$MODIFICATION_TIME";
+    fi
+  done
+}
 
-# get_filename "9837" "27818" "2020-05-27 16:45:16";
+rename_resumes() {
+
+read -r -d '' ELIXIR_RENAME_COMMAND << EOM
+import Ecto.Query
+
+id_min=9244
+id_max=9529
+
+query =
+  from r in Vae.Resume, [
+    where: r.id >= ^id_min and r.id <= ^id_max and not like(r.filename, "%|%"),
+    order_by: [desc: :inserted_at]
+  ]
+
+Vae.Repo.all(query) |> Enum.each(fn r ->
+  application_id = r.application_id
+  previous_filename = r.filename
+  new_filename = "#{UUID.uuid4(:hex)}#{Path.extname(r.filename)}"
+
+  IO.write("|#{application_id}|#{previous_filename}|#{new_filename}\n")
+
+  r
+  |> Vae.Repo.preload(:application)
+  |> Vae.Resume.changeset(%{url: Vae.Resume.file_url(Vae.URI.endpoint(), application_id, new_filename)})
+  |> Vae.Repo.update()
+end)
+EOM
+
+  docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_RENAME_COMMAND" | while read RESUME_INFOS; do
+    APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
+    PREVIOUS_FILENAME=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
+    NEW_FILENAME=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
+
+    if [[ ! -z "$APPLICATION_ID" ]] && [[ ! -z "$PREVIOUS_FILENAME" ]] && [[ ! -z "$NEW_FILENAME" ]]; then
+      echo "Renaming for : app_id: $APPLICATION_ID previous_name: $PREVIOUS_FILENAME new_name: $NEW_FILENAME";
+
+      RENAME_FILE_COMMAND="mv \"/data/$BUCKET_NAME/$APPLICATION_ID/$PREVIOUS_FILENAME\" \"/data/$BUCKET_NAME/$APPLICATION_ID/$NEW_FILENAME\""
+
+      docker exec $MINIO_CONTAINER_ID sh -c "$RENAME_FILE_COMMAND" && echo "$PREVIOUS_FILENAME renamed";
+    fi
+  done
+
+}
+
+check_resumes() {
+  read -r -d '' ELIXIR_CHECK_COMMAND << EOM
+import Ecto.Query
+
+query =
+  from r in Vae.Resume, [
+    order_by: [desc: :inserted_at]
+  ]
+
+Vae.Repo.all(query) |> Enum.each(fn r ->
+  IO.write("|#{r.id}|#{r.application_id}|#{r.url}\n")
+end)
+EOM
+
+  docker exec $PHOENIX_CONTAINER_ID mix run -e "$ELIXIR_CHECK_COMMAND" | while read RESUME_INFOS; do
+    RESUME_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f2)
+    APPLICATION_ID=$(echo $RESUME_INFOS | cut -d '|' -s -f3)
+    URL=$(echo $RESUME_INFOS | cut -d '|' -s -f4)
+
+    if [[ ! -z "$RESUME_ID" ]] && [[ ! -z "$APPLICATION_ID" ]] && [[ ! -z "$URL" ]]; then
+
+      status_code=$(curl --write-out %{http_code} --silent --output /dev/null $URL)
+
+      if [[ "$status_code" -ne 200 ]] ; then
+        echo "==============================="
+        echo "FILE NOT FOUND"
+        echo "APPLICATION_ID: $APPLICATION_ID"
+        echo "RESUME_ID: $RESUME_ID"
+      fi
+    fi
+  done
+}
+
+# select_resumes
+# rename_resumes
+check_resumes

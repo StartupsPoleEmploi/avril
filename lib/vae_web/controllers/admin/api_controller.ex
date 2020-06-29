@@ -102,23 +102,6 @@ defmodule ExAdmin.ApiController do
     )
   end
 
-  def applications_select("booklet") do
-    """
-      count(*) FILTER (WHERE booklet_1 IS NULL) AS not_started,
-      count(*) FILTER (WHERE booklet_1 IS NOT NULL AND booklet_1 ->> 'completed_at' IS NULL) AS started,
-      count(*) FILTER (WHERE booklet_1 IS NOT NULL AND booklet_1 ->> 'completed_at' IS NOT NULL) AS finished
-    """
-  end
-
-  def applications_select(_) do
-    """
-      count(*) FILTER (WHERE submitted_at IS NULL) AS unsubmitted,
-      count(*) FILTER (WHERE submitted_at IS NOT NULL AND admissible_at IS NULL and inadmissible_at IS NULL) AS submitted,
-      count(*) FILTER (WHERE submitted_at IS NOT NULL AND inadmissible_at IS NOT NULL) AS inadmissible,
-      count(*) FILTER (WHERE submitted_at IS NOT NULL AND admissible_at IS NOT NULL) AS admissible
-    """
-  end
-
   def join_certifier(certifier_id, base_name \\ "delegate")
 
   def join_certifier(certifier_id, base_name) when not is_nil(certifier_id) do
@@ -131,16 +114,20 @@ defmodule ExAdmin.ApiController do
 
   def join_certifier(_, _), do: ""
 
-  def applications_query(start_date, end_date, type, certifier_id) do
+  def applications_query(start_date, end_date, _type, certifier_id) do
+    # Check Vae.Repo.Migrations.AddApplicationStatusSQLFunction
+    # to see status(application) SQL function definition
+
     """
     SELECT
       to_char(applications.inserted_at, 'IYYY-IW') AS week_number,
-      #{applications_select(type)}
+      status(applications.*) as status,
+      count(applications.*) as count
     FROM applications
     #{join_certifier(certifier_id)}
     #{where_applications_date_filter(start_date, end_date)}
-    GROUP BY week_number
-    ORDER BY week_number
+    GROUP BY week_number, status
+    ORDER BY week_number, status;
     """
   end
 

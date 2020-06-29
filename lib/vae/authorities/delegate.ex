@@ -1,10 +1,8 @@
 defmodule Vae.Delegate do
   use VaeWeb, :model
 
-  alias Ecto.Changeset
-
   alias __MODULE__
-
+  alias Ecto.Changeset
   alias Vae.{
     UserApplication,
     Certification,
@@ -41,6 +39,7 @@ defmodule Vae.Delegate do
     has_many(:certifications, through: [:certifications_delegates, :certification])
 
     has_many(:applications, UserApplication, on_replace: :nilify)
+    has_many(:recent_applications, UserApplication, where: [inserted_at: {:fragment, "? > now() - interval '16 days'"}, submitted_at: {:not, nil}])
 
     has_many(
       :users,
@@ -215,7 +214,7 @@ defmodule Vae.Delegate do
 
   def format_for_index(nil), do: nil
 
-  def format_for_index(%__MODULE__{} = delegate) do
+  def format_for_index(%Delegate{} = delegate) do
     delegate = delegate |> Repo.preload(:certifiers)
 
     certifiers =
@@ -229,22 +228,22 @@ defmodule Vae.Delegate do
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
 
-  def is_asp?(%__MODULE__{} = delegate) do
+  def is_asp?(%Delegate{} = delegate) do
     String.starts_with?(delegate.name, "ASP")
   end
 
-  def is_educ_nat?(%__MODULE__{} = delegate) do
+  def is_educ_nat?(%Delegate{} = delegate) do
     delegate
     |> Repo.preload(:certifiers)
     |> Map.get(:certifiers)
     |> Enum.reduce(false, fn certifier, result -> result || Certifier.is_educ_nat?(certifier) end)
   end
 
-  def is_corse?(%__MODULE__{} = delegate) do
+  def is_corse?(%Delegate{} = delegate) do
     delegate.administrative == "Corse"
   end
 
-  def external_subscription_link(%__MODULE__{} = delegate) do
+  def external_subscription_link(%Delegate{} = delegate) do
     if delegate.academy_id do
       Vae.Meetings.FranceVae.Config.get_france_vae_academy_page(delegate.academy_id)
     else
@@ -256,9 +255,9 @@ defmodule Vae.Delegate do
     end
   end
 
-  def display_name(%__MODULE__{} = delegate), do: delegate.name
+  def display_name(%Delegate{} = delegate), do: delegate.name
 
-  def to_slug(%__MODULE__{} = delegate) do
+  def to_slug(%Delegate{} = delegate) do
     Vae.String.parameterize(
       "#{delegate.name} #{
         if delegate.city && delegate.name =~ delegate.city, do: "", else: delegate.city
