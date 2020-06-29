@@ -198,21 +198,6 @@ defmodule Vae.UserApplication do
     |> Repo.update!()
   end
 
-  def register_meeting(application, nil), do: {:ok, application}
-
-  def register_meeting(application, meeting_id) do
-    case Vae.Meetings.register(meeting_id, application) do
-      {:ok, meeting} ->
-        application
-        |> change()
-        |> put_embed(:meeting, meeting)
-        |> Repo.update()
-
-      {:error, _meeting} = error ->
-        error
-    end
-  end
-
   def save_booklet(application, booklet_params) do
     application
     |> change()

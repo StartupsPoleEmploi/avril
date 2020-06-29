@@ -3,22 +3,18 @@ defmodule Vae.Meetings.Afpa.Server do
   use GenServer
 
   alias Vae.Meetings.Afpa.Scraper
-  alias Vae.Meetings.StateHolder
-  alias Vae.Meetings.{Delegate, Meeting}
+  alias Vae.Meeting
 
   @name :afpa
 
   @doc false
   def start_link() do
-    GenServer.start_link(__MODULE__, Delegate.new(@name), name: @name)
+    GenServer.start_link(__MODULE__, [], name: @name)
   end
 
   @impl true
   def init(state) do
     Logger.info("[AFPA] Init #{@name} server")
-
-    StateHolder.subscribe(@name)
-
     {:ok, state}
   end
 
@@ -73,24 +69,6 @@ defmodule Vae.Meetings.Afpa.Server do
           }
           | acc
         ]
-    end)
-    |> Flow.on_trigger(fn meetings ->
-      global = %Delegate{
-        req_id: req_id,
-        #        name: @name,
-        updated_at: DateTime.utc_now(),
-        meetings: [
-          %{
-            certifier_id: 4,
-            academy_id: nil,
-            meetings: meetings
-          }
-        ]
-      }
-
-      GenServer.cast(pid, {:save, @name, global})
-
-      {meetings, []}
     end)
     |> Enum.to_list()
   end

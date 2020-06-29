@@ -16,12 +16,6 @@ defmodule Vae.Search.Client.Algolia do
     execute(:delegate, query)
   end
 
-  def get_meetings(%Vae.Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
-    delegate
-    |> Vae.Repo.preload(:certifiers)
-    |> get_meetings()
-  end
-
   def get_france_vae_meetings(
         academy_id,
         %{
@@ -39,6 +33,12 @@ defmodule Vae.Search.Client.Algolia do
       |> build_query()
 
     execute(:fvae_meetings, query, aroundRadius: :all)
+  end
+
+  def get_meetings(%Vae.Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
+    delegate
+    |> Vae.Repo.preload(:certifiers)
+    |> get_meetings()
   end
 
   def get_meetings(%{
@@ -131,11 +131,11 @@ defmodule Vae.Search.Client.Algolia do
 
   defp build_filters(%{filters: %{or: [], and: []}} = query), do: query
 
-  defp build_filters(%{filters: %{or: [], and: and_filter}} = query) when and_filter != [] do
+  defp build_filters(%{filters: %{or: [], and: and_filter}} = _query) when and_filter != [] do
     [filters: "#{Enum.join(and_filter, " AND ")}"]
   end
 
-  defp build_filters(%{filters: %{or: or_filter, and: []}} = query) do
+  defp build_filters(%{filters: %{or: or_filter, and: []}} = _query) do
     [filters: "#{Enum.join(or_filter, " OR ")}"]
   end
 

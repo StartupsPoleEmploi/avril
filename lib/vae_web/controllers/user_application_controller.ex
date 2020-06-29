@@ -39,8 +39,14 @@ defmodule VaeWeb.UserApplicationController do
   end
 
   def show(conn, %{"hash" => hash}) when not is_nil(hash) do
-    redirect(conn, to: Routes.user_application_path(conn, :show, conn.assigns[:current_application], delegate_hash: conn.assigns[:current_application].delegate_access_hash))
+    redirect(conn,
+      to:
+        Routes.user_application_path(conn, :show, conn.assigns[:current_application],
+          delegate_hash: conn.assigns[:current_application].delegate_access_hash
+        )
+    )
   end
+
   def show(conn, %{"delegate_hash" => hash}) when not is_nil(hash) do
     application =
       conn.assigns[:current_application]
@@ -82,74 +88,6 @@ defmodule VaeWeb.UserApplicationController do
       redirect(conn, external: Vae.User.profile_url(conn))
     end
   end
-
-  # TODO: change to submit
-  # def update(conn, %{"id" => _id} = params) do
-  #   application =
-  #     conn.assigns[:current_application]
-  #     |> Repo.preload([
-  #       :user,
-  #       [delegate: [:process, :certifiers]],
-  #       :certification
-  #     ])
-
-  #   meeting_id =
-  #     if params["book"] == "on",
-  #       do: params["application"]["meeting_id"]
-
-  #   with(
-  #     {:ok, application} <- UserApplication.register_meeting(application, meeting_id),
-  #     {:ok, application} <- UserApplication.submit(application)
-  #   ) do
-  #     if application.meeting && application.meeting.name == :france_vae do
-  #       redirect(conn,
-  #         to:
-  #           Routes.user_application_france_vae_registered_path(
-  #             conn,
-  #             :france_vae_registered,
-  #             application,
-  #             %{
-  #               academy_id: application.delegate.academy_id,
-  #               meeting_id: application.meeting.meeting_id
-  #             }
-  #           )
-  #       )
-  #     else
-  #       conn
-  #       |> put_flash(:succes, "Votre profil a été transmis avec succès !")
-  #       |> redirect(to: Routes.user_application_path(conn, :show, application))
-  #     end
-  #   else
-  #     {:error, msg} ->
-  #       Logger.error(fn -> inspect(msg) end)
-
-  #       conn
-  #       |> put_flash(:danger, "Une erreur est survenue, merci de réessayer plus tard")
-  #       |> redirect(to: Routes.user_application_path(conn, :show, application))
-  #   end
-  # end
-
-  # def download(conn, %{"application_id" => _id}) do
-  #   application =
-  #     conn.assigns[:current_application]
-  #     |> Repo.preload([
-  #       :user,
-  #       [delegate: [:process, :certifiers]],
-  #       :certification
-  #     ])
-
-  #   case Vae.StepsPdf.create_pdf_file(application.delegate.process) do
-  #     {:ok, file} ->
-  #       conn
-  #       |> put_resp_content_type("application/pdf", "utf-8")
-  #       |> send_file(200, file)
-
-  #     {:error, msg} ->
-  #       conn
-  #       |> put_flash(:danger, "Une erreur est survenue: #{msg}. Merci de réessayer plus tard.")
-  #       |> redirect(to: Routes.user_application_path(conn, :show, application))
-  #   end
-  # end
 
   def admissible(conn, %{"id" => id}) do
     Repo.get(UserApplication, id)

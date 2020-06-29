@@ -4,7 +4,7 @@ defmodule Vae.Meetings.FranceVae do
   alias Vae.Meetings.FranceVae.Connection.Cache
   alias Vae.Meetings.FranceVae.Config
   alias Vae.Meetings.FranceVae.UserRegistration
-  alias Vae.Meetings.Meeting
+  alias Vae.Meeting
 
   @name FranceVae
 

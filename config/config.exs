@@ -124,9 +124,9 @@ config :vae, Vae.Scheduler,
       schedule: "45 7 */16 * *",
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
-    meetings_task: [
+    fvae_meetings_task: [
       schedule: "0 5 * * *",
-      task: &Vae.Meetings.fetch_all/0
+      task: &Vae.Authorities.fetch_fvae_delegate_meetings/0
     ]
   ]
 

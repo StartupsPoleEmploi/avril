@@ -74,9 +74,10 @@ defmodule Vae.ExAdmin.Delegate do
       end
 
       panel "Meetings" do
-        table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&elem(&1, 1)) do
+        table_for delegate
+                  |> Enum.flat_map(fn %{meeting_places: %{meetings: meetings}} -> meetings end) do
           column(:meeting_id)
-          column(:name)
+          # column(:name)
           column(:target)
           column(:place)
           column(:address)

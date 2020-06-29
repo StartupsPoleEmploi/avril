@@ -3,7 +3,7 @@ defmodule Vae.Meetings.FranceVae.Server do
   use GenServer
 
   alias Vae.Meetings.FranceVae
-  alias Vae.Meetings.{Delegate, Meeting}
+  alias Vae.Meeting
 
   @name :france_vae
 
