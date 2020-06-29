@@ -2,9 +2,7 @@ defmodule Vae.Meetings.Server do
   require Logger
   use GenServer
 
-  alias Vae.Meetings.{Academy, Meeting}
   alias Vae.Search.Client.Algolia, as: AlgoliaClient
-  alias Vae.Places
 
   @name MeetingsServer
 
@@ -49,7 +47,7 @@ defmodule Vae.Meetings.Server do
         {:ok, meetings} ->
           to_meeting_places(meetings)
 
-        error ->
+        _error ->
           Logger.error(fn ->
             "Error while attempting to retrieve meetings for delegate_id #{inspect(delegate.id)}"
           end)
@@ -72,7 +70,7 @@ defmodule Vae.Meetings.Server do
     end
   end
 
-  def fetch(:fvae = name, academy_id) do
+  def fetch(:fvae, academy_id) do
     GenServer.call(@name, {:fetch, academy_id}, 15_000)
   end
 
@@ -88,18 +86,18 @@ defmodule Vae.Meetings.Server do
     GenServer.call(@name, {:search, delegate}, 15_000)
   end
 
-  def register(meeting_id, %{delegate: %{meeting_places: []}} = application), do: {:ok, nil}
+  def register(_meeting_id, %{delegate: %{meeting_places: []}} = _application), do: {:ok, nil}
 
   def register(meeting_id, %{delegate: %{meeting_places: meeting_places}} = application) do
     meeting =
       meeting_places
       |> Enum.flat_map(& &1.meetings)
-      |> Enum.find(fn %{meeting_id: id} -> meeting_id = id end)
+      |> Enum.find(fn %{meeting_id: id} -> meeting_id == id end)
 
     GenServer.call(@name, {:register, meeting, application}, 15_000)
   end
 
-  defp format_for_index(%{place: place, address: address, geolocation: geoloc} = meeting) do
+  defp format_for_index(%{place: _place, address: _address, geolocation: geoloc} = meeting) do
     Map.merge(meeting, %{
       _geoloc: geoloc["_geoloc"]
     })
@@ -112,8 +110,8 @@ defmodule Vae.Meetings.Server do
         nil ->
           new_meeting_place(meeting, meeting_places)
 
-        %{name: _name, meetings: meetings} ->
-          add_meeting_to_meeting_place(meeting, meetings, meeting_places)
+        %{name: _name, meetings: _meetings} ->
+          add_meeting_to_meeting_place(meeting, meeting_places)
       end
     end)
     |> Enum.reverse()
@@ -126,14 +124,14 @@ defmodule Vae.Meetings.Server do
     })
   end
 
-  defp add_meeting_to_meeting_place(meeting, meetings, meeting_places) do
+  defp add_meeting_to_meeting_place(meeting, meeting_places) do
     meeting_to_add = Map.take(meeting, @common_fields)
 
     {_old, place_meetings} =
       get_and_update_in(
         meeting_places,
         [:"#{meeting.place}", :meetings],
-        &{&1, [meeting | &1]}
+        &{&1, [meeting_to_add | &1]}
       )
 
     place_meetings

@@ -9,7 +9,7 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   @doc false
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: @name)
+    GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
   @impl true
@@ -35,36 +35,45 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   @impl true
   def handle_call({:fetch, academy_id}, _from, state) do
-    new_academy_meetings = %{
-      updated_at: DateTime.utc_now(),
-      meetings: get_data(academy_id)
-    }
+    {meetings, new_state} =
+      Map.get_and_update(state, :"#{academy_id}", fn
+        nil ->
+          IO.inspect("get from fvae academy_id: #{academy_id}")
+          meetings = get_data(academy_id)
 
-    new_state =
-      Keyword.update(state, :"#{academy_id}", new_academy_meetings, fn
-        %{meetings: meetings, updated_at: datetime} = academy_meetings ->
-          case DateTime.compare(
-                 Timex.add(datetime, Timex.Duration.from_hours(48)),
-                 DateTime.utc_now()
-               ) do
-            :lt ->
-              new_academy_meetings
+          {meetings,
+           %{
+             updated_at: DateTime.utc_now(),
+             meetings: meetings
+           }}
 
-            _ ->
-              academy_meetings
+        %{updated_at: updated_at, meetings: meetings} = academy_meetings ->
+          if DateTime.compare(
+               Timex.add(updated_at, Timex.Duration.from_hours(48)),
+               DateTime.utc_now()
+             ) == :lt do
+            IO.inspect("outdated academy_id: #{academy_id}")
+
+            {meetings,
+             %{
+               updated_at: DateTime.utc_now(),
+               meetings: meetings
+             }}
+          else
+            IO.inspect("Already in da pipe academy_id: #{academy_id}")
+            {meetings, academy_meetings}
           end
 
         _ ->
-          new_academy_meetings
+          # Uggly hack ...
+          {[],
+           %{
+             updated_at: Timex.subtract(DateTime.utc_now(), Timex.Duration.from_days(3)),
+             meetings: []
+           }}
       end)
 
-    {:reply, get_in(new_state, [:"#{academy_id}", :meetings]), new_state}
-  end
-
-  @impl true
-  def handle_info(msg, state) do
-    Logger.error(fn -> "Incoming unknown msg: #{inspect(msg)}" end)
-    {:noreply, state}
+    {:reply, meetings, new_state}
   end
 
   defp get_data(academy_id) do
@@ -80,34 +89,6 @@ defmodule Vae.Meetings.FranceVae.Server do
           meeting
           | geolocation: geolocation
         }
-    end)
-  end
-
-  defp get_data() do
-    FranceVae.get_academies()
-    |> Enum.reduce([], fn %{"id" => academy_id}, acc ->
-      [
-        %{
-          # Call me DB ...
-          certifier_id: 2,
-          academy_id: academy_id,
-          meetings:
-            FranceVae.get_meetings(academy_id)
-            |> Enum.map(fn
-              %Meeting{postal_code: nil} = meeting ->
-                meeting
-
-              %Meeting{postal_code: postal_code} = meeting ->
-                geolocation = Vae.Places.get_geoloc_from_address(postal_code)
-
-                %{
-                  meeting
-                  | geolocation: geolocation
-                }
-            end)
-        }
-        | acc
-      ]
     end)
   end
 end
