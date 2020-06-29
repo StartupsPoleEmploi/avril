@@ -38,7 +38,6 @@ defmodule Vae.Meetings.FranceVae.Server do
     {meetings, new_state} =
       Map.get_and_update(state, :"#{academy_id}", fn
         nil ->
-          IO.inspect("get from fvae academy_id: #{academy_id}")
           meetings = get_data(academy_id)
 
           {meetings,
@@ -52,15 +51,12 @@ defmodule Vae.Meetings.FranceVae.Server do
                Timex.add(updated_at, Timex.Duration.from_hours(48)),
                DateTime.utc_now()
              ) == :lt do
-            IO.inspect("outdated academy_id: #{academy_id}")
-
             {meetings,
              %{
                updated_at: DateTime.utc_now(),
                meetings: meetings
              }}
           else
-            IO.inspect("Already in da pipe academy_id: #{academy_id}")
             {meetings, academy_meetings}
           end
 
