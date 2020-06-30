@@ -60,18 +60,18 @@ defmodule Vae.ExAdmin.Delegate do
         end
       end
 
-      panel "Applications" do
-        table_for delegate.applications do
-          column(:id)
-          column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
+      # panel "Applications" do
+      #   table_for delegate.applications do
+      #     column(:id)
+      #     column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
 
-          column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+      #     column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
 
-          column(:submitted_at)
-          column(:admissible_at)
-          column(:inadmissible_at)
-        end
-      end
+      #     column(:submitted_at)
+      #     column(:admissible_at)
+      #     column(:inadmissible_at)
+      #   end
+      # end
 
       panel "Meetings" do
         table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&elem(&1, 1)) do
@@ -154,7 +154,7 @@ defmodule Vae.ExAdmin.Delegate do
             :process,
             :certifiers,
             :certifications,
-            applications: [:delegate, :user, :certification, :certifiers]
+            # applications: [:delegate, :user, :certification, :certifiers]
           ]
         ]
       }

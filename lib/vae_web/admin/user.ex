@@ -1,8 +1,8 @@
 defmodule Vae.ExAdmin.User do
   use ExAdmin.Register
-  alias Vae.ExAdmin.Helpers
+  alias Vae.{ExAdmin.Helpers, User, Identity}
 
-  register_resource Vae.User do
+  register_resource User do
     index do
       selectable_column()
       column(:id)
@@ -149,6 +149,15 @@ defmodule Vae.ExAdmin.User do
         end
       end
     end
+
+    action_item(:show, fn id ->
+      user = Vae.Repo.get(Vae.User, id)
+
+      href =
+        VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
+
+      action_item_link("Connect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
+    end)
 
     query do
       %{

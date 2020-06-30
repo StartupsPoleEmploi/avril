@@ -37,6 +37,6 @@ defmodule VaeWeb.Plugs.ErrorHandlers.Browser do
   def call(conn, :already_authenticated) do
     conn
     |> put_flash(:danger, "Vous êtes déjà connecté")
-    |> redirect(to: Routes.root_path(conn, :index))
+    # |> redirect(to: Routes.root_path(conn, :index))
   end
 end

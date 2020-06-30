@@ -111,7 +111,7 @@ config :vae, :pow,
   web_module: VaeWeb
 
 config :vae, Vae.Scheduler,
-  jobs: [
+  jobs: if Mix.env() == :prod, do: [
     raise_unsubmitted_applications: [
       schedule: "0 5 * * *",
       task: {Vae.UserApplications.FollowUp, :send_unsubmitted_raise_email, []}
@@ -128,7 +128,7 @@ config :vae, Vae.Scheduler,
       schedule: "0 5 * * *",
       task: &Vae.Meetings.fetch_all/0
     ]
-  ]
+  ], else: []
 
 config :absinthe,
   log: false
