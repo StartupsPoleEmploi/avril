@@ -272,7 +272,7 @@ defmodule Vae.UserApplication do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path]}",
+      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path] || "/"}",
       query:
         if(opts[:delegate_mode],
           do: "delegate_hash=#{application.delegate_access_hash}",

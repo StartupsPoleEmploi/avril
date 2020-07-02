@@ -370,7 +370,7 @@ defmodule Vae.User do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path}"
+      path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path || "/"}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end

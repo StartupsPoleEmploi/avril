@@ -26,7 +26,7 @@ defmodule ExAdmin.ApiController do
       |> Plug.Conn.put_session(:admin_current_user_id, id)
       |> redirect(external: Vae.User.profile_url(conn))
     else
-      conn |> redirect(to: Routes.root_page(conn, :index))
+      conn |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 

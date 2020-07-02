@@ -44,7 +44,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
     field(:completed_at, :naive_datetime)
     field(:certification_name, :string)
     field(:certifier_name, :string)
-    field(:civility, :identity)
+    # field(:civility, :identity)
     field(:experiences, list_of(:experience))
     field(:education, :education)
   end
@@ -144,7 +144,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
   input_object :booklet_item do
     # field(:certification_name, :string)
     # field(:certifier_name, :string)
-    field(:civility, :identity_input)
+    # field(:civility, :identity_input)
     field(:education, :education_input)
     field(:experiences, list_of(:experience_input))
   end
