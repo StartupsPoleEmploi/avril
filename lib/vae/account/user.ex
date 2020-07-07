@@ -361,7 +361,7 @@ defmodule Vae.User do
 
   def profile_url(endpoint, %UserApplication{} = application) do
     application = Repo.preload(application, :certification)
-    profile_url(endpoint, "/mes-candidatures/#{application.certification.slug}")
+    profile_url(endpoint, "/mes-candidatures/#{application.id}-#{application.certification.slug}")
   end
 
   def profile_url(endpoint, path) do
