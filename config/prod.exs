@@ -14,10 +14,14 @@ config :vae, Vae.Scheduler,
   jobs: [
     registered_campaign_task: [
       schedule: "30 10 * * 2",
-      task: &Vae.CampaignDiffuser.Handler.execute_registered/0
+      task: fn () ->
+        Vae.CampaignDiffuser.Handler.execute_registered(Vae.Date.last_monday())
+      end
     ],
     new_registered_campaign_task: [
       schedule: "30 14 * * 2",
-      task: &Vae.CampaignDiffuser.Handler.execute_new_registered/0
+      task: fn () ->
+        Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
+      end
     ]
   ]

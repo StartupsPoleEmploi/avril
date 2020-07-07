@@ -19,8 +19,8 @@ defmodule Vae.CampaignDiffuser.Worker do
 
   def run(pending_emails) do
     receive do
-      {:execute, {type, from}} ->
-        execute(pending_emails, type, from)
+      {:execute, {type, date}} ->
+        execute(pending_emails, type, date)
 
       {:flush} ->
         :ets.delete_all_objects(:pending_emails)
@@ -33,10 +33,10 @@ defmodule Vae.CampaignDiffuser.Worker do
     end
   end
 
-  def execute(_pending_emails, type, from) do
+  def execute(_pending_emails, type, date) do
     Logger.info("Start extracting job seekers")
 
-    @extractor.build_enumerable(type, from)
+    @extractor.build_enumerable(type, date)
     |> case do
       {:ok, csv} ->
         csv

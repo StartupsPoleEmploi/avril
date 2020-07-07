@@ -138,7 +138,7 @@ defmodule Vae.ExAdmin.Delegate do
       end
     end
 
-    filter([:id, :slug, :is_active, :city, :administrative])
+    filter([:id, :slug, :is_active, :email, :city, :administrative])
 
     query do
       %{

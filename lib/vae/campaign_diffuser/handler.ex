@@ -1,14 +1,14 @@
 defmodule Vae.CampaignDiffuser.Handler do
-  def execute_registered(), do: execute(:reinscrits)
+  def execute_registered(date), do: execute(:reinscrits, date)
 
-  def execute_new_registered(), do: execute(:primo_inscrits)
+  def execute_new_registered(date), do: execute(:primo_inscrits, date)
 
-  def execute(type, from \\ 2) do
+  def execute(type, date) do
     {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
 
     send(
       pid,
-      {:execute, {type, from}}
+      {:execute, {type, date}}
     )
   end
 

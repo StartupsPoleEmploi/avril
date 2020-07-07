@@ -35,8 +35,8 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     Guadeloupe
   )
 
-  def build_enumerable(type, from) do
-    with {:ok, output_path} <- extract(type, from),
+  def build_enumerable(type, date) do
+    with {:ok, output_path} <- extract(type, date),
          stream <- File.stream!(output_path) do
       {
         :ok,
@@ -49,11 +49,11 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     end
   end
 
-  def extract(type, from) do
-    System.cmd("bunzip2", ["-kc", build_path(type, from)])
+  def extract(type, date) do
+    System.cmd("bunzip2", ["-kc", build_path(type, date)])
     |> case do
       {data, 0} ->
-        output_path = "/tmp/emails_#{type}_#{Date.utc_today()}.csv"
+        output_path = "/tmp/emails_#{type}_#{date}.csv"
 
         {
           File.write!(output_path, data),
@@ -90,14 +90,8 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     end)
   end
 
-  def build_path(type, from) do
-    "#{System.get_env("CAMPAIGN_BASE_PATH")}/avril_de_#{type}_delta_#{define_date(from)}1800.bz2"
-  end
-
-  def define_date(from) do
-    Date.utc_today()
-    |> Date.add(from * -1)
-    |> Timex.format!("{YYYY}{0M}{0D}")
+  def build_path(type, date) do
+    "#{System.get_env("CAMPAIGN_BASE_PATH")}/avril_de_#{type}_delta_#{Timex.format!(date, "{YYYY}{0M}{0D}")}*.bz2"
   end
 
   defp build_geolocation(job_seeker) do
