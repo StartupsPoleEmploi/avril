@@ -14,7 +14,7 @@ defmodule Vae.Repo.Migrations.AddDbConstraintsPreSanitization do
           AND  T1.delegate_id    = T2.delegate_id
           AND  T1.certification_id = T2.certification_id;
       """
-    ) |> IO.inspect()
+    )
 
     create unique_index(:certifications_delegates, [:delegate_id, :certification_id])
   end

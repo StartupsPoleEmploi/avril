@@ -3,4 +3,4 @@
   .app-status.notification.is-top role="alert" class="is-#{level}"
     button.delete aria-label="Fermer" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token()
     .container
-      = message |> String.trim() |> Earmark.as_html!() |> IO.inspect() |> Phoenix.HTML.raw
+      = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw
