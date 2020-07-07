@@ -1,6 +1,6 @@
 defmodule Vae.ExAdmin.User do
   use ExAdmin.Register
-  alias Vae.{ExAdmin.Helpers, User, Identity}
+  alias Vae.{ExAdmin.Helpers, User}
 
   register_resource User do
     index do
@@ -156,7 +156,7 @@ defmodule Vae.ExAdmin.User do
       href =
         VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
 
-      action_item_link("Connect as #{Identity.fullname(user)}", href: href, "data-method": :put)
+      action_item_link("Connect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
     end)
 
     query do

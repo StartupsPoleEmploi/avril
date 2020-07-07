@@ -109,13 +109,23 @@ defmodule Vae.Applications do
   def delete_resume(resume), do: Resume.delete(resume)
 
   def get_booklet(application) do
-    case application.booklet_1 do
-      nil ->
-        {:ok, Booklet.from_application(application)}
+    booklet = (application.booklet_1 || Booklet.from_application(application)) |> with_static_fields(application)
+    {:ok, booklet}
+    # case application.booklet_1 do
+    #   nil ->
+    #     {:ok, Booklet.from_application(application)}
 
-      booklet ->
-        {:ok, booklet}
-    end
+    #   booklet ->
+    #     {:ok, booklet}
+    # end
+  end
+
+  def with_static_fields(booklet, application) do
+    application = Repo.preload(application, :certification)
+    Map.merge(booklet, %{
+      certification_name: Certification.name(application.certification),
+      certifier_name: UserApplication.certifier_name(application),
+    })
   end
 
   def set_booklet(application, booklet) do

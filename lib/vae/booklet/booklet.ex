@@ -1,15 +1,14 @@
 defmodule Vae.Booklet do
   alias Vae.Booklet.{Cerfa, Experience}
-  alias Vae.{Certification, UserApplication}
 
   def from_application(application) do
     user = application.user
 
     %Cerfa{
       completed_at: nil,
-      certification_name: Certification.name(application.certification),
-      certifier_name: UserApplication.certifier_name(application),
-      civility: user.identity,
+      # certification_name: Certification.name(application.certification),
+      # certifier_name: UserApplication.certifier_name(application),
+      # civility: user.identity,
       experiences: user.proven_experiences |> group_experiences() |> map_experiences()
     }
   end
