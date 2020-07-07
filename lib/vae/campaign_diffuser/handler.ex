@@ -22,6 +22,6 @@ defmodule Vae.CampaignDiffuser.Handler do
   """
   def flush() do
     {:ok, pid} = Vae.CampaignDiffuser.Worker.start_link()
-    send(pid, :flush)
+    send(pid, {:flush})
   end
 end
