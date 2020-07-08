@@ -361,7 +361,7 @@ defmodule Vae.User do
 
   def profile_url(endpoint, %UserApplication{} = application) do
     application = Repo.preload(application, :certification)
-    profile_url(endpoint, "/mes-candidatures/#{application.certification.slug}")
+    profile_url(endpoint, "/mes-candidatures/#{application.id}-#{application.certification.slug}")
   end
 
   def profile_url(endpoint, path) do
@@ -370,7 +370,7 @@ defmodule Vae.User do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path}"
+      path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path || "/"}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
   end

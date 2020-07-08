@@ -4,8 +4,6 @@
 Parce qu’il est inutile d’apprendre ce que l’on sait déjà, la VAE vous permet d’obtenir le diplôme que votre expérience mérite !
 Pas de formation&ast; ! Juste un dossier et un entretien !*
 
-(&ast; ou presque ! En effet, en cas de diplôme obtenu partiellement, vous pourrez compléter votre diplôme par une formation courte)
-
 ## 1. S’informer :
 
 Si vous lisez ces mots, vous êtes sur la bonne voie  puisque vous êtes en déjà train de vous informer !
@@ -103,3 +101,4 @@ Evoluer professionnellement, reprendre des études, monter votre entreprise, voi
 
 Faites profiter vos proches, vos collègues et connaissance de votre expérience et encouragez les aussi à faire reconnaître leur expérience !
 
+(&ast; ou presque ! En effet, en cas de diplôme obtenu partiellement, vous pourrez compléter votre diplôme par une formation courte)

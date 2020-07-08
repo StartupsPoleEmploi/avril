@@ -136,6 +136,46 @@ defmodule VaeWeb.Resolvers.Application do
     end
   end
 
+  def get_booklet(_, %{application_id: application_id}, %{context: %{current_user: user}}) do
+    with {:application, application} <-
+           {:application,
+            Applications.get_application_from_id_and_user_id(application_id, user.id)},
+         {:ok, booklet} <- Applications.get_booklet(application) do
+      {:ok, booklet}
+    else
+      {:application, _error} ->
+        error_response(@application_not_found, format_application_error_message(application_id))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@submit_error, changeset)
+
+      error ->
+        Logger.error(fn -> inspect(error) end)
+        error_response("Une erreur est survenue", "")
+    end
+  end
+
+  def set_booklet(_, %{input: %{application_id: application_id, booklet: booklet}}, %{
+        context: %{current_user: user}
+      }) do
+    with {:application, application} <-
+           {:application,
+            Applications.get_application_from_id_and_user_id(application_id, user.id)},
+         {:ok, updated_application} <- Applications.set_booklet(application, booklet) do
+      {:ok, updated_application.booklet_1}
+    else
+      {:application, _error} ->
+        error_response(@application_not_found, format_application_error_message(application_id))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@submit_error, changeset)
+
+      error ->
+        Logger.error(fn -> inspect(error) end)
+        error_response("Une erreur est survenue", "")
+    end
+  end
+
   defp format_application_error_message(application_id),
     do: "Application id #{application_id} not found"
 

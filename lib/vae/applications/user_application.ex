@@ -198,19 +198,16 @@ defmodule Vae.UserApplication do
     |> Repo.update!()
   end
 
-  def save_booklet(application, booklet_params) do
+  def save_booklet(application, booklet) do
     application
     |> change()
-    # |> cast(%{"booklet_1" => booklet_params}, [])
-    # |> cast_embed(:booklet_1)
     |> put_embed(
       :booklet_1,
       Vae.Booklet.Cerfa.changeset(
         application.booklet_1 || %Vae.Booklet.Cerfa{},
-        booklet_params
+        booklet
       )
     )
-    |> Repo.update()
   end
 
   def from_application_id_and_user_id(application_id, user_id) do
@@ -260,7 +257,7 @@ defmodule Vae.UserApplication do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path]}",
+      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path] || "/"}",
       query:
         if(opts[:delegate_mode],
           do: "delegate_hash=#{application.delegate_access_hash}",

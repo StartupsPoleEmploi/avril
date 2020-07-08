@@ -2,7 +2,7 @@ defmodule VaeWeb.ApiController do
   use VaeWeb, :controller
   require Logger
 
-  alias Vae.{UserApplication, Certification}
+  alias Vae.{UserApplication}
 
   def get_booklet(conn, _params) do
     application =
@@ -49,26 +49,26 @@ defmodule VaeWeb.ApiController do
 
     %Vae.Booklet.Cerfa{
       completed_at: nil,
-      certification_name: Certification.name(application.certification),
-      certifier_name: UserApplication.certifier_name(application),
-      civility: %Vae.Identity{
-        gender: if(user.gender, do: user.gender |> String.downcase() |> map_gender()),
-        birthday: user.birthday,
-        birth_place: %Vae.Booklet.Address{
-          city: user.birth_place
-        },
-        is_handicapped: false,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        mobile_phone: user.phone_number,
-        full_address: %Vae.Booklet.Address{
-          city: user.city_label,
-          country: user.country_label,
-          postal_code: user.postal_code,
-          street: Vae.Account.address_street(user)
-        }
-      },
+      # certification_name: Certification.name(application.certification),
+      # certifier_name: UserApplication.certifier_name(application),
+      # civility: %Vae.Identity{
+      #   gender: if(user.gender, do: user.gender |> String.downcase() |> map_gender()),
+      #   birthday: user.birthday,
+      #   birth_place: %Vae.Booklet.Address{
+      #     city: user.birth_place
+      #   },
+      #   is_handicapped: false,
+      #   first_name: user.first_name,
+      #   last_name: user.last_name,
+      #   email: user.email,
+      #   mobile_phone: user.phone_number,
+      #   full_address: %Vae.Booklet.Address{
+      #     city: user.city_label,
+      #     country: user.country_label,
+      #     postal_code: user.postal_code,
+      #     street: Vae.Account.address_street(user)
+      #   }
+      # },
       experiences: user.proven_experiences |> group_experiences() |> map_experiences()
     }
   end

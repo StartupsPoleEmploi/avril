@@ -47,4 +47,8 @@ defmodule Vae.Date do
     Timex.shift(date, months: -1)
   end
 
+  def last_monday() do
+    Date.utc_today()
+    |> Timex.beginning_of_week()
+  end
 end

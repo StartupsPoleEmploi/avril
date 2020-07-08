@@ -12,7 +12,7 @@
           |  Imprimer cette page
       = if @application.booklet_1 && @application.booklet_1.completed_at do
         .field
-          = link("Télécharger son livret de recevabilité (L1)", to: Vae.UserApplication.booklet_url(@conn, @application, [path: "/cerfa", delegate_mode: true]), class: "button is-info is-rounded is-medium")
+          = link("Télécharger son livret de recevabilité (L1)", to: Vae.UserApplication.booklet_url!(@conn, @application, [path: "/cerfa", delegate_mode: true]), class: "button is-info is-rounded is-medium")
 
   section.section style="background: white; margin: 2rem 0;"
     .columns

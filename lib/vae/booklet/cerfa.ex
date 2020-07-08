@@ -3,7 +3,6 @@ defmodule Vae.Booklet.Cerfa do
   import Ecto.Changeset
 
   alias Vae.Booklet.{Education, Experience}
-  alias Vae.Identity
 
   @primary_key false
   @derive Jason.Encoder
@@ -11,9 +10,9 @@ defmodule Vae.Booklet.Cerfa do
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)
     field(:completed_at, :utc_datetime)
-    field(:certification_name, :string)
-    field(:certifier_name, :string)
-    embeds_one(:civility, Identity, on_replace: :delete)
+    # field(:certification_name, :string)
+    # field(:certifier_name, :string)
+    # embeds_one(:civility, Identity, on_replace: :delete)
     embeds_one(:education, Education, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
     # timestamps() # Unfortunately doesn't work: inserted_at always updated
@@ -21,12 +20,11 @@ defmodule Vae.Booklet.Cerfa do
 
   def changeset(struct, params) do
     struct
-    |> cast(params, [:completed_at, :certification_name, :certifier_name])
+    |> cast(params, [:completed_at])
     |> cast(%{inserted_at: struct.inserted_at || Timex.now(), updated_at: Timex.now()}, [
       :inserted_at,
       :updated_at
     ])
-    |> cast_embed(:civility)
     |> cast_embed(:education)
     |> cast_embed(:experiences)
   end

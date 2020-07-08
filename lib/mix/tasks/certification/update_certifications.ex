@@ -83,14 +83,13 @@ defmodule Mix.Tasks.UpdateCertifications do
   end
 
   def parse() do
-    # System.cmd("rm", ["priv/rncp_2019_11.xml"]) |> IO.inspect()
+    # System.cmd("rm", ["priv/rncp_2019_11.xml"])
 
     # System.cmd("curl", [
     #  "-o",
     #  "priv/rncp_2019_11.xml",
     #  "https://avril-resumes.s3.eu-west-3.amazonaws.com/rncp_2019_11.xml"
     # ])
-    # |> IO.inspect()
 
     # IO.puts("RNCP xml file downloaded")
 

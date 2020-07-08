@@ -162,6 +162,7 @@ defmodule VaeWeb.Router do
     get("/status", ApiController, :get_status)
     post("/status", ApiController, :put_status)
     delete("/status", ApiController, :delete_status)
+    put("/set-current-user/:id", ApiController, :set_current_user)
     admin_routes()
   end
 
