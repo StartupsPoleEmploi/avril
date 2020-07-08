@@ -1,6 +1,6 @@
 # Editer les emails sur Avril
 
-Certains emails sont éditables directement dans le code, au format markdown.
+La plupart des emails sont éditables directement dans le code, au format markdown.
 
 <!-- MarkdownTOC -->
 

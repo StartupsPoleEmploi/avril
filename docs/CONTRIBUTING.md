@@ -5,10 +5,10 @@ Nous accueillons les contributions de tous les développeurs volontaires à notr
 <!-- MarkdownTOC -->
 
 - [Dépendences](#d%C3%A9pendences)
+- [Clôner les sources](#cl%C3%B4ner-les-sources)
 - [Installation](#installation)
 - [Variables d'environnement](#variables-denvironnement)
 - [Installer le dump de la BDD](#installer-le-dump-de-la-bdd)
-- [Installer `avril-livret1`](#installer-avril-livret1)
 - [Démarrer le serveur](#d%C3%A9marrer-le-serveur)
 - [Démarrer PG Admin](#d%C3%A9marrer-pg-admin)
 - [Configuration sous OSX](#configuration-sous-osx)
@@ -27,15 +27,35 @@ En outre, elle utilise [wkhtmltopdf](https://wkhtmltopdf.org/) pour générer de
 >
 > Aussi, [FROM_RAILS.md](FROM_RAILS.md) rassemble quelques équivalents pour ceux qui viennent de ce monde.
 
+Avril est aussi composée de 2 applications front qui utilisent le framework [nuxt.js](https://nuxtjs.org) basée sur [NodeJS](https://nodejs.org) et [VueJS](https://vuejs.org).
+
+## Clôner les sources
+
+Avril est présentement composée de 3 applications indépendantes dont le code est enregistré dans 3 repos séparés :
+
+- [avril](https://github.com/StartupsPoleEmploi/avril)
+- [avril-profil](https://github.com/StartupsPoleEmploi/avril-profil)
+- [avril-livret1](https://github.com/StartupsPoleEmploi/avril-livret1)
+
+Il est nécessaire de cloner ces repos dans le même dossier racine et de ne pas les renommer.
+
+```
+cd ~/Workspace # votre dossier de travail
+
+git clone git@github.com:StartupsPoleEmploi/avril.git && \
+git clone git@github.com:StartupsPoleEmploi/avril-profil.git && \
+git clone git@github.com:StartupsPoleEmploi/avril-livret1.git
+```
+
 ## Installation
 
-Il est possible d'installer directement les dépendences sur sa machine, mais il est préconisé d'utiliser [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/) pour une installation accélérée. En effet, l'ensemble des dépendances sus-citées sont installées grâce au [Dockerfile](/Dockerfile).
+S'il est techniquement possible d'installer directement les dépendences sur sa machine, il est désormais **indispensable** d'utiliser [Docker](https://www.docker.com/) et [Docker Compose](https://docs.docker.com/compose/) pour une installation accélérée. En effet, l'ensemble des dépendances sus-citées sont installées grâce au [Dockerfile](/Dockerfile).
 
 Une fois `docker-compose` installé, il ne reste plus qu'à faire `docker-compose build`.
 
 ## Variables d'environnement
 
-Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Algolia).
+Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Algolia/Mailjet).
 
 ## Installer le dump de la BDD
 
@@ -44,6 +64,8 @@ Télécharger un dump de la BDD si accès à la prod :
 ```
 docker-compose exec postgres bash -c 'pg_dump -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER -F c -f /pg-dump/latest.dump'
 ```
+
+> La commande est disponible dans le script suivant à exécuter depuis sa machine distante : [`backup_remote.sh`](/scripts/utils/scripts/utils/backup_remote.sh).
 
 Copier le dump dans `[/db/dumps](../db/dumps)` pour qu'il soit accessible dans un docker.
 
@@ -55,25 +77,20 @@ Sinon la commande manuelle sera, une fois le container `postgres` lancé :
 docker-compose exec postgres bash -c 'pg_restore --verbose --clean --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER /pg-dump/latest.dump'
 ```
 
-## Installer `avril-livret1`
-
-Avril est constitué d'un second service, qu'il n'est pas obligatoire d'installer, mais c'est tout de même conseillé pour que l'installation fonctionne directement.
-
-Il faut clôner le repo suivant au même niveau hierarchique que le dossier `avril`: https://github.com/StartupsPoleEmploi/avril-livret1
-
-Il s'agit d'une appli [Nuxt](https://nuxtjs.org/) basée sur NodeJS.
+> La commande est disponible dans le script suivant : [`backup_restore.sh`](/scripts/utils/scripts/utils/backup_restore.sh).
 
 ## Démarrer le serveur
 
 Une fois que l'on a:
 
 ```
-/avril/<Ce Repo>
-/avril/.env
-/avril/docker-compose.override.yml
-/avril/db/dumps/latest.dump
-/avril/db/data/<VIDE>
-/avril-livret1/<Le repo nuxt>
+./avril/<Ce Repo>
+./avril/.env
+./avril/docker-compose.override.yml
+./avril/db/dumps/latest.dump
+./avril/db/data/<VIDE>
+./avril-profil/<Le repo avril-profil>
+./avril-livret1/<Le repo avril-livret1>
 ```
 
 il est temps de démarrer le serveur avec :
@@ -108,6 +125,7 @@ Port : 5432
 Username : postgres
 Password :
 ```
+
 <!--
 ## Configuration sous OSX
 
