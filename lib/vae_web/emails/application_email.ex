@@ -1,11 +1,10 @@
 defmodule VaeWeb.ApplicationEmail do
   alias VaeWeb.Mailer
 
-  alias Vae.{Account, Certification, Repo, User}
-  alias VaeWeb.Endpoint
+  alias Vae.{Account, Certification, Repo, User, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
-  def delegate_submission(application) do
+  def delegate_submission(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :delegate, :certification])
 
     Mailer.build_email(
@@ -14,7 +13,7 @@ defmodule VaeWeb.ApplicationEmail do
       application.delegate,
       %{
         url:
-          Routes.user_application_url(Endpoint, :show, application,
+          Routes.user_application_url(endpoint, :show, application,
             hash: application.delegate_access_hash
           ),
         username: Account.fullname(application.user),
@@ -26,7 +25,7 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
-  def user_submission_confirmation(application) do
+  def user_submission_confirmation(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :delegate, :certification])
 
     Mailer.build_email(
@@ -34,7 +33,7 @@ defmodule VaeWeb.ApplicationEmail do
       :avril,
       application.user,
       %{
-        url: User.profile_url(Endpoint, application),
+        url: User.profile_url(endpoint, application),
         username: Account.fullname(application.user),
         meeting: application.meeting,
         date_format: "%d/%m/%Y à %H:%M",
@@ -44,14 +43,14 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_person_name: application.delegate && application.delegate.person_name,
         delegate_phone_number: application.delegate && application.delegate.telephone,
         delegate_email: application.delegate && application.delegate.email,
-        image_url: Routes.static_url(Endpoint, "/images/group.png"),
+        image_url: Routes.static_url(endpoint, "/images/group.png"),
         text_center: true,
         footer_note: :inscrit_avril
       }
     )
   end
 
-  def asp_user_submission_confirmation(application) do
+  def asp_user_submission_confirmation(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :delegate])
 
     Mailer.build_email(
@@ -59,20 +58,20 @@ defmodule VaeWeb.ApplicationEmail do
       :avril,
       application.user,
       %{
-        url: User.profile_url(Endpoint, application),
+        url: User.profile_url(endpoint, application),
         username: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
         delegate_website: application.delegate.website,
-        image_url: Routes.static_url(Endpoint, "/images/group.png"),
+        image_url: Routes.static_url(endpoint, "/images/group.png"),
         footer_note: :inscrit_avril
       }
     )
   end
 
-  def user_raise(application, endpoint \\ Endpoint) do
+  def user_raise(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :certification])
     finish_booklet_todo = application.booklet_1 && application.booklet_1.inserted_at
     certification_name = Certification.name(application.certification)
@@ -93,7 +92,7 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
-  def monthly_status(application, endpoint \\ Endpoint) do
+  def monthly_status(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user])
 
     Mailer.build_email(

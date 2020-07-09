@@ -254,6 +254,17 @@ defmodule Vae.UserApplication do
     end
   end
 
+  def slug(%UserApplication{} = application) do
+    application = Repo.preload(application, :certification)
+    certification_slug = case application.certification do
+      %Certification{slug: slug} when not is_nil(slug) -> slug
+      _ -> nil
+    end
+    [application.id, certification_slug]
+    |> Enum.filter(&(not is_nil(&1)))
+    |> Enum.join("-")
+  end
+
   def booklet_url(endpoint, application, opts \\ []) do
     application = application |> Repo.preload(:delegate)
 
@@ -272,11 +283,10 @@ defmodule Vae.UserApplication do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path] || "/"}",
+      path: "#{System.get_env("NUXT_BOOKLET_PATH")}/#{slug(application)}#{opts[:path] || "/"}",
       query:
         if(opts[:delegate_mode],
-          do: "delegate_hash=#{application.delegate_access_hash}",
-          else: "hash=#{application.booklet_hash}"
+          do: "delegate_hash=#{application.delegate_access_hash}"
         )
     }
     |> Vae.URI.to_absolute_string(endpoint)

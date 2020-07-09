@@ -121,7 +121,7 @@ config :vae, Vae.Scheduler,
       task: {Vae.UserApplications.FollowUp, :send_admissibility_update_email, []}
     ],
     send_delegate_recap: [
-      schedule: "45 5 */16 * *",
+      schedule: "45 5 1,15 * *",
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
     meetings_task: [

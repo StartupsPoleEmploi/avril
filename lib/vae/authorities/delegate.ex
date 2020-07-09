@@ -39,7 +39,7 @@ defmodule Vae.Delegate do
     has_many(:certifications, through: [:certifications_delegates, :certification])
 
     has_many(:applications, UserApplication)
-    has_many(:recent_applications, UserApplication, where: [inserted_at: {:fragment, "? > now() - interval '16 days'"}, submitted_at: {:not, nil}])
+    has_many(:recent_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '16 days'"}])
 
     has_many(
       :users,
