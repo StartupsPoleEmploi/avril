@@ -45,7 +45,7 @@ defmodule VaeWeb.Router do
   end
 
   pipeline :api_protected_login_or_server do
-    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: false)
+    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: true)
   end
 
   pipeline :maybe_set_current_application do

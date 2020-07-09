@@ -13,5 +13,5 @@
               = render @view_module, @view_template, assigns
     - else
       = render @view_module, @view_template, assigns
-  = if !@remove_footer do
+  = if !assigns[:remove_footer] do
     = render VaeWeb.ComponentView, "footer.html", conn: @conn
