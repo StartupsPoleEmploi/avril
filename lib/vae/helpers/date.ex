@@ -30,6 +30,9 @@ defmodule Vae.Date do
     end
   end
 
+  def format_iso(nil), do: nil
+  def format_iso(date), do: Timex.format!(date, "%d/%m/%Y", :strftime)
+
   def workdays_between(start_date, end_date \\ nil) do
     end_date = end_date || Date.utc_today()
 

@@ -2,10 +2,10 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplications.Polls, Delegate, User, UserApplication, Repo}
+  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, User, UserApplication, Repo}
 
   plug VaeWeb.Plugs.ApplicationAccess,
-       [verify_with_hash: :delegate_access_hash] when action in [:show]
+       [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
 
   def index(conn, params) do
     with(
@@ -62,8 +62,8 @@ defmodule VaeWeb.UserApplicationController do
 
     render(conn, "show.html", %{
       title:
-        "Candidature VAE de #{application.user.name} pour un diplôme de #{
-          application.certification.label
+        "Candidature VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
+          Certification.name(application.certification)
         }",
       remove_navbar: true,
       application: application,
@@ -83,73 +83,31 @@ defmodule VaeWeb.UserApplicationController do
     end
   end
 
-  # TODO: change to submit
-  # def update(conn, %{"id" => _id} = params) do
-  #   application =
-  #     conn.assigns[:current_application]
-  #     |> Repo.preload([
-  #       :user,
-  #       [delegate: [:process, :certifiers]],
-  #       :certification
-  #     ])
+  def cerfa(conn, %{"delegate_hash" => hash}) do
+    application =
+      conn.assigns[:current_application]
+      |> Repo.preload([
+        :user,
+        [delegate: [:process, :certifiers]],
+        :certification,
+        :resumes
+      ])
 
-  #   meeting_id =
-  #     if params["book"] == "on",
-  #       do: params["application"]["meeting_id"]
-
-  #   with(
-  #     {:ok, application} <- UserApplication.register_meeting(application, meeting_id),
-  #     {:ok, application} <- UserApplication.submit(application)
-  #   ) do
-  #     if application.meeting && application.meeting.name == :france_vae do
-  #       redirect(conn,
-  #         to:
-  #           Routes.user_application_france_vae_registered_path(
-  #             conn,
-  #             :france_vae_registered,
-  #             application,
-  #             %{
-  #               academy_id: application.delegate.academy_id,
-  #               meeting_id: application.meeting.meeting_id
-  #             }
-  #           )
-  #       )
-  #     else
-  #       conn
-  #       |> put_flash(:succes, "Votre profil a été transmis avec succès !")
-  #       |> redirect(to: Routes.user_application_path(conn, :show, application))
-  #     end
-  #   else
-  #     {:error, msg} ->
-  #       Logger.error(fn -> inspect(msg) end)
-
-  #       conn
-  #       |> put_flash(:danger, "Une erreur est survenue, merci de réessayer plus tard")
-  #       |> redirect(to: Routes.user_application_path(conn, :show, application))
-  #   end
-  # end
-
-  # def download(conn, %{"application_id" => _id}) do
-  #   application =
-  #     conn.assigns[:current_application]
-  #     |> Repo.preload([
-  #       :user,
-  #       [delegate: [:process, :certifiers]],
-  #       :certification
-  #     ])
-
-  #   case Vae.StepsPdf.create_pdf_file(application.delegate.process) do
-  #     {:ok, file} ->
-  #       conn
-  #       |> put_resp_content_type("application/pdf", "utf-8")
-  #       |> send_file(200, file)
-
-  #     {:error, msg} ->
-  #       conn
-  #       |> put_flash(:danger, "Une erreur est survenue: #{msg}. Merci de réessayer plus tard.")
-  #       |> redirect(to: Routes.user_application_path(conn, :show, application))
-  #   end
-  # end
+    render(conn, "cerfa.html", %{
+      title:
+        "Recevabilité VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
+          Certification.name(application.certification)
+        }",
+      remove_navbar: true,
+      remove_footer: true,
+      application: application,
+      delegate: application.delegate,
+      certification_name: Vae.Certification.name(application.certification),
+      certifier_name: application.delegate.certifiers |> Enum.map(fn c -> c.name end) |> Enum.join(", "),
+      identity: application.user.identity,
+      user: application.user,
+    })
+  end
 
   def admissible(conn, %{"id" => id}) do
     Repo.get(UserApplication, id)

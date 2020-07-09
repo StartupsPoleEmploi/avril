@@ -45,7 +45,7 @@ defmodule VaeWeb.Router do
   end
 
   pipeline :api_protected_login_or_server do
-    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: true)
+    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: false)
   end
 
   pipeline :maybe_set_current_application do
@@ -118,6 +118,7 @@ defmodule VaeWeb.Router do
 
     get("/candidatures/:id/admissible", VaeWeb.UserApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", VaeWeb.UserApplicationController, :inadmissible)
+    get("/candidatures/:id/cerfa", VaeWeb.UserApplicationController, :cerfa)
 
     # Mailing link redirection
     resources("/candidats", VaeWeb.JobSeekerController, only: [:create])

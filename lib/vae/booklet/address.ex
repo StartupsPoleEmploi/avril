@@ -1,9 +1,14 @@
 defmodule Vae.Booklet.Address do
   use Ecto.Schema
+  use StructAccess
+
   import Ecto.Changeset
 
   @primary_key false
   @derive Jason.Encoder
+
+  alias __MODULE__
+
   embedded_schema do
     field(:city, :string)
     field(:county, :string)
@@ -40,14 +45,19 @@ defmodule Vae.Booklet.Address do
   end
   def address_city(_), do: ""
 
-  def address(%__MODULE__{} = address) do
+  def address(%Address{} = address, new_line_representation \\ "\n") do
     [
-      address_street(address),
+      address.street,
       address_city(address)
-    ]
-    |> Vae.Enum.join_keep_nil("\n")
+    ] |> Enum.filter(&(!is_nil(&1))) |> Enum.join(new_line_representation)
   end
+end
 
-  def address_street(%{}), do: ""
-  def address_street(address), do: address.street
+defimpl Phoenix.HTML.Safe, for: Vae.Booklet.Address do
+  def to_iodata(address) do
+    address
+    |> Vae.Booklet.Address.address("<br/>")
+    |> Phoenix.HTML.raw()
+    |> Phoenix.HTML.Safe.to_iodata()
+  end
 end

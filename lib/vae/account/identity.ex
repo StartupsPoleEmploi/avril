@@ -1,9 +1,9 @@
 defmodule Vae.Identity do
   use Ecto.Schema
+  use StructAccess
   import Ecto.Changeset
 
   alias Vae.Booklet.{Address, CurrentSituation}
-
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do

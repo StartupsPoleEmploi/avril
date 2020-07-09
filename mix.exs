@@ -117,6 +117,7 @@ defmodule Vae.Mixfile do
       {:absinthe, "~> 1.4.0"},
       {:absinthe_plug, "~> 1.4"},
       {:quantum, "~> 3.0"},
+      {:struct_access, "~> 1.1.2"},
       {:ex_machina, "~> 2.3", only: :test}
     ]
   end
