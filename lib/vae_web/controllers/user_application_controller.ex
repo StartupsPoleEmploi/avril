@@ -83,7 +83,7 @@ defmodule VaeWeb.UserApplicationController do
     end
   end
 
-  def cerfa(conn, %{"delegate_hash" => hash}) do
+  def cerfa(conn, %{"delegate_hash" => hash} = params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -93,20 +93,37 @@ defmodule VaeWeb.UserApplicationController do
         :resumes
       ])
 
-    render(conn, "cerfa.html", %{
+    assigns = %{
+      conn: conn,
       title:
         "Recevabilité VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
           Certification.name(application.certification)
         }",
       remove_navbar: true,
       remove_footer: true,
+      application: application,
       certification_name: Vae.Certification.name(application.certification),
       certifier_name: application.delegate.certifiers |> Enum.map(fn c -> c.name end) |> Enum.join(", "),
       identity: application.user.identity,
       booklet: application.booklet_1,
       education: application.booklet_1.education,
       experiences: application.booklet_1.experiences,
-    })
+    }
+
+    if params["format"] == "pdf" do
+      file_path = Phoenix.View.render_to_string(VaeWeb.UserApplicationView, "cerfa.html", Map.merge(assigns, %{
+        conn: conn,
+        layout: {VaeWeb.LayoutView, "pdf.html"},
+      }))
+      |> PdfGenerator.generate!(shell_params: ["--encoding", "UTF8"])
+
+      conn
+      |> put_resp_content_type("application/pdf")
+      |> put_resp_header("content-disposition", "attachment; filename=cerfa.pdf")
+      |> Plug.Conn.send_file(:ok, file_path)
+    else
+      render(conn, "cerfa.html", assigns)
+    end
   end
 
   def admissible(conn, %{"id" => id}) do

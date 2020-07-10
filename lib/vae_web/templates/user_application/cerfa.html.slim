@@ -1,6 +1,11 @@
 .container.avril-cerfa
-  .columns
-    .column.is-10.is-offset-1.is-print-fullwidth
+  .columns.is-centered
+    .column.is-5.is-hidden-print
+      = link("Retour", to: Routes.root_path(@conn, :index), class: "button is-back")
+    .column.is-5.has-text-right
+      = link("Télécharger en PDF", to: Routes.user_application_path(@conn, :cerfa, @application, delegate_hash: @application.delegate_access_hash, format: :pdf), class: "button is-primary is-rounded")
+  .columns.is-centered
+    .column.is-10.is-print-fullwidth
       #pdf-content.recap-content
         .header
           section.section
