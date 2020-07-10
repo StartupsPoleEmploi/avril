@@ -2,7 +2,14 @@ nav.navbar {
 
   &.has-no-content {
     justify-content: center;
+    .navbar-brand {
+      justify-content: center;
+    }
+
     .navbar-menu {
+      display: none;
+    }
+    .navbar-burger {
       display: none;
     }
   }

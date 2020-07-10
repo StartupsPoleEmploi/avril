@@ -12,7 +12,7 @@
           |  Imprimer cette page
       = if @application.booklet_1 && @application.booklet_1.completed_at do
         .field
-          = link("Télécharger son livret de recevabilité (L1)", to: Vae.UserApplication.booklet_url!(@conn, @application, [path: "/cerfa", delegate_mode: true]), class: "button is-info is-rounded is-medium")
+          = link("Télécharger son livret de recevabilité (L1)", to: Routes.user_application_path(VaeWeb.Endpoint, :cerfa, @application, delegate_hash: @application.delegate_access_hash), class: "button is-info is-rounded is-medium")
 
   section.section style="background: white; margin: 2rem 0;"
     .columns
@@ -107,7 +107,7 @@
           ul
             li
               strong
-                = link("Livret de recevabilité complété (L1)", to: Vae.UserApplication.booklet_url(@conn, @application, [path: "/cerfa", delegate_mode: true]))
+                = link("Livret de recevabilité complété (L1)", to: Routes.user_application_path(VaeWeb.Endpoint, :cerfa, @application, delegate_hash: @application.delegate_access_hash))
             = for resume <- @application.resumes do
               li.document
                 = link to: resume.url, class: "download", download: resume.filename, data: [analytics: "CV#download certificateur"] do

@@ -5,5 +5,10 @@ span
   - else
     |  à aujourd'hui
   = if @period.week_hours_duration do
-    |  à #{@period.week_hours_duration} heures/semaine
-  |  soit #{@period.total_hours || (Vae.Date.workdays_between(@period.start_date, @period.end_date) * @period.week_hours_duration |> div(5))} heures en cumulé.
+    '  :
+    strong #{@period.week_hours_duration} h/semaine
+  '  soit
+  strong
+    = @period.total_hours || (Vae.Date.workdays_between(@period.start_date, @period.end_date) * @period.week_hours_duration |> div(5))
+    |  heures
+  |  en cumulé.
