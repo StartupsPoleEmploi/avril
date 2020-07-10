@@ -100,12 +100,13 @@ defmodule VaeWeb.UserApplicationController do
         }",
       remove_navbar: true,
       remove_footer: true,
-      application: application,
-      delegate: application.delegate,
+      user: application.user,
       certification_name: Vae.Certification.name(application.certification),
       certifier_name: application.delegate.certifiers |> Enum.map(fn c -> c.name end) |> Enum.join(", "),
       identity: application.user.identity,
-      user: application.user,
+      booklet: application.booklet_1,
+      education: application.booklet_1.education,
+      experiences: application.booklet_1.experiences,
     })
   end
 

@@ -161,69 +161,56 @@
                 .columns
                   .column
                     input[type="checkbox" checked=(@identity.current_situation.status == "inactive")]
-                    label
-                      |  2. En inactivité
+                    label 2. En inactivité
               .control.box
                 .columns[style="margin-bottom: 0;"]
                   .column
                     input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking")]
-                    label
-                      |  3. En recherche d'emploi :
+                    label 3. En recherche d'emploi :
                 .columns
                   .column.is-11.is-offset-1.is-print-fullwidth.content
                     ul
                       li
-                        |  Inscrit à Pôle-emploi :
-                        input[type="checkbox" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.registerToPoleEmploi"]
-                        label
-                          | Oui
-                        span[v-if="identity.currentSituation.registerToPoleEmploiSince"]
-                          | depuis le {{parseAndFormat(identity.currentSituation.registerToPoleEmploiSince)}}
-                        input[type="checkbox" style="margin-left: 1rem;" :checked="identity.currentSituation.status === 'jobseeking' && !identity.currentSituation.registerToPoleEmploi"]
-                        label
-                          | Non
+                        | Inscrit à Pôle-emploi :
+                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.register_to_pole_emploi)]
+                        label Oui
+                        = if @identity.current_situation.register_to_pole_emploi_since do
+                          span depuis le #{Vae.Date.format_iso(@identity.current_situation.register_to_pole_emploi_since)}
+                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && !@identity.current_situation.register_to_pole_emploi)]
+                        label Non
                       li
-                        |  Vous touchez l'assurance chômage (allocation de retour à l'emploi) :
-                        input[type="checkbox" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.compensationType === 'jobless'"]
-                        label
-                          | Oui
-                        input[type="checkbox" style="margin-left: 1rem;" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.compensationType !== 'jobless'"]
-                        label
-                          | Non
+                        | Vous touchez l'assurance chômage (allocation de retour à l'emploi) :
+                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "jobless")]
+                        label Oui
+                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
+                        label Non
                       li
                         label
-                          |  Vous touchez l'assurance chômage des intermittents du spectacle :
-                          input[type="checkbox" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.compensationType === 'artist'"]
-                        label
-                          | Oui
-                        input[type="checkbox" style="margin-left: 1rem;" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.compensationType !== 'artist'"]
-                        label
-                          | Non
+                          | Vous touchez l'assurance chômage des intermittents du spectacle :
+                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "artist")]
+                        label Oui
+                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
+                        label Non
                       li
                         label
-                          |  Vous êtes allocataire de minima sociaux :
-                          input[type="checkbox" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.compensationType === 'poor'"]
-                        label
-                          | Oui
-                        input[type="checkbox" style="margin-left: 1rem;" :checked="identity.currentSituation.status === 'jobseeking' && identity.currentSituation.compensationType !== 'poor'"]
-                        label
-                          | Non
+                          | Vous êtes allocataire de minima sociaux :
+                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "poor")]
+                        label Oui
+                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "poor")]
+                        label Non
               .control.box
                 .columns
                   .column.is-narrow
-                    input[type="checkbox" :checked="identity.currentSituation.status === 'volontary' || identity.currentSituation.status === 'election'"]
-                    label
-                      |  4. Autres :
+                    input[type="checkbox" checked=(@identity.current_situation.status == "volontary" && @identity.current_situation.status == "election")]
+                    label 4. Autres :
                   .column
                     ul
                       li
-                        input[type="checkbox" :checked="identity.currentSituation.status === 'volontary'"]
-                        label
-                          | Volontaire
+                        input[type="checkbox" checked=(@identity.current_situation.status == "volontary")]
+                        label Volontaire
                       li
-                        input[type="checkbox" :checked="identity.currentSituation.status === 'election'"]
-                        label
-                          | Mandat électoral
+                        input[type="checkbox" checked=(@identity.current_situation.status == "election")]
+                        label Mandat électoral
       .columns.message-group
         .column
           article.message.is-dark
@@ -234,13 +221,11 @@
                 .column
                   .control.box
                     input[type="radio" checked=(@identity.is_handicapped)]
-                    label
-                      |  Oui
+                    label Oui
                 .column
                   .control.box
                     input[type="radio" checked=(!@identity.is_handicapped)]
-                    label
-                      |  Non
+                    label Non
     section.section.section-level
       article.message.is-dark
         .message-body
@@ -329,60 +314,51 @@
         .message-body.content
           h2.title.is-4.has-text-weight-light
             | Rubrique 5 : Information concernant votre expérience en rapport direct avec la certification visée
-          p[v-if="experiences.length === 0"]
-            | Aucune expérience professionnelle saisie.
-          p[v-else]
-            | {{pluralize(experiences.length, 'experience professionnelle enregistrée')}} :
-          .control.atome.box[v-for="experience in experiences"]
-            table.cerfa-table
-              tbody
-                tr
-                  td
-                    | Emploi ou fonction occupée :
-                  td
-                    strong
-                      | {{experience.role || 'A COMPLETER'}}
-                tr
-                  td
-                    | Nom et adresse de l'organisme :
-                  td
-                    strong
-                      | {{experience.companyName || 'A COMPLETER'}}
-                    br
-                    |  {{addressLabelify(experience.fullAddress)}}
-                tr
-                  td
-                    | Statut :
-                  td
-                    strong
-                      | {{experience.employmentType}}
-                    |  - {{experienceStatusesLabel(experience)}}
-                tr
-                  td
-                    | Famille professionnelle :
-                  td
-                    strong
-                      | {{experience.jobIndustry}}
-                    |  - {{experienceCategoriesLabel(experience)}}
-                tr
-                  td
-                    | Certification et niveau de formation suivie :
-                  td
-                    | -
-                tr
-                  td
-                    | {{pluralize('Période', experience.periods.length)}} :
-                  td
-                    ul
-                      li[v-for="period in experience.periods"]
-                        perioddisplay[:period="period"]
-                tr
-                  td
-                    | {{pluralize('Activité', experience.skills.length)}} :
-                  td
-                    ul
-                      li[v-for="skill in experience.skills"]
-                        | {{skill.label}}
+          = if length(@experiences) == 0 do
+            p Aucune expérience professionnelle saisie.
+          - else
+            p #{Vae.String.inflect(length(@experiences), "experience professionnelle enregistrée")} :
+          = for experience <- @experiences do
+            .control.atome.box
+              table.cerfa-table
+                tbody
+                  tr
+                    td Emploi ou fonction occupée :
+                    td
+                      strong= experience.title || "à compléter"
+                  tr
+                    td Nom et adresse de l'organisme :
+                    td
+                      strong= experience.company_name || "à compléter"
+                      br
+                      = experience.full_address
+                  tr
+                    td Statut :
+                    td
+                      strong= experience.employment_type
+                      |  - #{Vae.Booklet.Experience.employment_type_label(experience)}
+                  tr
+                    td Famille professionnelle :
+                    td
+                      strong= experience.job_industry
+                      |  -  #{Vae.Booklet.Experience.job_industry_label(experience)}
+                  tr
+                    td
+                      | Certification et niveau de formation suivie :
+                    td
+                      | -
+                  tr
+                    td= Vae.String.inflect("Période", length(experience.periods))
+                    td
+                      ul
+                        = for period <- experience.periods do
+                          li= render("_period_display.html", period: period)
+                  tr
+                    td= Vae.String.inflect("Activité", length(experience.skills))
+                    td
+                      ul
+                        = for skill <- experience.skills do
+                          li= skill.label
     section.section.section-sworn
       article.message.is-dark
         .message-body
@@ -393,7 +369,7 @@
             label
               |  Je ne fais pas l'objet d'une mesure pénale ou administrative d'interdiction de présentation devant un jury d'examen ou de validation des acquis de l'expérience
           .control.atome.box
-            input[type="checkbox" :checked="!!completedAt"]
+            input[type="checkbox" checked=(!!@booklet.completed_at)]
             label
               |  Je certifie que toutes les informations fournies sont exactes
           .control.atome.box
