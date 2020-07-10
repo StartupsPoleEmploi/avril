@@ -122,5 +122,5 @@ defmodule Vae.Account do
     |> Vae.Enum.join_keep_nil(", ")
   end
 
-  def address_street(address), do: Address.address_street(address)
+  def address_street(address), do: address.street
 end

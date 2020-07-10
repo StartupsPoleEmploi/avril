@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, User, UserApplication, Repo}
+  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, UserApplication, Repo}
 
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
@@ -10,7 +10,7 @@ defmodule VaeWeb.UserApplicationController do
   def show(conn, %{"hash" => hash}) when not is_nil(hash) do
     redirect(conn, to: Routes.user_application_path(conn, :show, conn.assigns[:current_application], delegate_hash: conn.assigns[:current_application].delegate_access_hash))
   end
-  def show(conn, params) do
+  def show(conn, _params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -42,14 +42,6 @@ defmodule VaeWeb.UserApplicationController do
       user: application.user,
       grouped_experiences: grouped_experiences
     })
-  end
-
-  def show(conn, _params) do
-    if Pow.Plug.current_user(conn) == conn.assigns[:current_application].user do
-      redirect(conn, external: Vae.User.profile_url(conn, conn.assigns[:current_application]))
-    else
-      redirect(conn, external: Vae.User.profile_url(conn))
-    end
   end
 
   def cerfa(conn, params) do
