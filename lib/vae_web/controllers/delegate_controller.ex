@@ -4,16 +4,7 @@ defmodule VaeWeb.DelegateController do
   alias Vae.Delegate
 
   plug VaeWeb.Plugs.ApplicationAccess,
-       [find_with_hash: true] when action in [:update]
-
-  filterable do
-    # @options param: :organismes
-    # filter certifier(query, value, _conn) do
-    #   query
-    #   |> join(:inner, [c], d in assoc(c, :certifiers))
-    #   |> where([d, c], c.id == ^Vae.String.to_id(value))
-    # end
-  end
+       [find_with_hash: :delegate_access_hash] when action in [:update]
 
   def geo(conn, %{"administrative" => administrative_slug}) do
     cities = Delegate

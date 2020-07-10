@@ -30,7 +30,7 @@ defmodule Vae.UserApplications.FollowUp do
       preload: :recent_applications
     )
     |> Repo.all()
-    |> Enum.filter(fn d -> length(d.recent_applications) >= 3 end)
+    # |> Enum.filter(fn d -> length(d.recent_applications) >= 3 end)
     |> Enum.uniq()
     |> send_follow_up_emails(DelegateEmail, :applications_raise)
   end
