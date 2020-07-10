@@ -92,7 +92,7 @@ defmodule VaeWeb.UserApplicationController do
         :certification,
         :resumes
       ])
-    title = "Recevabilité VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
+    title = "Recevabilité VAE de #{Identity.fullname(application.user.identity)} pour un diplôme de #{
       Certification.name(application.certification)
     }"
     assigns = %{
