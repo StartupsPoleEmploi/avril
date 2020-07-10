@@ -118,7 +118,7 @@ defmodule VaeWeb.UserApplicationController do
 
       conn
       |> put_resp_content_type("application/pdf")
-      |> put_resp_header("content-disposition", "attachment; filename=#{title}.pdf")
+      |> put_resp_header("content-disposition", "attachment; filename=#{Vae.String.parameterize(title, " ")}.pdf")
       |> Plug.Conn.send_file(:ok, file_path)
     else
       render(conn, "cerfa.html", assigns)
