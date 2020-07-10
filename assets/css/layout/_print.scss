@@ -1,4 +1,8 @@
 @media print {
+  .is-hidden-print {
+    display: none !important;
+  }
+
   nav.navbar {
     margin-bottom: 100px;
     height: 0;

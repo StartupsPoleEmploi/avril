@@ -92,13 +92,12 @@ defmodule VaeWeb.UserApplicationController do
         :certification,
         :resumes
       ])
-
+    title = "Recevabilité VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
+      Certification.name(application.certification)
+    }"
     assigns = %{
       conn: conn,
-      title:
-        "Recevabilité VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
-          Certification.name(application.certification)
-        }",
+      title: title,
       remove_navbar: true,
       remove_footer: true,
       application: application,
@@ -119,7 +118,7 @@ defmodule VaeWeb.UserApplicationController do
 
       conn
       |> put_resp_content_type("application/pdf")
-      |> put_resp_header("content-disposition", "attachment; filename=cerfa.pdf")
+      |> put_resp_header("content-disposition", "attachment; filename=#{title}.pdf")
       |> Plug.Conn.send_file(:ok, file_path)
     else
       render(conn, "cerfa.html", assigns)
