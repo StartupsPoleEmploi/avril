@@ -3,6 +3,7 @@ defmodule Vae.Identity do
   use StructAccess
   import Ecto.Changeset
 
+  alias __MODULE__
   alias Vae.Booklet.{Address, CurrentSituation}
   @primary_key false
   @derive Jason.Encoder
@@ -116,5 +117,9 @@ defmodule Vae.Identity do
     else
       {fullname(user), identity.email}
     end
+  end
+
+  def is_man?(%Identity{gender: gender}) do
+    String.starts_with?(gender, "m")
   end
 end

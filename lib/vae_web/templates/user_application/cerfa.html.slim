@@ -1,452 +1,453 @@
 .container.avril-cerfa
-  #pdf-content.recap-content
-    .header
-      section.section
-        h1.title.is-3
-          | Demande de recevabilité à la validation des acquis de l'expérience
-        p.subtitle
-          | Code de l'éducation art. R335-5 à R335-11
-    section.section.section-nature
-      article.message.is-dark
-        .message-body
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 1 : Nature de la demande
-          .columns
-            .column
-              .control.box
-                input[type="radio" checked]
-                label
-                  | 1ère demande
-            .column
-              .control.box
-                input[type="radio"]
-                label
-                  | Renouvellement
-            .column
-              .control.box
-                input[type="radio"]
-                label
-                  | Prolongation
-    section.section.section-certification
-      article.message.is-dark
-        .message-body
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 2 : Certification professionnelle que vous souhaitez obtenir
-          .columns
-            .column
-              .atome
-                label
-                  | Nature, intitulé complet et niveau de la certification :
-                p.title.is-6.is-uppercase.is-spaced= @certification_name
-            .column
-              .atome
-                label
-                  | Autorité responsable de la certification :
-                p.title.is-6.is-uppercase.is-spaced= @certifier_name
-    section.section.section-identity
-      article.message.is-dark
-        .message-body
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 3 : Etat civil/Situation du candidat
-          .columns
-            .column
-              .atome
-                label
-                  | Nom de naissance :
-                p.is-italic
-                  small
-                    | c'est le nom qui figure sur votre acte de naissance
-                p.title.is-6.is-uppercase.is-spaced= @identity.last_name
-              .atome
-                label
-                  | Nom d'usage :
-                p.is-italic
-                  small
-                    | s'il y a lieu
-                p.title.is-6.is-uppercase.is-spaced= @identity.usage_name || "-"
-            .column
-              .atome
-                label
-                  | Prénoms :
-                p.is-italic
-                  small
-                    | dans l'ordre de l'état civil
-                p.title.is-6.is-uppercase.is-spaced= @identity.first_name
-              .atome
-                label
-                  | Sexe :
-                p.title.is-6.is-uppercase.is-spaced
-                  = if String.starts_with?(@identity.gender, "m"), do: "Masculin", else: "Féminin"
-      article.message.is-dark
-        .message-body
-          .columns
-            .column
-              .atome
-                label
-                  | Date de naissance :
-                p.title.is-6.is-uppercase.is-spaced= Vae.Date.format_iso(@identity.birthday)
-              .atome
-                label
-                  | Commune de naissance :
-                p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.city || "-"
-              .atome
-                label
-                  | Département ou collectivité outre-mer de naissance :
-                p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.county || "-"
-            .column
-              .atome
-                label
-                  | Pays de naissance :
-                p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.country || "-"
-              .atome
-                label
-                  | Nationalité :
-                p.title.is-6.is-uppercase.is-spaced= @identity.nationality.country_code || "-"
-      article.message.is-dark
-        .message-body
-          .columns
-            .column
-              .atome
-                label
-                  | Adresse actuelle :
-                p.title.is-6.is-uppercase.is-spaced= @identity.full_address
-              .atome
-                label
-                  | Tel domicile :
-                p.title.is-6.is-uppercase.is-spaced= @identity.home_phone || "-"
-            .column
-              .atome
-                label
-                  | Tel portable :
-                p.title.is-6.is-uppercase.is-spaced= @identity.mobile_phone || "-"
-              .atome
-                label
-                  | Courriel :
-                p.title.is-6.is-uppercase.is-spaced
-                  = if @identity.email do
-                    a href="mailto:#{@identity.email}"= @identity.email
-      .columns.message-group
-        .column
+  .columns
+    .column.is-10.is-offset-1.is-print-fullwidth
+      #pdf-content.recap-content
+        .header
+          section.section
+            h1.title.is-3
+              | Demande de recevabilité à la validation des acquis de l'expérience
+            p.subtitle
+              | Code de l'éducation art. R335-5 à R335-11
+        section.section.section-nature
           article.message.is-dark
             .message-body
-              h3.title.is-5.has-text-weight-light
-                | Vous êtes actuellement :
-              .control.box
-                .columns
-                  .column.is-narrow
-                    input[type="checkbox" checked=(@identity.current_situation.status == "working")]
-                    label
-                      |  1. En situation d'emploi :
-                  .column
-                    ul
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.employment_type == "permanent")]
-                        label CDI
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.employment_type == "contract")]
-                        label CDD, CDD d'usage et intérim
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.employment_type == "independant")]
-                        label travailleur indépendant, artisan, profession libérale
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.employment_type == "public")]
-                        label fonctionnaire
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.employment_type == "military")]
-                        label militaire
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.employment_type == "alternance")]
-                        label contrat aidé ou contrat en alternance
-              .control.box
-                .columns
-                  .column
-                    input[type="checkbox" checked=(@identity.current_situation.status == "inactive")]
-                    label 2. En inactivité
-              .control.box
-                .columns[style="margin-bottom: 0;"]
-                  .column
-                    input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking")]
-                    label 3. En recherche d'emploi :
-                .columns
-                  .column.is-11.is-offset-1.is-print-fullwidth.content
-                    ul
-                      li
-                        | Inscrit à Pôle-emploi :
-                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.register_to_pole_emploi)]
-                        label Oui
-                        = if @identity.current_situation.register_to_pole_emploi_since do
-                          span depuis le #{Vae.Date.format_iso(@identity.current_situation.register_to_pole_emploi_since)}
-                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && !@identity.current_situation.register_to_pole_emploi)]
-                        label Non
-                      li
-                        | Vous touchez l'assurance chômage (allocation de retour à l'emploi) :
-                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "jobless")]
-                        label Oui
-                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
-                        label Non
-                      li
-                        label
-                          | Vous touchez l'assurance chômage des intermittents du spectacle :
-                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "artist")]
-                        label Oui
-                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
-                        label Non
-                      li
-                        label
-                          | Vous êtes allocataire de minima sociaux :
-                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "poor")]
-                        label Oui
-                        input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "poor")]
-                        label Non
-              .control.box
-                .columns
-                  .column.is-narrow
-                    input[type="checkbox" checked=(@identity.current_situation.status == "volontary" && @identity.current_situation.status == "election")]
-                    label 4. Autres :
-                  .column
-                    ul
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.status == "volontary")]
-                        label Volontaire
-                      li
-                        input[type="checkbox" checked=(@identity.current_situation.status == "election")]
-                        label Mandat électoral
-      .columns.message-group
-        .column
-          article.message.is-dark
-            .message-body
-              h3.title.is-5.has-text-weight-light
-                | Êtes-vous reconnu travailleur handicapé :
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 1 : Nature de la demande
               .columns
                 .column
                   .control.box
-                    input[type="radio" checked=(@identity.is_handicapped)]
-                    label Oui
+                    input[type="radio" checked]
+                    label
+                      | 1ère demande
                 .column
                   .control.box
-                    input[type="radio" checked=(!@identity.is_handicapped)]
-                    label Non
-    section.section.section-level
-      article.message.is-dark
-        .message-body
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 4 : Niveau de formation/Certification(s) obtenue(s) à la date de votre demande
-          .columns
+                    input[type="radio"]
+                    label
+                      | Renouvellement
+                .column
+                  .control.box
+                    input[type="radio"]
+                    label
+                      | Prolongation
+        section.section.section-certification
+          article.message.is-dark
+            .message-body
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 2 : Certification professionnelle que vous souhaitez obtenir
+              .columns
+                .column
+                  .atome
+                    label
+                      | Nature, intitulé complet et niveau de la certification :
+                    p.title.is-6.is-uppercase.is-spaced= @certification_name
+                .column
+                  .atome
+                    label
+                      | Autorité responsable de la certification :
+                    p.title.is-6.is-uppercase.is-spaced= @certifier_name
+        section.section.section-identity
+          article.message.is-dark
+            .message-body
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 3 : Etat civil/Situation du candidat
+              .columns
+                .column
+                  .atome
+                    label
+                      | Nom de naissance :
+                    p.is-italic
+                      small
+                        | c'est le nom qui figure sur votre acte de naissance
+                    p.title.is-6.is-uppercase.is-spaced= @identity.last_name
+                  .atome
+                    label
+                      | Nom d'usage :
+                    p.is-italic
+                      small
+                        | s'il y a lieu
+                    p.title.is-6.is-uppercase.is-spaced= @identity.usage_name || "-"
+                .column
+                  .atome
+                    label
+                      | Prénoms :
+                    p.is-italic
+                      small
+                        | dans l'ordre de l'état civil
+                    p.title.is-6.is-uppercase.is-spaced= @identity.first_name
+                  .atome
+                    label
+                      | Sexe :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = if Vae.Identity.is_man?(@identity), do: "Masculin", else: "Féminin"
+          article.message.is-dark
+            .message-body
+              .columns
+                .column
+                  .atome
+                    label
+                      | Date de naissance :
+                    p.title.is-6.is-uppercase.is-spaced= Vae.Date.format_iso(@identity.birthday)
+                  .atome
+                    label
+                      | Commune de naissance :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.city || "-"
+                  .atome
+                    label
+                      | Département ou collectivité outre-mer de naissance :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.county || "-"
+                .column
+                  .atome
+                    label
+                      | Pays de naissance :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.country || "-"
+                  .atome
+                    label
+                      | Nationalité :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.nationality.country_code || "-"
+          article.message.is-dark
+            .message-body
+              .columns
+                .column
+                  .atome
+                    label
+                      | Adresse actuelle :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.full_address
+                  .atome
+                    label
+                      | Tel domicile :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.home_phone || "-"
+                .column
+                  .atome
+                    label
+                      | Tel portable :
+                    p.title.is-6.is-uppercase.is-spaced= @identity.mobile_phone || "-"
+                  .atome
+                    label
+                      | Courriel :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = if @identity.email do
+                        a href="mailto:#{@identity.email}"= @identity.email
+          .columns.message-group
             .column
-              .atome
-                label
-                  | Dernière classe suivie :
-                p.title.is-6.is-uppercase.is-spaced
-                  |  {{education.grade ? `${education.grade} : ${gradeLabel}` : '-'}}
-              .atome
-                label
-                  | Titre ou diplôme le plus élevé obtenu en France :
-                p.title.is-6.is-uppercase.is-spaced
-                  |  {{education.degree ? `${education.degree} : ${degreeLabel}` : '-'}}
-              .atome
-                label
-                  | Autre certification obtenue en France :
-                p.title.is-6.is-uppercase.is-spaced
-                  | Non applicable
-              .atome
-                label
-                  | Partie(s) de certification professionnelle obtenue/s :
-                p.title.is-6.is-uppercase.is-spaced
-                  | {{education.courses.length ? 'Oui' : 'Non'}}
-            .column[style="background-color: rgba(0, 0, 0, 0.05);"]
-              h5.title.is-6.is-uppercase.has-text-centered
-                | A compléter manuellement si besoin
-              .atome
-                p[style="margin-bottom: 1rem;"]
-                  label
-                    | Attestation de comparabilité d'un diplôme délivré dans un pays étranger :
-                ul
-                  li.is-inline-block
-                    input[type="checkbox" :checked="false"]
+              article.message.is-dark
+                .message-body
+                  h3.title.is-5.has-text-weight-light
+                    | Vous êtes actuellement :
+                  .control.box
+                    .columns
+                      .column.is-narrow
+                        input[type="checkbox" checked=(@identity.current_situation.status == "working")]
+                        label
+                          |  1. En situation d'emploi :
+                      .column
+                        ul
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "permanent")]
+                            label CDI
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "contract")]
+                            label CDD, CDD d'usage et intérim
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "independant")]
+                            label travailleur indépendant, artisan, profession libérale
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "public")]
+                            label fonctionnaire
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "military")]
+                            label militaire
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "alternance")]
+                            label contrat aidé ou contrat en alternance
+                  .control.box
+                    .columns
+                      .column
+                        input[type="checkbox" checked=(@identity.current_situation.status == "inactive")]
+                        label 2. En inactivité
+                  .control.box
+                    .columns[style="margin-bottom: 0;"]
+                      .column
+                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking")]
+                        label 3. En recherche d'emploi :
+                    .columns
+                      .column.is-11.is-offset-1.is-print-fullwidth.content
+                        ul
+                          li
+                            | Inscrit à Pôle-emploi :
+                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.register_to_pole_emploi)]
+                            label Oui
+                            = if @identity.current_situation.register_to_pole_emploi_since do
+                              span depuis le #{Vae.Date.format_iso(@identity.current_situation.register_to_pole_emploi_since)}
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && !@identity.current_situation.register_to_pole_emploi)]
+                            label Non
+                          li
+                            | Vous touchez l'assurance chômage (allocation de retour à l'emploi) :
+                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "jobless")]
+                            label Oui
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
+                            label Non
+                          li
+                            label
+                              | Vous touchez l'assurance chômage des intermittents du spectacle :
+                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "artist")]
+                            label Oui
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
+                            label Non
+                          li
+                            label
+                              | Vous êtes allocataire de minima sociaux :
+                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "poor")]
+                            label Oui
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "poor")]
+                            label Non
+                  .control.box
+                    .columns
+                      .column.is-narrow
+                        input[type="checkbox" checked=(@identity.current_situation.status == "volontary" && @identity.current_situation.status == "election")]
+                        label 4. Autres :
+                      .column
+                        ul
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.status == "volontary")]
+                            label Volontaire
+                          li
+                            input[type="checkbox" checked=(@identity.current_situation.status == "election")]
+                            label Mandat électoral
+          .columns.message-group
+            .column
+              article.message.is-dark
+                .message-body
+                  h3.title.is-5.has-text-weight-light
+                    | Êtes-vous reconnu travailleur handicapé :
+                  .columns
+                    .column
+                      .control.box
+                        input[type="radio" checked=(@identity.is_handicapped)]
+                        label Oui
+                    .column
+                      .control.box
+                        input[type="radio" checked=(!@identity.is_handicapped)]
+                        label Non
+        section.section.section-level
+          article.message.is-dark
+            .message-body
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 4 : Niveau de formation/Certification(s) obtenue(s) à la date de votre demande
+              .columns
+                .column
+                  .atome
                     label
-                      | Niveau V
-                  li.is-inline-block
-                    input[type="checkbox" :checked="false"]
+                      | Dernière classe suivie :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = if @education.grade do
+                        | #{@education.grade} - #{Vae.Booklet.Education.grade_label(@education)}
+                      - else
+                        | -
+                  .atome
                     label
-                      | Niveau IV
-                  li.is-inline-block
-                    input[type="checkbox" :checked="false"]
+                      | Titre ou diplôme le plus élevé obtenu en France :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = if @education.degree do
+                        | #{@education.degree} - #{Vae.Booklet.Education.degree_label(@education)}
+                      - else
+                        | -
+                  .atome
                     label
-                      | Niveau III
-                  li.is-inline-block
-                    input[type="checkbox" :checked="false"]
+                      | Autre certification obtenue en France :
+                    p.title.is-6.is-uppercase.is-spaced
+                      | Non applicable
+                  .atome
                     label
-                      | Niveau II
-                  li.is-inline-block
-                    input[type="checkbox" :checked="false"]
-                    label
-                      | Niveau I
-                ul
+                      | Partie(s) de certification professionnelle obtenue/s :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = if Enum.empty?(@education.courses), do: "Non", else: "Oui"
+                .column[style="background-color: rgba(0, 0, 0, 0.05);"]
+                  h5.title.is-6.is-uppercase.has-text-centered
+                    | A compléter manuellement si besoin
+                  .atome
+                    p[style="margin-bottom: 1rem;"]
+                      label
+                        | Attestation de comparabilité d'un diplôme délivré dans un pays étranger :
+                    ul
+                      li.is-inline-block
+                        input[type="checkbox" checked=false]
+                        label Niveau V
+                      li.is-inline-block
+                        input[type="checkbox" checked=false]
+                        label Niveau IV
+                      li.is-inline-block
+                        input[type="checkbox" checked=false]
+                        label Niveau III
+                      li.is-inline-block
+                        input[type="checkbox" checked=false]
+                        label Niveau II
+                      li.is-inline-block
+                        input[type="checkbox" checked=false]
+                        label Niveau I
+                    ul
 
-              .atome
-                p[style="margin-bottom: 1rem;"]
-                  label
-                    | Attestation de reconnaissance d'études/et ou de formation/s suivie/s à l'étranger :
-                p
-                  input[type="checkbox" :checked="false"]
-                  label
-                    | Oui
-                  input[type="checkbox" :checked="false"]
-                  label
-                    | Non
-      article.message.is-dark
-        .message-body
-          .columns
-            .column
-              .atome
+                  .atome
+                    p[style="margin-bottom: 1rem;"]
+                      label
+                        | Attestation de reconnaissance d'études/et ou de formation/s suivie/s à l'étranger :
+                    p
+                      input[type="checkbox" checked=false]
+                      label Oui
+                      input[type="checkbox" checked=false]
+                      label Non
+          article.message.is-dark
+            .message-body
+              .columns
+                .column
+                  .atome
+                    label
+                      | Certification ou partie/s de certification professionnelle inscrite/s au Répertoire National des Certifications Professionnelles (RNCP) en rapport avec la certification professionnelle que vous souhaitez obtenir par la validation des acquis de l'expérience (VAE) :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = @education.courses |> Enum.map(fn d -> d.label end) |> Enum.join(", ") |> Vae.String.blank_is_nil() || "-"
+                .column
+                  .atome
+                    label
+                      | Formations courtes suivies dans le cadre de la formation continue :
+                    p.title.is-6.is-uppercase.is-spaced
+                      = @education.diplomas |> Enum.map(fn d -> d.label end) |> Enum.join(", ") |> Vae.String.blank_is_nil() || "-"
+        section.section.section-experiences
+          article.message.is-dark
+            .message-body.content
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 5 : Information concernant votre expérience en rapport direct avec la certification visée
+              = if length(@experiences) == 0 do
+                p Aucune expérience professionnelle saisie.
+              - else
+                p #{Vae.String.inflect(length(@experiences), "experience professionnelle enregistrée")} :
+              = for experience <- @experiences do
+                .control.atome.box
+                  table.cerfa-table
+                    tbody
+                      tr
+                        td Emploi ou fonction occupée :
+                        td
+                          strong= experience.title || "à compléter"
+                      tr
+                        td Nom et adresse de l'organisme :
+                        td
+                          strong= experience.company_name || "à compléter"
+                          br
+                          = experience.full_address
+                      tr
+                        td Statut :
+                        td
+                          strong= experience.employment_type
+                          |  - #{Vae.Booklet.Experience.employment_type_label(experience)}
+                      tr
+                        td Famille professionnelle :
+                        td
+                          strong= experience.job_industry
+                          |  -  #{Vae.Booklet.Experience.job_industry_label(experience)}
+                      tr
+                        td
+                          | Certification et niveau de formation suivie :
+                        td
+                          | -
+                      tr
+                        td= Vae.String.inflect("Période", length(experience.periods))
+                        td
+                          ul
+                            = for period <- experience.periods do
+                              li= render("_period_display.html", period: period)
+                      tr
+                        td= Vae.String.inflect("Activité", length(experience.skills))
+                        td
+                          ul
+                            = for skill <- experience.skills do
+                              li= skill.label
+        section.section.section-sworn
+          article.message.is-dark
+            .message-body
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 6 : Déclaration sur l'honneur
+              .control.atome.box
+                input[type="checkbox"]
                 label
-                  | Certification ou partie/s de certification professionnelle inscrite/s au Répertoire National des Certifications Professionnelles (RNCP) en rapport avec la certification professionnelle que vous souhaitez obtenir par la validation des acquis de l'expérience (VAE) :
-                p.title.is-6.is-uppercase.is-spaced
-                  | {{education.courses.map(c => c.label).join(', ') || '-'}}
-            .column
-              .atome
+                  |  Je ne fais pas l'objet d'une mesure pénale ou administrative d'interdiction de présentation devant un jury d'examen ou de validation des acquis de l'expérience
+              .control.atome.box
+                input[type="checkbox" checked=(!!@booklet.completed_at)]
                 label
-                  | Formations courtes suivies dans le cadre de la formation continue :
-                p.title.is-6.is-uppercase.is-spaced
-                  | {{education.diplomas.map(c => c.label).join(', ') || '-'}}
-    section.section.section-experiences
-      article.message.is-dark
-        .message-body.content
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 5 : Information concernant votre expérience en rapport direct avec la certification visée
-          = if length(@experiences) == 0 do
-            p Aucune expérience professionnelle saisie.
-          - else
-            p #{Vae.String.inflect(length(@experiences), "experience professionnelle enregistrée")} :
-          = for experience <- @experiences do
-            .control.atome.box
+                  |  Je certifie que toutes les informations fournies sont exactes
+              .control.atome.box
+                input[type="checkbox"]
+                label
+                  |  Je certifie que la présente candidature constitue l'unique demande pour cette certification pour la même année civile
+              .control.atome.box
+                input[type="checkbox"]
+                label
+                  |  Je m'engage également à ne pas présenter plus de trois candidatures à la validation des acquis de l'expérience pour des diplômes, certificats ou titres différents durant la présente année civile
+              .control.atome
+                .columns
+                  .column
+                    .box.content[style="height: 200px;"]
+                      p
+                        br
+                        |  Fait à : ______________________________
+                        br
+                        br
+                        br
+                        |  Le : _________________________________
+                        br
+                        br
+                  .column
+                    .box.content[style="height: 200px;"]
+                      p
+                        |  Nom et signature
+                        = if Vae.Identity.is_man?(@identity) do
+                          |  du candidat
+                        - else
+                          |  de la candidatre
+                        |  :
+                        br
+                        br
+                        br
+                        br
+                        br
+                        br
+        section.section.section-sworn
+          article.message.is-danger
+            .message-body.content
+              h2.title.is-4.has-text-weight-light
+                | Rubrique 7 : Réservé à l'organisme certificateur (ne pas remplir)
               table.cerfa-table
                 tbody
                   tr
-                    td Emploi ou fonction occupée :
                     td
-                      strong= experience.title || "à compléter"
-                  tr
-                    td Nom et adresse de l'organisme :
+                      | Dossier reçu le :
                     td
-                      strong= experience.company_name || "à compléter"
-                      br
-                      = experience.full_address
-                  tr
-                    td Statut :
                     td
-                      strong= experience.employment_type
-                      |  - #{Vae.Booklet.Experience.employment_type_label(experience)}
-                  tr
-                    td Famille professionnelle :
+                      | Dossier complet le :
                     td
-                      strong= experience.job_industry
-                      |  -  #{Vae.Booklet.Experience.job_industry_label(experience)}
                   tr
                     td
-                      | Certification et niveau de formation suivie :
-                    td
-                      | -
+                      | N° Identifiant :
+                    td[colspan="3"]
                   tr
-                    td= Vae.String.inflect("Période", length(experience.periods))
                     td
-                      ul
-                        = for period <- experience.periods do
-                          li= render("_period_display.html", period: period)
+                      | Niveau de certification visé, le cas échéant :
+                    td
+                    td
+                      | Code du diplôme :
+                    td
                   tr
-                    td= Vae.String.inflect("Activité", length(experience.skills))
                     td
-                      ul
-                        = for skill <- experience.skills do
-                          li= skill.label
-    section.section.section-sworn
-      article.message.is-dark
-        .message-body
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 6 : Déclaration sur l'honneur
-          .control.atome.box
-            input[type="checkbox"]
-            label
-              |  Je ne fais pas l'objet d'une mesure pénale ou administrative d'interdiction de présentation devant un jury d'examen ou de validation des acquis de l'expérience
-          .control.atome.box
-            input[type="checkbox" checked=(!!@booklet.completed_at)]
-            label
-              |  Je certifie que toutes les informations fournies sont exactes
-          .control.atome.box
-            input[type="checkbox"]
-            label
-              |  Je certifie que la présente candidature constitue l'unique demande pour cette certification pour la même année civile
-          .control.atome.box
-            input[type="checkbox"]
-            label
-              |  Je m'engage également à ne pas présenter plus de trois candidatures à la validation des acquis de l'expérience pour des diplômes, certificats ou titres différents durant la présente année civile
-          .control.atome
-            .columns
-              .column
-                .box.content[style="height: 200px;"]
-                  p
-                    br
-                    |  Fait à : ______________________________
-                    br
-                    br
-                    br
-                    |  Le : _________________________________
-                    br
-                    br
-              .column
-                .box.content[style="height: 200px;"]
-                  p
-                    |  Nom et signature
-                    span[v-if="isMan"]
-                      | du candidat
-                    span[v-else]
-                      | de la candidate
-                    |  :
-                    br
-                    br
-                    br
-                    br
-                    br
-                    br
-    section.section.section-sworn
-      article.message.is-danger
-        .message-body.content
-          h2.title.is-4.has-text-weight-light
-            | Rubrique 7 : Réservé à l'organisme certificateur (ne pas remplir)
-          table.cerfa-table
-            tbody
-              tr
-                td
-                  | Dossier reçu le :
-                td
-                td
-                  | Dossier complet le :
-                td
-              tr
-                td
-                  | N° Identifiant :
-                td[colspan="3"]
-              tr
-                td
-                  | Niveau de certification visé, le cas échéant :
-                td
-                td
-                  | Code du diplôme :
-                td
-              tr
-                td
-                  | Décision de recevabilité :
-                td[colspan="3"]
-                  input[type="checkbox"]
-                  label.checkbox
-                    |  Favorable
-                  input[type="checkbox"]
-                  label.checkbox[style="margin-left: 2rem;"]
-                    |  Défavorable
-              tr
-                td
-                  | Date de décision de la recevabilité :
-                td
-                td
-                  | Date limite de validité de la recevabilité (le cas échéant) :
-                td
+                      | Décision de recevabilité :
+                    td[colspan="3"]
+                      input[type="checkbox"]
+                      label.checkbox
+                        |  Favorable
+                      input[type="checkbox"]
+                      label.checkbox[style="margin-left: 2rem;"]
+                        |  Défavorable
+                  tr
+                    td
+                      | Date de décision de la recevabilité :
+                    td
+                    td
+                      | Date limite de validité de la recevabilité (le cas échéant) :
+                    td
