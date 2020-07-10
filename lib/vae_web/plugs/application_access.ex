@@ -36,7 +36,11 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
       cond do
         options[:verify_with_hash] ->
           fn a ->
-            Map.get(a, options[:verify_with_hash]) == (conn.params["hash"] || conn.params["delegate_hash"])
+            hash_param = @hash_pairs[options[:verify_with_hash]]
+            hash_param_value = conn.params[hash_param] || conn.params["hash"] # "hash" is legacy
+            application_hash_value = Map.get(a, options[:verify_with_hash])
+
+            not is_nil(application_hash_value) && application_hash_value == hash_param_value
           end
 
         true ->
@@ -54,10 +58,9 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
   defp has_access?(nil, _user, _verification), do: {:error, :not_found}
 
-  defp has_access?(%UserApplication{} = application, %User{} = user, verification_func) do
+  defp has_access?(%UserApplication{} = application, %User{} = current_user, verification_func) do
     application = application |> Repo.preload(:user)
-
-    if (user == application.user) || user.is_admin do
+    if (current_user == application.user) || current_user.is_admin do
       {:ok, application}
     else
       has_access?(application, nil, verification_func)
@@ -73,7 +76,6 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   end
 
   defp has_access?(_application, nil, nil), do: {:error, :not_authenticated}
-
 
   defp call_error(conn, options, error) do
     if options[:optional] do
