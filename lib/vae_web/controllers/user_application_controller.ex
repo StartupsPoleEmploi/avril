@@ -3,7 +3,7 @@ defmodule VaeWeb.UserApplicationController do
   use VaeWeb, :controller
 
   alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, UserApplication, Repo}
-
+  alias Vae.Booklet.{Cerfa, Education, Experience}
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
 
@@ -53,6 +53,7 @@ defmodule VaeWeb.UserApplicationController do
         :certification,
         :resumes
       ])
+    booklet = application.booklet_1 || %Cerfa{}
     title = "Recevabilité VAE de #{Identity.fullname(application.user.identity)} pour un diplôme de #{
       Certification.name(application.certification)
     }"
@@ -65,9 +66,9 @@ defmodule VaeWeb.UserApplicationController do
       certification_name: Vae.Certification.name(application.certification),
       certifier_name: application.delegate.certifiers |> Enum.map(fn c -> c.name end) |> Enum.join(", "),
       identity: application.user.identity,
-      booklet: application.booklet_1,
-      education: application.booklet_1.education,
-      experiences: application.booklet_1.experiences,
+      booklet: booklet,
+      education: booklet.education || %Education{},
+      experiences: booklet.experiences
     }
 
     if params["format"] == "pdf" do

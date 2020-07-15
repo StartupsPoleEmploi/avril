@@ -98,22 +98,23 @@
               ' Ces coordonnées ne sont plus à jour ? Vous pouvez les
               a.toggle-mode modifier directement ici
               | .
-
-    section.section.is-vertical.is-hidden-print
-      h3.title.is-3 Sa recevabilité
-      p.subtitle Voici les informations qu'a complété le candidat via Avril, ainsi que les justificatifs qu'il a souhaité joindre.
-      .notification
-        .content
-          ul
-            li
-              strong
-                = link("Livret de recevabilité complété (L1)", to: Routes.user_application_path(VaeWeb.Endpoint, :cerfa, @application, delegate_hash: @application.delegate_access_hash))
-            = for resume <- @application.resumes do
-              li.document
-                = link to: resume.url, class: "download", download: resume.filename, data: [analytics: "CV#download certificateur"] do
-                  span.fa.fa-download
-                  = resume.filename
-    = if length(@user.experiences) > 0 do
+    = if @application.booklet_1 && @application.booklet_1.completed_at || not Enum.empty?(@user.experiences) do
+      section.section.is-vertical.is-hidden-print
+        h3.title.is-3 Sa recevabilité
+        p.subtitle Voici les informations qu'a complété le candidat via Avril, ainsi que les justificatifs qu'il a souhaité joindre.
+        .notification
+          .content
+            ul
+              = if @application.booklet_1 && @application.booklet_1.completed_at do
+                li
+                  strong
+                    = link("Livret de recevabilité complété (L1)", to: Routes.user_application_path(VaeWeb.Endpoint, :cerfa, @application, delegate_hash: @application.delegate_access_hash))
+              = for resume <- @application.resumes do
+                li.document
+                  = link to: resume.url, class: "download", download: resume.filename, data: [analytics: "CV#download certificateur"] do
+                    span.fa.fa-download
+                    = resume.filename
+    = if not Enum.empty?(@user.experiences) do
       section.section.is-vertical
         h4.title.is-4 Ses expériences professionnelles
         p.subtitle Il s'agit des expériences que le candidat a déclarées dans son espace personnel Pôle emploi. Elles ont donc une valeur indicative.
@@ -127,7 +128,7 @@
                   p= experience.label
                   p= render VaeWeb.ComponentView, "date-range.html", conn: @conn, start_date: experience.start_date, end_date: experience.end_date
 
-    = if length(@user.proven_experiences) > 0 do
+    = if not Enum.empty?(@user.proven_experiences) do
       section.section.is-vertical
         h4.title.is-4
           | Ses expériences attestées
@@ -154,7 +155,7 @@
                         = "#{exp.work_duration} heures en #{exp.contract_type}, "
                         = render VaeWeb.ComponentView, "date-range.html", conn: @conn, start_date: exp.start_date, end_date: exp.end_date
 
-    = if length(@user.skills) > 0 do
+    = if not Enum.empty?(@user.skills) do
       section.section.is-vertical
         h4.title.is-4 Ses compétences
         .content
