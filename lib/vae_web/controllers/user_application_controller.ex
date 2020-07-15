@@ -3,7 +3,7 @@ defmodule VaeWeb.UserApplicationController do
   use VaeWeb, :controller
 
   alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, UserApplication, Repo}
-  alias Vae.Booklet.{Cerfa, Education, Experience}
+  alias Vae.Booklet.{Cerfa, Education}
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
 
@@ -63,8 +63,8 @@ defmodule VaeWeb.UserApplicationController do
       remove_navbar: true,
       remove_footer: true,
       application: application,
-      certification_name: Vae.Certification.name(application.certification),
-      certifier_name: application.delegate.certifiers |> Enum.map(fn c -> c.name end) |> Enum.join(", "),
+      certification_name: Certification.name(application.certification),
+      certifier_name: UserApplication.certifier_name(application),
       identity: application.user.identity,
       booklet: booklet,
       education: booklet.education || %Education{},
