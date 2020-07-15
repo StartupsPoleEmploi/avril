@@ -40,10 +40,8 @@ defmodule Vae.Applications do
 
   @doc "Attaches a resume to an application"
   def attach_resume_to_application(application, resume_file) do
-    resume = Resume.attach_resume_to_application(application, resume_file)
-
     application
-    |> UserApplication.attach_resume_changeset(resume)
+    |> UserApplication.attach_resume_changeset(resume_file)
     |> Repo.update()
   end
 
