@@ -53,17 +53,14 @@ defmodule VaeWeb.DelegateController do
     first_result = Repo.all(query |> limit(1)) |> List.first()
 
     if first_result do
-      with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
-           page <- Repo.paginate(filtered_query, params),
-           meta <- filter_values do
+      with page <- Repo.paginate(query, params) do
         render(conn, "index.html",
           administrative_slug: administrative_slug,
           city_slug: city_slug,
           administrative: first_result.administrative,
           city: first_result.city,
           delegates: page.entries,
-          page: page,
-          meta: meta
+          page: page
         )
       end
     else
