@@ -80,6 +80,7 @@ defmodule Vae.Booklet.Experience do
       "V" -> "Santé, action sociale, culturelle et sportive"
       "W" -> "Enseignement, formation"
       "X" -> "Politique, religion"
+      nil -> ""
     end
   end
 
@@ -99,6 +100,7 @@ defmodule Vae.Booklet.Experience do
       12 -> "Préparation opérationnelle à l’emploi (POE)"
       13 -> "Période de formation en milieu professionnel (PFMP)"
       14 -> "Stage pratique dans le cadre d'une formation"
+      nil -> ""
     end
   end
 

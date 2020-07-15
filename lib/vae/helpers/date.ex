@@ -35,6 +35,7 @@ defmodule Vae.Date do
 
   def workdays_between(start_date, end_date \\ nil) do
     end_date = end_date || Date.utc_today()
+    end_date = if Timex.compare(end_date, start_date, :day) < 1, do: start_date, else: end_date
 
     Timex.Interval.new(from: start_date, until: Date.add(end_date, 1))
     |> Enum.filter(&(!weekend?(&1)))
