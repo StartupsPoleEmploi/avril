@@ -73,21 +73,21 @@ defmodule Vae.ExAdmin.Delegate do
       #   end
       # end
 
-      panel "Meetings" do
-        table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&elem(&1, 1)) do
-          column(:meeting_id)
-          column(:name)
-          column(:target)
-          column(:place)
-          column(:address)
-          column(:postal_code)
-          column(:city)
-          column(:remaining_places)
-          column(:start_date)
-          column(:end_date)
-        end
-      end
-    end
+    #   panel "Meetings" do
+    #     table_for Vae.Meetings.get(delegate) |> Enum.flat_map(&elem(&1, 1)) do
+    #       column(:meeting_id)
+    #       column(:name)
+    #       column(:target)
+    #       column(:place)
+    #       column(:address)
+    #       column(:postal_code)
+    #       column(:city)
+    #       column(:remaining_places)
+    #       column(:start_date)
+    #       column(:end_date)
+    #     end
+    #   end
+    # end
 
     form delegate do
       inputs do
