@@ -87,7 +87,7 @@ defmodule Vae.ExAdmin.Delegate do
     #       column(:end_date)
     #     end
     #   end
-    # end
+    end
 
     form delegate do
       inputs do
