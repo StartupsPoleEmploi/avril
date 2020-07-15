@@ -73,7 +73,6 @@ defmodule VaeWeb.ApplicationEmail do
   end
 
   def user_meeting_confirmation(application, endpoint \\ URI.endpoint()) do
-    )
     Mailer.build_email(
       "application/meeting_confirmation.html",
       :avril,
@@ -86,7 +85,6 @@ defmodule VaeWeb.ApplicationEmail do
         footer_note: :inscrit_avril
       }
     )
-
   end
 
   def user_raise(application, endpoint \\ URI.endpoint()) do
