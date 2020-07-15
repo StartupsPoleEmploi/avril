@@ -69,6 +69,7 @@ defmodule VaeWeb.ApplicationEmail do
         image_url: Routes.static_url(endpoint, "/images/group.png"),
         footer_note: :inscrit_avril
       }
+    )
   end
 
   def user_meeting_confirmation(application, endpoint \\ URI.endpoint()) do
