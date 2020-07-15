@@ -124,6 +124,7 @@ defmodule Vae.UserApplication do
     })
   end
 
+  # Deprecated
   def submit(application, auto_submitted \\ false) do
     application = Repo.preload(application, [:user, :delegate])
 
