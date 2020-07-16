@@ -1,3 +1,5 @@
+[SUJET]: # (Restons tournés vers l'avenir : avec Avril obtenez un diplôme sans suivre de formation, c'est votre expérience qui compte.)
+
 # Obtenez un diplôme par la VAE !
 
 Vous avez au moins 1 an d'expérience ?
