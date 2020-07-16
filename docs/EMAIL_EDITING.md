@@ -21,7 +21,7 @@ La plupart des emails sont éditables directement dans le code, au format markdo
 
 ## Où se trouvent les fichiers ?
 
-Les fichiers sont situés dans le dossier [/web/templates/email](/web/templates/email). Les noms sont choisis pour être explicites et ne pas nécessiter plus d'explications.
+Les fichiers sont situés dans le dossier [/priv/emails](/priv/emails). Les noms sont choisis pour être explicites et ne pas nécessiter plus d'explications.
 
 ## Markdown générique
 
