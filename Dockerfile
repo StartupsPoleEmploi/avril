@@ -47,7 +47,7 @@ RUN mix deps.get
 RUN yarn --cwd ./assets install
 
 # Install min.io client
-RUN wget -P /usr/bin https://dl.min.io/client/mc/release/linux-amd64/mc
+RUN wget -nv -P /usr/bin https://dl.min.io/client/mc/release/linux-amd64/mc
 RUN chmod +x /usr/bin/mc
 
 # Setup DB

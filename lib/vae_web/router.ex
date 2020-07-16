@@ -95,7 +95,7 @@ defmodule VaeWeb.Router do
     get("/candidatures/:id/admissible", VaeWeb.UserApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", VaeWeb.UserApplicationController, :inadmissible)
 
-    resources("/candidats", VaeWeb.JobSeekerController, only: [:create])
+    # Still used?
     get("/candidats/:id/admissible", VaeWeb.JobSeekerController, :admissible)
     get("/candidats/:id/inadmissible", VaeWeb.JobSeekerController, :inadmissible)
 

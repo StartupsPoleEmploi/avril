@@ -14,6 +14,7 @@ defmodule Vae.ExAdmin.Certification do
       column(:label)
       column(:level)
       column(:rncp_id)
+      column(:is_active)
 
       actions()
     end
@@ -60,6 +61,7 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym)
         input(certification, :level)
         input(certification, :rncp_id)
+        input(certification, :is_active)
         input(certification, :description, type: :text)
 
         certifier_option_tags =
