@@ -2,9 +2,10 @@ defmodule Vae.Certification do
   use VaeWeb, :model
 
   alias __MODULE__
-  alias Vae.{UserApplication, CertificationDelegate, Certifier, Delegate, Repo, Rome}
+  alias Vae.{UserApplication, Certifier, Delegate, Repo, Rome}
 
   schema "certifications" do
+    field(:is_active, :boolean)
     field(:slug, :string)
     field(:label, :string)
     field(:acronym, :string)
@@ -28,22 +29,30 @@ defmodule Vae.Certification do
       on_delete: :delete_all
     )
 
+    many_to_many(
+      :delegates,
+      Delegate,
+      join_through: "certifications_delegates",
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
+
     has_many(
       :professions,
       through: [:romes, :professions]
     )
 
-    has_many(
-      :certifications_delegates,
-      CertificationDelegate,
-      on_delete: :delete_all,
-      on_replace: :delete
-    )
+    # has_many(
+    #   :certifications_delegates,
+    #   CertificationDelegate,
+    #   on_delete: :delete_all,
+    #   on_replace: :delete
+    # )
 
-    has_many(
-      :delegates,
-      through: [:certifications_delegates, :delegate]
-    )
+    # has_many(
+    #   :delegates,
+    #   through: [:certifications_delegates, :delegate]
+    # )
 
     has_many(:applications, UserApplication, on_replace: :nilify)
 
@@ -61,6 +70,7 @@ defmodule Vae.Certification do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params |> Map.update(:rncp_id, nil, fn e -> to_string(e) end), [
+      :is_active,
       :label,
       :acronym,
       :level,
@@ -74,15 +84,6 @@ defmodule Vae.Certification do
     |> add_certifiers(params)
     |> add_delegates(params)
   end
-
-  # def get(nil), do: nil
-  # def get(id), do: Repo.get(Certification, id)
-
-  # def get_certification(%{"rncp_id" => rncp_id}), do: Repo.get_by(Certification, rncp_id: rncp_id)
-
-  # def get_certification(nil), do: nil
-
-  # def get_certification(certification_id), do: Repo.get(Certification, certification_id)
 
   def find_by_acronym_and_label(certification_label) do
     from(

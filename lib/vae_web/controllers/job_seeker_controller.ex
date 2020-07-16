@@ -3,9 +3,7 @@ defmodule VaeWeb.JobSeekerController do
 
   alias Vae.Repo
   alias Vae.UserApplications.Polls
-  alias Vae.{Certification, Delegate, Event, JobSeeker}
-  alias VaeWeb.JobSeekerEmail
-  alias VaeWeb.Mailer
+  alias Vae.{JobSeeker}
 
   def admissible(conn, %{"id" => id}) do
     Repo.get(JobSeeker, id)

@@ -29,14 +29,22 @@ defmodule Vae.Delegate do
 
     belongs_to(:process, Process)
 
-    has_many(
-      :certifications_delegates,
-      CertificationDelegate,
+    # has_many(
+    #   :certifications_delegates,
+    #   CertificationDelegate,
+    #   on_delete: :delete_all,
+    #   on_replace: :delete
+    # )
+
+    # has_many(:certifications, through: [:certifications_delegates, :certification])
+
+    many_to_many(
+      :certifications,
+      Certification,
+      join_through: "certifications_delegates",
       on_delete: :delete_all,
       on_replace: :delete
     )
-
-    has_many(:certifications, through: [:certifications_delegates, :certification])
 
     has_many(:applications, UserApplication)
     has_many(:recent_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '16 days'"}])

@@ -3,8 +3,6 @@ defmodule Vae.ExAdmin.Delegate do
   alias Vae.ExAdmin.Helpers
 
   alias Vae.{Certifier, Process, Repo}
-
-  alias Ecto.Query
   require Ecto.Query
 
   register_resource Vae.Delegate do
@@ -21,10 +19,10 @@ defmodule Vae.ExAdmin.Delegate do
         Enum.map(d.certifiers, &Helpers.link_to_resource/1)
       end)
 
-      column(:is_active)
       column(:administrative)
       column(:city)
 
+      column(:is_active)
       actions()
     end
 
@@ -116,24 +114,14 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :telephone)
         input(delegate, :email)
         input(delegate, :person_name)
-        input(delegate, :process, collection: processes())
-
-        certifiers_options_tags =
-          Certifier
-          |> Repo.all()
-          |> Enum.sort_by(fn certifier -> certifier.name end)
-          |> Enum.map(&option_tag(&1.id, "#{&1.name}", delegate.certifiers))
+        input(delegate, :process, collection: Repo.all(Process))
 
         content do
-          form_select_tag("certifiers", "Certifiers", certifiers_options_tags)
+          Helpers.form_select_tag(delegate, :certifiers)
         end
 
-        javascript do
-          """
-          $(document).ready(function() {
-            $('#delegate_certifiers').multiSelect();
-          });
-          """
+        content do
+          Helpers.form_select_tag(delegate, :certifications)
         end
       end
     end
@@ -141,61 +129,15 @@ defmodule Vae.ExAdmin.Delegate do
     filter([:id, :slug, :is_active, :email, :city, :administrative])
 
     query do
+      preloads = [preload: [:process, :certifiers, :certifications]]
       %{
-        all: [
-          preload: [
-            certifiers: from(c in Certifier, order_by: c.name),
-            process: from(p in Process, order_by: p.name)
-          ]
-        ],
-        index: [default_sort: [asc: :id]],
-        show: [
-          preload: [
-            :process,
-            :certifiers,
-            :certifications,
-            # applications: [:delegate, :user, :certification, :certifiers]
-          ]
-        ]
+        index: [preload: [:process, :certifiers], default_sort: [asc: :id]],
+        show: preloads,
+        new: preloads,
+        create: preloads,
+        edit: preloads,
+        update: preloads,
       }
     end
-  end
-
-  defp processes() do
-    Process |> Query.order_by(:name) |> Repo.all()
-  end
-
-  defp form_select_tag(id, label, options) do
-    content_tag(
-      :div,
-      [
-        content_tag(
-          :label,
-          label,
-          class: "col-sm-2 control-label"
-        ),
-        content_tag(
-          :div,
-          content_tag(
-            :select,
-            options,
-            id: "delegate_#{id}",
-            name: "delegate[#{id}][]",
-            multiple: true
-          ),
-          class: "col-sm-10"
-        )
-      ],
-      class: "form-group"
-    )
-  end
-
-  defp option_tag(id, label, collection) do
-    content_tag(
-      :option,
-      label,
-      value: id,
-      selected: Ecto.assoc_loaded?(collection) && Enum.any?(collection, fn c -> c.id == id end)
-    )
   end
 end

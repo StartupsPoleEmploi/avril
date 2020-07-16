@@ -5,8 +5,8 @@ defmodule Vae.CertificationDelegate do
   schema "certifications_delegates" do
     belongs_to(:certification, Certification)
     belongs_to(:delegate, Delegate)
-    field(:booklet_1, :string)
-    field(:booklet_2, :string)
+    field(:booklet_1, :string) # TODO: remove
+    field(:booklet_2, :string) # TODO: remove
     field(:_destroy, :boolean, virtual: true)
   end
 
