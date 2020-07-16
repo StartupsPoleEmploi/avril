@@ -1,7 +1,7 @@
 defmodule VaeWeb.JobSeekerEmail do
   require Logger
 
-  alias Vae.{JobSeeker, Repo, StepsPdf, URI}
+  alias Vae.{JobSeeker, URI}
   alias VaeWeb.Mailer
   alias VaeWeb.Router.Helpers, as: Routes
 

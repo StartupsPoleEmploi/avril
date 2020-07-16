@@ -6,7 +6,6 @@ defmodule Vae.Delegate do
   alias Vae.{
     UserApplication,
     Certification,
-    CertificationDelegate,
     Certifier,
     Places,
     Process,

@@ -2,8 +2,6 @@ defmodule Vae.ExAdmin.Certification do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-  alias Vae.{Certifier, Delegate, Repo, Rome}
-
   require Ecto.Query
 
   register_resource Vae.Certification do

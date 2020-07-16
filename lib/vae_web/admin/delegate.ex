@@ -2,7 +2,7 @@ defmodule Vae.ExAdmin.Delegate do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-  alias Vae.{Certifier, Process, Repo}
+  alias Vae.{Process, Repo}
   require Ecto.Query
 
   register_resource Vae.Delegate do
