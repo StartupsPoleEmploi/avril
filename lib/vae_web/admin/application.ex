@@ -3,11 +3,13 @@ defmodule Vae.ExAdmin.UserApplication do
   alias Vae.ExAdmin.Helpers
 
   # Note: Vae.UserApplication cannot be aliased here: ex_admin fails
-  alias Vae.{Account, Certification, Delegate, Repo}
+  alias Vae.{Account, Certification, Delegate, Repo, User}
 
   require Ecto.Query
 
   register_resource Vae.UserApplication do
+    action_items except: [:new, :create]
+
     index do
       selectable_column()
       column(:id)
@@ -49,17 +51,6 @@ defmodule Vae.ExAdmin.UserApplication do
       end
     end)
 
-    # action_item(:show, fn id ->
-    #   application = Vae.Repo.get(Vae.UserApplication, id)
-
-    #   if application.booklet_1 do
-    #     action_item_link("Check Old CERFA",
-    #       href: Vae.UserApplication.booklet_url!(VaeWeb.Endpoint, application, [path: "/cerfa", delegate_mode: true]),
-    #       target: "_blank"
-    #     )
-    #   end
-    # end)
-
     show application do
       attributes_table do
         row(:user, fn a -> Account.fullname(a.user) end)
@@ -86,7 +77,10 @@ defmodule Vae.ExAdmin.UserApplication do
 
     form application do
       inputs do
-        input(application, :user, collection: [application.user])
+        application = Repo.preload(application, :user)
+        if application.user do
+          input(application, :user, collection: [application.user])
+        end
         input(application, :certification, collection: Repo.all(Certification))
         input(application, :delegate, collection: Repo.all(Delegate))
         input(application, :submitted_at)
