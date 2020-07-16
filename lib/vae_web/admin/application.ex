@@ -3,7 +3,7 @@ defmodule Vae.ExAdmin.UserApplication do
   alias Vae.ExAdmin.Helpers
 
   # Note: Vae.UserApplication cannot be aliased here: ex_admin fails
-  alias Vae.{Account, Certification, Delegate, Repo, User}
+  alias Vae.{Account, Certification, Delegate, Repo}
 
   require Ecto.Query
 
