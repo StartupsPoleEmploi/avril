@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if ! [ -x "$(command -v mc)" ]; then
-  wget -P /usr/bin https://dl.min.io/client/mc/release/linux-amd64/mc
+  wget -nv -P /usr/bin https://dl.min.io/client/mc/release/linux-amd64/mc
   chmod +x /usr/bin/mc
 else
   /usr/bin/mc update
