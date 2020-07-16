@@ -27,6 +27,12 @@ do_restore() {
     mv DB_DUMP ./avril/db/dumps/latest.dump
   fi
 
+  if [ -f docker-compose.override.yml ]; then
+    mv docker-compose.override.yml ./avril
+  else
+    echo "Warning: docker-compose.override.yml not present: ignoring"
+  fi
+
   echo "Let's build Avril container"
   cd avril
   docker-compose build
