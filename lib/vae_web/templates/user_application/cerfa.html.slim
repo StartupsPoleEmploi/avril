@@ -108,7 +108,7 @@
                   .atome
                     label
                       | Nationalité :
-                    p.title.is-6.is-uppercase.is-spaced= @identity.nationality.country_code || "-"
+                    p.title.is-6.is-uppercase.is-spaced= @identity.nationality && @identity.nationality.country_code || "-"
           article.message.is-dark
             .message-body
               .columns
