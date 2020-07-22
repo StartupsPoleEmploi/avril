@@ -50,7 +50,11 @@ const setupSearchBar = needProxy => {
       suggestion: suggestion => `<a href="${professionToPath(suggestion)}">${suggestion._highlightResult.label.value}</a>`,
     }
   }, {
-    source: autocomplete.sources.hits(client.initIndex('certification'), { hitsPerPage: 3, queryType: 'prefixAll' }),
+    source: autocomplete.sources.hits(client.initIndex('certification'), {
+      hitsPerPage: 3,
+      queryType: 'prefixAll',
+      facetFilters: 'is_active:true',
+    }),
     debounce: 500,
     displayKey: suggestion => {
       const acronym = suggestion.acronym;

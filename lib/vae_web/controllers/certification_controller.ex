@@ -20,18 +20,22 @@ defmodule VaeWeb.CertificationController do
       query |> where([c], c.level == ^value)
     end
 
-    @options param: :metier
+    @options param: :metier,
+             default: nil,
+             cast: &Vae.String.to_id/1
     filter profession(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :professions))
-      |> where([c, r], r.id == ^Vae.String.to_id(value))
+      |> where([c, r], r.id == ^value)
     end
 
-    @options param: :rome_code
+    @options param: :rome_code,
+             default: nil,
+             cast: &Vae.String.to_id/1
     filter rome_code(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.code == ^Vae.String.to_id(value))
+      |> where([c, r], r.code == ^value)
     end
   end
 
@@ -47,8 +51,9 @@ defmodule VaeWeb.CertificationController do
   end
 
   def index(conn, params) do
+    active_certifications_query = from c in Certification, where: [is_active: true]
     with(
-      {:ok, filtered_query, filter_values} <- apply_filters(Certification, conn),
+      {:ok, filtered_query, filter_values} <- apply_filters(active_certifications_query, conn),
       page <- Repo.paginate(filtered_query, params)
     ) do
       render(
