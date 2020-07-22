@@ -28,15 +28,6 @@ defmodule Vae.Delegate do
 
     belongs_to(:process, Process)
 
-    # has_many(
-    #   :certifications_delegates,
-    #   CertificationDelegate,
-    #   on_delete: :delete_all,
-    #   on_replace: :delete
-    # )
-
-    # has_many(:certifications, through: [:certifications_delegates, :certification])
-
     many_to_many(
       :certifications,
       Certification,
@@ -118,7 +109,7 @@ defmodule Vae.Delegate do
       )
 
     struct
-    |> Repo.preload([:certifiers, :certifications_delegates])
+    |> Repo.preload([:certifiers, :certifications])
     |> cast(params, [
       :name,
       :website,
@@ -157,30 +148,16 @@ defmodule Vae.Delegate do
     |> Repo.all()
   end
 
-  def link_certifications(%Changeset{changes: %{certifiers: certifiers}} = changeset) do
-    certifications_delegates =
-      Enum.reduce(certifiers, [], fn
-        %{action: :update, data: data}, acc ->
-          [
-            Certification.from_certifier(data.id)
-            |> Repo.all()
-            |> Enum.map(fn certification ->
-              Ecto.build_assoc(changeset.data, :certifications_delegates,
-                certification_id: certification.id
-              )
-            end)
-            | acc
-          ]
-
-        _, acc ->
-          acc
+  def link_certifications(%Changeset{changes: %{certifiers: certifiers_changes}} = changeset) do
+    certifications =
+      Enum.flat_map(certifiers_changes, fn
+        %{action: :update, data: certifiers} ->
+          %Certifier{certifications: certifications} = Repo.preload(certifiers, :certifications)
+          certifications
+        _ -> []
       end)
 
-    put_assoc(
-      changeset,
-      :certifications_delegates,
-      List.flatten(certifications_delegates)
-    )
+    put_assoc(changeset, :certifications, certifications)
   end
 
   def link_certifications(changeset), do: changeset

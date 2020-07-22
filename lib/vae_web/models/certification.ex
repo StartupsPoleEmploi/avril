@@ -42,18 +42,6 @@ defmodule Vae.Certification do
       through: [:romes, :professions]
     )
 
-    # has_many(
-    #   :certifications_delegates,
-    #   CertificationDelegate,
-    #   on_delete: :delete_all,
-    #   on_replace: :delete
-    # )
-
-    # has_many(
-    #   :delegates,
-    #   through: [:certifications_delegates, :delegate]
-    # )
-
     has_many(:applications, UserApplication, on_replace: :nilify)
 
     has_many(
@@ -119,40 +107,33 @@ defmodule Vae.Certification do
     |> Repo.all()
   end
 
-  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers}} = changeset, _params) do
-    certifications_delegates =
-      Enum.reduce(certifiers, [], fn
-        %{action: :update, data: data}, acc ->
-          [
-            Delegate.from_certifier(data.id)
-            |> Repo.all()
-            |> Enum.map(fn delegate ->
-              Ecto.build_assoc(changeset.data, :certifications_delegates, delegate_id: delegate.id)
-            end)
-            | acc
-          ]
-
-        _, acc ->
-          acc
+  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers_changes}} = changeset, _params) do
+    delegates =
+      Enum.flat_map(certifiers_changes, fn
+        %{action: :update, data: certifiers} ->
+          %Certifier{delegates: delegates} = Repo.preload(certifiers, :delegates)
+          delegates
+        _ -> []
       end)
 
-    put_assoc(
-      changeset,
-      :certifications_delegates,
-      List.flatten(certifications_delegates)
-    )
+    put_assoc(changeset, :delegates, delegates)
   end
 
-  def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
-    changeset
-    |> put_assoc(
-      :certifications_delegates,
-      certifications_delegates
-      |> ensure_not_nil
-      |> transform_destroy
-      |> Enum.uniq_by(& &1.delegate_id)
-    )
-  end
+  # def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
+  #   changeset
+  #   |> put_assoc(
+  #     :certifications_delegates,
+  #     certifications_delegates
+  #     |> ensure_not_nil
+  #     |> transform_destroy
+  #     |> Enum.uniq_by(& &1.delegate_id)
+  #   )
+  # end
+
+  # defp ensure_not_nil(certifications_delegates) do
+  #   certifications_delegates
+  #   |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
+  # end
 
   def add_delegates(changeset, _no_delegates_param), do: changeset
 
@@ -178,11 +159,6 @@ defmodule Vae.Certification do
       where: r.code == ^rome
     )
     |> Repo.all()
-  end
-
-  defp ensure_not_nil(certifications_delegates) do
-    certifications_delegates
-    |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
   end
 
   defp transform_destroy(collection_with_destroy) do
