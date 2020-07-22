@@ -1,6 +1,7 @@
 defmodule Vae.ExAdmin.User do
   use ExAdmin.Register
   alias Vae.{ExAdmin.Helpers, User}
+  alias VaeWeb.Router.Helpers, as: Routes
 
   register_resource User do
     index do
@@ -150,20 +151,41 @@ defmodule Vae.ExAdmin.User do
       end
     end
 
-    action_item(:show, fn id ->
-      user = Vae.Repo.get(Vae.User, id)
+    # action_item(:show, fn id ->
+    #   user = Vae.Repo.get(Vae.User, id)
 
-      href =
-        VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
+    #   href =
+    #     VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
 
-      action_item_link("Connect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
-    end)
+    #   action_item_link("Connect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
+    # end)
+
+
+    # if Plug.Conn.get_session(conn, :admin_current_user_id) do
+    #   action_item(:index, fn ->
+    #     href =
+    #       VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
+    #     action_item_link("Disconnect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
+    #   end)
+    # end
 
     query do
       %{
         index: [default_sort: [desc: :inserted_at]],
         show: [preload: [applications: [:delegate, :user, :certification, :certifiers]]]
       }
+    end
+
+    member_action :"override-current-user", &__MODULE__.override_current_user/2, label: "Connect as User"
+
+    def override_current_user(conn, %{id: id}) do
+      if Vae.Repo.get(Vae.User, id) do
+        conn
+        |> Plug.Conn.put_session(Application.get_env(:ex_admin, :override_user_id_session_key), id)
+        |> Phoenix.Controller.redirect(external: Vae.User.profile_url(conn))
+      else
+        conn |> Phoenix.Controller.redirect(to: Routes.root_path(conn, :index))
+      end
     end
   end
 end

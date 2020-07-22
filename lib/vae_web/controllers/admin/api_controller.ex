@@ -19,17 +19,6 @@ end
 defmodule ExAdmin.ApiController do
   use VaeWeb, :controller
 
-  def set_current_user(conn, %{"id" => id}) do
-    user = Vae.Repo.get(Vae.User, id)
-    if user do
-      conn
-      |> Plug.Conn.put_session(:admin_current_user_id, id)
-      |> redirect(external: Vae.User.profile_url(conn))
-    else
-      conn |> redirect(to: Routes.root_path(conn, :index))
-    end
-  end
-
   def get_status(conn, _params) do
     status =
       case GenServer.call(Status, :get) do

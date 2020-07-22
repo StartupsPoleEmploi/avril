@@ -155,7 +155,8 @@ config :ex_admin,
     Vae.ExAdmin.Rome,
     Vae.ExAdmin.User
   ],
-  title: "Avril, la VAE Facile | Admin "
+  title: "Avril, la VAE Facile | Admin ",
+  override_user_id_session_key: :admin_current_override_user_id
 
 # config :ex_aws,
 #   access_key_id: [System.get_env("MINIO_ACCESS_KEY"), :instance_role],
