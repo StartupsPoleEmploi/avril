@@ -6,7 +6,7 @@ defmodule VaeWeb.JobSeekerController do
   alias Vae.{JobSeeker}
 
   def admissible(conn, %{"id" => id}) do
-    Repo.get(JobSeeker, id)
+    Repo.get!(JobSeeker, id)
     |> JobSeeker.admissible()
     |> Repo.update!()
 
@@ -16,7 +16,7 @@ defmodule VaeWeb.JobSeekerController do
   end
 
   def inadmissible(conn, %{"id" => id}) do
-    Repo.get(JobSeeker, id)
+    Repo.get!(JobSeeker, id)
     |> JobSeeker.inadmissible()
     |> Repo.update!()
 

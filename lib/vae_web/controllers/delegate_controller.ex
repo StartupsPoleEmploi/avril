@@ -72,7 +72,7 @@ defmodule VaeWeb.DelegateController do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
-      delegate when not is_nil(delegate) <- Repo.get(Delegate, id)
+      delegate when not is_nil(delegate) <- Repo.get!(Delegate, id)
     ) do
       real_administrative_slug = Vae.String.parameterize(delegate.administrative)
       real_city_slug = Vae.String.parameterize(delegate.city)
@@ -88,15 +88,12 @@ defmodule VaeWeb.DelegateController do
         # Metadata is not up-to-date
         redirect(conn, to: Routes.delegate_path(conn, :show, real_administrative_slug, real_city_slug, delegate, conn.query_params))
       end
-    else
-      _error ->
-        raise Ecto.NoResultsError, queryable: Delegate
     end
   end
 
   def update(conn, %{"id" => id} = params) do
     with(
-      delegate when not is_nil(delegate) <- Repo.get(Delegate, Vae.String.to_id(id)),
+      delegate when not is_nil(delegate) <- Repo.get!(Delegate, Vae.String.to_id(id)),
       application <- conn.assigns[:current_application] |> Repo.preload(:delegate),
       true = application.delegate == delegate
     ) do
@@ -108,9 +105,6 @@ defmodule VaeWeb.DelegateController do
       conn
       |> put_flash(level, msg)
       |> redirect(to: Routes.user_application_path(conn, :show, application, %{hash: application.delegate_access_hash}))
-    else
-      _error ->
-        raise Ecto.NoResultsError, queryable: Delegate
     end
   end
 end

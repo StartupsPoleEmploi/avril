@@ -2,8 +2,6 @@ defmodule VaeWeb.CertificationController do
   require Logger
   use VaeWeb, :controller
 
-  action_fallback VaeWeb.FallbackController
-
   alias Vae.{
     Certification,
     Profession,
@@ -75,7 +73,7 @@ defmodule VaeWeb.CertificationController do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
-      certification when not is_nil(certification) <- Repo.get(Certification, id)
+      certification <- Repo.get!(Certification, id)
     ) do
       if certification.slug != slug do
         # Slug is not up-to-date
@@ -111,9 +109,6 @@ defmodule VaeWeb.CertificationController do
           similars: similars
         )
       end
-    else
-      _error ->
-        {:error, :not_found}
     end
   end
 
@@ -144,9 +139,6 @@ defmodule VaeWeb.CertificationController do
 
     Map.merge(filters, %{
       profession: profession
-      # rome: profession.rome,
-      # subcategory: Rome.subcategory(profession.rome),
-      # category: Rome.category(profession.rome)
     })
   end
 
