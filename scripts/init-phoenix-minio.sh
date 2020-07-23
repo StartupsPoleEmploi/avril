@@ -8,5 +8,5 @@ else
 fi
 
 /usr/bin/mc config host list | grep minio:9000 || /usr/bin/mc config host add minio http://minio:9000 $MINIO_ACCESS_KEY $MINIO_SECRET_KEY --api S3v4
-/usr/bin/mc ls minio/$BUCKET_NAME || /usr/bin/mc mb minio/$BUCKET_NAME
+/usr/bin/mc ls minio/$BUCKET_NAME >/dev/null || /usr/bin/mc mb minio/$BUCKET_NAME
 /usr/bin/mc policy set download minio/$BUCKET_NAME
