@@ -11,11 +11,10 @@ defmodule Vae.UserApplication do
     Certification,
     Delegate,
     Meetings.Meeting,
+    Repo,
     Resume,
     User
   }
-
-  alias Vae.Repo
 
   alias __MODULE__
 
@@ -79,26 +78,9 @@ defmodule Vae.UserApplication do
 
   def find_or_create_with_params(%{user_id: user_id, certification_id: certification_id} = params)
       when not is_nil(user_id) and not is_nil(certification_id) do
-    from(a in UserApplication,
-      where:
-        a.user_id == ^user_id and
-          a.certification_id == ^certification_id and
-          is_nil(a.submitted_at)
-    )
-    |> Repo.all()
-    |> case do
-      [] ->
-        Repo.insert(changeset(%__MODULE__{}, params))
-
-      [application | []] ->
-        {:ok, application}
-
-      [h | _t] ->
-        Logger.warn(fn ->
-          "Multiple results found for user: #{user_id} and certification: #{certification_id}"
-        end)
-
-        {:ok, h}
+    case Repo.get_by(UserApplication, user_id: user_id, certification_id: certification_id) do
+      nil -> %UserApplication{} |> changeset(params) |> Repo.insert()
+      a -> {:ok, a}
     end
   end
 
