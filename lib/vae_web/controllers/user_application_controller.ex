@@ -62,6 +62,7 @@ defmodule VaeWeb.UserApplicationController do
       title: title,
       remove_navbar: true,
       remove_footer: true,
+      is_delegate_view: not is_nil(params["delegate_hash"]),
       application: application,
       certification_name: Certification.name(application.certification),
       certifier_name: UserApplication.certifier_name(application),

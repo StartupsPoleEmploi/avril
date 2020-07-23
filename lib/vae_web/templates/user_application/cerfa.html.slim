@@ -1,7 +1,7 @@
 .container.avril-cerfa
   .columns.is-centered
     .column.is-5.is-hidden-print
-      = link("Retour", to: "#", class: "button is-back")
+      = link("Retour", to: (if @is_delegate_view, do: Routes.user_application_path(@conn, :show, @application, delegate_hash: @application.delegate_access_hash), else:  Vae.User.profile_url(@conn, @application)), class: "button is-back")
     .column.is-5.has-text-right
       = link("Télécharger en PDF", to: Routes.user_application_path(@conn, :cerfa, @application, delegate_hash: @application.delegate_access_hash, format: :pdf), class: "button is-primary is-rounded")
   .columns.is-centered
