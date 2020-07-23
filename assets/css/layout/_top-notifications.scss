@@ -6,7 +6,9 @@
     display: none;
   }
   &.cookies {
-    background: no-repeat #feffd5 top right url("/images/cookie.jpg");
+    @include tablet {
+      background: no-repeat #feffd5 top right url("/images/cookie.jpg");
+    }
     color: #947600;
   }
 }
