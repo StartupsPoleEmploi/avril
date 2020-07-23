@@ -35,8 +35,10 @@ services:
       - ${NGINX_PORT:-80}:80
     restart: always
     volumes:
-      - ./nginx/${WHOST:-localhost}.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/configs/${WHOST:-localhost}.conf:/etc/nginx/conf.d/default.conf
       - /var/log/nginx:/var/log/nginx
+      - ./priv/static:/static
+      - ./nginx/error_pages:/errors
   nuxt_booklet:
     command: yarn setup
     env_file:

@@ -5,9 +5,11 @@
         .columns
           .column.is-8 style="padding-top: 0;"
             h1.title.is-1 Nous avons accéléré la VAE
-            p.is-size-5 La VAE (Validation de Acquis de l'Expérience) est un autre moyen d'obtenir un diplôme qui est reconnu de la même façon que les autres diplômes. C'est d'ailleurs plus de 350&nbsp;000 diplômes qui ont été obtenus en France par cette voie-là. Pour vous, nous avons voulu simplifier les démarches et c'est de cette idée simple qu'est né Avril.
-          .column.is-4
-            = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", class: "search-img is-hidden-mobile"
+            p.is-size-5
+              | La VAE (Validation de Acquis de l'Expérience) est un autre moyen d'obtenir un diplôme qui est reconnu de la même façon que les autres diplômes.
+              span.is-hidden-mobile C'est d'ailleurs plus de 350&nbsp;000 diplômes qui ont été obtenus en France par cette voie-là. Pour vous, nous avons voulu simplifier les démarches et c'est de cette idée simple qu'est né Avril.
+          .column.is-4.is-hidden-mobile
+            = img_tag "/images/hero-homepage.png", alt: "Photo de Marie-Cécile", class: "search-img"
         .columns
           .column.is-7-desktop
             = render VaeWeb.ComponentView, "searchbar.html", conn: @conn

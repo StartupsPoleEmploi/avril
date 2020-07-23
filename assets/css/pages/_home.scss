@@ -3,6 +3,9 @@
     h1 {
       font-size: 3.5rem;
       margin-bottom: 1rem;
+      @include mobile {
+        font-size: 2.5rem;
+      }
     }
     img.search-img {
       z-index: 1;
@@ -12,7 +15,7 @@
         float: right;
         height: 13rem;
         transform-origin: right;
-        transform: scale(3) translateX(1rem) translateY(3rem);
+        transform: scale(2.7) translateX(1rem) translateY(3rem);
       }
       @include fullhd {
         transform: scale(3) translateX(1rem) translateY(3rem);

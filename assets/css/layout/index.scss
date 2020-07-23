@@ -14,3 +14,9 @@
     }
   }
 }
+
+.title.is-1 {
+  @include mobile {
+    font-size: 2.2rem;
+  }
+}
