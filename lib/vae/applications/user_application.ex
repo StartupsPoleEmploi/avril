@@ -45,7 +45,7 @@ defmodule Vae.UserApplication do
     timestamps()
   end
 
-  @fields ~w(delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash has_just_been_auto_submitted)a
+  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash has_just_been_auto_submitted)a
 
   def changeset(struct, params \\ %{}) do
     struct
