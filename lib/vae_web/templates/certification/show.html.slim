@@ -1,6 +1,6 @@
 .container
   section.section.is-vertical#header
-    = link("Retour", to: "#", class: "button is-back")
+    = render VaeWeb.ComponentView, "back_button", conn: @conn
 
     h1.title.is-1= Vae.Certification.name(@certification)
     p.subtile

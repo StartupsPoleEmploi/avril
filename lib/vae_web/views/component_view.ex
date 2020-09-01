@@ -1,6 +1,17 @@
 defmodule VaeWeb.ComponentView do
   use VaeWeb, :view
 
+  def render("back_button", %{conn: conn} = params) do
+    referer = case Plug.Conn.get_req_header(conn, "referer") do
+      [hd | _] -> hd
+      _ -> nil
+    end
+    home_page = Routes.root_path(conn, :index)
+    to = params[:to] || referer || params[:default_to] || home_page
+    label = params[:label] || (if URI.parse(to).path === home_page, do: "Retour à l'accueil", else: "Retour")
+    Phoenix.HTML.Link.link(label, to: to, class: "button is-back #{params[:class]}")
+  end
+
   @tracking_config Application.get_env(:vae, :tracking)
 
   def render("analytics", %{conn: conn}) do

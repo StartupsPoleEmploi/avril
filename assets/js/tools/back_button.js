@@ -2,7 +2,7 @@ import $ from 'jquery';
 
 $(() => {
   $('a.is-back').on('click', e => {
-    if (e.target.href === document.referrer || e.target.getAttribute('href') === '#') {
+    if (e.target.href === document.referrer) {
       console.log('Going back');
       const result = history.back();
       e.preventDefault();

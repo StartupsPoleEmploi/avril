@@ -1,9 +1,9 @@
 section.section
   .container
     = if assigns[:administrative] do
-      = link("Régions", to: Routes.delegate_path(@conn, :geo), class: "button is-back")
+      = render VaeWeb.ComponentView, "back_button", conn: @conn, label: "Régions", default_to: Routes.delegate_path(@conn, :geo)
     - else
-      = link("Accueil", to: Routes.root_path(@conn, :index), class: "button is-back")
+      = render VaeWeb.ComponentView, "back_button", conn: @conn
     .results.has-text-centered
       h1.title.is-1
         | Explorer les certificateurs VAE

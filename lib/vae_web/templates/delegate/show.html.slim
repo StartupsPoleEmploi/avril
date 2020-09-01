@@ -1,6 +1,7 @@
 section.section
   .container
-    = link("Certificateurs à #{@delegate.city}, #{@delegate.administrative}", to: Routes.delegate_path(@conn, :index, Vae.String.parameterize(@delegate.administrative), Vae.String.parameterize(@delegate.city)), class: "button is-back")
+    = render VaeWeb.ComponentView, "back_button", conn: @conn, label: "Certificateurs à #{@delegate.city}, #{@delegate.administrative}", to: Routes.delegate_path(@conn, :index, Vae.String.parameterize(@delegate.administrative), Vae.String.parameterize(@delegate.city))
+
     .has-text-centered
       h2.subtitle Démarrez votre VAE avec le certificateur :
       h1.title.is-1= @delegate.name

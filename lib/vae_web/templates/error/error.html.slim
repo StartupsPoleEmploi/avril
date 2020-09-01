@@ -10,5 +10,4 @@
               = if assigns[:code] do
                 h1.title.is-1= @code
               h3.subtitle.is-3= @message || "Une erreur s'est produite"
-              = link "Retour vers l'accueil", to: Routes.root_path(@conn, :index), class: "button is-primary is-back is-rounded"
-
+              = render VaeWeb.ComponentView, "back_button", conn: @conn, class: "is-primary"

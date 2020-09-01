@@ -5,7 +5,7 @@
     = if @level do
       = link("Retirer le filtre", to: Phoenix.Controller.current_path(@conn, Map.drop(@params, ["level"])), class: "button is-back")
     - else
-      = link("Recherche", to: Routes.root_path(@conn, :index), class: "button is-back")
+      = render VaeWeb.ComponentView, "back_button", conn: @conn, label: "Recherche"
     = if assigns[:rome] do
       = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
     = if filter_object do
