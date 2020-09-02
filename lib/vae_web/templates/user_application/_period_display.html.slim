@@ -1,0 +1,14 @@
+span
+  | Du #{Vae.Date.format_iso(@period.start_date)}
+  = if @period.end_date do
+    |  au #{Vae.Date.format_iso(@period.end_date)}
+  - else
+    |  à aujourd'hui
+  = if @period.week_hours_duration do
+    '  :
+    strong #{@period.week_hours_duration} h/semaine
+  '  soit
+  strong
+    = @period.total_hours || (Vae.Date.workdays_between(@period.start_date, @period.end_date) * @period.week_hours_duration |> div(5))
+    |  heures
+  |  en cumulé.

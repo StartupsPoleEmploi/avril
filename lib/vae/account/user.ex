@@ -215,6 +215,8 @@ defmodule Vae.User do
   def update_user_email_changeset(changeset, email) do
     changeset
     |> change(%{email: email})
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
   end
 

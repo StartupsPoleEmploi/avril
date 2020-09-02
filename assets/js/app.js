@@ -22,7 +22,6 @@ $(() => {
   });
 
   $('nav.navbar').on('click', 'a.navbar-burger.burger', e => {
-    console.log(e);
     $(e.delegateTarget).find('.navbar-menu').toggleClass('is-active');
     $(e.target).toggleClass('is-active');
   });

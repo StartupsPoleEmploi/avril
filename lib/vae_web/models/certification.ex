@@ -2,9 +2,10 @@ defmodule Vae.Certification do
   use VaeWeb, :model
 
   alias __MODULE__
-  alias Vae.{UserApplication, CertificationDelegate, Certifier, Delegate, Repo, Rome}
+  alias Vae.{UserApplication, Certifier, Delegate, Repo, Rome}
 
   schema "certifications" do
+    field(:is_active, :boolean)
     field(:slug, :string)
     field(:label, :string)
     field(:acronym, :string)
@@ -28,21 +29,17 @@ defmodule Vae.Certification do
       on_delete: :delete_all
     )
 
+    many_to_many(
+      :delegates,
+      Delegate,
+      join_through: "certifications_delegates",
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
+
     has_many(
       :professions,
       through: [:romes, :professions]
-    )
-
-    has_many(
-      :certifications_delegates,
-      CertificationDelegate,
-      on_delete: :delete_all,
-      on_replace: :delete
-    )
-
-    has_many(
-      :delegates,
-      through: [:certifications_delegates, :delegate]
     )
 
     has_many(:applications, UserApplication, on_replace: :nilify)
@@ -61,6 +58,7 @@ defmodule Vae.Certification do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params |> Map.update(:rncp_id, nil, fn e -> to_string(e) end), [
+      :is_active,
       :label,
       :acronym,
       :level,
@@ -74,15 +72,6 @@ defmodule Vae.Certification do
     |> add_certifiers(params)
     |> add_delegates(params)
   end
-
-  # def get(nil), do: nil
-  # def get(id), do: Repo.get(Certification, id)
-
-  # def get_certification(%{"rncp_id" => rncp_id}), do: Repo.get_by(Certification, rncp_id: rncp_id)
-
-  # def get_certification(nil), do: nil
-
-  # def get_certification(certification_id), do: Repo.get(Certification, certification_id)
 
   def find_by_acronym_and_label(certification_label) do
     from(
@@ -118,40 +107,33 @@ defmodule Vae.Certification do
     |> Repo.all()
   end
 
-  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers}} = changeset, _params) do
-    certifications_delegates =
-      Enum.reduce(certifiers, [], fn
-        %{action: :update, data: data}, acc ->
-          [
-            Delegate.from_certifier(data.id)
-            |> Repo.all()
-            |> Enum.map(fn delegate ->
-              Ecto.build_assoc(changeset.data, :certifications_delegates, delegate_id: delegate.id)
-            end)
-            | acc
-          ]
-
-        _, acc ->
-          acc
+  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers_changes}} = changeset, _params) do
+    delegates =
+      Enum.flat_map(certifiers_changes, fn
+        %{action: :update, data: certifiers} ->
+          %Certifier{delegates: delegates} = Repo.preload(certifiers, :delegates)
+          delegates
+        _ -> []
       end)
 
-    put_assoc(
-      changeset,
-      :certifications_delegates,
-      List.flatten(certifications_delegates)
-    )
+    put_assoc(changeset, :delegates, delegates)
   end
 
-  def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
-    changeset
-    |> put_assoc(
-      :certifications_delegates,
-      certifications_delegates
-      |> ensure_not_nil
-      |> transform_destroy
-      |> Enum.uniq_by(& &1.delegate_id)
-    )
-  end
+  # def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
+  #   changeset
+  #   |> put_assoc(
+  #     :certifications_delegates,
+  #     certifications_delegates
+  #     |> ensure_not_nil
+  #     |> transform_destroy
+  #     |> Enum.uniq_by(& &1.delegate_id)
+  #   )
+  # end
+
+  # defp ensure_not_nil(certifications_delegates) do
+  #   certifications_delegates
+  #   |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
+  # end
 
   def add_delegates(changeset, _no_delegates_param), do: changeset
 
@@ -177,11 +159,6 @@ defmodule Vae.Certification do
       where: r.code == ^rome
     )
     |> Repo.all()
-  end
-
-  defp ensure_not_nil(certifications_delegates) do
-    certifications_delegates
-    |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
   end
 
   defp transform_destroy(collection_with_destroy) do

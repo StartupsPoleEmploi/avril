@@ -8,6 +8,7 @@ Une fois connecté sur le serveur, voici les différents checks et actions possi
   - [Avec `docker`](#avec-docker)
   - [Avec `docker-compose`](#avec-docker-compose)
 - [Si ça n'est pas le cas ?](#si-%C3%A7a-nest-pas-le-cas-)
+  - [Redémarrage de tous les services qui sont down:](#red%C3%A9marrage-de-tous-les-services-qui-sont-down)
   - [Simple redémarrage d'un service](#simple-red%C3%A9marrage-dun-service)
   - [Cas particulier des services web](#cas-particulier-des-services-web)
   - [Voir ce qui se passe](#voir-ce-qui-se-passe)
@@ -24,10 +25,12 @@ Dans n'importe quel `cwd` de la machine, il est possible de vérifier qu'Avril t
 ```
 $ docker ps -a
 CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                  PORTS                                      NAMES
-9bef07f8b6XX        avril_phoenix              "/app/scripts/init-p…"   5 hours ago         Up 4 hours (healthy)                                               avril_phoenix_X
-0198632e02XX        node:latest                "docker-entrypoint.s…"   25 hours ago        Up 25 hours (healthy)                                              avril_nuxt_X
-149d549a94XX        postgres:11.6-alpine       "docker-entrypoint.s…"   5 days ago          Up 5 days (healthy)     5432/tcp                                   avril_postgres_1
-fd81355842XX        nginx:latest               "nginx -g 'daemon of…"   5 days ago          Up 4 hours (healthy)    0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   avril_nginx_1
+fa522b8e7cXX        nginx:latest               "nginx -g 'daemon of…"   2 days ago          Up 16 hours (healthy)   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   avril_nginx_1
+840ff0e103XX        avril_phoenix              "/app/scripts/init-p…"   2 hours ago         Up 2 hours (healthy)                                               avril_phoenix_9
+500edced31XX        node:latest                "docker-entrypoint.s…"   2 days ago          Up 16 hours (healthy)                                              avril_nuxt_booklet_17
+aa15368d39XX        node:latest                "docker-entrypoint.s…"   2 days ago          Up 16 hours (healthy)                                              avril_nuxt_profile_23
+279b16daecXX        postgres:11.6-alpine       "docker-entrypoint.s…"   2 days ago          Up 16 hours (healthy)   5432/tcp                                   avril_postgres_1
+48ef1ec652XX        minio/minio                "/usr/bin/docker-ent…"   2 days ago          Up 16 hours (healthy)   9000/tcp                                   avril_minio_1
 # d'autres containers peuvent aussi tourner
 ```
 
@@ -40,12 +43,14 @@ Toutefois, il est préférable de monitorer depuis le répertoire où `docker-co
 ```
 $ cd /home/docker/avril
 $ docker-compose ps
-      Name                    Command                  State                        Ports
------------------------------------------------------------------------------------------------------------
-avril_nginx_1      nginx -g daemon off;             Up (healthy)   0.0.0.0:443->443/tcp, 0.0.0.0:80->80/tcp
-avril_nuxt_5       docker-entrypoint.sh yarn  ...   Up (healthy)
-avril_phoenix_9    /app/scripts/init-phoenix.sh     Up (healthy)
-avril_postgres_1   docker-entrypoint.sh postgres    Up (healthy)   5432/tcp
+        Name                       Command                  State                        Ports
+----------------------------------------------------------------------------------------------------------------
+avril_nginx_1           nginx -g daemon off;             Up (healthy)   0.0.0.0:443->443/tcp, 0.0.0.0:80->80/tcp
+avril_phoenix_9         /app/scripts/init-phoenix.sh     Up (healthy)
+avril_nuxt_booklet_17   docker-entrypoint.sh yarn  ...   Up (healthy)
+avril_nuxt_profile_23   docker-entrypoint.sh yarn  ...   Up (healthy)
+avril_postgres_1        docker-entrypoint.sh postgres    Up (healthy)   5432/tcp
+avril_minio_1           /usr/bin/docker-entrypoint ...   Up (healthy)   9000/tcp
 ```
 
 Idem, les containers doivent avoir pour `State` `Up (healthy)`.
@@ -54,14 +59,29 @@ Toutes les commandes `docker-compose` devront être exécutées depuis ce dossie
 
 ## Si ça n'est pas le cas ?
 
+### Redémarrage de tous les services qui sont down:
+
+```
+$ docker-compose up -d
+```
+
+Pour suivre le redémarrage, il est suggéré de lancer les logs dans la foulée, comme expliqué ci-dessous.
+
+
 ### Simple redémarrage d'un service
 
 Chaque container peut être relancé avec les commandes suivantes :
 
-- `docker-compose restart <SERVICE_NAME>`: la liste des services est disponible dans [`docker-compose.yml`](../docker-compose.yml). Ex: `docker-compose restart postgres` (et non `avril_postgres_1`).
-- Ou bien avec docker `docker restart <CONTAINER_ID>`. Ex: `docker restart fd81355842XX`
+- `docker-compose up -d <SERVICE_NAME>` qui crée et démarre une nouvelle instance. Ou bien :
+- `docker-compose restart <SERVICE_NAME>` qui redémarre la même instance. Attention dans ce cas, les variables d'environnement ne sont pas mises à jour par exemple.
+
+La liste des services est disponible dans [`docker-compose.yml`](../docker-compose.yml). Ex: `docker-compose restart phoenix` (et non `avril_phoenix_9`).
+
+- Ou bien avec docker `docker restart <CONTAINER_ID>`. Ex: `docker restart fd81355842XX` (après avoir fait `docker ps -a` pour avoir l'ID)
 
 Le container relancé va d'abord être en état `Starting` avant de passer normalement à `Up (healthy)` à nouveau.
+
+Pour suivre le redémarrage, il est suggéré de lancer les logs dans la foulée, comme expliqué ci-dessous.
 
 ### Cas particulier des services web
 
@@ -71,7 +91,9 @@ Plutôt que de les `restart` simplement, ce qui fonctionnerait mais entrainerait
 
 Pour cela la commande est (depuis `/home/docker/avril`):
 
-`./scripts/utils/docker_update <SERVICE_NAME>`. Ex: `./scripts/utils/docker_update phoenix`
+`./scripts/utils/deploy_local.sh <REPO_NAME>`. Ex: `./scripts/utils/docker_update phoenix`
+
+Ou bien depuis la machine distante : `./scripts/utils/deploy_remote.sh <REPO_NAME>`
 
 Plus de détails sur le fonctionnement du script est disponible [ici](./HOSTING.md#rolling-update).
 
@@ -90,6 +112,9 @@ Pour un service en particulier :
 ```
 docker-compose logs --tail=100 -f <SERVICE_NAME>
 ```
+
+> La commande est disponible dans le script suivant depuis sa machine distante : [`logs_remote.sh`](/scripts/utils/logs_remote.sh).
+
 
 #### Erreur de compilation
 
@@ -111,6 +136,8 @@ Ex: les fichiers du certificat SSL d'Avril qui ne sont pas au bon endroit.
 
 #### Restore un backup de la BDD
 
+**Attention, si vous décidez d'effectuer cette opération sur la base de donnée de production, les données sont écrasées. A manipuler avec précaution.**
+
 Pour générer un backup de la BDD (à supposer que le service `postgres`) soit `Up`, la commande est :
 
 ```
@@ -130,6 +157,9 @@ Plusieurs cas de figure:
 ```
 docker-compose exec postgres bash -c 'pg_restore --verbose --clean --no-acl --no-owner -h $POSTGRES_HOST -d $POSTGRES_DB -U $POSTGRES_USER /pg-dump/latest.dump'
 ```
+
+> La commande est disponible dans le script suivant : [`backup_restore.sh`](/scripts/utils/backup_restore.sh).
+
 
 ##### 2. Le container `postgres` est `exited` mais `docker-compose run` fonctionne
 

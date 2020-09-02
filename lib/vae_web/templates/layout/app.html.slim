@@ -7,10 +7,11 @@
     = if assigns[:is_landing] do
       section.section
         .container
-          = render VaeWeb.ComponentView, "back_button.html", conn: @conn
+          = render VaeWeb.ComponentView, "back_button", conn: @conn
           .columns
             .column.is-8.is-offset-2.content
               = render @view_module, @view_template, assigns
     - else
       = render @view_module, @view_template, assigns
-  = render VaeWeb.ComponentView, "footer.html", conn: @conn
+  = if !assigns[:remove_footer] do
+    = render VaeWeb.ComponentView, "footer.html", conn: @conn

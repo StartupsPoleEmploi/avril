@@ -7,10 +7,7 @@ defmodule VaeWeb.Router do
 
   use Pow.Extension.Phoenix.Router,
     otp_app: :vae,
-    extensions: [
-      # PowEmailConfirmation,
-      PowResetPassword
-    ]
+    extensions: [PowResetPassword]
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -26,7 +23,7 @@ defmodule VaeWeb.Router do
       error_handler: VaeWeb.Plugs.ErrorHandlers.Browser
   end
 
-  pipeline :protected do
+  pipeline :authenticated do
     plug(Pow.Plug.RequireAuthenticated,
       error_handler: VaeWeb.Plugs.ErrorHandlers.Browser
     )
@@ -34,38 +31,17 @@ defmodule VaeWeb.Router do
 
   pipeline :admin do
     plug(VaeWeb.Plugs.CheckAdmin)
+    plug(VaeWeb.Plugs.RemoveOverrideUser)
   end
 
   pipeline :accepts_json do
     plug(:accepts, ["json"])
   end
 
-  pipeline :api_protected_login_only do
-    plug(VaeWeb.Plugs.ApiProtected)
-  end
-
-  pipeline :api_protected_login_or_server do
-    plug(VaeWeb.Plugs.ApiProtected, allow_server_side: true)
-  end
-
-  pipeline :maybe_set_current_application do
-    plug(
-      VaeWeb.Plugs.ApplicationAccess,
-      find_with_hash: true,
-      optional: true,
+  pipeline :api_authenticated do
+    plug(Pow.Plug.RequireAuthenticated,
       error_handler: VaeWeb.Plugs.ErrorHandlers.API
     )
-  end
-
-  pipeline :set_current_application do
-    plug(
-      VaeWeb.Plugs.ApplicationAccess,
-      find_with_hash: true,
-      error_handler: VaeWeb.Plugs.ErrorHandlers.API
-    )
-  end
-
-  pipeline :set_graphql_context do
     plug(VaeWeb.Plugs.AddGraphqlContext)
   end
 
@@ -93,11 +69,10 @@ defmodule VaeWeb.Router do
     post("/close-app-status", VaeWeb.PageController, :close_status)
     get("/stats", VaeWeb.PageController, :stats)
 
-    # Basic navigation
+    # Public navigation
     resources("/rome", VaeWeb.RomeController, only: [:index, :show])
     get("/certificateurs", VaeWeb.DelegateController, :geo)
     get("/certificateurs/:administrative", VaeWeb.DelegateController, :geo)
-
     resources("/certificateurs/:administrative/:city", VaeWeb.DelegateController,
       only: [:index, :show, :update]
     )
@@ -113,14 +88,15 @@ defmodule VaeWeb.Router do
     get("/:provider/callback", VaeWeb.AuthController, :callback)
     get("/:provider/redirect", VaeWeb.AuthController, :save_session_and_redirect)
 
-    # Loggued in applications
-    resources("/candidatures", VaeWeb.UserApplicationController, only: [:index, :show])
+    # Delegate applications views
+    resources("/candidatures", VaeWeb.UserApplicationController, only: [:show])
+    get("/candidatures/:id/cerfa", VaeWeb.UserApplicationController, :cerfa)
 
+    # Mailing link redirection
     get("/candidatures/:id/admissible", VaeWeb.UserApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", VaeWeb.UserApplicationController, :inadmissible)
 
-    # Mailing link redirection
-    resources("/candidats", VaeWeb.JobSeekerController, only: [:create])
+    # Still used?
     get("/candidats/:id/admissible", VaeWeb.JobSeekerController, :admissible)
     get("/candidats/:id/inadmissible", VaeWeb.JobSeekerController, :inadmissible)
 
@@ -140,7 +116,6 @@ defmodule VaeWeb.Router do
     post("/signup", RegistrationController, :create, as: :signup)
     get("/login", SessionController, :new, as: :login)
     post("/login", SessionController, :create, as: :login)
-
     resources("/reset-password", ResetPasswordController,
       as: :reset_password,
       only: [:new, :create, :edit, :update]
@@ -148,7 +123,7 @@ defmodule VaeWeb.Router do
   end
 
   scope "/", VaeWeb do
-    pipe_through [:browser, :protected]
+    pipe_through [:browser, :authenticated]
 
     delete("/logout", SessionController, :delete, as: :logout)
     # For nuxt_profile
@@ -157,15 +132,15 @@ defmodule VaeWeb.Router do
 
   # Admin
   scope "/admin", ExAdmin do
-    pipe_through([:browser, :protected, :admin])
+    pipe_through([:browser, :authenticated, :admin])
     get("/sql", ApiController, :sql)
     get("/status", ApiController, :get_status)
     post("/status", ApiController, :put_status)
     delete("/status", ApiController, :delete_status)
-    put("/set-current-user/:id", ApiController, :set_current_user)
     admin_routes()
   end
 
+  # API
   scope "/" do
     pipe_through [:accepts_json]
     post("/mail_events", VaeWeb.MailEventsController, :new_event)
@@ -174,9 +149,7 @@ defmodule VaeWeb.Router do
   scope "/api" do
     pipe_through [
       :accepts_json,
-      :api_protected_login_or_server,
-      :maybe_set_current_application,
-      :set_graphql_context
+      :api_authenticated
     ]
 
     forward "/v2", Absinthe.Plug,
@@ -189,18 +162,6 @@ defmodule VaeWeb.Router do
       before_send: {__MODULE__, :logout?},
       interface: :playground,
       json_codec: Jason
-  end
-
-  # deprecated: should be moved to Absinthe
-  scope "/api" do
-    pipe_through([
-      :accepts_json,
-      # :api_protected_login_or_server,
-      :set_current_application
-    ])
-
-    get("/booklet", VaeWeb.ApiController, :get_booklet)
-    put("/booklet", VaeWeb.ApiController, :set_booklet)
   end
 
   def logout?(conn, %Absinthe.Blueprint{} = blueprint) do

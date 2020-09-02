@@ -82,7 +82,7 @@ defmodule VaeWeb.Resolvers.Application do
       application <- Applications.get_application_from_id_and_user_id(application_id, user.id),
       {:ok, registered_application} <- Applications.register_to_a_meeting(application, meeting_id)
     ) do
-      {:ok, registered_application}
+      VaeWeb.Emails.send_user_meeting_confirmation(registered_application)
     else
       {:error, %Ecto.Changeset{} = changeset} ->
         error_response(@register_meeting_error, changeset)

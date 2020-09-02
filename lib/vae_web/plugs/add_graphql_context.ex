@@ -14,7 +14,7 @@ defmodule VaeWeb.Plugs.AddGraphqlContext do
   end
 
   defp get_user(conn) do
-    current_user = 
+    current_user =
       if conn.assigns[:current_application] do
         Vae.Repo.preload(conn.assigns[:current_application], :user).user
       else
@@ -23,10 +23,10 @@ defmodule VaeWeb.Plugs.AddGraphqlContext do
         end
       end
 
-    user_id = Plug.Conn.get_session(conn, :admin_current_user_id)
+    user_id = Plug.Conn.get_session(conn, Application.get_env(:ex_admin, :override_user_id_session_key))
     if user_id && current_user && current_user.is_admin do
       Vae.Account.get_user(user_id)
-    else 
+    else
       current_user
     end
   end

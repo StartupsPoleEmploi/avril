@@ -11,7 +11,7 @@ defmodule VaeWeb.RomeController do
 
   def show(conn, %{"id" => id} = _params) do
     [code, slug] = String.split(id, "-", parts: 2)
-    rome = Repo.get_by(Rome, code: code)
+    rome = Repo.get_by!(Rome, code: code)
 
     cond do
       rome.slug != slug ->

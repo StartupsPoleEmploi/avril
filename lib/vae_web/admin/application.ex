@@ -8,6 +8,8 @@ defmodule Vae.ExAdmin.UserApplication do
   require Ecto.Query
 
   register_resource Vae.UserApplication do
+    action_items except: [:new, :create]
+
     index do
       selectable_column()
       column(:id)
@@ -38,32 +40,12 @@ defmodule Vae.ExAdmin.UserApplication do
       action_item_link("View Delegate Application", href: href, target: "_blank")
     end)
 
-    # action_item(:show, fn id ->
-    #   application = Vae.Repo.get(Vae.UserApplication, id)
-
-    #   if !application.submitted_at do
-    #     href = VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :update, application)
-    #     action_item_link("Submit Application", href: href, "data-method": :put)
-    #   end
-    # end)
-
-    action_item(:show, fn id ->
-      application = Vae.Repo.get(Vae.UserApplication, id)
-
-      if application.booklet_1 do
-        action_item_link("Fill Booklet",
-          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application),
-          target: "_blank"
-        )
-      end
-    end)
-
     action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
 
       if application.booklet_1 do
         action_item_link("Check CERFA",
-          href: Vae.UserApplication.booklet_url(VaeWeb.Endpoint, application, [path: "/cerfa", delegate_mode: true]),
+          href: VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :cerfa, application, delegate_hash: application.delegate_access_hash),
           target: "_blank"
         )
       end
@@ -95,7 +77,10 @@ defmodule Vae.ExAdmin.UserApplication do
 
     form application do
       inputs do
-        input(application, :user, collection: [application.user])
+        application = Repo.preload(application, :user)
+        if application.user do
+          input(application, :user, collection: [application.user])
+        end
         input(application, :certification, collection: Repo.all(Certification))
         input(application, :delegate, collection: Repo.all(Delegate))
         input(application, :submitted_at)
@@ -105,6 +90,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
     csv do
       column(:id)
+      column(:url, fn a -> if a.submitted_at, do: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash) end)
       column(:user@first_name, fn a -> a.user.first_name end)
       column(:user@last_name, fn a -> a.user.last_name end)
       # column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
@@ -130,7 +116,7 @@ defmodule Vae.ExAdmin.UserApplication do
       column(:booklet_1@completed_at, fn a -> a.booklet_1 && a.booklet_1.completed_at end)
     end
 
-    filter([:meeting, :booklet_1, :booklet_hash, :resumes])
+    filter([:meeting, :booklet_1, :booklet_hash])
     filter(:certification, order_by: [:acronym, :label])
     filter(:delegate, order_by: :name)
     filter(:certifiers, order_by: :name)

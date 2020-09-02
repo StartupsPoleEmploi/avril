@@ -13,13 +13,13 @@ defmodule VaeWeb.ResetPasswordController do
     conn
     |> PowResetPassword.Plug.create_reset_token(user_params)
     |> case do
-      {:ok, %{token: token, user: user}, conn} ->
+      {:ok, %{token: token, user: user}, conn} when not is_nil(user) ->
         VaeWeb.UserEmail.reset_password(user, token)
         |> VaeWeb.Mailer.send()
 
         redirect_to_home(conn)
 
-      {:error, _error_changeset, conn} ->
+      _other ->
         redirect_to_home(conn)
     end
   end

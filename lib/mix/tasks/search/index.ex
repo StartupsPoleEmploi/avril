@@ -24,7 +24,8 @@ defmodule Mix.Tasks.Search.Index do
 
   def run(args) do
     # ensure_started(Repo, [])
-    {:ok, _started} = Application.ensure_all_started(:httpoison)
+    # {:ok, _started} = Application.ensure_all_started(:httpoison)
+    {:ok, _} = Application.ensure_all_started(:vae)
 
     with {parsed, _argv, []} <- option_parser(args),
          {:ok, models} <- get_models(parsed) do

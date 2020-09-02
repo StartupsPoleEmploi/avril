@@ -4,16 +4,7 @@ defmodule VaeWeb.DelegateController do
   alias Vae.Delegate
 
   plug VaeWeb.Plugs.ApplicationAccess,
-       [find_with_hash: true] when action in [:update]
-
-  filterable do
-    # @options param: :organismes
-    # filter certifier(query, value, _conn) do
-    #   query
-    #   |> join(:inner, [c], d in assoc(c, :certifiers))
-    #   |> where([d, c], c.id == ^Vae.String.to_id(value))
-    # end
-  end
+       [find_with_hash: :delegate_access_hash] when action in [:update]
 
   def geo(conn, %{"administrative" => administrative_slug}) do
     cities = Delegate
@@ -62,17 +53,14 @@ defmodule VaeWeb.DelegateController do
     first_result = Repo.all(query |> limit(1)) |> List.first()
 
     if first_result do
-      with {:ok, filtered_query, filter_values} <- apply_filters(query, conn),
-           page <- Repo.paginate(filtered_query, params),
-           meta <- filter_values do
+      with page <- Repo.paginate(query, params) do
         render(conn, "index.html",
           administrative_slug: administrative_slug,
           city_slug: city_slug,
           administrative: first_result.administrative,
           city: first_result.city,
           delegates: page.entries,
-          page: page,
-          meta: meta
+          page: page
         )
       end
     else
@@ -84,7 +72,7 @@ defmodule VaeWeb.DelegateController do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
-      delegate when not is_nil(delegate) <- Repo.get(Delegate, id)
+      delegate when not is_nil(delegate) <- Repo.get!(Delegate, id)
     ) do
       real_administrative_slug = Vae.String.parameterize(delegate.administrative)
       real_city_slug = Vae.String.parameterize(delegate.city)
@@ -100,15 +88,12 @@ defmodule VaeWeb.DelegateController do
         # Metadata is not up-to-date
         redirect(conn, to: Routes.delegate_path(conn, :show, real_administrative_slug, real_city_slug, delegate, conn.query_params))
       end
-    else
-      _error ->
-        raise Ecto.NoResultsError, queryable: Delegate
     end
   end
 
   def update(conn, %{"id" => id} = params) do
     with(
-      delegate when not is_nil(delegate) <- Repo.get(Delegate, Vae.String.to_id(id)),
+      delegate when not is_nil(delegate) <- Repo.get!(Delegate, Vae.String.to_id(id)),
       application <- conn.assigns[:current_application] |> Repo.preload(:delegate),
       true = application.delegate == delegate
     ) do
@@ -120,9 +105,6 @@ defmodule VaeWeb.DelegateController do
       conn
       |> put_flash(level, msg)
       |> redirect(to: Routes.user_application_path(conn, :show, application, %{hash: application.delegate_access_hash}))
-    else
-      _error ->
-        raise Ecto.NoResultsError, queryable: Delegate
     end
   end
 end

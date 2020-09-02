@@ -11,11 +11,10 @@ defmodule Vae.UserApplication do
     Certification,
     Delegate,
     Meeting,
+    Repo,
     Resume,
     User
   }
-
-  alias Vae.Repo
 
   alias __MODULE__
 
@@ -60,7 +59,8 @@ defmodule Vae.UserApplication do
     |> put_assoc(:delegate, delegate)
   end
 
-  def attach_resume_changeset(struct, %Resume{} = resume) do
+  def attach_resume_changeset(struct, resume_file) do
+    resume = Resume.attach_resume_to_application(struct, resume_file)
     struct
     |> change()
     |> put_assoc(:resumes, [resume | struct.resumes])
@@ -78,26 +78,9 @@ defmodule Vae.UserApplication do
 
   def find_or_create_with_params(%{user_id: user_id, certification_id: certification_id} = params)
       when not is_nil(user_id) and not is_nil(certification_id) do
-    from(a in UserApplication,
-      where:
-        a.user_id == ^user_id and
-          a.certification_id == ^certification_id and
-          is_nil(a.submitted_at)
-    )
-    |> Repo.all()
-    |> case do
-      [] ->
-        Repo.insert(changeset(%__MODULE__{}, params))
-
-      [application | []] ->
-        {:ok, application}
-
-      [h | _t] ->
-        Logger.warn(fn ->
-          "Multiple results found for user: #{user_id} and certification: #{certification_id}"
-        end)
-
-        {:ok, h}
+    case Repo.get_by(UserApplication, user_id: user_id, certification_id: certification_id) do
+      nil -> %UserApplication{} |> changeset(params) |> Repo.insert()
+      a -> {:ok, a}
     end
   end
 
@@ -124,6 +107,7 @@ defmodule Vae.UserApplication do
     })
   end
 
+  # Deprecated
   def submit(application, auto_submitted \\ false) do
     application = Repo.preload(application, [:user, :delegate])
 
@@ -239,6 +223,17 @@ defmodule Vae.UserApplication do
     end
   end
 
+  def slug(%UserApplication{} = application) do
+    application = Repo.preload(application, :certification)
+    certification_slug = case application.certification do
+      %Certification{slug: slug} when not is_nil(slug) -> slug
+      _ -> nil
+    end
+    [application.id, certification_slug]
+    |> Enum.filter(&(not is_nil(&1)))
+    |> Enum.join("-")
+  end
+
   def booklet_url(endpoint, application, opts \\ []) do
     application = application |> Repo.preload(:delegate)
 
@@ -257,11 +252,10 @@ defmodule Vae.UserApplication do
     end
 
     %URI{
-      path: "#{System.get_env("NUXT_BOOKLET_PATH")}#{opts[:path] || "/"}",
+      path: "#{System.get_env("NUXT_BOOKLET_PATH")}/#{slug(application)}#{opts[:path] || "/"}",
       query:
         if(opts[:delegate_mode],
-          do: "delegate_hash=#{application.delegate_access_hash}",
-          else: "hash=#{application.booklet_hash}"
+          do: "delegate_hash=#{application.delegate_access_hash}"
         )
     }
     |> Vae.URI.to_absolute_string(endpoint)

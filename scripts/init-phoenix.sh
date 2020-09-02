@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 {
   ./scripts/init-phoenix-frontend.sh &
   ./scripts/init-phoenix-backend.sh &
-  # ./scripts/init-phoenix-minio.sh &
+  ./scripts/init-phoenix-minio.sh &
   ./scripts/wait-for-postgres.sh &
 }
 

@@ -2,41 +2,10 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplications.Polls, Delegate, User, UserApplication, Repo}
-
+  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, UserApplication, Repo}
+  alias Vae.Booklet.{Cerfa, Education}
   plug VaeWeb.Plugs.ApplicationAccess,
-       [verify_with_hash: :delegate_access_hash] when action in [:show]
-
-  def index(conn, params) do
-    with(
-      current_user when not is_nil(current_user) <-
-        Pow.Plug.current_user(conn),
-      current_application when not is_nil(current_application) <-
-        Repo.preload(current_user, :applications).applications
-        |> Enum.find(fn a -> a.booklet_hash == params["hash"] end)
-    ) do
-      case params["msg"] do
-        "request_failed" ->
-          put_flash(
-            conn,
-            :danger,
-            "Nous n'avons pas réussi à récupérer vos données. Merci de réessayer plus tard."
-          )
-
-        "not_allowed" ->
-          put_flash(conn, :danger, "Vous n'avez pas accès.")
-
-        _ ->
-          conn
-      end
-      |> redirect(external: User.profile_url(conn, current_application))
-    else
-      _error ->
-        conn
-        |> put_flash(:danger, "Vous n'avez pas accès")
-        |> redirect(to: Routes.root_path(conn, :index))
-    end
-  end
+       [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
 
   def show(conn, %{"hash" => hash}) when not is_nil(hash) do
     redirect(conn,
@@ -47,7 +16,7 @@ defmodule VaeWeb.UserApplicationController do
     )
   end
 
-  def show(conn, %{"delegate_hash" => hash}) when not is_nil(hash) do
+  def show(conn, _params) do
     application =
       conn.assigns[:current_application]
       |> Repo.preload([
@@ -68,8 +37,8 @@ defmodule VaeWeb.UserApplicationController do
 
     render(conn, "show.html", %{
       title:
-        "Candidature VAE de #{application.user.name} pour un diplôme de #{
-          application.certification.label
+        "Candidature VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
+          Certification.name(application.certification)
         }",
       remove_navbar: true,
       application: application,
@@ -81,11 +50,47 @@ defmodule VaeWeb.UserApplicationController do
     })
   end
 
-  def show(conn, _params) do
-    if Pow.Plug.current_user(conn) == conn.assigns[:current_application].user do
-      redirect(conn, external: Vae.User.profile_url(conn, conn.assigns[:current_application]))
+  def cerfa(conn, params) do
+    application =
+      conn.assigns[:current_application]
+      |> Repo.preload([
+        :user,
+        [delegate: [:process, :certifiers]],
+        :certification,
+        :resumes
+      ])
+    booklet = application.booklet_1 || %Cerfa{}
+    title = "Recevabilité VAE de #{Identity.fullname(application.user.identity)} pour un diplôme de #{
+      Certification.name(application.certification)
+    }"
+    assigns = %{
+      conn: conn,
+      title: title,
+      remove_navbar: true,
+      remove_footer: true,
+      is_delegate_view: not is_nil(params["delegate_hash"]),
+      application: application,
+      certification_name: Certification.name(application.certification),
+      certifier_name: UserApplication.certifier_name(application),
+      identity: application.user.identity,
+      booklet: booklet,
+      education: booklet.education || %Education{},
+      experiences: booklet.experiences
+    }
+
+    if params["format"] == "pdf" do
+      file_path = Phoenix.View.render_to_string(VaeWeb.UserApplicationView, "cerfa.html", Map.merge(assigns, %{
+        conn: conn,
+        layout: {VaeWeb.LayoutView, "pdf.html"},
+      }))
+      |> PdfGenerator.generate!(shell_params: ["--encoding", "UTF8"])
+
+      conn
+      |> put_resp_content_type("application/pdf")
+      |> put_resp_header("content-disposition", "attachment; filename=#{Vae.String.parameterize(title, " ")}.pdf")
+      |> Plug.Conn.send_file(:ok, file_path)
     else
-      redirect(conn, external: Vae.User.profile_url(conn))
+      render(conn, "cerfa.html", assigns)
     end
   end
 

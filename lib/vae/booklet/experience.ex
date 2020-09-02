@@ -2,6 +2,7 @@ defmodule Vae.Booklet.Experience do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias __MODULE__
   alias Vae.Booklet.Address
 
   @primary_key false
@@ -54,4 +55,53 @@ defmodule Vae.Booklet.Experience do
     |> cast_embed(:periods)
     |> cast_embed(:full_address)
   end
+
+  def job_industry_label(%Experience{job_industry: job_industry}) do
+    case job_industry do
+      "A" -> "Agriculture, marine, pêche"
+      "B" -> "Bâtiment, travaux publics"
+      "C" -> "Electricité, électronique"
+      "D" -> "Mécanique, travail des métaux"
+      "E" -> "Industries de process"
+      "F" -> "Matériaux souples, bois, industries graphiques"
+      "G" -> "Maintenance"
+      "H" -> "Ingénieurs et cadres de l'industrie"
+      "J" -> "Transports, logistique et tourisme"
+      "K" -> "Artisanat"
+      "L" -> "Gestion, administration des entreprises"
+      "M" -> "Informatique et télécommunications"
+      "N" -> "Études et recherche"
+      "P" -> "Administration publique, professions juridiques, armée et police"
+      "Q" -> "Banque et assurance"
+      "R" -> "Commerce"
+      "S" -> "Hôtellerie, restauration, alimentation"
+      "T" -> "Services aux particuliers et aux collectivités"
+      "U" -> "Communication, information, art et spectacle"
+      "V" -> "Santé, action sociale, culturelle et sportive"
+      "W" -> "Enseignement, formation"
+      "X" -> "Politique, religion"
+      nil -> ""
+    end
+  end
+
+  def employment_type_label(%Experience{employment_type: employment_type}) do
+    case employment_type do
+      1 -> "Salarié"
+      2 -> "Travailleur indépendant, artisan, profession libérale"
+      3 -> "Volontaire {VIE, VIA...}"
+      4 -> "Sportif de haut niveau"
+      5 -> "Bénévolat"
+      6 -> "Personne ayant exercé des responsabilités syndicales"
+      7 -> "Mandat électoral local ou fonction élective locale"
+      8 -> "En contrat d’apprentissage"
+      9 -> "En contrat de professionnalisation"
+      10 -> "Contrat Unique d'Insertion (CUI, CAE...)"
+      11 -> "Période d'immersion (PMSMP, EMT)"
+      12 -> "Préparation opérationnelle à l’emploi (POE)"
+      13 -> "Période de formation en milieu professionnel (PFMP)"
+      14 -> "Stage pratique dans le cadre d'une formation"
+      nil -> ""
+    end
+  end
+
 end

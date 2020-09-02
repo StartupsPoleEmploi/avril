@@ -1,0 +1,104 @@
+.avril-cerfa {
+  background: #fafafa;
+
+  #pdf-content {
+    background: $white;
+    box-shadow: 0 0 0 0.75pt #d1d1d1, 0 0 3pt 0.75pt #ccc;
+    margin: -1rem;
+    padding: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .avril-recapitulatif{
+    padding: 2rem;
+  }
+  section {
+    margin: 2rem 1rem;
+    padding: 0;
+  }
+  .message.is-avril{
+    background: #fbfbfb;
+  }
+  .message.is-avril .message-body{
+    border-color: #66f2b3;
+  }
+  .atome{
+    margin-bottom: 2rem;
+  }
+  .is-spaced{
+    letter-spacing: .1rem;
+  }
+  .is-bottom-bordered{
+    /* border-bottom: 2px solid #333; */
+  }
+  @media screen {
+    .unseen{
+      display: none;
+    }
+  }
+
+  .box {
+    background: white;
+  }
+
+  input[type="checkbox"], input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+
+    & + label {
+      position: relative;
+      cursor: initial;
+      padding: 0;
+      padding-left: 5px;
+
+      &:before {
+        content: '';
+        margin-right: 5px;
+        display: inline-block;
+        vertical-align: text-top;
+        width: 1.25rem;
+        height: 1.25rem;
+        background: none;
+        font-size: 1.25rem;
+        line-height: 1.25rem;
+        border: thin solid;
+        // font-weight: bold;
+      }
+    }
+
+    &:checked + label:before {
+      content: 'X';
+      content: '✓';
+      content: '\2714';
+    }
+  }
+
+  table.cerfa-table {
+    width: 100%;
+    font-size: 1rem;
+    tr {
+      td {
+        padding: 0.5rem;
+        &:first-child {
+          text-align: right;
+          width: 25%;
+        }
+        &:last-child {
+          width: 75%;
+        }
+
+        &:nth-child(3), &:nth-child(4) {
+          width: 25%;
+        }
+
+        ul {
+          margin-top: 0;
+          margin-left: 1rem;
+        }
+      }
+      &:last-child td {
+        border-bottom: none;
+      }
+    }
+  }
+}

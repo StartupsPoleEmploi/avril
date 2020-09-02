@@ -12,11 +12,12 @@ defmodule Vae.Account do
     Repo.get_by(User, pe_id: pe_id)
   end
 
-  def update_identity(attrs \\ %{}, %User{} = user) do
-    user
-    |> User.update_identity_changeset(attrs)
-    |> Repo.update!()
-  end
+  # Deprecated
+  # def update_identity(attrs \\ %{}, %User{} = user) do
+  #   user
+  #   |> User.update_identity_changeset(attrs)
+  #   |> Repo.update!()
+  # end
 
   def update_identity_item(attrs \\ %{}, %User{} = user) do
     user
@@ -122,5 +123,5 @@ defmodule Vae.Account do
     |> Vae.Enum.join_keep_nil(", ")
   end
 
-  def address_street(address), do: Address.address_street(address)
+  def address_street(address), do: address.street
 end

@@ -50,7 +50,7 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
   end
 
   def extract(type, date) do
-    System.cmd("bunzip2", ["-kc", build_path(type, date)])
+    System.cmd("/bin/sh", ["-c", "bunzip2 -kc #{build_path(type, date)}"])
     |> case do
       {data, 0} ->
         output_path = "/tmp/emails_#{type}_#{date}.csv"

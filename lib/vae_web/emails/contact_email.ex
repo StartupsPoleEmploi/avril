@@ -4,9 +4,8 @@ defmodule VaeWeb.ContactEmail do
   def submit(%{
         "email" => email,
         "name" => name,
-        "object" => object,
         "body" => body
-      }) do
+      } = params) do
     Mailer.build_email(
       "contact/submit.html",
       :avril,
@@ -15,7 +14,7 @@ defmodule VaeWeb.ContactEmail do
         reply_to: {name, email},
         name: name,
         email_address: email,
-        object: object,
+        object: params["object"],
         body: body
       }
     )
@@ -24,9 +23,8 @@ defmodule VaeWeb.ContactEmail do
   def confirm(%{
         "email" => email,
         "name" => name,
-        "object" => object,
         "body" => body
-      }) do
+      } = params) do
     Mailer.build_email(
       "contact/confirm.html",
       :avril,
@@ -34,7 +32,7 @@ defmodule VaeWeb.ContactEmail do
       %{
         name: name,
         email: email,
-        object: object,
+        object: params["object"],
         body: body
       }
     )

@@ -121,7 +121,7 @@ config :vae, Vae.Scheduler,
       task: {Vae.UserApplications.FollowUp, :send_admissibility_update_email, []}
     ],
     send_delegate_recap: [
-      schedule: "45 5 */16 * *",
+      schedule: "45 5 1,15 * *",
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
     fvae_meetings_task: [
@@ -155,7 +155,8 @@ config :ex_admin,
     Vae.ExAdmin.Rome,
     Vae.ExAdmin.User
   ],
-  title: "Avril, la VAE Facile | Admin "
+  title: "Avril, la VAE Facile | Admin ",
+  override_user_id_session_key: :admin_current_override_user_id
 
 # config :ex_aws,
 #   access_key_id: [System.get_env("MINIO_ACCESS_KEY"), :instance_role],

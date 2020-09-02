@@ -15,12 +15,13 @@ defmodule VaeWeb.Emails do
 
   def send_user_meeting_confirmation(application) do
     application
-    |> ApplicationEmail.user_submission_confirmation()
+    |> ApplicationEmail.user_meeting_confirmation()
     |> Mailer.send()
+    {:ok, application}
   end
 
   defp send_asp_application_submission_confirmation(application) do
-    {:ok, _sent} = application
+    application
     |> ApplicationEmail.asp_user_submission_confirmation()
     |> Mailer.send()
     {:ok, application}

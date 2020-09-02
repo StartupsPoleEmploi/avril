@@ -6,7 +6,6 @@ defmodule Vae.Delegate do
   alias Vae.{
     UserApplication,
     Certification,
-    CertificationDelegate,
     Certifier,
     Meeting,
     Places,
@@ -30,17 +29,16 @@ defmodule Vae.Delegate do
 
     belongs_to(:process, Process)
 
-    has_many(
-      :certifications_delegates,
-      CertificationDelegate,
+    many_to_many(
+      :certifications,
+      Certification,
+      join_through: "certifications_delegates",
       on_delete: :delete_all,
       on_replace: :delete
     )
 
-    has_many(:certifications, through: [:certifications_delegates, :certification])
-
-    has_many(:applications, UserApplication, on_replace: :nilify)
-    has_many(:recent_applications, UserApplication, where: [inserted_at: {:fragment, "? > now() - interval '16 days'"}, submitted_at: {:not, nil}])
+    has_many(:applications, UserApplication)
+    has_many(:recent_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '16 days'"}])
 
     has_many(
       :users,
@@ -114,7 +112,7 @@ defmodule Vae.Delegate do
       )
 
     struct
-    |> Repo.preload([:certifiers, :certifications_delegates])
+    |> Repo.preload([:certifiers, :certifications])
     |> cast(params, [
       :name,
       :website,
@@ -153,30 +151,16 @@ defmodule Vae.Delegate do
     |> Repo.all()
   end
 
-  def link_certifications(%Changeset{changes: %{certifiers: certifiers}} = changeset) do
-    certifications_delegates =
-      Enum.reduce(certifiers, [], fn
-        %{action: :update, data: data}, acc ->
-          [
-            Certification.from_certifier(data.id)
-            |> Repo.all()
-            |> Enum.map(fn certification ->
-              Ecto.build_assoc(changeset.data, :certifications_delegates,
-                certification_id: certification.id
-              )
-            end)
-            | acc
-          ]
-
-        _, acc ->
-          acc
+  def link_certifications(%Changeset{changes: %{certifiers: certifiers_changes}} = changeset) do
+    certifications =
+      Enum.flat_map(certifiers_changes, fn
+        %{action: :update, data: certifiers} ->
+          %Certifier{certifications: certifications} = Repo.preload(certifiers, :certifications)
+          certifications
+        _ -> []
       end)
 
-    put_assoc(
-      changeset,
-      :certifications_delegates,
-      List.flatten(certifications_delegates)
-    )
+    put_assoc(changeset, :certifications, certifications)
   end
 
   def link_certifications(changeset), do: changeset

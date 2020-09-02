@@ -92,10 +92,15 @@ const selectFiltersWithChosen = () => {
   $('form.filter_form select.form-control').chosen();
 }
 
+const selectMultipleWithMultiSelect = () => {
+  $('section.content form select[multiple]').multiSelect();
+}
+
 $(document).ready(() => {
   algoliaAutocompleteDelegateAddress();
   textareaToSimditor();
   selectFiltersWithChosen();
+  selectMultipleWithMultiSelect();
   trimPaste();
   doubleClickUncheckPresenceRadioInputs();
 })

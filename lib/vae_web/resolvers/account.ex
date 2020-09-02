@@ -7,7 +7,7 @@ defmodule VaeWeb.Resolvers.Account do
   @update_password_error "Erreur lors de la mise à jour du mot de passe"
 
   def identity_item(_, _, %{context: %{current_user: user}}) do
-    {:ok, user.identity}
+    {:ok, user.identity || %Vae.Identity{}}
   end
 
   def update_item(_, %{input: params}, %{context: %{current_user: user}}) do

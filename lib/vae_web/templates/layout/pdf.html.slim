@@ -1,0 +1,12 @@
+doctype html
+html lang="fr"
+  head
+    meta charset="UTF-8"
+    meta content="IE=edge" http-equiv="X-UA-Compatible"
+    meta content="width=device-width, initial-scale=1" name="viewport"
+    - %{title: title, description: description} = meta_data(assigns)
+    meta name="description" content=description
+    title= title
+    link href=Routes.static_url(@conn,"/css/app.css") rel="stylesheet"
+  body
+    = render @view_module, @view_template, assigns

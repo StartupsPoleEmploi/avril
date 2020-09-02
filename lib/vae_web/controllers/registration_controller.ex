@@ -34,7 +34,7 @@ defmodule VaeWeb.RegistrationController do
       current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
       certification_id when not is_nil(certification_id) <-
         certification_id || Plug.Conn.get_session(conn, :certification_id),
-      {:ok, application} <-
+      {:ok, application} when not is_nil(application) <-
         Vae.UserApplication.find_or_create_with_params(%{
           user_id: current_user.id,
           certification_id: certification_id

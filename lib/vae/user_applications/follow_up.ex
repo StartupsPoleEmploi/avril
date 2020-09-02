@@ -2,7 +2,7 @@ defmodule Vae.UserApplications.FollowUp do
   import Ecto.Query
   require Logger
   alias Vae.{Delegate, Repo, UserApplication}
-  alias VaeWeb.{ApplicationEmail, Mailer}
+  alias VaeWeb.{ApplicationEmail, DelegateEmail, Mailer}
 
   def send_admissibility_update_email() do
     from(a in UserApplication,
@@ -26,10 +26,12 @@ defmodule Vae.UserApplications.FollowUp do
 
   def send_delegate_recap_email() do
     from(d in Delegate,
-      join: s in assoc(d, :recent_applications)
+      join: s in assoc(d, :recent_applications),
+      preload: :recent_applications
     )
     |> Repo.all()
-    |> Enum.filter(fn d -> length(d.recent_applications) >= 5 end)
+    # |> Enum.filter(fn d -> length(d.recent_applications) >= 3 end)
+    |> Enum.uniq()
     |> send_follow_up_emails(DelegateEmail, :applications_raise)
   end
 

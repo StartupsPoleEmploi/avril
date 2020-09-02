@@ -77,16 +77,20 @@ defmodule Vae.Repo do
   end
 
   defp save_object_index(%type{} = struct) do
-    with {:format, struct_to_index} <- {:format, type.format_for_index(struct)} do
-      type
-      |> @search_client.get_index_name()
-      |> Algolia.save_object(struct_to_index, id_attribute: :id)
+    if should_save_to_index?() do
+      with {:format, struct_to_index} <- {:format, type.format_for_index(struct)} do
+        type
+        |> @search_client.get_index_name()
+        |> Algolia.save_object(struct_to_index, id_attribute: :id)
 
-      {:ok, struct}
+        {:ok, struct}
+      else
+        {:format, error} ->
+          Logger.warn(fn -> inspect(error) end)
+          {:error, "format error"}
+      end
     else
-      {:format, error} ->
-        Logger.warn(fn -> inspect(error) end)
-        {:error, "format error"}
+      {:ok, struct}
     end
   end
 
@@ -95,6 +99,10 @@ defmodule Vae.Repo do
       {:ok, value} -> value
       {:error, error} -> raise error
     end
+  end
+
+  defp should_save_to_index?() do
+    Mix.env() == :prod
   end
 
   defp delete_object_index(%type{} = struct) do

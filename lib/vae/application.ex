@@ -21,7 +21,6 @@ defmodule Vae.Application do
         Pow.Store.Backend.MnesiaCache,
         supervisor(VaeWeb.Endpoint, []),
         supervisor(Vae.Event.EventSupervisor, []),
-        supervisor(Vae.Statistics.StatisticsSupervisor, []),
         worker(Vae.Status.Server, []),
         worker(Vae.Places.Cache, []),
         Vae.PoleEmploi.OAuth.Clients,
