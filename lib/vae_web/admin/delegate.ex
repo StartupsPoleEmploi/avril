@@ -2,7 +2,7 @@ defmodule Vae.ExAdmin.Delegate do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-  alias Vae.{Process, Repo}
+  alias Vae.{Delegate, Process, Repo}
   require Ecto.Query
 
   register_resource Vae.Delegate do
@@ -86,6 +86,19 @@ defmodule Vae.ExAdmin.Delegate do
           column(:end_date)
         end
       end
+    end
+
+    collection_action :"refresh-meetings",
+      &__MODULE__.refresh_meetings/2,
+      label: "Refresh meetings"
+
+    def refresh_meetings(conn, _infos) do
+      Task.async(fn ->
+        Vae.Authorities.fetch_fvae_delegate_meetings()
+      end)
+      conn
+      |> Phoenix.Controller.put_flash(:notice, "Rafraichissement en cours")
+      |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Delegate))
     end
 
     form delegate do

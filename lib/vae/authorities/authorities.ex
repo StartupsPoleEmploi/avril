@@ -35,7 +35,7 @@ defmodule Vae.Authorities do
   end
 
   def fetch_fvae_delegate_meetings() do
-    get_france_vae_delegate()
+    get_france_vae_delegates()
     |> Enum.map(fn delegate ->
       with meetings <-
              Vae.Meetings.fetch_france_vae_meetings(delegate.academy_id),
@@ -58,7 +58,7 @@ defmodule Vae.Authorities do
     end)
   end
 
-  def get_france_vae_delegate() do
+  def get_france_vae_delegates() do
     from(
       d in Delegate,
       where: not is_nil(d.academy_id)
