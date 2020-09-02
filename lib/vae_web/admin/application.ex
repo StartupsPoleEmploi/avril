@@ -90,6 +90,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
     csv do
       column(:id)
+      column(:url, fn a -> if a.submitted_at, do: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash) end)
       column(:user@first_name, fn a -> a.user.first_name end)
       column(:user@last_name, fn a -> a.user.last_name end)
       # column(:user, fn a -> Helpers.csv_link_to_resource(a.user) end)
