@@ -72,8 +72,8 @@ defmodule Vae.ExAdmin.Delegate do
       # end
 
       panel "Meetings" do
-        table_for delegate
-                  |> Enum.flat_map(fn %{meeting_places: %{meetings: meetings}} -> meetings end) do
+        table_for delegate.meeting_places
+                  |> Enum.flat_map(fn %{meetings: meetings} -> meetings end) do
           column(:meeting_id)
           # column(:name)
           column(:target)
