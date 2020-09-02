@@ -44,7 +44,7 @@ defmodule Vae.Meetings.Afpa.Server do
     {:reply, {:ok, meeting}, state}
   end
 
-  defp get_data(pid, req_id) do
+  defp get_data(_pid, _req_id) do
     Scraper.scrape_all_events()
     |> Flow.from_enumerable(max_demand: 5, window: Flow.Window.count(10))
     |> Flow.map(fn id ->

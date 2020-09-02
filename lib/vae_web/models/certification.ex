@@ -134,6 +134,15 @@ defmodule Vae.Certification do
   #   certifications_delegates
   #   |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
   # end
+  # defp transform_destroy(collection_with_destroy) do
+  #   collection_with_destroy
+  #   |> Enum.reduce([], fn {_index, d}, acc ->
+  #     case d[:_destroy] do
+  #       "0" -> [d | acc]
+  #       _ -> acc
+  #     end
+  #   end)
+  # end
 
   def add_delegates(changeset, _no_delegates_param), do: changeset
 
@@ -161,15 +170,6 @@ defmodule Vae.Certification do
     |> Repo.all()
   end
 
-  defp transform_destroy(collection_with_destroy) do
-    collection_with_destroy
-    |> Enum.reduce([], fn {_index, d}, acc ->
-      case d[:_destroy] do
-        "0" -> [d | acc]
-        _ -> acc
-      end
-    end)
-  end
 
   def format_for_index(struct) do
     struct

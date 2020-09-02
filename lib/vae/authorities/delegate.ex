@@ -7,7 +7,6 @@ defmodule Vae.Delegate do
     UserApplication,
     Certification,
     Certifier,
-    Meeting,
     Places,
     Process,
     Repo

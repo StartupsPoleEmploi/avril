@@ -1,6 +1,5 @@
 defmodule Vae.MeetingPlace do
   use Ecto.Schema
-  import Ecto.Changeset
 
   @primary_key false
   @derive Jason.Encoder

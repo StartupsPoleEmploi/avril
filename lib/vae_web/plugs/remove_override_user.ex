@@ -1,7 +1,4 @@
 defmodule VaeWeb.Plugs.RemoveOverrideUser do
-  import Phoenix.Controller
-  import Plug.Conn
-  alias VaeWeb.Router.Helpers, as: Routes
 
   def init(opts), do: opts
 
