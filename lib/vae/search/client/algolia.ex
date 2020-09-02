@@ -16,6 +16,25 @@ defmodule Vae.Search.Client.Algolia do
     execute(:delegate, query)
   end
 
+  def get_france_vae_meetings(
+        academy_id,
+        %{
+          "_geoloc" =>
+            %{
+              "lat" => _lat,
+              "lng" => _lng
+            } = geoloc
+        }
+      ) do
+    query =
+      init()
+      |> build_academy_filter(academy_id)
+      |> build_geoloc(geoloc)
+      |> build_query()
+
+    execute(:fvae_meetings, query, aroundRadius: :all)
+  end
+
   def get_meetings(%Vae.Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
     delegate
     |> Vae.Repo.preload(:certifiers)
@@ -88,6 +107,10 @@ defmodule Vae.Search.Client.Algolia do
     Algolia.save_objects(@meetings_indice, objects, id_attribute: :id)
   end
 
+  def save_objects(:fvae_meetings, objects) do
+    Algolia.save_objects("fvae_meetings", objects, id_attribute: :meeting_id)
+  end
+
   defp add_and_filter(query, filter) do
     add_filter(query, {:and, filter})
   end
@@ -106,7 +129,15 @@ defmodule Vae.Search.Client.Algolia do
     update_in(query, [:aroundLatLng], fn _ -> [lat, lng] end)
   end
 
-  defp build_filters(%{filters: []} = query), do: query
+  defp build_filters(%{filters: %{or: [], and: []}} = query), do: query
+
+  defp build_filters(%{filters: %{or: [], and: and_filter}} = _query) when and_filter != [] do
+    [filters: "#{Enum.join(and_filter, " AND ")}"]
+  end
+
+  defp build_filters(%{filters: %{or: or_filter, and: []}} = _query) do
+    [filters: "#{Enum.join(or_filter, " OR ")}"]
+  end
 
   defp build_filters(%{filters: %{or: or_filter, and: and_filter}}) do
     [filters: "(#{Enum.join(or_filter, " OR ")}) AND #{Enum.join(and_filter, " AND ")}"]
@@ -123,6 +154,8 @@ defmodule Vae.Search.Client.Algolia do
   defp execute(:delegate, query, opts), do: search("delegate", query, opts)
 
   defp execute(:meetings, query, opts), do: search(@meetings_indice, query, opts)
+
+  defp execute(:fvae_meetings, query, opts), do: search("fvae_meetings", query, opts)
 
   defp search(index_name, query, opts) do
     merged_query = Keyword.merge(query, opts)

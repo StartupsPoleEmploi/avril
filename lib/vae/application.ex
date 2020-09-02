@@ -23,7 +23,10 @@ defmodule Vae.Application do
         supervisor(Vae.Event.EventSupervisor, []),
         worker(Vae.Status.Server, []),
         worker(Vae.Places.Cache, []),
-        Vae.PoleEmploi.OAuth.Clients
+        Vae.PoleEmploi.OAuth.Clients,
+        worker(Vae.Meetings.Server, []),
+        worker(Vae.Meetings.FranceVae.Server, []),
+        Vae.Meetings.FranceVae.Connection.Cache
       ]
     }
 
@@ -32,10 +35,10 @@ defmodule Vae.Application do
         Application.get_env(:vae, :meetings_indice) &&
           Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
       children: [
-        worker(Vae.Meetings.StateHolder, []),
-        worker(Vae.Meetings.FranceVae.Server, []),
-        # worker(Vae.Meetings.Afpa.Server, []),
-        Vae.Meetings.FranceVae.Connection.Cache
+        #        worker(Vae.Meetings.StateHolder, []),
+        # worker(Vae.Meetings.FranceVae.Server, []),
+        #        worker(Vae.Meetings.Afpa.Server, []),
+        # Vae.Meetings.FranceVae.Connection.Cache
       ]
     }
 

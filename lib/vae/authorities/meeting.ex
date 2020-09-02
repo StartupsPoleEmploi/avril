@@ -1,32 +1,29 @@
-defmodule Vae.Meetings.Meeting do
+defmodule Vae.Meeting do
   use Ecto.Schema
   import Ecto.Changeset
-  use Xain
 
   @primary_key false
+  @derive Jason.Encoder
   embedded_schema do
-    field(:name, :string)
     field(:academy_id, :integer)
-    field(:meeting_id, Vae.Meetings.EctoTypeAny)
-    field(:meeting_id2, :string)
-    field(:place, :string)
     field(:address, :string)
-    field(:postal_code, :string)
     field(:city, :string)
-    field(:geolocation, :map)
-    field(:target, :string)
-    field(:remaining_places, :integer)
     field(:start_date, :naive_datetime)
     field(:end_date, :naive_datetime)
+    field(:meeting_id, :string)
+    field(:place, :string)
+    field(:postal_code, :string)
+    field(:remaining_places, :integer)
+    field(:target, :string)
+    field(:geolocation, :map)
   end
 
-  @fields ~w(name academy_id meeting_id place address postal_code geolocation target start_date end_date)a
+  @fields ~w(academy_id meeting_id place address postal_code geolocation target start_date end_date)a
 
   def changeset(module, params) do
     module
     |> cast(params, @fields)
     |> validate_required([
-      :name,
       :academy_id,
       :meeting_id,
       :place,

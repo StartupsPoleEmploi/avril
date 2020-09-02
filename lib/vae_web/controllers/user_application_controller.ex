@@ -8,8 +8,14 @@ defmodule VaeWeb.UserApplicationController do
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
 
   def show(conn, %{"hash" => hash}) when not is_nil(hash) do
-    redirect(conn, to: Routes.user_application_path(conn, :show, conn.assigns[:current_application], delegate_hash: conn.assigns[:current_application].delegate_access_hash))
+    redirect(conn,
+      to:
+        Routes.user_application_path(conn, :show, conn.assigns[:current_application],
+          delegate_hash: conn.assigns[:current_application].delegate_access_hash
+        )
+    )
   end
+
   def show(conn, _params) do
     application =
       conn.assigns[:current_application]

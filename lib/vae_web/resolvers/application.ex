@@ -3,7 +3,7 @@ defmodule VaeWeb.Resolvers.Application do
 
   import VaeWeb.Resolvers.ErrorHandler
 
-  alias Vae.{Applications, Authorities}
+  alias Vae.{Applications, Authorities, Meeting}
 
   @application_not_found "La candidature est introuvable"
   @delegate_not_found "Le certificateur est introuvable"
@@ -87,7 +87,10 @@ defmodule VaeWeb.Resolvers.Application do
       {:error, %Ecto.Changeset{} = changeset} ->
         error_response(@register_meeting_error, changeset)
 
-      _ ->
+      {:error, %Meeting{} = meeting} ->
+        error_response(@register_meeting_error, "")
+
+      error ->
         error_response(@application_not_found, format_application_error_message(application_id))
     end
   end
