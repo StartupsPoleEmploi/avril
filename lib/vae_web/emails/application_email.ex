@@ -79,6 +79,7 @@ defmodule VaeWeb.ApplicationEmail do
       application.user,
       %{
         url: User.profile_url(endpoint, "/mes-rendez-vous"),
+        meeting: application.meeting,
         username: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
         image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
