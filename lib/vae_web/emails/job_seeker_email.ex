@@ -5,33 +5,6 @@ defmodule VaeWeb.JobSeekerEmail do
   alias VaeWeb.Mailer
   alias VaeWeb.Router.Helpers, as: Routes
 
-  # def receive_synthesis(job_seeker, delegate) do
-  #   delegate = Repo.preload(delegate, :process)
-
-  #   with(
-  #     process when not is_nil(process) <- delegate.process,
-  #     {:ok, file} <- StepsPdf.create_pdf_file(delegate.process)
-  #   ) do
-  #     Mailer.build_email(
-  #       "job_seeker/receive_synthesis.html",
-  #       :avril,
-  #       job_seeker,
-  #       %{
-  #         subject: "Votre synthèse VAE par Avril - la VAE facile",
-  #         attachment:
-  #           Swoosh.Attachment.new(file,
-  #             filename: "synthese-vae.pdf",
-  #             content_type: "application/pdf"
-  #           ),
-  #         footer_note: :mise_en_relation
-  #       }
-  #     )
-  #   else
-  #     _error ->
-  #       Logger.warn("No process for delegate #{delegate.name}")
-  #   end
-  # end
-
   def campaign(%JobSeeker{id: id, email: email, geolocation: geolocation} = job_seeker, endpoint \\ URI.endpoint()) do
     Mailer.build_email(
       "job_seeker/campaign.html",
