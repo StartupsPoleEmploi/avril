@@ -35,6 +35,13 @@ defmodule Vae.ExAdmin.Certification do
         end
       end
 
+      panel "RNCP Delegates" do
+        table_for certification.rncp_delegates do
+          column(:id)
+          column(:name, &Helpers.link_to_resource/1)
+        end
+      end
+
       panel "Delegates" do
         table_for certification.delegates do
           column(:id)
@@ -61,31 +68,34 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym)
         input(certification, :label)
         input(certification, :level)
-        input(certification, :description, type: :text)
+        input(certification, :activity_area)
+        input(certification, :activities, type: :text)
+        input(certification, :abilities, type: :text)
+        input(certification, :accessible_job_type, type: :text)
 
-        content do
-          Helpers.form_select_tag(certification, :certifiers)
-        end
+        # content do
+        #   Helpers.form_select_tag(certification, :certifiers)
+        # end
 
-        content do
-          Helpers.form_select_tag(certification, :romes, fn r -> r.code end)
-        end
+        # content do
+        #   Helpers.form_select_tag(certification, :romes, fn r -> r.code end)
+        # end
 
-        content do
-          Helpers.form_select_tag(certification, :delegates)
-        end
+        # content do
+        #   Helpers.form_select_tag(certification, :delegates)
+        # end
       end
     end
 
     filter [:id, :rncp_id, :slug, :acronym, :label, :is_active, :level, :description]
 
     query do
-      preloads = [:certifiers, :delegates, :romes]
+      preloads = [:certifiers, :delegates, :rncp_delegates, :romes]
 
       %{
         index: [default_sort: [asc: :rncp_id]],
         show: [
-          preload: preloads ++ [
+          preload: preloads ++ [:newer_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]
           ]
         ],

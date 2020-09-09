@@ -137,16 +137,16 @@ defmodule Vae.Delegate do
   def get(nil), do: nil
   def get(id), do: Repo.get(Delegate, id)
 
-  def add_certifiers(changeset, %{certifiers: certifiers}) do
+  def add_certifiers(changeset, %{certifier_ids: certifier_ids}) do
     changeset
-    |> put_assoc(:certifiers, get_certifiers(certifiers))
+    |> put_assoc(:certifiers, get_certifiers(certifier_ids))
   end
 
   def add_certifiers(changeset, _no_certifiers), do: changeset
 
-  def get_certifiers(certifiers) do
+  def get_certifiers(certifier_ids) do
     Certifier
-    |> where([c], c.id in ^certifiers)
+    |> where([c], c.id in ^certifier_ids)
     |> Repo.all()
   end
 

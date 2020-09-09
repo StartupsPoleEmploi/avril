@@ -11,7 +11,12 @@ defmodule Vae.Certification do
     field(:acronym, :string)
     field(:level, :integer)
     field(:rncp_id, :string)
-    field(:description, :string)
+    field(:activities, :string)
+    field(:abilities, :string)
+    field(:activity_area, :string)
+    field(:accessible_job_type, :string)
+
+    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
 
     many_to_many(
       :certifiers,
@@ -38,6 +43,11 @@ defmodule Vae.Certification do
     )
 
     has_many(
+      :rncp_delegates,
+      through: [:certifiers, :delegates]
+    )
+
+    has_many(
       :professions,
       through: [:romes, :professions]
     )
@@ -57,53 +67,65 @@ defmodule Vae.Certification do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params |> Map.update(:rncp_id, nil, fn e -> to_string(e) end), [
+    |> cast(params, [
       :is_active,
       :label,
       :acronym,
       :level,
       :rncp_id,
-      :description
+      :activities,
+      :abilities,
+      :activity_area,
+      :accessible_job_type
     ])
     |> slugify()
     |> validate_required([:label, :slug])
     |> unique_constraint(:slug)
     |> add_romes(params)
     |> add_certifiers(params)
-    |> add_delegates(params)
+    # |> add_delegates(params)
+    |> add_newer_certification(params)
   end
 
-  def find_by_acronym_and_label(certification_label) do
-    from(
-      c in Certification,
-      where: fragment("lower(acronym || ' ' || label)") == ^String.downcase(certification_label)
-    )
-    |> Repo.one()
-  end
+  # def find_by_acronym_and_label(certification_label) do
+  #   from(
+  #     c in Certification,
+  #     where: fragment("lower(acronym || ' ' || label)") == ^String.downcase(certification_label)
+  #   )
+  #   |> Repo.one()
+  # end
 
   def add_romes(changeset, %{romes: romes}) do
     changeset
-    |> put_assoc(:romes, get_romes(romes))
+    |> put_assoc(:romes, romes)
+  end
+  def add_romes(changeset, %{rome_ids: rome_ids}) do
+    changeset
+    |> put_assoc(:romes, get_romes(rome_ids))
   end
 
   def add_romes(changeset, _no_romes_param), do: changeset
 
-  def get_romes(romes) do
+  def get_romes(rome_ids) do
     Rome
-    |> where([r], r.id in ^romes)
+    |> where([r], r.id in ^rome_ids)
     |> Repo.all()
   end
 
   def add_certifiers(changeset, %{certifiers: certifiers}) do
     changeset
-    |> put_assoc(:certifiers, get_certifiers(certifiers))
+    |> put_assoc(:certifiers, certifiers)
+  end
+
+  def add_certifiers(changeset, %{certifier_ids: certifier_ids}) do
+    add_certifiers(changeset, %{certifiers: get_certifiers(certifier_ids)})
   end
 
   def add_certifiers(changeset, _no_certifiers), do: changeset
 
-  def get_certifiers(certifiers) do
+  def get_certifiers(certifier_ids) do
     Certifier
-    |> where([c], c.id in ^certifiers)
+    |> where([c], c.id in ^certifier_ids)
     |> Repo.all()
   end
 
@@ -118,31 +140,6 @@ defmodule Vae.Certification do
 
     put_assoc(changeset, :delegates, delegates)
   end
-
-  # def add_delegates(changeset, %{certifications_delegates: certifications_delegates}) do
-  #   changeset
-  #   |> put_assoc(
-  #     :certifications_delegates,
-  #     certifications_delegates
-  #     |> ensure_not_nil
-  #     |> transform_destroy
-  #     |> Enum.uniq_by(& &1.delegate_id)
-  #   )
-  # end
-
-  # defp ensure_not_nil(certifications_delegates) do
-  #   certifications_delegates
-  #   |> Enum.filter(fn {_index, %{delegate_id: d_id}} -> d_id != nil end)
-  # end
-  # defp transform_destroy(collection_with_destroy) do
-  #   collection_with_destroy
-  #   |> Enum.reduce([], fn {_index, d}, acc ->
-  #     case d[:_destroy] do
-  #       "0" -> [d | acc]
-  #       _ -> acc
-  #     end
-  #   end)
-  # end
 
   def add_delegates(changeset, _no_delegates_param), do: changeset
 
@@ -160,6 +157,13 @@ defmodule Vae.Certification do
     )
   end
 
+  def add_newer_certification(changeset, %{newer_certification: newer_certification}) do
+    changeset
+    |> put_assoc(:newer_certification, newer_certification)
+  end
+
+  def add_newer_certification(changeset, _params), do: changeset
+
   def from_rome(nil), do: nil
 
   def from_rome(rome) do
@@ -169,7 +173,6 @@ defmodule Vae.Certification do
     )
     |> Repo.all()
   end
-
 
   def format_for_index(struct) do
     struct
@@ -181,8 +184,8 @@ defmodule Vae.Certification do
     [acronym, label] |> Enum.reject(&is_nil/1) |> Enum.join(" ")
   end
 
-  def to_slug(%Certification{} = certification) do
-    Vae.String.parameterize(name(certification))
+  def to_slug(%Certification{is_active: is_active} = certification) do
+    Vae.String.parameterize("#{unless is_active, do: "ancien"} #{name(certification)}")
   end
 
   def slugify(changeset) do
