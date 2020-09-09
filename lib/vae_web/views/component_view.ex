@@ -3,7 +3,7 @@ defmodule VaeWeb.ComponentView do
 
   def render("back_button", %{conn: conn} = params) do
     referer = case Plug.Conn.get_req_header(conn, "referer") do
-      [hd | _] -> hd
+      [("http" <> referer_url) = hd | _] when not is_nil(referer_url) -> hd
       _ -> nil
     end
     home_page = Routes.root_path(conn, :index)
