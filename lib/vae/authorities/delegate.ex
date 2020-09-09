@@ -21,10 +21,13 @@ defmodule Vae.Delegate do
     field(:telephone, :string)
     field(:email, :string)
     field(:person_name, :string)
+    field(:secondary_email, :string)
+    field(:secondary_person_name, :string)
     field(:is_active, :boolean, default: false)
     field(:geolocation, :map)
     field(:city, :string)
     field(:administrative, :string)
+    field(:internal_notes, :string)
 
     belongs_to(:process, Process)
 
@@ -81,15 +84,20 @@ defmodule Vae.Delegate do
       :telephone,
       :email,
       :person_name,
+      :secondary_email,
+      :secondary_person_name,
       :is_active,
       :geolocation,
       :city,
       :administrative,
-      :academy_id
+      :academy_id,
+      :internal_notes
     ])
     |> slugify()
     |> validate_required([:name, :slug])
     |> unique_constraint(:slug)
+    |> validate_format(:email, ~r/@/)
+    |> validate_format(:secondary_email, ~r/@/)
     |> add_certifiers(params)
   end
 
@@ -119,12 +127,14 @@ defmodule Vae.Delegate do
       :telephone,
       :email,
       :person_name,
+      :secondary_email,
+      :secondary_person_name,
       :is_active,
       :geolocation,
       :city,
       :administrative,
-      :process_id,
-      :academy_id
+      :academy_id,
+      :internal_notes
     ])
     |> slugify()
     |> validate_required([:name, :slug])
