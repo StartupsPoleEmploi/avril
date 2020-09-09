@@ -1,6 +1,8 @@
 defmodule VaeWeb.ApplicationEmail do
   alias VaeWeb.Mailer
 
+  @date_format "%d/%m/%Y à %H:%M"
+
   alias Vae.{Account, Certification, Repo, User, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
@@ -18,7 +20,7 @@ defmodule VaeWeb.ApplicationEmail do
           ),
         username: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
-        date_format: "%d/%m/%Y à %H:%M",
+        date_format: @date_format,
         meeting: application.meeting,
         footer_note: :delegate
       }
@@ -43,6 +45,7 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_person_name: application.delegate && application.delegate.person_name,
         delegate_phone_number: application.delegate && application.delegate.telephone,
         delegate_email: application.delegate && application.delegate.email,
+        date_format: @date_format,
         image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
         text_center: true,
         footer_note: :inscrit_avril
@@ -83,6 +86,7 @@ defmodule VaeWeb.ApplicationEmail do
         username: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
         image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
+        date_format: @date_format,
         footer_note: :inscrit_avril
       }
     )
