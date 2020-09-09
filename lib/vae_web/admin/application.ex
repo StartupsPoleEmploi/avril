@@ -23,6 +23,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:status, &application_status/1)
+      column(:url, fn a -> if a.submitted_at, do: Phoenix.HTML.Link.link("URL", to: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash), target: "_blank") end)
       column(:meeting)
       column(:booklet_1)
 

@@ -38,8 +38,11 @@ defmodule Vae.ExAdmin.Delegate do
           :telephone,
           :email,
           :person_name,
+          :secondary_email,
+          :secondary_person_name,
           :process_id,
-          :academy_id
+          :academy_id,
+          :internal_notes
         ]
       )
 
@@ -128,15 +131,18 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :telephone)
         input(delegate, :email)
         input(delegate, :person_name)
+        input(delegate, :secondary_email)
+        input(delegate, :secondary_person_name)
         input(delegate, :process, collection: Repo.all(Process))
+        input(delegate, :internal_notes, type: :text)
 
-        content do
-          Helpers.form_select_tag(delegate, :certifiers)
-        end
+        # content do
+        #   Helpers.form_select_tag(delegate, :certifiers)
+        # end
 
-        content do
-          Helpers.form_select_tag(delegate, :certifications)
-        end
+        # content do
+        #   Helpers.form_select_tag(delegate, :certifications)
+        # end
       end
     end
 
