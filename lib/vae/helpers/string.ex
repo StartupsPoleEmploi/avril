@@ -7,6 +7,8 @@ defmodule Vae.String do
   def is_blank?(str) when is_binary(str), do: String.trim(str) == ""
   def is_blank?(_), do: false
 
+  def is_present?(str), do: not is_blank?(str)
+
   def blank_is_nil(v, map_fn \\ fn e -> e end), do: if(is_blank?(v), do: nil, else: map_fn.(v))
 
   def encode(string) do

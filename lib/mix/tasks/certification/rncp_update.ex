@@ -16,9 +16,12 @@ defmodule Mix.Tasks.RncpUpdate do
     Repo.update_all(Certification, set: [is_active: false])
 
     Logger.info("Parse RNCP")
-    # File.stream!("priv/rncp-2020-06-19.xml")
-    File.stream!("priv/rncp-test.xml")
+    File.stream!("priv/rncp-2020-06-19.xml")
+    # File.stream!("priv/rncp-test.xml")
     |> SweetXml.stream_tags(:FICHE)
+    |> Stream.filter(fn {_, fiche} ->
+      !String.starts_with?(xpath(fiche,~x"./INTITULE/text()"s), "CQP")
+    end)
     |> Stream.map(fn {_, fiche} ->
       fiche
       |> fiche_to_certification_fields()
@@ -26,17 +29,22 @@ defmodule Mix.Tasks.RncpUpdate do
     end)
     |> Enum.to_list()
 
-    File.stream!("priv/rncp-test.xml")
+    # File.stream!("priv/rncp-test.xml")
+    File.stream!("priv/rncp-2020-06-19.xml")
     |> SweetXml.stream_tags(:FICHE)
     |> Stream.map(fn {_, fiche} ->
       fiche
       |> move_applications_if_inactive_and_set_newer_certification()
     end)
     |> Enum.to_list()
-    |> IO.inspect()
   end
 
   def fiche_to_certification_fields(fiche) do
+    rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
+      String.replace_prefix(nb, "RNCP", "")
+    end))
+
+    Logger.info("Updating RNCP_ID: #{rncp_id}")
 
     romes = SweetXml.xpath(fiche, ~x"./CODES_ROME"l)
       |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./ROME/CODE/text()"s) end)
@@ -47,9 +55,6 @@ defmodule Mix.Tasks.RncpUpdate do
       |> Enum.map(&name_to_certifier/1)
 
     SweetXml.xmap(fiche,
-      rncp_id: ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
-        String.replace_prefix(nb, "RNCP", "")
-      end),
       label: ~x"./INTITULE/text()"s,
       acronym: ~x"./ABREGE/CODE/text()"s,
       activities: ~x"./ACTIVITES_VISEES/text()"s |> transform_by(&HtmlEntities.decode/1),
@@ -59,7 +64,7 @@ defmodule Mix.Tasks.RncpUpdate do
       level: ~x"./NOMENCLATURE_EUROPE/NIVEAU/text()"s |> transform_by(fn l ->
         l
         |> String.replace_prefix("NIV", "")
-        |> String.to_integer()
+        |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
       end),
       is_active: ~x"./ACTIF/text()"s |> transform_by(fn t ->
         case t do
@@ -69,6 +74,7 @@ defmodule Mix.Tasks.RncpUpdate do
       end)
     )
     |> Map.merge(%{
+      rncp_id: rncp_id,
       romes: romes,
       certifiers: certifiers
     })
@@ -77,13 +83,17 @@ defmodule Mix.Tasks.RncpUpdate do
   def certifier_rncp_override(name) do
     case name do
       "Ministère chargé de l'enseignement supérieur" -> "Ministère de l'Education Nationale"
+      "Ministère chargé de l'Emploi" -> "Ministère du travail"
       n -> n
     end
   end
 
   def name_to_certifier(name) do
     case Repo.get_by(Certifier, slug: Vae.String.parameterize(certifier_rncp_override(name))) do
-      nil -> Logger.warn("No certifier found for #{name}")
+      nil ->
+        Logger.warn("#####################################")
+        Logger.warn("# No certifier found for #{name} ")
+        Logger.warn("#####################################")
       %Certifier{} = c -> c
     end
   end

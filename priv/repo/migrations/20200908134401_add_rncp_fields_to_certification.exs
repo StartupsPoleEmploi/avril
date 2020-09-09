@@ -3,8 +3,8 @@ defmodule Vae.Repo.Migrations.AddRncpFieldsToCertification do
 
   def change do
     alter table(:certifications) do
-      add :activity_area, :string
-      add :accessible_job_type, :string
+      add :activity_area, :text
+      add :accessible_job_type, :text
       add :activities, :text
       add :abilities, :text
       add :newer_certification_id, references(:certifications)

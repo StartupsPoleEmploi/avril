@@ -68,7 +68,7 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym)
         input(certification, :label)
         input(certification, :level)
-        input(certification, :activity_area)
+        input(certification, :activity_area, type: :text)
         input(certification, :activities, type: :text)
         input(certification, :abilities, type: :text)
         input(certification, :accessible_job_type, type: :text)

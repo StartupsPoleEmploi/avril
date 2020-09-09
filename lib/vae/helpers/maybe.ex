@@ -6,6 +6,10 @@ defmodule Vae.Maybe do
   def to_integer(v), do: v
 
   def if(data, bool, do_action, else_action\\fn v -> v end)
+  def if(data, bool, do_action, else_action)
+    when is_function(bool, 1),
+    do: if(data, bool.(data), do_action, else_action)
+
   def if(data, true, do_action, _else_action)
     when is_function(do_action, 1),
     do: do_action.(data)
