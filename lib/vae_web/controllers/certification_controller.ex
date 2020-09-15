@@ -62,6 +62,7 @@ defmodule VaeWeb.CertificationController do
           certifications: page.entries,
           no_results: count_without_level_filter(params) == 0,
           page: page,
+          page_size: 9,
           params: params,
           level: nil
         }
