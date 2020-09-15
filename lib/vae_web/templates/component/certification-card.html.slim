@@ -6,6 +6,6 @@
       span.label-avril Équivalence #{level_info_by_level(@certification.level)}
   .card-content
     .content
-      = raw @certification.description
+      = raw @certification.activities
   .card-footer
     = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button has-text-weight-bold is-transparent"

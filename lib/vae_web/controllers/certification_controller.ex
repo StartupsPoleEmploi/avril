@@ -52,7 +52,8 @@ defmodule VaeWeb.CertificationController do
     active_certifications_query = from c in Certification, where: [is_active: true]
     with(
       {:ok, filtered_query, filter_values} <- apply_filters(active_certifications_query, conn),
-      page <- Repo.paginate(filtered_query, params)
+      ordered_query <- order_by_popularity(filtered_query),
+      page <- Repo.paginate(ordered_query, params)
     ) do
       render(
         conn,
@@ -157,4 +158,12 @@ defmodule VaeWeb.CertificationController do
       Repo.aggregate(filtered_query, :count, :id)
     end
   end
+
+  def order_by_popularity(query) do
+    query
+    |> join(:left, [c], a in assoc(c, :applications))
+    |> group_by([c], c.id)
+    |> order_by([c, a], [desc: count(a.id)])
+  end
+
 end
