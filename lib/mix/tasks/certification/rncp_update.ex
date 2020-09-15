@@ -45,9 +45,9 @@ defmodule Mix.Tasks.RncpUpdate do
     # |> CSV.encode()
     # |> Enum.each(&IO.write(file, &1))
 
-    # build_and_transform_stream(filename,
-    #   &fiche_to_certification/1
-    # )
+    build_and_transform_stream(filename,
+      &fiche_to_certification/1
+    )
 
     build_and_transform_stream(filename,
       &move_applications_if_inactive_and_set_newer_certification/1
@@ -195,11 +195,11 @@ defmodule Mix.Tasks.RncpUpdate do
       rescue
         e in Postgrex.Error ->
           IO.inspect(e)
-          id = IO.gets("Quel ID supprime-t-on ? ")
-          |> String.trim()
-          |> String.to_integer()
+          # id = IO.gets("Quel ID supprime-t-on ? ")
+          # |> String.trim()
+          # |> String.to_integer()
 
-          Repo.get(UserApplication, id) |> Repo.delete()
+          # Repo.get(UserApplication, id) |> Repo.delete()
       end
     else
       err ->
