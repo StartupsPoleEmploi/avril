@@ -9,10 +9,11 @@ defmodule Vae.ExAdmin.Certification do
       selectable_column()
       column(:id)
       column(:rncp_id)
+      column(:is_active)
       column(:acronym)
       column(:label)
-      column(:level)
-      column(:is_active)
+      column(:nb_certifiers, fn a -> length(a.certifiers) end)
+      column(:nb_applications, fn a -> length(a.applications) end)
 
       actions()
     end
@@ -87,13 +88,13 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
-    filter [:id, :rncp_id, :slug, :acronym, :label, :is_active, :level, :description]
+    filter [:is_active, :id, :rncp_id, :slug, :acronym, :label, :level, :description]
 
     query do
       preloads = [:certifiers, :delegates, :rncp_delegates, :romes]
 
       %{
-        index: [default_sort: [asc: :rncp_id]],
+        index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :applications]],
         show: [
           preload: preloads ++ [:newer_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]

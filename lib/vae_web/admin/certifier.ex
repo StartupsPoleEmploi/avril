@@ -7,11 +7,13 @@ defmodule Vae.ExAdmin.Certifier do
     index do
       column(:id)
       column(:name)
+      column(:active_certifications, fn a -> length(a.certifications) end)
+      column(:active_delegates, fn a -> length(a.delegates) end)
       actions()
     end
 
     show certifier do
-      attributes_table()
+      attributes_table
 
       panel "Certifications" do
         table_for certifier.certifications do
@@ -36,7 +38,7 @@ defmodule Vae.ExAdmin.Certifier do
     query do
       %{
         index: [default_sort: [asc: :id]],
-        show: [
+        all: [
           preload: [
             :certifications,
             :delegates,

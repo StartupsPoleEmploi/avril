@@ -13,16 +13,16 @@ defmodule Vae.ExAdmin.Delegate do
       selectable_column()
       column(:id)
       column(:name)
+      column(:is_active)
       column(:process)
 
       column(:certifiers, fn d ->
         Enum.map(d.certifiers, &Helpers.link_to_resource/1)
       end)
-
+      column(:nb_applications, fn a -> length(a.applications) end)
       column(:administrative)
       column(:city)
 
-      column(:is_active)
       actions()
     end
 
@@ -146,12 +146,12 @@ defmodule Vae.ExAdmin.Delegate do
       end
     end
 
-    filter([:id, :slug, :is_active, :email, :city, :administrative])
+    filter([:is_active, :id, :slug, :email, :city, :administrative])
 
     query do
       preloads = [preload: [:process, :certifiers, :certifications]]
       %{
-        index: [preload: [:process, :certifiers], default_sort: [asc: :id]],
+        index: [preload: [:process, :certifiers, :applications], default_sort: [asc: :id]],
         show: preloads,
         new: preloads,
         create: preloads,

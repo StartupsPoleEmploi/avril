@@ -13,14 +13,16 @@ defmodule Vae.Certifier do
       Certification,
       join_through: "certifier_certifications",
       on_delete: :delete_all,
-      on_replace: :delete
+      on_replace: :delete,
+      where: [is_active: true]
     )
 
     many_to_many(
       :delegates,
       Delegate,
       join_through: "certifiers_delegates",
-      on_delete: :delete_all
+      on_delete: :delete_all,
+      where: [is_active: true]
     )
 
     timestamps()
