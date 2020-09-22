@@ -77,6 +77,7 @@ defmodule VaeWeb.ApplicationEmail do
   end
 
   def user_meeting_confirmation(application, endpoint \\ URI.endpoint()) do
+    application = Repo.preload(application, [:user, :delegate])
     Mailer.build_email(
       "application/meeting_confirmation.html",
       :avril,
@@ -86,6 +87,7 @@ defmodule VaeWeb.ApplicationEmail do
         meeting: application.meeting,
         username: Account.fullname(application.user),
         certification_name: Certification.name(application.certification),
+        delegate_phone_number: application.delegate.telephone,
         image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
         date_format: @date_format,
         footer_note: :inscrit_avril
