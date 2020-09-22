@@ -25,7 +25,7 @@ defmodule VaeWeb.Resolvers.ErrorHandler do
 
   defp format_error({msg, opts}) do
     Enum.reduce(opts, msg, fn {key, value}, acc ->
-      String.replace(acc, "%{#{key}}", to_string(value))
+      String.replace(acc, "%{#{key}}", inspect(value))
     end)
   end
 end
