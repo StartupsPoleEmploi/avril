@@ -5,26 +5,23 @@ defmodule Mix.Tasks.RncpUpdate do
   import SweetXml
   import Ecto.Query
 
-  alias Vae.{Certification, Certifier, Rome, Repo, UserApplication}
-
-  # {:ok, _} = Application.ensure_all_started(:vae)
-  # @all_certifiers Repo.all(Certifier)
+  alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
 
   def run([filename | _args]) do
     {:ok, _} = Application.ensure_all_started(:vae)
 
     Logger.info("Start update RNCP with #{filename}")
-    # prepare_avril_data()
+    prepare_avril_data()
 
-    # build_and_transform_stream(
-    #   filename,
-    #   &fiche_to_certification/1
-    # )
+    build_and_transform_stream(
+      filename,
+      &fiche_to_certification/1
+    )
 
-    # build_and_transform_stream(
-    #   filename,
-    #   &move_applications_if_inactive_and_set_newer_certification/1
-    # )
+    build_and_transform_stream(
+      filename,
+      &move_applications_if_inactive_and_set_newer_certification/1
+    )
 
     clean_avril_data()
   end
@@ -43,18 +40,10 @@ defmodule Mix.Tasks.RncpUpdate do
     from(c in Certifier,
       left_join: a in assoc(c, :certifications),
       group_by: c.id,
-      # where: count(a.id) == ^0,
-      select: c
+      having: count(a.id) == ^0
     )
     |> Repo.all()
-    |> length()
-    |> IO.inspect()
-
-
-    #     from(c in Certification,
-    #   join: r in assoc(c, :romes),
-    #   where: r.code == ^rome
-    # )
+    |> Enum.each(fn c -> Repo.delete(c) end)
   end
 
   defp build_and_transform_stream(filename, transform) do
@@ -95,7 +84,7 @@ defmodule Mix.Tasks.RncpUpdate do
       |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
       |> Enum.map(&match_or_build_certifier/1)
       |> Enum.filter(&not(is_nil(&1)))
-      |> Enum.uniq()
+      |> Enum.uniq_by(&(&1.slug))
 
     SweetXml.xmap(fiche,
       label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
@@ -142,16 +131,25 @@ defmodule Mix.Tasks.RncpUpdate do
   defp match_or_build_certifier(name) do
     all_certifiers = Repo.all(Certifier)
     prefiltered_name = Vae.String.parameterize(certifier_rncp_override(name))
-    best_match = Enum.min_by(all_certifiers, &String.jaro_distance(prefiltered_name, &1.slug))
+    best_match = Enum.max_by(all_certifiers, &String.jaro_distance(prefiltered_name, &1.slug))
     best_match_distance = String.jaro_distance(prefiltered_name, best_match.slug)
-    IO.inspect(best_match)
-    IO.inspect(best_match_distance)
 
-    if best_match_distance > 0.5 do
+    if best_match_distance > 0.9 do
+      IO.inspect("##### MATCH #######")
+      IO.inspect(prefiltered_name)
+      IO.inspect(best_match.slug)
+      IO.inspect(best_match_distance)
+      IO.inspect("###################")
       best_match
     else
       %Certifier{}
-      |> Certifier.changeset(%{name: certifier_rncp_override(name)})
+      |> Certifier.changeset(%{
+        name: certifier_rncp_override(name),
+        delegates: [%Delegate{
+          name: certifier_rncp_override(name),
+          is_active: true
+        }]
+      })
       |> Repo.insert!()
     end
   end
@@ -191,11 +189,11 @@ defmodule Mix.Tasks.RncpUpdate do
       rescue
         e in Postgrex.Error ->
           IO.inspect(e)
-          id = IO.gets("Quel ID supprime-t-on ? ")
-          |> String.trim()
-          |> String.to_integer()
+          # id = IO.gets("Quel ID supprime-t-on ? ")
+          # |> String.trim()
+          # |> String.to_integer()
 
-          Repo.get(UserApplication, id) |> Repo.delete()
+          # Repo.get(UserApplication, id) |> Repo.delete()
       end
     # else
     #   err ->
