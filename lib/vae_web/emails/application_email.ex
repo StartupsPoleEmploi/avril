@@ -3,7 +3,7 @@ defmodule VaeWeb.ApplicationEmail do
 
   @date_format "%d/%m/%Y à %H:%M"
 
-  alias Vae.{Account, Certification, Repo, User, URI}
+  alias Vae.{Account, Certification, Delegate, Repo, User, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
   def delegate_submission(application, endpoint \\ URI.endpoint()) do
@@ -40,6 +40,7 @@ defmodule VaeWeb.ApplicationEmail do
         meeting: application.meeting,
         date_format: "%d/%m/%Y à %H:%M",
         is_france_vae: application.delegate && application.delegate.academy_id,
+        is_afpa: application.delegate && Delegate.is_afpa?(application.delegate),
         certification_name: Certification.name(application.certification),
         delegate_name: application.delegate && application.delegate.name,
         delegate_person_name: application.delegate && application.delegate.person_name,

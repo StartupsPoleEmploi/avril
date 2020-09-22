@@ -234,6 +234,10 @@ defmodule Vae.Delegate do
     String.starts_with?(delegate.name, "ASP")
   end
 
+  def is_afpa?(%Delegate{} = delegate) do
+    String.starts_with?(delegate.name, "AFPA")
+  end
+
   def is_educ_nat?(%Delegate{} = delegate) do
     delegate
     |> Repo.preload(:certifiers)
