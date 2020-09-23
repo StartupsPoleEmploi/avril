@@ -21,6 +21,7 @@ defmodule Vae.ExAdmin.Certifier do
           column(:name, fn a -> Helpers.link_to_resource(a) end)
           column(:level)
           column(:rncp_id)
+          column(:is_active)
         end
       end
 
@@ -30,6 +31,7 @@ defmodule Vae.ExAdmin.Certifier do
           column(:name, fn a -> Helpers.link_to_resource(a) end)
           column(:city)
           column(:adminitrative)
+          column(:is_active)
         end
       end
     end

@@ -32,6 +32,19 @@ defmodule Vae.Delegate do
     belongs_to(:process, Process)
 
     many_to_many(
+      :certifiers,
+      Certifier,
+      join_through: "certifiers_delegates",
+      on_delete: :delete_all,
+      on_replace: :delete
+    )
+
+    has_many(
+      :rncp_certifications,
+      through: [:certifiers, :certifications]
+    )
+
+    many_to_many(
       :certifications,
       Certification,
       join_through: "certifications_delegates",
@@ -45,14 +58,6 @@ defmodule Vae.Delegate do
     has_many(
       :users,
       through: [:applications, :user]
-    )
-
-    many_to_many(
-      :certifiers,
-      Certifier,
-      join_through: "certifiers_delegates",
-      on_delete: :delete_all,
-      on_replace: :delete
     )
 
     embeds_many(:meeting_places, Vae.MeetingPlace, on_replace: :delete)
@@ -94,6 +99,7 @@ defmodule Vae.Delegate do
       :internal_notes
     ])
     |> slugify()
+    |> make_inactive_if_email_missing()
     |> validate_required([:name, :slug])
     |> unique_constraint(:slug)
     |> validate_format(:email, ~r/@/)
@@ -275,8 +281,12 @@ defmodule Vae.Delegate do
     )
   end
 
-  def slugify(changeset) do
-    put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
+  def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(data, changes)))
+  end
+
+  def make_inactive_if_email_missing(%Ecto.Changeset{data: data, changes: changes} = changeset) do
+    if is_nil(Map.merge(data, changes).email), do: put_change(changeset, :is_active, false), else: changeset
   end
 
   def get_certifications(%Delegate{} = delegate) do

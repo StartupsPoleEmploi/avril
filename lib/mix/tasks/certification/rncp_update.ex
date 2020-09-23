@@ -7,32 +7,74 @@ defmodule Mix.Tasks.RncpUpdate do
 
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
 
-  def run([filename | _args]) do
+  @cities ~w(
+    angers
+    besancon
+    caen
+    lille
+    lyon
+    nantes
+    nice
+    nimes
+    orleans
+    paris
+    rouen
+    toulon
+    toulouse
+    tours
+  )
+
+  @overrides %{
+    "Conservatoire national des arts et métiers (CNAM)" => "CNAM",
+    "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" => "Ministère de l'Education Nationale",
+    "Ministère chargé de l'Emploi" => "Ministère du travail",
+    "Ministère chargé de l'enseignement supérieur" => "Ministère de l'Education Nationale",
+    "Ministère chargé des sports et de la jeunesse" => "Ministère de la jeunesse, des sports et de la cohésion sociale",
+    "Ministère de l'Education nationale et de la jeunesse" => "Ministère de l'Education Nationale",
+    "Ministère de l'Enseignement Supérieur" => "Ministère de l'Education Nationale",
+    "Ministère de la Défense" => "Ministère des Armées",
+    "Université de Bourgogne - Dijon" => "Université de Bourgogne - pole VAE- SEFCA",
+    "Université Lumière - Lyon 2" => "Université Lyon 2 Service Commun de Formation Continue",
+    "Université Paul Valéry - Montpellier 3" => "Université Paul Valéry Montpellier 3",
+  }
+
+  def run(args) do
     {:ok, _} = Application.ensure_all_started(:vae)
+
+    {[filename: filename, interactive: interactive], [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
 
     Logger.info("Start update RNCP with #{filename}")
     prepare_avril_data()
 
     build_and_transform_stream(
       filename,
-      &fiche_to_certification/1
+      &fiche_to_certification(&1)
     )
 
     build_and_transform_stream(
       filename,
-      &move_applications_if_inactive_and_set_newer_certification/1
+      &move_applications_if_inactive_and_set_newer_certification(&1, [interactive: interactive])
     )
 
     clean_avril_data()
   end
 
   def run(_args) do
-    Logger.error("RNCP XML Filename required. Ex: mix RncpUpdate rncp-2020-08-03.xml")
+    Logger.error("RNCP filname argument required. Ex: mix RncpUpdate -f rncp-2020-08-03.xml")
   end
 
   defp prepare_avril_data() do
+    Logger.info("Update slugs")
+    Enum.each([Certifier, Delegate], fn klass ->
+      Repo.all(klass)
+      |> Enum.each(fn %klass{} = c ->
+        klass.changeset(c) |> Repo.update()
+      end)
+    end)
+
     Logger.info("Make all certifications inactive")
     Repo.update_all(Certification, set: [is_active: false])
+
   end
 
   defp clean_avril_data() do
@@ -55,19 +97,6 @@ defmodule Mix.Tasks.RncpUpdate do
     |> Stream.map(fn {_, fiche} -> transform.(fiche) end)
     |> Enum.to_list()
   end
-
-  # defp prepare_certifiers(fiche) do
-  #   SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
-  #     |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
-  #     |> Enum.map(&name_to_certifier/1)
-  #     |> Enum.filter(fn
-  #       {:err, name} ->
-  #         Logger.debug("Certifier not found: #{name}")
-  #         true
-  #       _ -> false
-  #     end)
-  #     |> Enum.map(fn {:err, name} -> name end)
-  # end
 
   defp fiche_to_certification(fiche) do
     rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
@@ -113,45 +142,55 @@ defmodule Mix.Tasks.RncpUpdate do
     |> insert_or_update_by_rncp_id()
   end
 
-  defp certifier_rncp_override(name) do
-    case name do
-      "Conservatoire national des arts et métiers (CNAM)" -> "CNAM"
-      "Ministère chargé de l'enseignement supérieur" -> "Ministère de l'Education Nationale"
-      "Ministère de l'Enseignement Supérieur" -> "Ministère de l'Education Nationale"
-      "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" -> "Ministère de l'Education Nationale"
-      "Ministère de l'Education nationale et de la jeunesse" -> "Ministère de l'Education Nationale"
-      "Ministère chargé de l'Emploi" -> "Ministère du travail"
-      "Université Paul Valéry - Montpellier 3" -> "Université Paul Valéry Montpellier 3"
-      "Université de Bourgogne - Dijon" -> "Université de Bourgogne - pole VAE- SEFCA"
-      # "Université Lumière - Lyon 2" -> "Université Lyon 2 Service Commun de Formation Continue"
-      n -> n
+  defp certifier_rncp_override(name), do: @overrides[name] || name
+
+  defp match_or_build_certifier(name) do
+    name_with_overrides = certifier_rncp_override(name)
+    slug = Vae.String.parameterize(name_with_overrides)
+
+    case find_by_slug_or_closer_distance_match(Certifier, slug) do
+      %Certifier{} = c -> c
+      nil ->
+        if String.contains?(slug, "universite") || String.contains?(slug, "ministere") do
+          delegate = find_by_slug_or_closer_distance_match(Delegate, slug) ||
+            Delegate.changeset(%Delegate{}, %{
+              name: name_with_overrides,
+              is_active: false
+            }) |> Repo.insert!()
+          %Certifier{}
+          |> Certifier.changeset(%{
+            name: name_with_overrides,
+            delegates: [delegate]
+          })
+          |> Repo.insert!()
+        end
     end
   end
 
-  defp match_or_build_certifier(name) do
-    all_certifiers = Repo.all(Certifier)
-    prefiltered_name = Vae.String.parameterize(certifier_rncp_override(name))
-    best_match = Enum.max_by(all_certifiers, &String.jaro_distance(prefiltered_name, &1.slug))
-    best_match_distance = String.jaro_distance(prefiltered_name, best_match.slug)
+  defp find_by_slug_or_closer_distance_match(klass, slug, tolerance \\ 0.9) do
+    case Repo.get_by(klass, slug: slug) do
+      %klass{} = el -> el
+      nil ->
+        all_elements = Repo.all(klass)
+        best_match = Enum.max_by(all_elements, &String.jaro_distance(slug, &1.slug))
+        best_match_distance = String.jaro_distance(slug, best_match.slug)
 
-    if best_match_distance > 0.9 do
-      IO.inspect("##### MATCH #######")
-      IO.inspect(prefiltered_name)
-      IO.inspect(best_match.slug)
-      IO.inspect(best_match_distance)
-      IO.inspect("###################")
-      best_match
-    else
-      %Certifier{}
-      |> Certifier.changeset(%{
-        name: certifier_rncp_override(name),
-        delegates: [%Delegate{
-          name: certifier_rncp_override(name),
-          is_active: true
-        }]
-      })
-      |> Repo.insert!()
+        if best_match_distance > tolerance && city_names_match(best_match.slug, slug) do
+          Logger.info("##### MATCH #######")
+          Logger.info(klass)
+          Logger.info(slug)
+          Logger.info(best_match.slug)
+          Logger.info(best_match_distance)
+          Logger.info("###################")
+          best_match
+        end
     end
+  end
+
+  defp city_names_match(slug1, slug2) do
+    cities1 = Enum.filter(@cities, fn c -> String.contains?(slug1, c) end)
+    cities2 = Enum.filter(@cities, fn c -> String.contains?(slug2, c) end)
+    cities1 -- cities2 == []
   end
 
   defp insert_or_update_by_rncp_id(%{rncp_id: rncp_id} = fields) do
@@ -165,7 +204,7 @@ defmodule Mix.Tasks.RncpUpdate do
     |> Repo.insert_or_update()
   end
 
-  defp move_applications_if_inactive_and_set_newer_certification(fiche) do
+  defp move_applications_if_inactive_and_set_newer_certification(fiche, options) do
     rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
       String.replace_prefix(nb, "RNCP", "")
     end))
@@ -188,18 +227,17 @@ defmodule Mix.Tasks.RncpUpdate do
         ) |> Repo.update_all(set: [certification_id: newer_certification_id])
       rescue
         e in Postgrex.Error ->
-          IO.inspect(e)
-          # id = IO.gets("Quel ID supprime-t-on ? ")
-          # |> String.trim()
-          # |> String.to_integer()
+          Logger.warn(e)
+          if options[:interactive] do
+            id = IO.gets("Quel ID supprime-t-on ? ")
+            |> String.trim()
+            |> String.to_integer()
 
-          # Repo.get(UserApplication, id) |> Repo.delete()
+            Repo.get(UserApplication, id) |> Repo.delete()
+          else
+            Logger.warn("Ignored. Run with -i option to make it interactive")
+          end
       end
-    # else
-    #   err ->
-    #     Logger.debug(inspect(err))
-
-    #     # Logger.debug("Newer certification not found for: #{rncp_id}")
     end
   end
 end

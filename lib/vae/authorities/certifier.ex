@@ -13,16 +13,16 @@ defmodule Vae.Certifier do
       Certification,
       join_through: "certifier_certifications",
       on_delete: :delete_all,
-      on_replace: :delete,
-      where: [is_active: true]
+      on_replace: :delete
+      # where: [is_active: true]
     )
 
     many_to_many(
       :delegates,
       Delegate,
       join_through: "certifiers_delegates",
-      on_delete: :delete_all,
-      where: [is_active: true]
+      on_delete: :delete_all
+      # where: [is_active: true]
     )
 
     timestamps()
@@ -39,7 +39,7 @@ defmodule Vae.Certifier do
     |> slugify()
     |> validate_required([:name, :slug])
     |> unique_constraint(:slug)
-    |> put_assoc(:delegates, params.delegates)
+    |> Vae.Maybe.if(not is_nil(params[:delegates]), &(put_assoc(&1, :delegates, params[:delegates])))
   end
 
   def to_slug(certifier) do

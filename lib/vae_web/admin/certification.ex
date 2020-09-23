@@ -40,6 +40,7 @@ defmodule Vae.ExAdmin.Certification do
         table_for certification.rncp_delegates do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
+          column(:is_active)
         end
       end
 
@@ -47,6 +48,7 @@ defmodule Vae.ExAdmin.Certification do
         table_for certification.delegates do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
+          column(:is_active)
         end
       end
 
@@ -94,7 +96,7 @@ defmodule Vae.ExAdmin.Certification do
       preloads = [:certifiers, :delegates, :rncp_delegates, :romes]
 
       %{
-        index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :applications]],
+        index: [default_sort: [asc: :id], preload: [:certifiers, :applications]],
         show: [
           preload: preloads ++ [:newer_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]

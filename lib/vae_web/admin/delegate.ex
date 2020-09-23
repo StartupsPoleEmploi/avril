@@ -33,6 +33,8 @@ defmodule Vae.ExAdmin.Delegate do
           :is_active,
           :slug,
           :name,
+          :city,
+          :administrative,
           :website,
           :address,
           :telephone,
@@ -45,21 +47,31 @@ defmodule Vae.ExAdmin.Delegate do
           :internal_notes
         ]
       )
-
-      panel "Certifications" do
-        table_for delegate.certifications do
-          column(:id)
-          column(:name, &Helpers.link_to_resource/1)
-          column(:rncp_id)
-        end
-      end
-
       panel "Certifiers" do
         table_for delegate.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
+
+      panel "RNCP Certifications" do
+        table_for delegate.rncp_certifications do
+          column(:id)
+          column(:name, &Helpers.link_to_resource/1)
+          column(:rncp_id)
+          column(:is_active)
+        end
+      end
+
+      panel "Certifications" do
+        table_for delegate.certifications do
+          column(:id)
+          column(:name, &Helpers.link_to_resource/1)
+          column(:rncp_id)
+          column(:is_active)
+        end
+      end
+
 
       # panel "Applications" do
       #   table_for delegate.applications do
@@ -149,7 +161,7 @@ defmodule Vae.ExAdmin.Delegate do
     filter([:is_active, :id, :slug, :email, :city, :administrative])
 
     query do
-      preloads = [preload: [:process, :certifiers, :certifications]]
+      preloads = [preload: [:process, :certifiers, :rncp_certifications, :certifications]]
       %{
         index: [preload: [:process, :certifiers, :applications], default_sort: [asc: :id]],
         show: preloads,
