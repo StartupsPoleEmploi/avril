@@ -41,19 +41,19 @@ defmodule Mix.Tasks.RncpUpdate do
   def run(args) do
     {:ok, _} = Application.ensure_all_started(:vae)
 
-    {[filename: filename, interactive: interactive], [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
+    {options, [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
 
-    Logger.info("Start update RNCP with #{filename}")
+    Logger.info("Start update RNCP with #{options[:filename]}")
     prepare_avril_data()
 
     build_and_transform_stream(
-      filename,
+      options[:filename],
       &fiche_to_certification(&1)
     )
 
     build_and_transform_stream(
-      filename,
-      &move_applications_if_inactive_and_set_newer_certification(&1, [interactive: interactive])
+      options[:filename],
+      &move_applications_if_inactive_and_set_newer_certification(&1, [interactive: options[:interactive]])
     )
 
     clean_avril_data()
