@@ -6,9 +6,6 @@ defmodule Vae.ExAdmin.Delegate do
   require Ecto.Query
 
   register_resource Vae.Delegate do
-    update_changeset(:changeset_update)
-    create_changeset(:changeset_update)
-
     index do
       selectable_column()
       column(:id)
@@ -19,6 +16,7 @@ defmodule Vae.ExAdmin.Delegate do
       column(:certifiers, fn d ->
         Enum.map(d.certifiers, &Helpers.link_to_resource/1)
       end)
+      column(:nb_active_certifications, fn a -> length(a.certifications) end)
       column(:nb_applications, fn a -> length(a.applications) end)
       column(:administrative)
       column(:city)
@@ -47,23 +45,14 @@ defmodule Vae.ExAdmin.Delegate do
           :internal_notes
         ]
       )
-      panel "Certifiers" do
+      panel Vae.String.inflect(length(delegate.certifiers), "Certifiers", [lang: :en]) do
         table_for delegate.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
 
-      panel "RNCP Certifications" do
-        table_for delegate.rncp_certifications do
-          column(:id)
-          column(:name, &Helpers.link_to_resource/1)
-          column(:rncp_id)
-          column(:is_active)
-        end
-      end
-
-      panel "Certifications" do
+      panel Vae.String.inflect(length(delegate.certifications), "active certifications", [lang: :en]) do
         table_for delegate.certifications do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
@@ -136,7 +125,6 @@ defmodule Vae.ExAdmin.Delegate do
         )
 
         input(delegate, :name)
-
         input(delegate, :website)
         input(delegate, :address)
         input(delegate, :geo, type: :hidden)
@@ -148,27 +136,26 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :process, collection: Repo.all(Process))
         input(delegate, :internal_notes, type: :text)
 
-        # content do
-        #   Helpers.form_select_tag(delegate, :certifiers)
-        # end
+        content do
+          Helpers.form_select_tag(delegate, :excluded_certifications, [options: delegate.rncp_certifications])
+        end
 
-        # content do
-        #   Helpers.form_select_tag(delegate, :certifications)
-        # end
+        content do
+          other_certifications = Vae.Repo.all(Ecto.Query.from(c in Vae.Certification, where: [is_active: true])) -- delegate.rncp_certifications
+          Helpers.form_select_tag(delegate, :included_certifications, [options: other_certifications, label: "Extra certifications"])
+        end
+
       end
     end
 
     filter([:is_active, :id, :slug, :email, :city, :administrative])
 
     query do
-      preloads = [preload: [:process, :certifiers, :rncp_certifications, :certifications]]
       %{
-        index: [preload: [:process, :certifiers, :applications], default_sort: [asc: :id]],
-        show: preloads,
-        new: preloads,
-        create: preloads,
-        edit: preloads,
-        update: preloads,
+        index: [preload: [:process, :certifiers, :certifications, :applications], default_sort: [asc: :id]],
+        show: [preload: [:process, :certifiers, :certifications]],
+        edit: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
+        update: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
       }
     end
   end

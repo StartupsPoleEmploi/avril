@@ -60,18 +60,18 @@ defmodule Vae.ExAdmin.Helpers do
     end
   end
 
-  def form_select_tag(%struct{} = object, association_name, namify \\ nil) do
+  def form_select_tag(%struct{} = object, association_name, options \\ nil) do
     object = Repo.preload(object, association_name)
 
     association_struct = struct.__schema__(:association, association_name).related
-    label = association_struct |> Atom.to_string() |> String.split(".") |> List.last() |> Inflex.pluralize()
+    label = options[:label] || (association_name |> Atom.to_string() |> String.replace("_", " ") |> String.capitalize())
+    possible_options = options[:options] || Repo.all(association_struct)
 
     options =
-      association_struct
-      |> Repo.all()
-      |> Enum.sort_by(&(resource_name(&1, namify)))
+      possible_options
+      |> Enum.sort_by(&(resource_name(&1, options[:namify])))
       |> Enum.map(fn asso ->
-        content_tag(:option, resource_name(asso, namify), [
+        content_tag(:option, resource_name(asso, options[:namify]), [
           value: asso.id,
           selected: Enum.member?(Map.get(object, association_name), asso)
         ])

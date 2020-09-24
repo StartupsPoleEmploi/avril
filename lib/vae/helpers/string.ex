@@ -68,19 +68,24 @@ defmodule Vae.String do
     end
   end
 
-  def pluralize(words) do
-    String.split(words, " ") |> Enum.map(&pluralize_word/1) |> Enum.join(" ")
+  def pluralize(words, opts) do
+    if opts[:lang] == :en do
+      pluralize_word(words)
+    else
+      String.split(words, " ") |> Enum.map(&pluralize_word/1) |> Enum.join(" ")
+    end
   end
 
-  def inflect(words, count) when is_binary(words) and is_integer(count) do
+  def inflect(w, c, opts \\ [])
+  def inflect(words, count, opts) when is_binary(words) and is_integer(count) do
     if count > 1 do
-      pluralize(words)
+      pluralize(words, opts)
     else
       words
     end
   end
 
-  def inflect(count, words) when is_binary(words) and is_integer(count) do
-    "#{count} #{inflect(words, count)}"
+  def inflect(count, words, opts) when is_binary(words) and is_integer(count) do
+    "#{count} #{inflect(words, count, opts)}"
   end
 end

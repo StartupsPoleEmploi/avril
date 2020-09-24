@@ -1,7 +1,7 @@
-
 defmodule Vae.Certifier do
   use VaeWeb, :model
 
+  alias __MODULE__
   alias Vae.{Certification, Delegate}
 
   schema "certifiers" do
@@ -13,16 +13,17 @@ defmodule Vae.Certifier do
       Certification,
       join_through: "certifier_certifications",
       on_delete: :delete_all,
-      on_replace: :delete
-      # where: [is_active: true]
+      on_replace: :delete,
+      where: [is_active: true]
     )
 
     many_to_many(
       :delegates,
       Delegate,
       join_through: "certifiers_delegates",
-      on_delete: :delete_all
-      # where: [is_active: true]
+      on_delete: :delete_all,
+      on_replace: :delete,
+      where: [is_active: true]
     )
 
     timestamps()
@@ -50,7 +51,8 @@ defmodule Vae.Certifier do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
   end
 
-  def is_educ_nat?(%__MODULE__{} = certifier), do: certifier.id == @educ_nat_id
+  def is_educ_nat?(%Certifier{id: @educ_nat_id}), do: true
+  def is_educ_nat?(_), do: false
 
   defimpl Phoenix.Param, for: Vae.Certifier do
     def to_param(%{id: id, slug: slug}) do

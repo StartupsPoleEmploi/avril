@@ -13,9 +13,6 @@ defmodule Vae.ExAdmin.Process do
   end
 
   register_resource Vae.Process do
-    update_changeset(:changeset_update)
-    create_changeset(:changeset_update)
-
     index do
       selectable_column()
       column(:id)

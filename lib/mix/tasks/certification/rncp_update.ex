@@ -44,12 +44,12 @@ defmodule Mix.Tasks.RncpUpdate do
     {options, [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
 
     Logger.info("Start update RNCP with #{options[:filename]}")
-    prepare_avril_data()
+    # prepare_avril_data()
 
-    build_and_transform_stream(
-      options[:filename],
-      &fiche_to_certification(&1)
-    )
+    # build_and_transform_stream(
+    #   options[:filename],
+    #   &fiche_to_certification(&1)
+    # )
 
     build_and_transform_stream(
       options[:filename],
@@ -227,7 +227,7 @@ defmodule Mix.Tasks.RncpUpdate do
         ) |> Repo.update_all(set: [certification_id: newer_certification_id])
       rescue
         e in Postgrex.Error ->
-          Logger.warn(e)
+          Logger.warn(inspect(e))
           if options[:interactive] do
             id = IO.gets("Quel ID supprime-t-on ? ")
             |> String.trim()

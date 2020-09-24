@@ -15,22 +15,21 @@ defmodule Vae.ExAdmin.Certifier do
     show certifier do
       attributes_table
 
-      panel "Certifications" do
+      panel Vae.String.inflect(length(certifier.certifications), "active certification", [lang: :en]) do
         table_for certifier.certifications do
           column(:id)
-          column(:name, fn a -> Helpers.link_to_resource(a) end)
-          column(:level)
           column(:rncp_id)
+          column(:name, fn a -> Helpers.link_to_resource(a) end)
           column(:is_active)
         end
       end
 
-      panel "Delegates" do
+      panel Vae.String.inflect(length(certifier.delegates), "active delegate", [lang: :en]) do
         table_for certifier.delegates do
           column(:id)
           column(:name, fn a -> Helpers.link_to_resource(a) end)
           column(:city)
-          column(:adminitrative)
+          column(:administrative)
           column(:is_active)
         end
       end

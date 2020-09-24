@@ -2,21 +2,22 @@ defmodule Vae.Certification do
   use VaeWeb, :model
 
   alias __MODULE__
+  alias Ecto.Changeset
   alias Vae.{UserApplication, Certifier, Delegate, Repo, Rome}
 
   schema "certifications" do
+    field(:rncp_id, :string)
     field(:is_active, :boolean)
     field(:slug, :string)
-    field(:label, :string)
     field(:acronym, :string)
+    field(:label, :string)
     field(:level, :integer)
-    field(:rncp_id, :string)
+    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
     field(:activities, :string)
     field(:abilities, :string)
     field(:activity_area, :string)
     field(:accessible_job_type, :string)
 
-    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
 
     many_to_many(
       :certifiers,
@@ -34,17 +35,37 @@ defmodule Vae.Certification do
       on_delete: :delete_all
     )
 
+    # Theoretical delegates
+    has_many(
+      :rncp_delegates,
+      through: [:certifiers, :delegates]
+    )
+
+    # Manually excluded delegates in admin
+    many_to_many(
+      :excluded_delegates,
+      Certification,
+      join_through: "certifications_delegates_exclusions",
+      on_delete: :delete_all,
+      on_replace: :delete
+    )
+
+    # Manually included delegates in admin
+    many_to_many(
+      :included_delegates,
+      Certification,
+      join_through: "certifications_delegates_inclusions",
+      on_delete: :delete_all,
+      on_replace: :delete
+    )
+
+    # Actual associations : delegates = rncp + included - excluded
     many_to_many(
       :delegates,
       Delegate,
       join_through: "certifications_delegates",
       on_replace: :delete,
       on_delete: :delete_all
-    )
-
-    has_many(
-      :rncp_delegates,
-      through: [:certifiers, :delegates]
     )
 
     has_many(
@@ -79,12 +100,15 @@ defmodule Vae.Certification do
       :accessible_job_type
     ])
     |> slugify()
-    |> validate_required([:label, :slug])
+    |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
+    |> unique_constraint(:rncp_id)
+    |> add_newer_certification(params)
     |> add_romes(params)
     |> add_certifiers(params)
+    |> add_included_excluded_delegates(params)
+    |> link_delegates()
     # |> add_delegates(params)
-    |> add_newer_certification(params)
   end
 
   # def find_by_acronym_and_label(certification_label) do
@@ -127,6 +151,37 @@ defmodule Vae.Certification do
     Certifier
     |> where([c], c.id in ^certifier_ids)
     |> Repo.all()
+  end
+
+  def add_included_excluded_delegates(changeset, %{
+      included_delegate_ids: included_delegate_ids,
+      excluded_delegate_ids: excluded_delegate_ids
+    }) when is_list(included_delegate_ids) and is_list(excluded_delegate_ids) do
+    included_delegates = Repo.all(from c in Certification, where: c.id in ^included_delegate_ids)
+    excluded_delegates = Repo.all(from c in Certification, where: c.id in ^excluded_delegate_ids)
+
+    changeset
+    |> put_assoc(:included_delegates, included_delegates)
+    |> put_assoc(:excluded_delegates, excluded_delegates)
+  end
+
+  def add_included_excluded_certifications(changeset, _), do: changeset
+
+  def link_delegates(%Changeset{} = changeset) do
+    if get_change(changeset, :certifiers) ||
+       get_change(changeset, :included_delegates) ||
+       get_change(changeset, :excluded_delegates) do
+
+      certifiers = get_field(changeset, :certifiers) |> Repo.repload(:delegates)
+      rncp_delegates = Enum.flat_map(certifiers, &(&1.delegates))
+
+      delegates = rncp_delegates ++ get_field(changeset, :included_delegates) -- get_field(changeset, :excluded_delegates)
+
+      changeset
+      |> put_assoc(:delegates, delegates)
+    else
+      changeset
+    end
   end
 
   def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers_changes}} = changeset, _params) do

@@ -39,11 +39,31 @@ defmodule Vae.Delegate do
       on_replace: :delete
     )
 
+    # Theoretical certifications
     has_many(
       :rncp_certifications,
       through: [:certifiers, :certifications]
     )
 
+    # Manually excluded certifications in admin
+    many_to_many(
+      :excluded_certifications,
+      Certification,
+      join_through: "certifications_delegates_exclusions",
+      on_delete: :delete_all,
+      on_replace: :delete
+    )
+
+    # Manually included certifications in admin
+    many_to_many(
+      :included_certifications,
+      Certification,
+      join_through: "certifications_delegates_inclusions",
+      on_delete: :delete_all,
+      on_replace: :delete
+    )
+
+    # Actual associations : certifications = rncp + included - excluded
     many_to_many(
       :certifications,
       Certification,
@@ -81,7 +101,23 @@ defmodule Vae.Delegate do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
+    # params =
+    #   Map.merge(
+    #     params,
+    #     case params[:is_active] do
+    #       "true" -> %{is_active: true}
+    #       _ -> %{is_active: false}
+    #     end
+    #   )
+    #   |> Map.merge(
+    #     case params[:academy_id] do
+    #       nil -> %{}
+    #       id -> %{academy_id: Integer.to_string(id)}
+    #     end
+    #   )
+
     struct
+    # |> Repo.preload([:certifiers, :certifications])
     |> cast(params, [
       :name,
       :website,
@@ -104,93 +140,63 @@ defmodule Vae.Delegate do
     |> unique_constraint(:slug)
     |> validate_format(:email, ~r/@/)
     |> validate_format(:secondary_email, ~r/@/)
-    |> add_certifiers(params)
-  end
-
-  # TODO: consider refacto changeset and changeset_update, or remove one
-  def changeset_update(struct, params) do
-    params =
-      Map.merge(
-        params,
-        case params[:is_active] do
-          "true" -> %{is_active: true}
-          _ -> %{is_active: false}
-        end
-      )
-      |> Map.merge(
-        case params[:academy_id] do
-          nil -> %{}
-          id -> %{academy_id: Integer.to_string(id)}
-        end
-      )
-
-    struct
-    |> Repo.preload([:certifiers, :certifications])
-    |> cast(params, [
-      :name,
-      :website,
-      :address,
-      :telephone,
-      :email,
-      :person_name,
-      :secondary_email,
-      :secondary_person_name,
-      :is_active,
-      :geolocation,
-      :city,
-      :administrative,
-      :academy_id,
-      :internal_notes
-    ])
-    |> slugify()
-    |> validate_required([:name, :slug])
-    |> unique_constraint(:slug)
-    |> add_certifiers(params)
-    |> link_certifications()
+    |> add_process(params)
     |> add_geolocation(params)
+    |> add_certifiers(params)
+    |> add_included_excluded_certifications(params)
+    |> link_certifications()
   end
 
-  def get(nil), do: nil
-  def get(id), do: Repo.get(Delegate, id)
+  # def get(nil), do: nil
+  # def get(id), do: Repo.get(Delegate, id)
 
-  def add_certifiers(changeset, %{certifier_ids: certifier_ids}) do
-    changeset
-    |> put_assoc(:certifiers, get_certifiers(certifier_ids))
+  def add_certifiers(changeset, %{certifier_ids: certifier_ids}) when is_list(certifier_ids) do
+    certifiers = Repo.all(from c in Certifier, where: c.id in ^certifier_ids)
+    put_assoc(changeset, :certifiers, certifiers)
   end
 
   def add_certifiers(changeset, _no_certifiers), do: changeset
 
-  def get_certifiers(certifier_ids) do
-    Certifier
-    |> where([c], c.id in ^certifier_ids)
-    |> Repo.all()
+  def add_included_excluded_certifications(changeset, %{
+      included_certification_ids: included_certification_ids,
+      excluded_certification_ids: excluded_certification_ids
+    }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
+    included_certifications = Repo.all(from c in Certification, where: c.id in ^included_certification_ids)
+    excluded_certifications = Repo.all(from c in Certification, where: c.id in ^excluded_certification_ids)
+
+    changeset
+    |> put_assoc(:included_certifications, included_certifications)
+    |> put_assoc(:excluded_certifications, excluded_certifications)
   end
 
-  def link_certifications(%Changeset{changes: %{certifiers: certifiers_changes}} = changeset) do
-    certifications =
-      Enum.flat_map(certifiers_changes, fn
-        %{action: :update, data: certifiers} ->
-          %Certifier{certifications: certifications} = Repo.preload(certifiers, :certifications)
-          certifications
-        _ -> []
-      end)
+  def add_included_excluded_certifications(changeset, _), do: changeset
 
-    put_assoc(changeset, :certifications, certifications)
+  def link_certifications(%Changeset{} = changeset) do
+    if get_change(changeset, :certifiers) ||
+       get_change(changeset, :included_certifications) ||
+       get_change(changeset, :excluded_certifications) do
+
+      certifiers = get_field(changeset, :certifiers) |> Repo.repload(:certifications)
+      rncp_certifications = Enum.flat_map(certifiers, &(&1.certifications))
+
+      certifications = rncp_certifications ++ get_field(changeset, :included_certifications) -- get_field(changeset, :excluded_certifications)
+
+      changeset
+      |> put_assoc(:certifications, certifications)
+    else
+      changeset
+    end
   end
 
-  def link_certifications(changeset), do: changeset
-
-  def add_process(delegate, process) do
-    delegate
-    |> change
-    |> put_assoc(:process, process)
+  def add_process(changeset, %{process_id: process_id}) when not is_nil(process_id) do
+    case Repo.get(Process, process_id) do
+      %Process{} = process ->
+        changeset
+        |> put_assoc(:process, process)
+      _ -> changeset
+    end
   end
-
-  def add_certifications(delegate, certifications) do
-    delegate
-    |> change
-    |> put_assoc(:certifications, certifications)
-  end
+  def add_process(changeset, _params), do: changeset
 
   def put_meeting_places(delegate, meetings) do
     delegate
@@ -220,7 +226,6 @@ defmodule Vae.Delegate do
 
   defp add_geolocation(changeset, _params), do: changeset
 
-  def format_for_index(nil), do: nil
 
   def format_for_index(%Delegate{} = delegate) do
     delegate = delegate |> Repo.preload(:certifiers)
@@ -232,28 +237,28 @@ defmodule Vae.Delegate do
 
     delegate
     |> Map.take(Delegate.__schema__(:fields))
-    |> Map.put(:certifiers, certifiers)
+    |> Map.put(:certifiers, Enum.map(delegate.certifiers, &(&1.id)))
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
+  def format_for_index(_), do: nil
 
-  def is_asp?(%Delegate{} = delegate) do
-    String.starts_with?(delegate.name, "ASP")
+  def is_asp?(%Delegate{name: name}) do
+    String.starts_with?(name, "ASP")
   end
 
-  def is_afpa?(%Delegate{} = delegate) do
-    String.starts_with?(delegate.name, "AFPA")
+  def is_afpa?(%Delegate{name: name}) do
+    String.starts_with?(name, "AFPA")
   end
 
   def is_educ_nat?(%Delegate{} = delegate) do
     delegate
     |> Repo.preload(:certifiers)
     |> Map.get(:certifiers)
-    |> Enum.reduce(false, fn certifier, result -> result || Certifier.is_educ_nat?(certifier) end)
+    |> Enum.any?(&Certifier.is_educ_nat?/1)
   end
 
-  def is_corse?(%Delegate{} = delegate) do
-    delegate.administrative == "Corse"
-  end
+  def is_corse?(%Delegate{administrative: "Corse"}), do: true
+  def is_corse?(_), do: false
 
   def external_subscription_link(%Delegate{} = delegate) do
     if delegate.academy_id do
@@ -267,7 +272,7 @@ defmodule Vae.Delegate do
     end
   end
 
-  def display_name(%Delegate{} = delegate), do: delegate.name
+  # def display_name(%Delegate{} = delegate), do: delegate.name
 
   def to_slug(%Delegate{} = delegate) do
     Vae.String.parameterize(
@@ -289,21 +294,14 @@ defmodule Vae.Delegate do
     if is_nil(Map.merge(data, changes).email), do: put_change(changeset, :is_active, false), else: changeset
   end
 
-  def get_certifications(%Delegate{} = delegate) do
-    delegate |> Repo.preload(:certifications) |> Map.get(:certifications)
-  end
-
   def get_popular(limit \\ 10) do
-    query =
-      from(d in Delegate,
-        join: a in UserApplication,
-        on: d.id == a.delegate_id,
-        group_by: d.id,
-        order_by: [desc: count(a.id)],
-        limit: ^limit
-      )
-
-    Repo.all(query)
+    from(d in Delegate,
+      join: a in UserApplication,
+      on: d.id == a.delegate_id,
+      group_by: d.id,
+      order_by: [desc: count(a.id)],
+      limit: ^limit
+    ) |> Repo.all()
   end
 
   defimpl Phoenix.Param, for: Vae.Delegate do

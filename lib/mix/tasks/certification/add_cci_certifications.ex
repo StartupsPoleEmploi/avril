@@ -58,7 +58,7 @@ defmodule Mix.Tasks.AddCciCertifications do
   def build_delegate_changesets(delegates) do
     Enum.map(delegates, fn delegate ->
       %Delegate{}
-      |> Delegate.changeset_update(delegate)
+      |> Delegate.changeset(delegate)
     end)
   end
 

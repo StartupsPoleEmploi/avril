@@ -68,7 +68,7 @@ defmodule VaeWeb.DelegateController do
     end
   end
 
-  def show(conn, %{"administrative" => administrative_slug, "city" => city_slug, "id" => id} = _params) do
+  def show(conn, %{"administrative" => administrative_slug, "city" => city_slug, "id" => id}) do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
@@ -81,8 +81,7 @@ defmodule VaeWeb.DelegateController do
         real_administrative_slug == administrative_slug &&
         real_city_slug == city_slug) do
           render(conn, "show.html",
-            delegate: delegate,
-            certifications: Delegate.get_certifications(delegate)
+            delegate: delegate
           )
       else
         # Metadata is not up-to-date

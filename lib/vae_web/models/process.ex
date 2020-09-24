@@ -34,11 +34,6 @@ defmodule Vae.Process do
     )
     |> validate_required([:name])
     |> unique_constraint(:name)
-  end
-
-  def changeset_update(process, params \\ %{}) do
-    process
-    |> changeset(params)
     |> add_delegates(params)
   end
 

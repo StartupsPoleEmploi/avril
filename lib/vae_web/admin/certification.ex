@@ -5,6 +5,9 @@ defmodule Vae.ExAdmin.Certification do
   require Ecto.Query
 
   register_resource Vae.Certification do
+    action_items [except: [:new, :delete]]
+
+
     index do
       selectable_column()
       column(:id)
@@ -12,7 +15,10 @@ defmodule Vae.ExAdmin.Certification do
       column(:is_active)
       column(:acronym)
       column(:label)
-      column(:nb_certifiers, fn a -> length(a.certifiers) end)
+      column(:certifiers, fn d ->
+        Enum.map(d.certifiers, &Helpers.link_to_resource/1)
+      end)
+      column(:nb_active_delegates, fn a -> length(a.delegates) end)
       column(:nb_applications, fn a -> length(a.applications) end)
 
       actions()
@@ -21,7 +27,7 @@ defmodule Vae.ExAdmin.Certification do
     show certification do
       attributes_table()
 
-      panel "Romes" do
+      panel Vae.String.inflect(length(certification.romes), "rome", [lang: :en]) do
         table_for certification.romes do
           column(:id)
           column(:label)
@@ -29,22 +35,14 @@ defmodule Vae.ExAdmin.Certification do
         end
       end
 
-      panel "Certifiers" do
+      panel Vae.String.inflect(length(certification.certifiers), "certifier", [lang: :en]) do
         table_for certification.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
 
-      panel "RNCP Delegates" do
-        table_for certification.rncp_delegates do
-          column(:id)
-          column(:name, &Helpers.link_to_resource/1)
-          column(:is_active)
-        end
-      end
-
-      panel "Delegates" do
+      panel Vae.String.inflect(length(certification.delegates), "delegate", [lang: :en]) do
         table_for certification.delegates do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
@@ -52,7 +50,7 @@ defmodule Vae.ExAdmin.Certification do
         end
       end
 
-      panel "Applications" do
+      panel Vae.String.inflect(length(certification.applications), "application", [lang: :en]) do
         table_for certification.applications do
           column(:id)
           column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
@@ -66,44 +64,35 @@ defmodule Vae.ExAdmin.Certification do
 
     form certification do
       inputs do
-        input(certification, :is_active)
-        input(certification, :rncp_id)
-        input(certification, :acronym)
-        input(certification, :label)
-        input(certification, :level)
-        input(certification, :activity_area, type: :text)
-        input(certification, :activities, type: :text)
-        input(certification, :abilities, type: :text)
-        input(certification, :accessible_job_type, type: :text)
+        input(certification, :is_active, readonly: true)
+        input(certification, :rncp_id, readonly: true)
+        input(certification, :acronym, readonly: true)
+        input(certification, :label, readonly: true)
+        input(certification, :level, readonly: true)
 
-        # content do
-        #   Helpers.form_select_tag(certification, :certifiers)
-        # end
+        content do
+          Helpers.form_select_tag(certification, :excluded_delegates, [options: certification.rncp_delegates])
+        end
 
-        # content do
-        #   Helpers.form_select_tag(certification, :romes, fn r -> r.code end)
-        # end
-
-        # content do
-        #   Helpers.form_select_tag(certification, :delegates)
-        # end
+        content do
+          other_delegates = Vae.Repo.all(Ecto.Query.from(d in Vae.Delegate, where: [is_active: true])) -- certification.rncp_delegates
+          Helpers.form_select_tag(certification, :included_delegates, [options: other_delegates, label: "Extra delegates"])
+        end
       end
     end
 
     filter [:is_active, :id, :rncp_id, :slug, :acronym, :label, :level, :description]
 
     query do
-      preloads = [:certifiers, :delegates, :rncp_delegates, :romes]
+      preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]
 
       %{
-        index: [default_sort: [asc: :id], preload: [:certifiers, :applications]],
+        index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :delegates, :applications]],
         show: [
-          preload: preloads ++ [:newer_certification] ++ [
+          preload: [:certifiers, :delegates, :romes, :newer_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]
           ]
         ],
-        new: [preload: preloads],
-        create: [preload: preloads],
         edit: [preload: preloads],
         update: [preload: preloads],
       }
