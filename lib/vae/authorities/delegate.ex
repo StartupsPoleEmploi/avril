@@ -117,7 +117,7 @@ defmodule Vae.Delegate do
     #   )
 
     struct
-    # |> Repo.preload([:certifiers, :certifications])
+    |> Repo.preload([:certifiers, :certifications, :included_certifications, :excluded_certifications])
     |> cast(params, [
       :name,
       :website,
@@ -176,7 +176,7 @@ defmodule Vae.Delegate do
        get_change(changeset, :included_certifications) ||
        get_change(changeset, :excluded_certifications) do
 
-      certifiers = get_field(changeset, :certifiers) |> Repo.repload(:certifications)
+      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:certifications)
       rncp_certifications = Enum.flat_map(certifiers, &(&1.certifications))
 
       certifications = rncp_certifications ++ get_field(changeset, :included_certifications) -- get_field(changeset, :excluded_certifications)

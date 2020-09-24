@@ -44,12 +44,12 @@ defmodule Mix.Tasks.RncpUpdate do
     {options, [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
 
     Logger.info("Start update RNCP with #{options[:filename]}")
-    # prepare_avril_data()
+    prepare_avril_data()
 
-    # build_and_transform_stream(
-    #   options[:filename],
-    #   &fiche_to_certification(&1)
-    # )
+    build_and_transform_stream(
+      options[:filename],
+      &fiche_to_certification(&1)
+    )
 
     build_and_transform_stream(
       options[:filename],
@@ -81,15 +81,16 @@ defmodule Mix.Tasks.RncpUpdate do
     # Remove certifiers without certifications
     from(c in Certifier,
       left_join: a in assoc(c, :certifications),
+      left_join: d in assoc(c, :delegates),
       group_by: c.id,
-      having: count(a.id) == ^0
+      having: count(a.id) == ^0 and count(d.id) == ^0
     )
     |> Repo.all()
     |> Enum.each(fn c -> Repo.delete(c) end)
   end
 
   defp build_and_transform_stream(filename, transform) do
-    File.stream!("priv/#{filename}")
+    File.stream!(filename)
     |> SweetXml.stream_tags(:FICHE)
     |> Stream.filter(fn {_, fiche} ->
       !String.starts_with?(xpath(fiche, ~x"./INTITULE/text()"s), "CQP")

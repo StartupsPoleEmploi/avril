@@ -88,6 +88,7 @@ defmodule Vae.Certification do
   """
   def changeset(struct, params \\ %{}) do
     struct
+    |> Repo.preload([:certifiers, :delegates, :included_delegates, :excluded_delegates])
     |> cast(params, [
       :is_active,
       :label,
@@ -164,15 +165,14 @@ defmodule Vae.Certification do
     |> put_assoc(:included_delegates, included_delegates)
     |> put_assoc(:excluded_delegates, excluded_delegates)
   end
-
-  def add_included_excluded_certifications(changeset, _), do: changeset
+  def add_included_excluded_delegates(changeset, _), do: changeset
 
   def link_delegates(%Changeset{} = changeset) do
     if get_change(changeset, :certifiers) ||
        get_change(changeset, :included_delegates) ||
        get_change(changeset, :excluded_delegates) do
 
-      certifiers = get_field(changeset, :certifiers) |> Repo.repload(:delegates)
+      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:delegates)
       rncp_delegates = Enum.flat_map(certifiers, &(&1.delegates))
 
       delegates = rncp_delegates ++ get_field(changeset, :included_delegates) -- get_field(changeset, :excluded_delegates)
