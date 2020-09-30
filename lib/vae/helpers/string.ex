@@ -23,6 +23,10 @@ defmodule Vae.String do
 
   def to_id(_param), do: nil
 
+  def wordify(word) do
+    String.split(word, ~r/\s+/)
+  end
+
   def titleize(string) do
     cond do
       String.upcase(string || "") == string ->
@@ -43,7 +47,7 @@ defmodule Vae.String do
     string
     |> :unicode.characters_to_nfd_binary()
     |> String.replace("œ", "oe")
-    |> String.replace(~r/[\\"\'\-]/u, " ")
+    |> String.replace(~r/[\\"\'\-\(\)]/u, " ")
     |> String.replace(~r/[^A-z\s0-9]/u, "")
     |> String.downcase()
     |> String.trim()

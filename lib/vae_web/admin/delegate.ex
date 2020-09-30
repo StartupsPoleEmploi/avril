@@ -14,7 +14,7 @@ defmodule Vae.ExAdmin.Delegate do
       column(:process)
 
       column(:certifiers, fn d ->
-        Enum.map(d.certifiers, &Helpers.link_to_resource/1)
+        Enum.map(d.certifiers, &Helpers.link_to_resource(&1)) |> Enum.intersperse(", ")
       end)
       column(:nb_active_certifications, fn a -> length(a.certifications) end)
       column(:nb_applications, fn a -> length(a.applications) end)

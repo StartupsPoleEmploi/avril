@@ -175,7 +175,7 @@ defmodule Vae.Certification do
       certifiers = get_field(changeset, :certifiers) |> Repo.preload(:delegates)
       rncp_delegates = Enum.flat_map(certifiers, &(&1.delegates))
 
-      delegates = rncp_delegates ++ get_field(changeset, :included_delegates) -- get_field(changeset, :excluded_delegates)
+      delegates = Enum.uniq(rncp_delegates ++ get_field(changeset, :included_delegates) -- get_field(changeset, :excluded_delegates))
 
       changeset
       |> put_assoc(:delegates, delegates)
