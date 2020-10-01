@@ -16,7 +16,7 @@ defmodule Vae.ExAdmin.Certification do
       column(:acronym)
       column(:label)
       column(:certifiers, fn d ->
-        Enum.map(d.certifiers, &Helpers.link_to_resource/1)
+        Enum.map(d.certifiers, &Helpers.link_to_resource/1) |> Enum.intersperse(", ")
       end)
       column(:nb_active_delegates, fn a -> length(a.delegates) end)
       column(:nb_applications, fn a -> length(a.applications) end)

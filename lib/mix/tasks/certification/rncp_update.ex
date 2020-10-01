@@ -139,7 +139,7 @@ defmodule Mix.Tasks.RncpUpdate do
 
   defp build_and_transform_stream(filename, transform) do
     File.stream!(filename)
-    |> SweetXml.stream_tags(:FICHE)
+    |> SweetXml.stream_tags(:FICHE, discard: [:FICHE])
     |> Stream.filter(fn {_, fiche} ->
       !String.starts_with?(xpath(fiche, ~x"./INTITULE/text()"s), "CQP")
     end)
@@ -192,7 +192,7 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   defp certifier_rncp_override(name) do
-    case Enum.find(@overrides, fn {k, v} ->
+    case Enum.find(@overrides, fn {k, _v} ->
       String.starts_with?(Vae.String.parameterize(name), Vae.String.parameterize(k))
     end) do
       {_k, val} -> val
@@ -286,7 +286,7 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def wordify_jaro_distance(string1, string2) do
-    [short | [long | rest]] = [wordify(string1), wordify(string2)]
+    [short | [long | _rest]] = [wordify(string1), wordify(string2)]
     |> Enum.sort_by(&(length(&1)))
 
     short
