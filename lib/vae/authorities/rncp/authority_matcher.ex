@@ -4,36 +4,107 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
   @log_file "priv/matches.log"
 
+  @ignored_words ~w(de du la le d)
+  @pre_capitalization ~w(d' l')
+  @middle_capitalization ~w(( -)
+
   @cities ~w(
+    amiens
     angers
     avignon
     besancon
     bordeaux
+    brest
     caen
     cergy
+    chambery
     creteil
     evry
+    grenoble
+    havre
     lille
     limoges
     lorraine
     lyon
+    mans
+    marne
     marseille
     montpellier
+    mulhouse
+    nanterre
     nantes
     nice
     nimes
-    normandie
     orleans
     paris
     pau
     perpignan
     poitiers
+    reims
     rennes
     rouen
+    saint-etienne
+    saint-denis
+    saint-quentin-en-yvelines
     strasbourg
     toulon
     toulouse
     tours
+    valenciennes
+    versailles
+    vincennes
+  )
+
+  @other_capitalize_nouns ~w(
+    adour
+    alpes
+    antilles
+    antipolis
+    ardenne
+    artois
+    bernard
+    bourgogne
+    bretagne
+    cambresis
+    cezanne
+    champagne
+    charles
+    claude
+    corse
+    denis
+    essonne
+    est
+    etienne
+    france
+    francois
+    gaulle
+    hainaut
+    jaures
+    jean
+    jules
+    monnet
+    moulin
+    nord
+    normandie
+    ouest
+    paul
+    picardie
+    pontoise
+    provence
+    quentin
+    rabelais
+    reunion
+    roussillon
+    sabatier
+    saint
+    savoie
+    segalen
+    sophia
+    sorbonne
+    sud
+    vernes
+    victor
+    yveline
   )
 
   @roman_numbers %{
@@ -82,8 +153,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     case Repo.get_by(klass, slug: slug) do
       nil ->
         all_elements = Repo.all(klass)
-        best_match = Enum.max_by(all_elements, &wordify_jaro_distance(slug, &1.slug))
-        best_match_distance = wordify_jaro_distance(slug, best_match.slug)
+        best_match = Enum.max_by(all_elements, &custom_jaro_distance(slug, &1.slug))
+        best_match_distance = custom_jaro_distance(slug, best_match.slug)
 
         if best_match_distance > tolerance do
           log_into_file("""
@@ -100,14 +171,15 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end
   end
 
-  defp wordify_jaro_distance(string1, string2) do
-    [short | [long | _rest]] = [wordify(string1), wordify(string2)]
-    |> Enum.sort_by(&(length(&1)))
+  def custom_jaro_distance(string1, string2) do
+    [short | [long | _rest]] =
+      [wordify(string1), wordify(string2)]
+      |> Enum.sort_by(&(length(&1)))
 
     short
     |> Enum.map(fn word1 ->
       long
-      |> Enum.map(&custom_distance(word1, &1))
+      |> Enum.map(&custom_word_distance(word1, &1))
       |> Enum.max()
     end)
     |> (fn d ->
@@ -118,7 +190,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end).()
   end
 
-  defp custom_distance(word1, word2) do
+  defp custom_word_distance(word1, word2) do
     cond do
       Integer.parse(word1) !== :error && Integer.parse(word2) !== :error ->
         (if word1 == word2, do: 1, else: 0)
@@ -133,7 +205,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     string1
     |> Vae.String.parameterize()
     |> String.split("-")
-    |> Enum.filter(fn w -> Enum.member?(~w(de la le), w) end)
+    |> Enum.filter(fn w -> !Enum.member?(@ignored_words, w) end)
+    |> Enum.filter(&Vae.String.is_present?(&1))
   end
 
   defp replace_roman_numbers(word) do
@@ -161,8 +234,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
         "L'INTERIEUR" -> "l'intérieur"
         <<"(" :: utf8, _r :: binary>> = w -> w
         w ->
-          if (i == 0 || Enum.member?(@cities, Vae.String.parameterize(w))) do
-            String.capitalize(w)
+          if (i == 0 || Enum.member?(@cities ++ @other_capitalize_nouns, Vae.String.parameterize(w))) do
+            smarter_capitalize(w)
           else
             String.downcase(w)
           end
@@ -170,6 +243,21 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end)
     |> Enum.map(&replace_roman_numbers(&1))
     |> Enum.join(" ")
+  end
+
+  def smarter_capitalize(w) do
+    Enum.reduce(@middle_capitalization, w, fn mc, res ->
+      String.split(res, mc)
+      |> Enum.map(&ignore_apostrophes(&1))
+      |> Enum.join(mc)
+    end)
+  end
+
+  def ignore_apostrophes(w) do
+    case Enum.find(@pre_capitalization, &String.starts_with?(w, &1)) do
+      nil -> String.capitalize(w)
+      hd -> "#{hd}#{String.capitalize(String.replace_prefix(w, hd, ""))}"
+    end
   end
 
 end

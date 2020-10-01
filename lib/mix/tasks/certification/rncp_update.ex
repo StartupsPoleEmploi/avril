@@ -23,7 +23,7 @@ defmodule Mix.Tasks.RncpUpdate do
     {options, [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
 
     Logger.info("Start update RNCP with #{options[:filename]}")
-    # prepare_avril_data()
+    prepare_avril_data()
 
     build_and_transform_stream(
       options[:filename],
@@ -55,7 +55,7 @@ defmodule Mix.Tasks.RncpUpdate do
     Logger.info("Create static certifiers")
     Enum.each(@new_certifiers, fn c ->
       Repo.get_by(Certifier, slug: Vae.String.parameterize(c)) ||
-      Vae.Authorities.Rncp.AuthorityMatcher.create_certifier_and_maybe_delegate(c)
+      Vae.Authorities.Rncp.FicheHandler.create_certifier_and_maybe_delegate(c)
     end)
   end
 
@@ -63,12 +63,11 @@ defmodule Mix.Tasks.RncpUpdate do
     Logger.info("Remove certifiers without certifications")
     from(c in Certifier,
       left_join: a in assoc(c, :certifications),
-      left_join: d in assoc(c, :delegates),
       group_by: c.id,
-      having: count(a.id) == ^0 and count(d.id) == ^0
+      having: count(a.id) == ^0
     )
     |> Repo.all()
-    |> Enum.each(fn c -> Repo.delete(c) end)
+    |> Enum.each(&Repo.delete(&1))
   end
 
   defp build_and_transform_stream(filename, transform) do
