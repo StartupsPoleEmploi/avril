@@ -311,7 +311,7 @@ defmodule Mix.Tasks.RncpUpdate do
     string1
     |> Vae.String.parameterize()
     |> String.split("-")
-    |> Enum.filter(fn w -> Enum.member?(~w(de la )) end)
+    |> Enum.filter(fn w -> Enum.member?(~w(de la le), w) end)
   end
 
   defp insert_or_update_by_rncp_id(%{rncp_id: rncp_id} = fields) do
