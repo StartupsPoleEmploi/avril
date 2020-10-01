@@ -106,7 +106,7 @@ defmodule Mix.Tasks.RncpUpdate do
 
   defp prepare_avril_data() do
     Logger.info("Remove previous log file")
-    :ok = File.rm(@log_file)
+    File.rm(@log_file)
 
     Logger.info("Update slugs")
     Enum.each([Certifier, Delegate], fn klass ->
