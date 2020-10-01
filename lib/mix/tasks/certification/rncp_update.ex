@@ -292,7 +292,7 @@ defmodule Mix.Tasks.RncpUpdate do
     short
     |> Enum.map(fn word1 ->
       long
-      |> Enum.map(&custom_distance(&1, &2))
+      |> Enum.map(&custom_distance(word1, &1))
       |> Enum.max()
     end)
     |> (fn d ->
