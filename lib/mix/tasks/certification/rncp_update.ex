@@ -292,19 +292,26 @@ defmodule Mix.Tasks.RncpUpdate do
     short
     |> Enum.map(fn word1 ->
       long
-      |> Enum.map(fn word2 ->
-        cond do
-          Integer.parse(word1) !== :error && Integer.parse(word2) !== :error ->
-            (if word1 == word2, do: 1, else: 0)
-          Enum.member?(@cities, word1) ->
-            (if word1 == word2, do: 1, else: 0)
-          true ->
-            String.jaro_distance(word1, word2)
-        end
-      end)
+      |> Enum.map(&custom_distance(&1, &2))
       |> Enum.max()
     end)
-    |> (fn d -> Enum.sum(d)/length(d) end).()
+    |> (fn d ->
+      case d do
+        [] -> 0
+        d -> Enum.sum(d)/length(d)
+      end
+    end).()
+  end
+
+  defp custom_distance(word1, word2) do
+    cond do
+      Integer.parse(word1) !== :error && Integer.parse(word2) !== :error ->
+        (if word1 == word2, do: 1, else: 0)
+      Enum.member?(@cities, word1) ->
+        (if word1 == word2, do: 1, else: 0)
+      true ->
+        String.jaro_distance(word1, word2)
+    end
   end
 
   defp wordify(string1) do
