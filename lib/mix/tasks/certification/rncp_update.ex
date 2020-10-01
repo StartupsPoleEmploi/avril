@@ -11,18 +11,21 @@ defmodule Mix.Tasks.RncpUpdate do
     angers
     avignon
     besancon
+    bordeaux
     caen
     cergy
     creteil
     evry
     lille
     limoges
+    lorraine
     lyon
     marseille
     montpellier
     nantes
     nice
     nimes
+    normandie
     orleans
     paris
     pau
@@ -266,7 +269,12 @@ defmodule Mix.Tasks.RncpUpdate do
         "DEFENSE" -> "Défense"
         "L'INTERIEUR" -> "l'intérieur"
         <<"(" :: utf8, _r :: binary>> = w -> w
-        w -> if (i == 0 || Enum.member?(@cities, Vae.String.parameterize(w))), do: String.capitalize(w), else: String.downcase(w)
+        w ->
+          if (i == 0 || Enum.member?(@cities, Vae.String.parameterize(w))) do
+            String.capitalize(w)
+          else
+            String.downcase(w)
+          end
       end
     end)
     |> Enum.map(&replace_roman_numbers(&1))
@@ -286,6 +294,8 @@ defmodule Mix.Tasks.RncpUpdate do
       long
       |> Enum.map(fn word2 ->
         cond do
+          Integer.parse(word1) !== :error && Integer.parse(word2) !== :error ->
+            (if word1 == word2, do: 1, else: 0)
           Enum.member?(@cities, word1) ->
             (if word1 == word2, do: 1, else: 0)
           true ->
