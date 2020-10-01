@@ -149,6 +149,7 @@ defmodule Vae.ExAdmin.Delegate do
     end
 
     filter([:is_active, :id, :slug, :email, :city, :administrative])
+    filter(:certifiers, order_by: :name)
 
     query do
       %{
