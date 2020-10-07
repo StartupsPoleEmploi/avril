@@ -189,6 +189,14 @@ defmodule Vae.Delegate do
     end
   end
 
+  def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(data, changes)))
+  end
+
+  def make_inactive_if_email_missing(%Ecto.Changeset{} = changeset) do
+    if is_nil(get_field(changeset, :email)), do: put_change(changeset, :is_active, false), else: changeset
+  end
+
   def add_process(changeset, %{process_id: process_id}) when not is_nil(process_id) do
     case Repo.get(Process, process_id) do
       %Process{} = process ->
@@ -285,14 +293,6 @@ defmodule Vae.Delegate do
           else: delegate.administrative
       }"
     )
-  end
-
-  def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
-    put_change(changeset, :slug, to_slug(Map.merge(data, changes)))
-  end
-
-  def make_inactive_if_email_missing(%Ecto.Changeset{data: data, changes: changes} = changeset) do
-    if is_nil(Map.merge(data, changes).email), do: put_change(changeset, :is_active, false), else: changeset
   end
 
   def get_popular(limit \\ 10) do

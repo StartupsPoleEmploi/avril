@@ -101,6 +101,7 @@ defmodule Vae.Certification do
       :accessible_job_type
     ])
     |> slugify()
+    |> add_army_acronym()
     |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
     |> unique_constraint(:rncp_id)
@@ -109,6 +110,7 @@ defmodule Vae.Certification do
     |> add_certifiers(params)
     |> add_included_excluded_delegates(params)
     |> link_delegates()
+    |> make_inactive_if_no_certifier()
     # |> add_delegates(params)
   end
 
@@ -245,6 +247,19 @@ defmodule Vae.Certification do
 
   def slugify(changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
+  end
+
+  def add_army_acronym(%Changeset{} = changeset) do
+    case get_field(changeset, :certifiers) |> Enum.find(&Certifier.is_army_ministry?(&1)) do
+      %Certifier{name: name} ->
+        changeset
+        |> put_change(:acronym, get_field(changeset, :acronym) || "Diplôme #{name}" )
+      _ -> changeset
+    end
+  end
+
+  def make_inactive_if_no_certifier(%Ecto.Changeset{} = changeset) do
+    unless List.first(get_field(changeset, :certifiers)), do: put_change(changeset, :is_active, false), else: changeset
   end
 
   def get_popular(limit \\ 10) do

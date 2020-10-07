@@ -69,7 +69,7 @@ defmodule Vae.ExAdmin.User do
     update_changeset(:admin_changeset)
 
     show user do
-      attributes_table do
+      attributes_table() do
         row(:gender)
         row(:first_name)
         row(:last_name)

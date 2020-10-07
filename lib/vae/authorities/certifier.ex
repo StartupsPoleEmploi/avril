@@ -30,6 +30,7 @@ defmodule Vae.Certifier do
   end
 
   @educ_nat_id 2
+  @army_ministry_id 17
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -53,6 +54,9 @@ defmodule Vae.Certifier do
 
   def is_educ_nat?(%Certifier{id: @educ_nat_id}), do: true
   def is_educ_nat?(_), do: false
+
+  def is_army_ministry?(%Certifier{id: @army_ministry_id}), do: true
+  def is_army_ministry?(_), do: false
 
   defimpl Phoenix.Param, for: Vae.Certifier do
     def to_param(%{id: id, slug: slug}) do

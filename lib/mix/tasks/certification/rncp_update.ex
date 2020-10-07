@@ -3,15 +3,10 @@ defmodule Mix.Tasks.RncpUpdate do
 
   require Logger
   import Ecto.Query
-  alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
-
+  alias Vae.{Certification, Certifier, Delegate, Repo}
+  alias Vae.Authorities.Rncp.{CustomRules, FicheHandler, FileLogger}
   import SweetXml
 
-  @new_certifiers [
-    "Ministère de l'intérieur",
-    "Ministère de la transition écologique et solidarité",
-    "Ministère de l'agriculture et de la pêche"
-  ]
 
   def run([]) do
     Logger.error("RNCP filname argument required. Ex: mix RncpUpdate -f priv/rncp-2020-08-03.xml")
@@ -27,19 +22,19 @@ defmodule Mix.Tasks.RncpUpdate do
 
     build_and_transform_stream(
       options[:filename],
-      &Vae.Authorities.Rncp.FicheHandler.fiche_to_certification(&1)
+      &FicheHandler.fiche_to_certification(&1)
     )
 
     build_and_transform_stream(
       options[:filename],
-      &Vae.Authorities.Rncp.FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1, [interactive: options[:interactive]])
+      &FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1, [interactive: options[:interactive]])
     )
 
     clean_avril_data()
   end
 
   defp prepare_avril_data() do
-    Vae.Authorities.Rncp.AuthorityMatcher.clear_log_file()
+    FileLogger.clear_log_file()
 
     Logger.info("Update slugs")
     Enum.each([Certifier, Delegate], fn klass ->
@@ -51,15 +46,15 @@ defmodule Mix.Tasks.RncpUpdate do
 
     Logger.info("Make all certifications inactive")
     Repo.update_all(Certification, set: [is_active: false])
-
-    Logger.info("Create static certifiers")
-    Enum.each(@new_certifiers, fn c ->
-      Repo.get_by(Certifier, slug: Vae.String.parameterize(c)) ||
-      Vae.Authorities.Rncp.FicheHandler.create_certifier_and_maybe_delegate(c)
-    end)
   end
 
   defp clean_avril_data() do
+    CustomRules.deactivate_deamp()
+    CustomRules.deactivate_all_bep()
+    remove_certifiers_without_certifications()
+  end
+
+  defp remove_certifiers_without_certifications() do
     Logger.info("Remove certifiers without certifications")
     from(c in Certifier,
       left_join: a in assoc(c, :certifications),
@@ -73,8 +68,8 @@ defmodule Mix.Tasks.RncpUpdate do
   defp build_and_transform_stream(filename, transform) do
     File.stream!(filename)
     |> SweetXml.stream_tags(:FICHE, discard: [:FICHE])
-    |> Stream.filter(fn {_, fiche} ->
-      !String.starts_with?(xpath(fiche, ~x"./INTITULE/text()"s), "CQP")
+    |> Stream.reject(fn {_, fiche} ->
+      CustomRules.rejected_fiche?(xpath(fiche, ~x"./INTITULE/text()"s))
     end)
     |> Stream.each(fn {_, fiche} -> transform.(fiche) end)
     |> Stream.run()

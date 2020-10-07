@@ -3,6 +3,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   import Ecto.Query
   import SweetXml
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
+  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules}
 
   def fiche_to_certification(fiche) do
     rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
@@ -21,7 +22,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       |> Enum.filter(&not(is_nil(&1)))
       |> Enum.uniq_by(&(&1.slug))
 
-    SweetXml.xmap(fiche,
+    map = SweetXml.xmap(fiche,
       label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
       acronym: ~x"./ABREGE/CODE/text()"s,
       activities: ~x"./ACTIVITES_VISEES/text()"s |> transform_by(&HtmlEntities.decode/1),
@@ -33,17 +34,13 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         |> String.replace_prefix("NIV", "")
         |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
       end),
-      is_active: ~x"./ACTIF/text()"s |> transform_by(fn t ->
-        case t do
-          "Oui" -> true
-          _ -> false
-        end
-      end)
+      is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui"))
     )
-    |> Map.merge(%{
+
+    Map.merge(map, %{
       rncp_id: rncp_id,
       romes: romes,
-      certifiers: certifiers
+      certifiers: CustomRules.filtered_certifiers(certifiers, map.acronym)
     })
     |> insert_or_update_by_rncp_id()
   end
@@ -87,22 +84,22 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
 
   defp match_or_build_certifier(name) do
     name_with_overrides = name
-    |> Vae.Authorities.Rncp.AuthorityMatcher.certifier_rncp_override()
-    |> Vae.Authorities.Rncp.AuthorityMatcher.prettify_name()
+    |> CustomRules.certifier_rncp_override()
+    |> AuthorityMatcher.prettify_name()
 
     slug = Vae.String.parameterize(name_with_overrides)
 
-    case Vae.Authorities.Rncp.AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, slug) do
+    case AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, slug) do
       %Certifier{} = c -> c
       nil ->
-        if String.contains?(slug, "universite") || String.contains?(slug, "ministere") do
+        if CustomRules.buildable_certifier?(slug) do
           create_certifier_and_maybe_delegate(name_with_overrides)
         end
     end
   end
 
   def create_certifier_and_maybe_delegate(name) do
-    delegate = Vae.Authorities.Rncp.AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, Vae.String.parameterize(name)) ||
+    delegate = AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, Vae.String.parameterize(name)) ||
       Delegate.changeset(%Delegate{}, %{
         name: name,
         is_active: false

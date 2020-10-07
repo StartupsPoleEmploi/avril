@@ -53,7 +53,7 @@ defmodule Vae.ExAdmin.UserApplication do
     end)
 
     show application do
-      attributes_table do
+      attributes_table() do
         row(:user, fn a -> Account.fullname(a.user) end)
         row(:certification)
         row(:delegate)

@@ -13,7 +13,7 @@ defmodule Vae.ExAdmin.Certifier do
     end
 
     show certifier do
-      attributes_table
+      attributes_table()
 
       panel Vae.String.inflect(length(certifier.certifications), "active certification", [lang: :en]) do
         table_for certifier.certifications do

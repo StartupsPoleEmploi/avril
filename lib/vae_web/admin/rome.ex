@@ -14,7 +14,7 @@ defmodule Vae.ExAdmin.Rome do
     end
 
     show rome do
-      attributes_table do
+      attributes_table() do
         row(:id)
         row(:category, fn r -> Vae.Rome.category(r) |> Helpers.link_to_resource() end)
         row(:subcategory, fn r -> Vae.Rome.subcategory(r) |> Helpers.link_to_resource() end)

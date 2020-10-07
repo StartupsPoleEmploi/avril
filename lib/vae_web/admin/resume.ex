@@ -13,7 +13,7 @@ defmodule Vae.ExAdmin.Resume do
     action_items except: [:new]
 
     show _resume do
-      attributes_table do
+      attributes_table() do
         row(:id)
         row(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url, target: "_blank", download: r.filename) end)
         row(:content_type)

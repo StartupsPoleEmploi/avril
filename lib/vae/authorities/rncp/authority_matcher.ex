@@ -2,7 +2,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   require Logger
   import Ecto.Query
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
-  @log_file "priv/matches.log"
+  alias Vae.Authorities.Rncp.FileLogger
 
   @ignored_words ~w(de du la le d)
   @pre_capitalization ~w(d' l')
@@ -19,6 +19,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     cergy
     chambery
     creteil
+    dijon
     evry
     grenoble
     havre
@@ -65,17 +66,20 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     bernard
     bourgogne
     bretagne
+    caledonie
     cambresis
     cezanne
     champagne
     charles
     claude
     corse
+    dauphine
     denis
     essonne
     est
     etienne
     france
+    franche
     francois
     gaulle
     hainaut
@@ -125,30 +129,6 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     "xv" => "15"
   }
 
-  @overrides %{
-    "Conservatoire national des arts et métiers (CNAM)" => "CNAM",
-    "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" => "Ministère de l'Education Nationale",
-    "MINISTERE CHARGE DES AFFAIRES SOCIALES" => "Ministère des affaires sociales et de la santé",
-    "Ministère chargé de l'Emploi" => "Ministère du travail",
-    "Ministère du Travail - Délégation Générale à l'Emploi et à la Formation Professionnelle (DGEFP)" => "Ministère du travail",
-    "Ministère chargé de l'enseignement supérieur" => "Ministère de l'Education Nationale",
-    "Ministère chargé des sports et de la jeunesse" => "Ministère de la jeunesse, des sports et de la cohésion sociale",
-    "Ministère de l'Education nationale et de la jeunesse" => "Ministère de l'Education Nationale",
-    "Ministère de l'Enseignement Supérieur" => "Ministère de l'Education Nationale",
-    "Ministère de la Défense" => "Ministère des Armées",
-  }
-
-  def clear_log_file() do
-    Logger.info("Remove previous log file")
-    File.rm(@log_file)
-  end
-
-  def log_into_file(content) do
-    {:ok, file} = File.open(@log_file, [:append])
-    IO.write(file, content)
-    :ok = File.close(file)
-  end
-
   def find_by_slug_or_closer_distance_match(klass, slug, tolerance \\ 0.95) do
     case Repo.get_by(klass, slug: slug) do
       nil ->
@@ -157,7 +137,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
         best_match_distance = custom_jaro_distance(slug, best_match.slug)
 
         if best_match_distance > tolerance do
-          log_into_file("""
+          FileLogger.log_into_file("""
             ####### MATCH #######
             Class: #{klass}
             Input: #{slug}
@@ -211,15 +191,6 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
 
   defp replace_roman_numbers(word) do
     @roman_numbers[String.downcase(word)] || word
-  end
-
-  def certifier_rncp_override(name) do
-    case Enum.find(@overrides, fn {k, _v} ->
-      String.starts_with?(Vae.String.parameterize(name), Vae.String.parameterize(k))
-    end) do
-      {_k, val} -> val
-      nil -> name
-    end
   end
 
   def prettify_name(name) do
