@@ -43,7 +43,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
   def rejected_fiche?(text) do
     @ignored_certifications
-      |> Enum.any?(&String.starts_with?(text, &1))
+      |> Enum.any?(&String.starts_with?(String.downcase(text), String.downcase(&1)))
   end
 
   def filtered_certifiers(certifiers, acronym) do
