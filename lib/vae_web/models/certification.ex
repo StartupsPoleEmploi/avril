@@ -100,8 +100,8 @@ defmodule Vae.Certification do
       :activity_area,
       :accessible_job_type
     ])
-    |> slugify()
     |> add_army_acronym()
+    |> slugify()
     |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
     |> unique_constraint(:rncp_id)
@@ -253,7 +253,7 @@ defmodule Vae.Certification do
     case get_field(changeset, :certifiers) |> Enum.find(&Certifier.is_army_ministry?(&1)) do
       %Certifier{name: name} ->
         changeset
-        |> put_change(:acronym, get_field(changeset, :acronym) || "Diplôme #{name}" )
+        |> put_change(:acronym, "Diplôme #{name}" )
       _ -> changeset
     end
   end
