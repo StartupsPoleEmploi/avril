@@ -38,7 +38,6 @@ defmodule VaeWeb.ApplicationEmail do
         url: User.profile_url(endpoint, application),
         username: Account.fullname(application.user),
         meeting: application.meeting,
-        date_format: "%d/%m/%Y à %H:%M",
         is_france_vae: application.delegate && application.delegate.academy_id,
         is_afpa: application.delegate && Delegate.is_afpa?(application.delegate),
         certification_name: Certification.name(application.certification),

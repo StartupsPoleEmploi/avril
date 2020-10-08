@@ -1,7 +1,6 @@
 defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   require Logger
-  import Ecto.Query
-  alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
+  alias Vae.Repo
   alias Vae.Authorities.Rncp.FileLogger
 
   @ignored_words ~w(de du la le d)

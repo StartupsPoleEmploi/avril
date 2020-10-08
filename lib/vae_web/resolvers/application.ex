@@ -88,10 +88,10 @@ defmodule VaeWeb.Resolvers.Application do
       {:error, %Ecto.Changeset{} = changeset} ->
         error_response(@register_meeting_error, changeset)
 
-      {:error, %Meeting{} = meeting} ->
+      {:error, %Meeting{}} ->
         error_response(@register_meeting_error, "")
 
-      error ->
+      _error ->
         error_response(@application_not_found, format_application_error_message(application_id))
     end
   end

@@ -239,10 +239,10 @@ defmodule Vae.Delegate do
   def format_for_index(%Delegate{} = delegate) do
     delegate = delegate |> Repo.preload(:certifiers)
 
-    certifiers =
-      Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
-        [certifier.id | acc]
-      end)
+    # certifiers =
+    #   Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
+    #     [certifier.id | acc]
+    #   end)
 
     delegate
     |> Map.take(Delegate.__schema__(:fields))
