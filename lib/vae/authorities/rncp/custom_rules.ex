@@ -22,7 +22,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   ]
 
   @overrides %{
-    "Université de Corse p paoli" -> "Université de Corse - Pasquale Paoli",
+    "Université de Corse p paoli" => "Université de Corse - Pasquale Paoli",
     "Conservatoire national des arts et métiers (CNAM)" => "CNAM",
     "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" => "Ministère de l'Education Nationale",
     "MINISTERE CHARGE DES AFFAIRES SOCIALES" => "Ministère des affaires sociales et de la santé",
