@@ -7,6 +7,10 @@ defmodule Mix.Tasks.RncpUpdate do
   alias Vae.Authorities.Rncp.{CustomRules, FicheHandler, FileLogger}
   import SweetXml
 
+  @static_certifiers [
+    "Ministère chargé de la Culture",
+    "Ministère de le l'Intérieur"
+  ]
 
   def run([]) do
     Logger.error("RNCP filname argument required. Ex: mix RncpUpdate -f priv/rncp-2020-08-03.xml")
@@ -35,7 +39,20 @@ defmodule Mix.Tasks.RncpUpdate do
 
   defp prepare_avril_data() do
     FileLogger.clear_log_file()
+    update_all_slugs()
+    make_all_certifications_inactive()
+    create_static_certifiers()
+  end
 
+  defp clean_avril_data() do
+    CustomRules.custom_acronym()
+    CustomRules.deactivate_deamp()
+    CustomRules.deactivate_all_bep()
+    CustomRules.deactivate_culture_ministry()
+    remove_certifiers_without_certifications()
+  end
+
+  defp update_all_slugs() do
     Logger.info("Update slugs")
     Enum.each([Certifier, Delegate], fn klass ->
       Repo.all(klass)
@@ -43,15 +60,23 @@ defmodule Mix.Tasks.RncpUpdate do
         klass.changeset(c) |> Repo.update()
       end)
     end)
-
-    Logger.info("Make all certifications inactive")
-    Repo.update_all(Certification, set: [is_active: false])
   end
 
-  defp clean_avril_data() do
-    CustomRules.deactivate_deamp()
-    CustomRules.deactivate_all_bep()
-    remove_certifiers_without_certifications()
+  defp create_static_certifiers() do
+    @static_certifiers
+    |> Enum.each(fn name ->
+      case Repo.get_by(Certifier, slug: Vae.String.parameterize(name)) do
+        %Certifier{} = c -> c
+        nil ->
+          Certifier.changeset(%Certifier{}, %{name: name})
+          |> Repo.insert()
+      end
+    end)
+  end
+
+  defp make_all_certifications_inactive() do
+    Logger.info("Make all certifications inactive")
+    Repo.update_all(Certification, set: [is_active: false])
   end
 
   defp remove_certifiers_without_certifications() do

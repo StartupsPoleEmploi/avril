@@ -110,7 +110,7 @@ defmodule Vae.Certification do
     |> add_certifiers(params)
     |> add_included_excluded_delegates(params)
     |> link_delegates()
-    |> make_inactive_if_no_certifier()
+    |> make_inactive_if_no_delegates()
     # |> add_delegates(params)
   end
 
@@ -258,8 +258,8 @@ defmodule Vae.Certification do
     end
   end
 
-  def make_inactive_if_no_certifier(%Ecto.Changeset{} = changeset) do
-    unless List.first(get_field(changeset, :certifiers)), do: put_change(changeset, :is_active, false), else: changeset
+  def make_inactive_if_no_delegates(%Ecto.Changeset{} = changeset) do
+    unless List.first(get_field(changeset, :delegates)), do: put_change(changeset, :is_active, false), else: changeset
   end
 
   def get_popular(limit \\ 10) do

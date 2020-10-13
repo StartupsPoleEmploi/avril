@@ -16,7 +16,9 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     brest
     caen
     cergy
+    cergy-pontoise
     chambery
+    clermont-ferrand
     creteil
     dijon
     evry
@@ -27,7 +29,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     lorraine
     lyon
     mans
-    marne
+    marne-la-vallee
     marseille
     montpellier
     mulhouse
@@ -62,50 +64,67 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     antipolis
     ardenne
     artois
+    auvergne
     bernard
+    blaise
     bourgogne
     bretagne
     caledonie
     cambresis
     cezanne
-    champagne
+    champagne-ardenne
     charles
     claude
+    compiègne
     corse
     dauphine
     denis
+    descartes
     essonne
     est
     etienne
     france
-    franche
+    franche-comte
     francois
     gaulle
+    guyane
     hainaut
     jaures
     jean
     jules
+    loire
+    méditerranée
     monnet
+    montaigne
     moulin
     nord
     normandie
+    nouvelle-caledonie
     ouest
     paul
+    panthéon
+    pascal
+    pasquale
+    paoli
     picardie
     pontoise
     provence
     quentin
     rabelais
-    reunion
+    réunion
+    rené
+    rochelle
     roussillon
     sabatier
+    saclay
     saint
     savoie
     segalen
     sophia
     sorbonne
     sud
-    vernes
+    var
+    verne
     victor
     yveline
   )
@@ -204,7 +223,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
         "L'INTERIEUR" -> "l'intérieur"
         <<"(" :: utf8, _r :: binary>> = w -> w
         w ->
-          if (i == 0 || Enum.member?(@cities ++ @other_capitalize_nouns, Vae.String.parameterize(w))) do
+          if (i == 0 || is_special_word?(w)) do
             smarter_capitalize(w)
           else
             String.downcase(w)
@@ -213,6 +232,12 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end)
     |> Enum.map(&replace_roman_numbers(&1))
     |> Enum.join(" ")
+  end
+
+  def is_special_word?(w) do
+    @cities ++ @other_capitalize_nouns
+    |> Enum.join(" ")
+    |> String.contains?(Vae.String.parameterize(remove_apostrophes(w)))
   end
 
   def smarter_capitalize(w) do
@@ -227,6 +252,13 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     case Enum.find(@pre_capitalization, &String.starts_with?(w, &1)) do
       nil -> String.capitalize(w)
       hd -> "#{hd}#{String.capitalize(String.replace_prefix(w, hd, ""))}"
+    end
+  end
+
+  def remove_apostrophes(w) do
+    case Enum.find(@pre_capitalization, &String.starts_with?(w, &1)) do
+      nil -> w
+      hd -> String.replace_prefix(w, hd, "")
     end
   end
 

@@ -22,6 +22,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   ]
 
   @overrides %{
+    "Université de Corse p paoli" -> "Université de Corse - Pasquale Paoli",
     "Conservatoire national des arts et métiers (CNAM)" => "CNAM",
     "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" => "Ministère de l'Education Nationale",
     "MINISTERE CHARGE DES AFFAIRES SOCIALES" => "Ministère des affaires sociales et de la santé",
@@ -31,8 +32,8 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     "Ministère chargé de l'enseignement supérieur" => "Ministère de l'Education Nationale",
     "Ministère chargé des sports et de la jeunesse" => "Ministère de la jeunesse, des sports et de la cohésion sociale",
     "Ministère de l'Education nationale et de la jeunesse" => "Ministère de l'Education Nationale",
-    "Ministère de l'Enseignement Supérieur" => "Ministère de l'Education Nationale",
-    "Ministère de l’enseignement supérieur, de la recherche et de l’innovation" => "Ministère de l'Education Nationale",
+    # "Ministère de l'Enseignement Supérieur" => "Ministère de l'Education Nationale",
+    # "Ministère de l’enseignement supérieur, de la recherche et de l’innovation" => "Ministère de l'Education Nationale",
     "Ministère de la Défense" => "Ministère des Armées",
     "Ministère de l'agriculture et de la pêche" => "Ministère chargé de l'agriculture",
   }
@@ -61,6 +62,13 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     end
   end
 
+  def custom_acronym() do
+    Logger.info("Statically setting BATC acronym")
+    Repo.get_by(Certification, rncp_id: "23909")
+    |> Certification.changeset(%{acronym: "BATC"})
+    |> Repo.update()
+  end
+
   def deactivate_deamp() do
     Logger.info("Statically deactivating DEAMP")
     Repo.get_by(Certification, rncp_id: "4504")
@@ -68,10 +76,21 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     |> Repo.update()
   end
 
-
   def deactivate_all_bep() do
     Logger.info("Statically deactivating all BEP")
     from(c in Certification, where: [acronym: "BEP"])
     |> Repo.update_all(set: [is_active: false])
+  end
+
+  def deactivate_culture_ministry() do
+    Logger.info("Statically deactivating certifications Ministère de la culture")
+    Repo.get_by(Certifier, slug: "ministere-charge-de-la-culture")
+    |> Repo.preload(:certifications)
+    |> Map.get(:certifications)
+    |> Enum.each(fn c ->
+      c
+      |> Certification.changeset(%{is_active: false})
+      |> Repo.update()
+    end)
   end
 end
