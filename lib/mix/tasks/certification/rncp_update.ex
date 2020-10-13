@@ -9,7 +9,8 @@ defmodule Mix.Tasks.RncpUpdate do
 
   @static_certifiers [
     "Ministère chargé de la Culture",
-    "Ministère de le l'Intérieur"
+    "Ministère de l'Intérieur",
+    "Ministère de l'Enseignement supérieur"
   ]
 
   def run([]) do
@@ -48,8 +49,9 @@ defmodule Mix.Tasks.RncpUpdate do
     CustomRules.custom_acronym()
     CustomRules.deactivate_deamp()
     CustomRules.deactivate_all_bep()
-    CustomRules.deactivate_culture_ministry()
-    remove_certifiers_without_certifications()
+    CustomRules.deactivate_culture_ministry_certifications()
+    # CustomRules.add_cci_exceptions()
+    # remove_certifiers_without_certifications()
   end
 
   defp update_all_slugs() do
@@ -62,7 +64,7 @@ defmodule Mix.Tasks.RncpUpdate do
     end)
   end
 
-  defp create_static_certifiers() do
+  def create_static_certifiers() do
     @static_certifiers
     |> Enum.each(fn name ->
       case Repo.get_by(Certifier, slug: Vae.String.parameterize(name)) do

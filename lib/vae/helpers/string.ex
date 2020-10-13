@@ -47,7 +47,7 @@ defmodule Vae.String do
     string
     |> :unicode.characters_to_nfd_binary()
     |> String.replace("œ", "oe")
-    |> String.replace(~r/[\\"\'\-\(\)]/u, " ")
+    |> String.replace(~r/[\\"\'\’\-\(\)]/u, " ")
     |> String.replace(~r/[^A-z\s0-9]/u, "")
     |> String.downcase()
     |> String.trim()

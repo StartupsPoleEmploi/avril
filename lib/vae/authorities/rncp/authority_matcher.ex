@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   alias Vae.Repo
   alias Vae.Authorities.Rncp.FileLogger
 
-  @ignored_words ~w(de du la le d)
+  @ignored_words ~w(de du la le d des et)
   @pre_capitalization ~w(d' l')
   @middle_capitalization ~w(( -)
 
@@ -123,6 +123,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     sophia
     sorbonne
     sud
+    universite
     var
     verne
     victor
@@ -216,17 +217,17 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     |> Vae.String.wordify()
     |> Enum.with_index()
     |> Enum.map(fn {word, i} ->
-      case word do
-        "UNIVERSITE" -> "Université"
-        "MINISTERE" -> "Ministère"
-        "DEFENSE" -> "Défense"
-        "L'INTERIEUR" -> "l'intérieur"
+      case String.downcase(word) do
+        "universite" -> "Université"
+        "ministere" -> "Ministère"
+        "defense" -> "Défense"
+        "l'interieur" -> "l'intérieur"
         <<"(" :: utf8, _r :: binary>> = w -> w
         w ->
-          if (i == 0 || is_special_word?(w)) do
+          if (i == 0 || is_special_word?(w) && not Enum.member?(@ignored_words, w)) do
             smarter_capitalize(w)
           else
-            String.downcase(w)
+            w
           end
       end
     end)
@@ -243,15 +244,16 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   def smarter_capitalize(w) do
     Enum.reduce(@middle_capitalization, w, fn mc, res ->
       String.split(res, mc)
-      |> Enum.map(&ignore_apostrophes(&1))
+      |> Enum.map(&capitalize_ignore_apostrophes(&1))
       |> Enum.join(mc)
     end)
   end
 
-  def ignore_apostrophes(w) do
+  def capitalize_ignore_apostrophes(w) do
     case Enum.find(@pre_capitalization, &String.starts_with?(w, &1)) do
       nil -> String.capitalize(w)
-      hd -> "#{hd}#{String.capitalize(String.replace_prefix(w, hd, ""))}"
+      hd ->
+        "#{hd}#{String.capitalize(String.replace_prefix(w, hd, ""))}"
     end
   end
 

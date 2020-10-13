@@ -1,11 +1,15 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
-  alias Vae.{Certifier, Certification, Repo}
+  alias Vae.{Certifier, Certification, Delegate, Repo}
   import Ecto.Query
 
   @ignored_certifier_slugs ~w(
     universite-de-nouvelle-caledonie
+    universite-de-la-nouvelle-caledonie
     universite-de-la-polynesie-francaise
+    sncf-universite-de-la-surete
+    universite-du-vin
+    universite-scienchumaines-lettres-arts
   )
 
   @ignored_certifications [
@@ -82,7 +86,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     |> Repo.update_all(set: [is_active: false])
   end
 
-  def deactivate_culture_ministry() do
+  def deactivate_culture_ministry_certifications() do
     Logger.info("Statically deactivating certifications Ministère de la culture")
     Repo.get_by(Certifier, slug: "ministere-charge-de-la-culture")
     |> Repo.preload(:certifications)
@@ -90,6 +94,46 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     |> Enum.each(fn c ->
       c
       |> Certification.changeset(%{is_active: false})
+      |> Repo.update()
+    end)
+  end
+
+  def add_cci_exceptions() do
+    %Certifier{} = cci_france = Repo.get_by(Certifier, slug: "cci-france")
+    |> Repo.preload(:certifications)
+
+    from(c in Certifier)
+    |> where([c], like(c.name, "CCI%"))
+    |> where([c], c.id != ^cci_france.id)
+    |> preload([:certifications, [delegates: :certifiers]])
+    |> Repo.all()
+    |> Enum.each(fn c ->
+      Enum.each(c.delegates, fn d ->
+        d
+        |> Delegate.changeset(%{
+          certifiers: d.certifiers ++ [cci_france],
+          excluded_certifications: cci_france.certifications -- c.certifications
+        })
+        |> Repo.update()
+      end)
+    end)
+  end
+
+  def associate_some_enseignement_superieur_to_education_nationale() do
+    mes = Repo.get_by(Certifier, slug: "ministere-de-l-enseignement-superieur")
+
+    men = Repo.get_by(Certifier, slug: "ministere-de-l-education-nationale")
+
+    from(c in Certification,
+      join: certifier in assoc(c, :certifiers),
+      where: c.is_active and certifier.id == ^mes.id and (c.acronym == "BTS" or c.rncp_id in ["4877", "4875"])
+    )
+    |> Repo.all()
+    |> Enum.each(fn c ->
+      c = Repo.preload(c, :certifiers)
+      Certification.changeset(c, %{
+        certifiers: c.certifiers ++ [men]
+      })
       |> Repo.update()
     end)
   end
