@@ -7,13 +7,20 @@ defmodule Vae.Certifier do
   schema "certifiers" do
     field(:slug, :string)
     field(:name, :string)
+    field(:internal_notes, :string)
 
     many_to_many(
       :certifications,
       Certification,
       join_through: "certifier_certifications",
       on_delete: :delete_all,
-      on_replace: :delete,
+      on_replace: :delete
+    )
+
+    many_to_many(
+      :active_certifications,
+      Certification,
+      join_through: "certifier_certifications",
       where: [is_active: true]
     )
 
@@ -22,7 +29,13 @@ defmodule Vae.Certifier do
       Delegate,
       join_through: "certifiers_delegates",
       on_delete: :delete_all,
-      on_replace: :delete,
+      on_replace: :delete
+    )
+
+    many_to_many(
+      :active_delegates,
+      Delegate,
+      join_through: "certifiers_delegates",
       where: [is_active: true]
     )
 
@@ -37,7 +50,7 @@ defmodule Vae.Certifier do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name])
+    |> cast(params, [:name, :internal_notes])
     |> slugify()
     |> validate_required([:name, :slug])
     |> unique_constraint(:slug)

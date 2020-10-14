@@ -41,22 +41,25 @@ defmodule Mix.Tasks.RncpUpdate do
   defp prepare_avril_data() do
     FileLogger.clear_log_file()
     update_all_slugs()
+    store_former_certification_ids()
     make_all_certifications_inactive()
     create_static_certifiers()
   end
 
   defp clean_avril_data() do
+    CustomRules.match_cci_former_certifiers()
     CustomRules.custom_acronym()
     CustomRules.deactivate_deamp()
     CustomRules.deactivate_all_bep()
     CustomRules.deactivate_culture_ministry_certifications()
-    # CustomRules.add_cci_exceptions()
-    # remove_certifiers_without_certifications()
+    CustomRules.associate_some_enseignement_superieur_to_education_nationale()
+    remove_certifiers_without_certifications()
+    clear_certifier_internal_notes()
   end
 
   defp update_all_slugs() do
     Logger.info("Update slugs")
-    Enum.each([Certifier, Delegate], fn klass ->
+    Enum.each([Delegate], fn klass ->
       Repo.all(klass)
       |> Enum.each(fn %klass{} = c ->
         klass.changeset(c) |> Repo.update()
@@ -82,9 +85,9 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   defp remove_certifiers_without_certifications() do
-    Logger.info("Remove certifiers without certifications")
+    Logger.info("Remove certifiers without active certifications")
     from(c in Certifier,
-      left_join: a in assoc(c, :certifications),
+      left_join: a in assoc(c, :active_certifications),
       group_by: c.id,
       having: count(a.id) == ^0
     )
@@ -100,5 +103,19 @@ defmodule Mix.Tasks.RncpUpdate do
     end)
     |> Stream.each(fn {_, fiche} -> transform.(fiche) end)
     |> Stream.run()
+  end
+
+  def store_former_certification_ids() do
+    Logger.info("Store former certification ids")
+    Repo.all(Certifier)
+    |> Repo.preload(:certifications)
+    |> Enum.each(fn c ->
+      Certifier.changeset(c, %{internal_notes: Enum.map(c.certifications, &(&1.id)) |> Enum.join(",")})
+    end)
+  end
+
+  def clear_certifier_internal_notes() do
+    Logger.info("Clear certifier internal notes")
+    Repo.update_all(Certifier, set: [internal_notes: nil])
   end
 end

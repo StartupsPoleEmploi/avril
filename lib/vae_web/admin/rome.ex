@@ -23,13 +23,13 @@ defmodule Vae.ExAdmin.Rome do
         row(:url)
       end
 
-      panel "Certifications" do
+      panel "certifications" do
         table_for rome.certifications do
           column(:label, fn r -> Helpers.link_to_resource(r) end)
         end
       end
 
-      panel "Professions" do
+      panel "professions" do
         table_for rome.professions do
           column(:label, fn r -> Helpers.link_to_resource(r, namify: fn p -> p.label end) end)
         end
@@ -39,7 +39,7 @@ defmodule Vae.ExAdmin.Rome do
     query do
       %{
         index: [default_sort: [asc: :id]],
-        show: [preload: [:professions]]
+        show: [preload: [:professions, :certifications]]
       }
     end
   end

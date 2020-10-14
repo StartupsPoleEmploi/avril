@@ -7,15 +7,15 @@ defmodule Vae.ExAdmin.Certifier do
     index do
       column(:id)
       column(:name)
-      column(:active_certifications, fn a -> length(a.certifications) end)
-      column(:active_delegates, fn a -> length(a.delegates) end)
+      column(:active_certifications, fn a -> Enum.count(a.certifications, &(&1.is_active)) end)
+      column(:active_delegates, fn a -> Enum.count(a.delegates, &(&1.is_active)) end)
       actions()
     end
 
     show certifier do
       attributes_table()
 
-      panel Vae.String.inflect(length(certifier.certifications), "active certification", [lang: :en]) do
+      panel "certifications" do
         table_for certifier.certifications do
           column(:id)
           column(:rncp_id)
@@ -24,7 +24,7 @@ defmodule Vae.ExAdmin.Certifier do
         end
       end
 
-      panel Vae.String.inflect(length(certifier.delegates), "active delegate", [lang: :en]) do
+      panel "delegates" do
         table_for certifier.delegates do
           column(:id)
           column(:name, fn a -> Helpers.link_to_resource(a) end)

@@ -38,7 +38,7 @@ defmodule Vae.Certification do
     # Theoretical delegates
     has_many(
       :rncp_delegates,
-      through: [:certifiers, :delegates]
+      through: [:certifiers, :active_delegates]
     )
 
     # Manually excluded delegates in admin
@@ -111,16 +111,7 @@ defmodule Vae.Certification do
     |> add_included_excluded_delegates(params)
     |> link_delegates()
     |> make_inactive_if_no_delegates()
-    # |> add_delegates(params)
   end
-
-  # def find_by_acronym_and_label(certification_label) do
-  #   from(
-  #     c in Certification,
-  #     where: fragment("lower(acronym || ' ' || label)") == ^String.downcase(certification_label)
-  #   )
-  #   |> Repo.one()
-  # end
 
   def add_romes(changeset, %{romes: romes}) do
     changeset
@@ -174,8 +165,8 @@ defmodule Vae.Certification do
        get_change(changeset, :included_delegates) ||
        get_change(changeset, :excluded_delegates) do
 
-      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:delegates)
-      rncp_delegates = Enum.flat_map(certifiers, &(&1.delegates))
+      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:active_delegates)
+      rncp_delegates = Enum.flat_map(certifiers, &(&1.active_delegates))
 
       delegates = Enum.uniq(rncp_delegates ++ get_field(changeset, :included_delegates) -- get_field(changeset, :excluded_delegates))
 
@@ -186,33 +177,19 @@ defmodule Vae.Certification do
     end
   end
 
-  def add_delegates(%Ecto.Changeset{changes: %{certifiers: certifiers_changes}} = changeset, _params) do
-    delegates =
-      Enum.flat_map(certifiers_changes, fn
-        %{action: :update, data: certifiers} ->
-          %Certifier{delegates: delegates} = Repo.preload(certifiers, :delegates)
-          delegates
-        _ -> []
-      end)
+  # def get_delegates(delegates) do
+  #   Delegate
+  #   |> where([d], d.id in ^delegates)
+  #   |> Repo.all()
+  # end
 
-    put_assoc(changeset, :delegates, delegates)
-  end
-
-  def add_delegates(changeset, _no_delegates_param), do: changeset
-
-  def get_delegates(delegates) do
-    Delegate
-    |> where([d], d.id in ^delegates)
-    |> Repo.all()
-  end
-
-  def from_certifier(certifier_id) do
-    from(c in Certification,
-      join: cc in "certifier_certifications",
-      on: c.id == cc.certification_id and cc.certifier_id == ^certifier_id,
-      select: c
-    )
-  end
+  # def from_certifier(certifier_id) do
+  #   from(c in Certification,
+  #     join: cc in "certifier_certifications",
+  #     on: c.id == cc.certification_id and cc.certifier_id == ^certifier_id,
+  #     select: c
+  #   )
+  # end
 
   def add_newer_certification(changeset, %{newer_certification: newer_certification}) do
     changeset

@@ -27,7 +27,7 @@ defmodule Vae.ExAdmin.Certification do
     show certification do
       attributes_table()
 
-      panel Vae.String.inflect(length(certification.romes), "rome", [lang: :en]) do
+      panel "ROME" do
         table_for certification.romes do
           column(:id)
           column(:label)
@@ -35,14 +35,14 @@ defmodule Vae.ExAdmin.Certification do
         end
       end
 
-      panel Vae.String.inflect(length(certification.certifiers), "certifier", [lang: :en]) do
+      panel "certifiers" do
         table_for certification.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
 
-      panel Vae.String.inflect(length(certification.delegates), "delegate", [lang: :en]) do
+      panel "delegates" do
         table_for certification.delegates do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
@@ -50,7 +50,7 @@ defmodule Vae.ExAdmin.Certification do
         end
       end
 
-      panel Vae.String.inflect(length(certification.applications), "application", [lang: :en]) do
+      panel "user applications" do
         table_for certification.applications do
           column(:id)
           column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)

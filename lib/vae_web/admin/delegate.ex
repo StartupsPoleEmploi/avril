@@ -45,14 +45,14 @@ defmodule Vae.ExAdmin.Delegate do
           :internal_notes
         ]
       )
-      panel Vae.String.inflect(length(delegate.certifiers), "Certifiers", [lang: :en]) do
+      panel "certifiers" do
         table_for delegate.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
         end
       end
 
-      panel Vae.String.inflect(length(delegate.certifications), "active certifications", [lang: :en]) do
+      panel "certifications" do
         table_for delegate.certifications do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)

@@ -10,10 +10,15 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     sncf-universite-de-la-surete
     universite-du-vin
     universite-scienchumaines-lettres-arts
+    universite-de-technologie-belfort-montbeliard
+    universite-paris-lumiere
+    ecole-polytechnique-de-l-universite-de-tours-polytech-tours
+    centre-universitaire-des-sciences-et-techniques-de-l-universite-clermont-ferrand
   )
 
   @ignored_certifications [
-    "Un des meilleurs ouvriers de France"
+    "Un des meilleurs ouvriers de France",
+    "Ecole polytechnique"
   ]
 
   @ignored_acronyms_for_educ_nat [
@@ -36,8 +41,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     "Ministère chargé de l'enseignement supérieur" => "Ministère de l'Education Nationale",
     "Ministère chargé des sports et de la jeunesse" => "Ministère de la jeunesse, des sports et de la cohésion sociale",
     "Ministère de l'Education nationale et de la jeunesse" => "Ministère de l'Education Nationale",
-    # "Ministère de l'Enseignement Supérieur" => "Ministère de l'Education Nationale",
-    # "Ministère de l’enseignement supérieur, de la recherche et de l’innovation" => "Ministère de l'Education Nationale",
+    "Ministère de l’enseignement supérieur, de la recherche et de l’innovation" => "Ministère de l'Enseignement Supérieur",
     "Ministère de la Défense" => "Ministère des Armées",
     "Ministère de l'agriculture et de la pêche" => "Ministère chargé de l'agriculture",
   }
@@ -98,24 +102,31 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     end)
   end
 
-  def add_cci_exceptions() do
+  def match_cci_former_certifiers() do
     %Certifier{} = cci_france = Repo.get_by(Certifier, slug: "cci-france")
     |> Repo.preload(:certifications)
 
-    from(c in Certifier)
-    |> where([c], like(c.name, "CCI%"))
-    |> where([c], c.id != ^cci_france.id)
-    |> preload([:certifications, [delegates: :certifiers]])
+    from(d in Delegate,
+      where: like(d.name, "CCI%"),
+      preload: [certifiers: :certifications]
+    )
     |> Repo.all()
-    |> Enum.each(fn c ->
-      Enum.each(c.delegates, fn d ->
-        d
-        |> Delegate.changeset(%{
-          certifiers: d.certifiers ++ [cci_france],
-          excluded_certifications: cci_france.certifications -- c.certifications
-        })
-        |> Repo.update()
+    |> Enum.each(fn d ->
+      previous_certifications = d.certifiers
+      |> Enum.filter(&(&1.id != cci_france.id))
+      |> Enum.flat_map(fn c ->
+        ids = String.split(c.internal_notes, ",")
+        (from cf in Certification,
+          where: cf.id in ^ids
+        ) |> Repo.all()
       end)
+
+      d
+      |> Delegate.changeset(%{
+        certifiers: d.certifiers ++ [cci_france],
+        excluded_certifications: cci_france.certifications -- previous_certifications
+      })
+      |> Repo.update()
     end)
   end
 

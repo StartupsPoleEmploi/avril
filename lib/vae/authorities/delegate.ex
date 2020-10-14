@@ -42,7 +42,7 @@ defmodule Vae.Delegate do
     # Theoretical certifications
     has_many(
       :rncp_certifications,
-      through: [:certifiers, :certifications]
+      through: [:certifiers, :active_certifications]
     )
 
     # Manually excluded certifications in admin
@@ -89,13 +89,13 @@ defmodule Vae.Delegate do
     from(d in assoc(certification, :delegates))
   end
 
-  def from_certifier(certifier_id) do
-    from(d in Delegate,
-      join: cd in "certifiers_delegates",
-      on: d.id == cd.delegate_id and cd.certifier_id == ^certifier_id,
-      select: d
-    )
-  end
+  # def from_certifier(certifier_id) do
+  #   from(d in Delegate,
+  #     join: cd in "certifiers_delegates",
+  #     on: d.id == cd.delegate_id and cd.certifier_id == ^certifier_id,
+  #     select: d
+  #   )
+  # end
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
@@ -176,13 +176,12 @@ defmodule Vae.Delegate do
        get_change(changeset, :included_certifications) ||
        get_change(changeset, :excluded_certifications) do
 
-      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:certifications)
-      rncp_certifications = Enum.flat_map(certifiers, &(&1.certifications))
+      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:active_certifications)
+      rncp_certifications = Enum.flat_map(certifiers, &(&1.active_certifications))
 
       certifications = Enum.uniq(rncp_certifications ++ get_field(changeset, :included_certifications) -- get_field(changeset, :excluded_certifications))
 
       changeset
-      # |> put_assoc(:certifications, [])
       |> put_assoc(:certifications, certifications)
     else
       changeset
