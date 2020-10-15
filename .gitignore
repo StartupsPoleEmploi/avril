@@ -21,7 +21,12 @@ docker-compose.override.yml
 /priv/mnesia/*
 /priv/tabs/*.tab
 /priv/rncp*.xml
+/priv/*.log
 
 !/**/.gitkeep
 /.elixir_ls/
 /.tool-versions
+
+# swap
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
