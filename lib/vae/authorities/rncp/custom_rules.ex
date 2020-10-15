@@ -113,9 +113,9 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     |> Repo.all()
     |> Enum.each(fn d ->
       previous_certifications = d.certifiers
-      |> Enum.filter(&(&1.id != cci_france.id))
+      |> Enum.reject(&(&1.id == cci_france.id))
       |> Enum.flat_map(fn c ->
-        c.internal_notes || ""
+        (c.internal_notes || "")
         |> String.split(",")
         |> Enum.map(fn id ->
           case Integer.parse(id) do
@@ -123,7 +123,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
             {int, _rest} -> int
           end
         end)
-        |> Enum.filter(&(not is_nil(&1)))
+        |> Enum.reject(&is_nil(&1))
         |> case do
           [] -> []
           ids ->
@@ -162,7 +162,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   end
 
   def special_rules_for_educ_nat() do
-    certification = Repo.get_by(Certification, slug: "4505")
+    certification = Repo.get_by(Certification, rncp_id: "4505")
     |> Repo.preload(:certifiers)
 
     certification
@@ -171,7 +171,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     })
     |> Repo.update()
 
-    certification = Repo.get_by(Certification, slug: "31191")
+    certification = Repo.get_by(Certification, rncp_id: "31191")
     |> Certification.changeset(%{
       is_active: false
     })
