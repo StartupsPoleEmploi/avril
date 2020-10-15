@@ -117,13 +117,13 @@ defmodule Vae.Delegate do
     #   )
 
     struct
-    |> Repo.preload([
-      :applications,
-      :certifiers,
-      :certifications,
-      :included_certifications,
-      :excluded_certifications
-    ])
+    # |> Repo.preload([
+    #   :applications,
+    #   :certifiers,
+    #   :certifications,
+    #   :included_certifications,
+    #   :excluded_certifications
+    # ])
     |> cast(params, [
       :name,
       :website,
@@ -146,12 +146,12 @@ defmodule Vae.Delegate do
     |> unique_constraint(:slug)
     |> validate_format(:email, ~r/@/)
     |> validate_format(:secondary_email, ~r/@/)
-    |> add_process(params)
     |> add_geolocation(params)
-    |> add_certifiers(params)
-    |> add_applications(params)
-    |> add_included_excluded_certifications(params)
+    |> put_assoc_if_present(:certifiers, params)
+    |> put_assoc_if_present(:included_certifications, params)
+    |> put_assoc_if_present(:excluded_certifications, params)
     |> link_certifications()
+    |> put_assoc_if_present(:applications, params)
   end
 
   def add_certifiers(changeset, %{certifier_ids: certifier_ids}) when is_list(certifier_ids) do
@@ -161,17 +161,23 @@ defmodule Vae.Delegate do
 
   def add_certifiers(changeset, _no_certifiers), do: changeset
 
-  def add_included_excluded_certifications(changeset, %{
-      included_certification_ids: included_certification_ids,
-      excluded_certification_ids: excluded_certification_ids
-    }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
-    included_certifications = Repo.all(from c in Certification, where: c.id in ^included_certification_ids)
-    excluded_certifications = Repo.all(from c in Certification, where: c.id in ^excluded_certification_ids)
+  # def add_included_excluded_certifications(changeset, %{
+  #     included_certification_ids: included_certification_ids,
+  #     excluded_certification_ids: excluded_certification_ids
+  #   }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
+  #   included_certifications = Repo.all(from c in Certification, where: c.id in ^included_certification_ids)
+  #   excluded_certifications = Repo.all(from c in Certification, where: c.id in ^excluded_certification_ids)
 
-    changeset
-    |> put_assoc(:included_certifications, included_certifications)
-    |> put_assoc(:excluded_certifications, excluded_certifications)
-  end
+  #   changeset
+  #   |> put_assoc(:included_certifications, included_certifications)
+  #   |> put_assoc(:excluded_certifications, excluded_certifications)
+  # end
+
+  # def add_included_excluded_certifications(changeset, %{
+  #     included_certifications: [%Certification{} | _rest] = included_certifications,
+  #     excluded_certifications: excluded_certifications
+  #   }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
+  # end
 
   def add_included_excluded_certifications(changeset, _), do: changeset
 

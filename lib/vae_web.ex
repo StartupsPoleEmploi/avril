@@ -34,6 +34,34 @@ defmodule VaeWeb do
         # TODO: sort by week number
         # TODO: add a year key
       end
+
+      def put_assoc_if_present(%Ecto.Changeset{data: %struct{} = element} = changeset, key, params) do
+        with(
+          changeset <- %Ecto.Changeset{changeset | data: Repo.preload(element, key)},
+          %{cardinality: cardinality, related: assoc_struct} <- struct.__schema__(:association, key),
+          key_with_id <- key
+            |> Atom.to_string()
+            |> Inflex.singularize()
+            |> String.replace_suffix("", "_id#{if cardinality == :many, do: "s"}")
+            |> String.to_atom(),
+          value when not is_nil(value) <- (params[key] || params[key_with_id])
+        ) do
+          case {cardinality, value} do
+            {:one, id} when is_integer(id) -> Repo.get(assoc_struct, id)
+            {:one, value}  -> value
+            {:many, [id | _rest] = list} when is_integer(id) -> Repo.all(from(e in assoc_struct, where: e.id in ^list))
+            {:many, [%assoc_struct{} | _rest] = list} -> list
+            _ -> nil
+          end
+          |> case do
+            value when not is_nil(value) -> put_assoc(changeset, key, value)
+            nil -> changeset
+          end
+        else
+          _ ->
+            changeset
+        end
+      end
     end
   end
 

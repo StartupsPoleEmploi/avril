@@ -132,14 +132,18 @@ defmodule Vae.Authorities.Rncp.CustomRules do
             ) |> Repo.all()
         end
       end)
+      # |> IO.inspect()
 
       d
       |> Delegate.changeset(%{
         certifiers: d.certifiers ++ [cci_france],
         excluded_certifications: cci_france.certifications -- previous_certifications
       })
+      # |> IO.inspect
       |> Repo.update()
     end)
+
+    # IO.gets("Regarde les logs puis entrée pour terminer.")
   end
 
   def associate_some_enseignement_superieur_to_education_nationale() do

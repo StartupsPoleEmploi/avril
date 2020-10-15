@@ -111,7 +111,9 @@ defmodule Mix.Tasks.RncpUpdate do
     Repo.all(Certifier)
     |> Repo.preload(:certifications)
     |> Enum.each(fn c ->
-      Certifier.changeset(c, %{internal_notes: Enum.map(c.certifications, &(&1.id)) |> Enum.join(",")})
+      Certifier.changeset(c, %{
+        internal_notes: Enum.map(c.certifications, &(&1.id)) |> Enum.join(",")
+      })
       |> Repo.update()
     end)
   end
