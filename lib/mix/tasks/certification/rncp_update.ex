@@ -38,7 +38,7 @@ defmodule Mix.Tasks.RncpUpdate do
     clean_avril_data()
   end
 
-  defp prepare_avril_data() do
+  def prepare_avril_data() do
     FileLogger.clear_log_file()
     update_all_slugs()
     store_former_certification_ids()
@@ -46,7 +46,7 @@ defmodule Mix.Tasks.RncpUpdate do
     create_static_certifiers()
   end
 
-  defp clean_avril_data() do
+  def clean_avril_data() do
     CustomRules.match_cci_former_certifiers()
     CustomRules.custom_acronym()
     CustomRules.deactivate_deamp()
