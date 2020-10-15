@@ -88,7 +88,7 @@ defmodule Vae.Certification do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    # |> Repo.preload([:certifiers, :delegates, :included_delegates, :excluded_delegates])
+    |> Repo.preload([:delegates])
     |> cast(params, [
       :is_active,
       :label,
