@@ -160,4 +160,21 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       |> Repo.update()
     end)
   end
+
+  def special_rules_for_educ_nat() do
+    certification = Repo.get_by(Certification, slug: "4505")
+    |> Repo.preload(:certifiers)
+
+    certification
+    |> Certification.changeset(%{
+      certifiers: Enum.reject(certification.certifiers, &Certifier.is_educ_nat?(&1))
+    })
+    |> Repo.update()
+
+    certification = Repo.get_by(Certification, slug: "31191")
+    |> Certification.changeset(%{
+      is_active: false
+    })
+    |> Repo.update()
+  end
 end
