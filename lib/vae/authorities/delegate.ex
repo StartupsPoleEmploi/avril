@@ -77,6 +77,7 @@ defmodule Vae.Delegate do
   """
   def changeset(struct, params \\ %{}) do
     struct
+    |> Repo.preload([:applications, :certifiers])
     |> cast(params, [
       :name,
       :website,
@@ -98,7 +99,9 @@ defmodule Vae.Delegate do
     |> unique_constraint(:slug)
     |> validate_format(:email, ~r/@/)
     |> validate_format(:secondary_email, ~r/@/)
-    |> add_certifiers(params)
+    # |> add_certifiers(params)
+    |> update_applications(params)
+    |> update_certifiers(params)
   end
 
   # TODO: consider refacto changeset and changeset_update, or remove one
@@ -294,6 +297,43 @@ defmodule Vae.Delegate do
       )
 
     Repo.all(query)
+  end
+
+  def update_applications(changeset, %{applications: applications}) do
+    changeset
+    |> put_assoc(:applications, applications)
+  end
+  def update_applications(changeset, _), do: changeset
+
+  def update_certifiers(changeset, %{certifiers: certifiers}) do
+    changeset
+    |> put_assoc(:certifiers, certifiers)
+  end
+  def update_certifiers(changeset, _), do: changeset
+
+  def merge([delegate_id | _rest] = delegate_ids) when is_integer(delegate_id) do
+    delegate_ids
+    |> Enum.map(&Repo.get(Delegate, &1))
+    |> merge()
+  end
+
+  def merge([%Delegate{} = delegate | other_delegates] = delegates) do
+    delegates = delegates |> Repo.preload([:applications, :certifiers])
+
+    merged_fields = Delegate.__schema__(:fields)
+    |> Enum.reject(fn f -> f in [:id, :slug, :is_active, :inserted_at, :updated_at] end)
+    |> Enum.reduce(%{}, fn field, acc ->
+      Map.put(acc, field, Enum.find_value(delegates, fn d -> Map.get(d, field) end))
+    end)
+
+    delegate
+    |> changeset(Map.merge(merged_fields, %{
+      applications: Enum.flat_map(delegates, &(&1.applications)),
+      certifiers: Enum.flat_map(delegates, &(&1.certifiers))
+    }))
+    |> Repo.update()
+
+    other_delegates |> Enum.each(&Repo.delete(&1))
   end
 
   defimpl Phoenix.Param, for: Vae.Delegate do
