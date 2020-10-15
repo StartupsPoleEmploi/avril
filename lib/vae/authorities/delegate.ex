@@ -117,7 +117,13 @@ defmodule Vae.Delegate do
     #   )
 
     struct
-    |> Repo.preload([:certifiers, :certifications, :included_certifications, :excluded_certifications])
+    |> Repo.preload([
+      :applications,
+      :certifiers,
+      :certifications,
+      :included_certifications,
+      :excluded_certifications
+    ])
     |> cast(params, [
       :name,
       :website,
@@ -143,12 +149,10 @@ defmodule Vae.Delegate do
     |> add_process(params)
     |> add_geolocation(params)
     |> add_certifiers(params)
+    |> add_applications(params)
     |> add_included_excluded_certifications(params)
     |> link_certifications()
   end
-
-  # def get(nil), do: nil
-  # def get(id), do: Repo.get(Delegate, id)
 
   def add_certifiers(changeset, %{certifier_ids: certifier_ids}) when is_list(certifier_ids) do
     certifiers = Repo.all(from c in Certifier, where: c.id in ^certifier_ids)
@@ -235,6 +239,12 @@ defmodule Vae.Delegate do
   defp add_geolocation(changeset, _params), do: changeset
 
 
+  def add_applications(changeset, %{applications: applications}) do
+    changeset
+    |> put_assoc(:applications, applications)
+  end
+  def add_applications(changeset, _), do: changeset
+
   def format_for_index(%Delegate{} = delegate) do
     delegate = delegate |> Repo.preload(:certifiers)
 
@@ -302,6 +312,31 @@ defmodule Vae.Delegate do
       order_by: [desc: count(a.id)],
       limit: ^limit
     ) |> Repo.all()
+  end
+
+  def merge([delegate_id | _rest] = delegate_ids) when is_integer(delegate_id) do
+    delegate_ids
+    |> Enum.map(&Repo.get(Delegate, &1))
+    |> merge()
+  end
+
+  def merge([%Delegate{} = delegate | other_delegates] = delegates) do
+    delegates = delegates |> Repo.preload([:applications, :certifiers])
+
+    merged_fields = Delegate.__schema__(:fields)
+    |> Enum.reject(fn f -> f in [:id, :slug, :is_active, :inserted_at, :updated_at] end)
+    |> Enum.reduce(%{}, fn field, acc ->
+      Map.put(acc, field, Enum.find_value(delegates, fn d -> Map.get(d, field) end))
+    end)
+
+    delegate
+    |> changeset(Map.merge(merged_fields, %{
+      applications: Enum.flat_map(delegates, &(&1.applications)),
+      certifiers: Enum.flat_map(delegates, &(&1.certifiers))
+    }))
+    |> Repo.update()
+
+    other_delegates |> Enum.each(&Repo.delete(&1))
   end
 
   defimpl Phoenix.Param, for: Vae.Delegate do
