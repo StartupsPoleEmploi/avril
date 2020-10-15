@@ -84,7 +84,7 @@ defmodule Mix.Tasks.RncpUpdate do
     Repo.update_all(Certification, set: [is_active: false])
   end
 
-  defp remove_certifiers_without_certifications() do
+  def remove_certifiers_without_certifications() do
     Logger.info("Remove certifiers without active certifications")
     from(c in Certifier,
       left_join: a in assoc(c, :active_certifications),
@@ -111,6 +111,7 @@ defmodule Mix.Tasks.RncpUpdate do
     |> Repo.preload(:certifications)
     |> Enum.each(fn c ->
       Certifier.changeset(c, %{internal_notes: Enum.map(c.certifications, &(&1.id)) |> Enum.join(",")})
+      |> Repo.update()
     end)
   end
 

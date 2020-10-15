@@ -11,6 +11,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     amiens
     angers
     avignon
+    belfort-montbeliard
     besancon
     bordeaux
     brest
@@ -80,6 +81,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     dauphine
     denis
     descartes
+    eiffel
     essonne
     est
     etienne
@@ -88,12 +90,13 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     francois
     gaulle
     guyane
+    gustave
     hainaut
     jaures
     jean
     jules
     loire
-    méditerranée
+    mediterranee
     monnet
     montaigne
     moulin
@@ -106,13 +109,14 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     pascal
     pasquale
     paoli
+    paris-dauphine
     picardie
     pontoise
     provence
     quentin
     rabelais
-    réunion
-    rené
+    reunion
+    rene
     rochelle
     roussillon
     sabatier

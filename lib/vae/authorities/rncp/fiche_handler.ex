@@ -24,7 +24,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
 
     map = SweetXml.xmap(fiche,
       label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
-      acronym: ~x"./ABREGE/CODE/text()"s,
+      acronym: ~x"./ABREGE/CODE/text()"s |> transform_by(fn a -> if a != "Autre", do: a end),
       activities: ~x"./ACTIVITES_VISEES/text()"s |> transform_by(&HtmlEntities.decode/1),
       abilities: ~x"./CAPACITES_ATTESTEES/text()"s |> transform_by(&HtmlEntities.decode/1),
       activity_area: ~x"./SECTEURS_ACTIVITE/text()"s,

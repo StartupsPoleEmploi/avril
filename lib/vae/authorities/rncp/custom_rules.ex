@@ -115,10 +115,22 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       previous_certifications = d.certifiers
       |> Enum.filter(&(&1.id != cci_france.id))
       |> Enum.flat_map(fn c ->
-        ids = String.split(c.internal_notes, ",")
-        (from cf in Certification,
-          where: cf.id in ^ids
-        ) |> Repo.all()
+        c.internal_notes || ""
+        |> String.split(",")
+        |> Enum.map(fn id ->
+          case Integer.parse(id) do
+            :error -> nil
+            {int, _rest} -> int
+          end
+        end)
+        |> Enum.filter(&(not is_nil(&1)))
+        |> case do
+          [] -> []
+          ids ->
+            (from cf in Certification,
+              where: cf.id in ^ids
+            ) |> Repo.all()
+        end
       end)
 
       d
