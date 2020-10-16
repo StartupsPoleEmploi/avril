@@ -49,6 +49,7 @@ defmodule VaeWeb do
           case {cardinality, value} do
             {:one, id} when is_integer(id) -> Repo.get(assoc_struct, id)
             {:one, value}  -> value
+            {:many, []} -> []
             {:many, [id | _rest] = list} when is_integer(id) -> Repo.all(from(e in assoc_struct, where: e.id in ^list))
             {:many, [%assoc_struct{} | _rest] = list} -> list
             _ -> nil

@@ -88,7 +88,12 @@ defmodule Vae.Certification do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> Repo.preload([:certifiers, :delegates, :included_delegates, :excluded_delegates])
+    |> Repo.preload([
+      :certifiers,
+      :delegates,
+      :included_delegates,
+      :excluded_delegates
+    ])
     |> cast(params, [
       :is_active,
       :label,
@@ -161,15 +166,21 @@ defmodule Vae.Certification do
   # end
   # def add_included_excluded_delegates(changeset, _), do: changeset
 
-  def link_delegates(%Changeset{} = changeset) do
+  def link_delegates(changeset) do
     if get_change(changeset, :certifiers) ||
        get_change(changeset, :included_delegates) ||
        get_change(changeset, :excluded_delegates) do
 
-      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:active_delegates)
-      rncp_delegates = Enum.flat_map(certifiers, &(&1.active_delegates))
+      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
 
-      delegates = Enum.uniq(rncp_delegates ++ get_field(changeset, :included_delegates) -- get_field(changeset, :excluded_delegates))
+      rncp_delegates = get_field(changeset, :rncp_delegates)
+      included_delegates = get_field(changeset, :included_delegates)
+      excluded_delegates = get_field(changeset, :excluded_delegates)
+
+      delegates = rncp_delegates
+      |> Enum.concat(included_delegates)
+      |> Enum.uniq_by(&(&1.id))
+      |> Enum.filter(fn c -> is_nil(Enum.find(excluded_delegates, &(&1.id == c.id))) end)
 
       changeset
       |> put_assoc(:delegates, delegates)

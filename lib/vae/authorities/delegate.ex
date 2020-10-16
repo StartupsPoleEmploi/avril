@@ -117,13 +117,13 @@ defmodule Vae.Delegate do
     #   )
 
     struct
-    # |> Repo.preload([
-    #   :applications,
-    #   :certifiers,
-    #   :certifications,
-    #   :included_certifications,
-    #   :excluded_certifications
-    # ])
+    |> Repo.preload([
+      :applications,
+      :certifiers,
+      :certifications,
+      :included_certifications,
+      :excluded_certifications
+    ])
     |> cast(params, [
       :name,
       :website,
@@ -179,17 +179,23 @@ defmodule Vae.Delegate do
   #   }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
   # end
 
-  def add_included_excluded_certifications(changeset, _), do: changeset
+  # def add_included_excluded_certifications(changeset, _), do: changeset
 
-  def link_certifications(%Changeset{} = changeset) do
+  def link_certifications(changeset) do
     if get_change(changeset, :certifiers) ||
        get_change(changeset, :included_certifications) ||
        get_change(changeset, :excluded_certifications) do
 
-      certifiers = get_field(changeset, :certifiers) |> Repo.preload(:active_certifications)
-      rncp_certifications = Enum.flat_map(certifiers, &(&1.active_certifications))
+      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
 
-      certifications = Enum.uniq(rncp_certifications ++ get_field(changeset, :included_certifications) -- get_field(changeset, :excluded_certifications))
+      rncp_certifications = get_field(changeset, :rncp_certifications)
+      included_certifications = get_field(changeset, :included_certifications)
+      excluded_certifications = get_field(changeset, :excluded_certifications)
+
+      certifications = rncp_certifications
+      |> Enum.concat(included_certifications)
+      |> Enum.uniq_by(&(&1.id))
+      |> Enum.filter(fn c -> is_nil(Enum.find(excluded_certifications, &(&1.id == c.id))) end)
 
       changeset
       |> put_assoc(:certifications, certifications)
