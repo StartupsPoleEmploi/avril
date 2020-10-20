@@ -124,9 +124,13 @@ defmodule Vae.Certification do
     #    get_change(changeset, :included_delegates) ||
     #    get_change(changeset, :excluded_delegates) do
 
-      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
+      # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
 
-      rncp_delegates = get_field(changeset, :rncp_delegates)
+      # rncp_delegates = get_field(changeset, :rncp_delegates)
+      rncp_delegates = get_field(changeset, :certifiers)
+        |> Repo.preload(:active_delegates)
+        |> Enum.flat_map(&(&1.active_delegates))
+
       included_delegates = get_field(changeset, :included_delegates)
       excluded_delegates = get_field(changeset, :excluded_delegates)
 
