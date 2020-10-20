@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   import Ecto.Query
   import SweetXml
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
-  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules}
+  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
 
   def fiche_to_certification(fiche) do
     rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
@@ -36,6 +36,16 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end),
       is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui"))
     )
+
+    if "#{rncp_id}" == "34031" do
+      FileLogger.log_into_file("""
+        ####### RNCP#{rncp_id} #######
+          #{inspect(fiche)}
+        #####################
+          #{inspect(map)}
+        #####################
+      """)
+    end
 
     Map.merge(map, %{
       rncp_id: rncp_id,
