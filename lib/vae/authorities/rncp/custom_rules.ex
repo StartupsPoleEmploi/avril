@@ -123,6 +123,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
       d
       |> Delegate.changeset(%{
+        certifiers: d.certifiers ++ [cci_france],
         included_certifications: included_certifications,
         excluded_certifications: excluded_certifications
       })

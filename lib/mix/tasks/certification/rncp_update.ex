@@ -52,8 +52,8 @@ defmodule Mix.Tasks.RncpUpdate do
     CustomRules.deactivate_deamp()
     CustomRules.deactivate_all_bep()
     CustomRules.deactivate_culture_ministry_certifications()
-    CustomRules.associate_some_enseignement_superieur_to_education_nationale()
     CustomRules.special_rules_for_educ_nat()
+    CustomRules.associate_some_enseignement_superieur_to_education_nationale()
     remove_certifiers_without_certifications()
     clear_certifier_internal_notes()
   end

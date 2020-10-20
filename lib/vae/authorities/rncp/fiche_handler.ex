@@ -40,7 +40,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     if "#{rncp_id}" == "34031" do
       FileLogger.log_into_file("""
         ####### RNCP#{rncp_id} #######
-          #{inspect(fiche)}
+          #{inspect(map)}
         #####################
           #{inspect(SweetXml.xpath(fiche, ~x"./ACTIF/text()"s))}
         #####################

@@ -120,9 +120,9 @@ defmodule Vae.Certification do
   end
 
   def link_delegates(changeset) do
-    if get_change(changeset, :certifiers) ||
-       get_change(changeset, :included_delegates) ||
-       get_change(changeset, :excluded_delegates) do
+    # if get_change(changeset, :certifiers) ||
+    #    get_change(changeset, :included_delegates) ||
+    #    get_change(changeset, :excluded_delegates) do
 
       changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
 
@@ -134,9 +134,9 @@ defmodule Vae.Certification do
 
       changeset
       |> put_assoc(:delegates, delegates)
-    else
-      changeset
-    end
+    # else
+    #   changeset
+    # end
   end
 
   def format_for_index(struct) do

@@ -178,9 +178,9 @@ defmodule Vae.Delegate do
   defp add_geolocation(changeset, _params), do: changeset
 
   defp link_certifications(changeset) do
-    if get_change(changeset, :certifiers) ||
-       get_change(changeset, :included_certifications) ||
-       get_change(changeset, :excluded_certifications) do
+    # if get_change(changeset, :certifiers) ||
+    #    get_change(changeset, :included_certifications) ||
+    #    get_change(changeset, :excluded_certifications) do
 
       changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
 
@@ -192,9 +192,9 @@ defmodule Vae.Delegate do
 
       changeset
       |> put_assoc(:certifications, certifications)
-    else
-      changeset
-    end
+    # else
+    #   changeset
+    # end
   end
 
   def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
