@@ -104,46 +104,51 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
   def match_cci_former_certifiers() do
     %Certifier{} = cci_france = Repo.get_by(Certifier, slug: "cci-france")
-    |> Repo.preload(:certifications)
+    |> Repo.preload([:certifications, [delegates: :certifiers]])
 
-    from(d in Delegate,
+    other_delegates = from(d in Delegate,
       where: like(d.name, "CCI%"),
-      preload: [certifiers: :certifications]
+      preload: [:certifiers]
     )
     |> Repo.all()
+
+    Enum.uniq(cci_france.delegates ++ other_delegates)
     |> Enum.each(fn d ->
+
       previous_certifications = d.certifiers
-      |> Enum.reject(&(&1.id == cci_france.id))
-      |> Enum.flat_map(fn c ->
-        (c.internal_notes || "")
-        |> String.split(",")
-        |> Enum.map(fn id ->
-          case Integer.parse(id) do
-            :error -> nil
-            {int, _rest} -> int
-          end
-        end)
-        |> Enum.reject(&is_nil(&1))
-        |> case do
-          [] -> []
-          ids ->
-            (from cf in Certification,
-              where: cf.id in ^ids
-            ) |> Repo.all()
-        end
-      end)
-      # |> IO.inspect()
+      |> Enum.flat_map(&get_certifier_previous_certifications(&1))
+
+      {excluded_certifications, included_certifications} =
+        Enum.split_with(previous_certifications, &Enum.member?(cci_france.certifications, &1))
 
       d
       |> Delegate.changeset(%{
-        certifiers: d.certifiers ++ [cci_france],
-        excluded_certifications: cci_france.certifications -- previous_certifications
+        included_certifications: included_certifications,
+        excluded_certifications: excluded_certifications
       })
-      # |> IO.inspect
       |> Repo.update()
     end)
 
     # IO.gets("Regarde les logs puis entrée pour terminer.")
+  end
+
+  defp get_certifier_previous_certifications(certifier) do
+    (certifier.internal_notes || "")
+    |> String.split(",")
+    |> Enum.map(fn id ->
+      case Integer.parse(id) do
+        :error -> nil
+        {int, _rest} -> int
+      end
+    end)
+    |> Enum.reject(&is_nil(&1))
+    |> case do
+      [] -> []
+      ids ->
+        (from cf in Certification,
+          where: cf.id in ^ids and cf.is_active == true
+        ) |> Repo.all()
+    end
   end
 
   def associate_some_enseignement_superieur_to_education_nationale() do

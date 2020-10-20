@@ -110,61 +110,14 @@ defmodule Vae.Certification do
     |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
     |> unique_constraint(:rncp_id)
-    |> put_assoc_if_present(:newer_certification, params)
-    |> put_assoc_if_present(:romes, params)
-    |> put_assoc_if_present(:certifiers, params)
-    |> put_assoc_if_present(:included_delegates, params)
-    |> put_assoc_if_present(:excluded_delegates, params)
+    |> put_param_assoc(:newer_certification, params)
+    |> put_param_assoc(:romes, params)
+    |> put_param_assoc(:certifiers, params)
+    |> put_param_assoc(:included_delegates, params)
+    |> put_param_assoc(:excluded_delegates, params)
     |> link_delegates()
     |> make_inactive_if_no_delegates()
   end
-
-  # def add_romes(changeset, %{romes: romes}) do
-  #   changeset
-  #   |> put_assoc(:romes, romes)
-  # end
-  # def add_romes(changeset, %{rome_ids: rome_ids}) do
-  #   changeset
-  #   |> put_assoc(:romes, get_romes(rome_ids))
-  # end
-
-  # def add_romes(changeset, _no_romes_param), do: changeset
-
-  # def get_romes(rome_ids) do
-  #   Rome
-  #   |> where([r], r.id in ^rome_ids)
-  #   |> Repo.all()
-  # end
-
-  # def add_certifiers(changeset, %{certifiers: certifiers}) do
-  #   changeset
-  #   |> put_assoc(:certifiers, certifiers)
-  # end
-
-  # def add_certifiers(changeset, %{certifier_ids: certifier_ids}) do
-  #   add_certifiers(changeset, %{certifiers: get_certifiers(certifier_ids)})
-  # end
-
-  # def add_certifiers(changeset, _no_certifiers), do: changeset
-
-  # def get_certifiers(certifier_ids) do
-  #   Certifier
-  #   |> where([c], c.id in ^certifier_ids)
-  #   |> Repo.all()
-  # end
-
-  # def add_included_excluded_delegates(changeset, %{
-  #     included_delegate_ids: included_delegate_ids,
-  #     excluded_delegate_ids: excluded_delegate_ids
-  #   }) when is_list(included_delegate_ids) and is_list(excluded_delegate_ids) do
-  #   included_delegates = Repo.all(from c in Certification, where: c.id in ^included_delegate_ids)
-  #   excluded_delegates = Repo.all(from c in Certification, where: c.id in ^excluded_delegate_ids)
-
-  #   changeset
-  #   |> put_assoc(:included_delegates, included_delegates)
-  #   |> put_assoc(:excluded_delegates, excluded_delegates)
-  # end
-  # def add_included_excluded_delegates(changeset, _), do: changeset
 
   def link_delegates(changeset) do
     if get_change(changeset, :certifiers) ||
@@ -177,10 +130,7 @@ defmodule Vae.Certification do
       included_delegates = get_field(changeset, :included_delegates)
       excluded_delegates = get_field(changeset, :excluded_delegates)
 
-      delegates = rncp_delegates
-      |> Enum.concat(included_delegates)
-      |> Enum.uniq_by(&(&1.id))
-      |> Enum.filter(fn c -> is_nil(Enum.find(excluded_delegates, &(&1.id == c.id))) end)
+      delegates = Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
 
       changeset
       |> put_assoc(:delegates, delegates)
@@ -188,37 +138,6 @@ defmodule Vae.Certification do
       changeset
     end
   end
-
-  # def get_delegates(delegates) do
-  #   Delegate
-  #   |> where([d], d.id in ^delegates)
-  #   |> Repo.all()
-  # end
-
-  # def from_certifier(certifier_id) do
-  #   from(c in Certification,
-  #     join: cc in "certifier_certifications",
-  #     on: c.id == cc.certification_id and cc.certifier_id == ^certifier_id,
-  #     select: c
-  #   )
-  # end
-
-  # def add_newer_certification(changeset, %{newer_certification: newer_certification}) do
-  #   changeset
-  #   |> put_assoc(:newer_certification, newer_certification)
-  # end
-
-  # def add_newer_certification(changeset, _params), do: changeset
-
-  # def from_rome(nil), do: nil
-
-  # def from_rome(rome) do
-  #   from(c in Certification,
-  #     join: r in assoc(c, :romes),
-  #     where: r.code == ^rome
-  #   )
-  #   |> Repo.all()
-  # end
 
   def format_for_index(struct) do
     struct

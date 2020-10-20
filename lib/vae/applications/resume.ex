@@ -1,4 +1,5 @@
 defmodule Vae.Resume do
+  use VaeWeb, :model
   require Logger
 
   use Ecto.Schema
@@ -29,12 +30,9 @@ defmodule Vae.Resume do
   def changeset(resume, params \\ %{}) do
     resume
     |> cast(params, [:filename, :content_type, :url])
-    |> put_assoc_if_present(:application, params[:application])
+    |> put_param_assoc(:application, params)
     |> validate_required([:filename, :content_type, :url, :application])
   end
-
-  def put_assoc_if_present(changeset, _key, nil), do: changeset
-  def put_assoc_if_present(changeset, key, assoc), do: put_assoc(changeset, key, assoc)
 
   def attach_resume_to_application(application, file) do
     filename = "#{UUID.uuid4(:hex)}#{Path.extname(file.filename)}"

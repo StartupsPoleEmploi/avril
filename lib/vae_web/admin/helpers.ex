@@ -78,7 +78,7 @@ defmodule Vae.ExAdmin.Helpers do
       end)
 
     object_name = object.__struct__ |> Atom.to_string() |> String.split(".") |> List.last() |> String.downcase()
-    association_name_ids = association_name |> Atom.to_string() |> String.replace_suffix("s", "_ids")
+    # association_name_ids = association_name |> Atom.to_string() # |> String.replace_suffix("s", "_ids")
 
     content_tag(
       :div,
@@ -90,13 +90,16 @@ defmodule Vae.ExAdmin.Helpers do
         ),
         content_tag(
           :div,
-          content_tag(
-            :select,
-            options,
-            id: "#{object_name}_#{association_name_ids}",
-            name: "#{object_name}[#{association_name_ids}][]",
-            multiple: true
-          ),
+          [
+            Phoenix.HTML.Form.hidden_input(String.to_atom(object_name), association_name, id: "fake_#{object_name}_#{association_name}"),
+            content_tag(
+              :select,
+              options,
+              id: "#{object_name}_#{association_name}",
+              name: "#{object_name}[#{association_name}][]",
+              multiple: true
+            )
+          ],
           class: "col-sm-10"
         )
       ],

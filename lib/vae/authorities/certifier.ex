@@ -54,7 +54,7 @@ defmodule Vae.Certifier do
     |> slugify()
     |> validate_required([:name, :slug])
     |> unique_constraint(:slug)
-    |> put_assoc_if_present(:delegates, params)
+    |> put_param_assoc(:delegates, params)
   end
 
   def to_slug(certifier) do

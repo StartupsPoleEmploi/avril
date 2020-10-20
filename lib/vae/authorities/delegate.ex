@@ -147,85 +147,12 @@ defmodule Vae.Delegate do
     |> validate_format(:email, ~r/@/)
     |> validate_format(:secondary_email, ~r/@/)
     |> add_geolocation(params)
-    |> put_assoc_if_present(:certifiers, params)
-    |> put_assoc_if_present(:included_certifications, params)
-    |> put_assoc_if_present(:excluded_certifications, params)
+    |> put_param_assoc(:process, params)
+    |> put_param_assoc(:certifiers, params)
+    |> put_param_assoc(:included_certifications, params)
+    |> put_param_assoc(:excluded_certifications, params)
     |> link_certifications()
-    |> put_assoc_if_present(:applications, params)
-  end
-
-  def add_certifiers(changeset, %{certifier_ids: certifier_ids}) when is_list(certifier_ids) do
-    certifiers = Repo.all(from c in Certifier, where: c.id in ^certifier_ids)
-    put_assoc(changeset, :certifiers, certifiers)
-  end
-
-  def add_certifiers(changeset, _no_certifiers), do: changeset
-
-  # def add_included_excluded_certifications(changeset, %{
-  #     included_certification_ids: included_certification_ids,
-  #     excluded_certification_ids: excluded_certification_ids
-  #   }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
-  #   included_certifications = Repo.all(from c in Certification, where: c.id in ^included_certification_ids)
-  #   excluded_certifications = Repo.all(from c in Certification, where: c.id in ^excluded_certification_ids)
-
-  #   changeset
-  #   |> put_assoc(:included_certifications, included_certifications)
-  #   |> put_assoc(:excluded_certifications, excluded_certifications)
-  # end
-
-  # def add_included_excluded_certifications(changeset, %{
-  #     included_certifications: [%Certification{} | _rest] = included_certifications,
-  #     excluded_certifications: excluded_certifications
-  #   }) when is_list(included_certification_ids) and is_list(excluded_certification_ids) do
-  # end
-
-  # def add_included_excluded_certifications(changeset, _), do: changeset
-
-  def link_certifications(changeset) do
-    if get_change(changeset, :certifiers) ||
-       get_change(changeset, :included_certifications) ||
-       get_change(changeset, :excluded_certifications) do
-
-      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
-
-      rncp_certifications = get_field(changeset, :rncp_certifications)
-      included_certifications = get_field(changeset, :included_certifications)
-      excluded_certifications = get_field(changeset, :excluded_certifications)
-
-      certifications = rncp_certifications
-      |> Enum.concat(included_certifications)
-      |> Enum.uniq_by(&(&1.id))
-      |> Enum.filter(fn c -> is_nil(Enum.find(excluded_certifications, &(&1.id == c.id))) end)
-
-      changeset
-      |> put_assoc(:certifications, certifications)
-    else
-      changeset
-    end
-  end
-
-  def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
-    put_change(changeset, :slug, to_slug(Map.merge(data, changes)))
-  end
-
-  def make_inactive_if_email_missing(%Ecto.Changeset{} = changeset) do
-    if is_nil(get_field(changeset, :email)), do: put_change(changeset, :is_active, false), else: changeset
-  end
-
-  def add_process(changeset, %{process_id: process_id}) when not is_nil(process_id) do
-    case Repo.get(Process, process_id) do
-      %Process{} = process ->
-        changeset
-        |> put_assoc(:process, process)
-      _ -> changeset
-    end
-  end
-  def add_process(changeset, _params), do: changeset
-
-  def put_meeting_places(delegate, meetings) do
-    delegate
-    |> change
-    |> put_embed(:meeting_places, meetings)
+    |> put_param_assoc(:applications, params)
   end
 
   defp add_geolocation(%{changes: %{address: _}} = changeset, %{geo: encoded})
@@ -250,12 +177,39 @@ defmodule Vae.Delegate do
 
   defp add_geolocation(changeset, _params), do: changeset
 
+  defp link_certifications(changeset) do
+    if get_change(changeset, :certifiers) ||
+       get_change(changeset, :included_certifications) ||
+       get_change(changeset, :excluded_certifications) do
 
-  def add_applications(changeset, %{applications: applications}) do
-    changeset
-    |> put_assoc(:applications, applications)
+      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
+
+      rncp_certifications = get_field(changeset, :rncp_certifications)
+      included_certifications = get_field(changeset, :included_certifications)
+      excluded_certifications = get_field(changeset, :excluded_certifications)
+
+      certifications = Enum.uniq(rncp_certifications ++ included_certifications) -- excluded_certifications
+
+      changeset
+      |> put_assoc(:certifications, certifications)
+    else
+      changeset
+    end
   end
-  def add_applications(changeset, _), do: changeset
+
+  def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
+    put_change(changeset, :slug, to_slug(Map.merge(data, changes)))
+  end
+
+  def make_inactive_if_email_missing(%Ecto.Changeset{} = changeset) do
+    if is_nil(get_field(changeset, :email)), do: put_change(changeset, :is_active, false), else: changeset
+  end
+
+  def put_meeting_places(delegate, meetings) do
+    delegate
+    |> change
+    |> put_embed(:meeting_places, meetings)
+  end
 
   def format_for_index(%Delegate{} = delegate) do
     delegate = delegate |> Repo.preload(:certifiers)
