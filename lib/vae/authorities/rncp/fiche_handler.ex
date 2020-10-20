@@ -37,15 +37,15 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui"))
     )
 
-    if "#{rncp_id}" == "34031" do
-      FileLogger.log_into_file("""
-        ####### RNCP#{rncp_id} #######
-          #{inspect(map)}
-        #####################
-          #{inspect(SweetXml.xpath(fiche, ~x"./ACTIF/text()"s))}
-        #####################
-      """)
-    end
+    # if "#{rncp_id}" == "34031" do
+    #   FileLogger.log_into_file("""
+    #     ####### RNCP#{rncp_id} #######
+    #       #{inspect(map)}
+    #     #####################
+    #       #{inspect(SweetXml.xpath(fiche, ~x"./ACTIF/text()"s))}
+    #     #####################
+    #   """)
+    # end
 
     Map.merge(map, %{
       rncp_id: rncp_id,
