@@ -42,7 +42,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         ####### RNCP#{rncp_id} #######
           #{inspect(fiche)}
         #####################
-          #{inspect(map)}
+          #{inspect(SweetXml.xpath(fiche, ~x"./ACTIF/text()"s))}
         #####################
       """)
     end
