@@ -18,7 +18,8 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
 
     certifiers = SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
       |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
-      |> Enum.map(&match_or_build_certifier/1)
+      |> Enum.map(&AuthorityMatcher.prettify_name/1)
+      |> Enum.map(&match_or_build_certifier(&1, with_delegate: true))
       |> Enum.filter(&not(is_nil(&1)))
       |> Enum.uniq_by(&(&1.slug))
 
@@ -36,16 +37,6 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end),
       is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui"))
     )
-
-    # if "#{rncp_id}" == "34031" do
-    #   FileLogger.log_into_file("""
-    #     ####### RNCP#{rncp_id} #######
-    #       #{inspect(map)}
-    #     #####################
-    #       #{inspect(SweetXml.xpath(fiche, ~x"./ACTIF/text()"s))}
-    #     #####################
-    #   """)
-    # end
 
     Map.merge(map, %{
       rncp_id: rncp_id,
@@ -92,32 +83,28 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     end
   end
 
-  defp match_or_build_certifier(name) do
-    name_with_overrides = name
-    |> CustomRules.certifier_rncp_override()
-    |> AuthorityMatcher.prettify_name()
-
-    slug = Vae.String.parameterize(name_with_overrides)
-
-    case AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, slug) do
+  def match_or_build_certifier(name, opts \\ []) do
+    case AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, name, opts[:tolerance]) do
       %Certifier{} = c -> c
       nil ->
-        if CustomRules.buildable_certifier?(slug) do
-          create_certifier_and_maybe_delegate(name_with_overrides)
+        if CustomRules.buildable_certifier?(name) do
+          create_certifier_and_maybe_delegate(name, opts)
         end
     end
   end
 
-  def create_certifier_and_maybe_delegate(name) do
-    delegate = AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, Vae.String.parameterize(name)) ||
-      Delegate.changeset(%Delegate{}, %{
-        name: name,
-        is_active: false
-      }) |> Repo.insert!()
+  def create_certifier_and_maybe_delegate(name, opts \\ []) do
+    delegate =
+      if opts[:with_delegate] do
+        AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
+          Delegate.changeset(%Delegate{}, %{
+            name: name
+          }) |> Repo.insert!()
+      end
     %Certifier{}
     |> Certifier.changeset(%{
       name: name,
-      delegates: [delegate]
+      delegates: (if delegate, do: [delegate], else: [])
     })
     |> Repo.insert!()
   end

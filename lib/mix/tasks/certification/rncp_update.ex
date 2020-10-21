@@ -13,6 +13,14 @@ defmodule Mix.Tasks.RncpUpdate do
     "Ministère de l'Enseignement supérieur"
   ]
 
+  @static_certifiers_with_delegate [
+    "Université Paris-Saclay",
+    "Université de Corse - Pasquale Paoli",
+    "Université de Paris 8 | Vincennes",
+    "Université de Paris",
+    "Université Pierre et Marie Curie - Paris 6"
+  ]
+
   def run([]) do
     Logger.error("RNCP filname argument required. Ex: mix RncpUpdate -f priv/rncp-2020-08-03.xml")
   end
@@ -70,14 +78,10 @@ defmodule Mix.Tasks.RncpUpdate do
 
   def create_static_certifiers() do
     @static_certifiers
-    |> Enum.each(fn name ->
-      case Repo.get_by(Certifier, slug: Vae.String.parameterize(name)) do
-        %Certifier{} = c -> c
-        nil ->
-          Certifier.changeset(%Certifier{}, %{name: name})
-          |> Repo.insert()
-      end
-    end)
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1))
+
+    @static_certifiers_with_delegate
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, tolerance: 1))
   end
 
   defp make_all_certifications_inactive() do

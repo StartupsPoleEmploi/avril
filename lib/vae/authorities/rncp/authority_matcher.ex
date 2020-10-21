@@ -152,25 +152,111 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     "xv" => "15"
   }
 
-  def find_by_slug_or_closer_distance_match(klass, slug, tolerance \\ 0.95) do
-    case Repo.get_by(klass, slug: slug) do
-      nil ->
-        all_elements = Repo.all(klass)
-        best_match = Enum.max_by(all_elements, &custom_jaro_distance(slug, &1.slug))
-        best_match_distance = custom_jaro_distance(slug, best_match.slug)
+  @aliases %{
+    "cnam" => [
+      "conservatoire-national-des-arts-et-metiers-cnam"
+    ],
+    "ministere-de-l-education-nationale" => [
+      "ministere-de-l-education-nationale-et-de-la-jeunesse"
+    ],
+    "ministere-des-affaires-sociales-et-de-la-sante" => [
+      "ministere-charge-des-affaires-sociales"
+    ],
+    "ministere-du-travail" => [
+      "ministere-charge-de-l-emploi",
+      "ministere-du-travail-delegation-generale-a-l-emploi-et-a-la-formation-professionnelle-dgefp"
+    ],
+    "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale" => [
+      "ministere-charge-des-sports-et-de-la-jeunesse"
+    ],
+    "ministere-de-l-enseignement-superieur" => [
+      "ministere-de-l-enseignement-superieur-de-la-recherche-et-de-l-innovation"
+    ],
+    "ministere-des-armees" => [
+      "ministere-de-la-defense"
+    ],
+    "ministere-charge-de-l-agriculture" => [
+      "ministere-de-l-agriculture-et-de-la-peche"
+    ],
+    "universite-paris-saclay" => [
+      "communaute-d-universites-et-etablissements-universite-paris-saclay",
+      "universite-paris-sud-paris-11",
+      "universite-paris-sud",
+      "universite-paris-11"
+    ],
+    "universite-de-corse-pasquale-paoli" => [
+      "universite-de-corse-p-paoli"
+    ],
+    "universite-paris-est-creteil" => [
+      "upec",
+      "universite-paris-12"
+    ],
+    "universite-paris-est-marne-la-vallee-upem" => [
+      "universite-gustave-eiffel"
+    ],
+    "universite-paris-nanterre" => [
+      "upl",
+      "universite-paris-lumiere"
+    ],
+    "universite-de-paris-8-vincennes" => [
+      "universite-paris-nord-sorbonne",
+      "universite-paris-13",
+      "universite-paris-8",
+      "universite-paris-8-vincennes-st-denis"
+    ],
+    "universite-pierre-et-marie-curie-paris-6" => [
+      "universite-sorbonne-nouvelle",
+      "paris-sorbonne-paris-4",
+      "upms-paris-6"
+    ],
+    "universite-de-paris" => [
+      "universite-paris-7",
+      "universite-paris-descartes-paris-5",
+      "universite-de-paris-5-rene-descartes",
+      "universite-paris-diderot"
+    ]
+  }
 
-        if best_match_distance > tolerance do
-          FileLogger.log_into_file("""
-            ####### MATCH #######
-            Class: #{klass}
-            Input: #{slug}
-            Found: #{best_match.slug}
-            Score: #{best_match_distance}
-            #####################
-          """)
-          best_match
+  def slug_with_aliases(slug) do
+    case @aliases |> Enum.find(fn k, v -> AuthorityMatcher.find_by_custom_jaro_distance(v, slug, 0.98) end) do
+      {actual_slug, alias_slug} -> actual_slug
+      _ -> slug
+    end
+  end
+
+  def find_by_slug_or_closer_distance_match(klass, name, tolerance) do
+    slug = name
+    |> Vae.String.parameterize()
+    |> slug_with_aliases()
+
+    Repo.get_by(klass, slug: slug) ||
+      (if tolerance < 1, do: find_by_custom_jaro_distance(Repo.all(klass), slug, tolerance || 0.95, &(&1.slug)))
+  end
+
+  def find_by_custom_jaro_distance(list, string, tolerance \\ 0.95, map_fn \\ &(&1)) do
+    {best_match, best_distance} = list
+      |> Enum.reduce({nil, 0}, fn el, {_best, best_distance} = res ->
+        case custom_jaro_distance(map_fn.(el), string) do
+          distance when distance > best_distance -> {el, distance}
+          _ -> res
         end
-      el -> el
+      end)
+
+    if best_distance > tolerance do
+      klass = case List.first(list) do
+        %struct{} -> struct
+        v when is_binary(v) -> "string"
+        _ -> "unknown"
+      end
+      FileLogger.log_into_file("""
+        ####### MATCH #######
+        Class: #{klass}
+        Input: #{string}
+        Found: #{map_fn.(best_match)}
+        Score: #{best_distance}
+        #####################
+      """)
+      best_match
     end
   end
 

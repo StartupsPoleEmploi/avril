@@ -2,6 +2,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
   alias Vae.{Certifier, Certification, Delegate, Repo}
   import Ecto.Query
+  alias Vae.Authorities.Rncp.AuthorityMatcher
 
   @ignored_certifier_slugs ~w(
     universite-de-nouvelle-caledonie
@@ -30,23 +31,25 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     "Titre ingénieur",
   ]
 
-  @overrides %{
-    "Université de Corse p paoli" => "Université de Corse - Pasquale Paoli",
-    "Conservatoire national des arts et métiers (CNAM)" => "CNAM",
-    "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" => "Ministère de l'Education Nationale",
-    "MINISTERE CHARGE DES AFFAIRES SOCIALES" => "Ministère des affaires sociales et de la santé",
-    "Ministère chargé de la santé " => "Ministère des affaires sociales et de la santé",
-    "Ministère chargé de l'Emploi" => "Ministère du travail",
-    "Ministère du Travail - Délégation Générale à l'Emploi et à la Formation Professionnelle (DGEFP)" => "Ministère du travail",
-    "Ministère chargé de l'enseignement supérieur" => "Ministère de l'Education Nationale",
-    "Ministère chargé des sports et de la jeunesse" => "Ministère de la jeunesse, des sports et de la cohésion sociale",
-    "Ministère de l'Education nationale et de la jeunesse" => "Ministère de l'Education Nationale",
-    "Ministère de l’enseignement supérieur, de la recherche et de l’innovation" => "Ministère de l'Enseignement Supérieur",
-    "Ministère de la Défense" => "Ministère des Armées",
-    "Ministère de l'agriculture et de la pêche" => "Ministère chargé de l'agriculture",
-  }
+  # @overrides %{
+  #   "Communaute d universites et etablissements Université Paris saclay" => "Université Paris-Saclay",
+  #   "Université paris-sud - Paris 11" => "Université Paris-Saclay",
+  #   "Université de Corse p paoli" => "Université de Corse - Pasquale Paoli",
+  #   "Conservatoire national des arts et métiers (CNAM)" => "CNAM",
+  #   "MINISTERE DE L'EDUCATION NATIONALE ET DE LA JEUNESSE" => "Ministère de l'Education Nationale",
+  #   "MINISTERE CHARGE DES AFFAIRES SOCIALES" => "Ministère des affaires sociales et de la santé",
+  #   "Ministère chargé de la santé " => "Ministère des affaires sociales et de la santé",
+  #   "Ministère chargé de l'Emploi" => "Ministère du travail",
+  #   "Ministère du Travail - Délégation Générale à l'Emploi et à la Formation Professionnelle (DGEFP)" => "Ministère du travail",
+  #   "Ministère chargé des sports et de la jeunesse" => "Ministère de la jeunesse, des sports et de la cohésion sociale",
+  #   "Ministère de l'Education nationale et de la jeunesse" => "Ministère de l'Education Nationale",
+  #   "Ministère de l’enseignement supérieur, de la recherche et de l’innovation" => "Ministère de l'Enseignement Supérieur",
+  #   "Ministère de la Défense" => "Ministère des Armées",
+  #   "Ministère de l'agriculture et de la pêche" => "Ministère chargé de l'agriculture",
+  # }
 
-  def buildable_certifier?(slug) do
+  def buildable_certifier?(name) do
+    slug = Vae.String.parameterize(name)
     String.contains?(slug, "universite") && not Enum.member?(@ignored_certifier_slugs, slug)
   end
 
@@ -61,14 +64,14 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     end)
   end
 
-  def certifier_rncp_override(name) do
-    case Enum.find(@overrides, fn {k, _v} ->
-      String.starts_with?(Vae.String.parameterize(name), Vae.String.parameterize(k))
-    end) do
-      {_k, val} -> val
-      nil -> name
-    end
-  end
+  # def certifier_rncp_override(name) do
+  #   case Enum.find(@overrides, fn {k, _v} ->
+  #     String.starts_with?(Vae.String.parameterize(name), Vae.String.parameterize(k))
+  #   end) do
+  #     {_k, val} -> val
+  #     nil -> name
+  #   end
+  # end
 
   def custom_acronym() do
     Logger.info("Statically setting BATC acronym")
@@ -118,14 +121,17 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       previous_certifications = d.certifiers
       |> Enum.flat_map(&get_certifier_previous_certifications(&1))
 
-      {excluded_certifications, included_certifications} =
-        Enum.split_with(previous_certifications, &Enum.member?(cci_france.certifications, &1))
+      extra_certifications =
+        Enum.reject(previous_certifications, &Enum.member?(cci_france.certifications, &1))
+
+      rejected_certifications =
+        Enum.reject(cci_france.certifications, &Enum.member?(previous_certifications, &1))
 
       d
       |> Delegate.changeset(%{
         certifiers: d.certifiers ++ [cci_france],
-        included_certifications: included_certifications,
-        excluded_certifications: excluded_certifications
+        included_certifications: extra_certifications,
+        excluded_certifications: rejected_certifications
       })
       |> Repo.update()
     end)
