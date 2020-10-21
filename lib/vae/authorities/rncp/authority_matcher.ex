@@ -218,8 +218,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   }
 
   def slug_with_aliases(slug) do
-    case @aliases |> Enum.find(fn k, v -> AuthorityMatcher.find_by_custom_jaro_distance(v, slug, 0.98) end) do
-      {actual_slug, alias_slug} -> actual_slug
+    case @aliases |> Enum.find(fn {_k, v} -> find_by_custom_jaro_distance(v, slug, 0.98) end) do
+      {actual_slug, _alias_slug} -> actual_slug
       _ -> slug
     end
   end
