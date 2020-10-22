@@ -53,9 +53,16 @@ defmodule Vae.ExAdmin.Delegate do
       panel "certifications" do
         table_for delegate.certifications do
           column(:id)
-          column(:name, &Helpers.link_to_resource/1)
           column(:rncp_id)
           column(:is_active)
+          column(:origin, fn c ->
+            cond do
+              Enum.find(delegate.included_certifications, &(&1.id == c.id)) -> "Extra"
+              # Enum.find(delegate.excluded_certifications, &(&1.id == c.id)) -> "Excluded"
+              true -> "Certifier"
+            end
+          end)
+          column(:name, &Helpers.link_to_resource/1)
         end
       end
 
@@ -152,7 +159,7 @@ defmodule Vae.ExAdmin.Delegate do
     query do
       %{
         index: [preload: [:process, :certifiers, :certifications, :applications], default_sort: [asc: :id]],
-        show: [preload: [:process, :certifiers, :certifications]],
+        show: [preload: [:process, :certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers]]],
         edit: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
         update: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
       }
