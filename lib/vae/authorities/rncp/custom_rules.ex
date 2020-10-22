@@ -7,6 +7,8 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   @ignored_certifier_slugs ~w(
     universite-de-nouvelle-caledonie
     universite-de-la-nouvelle-caledonie
+    universite-de-guyane
+    universite-de-la-guyane
     universite-de-la-polynesie-francaise
     sncf-universite-de-la-surete
     universite-du-vin
