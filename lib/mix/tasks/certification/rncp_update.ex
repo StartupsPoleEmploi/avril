@@ -10,7 +10,8 @@ defmodule Mix.Tasks.RncpUpdate do
   @static_certifiers [
     "Ministère chargé de la Culture",
     "Ministère de l'Intérieur",
-    "Ministère de l'Enseignement supérieur"
+    "Ministère de l'Enseignement supérieur",
+    "Direction de l'hospitalisation et de l'organisation des soins (DHOS)"
   ]
 
   @static_certifiers_with_delegate [
@@ -22,7 +23,7 @@ defmodule Mix.Tasks.RncpUpdate do
   ]
 
   def run([]) do
-    Logger.error("RNCP filname argument required. Ex: mix RncpUpdate -f priv/rncp-2020-08-03.xml")
+    Logger.error("RNCP filename argument required. Ex: mix RncpUpdate -f priv/rncp-2020-08-03.xml")
   end
 
   def run(args) do
@@ -78,10 +79,10 @@ defmodule Mix.Tasks.RncpUpdate do
 
   def create_static_certifiers() do
     @static_certifiers
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1, force_build: true))
 
     @static_certifiers_with_delegate
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, tolerance: 1))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, tolerance: 1, force_build: true))
   end
 
   defp make_all_certifications_inactive() do

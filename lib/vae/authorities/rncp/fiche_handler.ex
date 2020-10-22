@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   import Ecto.Query
   import SweetXml
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
-  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
+  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules}
 
   def fiche_to_certification(fiche) do
     rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
@@ -87,7 +87,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     case AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, name, opts[:tolerance]) do
       %Certifier{} = c -> c
       nil ->
-        if CustomRules.buildable_certifier?(name) do
+        if CustomRules.buildable_certifier?(name) || opts[:force_build] do
           create_certifier_and_maybe_delegate(name, opts)
         end
     end
