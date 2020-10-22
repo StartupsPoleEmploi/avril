@@ -109,19 +109,21 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   end
 
   def create_certifier_and_maybe_delegate(name, opts \\ []) do
-    delegate =
-      if opts[:with_delegate] do
-        AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
-          Delegate.changeset(%Delegate{}, %{
-            name: name
-          }) |> Repo.insert!()
-      end
-    %Certifier{}
+    certifier = %Certifier{}
     |> Certifier.changeset(%{
-      name: name,
-      delegates: (if delegate, do: [delegate], else: [])
-    })
-    |> Repo.insert!()
+      name: name
+    }) |> Repo.insert!()
+
+    if not is_nil(certifier) && opts[:with_delegate] do
+      (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
+        %Delegate{name: name})
+      |> Delegate.changeset(%{
+        certifiers: [certifier]
+      })
+      |> Repo.insert_or_update!()
+    end
+
+    certifier
   end
 
   defp insert_or_update_by_rncp_id(%{rncp_id: rncp_id} = fields) do

@@ -69,6 +69,7 @@ defmodule Mix.Tasks.RncpUpdate do
     CustomRules.deactivate_culture_ministry_certifications()
     CustomRules.special_rules_for_educ_nat()
     CustomRules.associate_some_enseignement_superieur_to_education_nationale()
+    CustomRules.deassociate_some_ministere_de_la_jeunesse()
     remove_certifiers_without_certifications()
     clear_certifier_internal_notes()
   end

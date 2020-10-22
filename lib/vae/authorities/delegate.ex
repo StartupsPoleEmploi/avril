@@ -118,6 +118,8 @@ defmodule Vae.Delegate do
 
     struct
     |> Repo.preload([
+      :process,
+      :recent_applications,
       :applications,
       :certifiers,
       :certifications,

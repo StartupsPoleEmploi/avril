@@ -2,7 +2,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
   alias Vae.{Certifier, Certification, Delegate, Repo}
   import Ecto.Query
-  alias Vae.Authorities.Rncp.AuthorityMatcher
+  # alias Vae.Authorities.Rncp.AuthorityMatcher
 
   @ignored_certifier_slugs ~w(
     universite-de-nouvelle-caledonie
@@ -15,6 +15,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     universite-paris-lumiere
     ecole-polytechnique-de-l-universite-de-tours-polytech-tours
     centre-universitaire-des-sciences-et-techniques-de-l-universite-clermont-ferrand
+    universite-europeenne-des-senteurs-et-des-saveurs
   )
 
   @ignored_certifications [
@@ -141,7 +142,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
     from(c in Certification,
       join: certifier in assoc(c, :certifiers),
-      where: c.is_active and certifier.id == ^mes.id and (c.acronym == "BTS" or c.rncp_id in ["4877", "4875"])
+      where: c.is_active and certifier.id == ^mes.id and c.acronym == "BTS"
     )
     |> Repo.all()
     |> Enum.each(fn c ->
@@ -151,6 +152,30 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       })
       |> Repo.update()
     end)
+
+    from(c in Certification,
+      join: certifier in assoc(c, :certifiers),
+      where: certifier.id == ^mes.id and c.rncp_id in ["4877", "4875", "34825", "34828"]
+    )
+    |> Repo.all()
+    |> Enum.each(fn c ->
+      c = Repo.preload(c, :certifiers)
+      Certification.changeset(c, %{
+        certifiers: c.certifiers ++ [men]
+      })
+      |> Repo.update()
+    end)
+  end
+
+  def deassociate_some_ministere_de_la_jeunesse() do
+    mej = Repo.get_by(Certifier, slug: "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale")
+
+    cert = Repo.get_by(Certification, rncp_id: "492")
+    |> Repo.preload(:certifiers)
+
+    Certification.changeset(cert, %{
+      certifiers: Enum.reject(cert.certifiers, &(&1.id == mej.id))
+    }) |> Repo.update()
   end
 
   def special_rules_for_educ_nat() do

@@ -248,7 +248,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end
   end
 
-  def find_by_slug_or_closer_distance_match(klass, name, tolerance) do
+  def find_by_slug_or_closer_distance_match(klass, name, tolerance \\ nil) do
+    tolerance = tolerance || 0.95
     slug = name
     |> Vae.String.parameterize()
     |> slug_with_aliases()
