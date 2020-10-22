@@ -12,18 +12,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
 
     Logger.info("Updating RNCP_ID: #{rncp_id}")
 
-    romes = SweetXml.xpath(fiche, ~x"./CODES_ROME/ROME"l)
-      |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./CODE/text()"s) end)
-      |> Enum.map(fn code -> Repo.get_by(Rome, code: code) end)
-
-    certifiers = SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
-      |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
-      |> Enum.map(&AuthorityMatcher.prettify_name/1)
-      |> Enum.map(&match_or_build_certifier(&1, with_delegate: true))
-      |> Enum.filter(&not(is_nil(&1)))
-      |> Enum.uniq_by(&(&1.slug))
-
-    map = SweetXml.xmap(fiche,
+    data = SweetXml.xmap(fiche,
       label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
       acronym: ~x"./ABREGE/CODE/text()"s |> transform_by(fn a -> if a != "Autre", do: a end),
       activities: ~x"./ACTIVITES_VISEES/text()"s |> transform_by(&HtmlEntities.decode/1),
@@ -35,13 +24,39 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         |> String.replace_prefix("NIV", "")
         |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
       end),
-      is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui"))
+      is_currently_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui")),
+      will_soon_be_inactive: ~x"./DATE_FIN_ENREGISTREMENT/text()"s |> transform_by(fn d ->
+        with(
+          {:ok, datetime} <- Timex.parse(d, "%d/%m/%Y", :strftime),
+          date <- datetime |> DateTime.to_date()
+        ) do
+          today = Date.utc_today()
+          Timex.after?(today, Timex.set(today, [month: 6, day: 30])) &&
+          Timex.before?(date, Timex.end_of_year(today))
+        end
+      end)
     )
 
-    Map.merge(map, %{
+    romes = SweetXml.xpath(fiche, ~x"./CODES_ROME/ROME"l)
+      |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./CODE/text()"s) end)
+      |> Enum.map(fn code -> Repo.get_by(Rome, code: code) end)
+
+    certifiers = SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
+      |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
+      |> Enum.map(&AuthorityMatcher.prettify_name/1)
+      |> Enum.map(&match_or_build_certifier(&1, with_delegate: true))
+      |> Enum.filter(&not(is_nil(&1)))
+      |> CustomRules.filtered_certifiers(data.acronym)
+      |> Enum.uniq_by(&(&1.slug))
+
+    is_educ_nat = Enum.any?(certifiers, &Certifier.is_educ_nat?(&1))
+
+    data
+    |> Map.merge(%{
+      is_active: data.is_currently_active && (if is_educ_nat, do: !data.will_soon_be_inactive, else: true),
       rncp_id: rncp_id,
       romes: romes,
-      certifiers: CustomRules.filtered_certifiers(certifiers, map.acronym)
+      certifiers: certifiers
     })
     |> insert_or_update_by_rncp_id()
   end

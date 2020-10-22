@@ -19,7 +19,12 @@ defmodule Mix.Tasks.RncpUpdate do
     "Université de Corse - Pasquale Paoli",
     "Université de Paris 8 | Vincennes",
     "Université de Paris",
-    "Université Pierre et Marie Curie - Paris 6"
+    "Université Pierre et Marie Curie - Paris 6",
+    "Université Paris-Est Marne-la-Vallée (UPEM)",
+    "Université de Cergy-Pontoise",
+    "Université PSL (Paris, Sciences & Lettres)",
+    "Université Paris 2 Panthéon-Assas",
+    "Université Paris Ouest Nanterre la Défense"
   ]
 
   def run([]) do
@@ -53,6 +58,7 @@ defmodule Mix.Tasks.RncpUpdate do
     store_former_certification_ids()
     make_all_certifications_inactive()
     create_static_certifiers()
+    attach_asp_to_dhos()
   end
 
   def clean_avril_data() do
@@ -82,7 +88,17 @@ defmodule Mix.Tasks.RncpUpdate do
     |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1, force_build: true))
 
     @static_certifiers_with_delegate
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, tolerance: 1, force_build: true))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, force_build: true))
+  end
+
+  def attach_asp_to_dhos() do
+    asp = Repo.one(from d in Delegate, where: like(d.slug, "asp-%"))
+    |> Repo.preload(:certifiers)
+    dohs = Repo.get_by(Certifier, slug: "direction-de-l-hospitalisation-et-de-l-organisation-des-soins-dhos")
+
+    Delegate.changeset(asp, %{
+      certifiers: asp.certifiers ++ [dohs]
+    }) |> Repo.update()
   end
 
   defp make_all_certifications_inactive() do

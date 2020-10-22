@@ -8,6 +8,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   @middle_capitalization ~w(( -)
 
   @cities ~w(
+    aix
     amiens
     angers
     avignon
@@ -20,6 +21,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     cergy-pontoise
     chambery
     clermont-ferrand
+    compiègne
     creteil
     dijon
     evry
@@ -61,6 +63,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   @other_capitalize_nouns ~w(
     adour
     alpes
+    alsace
     antilles
     antipolis
     ardenne
@@ -71,12 +74,11 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     bourgogne
     bretagne
     caledonie
-    cambresis
     cezanne
     champagne-ardenne
     charles
     claude
-    compiègne
+    compiegne
     corse
     dauphine
     denis
@@ -85,17 +87,19 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     essonne
     est
     etienne
+    evry-val-d-essonne
     france
     franche-comte
     francois
     gaulle
     guyane
     gustave
-    hainaut
+    hainaut-cambresis
     jaures
     jean
     jules
     loire
+    maine
     mediterranee
     monnet
     montaigne
@@ -110,6 +114,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     pasquale
     paoli
     paris-dauphine
+    paris-est
     picardie
     pontoise
     provence
@@ -129,6 +134,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     sud
     universite
     var
+    valery
+    val-de-marne
     verne
     victor
     yveline
@@ -192,11 +199,16 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-paris-12"
     ],
     "universite-paris-est-marne-la-vallee-upem" => [
-      "universite-gustave-eiffel"
+      "universite-gustave-eiffel",
+      "universite-paris-est-marne-la-vallee",
+      "universite-paris-est",
+      "universite-de-marne-la-vallee"
     ],
-    "universite-paris-nanterre" => [
+    "universite-paris-ouest-nanterre-la-defense" => [
       "upl",
-      "universite-paris-lumiere"
+      "universite-paris-nanterre",
+      "universite-paris-lumiere",
+      "universite-paris-ouest-nanterre-la-defense-paris-10"
     ],
     "universite-de-paris-8-vincennes" => [
       "universite-paris-nord-sorbonne",
@@ -214,6 +226,18 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-paris-descartes-paris-5",
       "universite-de-paris-5-rene-descartes",
       "universite-paris-diderot"
+    ],
+    "universite-de-cergy-pontoise" => [
+      "cy-cergy-paris-universite",
+      "universite-cergy-pontoise",
+      "universite-paris-seine"
+    ],
+    "universite-psl-paris-sciences-lettres" => [
+      "communaute-d-universites-et-etablissements-universite-de-recherche-paris-sciences-et-lettres-psl-research-university",
+      "universite-psl"
+    ],
+    "universite-paris-2-pantheon-assas" => [
+      "universite-pantheon-assas-paris-2"
     ]
   }
 
@@ -243,19 +267,21 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       end)
 
     if best_distance > tolerance do
-      klass = case List.first(list) do
-        %struct{} -> struct
-        v when is_binary(v) -> "string"
-        _ -> "unknown"
+      if string != map_fn.(best_match) do
+        klass = case List.first(list) do
+          %struct{} -> struct
+          v when is_binary(v) -> "string"
+          _ -> "unknown"
+        end
+        FileLogger.log_into_file("""
+          ####### MATCH #######
+          Class: #{klass}
+          Input: #{string}
+          Found: #{map_fn.(best_match)}
+          Score: #{best_distance}
+          #####################
+        """)
       end
-      FileLogger.log_into_file("""
-        ####### MATCH #######
-        Class: #{klass}
-        Input: #{string}
-        Found: #{map_fn.(best_match)}
-        Score: #{best_distance}
-        #####################
-      """)
       best_match
     end
   end
