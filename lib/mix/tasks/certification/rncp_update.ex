@@ -86,10 +86,10 @@ defmodule Mix.Tasks.RncpUpdate do
 
   def create_static_certifiers() do
     @static_certifiers
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1, force_build: true))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1, build: :force))
 
     @static_certifiers_with_delegate
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, force_build: true))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, build: :force))
   end
 
   def attach_asp_to_dhos() do
@@ -115,7 +115,17 @@ defmodule Mix.Tasks.RncpUpdate do
       having: count(a.id) == ^0
     )
     |> Repo.all()
-    |> Enum.each(&Repo.delete(&1))
+    |> Repo.preload([delegates: :certifiers])
+    |> Enum.each(fn c ->
+      IO.inspect("Deleting certifier #{c.name} ...")
+      case %Certifier{id: id, name: name} = c do
+        %Certifier{delegates: [%Delegate{name: dname, certifiers: [%Certifier{id: cid}]}]} when id == cid and name == dname ->
+          IO.inspect("... and delegate")
+          Enum.each(c.delegates, &(Repo.delete(&1)))
+        _ -> nil
+      end
+      Repo.delete(c)
+    end)
   end
 
   defp build_and_transform_stream(filename, transform) do

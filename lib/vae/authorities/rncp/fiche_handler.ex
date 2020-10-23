@@ -44,7 +44,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     certifiers = SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
       |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
       |> Enum.map(&AuthorityMatcher.prettify_name/1)
-      |> Enum.map(&match_or_build_certifier(&1, with_delegate: true))
+      |> Enum.map(&match_or_build_certifier(&1, [with_delegate: true, build: (if data.is_currently_active, do: :allow)]))
       |> Enum.filter(&not(is_nil(&1)))
       |> CustomRules.filtered_certifiers(data.acronym)
       |> Enum.uniq_by(&(&1.slug))
@@ -102,7 +102,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     case AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, name, opts[:tolerance]) do
       %Certifier{} = c -> c
       nil ->
-        if CustomRules.buildable_certifier?(name) || opts[:force_build] do
+        if opts[:build] == :force || (CustomRules.buildable_certifier?(name) && opts[:build] == :allow) do
           create_certifier_and_maybe_delegate(name, opts)
         end
     end
@@ -114,7 +114,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       name: name
     }) |> Repo.insert!()
 
-    if not is_nil(certifier) && opts[:with_delegate] do
+    if opts[:with_delegate] && (not is_nil(certifier)) do
       (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
         %Delegate{name: name})
       |> Delegate.changeset(%{

@@ -1,6 +1,6 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
-  alias Vae.{Certifier, Certification, Delegate, Repo}
+  alias Vae.{Certifier, Certification, Delegate, Process, Repo}
   import Ecto.Query
   # alias Vae.Authorities.Rncp.AuthorityMatcher
 
@@ -88,11 +88,15 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     %Certifier{} = cci_france = Repo.get_by(Certifier, slug: "cci-france")
     |> Repo.preload([:certifications, [delegates: :certifiers]])
 
-    other_delegates = from(d in Delegate,
-      where: like(d.name, "CCI%"),
-      preload: [:certifiers]
-    )
-    |> Repo.all()
+    other_delegates = Repo.get_by(Process, name: "CCI")
+    |> Repo.preload([delegates: :certifiers])
+    |> Map.get(:delegates)
+
+    # other_delegates = from(d in Delegate,
+    #   where: like(d.name, "CCI%"),
+    #   preload: [:certifiers]
+    # )
+    # |> Repo.all()
 
     Enum.uniq(cci_france.delegates ++ other_delegates)
     |> Enum.each(fn d ->
