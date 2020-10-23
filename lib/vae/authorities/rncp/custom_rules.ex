@@ -14,8 +14,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     universite-du-vin
     universite-scienchumaines-lettres-arts
     universite-de-technologie-belfort-montbeliard
-    universite-paris-lumiere
-    ecole-polytechnique-de-l-universite-de-tours-polytech-tours
+    universite-catholique-de-l-ouest
     centre-universitaire-des-sciences-et-techniques-de-l-universite-clermont-ferrand
     universite-europeenne-des-senteurs-et-des-saveurs
   )

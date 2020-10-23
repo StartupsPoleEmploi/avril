@@ -8,8 +8,8 @@ defmodule Mix.Tasks.RncpUpdate do
   import SweetXml
 
   @static_certifiers [
-    "Ministère chargé de la Culture",
-    "Ministère de l'Intérieur",
+    # "Ministère chargé de la Culture",
+    # "Ministère de l'Intérieur",
     "Ministère de l'Enseignement supérieur",
     "Direction de l'hospitalisation et de l'organisation des soins (DHOS)"
   ]
