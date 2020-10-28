@@ -1,6 +1,6 @@
 defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   require Logger
-  alias Vae.Repo
+  alias Vae.{Certifier, Repo}
   alias Vae.Authorities.Rncp.FileLogger
 
   @ignored_words ~w(de du la le d des et)
@@ -248,6 +248,11 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end
   end
 
+  def find_by_siret(%{siret: siret}) when not is_nil(siret) do
+    Repo.get_by(Certifier, siret: siret)
+  end
+  def find_by_siret(_), do: nil
+
   def find_by_slug_or_closer_distance_match(klass, name, tolerance \\ nil) do
     tolerance = tolerance || 0.95
     slug = name
@@ -274,7 +279,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
           v when is_binary(v) -> "string"
           _ -> "unknown"
         end
-        FileLogger.log_into_file("""
+        FileLogger.log_into_file("matches.log", """
           ####### MATCH #######
           Class: #{klass}
           Input: #{string}

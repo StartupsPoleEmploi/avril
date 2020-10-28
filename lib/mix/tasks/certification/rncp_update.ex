@@ -5,12 +5,12 @@ defmodule Mix.Tasks.RncpUpdate do
   import Ecto.Query
   alias Vae.{Certification, Certifier, Delegate, Repo}
   alias Vae.Authorities.Rncp.{CustomRules, FicheHandler, FileLogger}
-  import SweetXml
 
   @static_certifiers [
     # "Ministère chargé de la Culture",
     # "Ministère de l'Intérieur",
     "Ministère de l'Enseignement supérieur",
+    "Ministère chargé de la solidarité",
     "Direction de l'hospitalisation et de l'organisation des soins (DHOS)"
   ]
 
@@ -53,7 +53,8 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def prepare_avril_data() do
-    FileLogger.clear_log_file()
+    FileLogger.clear_log_file("matches.log")
+    FileLogger.clear_log_file("men_rejected.log")
     update_all_slugs()
     store_former_certification_ids()
     make_all_certifications_inactive()
@@ -86,10 +87,10 @@ defmodule Mix.Tasks.RncpUpdate do
 
   def create_static_certifiers() do
     @static_certifiers
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, tolerance: 1, build: :force))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(%{name: &1}, tolerance: 1, build: :force))
 
     @static_certifiers_with_delegate
-    |> Enum.each(&FicheHandler.match_or_build_certifier(&1, with_delegate: true, build: :force))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(%{name: &1}, with_delegate: true, build: :force))
   end
 
   def attach_asp_to_dhos() do

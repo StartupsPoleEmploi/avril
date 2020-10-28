@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   alias Vae.{Certifier, Certification, Delegate, Process, Repo}
   import Ecto.Query
   import SweetXml
-  # alias Vae.Authorities.Rncp.AuthorityMatcher
+  alias Vae.Authorities.Rncp.FileLogger
 
   @ignored_certifier_slugs ~w(
     universite-de-nouvelle-caledonie
@@ -51,9 +51,18 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     accessible_vae && !ignored_intitule
   end
 
-  def filtered_certifiers(certifiers, acronym) do
+  def rejected_educ_nat_certifiers(certifiers, %{acronym: acronym, rncp_id: rncp_id, label: label}) do
     Enum.reject(certifiers, fn c ->
-      Certifier.is_educ_nat?(c) && Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
+      if Certifier.is_educ_nat?(c) && Enum.member?(@ignored_acronyms_for_educ_nat, acronym) do
+        FileLogger.log_into_file("men_rejected.log", """
+          ####### REJECT #######
+          RNCP_ID: #{rncp_id}
+          ACRONYM: #{acronym}
+          LIBELLE: #{label}
+          #####################
+        """)
+        true
+      end
     end)
   end
 
@@ -199,7 +208,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     })
     |> Repo.update()
 
-    certification = Repo.get_by(Certification, rncp_id: "31191")
+    Repo.get_by(Certification, rncp_id: "31191")
     |> Certification.changeset(%{
       is_active: false
     })

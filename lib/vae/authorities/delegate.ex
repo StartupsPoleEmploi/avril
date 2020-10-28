@@ -2,7 +2,6 @@ defmodule Vae.Delegate do
   use VaeWeb, :model
 
   alias __MODULE__
-  alias Ecto.Changeset
   alias Vae.{
     UserApplication,
     Certification,

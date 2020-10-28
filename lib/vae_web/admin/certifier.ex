@@ -7,6 +7,7 @@ defmodule Vae.ExAdmin.Certifier do
     index do
       column(:id)
       column(:name)
+      column(:siret)
       column(:active_certifications, fn a -> Enum.count(a.certifications, &(&1.is_active)) end)
       column(:active_delegates, fn a -> Enum.count(a.delegates, &(&1.is_active)) end)
       actions()

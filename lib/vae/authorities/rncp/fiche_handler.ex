@@ -6,13 +6,10 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules}
 
   def fiche_to_certification(fiche) do
-    rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
-      String.replace_prefix(nb, "RNCP", "")
-    end))
 
-    Logger.info("Updating RNCP_ID: #{rncp_id}")
 
     data = SweetXml.xmap(fiche,
+      rncp_id: ~x"./NUMERO_FICHE/text()"s |> transform_by(&String.replace_prefix(&1, "RNCP", "")),
       label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
       acronym: ~x"./ABREGE/CODE/text()"s |> transform_by(fn a -> if a != "Autre", do: a end),
       activities: ~x"./ACTIVITES_VISEES/text()"s |> transform_by(&HtmlEntities.decode/1),
@@ -42,19 +39,24 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       |> Enum.map(fn code -> Repo.get_by(Rome, code: code) end)
 
     certifiers = SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
-      |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./NOM_CERTIFICATEUR/text()"s) end)
-      |> Enum.map(&AuthorityMatcher.prettify_name/1)
+      |> Enum.map(fn node ->
+        SweetXml.xmap(node,
+          name: ~x"./NOM_CERTIFICATEUR/text()"s |> transform_by(&AuthorityMatcher.prettify_name/1),
+          siret: ~x"./SIRET_CERTIFICATEUR/text()"s |> transform_by(&String.replace(&1, ~r/\s+/, ""))
+        )
+      end)
       |> Enum.map(&match_or_build_certifier(&1, [with_delegate: true, build: (if data.is_currently_active, do: :allow)]))
       |> Enum.filter(&not(is_nil(&1)))
-      |> CustomRules.filtered_certifiers(data.acronym)
+      |> CustomRules.rejected_educ_nat_certifiers(data)
       |> Enum.uniq_by(&(&1.slug))
 
     is_educ_nat = Enum.any?(certifiers, &Certifier.is_educ_nat?(&1))
 
+    Logger.info("Updating RNCP_ID: #{data.rncp_id}")
+
     data
     |> Map.merge(%{
       is_active: data.is_currently_active && (if is_educ_nat, do: !data.will_soon_be_inactive, else: true),
-      rncp_id: rncp_id,
       romes: romes,
       certifiers: certifiers
     })
@@ -98,21 +100,22 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     end
   end
 
-  def match_or_build_certifier(name, opts \\ []) do
-    case AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, name, opts[:tolerance]) do
+  def match_or_build_certifier(%{name: name} = params, opts \\ []) do
+    siret_param = params[:siret]
+    case AuthorityMatcher.find_by_siret(params) || AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, name, opts[:tolerance]) do
+      %Certifier{siret: siret} = c when is_nil(siret) and not is_nil(siret_param) ->
+        Certifier.changeset(c, %{siret: siret}) |> Repo.update!()
       %Certifier{} = c -> c
       nil ->
         if opts[:build] == :force || (CustomRules.buildable_certifier?(name) && opts[:build] == :allow) do
-          create_certifier_and_maybe_delegate(name, opts)
+          create_certifier_and_maybe_delegate(params, opts)
         end
     end
   end
 
-  def create_certifier_and_maybe_delegate(name, opts \\ []) do
+  def create_certifier_and_maybe_delegate(%{name: name} = params, opts \\ []) do
     certifier = %Certifier{}
-    |> Certifier.changeset(%{
-      name: name
-    }) |> Repo.insert!()
+    |> Certifier.changeset(params) |> Repo.insert!()
 
     if opts[:with_delegate] && (not is_nil(certifier)) do
       (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||

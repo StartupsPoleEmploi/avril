@@ -7,6 +7,7 @@ defmodule Vae.Certifier do
   schema "certifiers" do
     field(:slug, :string)
     field(:name, :string)
+    field(:siret, :string)
     field(:internal_notes, :string)
 
     many_to_many(
@@ -50,10 +51,10 @@ defmodule Vae.Certifier do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :internal_notes])
+    |> cast(params, [:name, :siret, :internal_notes])
     |> slugify()
     |> validate_required([:name, :slug])
-    |> unique_constraint(:slug)
+    |> unique_constraint([:slug, :siret])
     |> put_param_assoc(:delegates, params)
   end
 
