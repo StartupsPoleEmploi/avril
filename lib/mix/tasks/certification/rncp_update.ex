@@ -131,9 +131,7 @@ defmodule Mix.Tasks.RncpUpdate do
   defp build_and_transform_stream(filename, transform) do
     File.stream!(filename)
     |> SweetXml.stream_tags(:FICHE, discard: [:FICHE])
-    |> Stream.reject(fn {_, fiche} ->
-      CustomRules.rejected_fiche?(xpath(fiche, ~x"./INTITULE/text()"s))
-    end)
+    |> Stream.filter(fn {_, fiche} -> CustomRules.accepted_fiche?(fiche) end)
     |> Stream.each(fn {_, fiche} -> transform.(fiche) end)
     |> Stream.run()
   end

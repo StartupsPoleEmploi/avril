@@ -2,6 +2,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
   alias Vae.{Certifier, Certification, Delegate, Process, Repo}
   import Ecto.Query
+  import SweetXml
   # alias Vae.Authorities.Rncp.AuthorityMatcher
 
   @ignored_certifier_slugs ~w(
@@ -40,9 +41,14 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       not Enum.member?(@ignored_certifier_slugs, slug)
   end
 
-  def rejected_fiche?(text) do
-    @ignored_certifications
-      |> Enum.any?(&String.starts_with?(String.downcase(text), String.downcase(&1)))
+  def accepted_fiche?(fiche) do
+    accessible_vae = xpath(fiche, ~x"./SI_JURY_VAE/text()"s) == "Oui"
+
+    intitule = xpath(fiche, ~x"./INTITULE/text()"s) |> String.downcase()
+    ignored_intitule = @ignored_certifications
+      |> Enum.any?(&String.starts_with?(intitule, String.downcase(&1)))
+
+    accessible_vae && !ignored_intitule
   end
 
   def filtered_certifiers(certifiers, acronym) do
