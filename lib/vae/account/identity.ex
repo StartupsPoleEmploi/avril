@@ -113,9 +113,9 @@ defmodule Vae.Identity do
 
   def formatted_email(%{identity: identity} = user) do
     if fullname(user) == identity.email do
-      identity.email
+      String.downcase(identity.email)
     else
-      {fullname(user), identity.email}
+      {fullname(user), String.downcase(identity.email)}
     end
   end
 

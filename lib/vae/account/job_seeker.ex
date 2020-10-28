@@ -175,8 +175,8 @@ defmodule Vae.JobSeeker do
 
   def formatted_email(job_seeker) do
     cond do
-      fullname(job_seeker) == job_seeker.email -> job_seeker.email
-      true -> {fullname(job_seeker), job_seeker.email}
+      fullname(job_seeker) == job_seeker.email -> String.downcase(job_seeker.email)
+      true -> {fullname(job_seeker), String.downcase(job_seeker.email)}
     end
   end
 
