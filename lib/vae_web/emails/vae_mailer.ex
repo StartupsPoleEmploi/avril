@@ -12,6 +12,7 @@ defmodule VaeWeb.Mailer do
 
   @config Application.get_env(:vae, VaeWeb.Mailer)
   @override_to System.get_env("DEV_EMAILS")
+  @whitelist System.get_env("WHITELIST_EMAILS") || "" |> String.downcase() |> String.split(";")
 
   def build_email(template_name_or_id, from, to) do
     build_email(template_name_or_id, from, to, %{})
@@ -60,14 +61,14 @@ defmodule VaeWeb.Mailer do
     end)
   end
 
-  defp format_mailer!(:avril_from), do: {@config[:avril_name], @config[:avril_from]}
-  defp format_mailer!(:avril_to), do: {@config[:avril_name], @config[:avril_to]}
+  defp format_mailer!(:avril_from), do: {@config[:avril_name], String.downcase(@config[:avril_from])}
+  defp format_mailer!(:avril_to), do: {@config[:avril_name], String.downcase(@config[:avril_to])}
   defp format_mailer!(%User{} = user), do: Account.formatted_email(user)
   defp format_mailer!(%JobSeeker{} = job_seeker), do: JobSeeker.formatted_email(job_seeker)
-  defp format_mailer!(%{name: name, email: email}), do: {name, email}
-  defp format_mailer!(%{Name: name, Email: email}), do: {name, email}
-  defp format_mailer!(%{email: email}), do: email
-  defp format_mailer!(tuple) when is_tuple(tuple), do: tuple
+  defp format_mailer!(%{name: name, email: email}), do: {name, String.downcase(email)}
+  defp format_mailer!(%{Name: name, Email: email}), do: {name, String.downcase(email)}
+  defp format_mailer!(%{email: email}), do: String.downcase(email)
+  defp format_mailer!({name, email}), do: {name, String.downcase(email)}
   defp format_mailer!(emails) when is_list(emails), do: Enum.flat_map(emails, &format_mailer!/1)
 
   defp format_mailer!(email) when is_binary(email) do
@@ -80,8 +81,12 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: Logger.warn(anything)
 
-  def format_mailer(:to, _anything) when not is_nil(@override_to) do
-    format_mailer!(@override_to)
+  def format_mailer(:to, to) when not is_nil(@override_to) do
+    case format_mailer!(to) do
+      {_name, email} = tuple when email in @whitelist -> tuple
+      email when is_binary(email) and email in @whitelist -> email
+      _ -> format_mailer!(@override_to)
+    end
   end
 
   def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
@@ -155,7 +160,7 @@ defmodule VaeWeb.Mailer do
     email
     |> subject(subject)
     |> Map.put(:text_body, remove_subject(processed_content))
-    |> Map.put(:html_body, call_to_action_inline_style(email.html_body, params))
+    |> Map.put(:html_body, call_to_action_inline_style(email.html_body))
   end
 
   defp environment_prefix(subject, to) do
@@ -178,29 +183,51 @@ defmodule VaeWeb.Mailer do
     |> String.trim()
   end
 
-  defp call_to_action_inline_style(html_content, params) do
-    button_inline_style = """
+  defp call_to_action_inline_style(html_content) do
+    html_content
+    |> replace_button_style(:primary)
+    |> replace_button_style(:secondary)
+  end
+
+  def replace_button_style(html_content, type) do
+    {tag, color, bg_color} = case type do
+      :primary -> {"strong", "#c7eeff", "#18495e"}
+      :secondary -> {"em", "#18495e", "#d6ffed"}
+    end
+    radius = "50px"
+    style = """
       padding: 8px 16px;
-      border-radius: 50px;
+      border-radius: #{radius};
       text-decoration: none;
-      margin: 24px #{if params[:text_center], do: "auto", else: "64px;"};
-      display: #{if params[:text_center], do: "inline-block", else: "block"};
       text-align: center;
       font-style: normal;
       font-weight: bold;
-    """
-    primary_inline_style = """
-      #{button_inline_style}
       background: #18495e;
-      color: #c7eeff !important;
+      color: #{color};
+      border: 1px solid #{bg_color};
+      display: inline-block;
     """ |> String.replace("\n", "")
-    secondary_inline_style = """
-      #{button_inline_style}
-      background: #d6ffed;
-      color: #18495e !important;
-    """ |> String.replace("\n", "")
-    html_content
-    |> String.replace("<strong><a href", "<strong><a style=\"#{primary_inline_style}\" href")
-    |> String.replace("<em><a href", "<em><a style=\"#{secondary_inline_style}\" href")
+
+    regex = "<p><#{tag}><a href=\"(?<link>.*)\">(?<content>.*)<\/a><\/#{tag}><\/p>" |> Regex.compile!()
+
+    Regex.replace(regex, html_content, fn m, _ ->
+      %{"link" => link, "content" => content} = Regex.named_captures(regex, m)
+
+      """
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td>
+              <table border="0" cellspacing="0" cellpadding="0" style="margin: 5px auto;">
+                <tr>
+                  <td align="center" style="border-radius: #{radius};" bgcolor="#{bg_color}">
+                    <a href="#{link}" target="_blank" style="#{style}">#{content}</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      """ |> String.replace("\n", "")
+    end)
   end
 end
