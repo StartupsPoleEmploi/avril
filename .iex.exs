@@ -4,7 +4,8 @@ alias Vae.{
   Delegate,
   Rome,
   Repo,
-  UserApplication
+  UserApplication,
+  User
 }
 
 import Ecto.Query
