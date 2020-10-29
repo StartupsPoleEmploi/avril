@@ -42,7 +42,10 @@ const setupSearchBar = needProxy => {
     },
     minLength: 3,
   }, [{
-    source: autocomplete.sources.hits(client.initIndex('profession'), { hitsPerPage: 5, queryType: 'prefixAll' }),
+    source: autocomplete.sources.hits(client.initIndex('profession'), {
+      hitsPerPage: 5,
+      queryType: 'prefixAll',
+    }),
     displayKey: suggestion => suggestion.label,
     debounce: 500,
     templates: {
@@ -93,7 +96,7 @@ const setupLabelsAndAccessibility = () => {
   $('#search_query').attr('aria-activedescendant', '');
   $('#search_query').attr('aria-readonly', 'true');
 
-  $('#algolia-autocomplete-listbox-0').attr('aria-label', 'liste des métiers ou diplomes');
+  $('#algolia-autocomplete-listbox-0').attr('aria-label', 'liste des métiers ou diplômes');
   $('#algolia-autocomplete-listbox-0').attr('aria-selected', 'false');
 }
 

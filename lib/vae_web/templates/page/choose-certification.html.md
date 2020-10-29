@@ -12,7 +12,7 @@ La VAE n’est donc pas une formation. La VAE est une démarche par laquelle vos
 
 Vous engager en VAE va donc vous permettre de valoriser votre expérience, mais aussi de sécuriser votre avenir professionnel. Cela peut aussi être un point d’étape pour une réorientation ou le moyen de vous mettre à votre compte. Dans certaines situations, vous pouvez aussi être repositionné dans la grille de salaire de votre entreprise ou vous présenter à un concours. N’hésitez plus !!!!
 
-![Illustration de l'obtention d'un diplome](/images/mon-diplome.jpg)
+![Illustration de l'obtention d'un diplôme](/images/mon-diplome.jpg)
 
 Choisir le diplôme qui correspond le mieux à vos expériences est donc une étape importante. En effet, selon le diplôme que vous choisirez, dépendra le résultat de votre démarche.
 

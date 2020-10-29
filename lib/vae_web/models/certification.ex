@@ -108,6 +108,7 @@ defmodule Vae.Certification do
     |> sanitize_html_fields([:activities, :abilities, :activity_area, :accessible_job_type])
     |> add_army_acronym()
     |> remove_acronym_in_label()
+    |> add_default_acronym()
     |> slugify()
     |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
@@ -148,7 +149,14 @@ defmodule Vae.Certification do
   def format_for_index(struct) do
     struct
     |> Map.take(__schema__(:fields))
-    |> Map.drop([:inserted_at, :updated_at, :description])
+    |> Map.drop([
+      :inserted_at,
+      :updated_at,
+      :activities,
+      :abilities,
+      :activity_area,
+      :accessible_job_type
+    ])
   end
 
   def name(%Certification{acronym: acronym, label: label}) do
@@ -165,10 +173,16 @@ defmodule Vae.Certification do
 
   def add_army_acronym(%Changeset{} = changeset) do
     case get_field(changeset, :certifiers) |> Enum.find(&Certifier.is_army_ministry?(&1)) do
-      %Certifier{name: name} ->
-        changeset
-        |> put_change(:acronym, "Diplôme #{name}" )
+      %Certifier{name: name} -> put_change(changeset, :acronym, "Diplôme #{name}" )
       _ -> changeset
+    end
+  end
+
+  def add_default_acronym(%Changeset{} = changeset) do
+    if Vae.String.is_blank?(get_field(changeset, :acronym)) do
+      put_change(changeset, :acronym, "Diplôme")
+    else
+      changeset
     end
   end
 

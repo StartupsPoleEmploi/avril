@@ -88,7 +88,7 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
-    filter [:is_active, :id, :rncp_id, :slug, :acronym, :label, :level, :description]
+    filter [:is_active, :id, :rncp_id, :slug, :acronym, :label, :level, :activities]
     filter(:certifiers, order_by: :name)
 
 
