@@ -9,3 +9,4 @@
       = raw @certification.activities
   .card-footer
     = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button has-text-weight-bold is-transparent"
+  = link("... lire la suite", to: Routes.certification_path(@conn, :show, @certification), class: "more-link")

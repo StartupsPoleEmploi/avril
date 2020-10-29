@@ -105,7 +105,9 @@ defmodule Vae.Certification do
       :activity_area,
       :accessible_job_type
     ])
+    |> sanitize_html_fields([:activities, :abilities, :activity_area, :accessible_job_type])
     |> add_army_acronym()
+    |> remove_acronym_in_label()
     |> slugify()
     |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
@@ -170,19 +172,25 @@ defmodule Vae.Certification do
     end
   end
 
+  def remove_acronym_in_label(%Changeset{} = changeset) do
+    if String.starts_with?(get_field(changeset, :label), get_field(changeset, :acronym)) do
+      put_change(changeset, :label, String.replace_prefix(get_field(changeset, :label), get_field(changeset, :acronym), ""))
+    else
+      changeset
+    end
+  end
+
   def make_inactive_if_no_delegates(%Ecto.Changeset{} = changeset) do
     unless List.first(get_field(changeset, :delegates)), do: put_change(changeset, :is_active, false), else: changeset
   end
 
-  def get_popular(limit \\ 10) do
-    query = from c in Certification, [
-      join: a in UserApplication,
-      on: c.id == a.certification_id,
-      group_by: c.id,
-      order_by: [desc: count(a.id)],
-      limit: ^limit
-    ]
-    Repo.all(query)
+  def sanitize_html_fields(%Ecto.Changeset{} = changeset, fields) do
+    Enum.reduce(fields, changeset, fn field, cs ->
+      new_value = get_field(cs, field)
+      |> String.replace(~r/<p>\s+<\/p>/iu, "")
+      |> String.trim()
+      put_change(cs, field, new_value)
+    end)
   end
 
   defimpl Phoenix.Param, for: Vae.Certification do

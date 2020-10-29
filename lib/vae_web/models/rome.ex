@@ -12,9 +12,17 @@ defmodule Vae.Rome do
 
     has_many(:professions, Profession)
 
-    many_to_many(:certifications, Certification,
+    many_to_many(:certifications,
+      Certification,
       join_through: "rome_certifications",
       on_delete: :delete_all
+    )
+
+    many_to_many(
+      :active_certifications,
+      Certification,
+      join_through: "rome_certifications",
+      where: [is_active: true]
     )
 
     timestamps()

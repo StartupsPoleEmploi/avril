@@ -88,33 +88,10 @@ defmodule Vae.Delegate do
     from(d in assoc(certification, :delegates))
   end
 
-  # def from_certifier(certifier_id) do
-  #   from(d in Delegate,
-  #     join: cd in "certifiers_delegates",
-  #     on: d.id == cd.delegate_id and cd.certifier_id == ^certifier_id,
-  #     select: d
-  #   )
-  # end
-
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
-    # params =
-    #   Map.merge(
-    #     params,
-    #     case params[:is_active] do
-    #       "true" -> %{is_active: true}
-    #       _ -> %{is_active: false}
-    #     end
-    #   )
-    #   |> Map.merge(
-    #     case params[:academy_id] do
-    #       nil -> %{}
-    #       id -> %{academy_id: Integer.to_string(id)}
-    #     end
-    #   )
-
     struct
     |> Repo.preload([
       :process,
@@ -215,14 +192,8 @@ defmodule Vae.Delegate do
   end
 
   def format_for_index(%Delegate{} = delegate) do
-    delegate = delegate |> Repo.preload(:certifiers)
-
-    # certifiers =
-    #   Enum.reduce(delegate.certifiers, [], fn certifier, acc ->
-    #     [certifier.id | acc]
-    #   end)
-
     delegate
+    |> Repo.preload(:certifiers)
     |> Map.take(Delegate.__schema__(:fields))
     |> Map.put(:certifiers, Enum.map(delegate.certifiers, &(&1.id)))
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
@@ -271,16 +242,6 @@ defmodule Vae.Delegate do
           else: delegate.administrative
       }"
     )
-  end
-
-  def get_popular(limit \\ 10) do
-    from(d in Delegate,
-      join: a in UserApplication,
-      on: d.id == a.delegate_id,
-      group_by: d.id,
-      order_by: [desc: count(a.id)],
-      limit: ^limit
-    ) |> Repo.all()
   end
 
   def merge([delegate_id | _rest] = delegate_ids) when is_integer(delegate_id) do

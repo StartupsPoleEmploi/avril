@@ -1285,7 +1285,7 @@ autocomplete.js@^0.37.0:
 
 avril@StartupsPoleEmploi/avril-shared:
   version "1.0.0"
-  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/7642de0c743e6fdf788d416c2cfecb1b2d45ad64"
+  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/1e68965cffdb055a12f59bac44cc829998fd0bbd"
   dependencies:
     "@trevoreyre/autocomplete-vue" "^2.1.1"
     algoliasearch "^3.35.1"
@@ -2272,9 +2272,9 @@ dashdash@^1.12.0:
     assert-plus "^1.0.0"
 
 date-fns@^2.0.1, date-fns@^2.11.0:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.14.0.tgz#359a87a265bb34ef2e38f93ecf63ac453f9bc7ba"
-  integrity sha512-1zD+68jhFgDIM0rF05rcwYO8cExdNqxjq4xP1QKM60Q45mnO6zaMWB4tOzrIr4M4GSLntsKeE4c9Bdl2jhL/yw==
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.16.1.tgz#05775792c3f3331da812af253e1a935851d3834b"
+  integrity sha512-sAJVKx/FqrLYHAQeN7VpJrPhagZc9R4ImZIWYRFZaaohR3KzmuK88touwsSwSVT8Qcbd4zoDsnGfX4GFB4imyQ==
 
 date-fns@^2.6.0:
   version "2.12.0"
@@ -6657,17 +6657,17 @@ vm-browserify@^1.0.1:
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vue2-datepicker@^3.4.1:
-  version "3.6.0"
-  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.6.0.tgz#5000bd18aabf66d22b5f412e2537a63a9dc3b30f"
-  integrity sha512-PDGkOIU2LCripjsWsosrHpxUSmR3itkdAHwhh5YU8aEOsc4kUKwR/aBqwn89PYophi1EwNcsPreeY1b8WhiSGg==
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.7.0.tgz#fc461bdda98e760a0b3632ec616786d2ecfc69c0"
+  integrity sha512-XB5slJZLXf3sbPIOMxjYPw2UlOI/utX4cHGQwGvRQqyiKzwpsGlPI6M3zUGw412Sm2tv2jMkXd9+k+yOSRf2OQ==
   dependencies:
     date-fns "^2.0.1"
     date-format-parse "^0.2.5"
 
 vue@^2.6.11:
-  version "2.6.11"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
-  integrity sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ==
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
+  integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
 warning@^4.0.2, warning@^4.0.3:
   version "4.0.3"

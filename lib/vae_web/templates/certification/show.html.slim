@@ -1,25 +1,46 @@
-.container
-  section.section.is-vertical#header
+.container.certification-page
+  section.section.is-small#header
     = render VaeWeb.ComponentView, "back_button", conn: @conn
-
-    h1.title.is-1= Vae.Certification.name(@certification)
-    p.subtile
-      span.label-avril Équivalence #{level_info_by_level(@certification.level)}
-  section.section.is-vertical#call-to-action
+    .has-text-centered
+      h1.title.is-1= Vae.Certification.name(@certification)
+      p.subtile
+        span.label-avril Équivalence #{level_info_by_level(@certification.level)}
+  section.section.is-small#activities
+    .columns
+      .column.is-10.is-offset-1
+        h3.subtitle.is-3 Activités visées
+        .content= raw @certification.activities
+  section.section.is-small#call-to-action
     .notification.is-blue.has-bubble
       .columns
         .column.is-8.is-offset-2.has-text-centered.content.is-medium
           h2.title.is-2 Commencer en douceur ma VAE
           p Prenez quelques minutes pour créer tranquillement votre compte, renseigner votre profil et remplir votre candidature à votre rythme. Rassurez-vous, quoique vous fassiez sur notre site, rien n'est engageant car la décision finale, vous la prendrez avec le certificateur. A vous de jouer pour un diplôme !
           = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
-  section.section.is-vertical#description
-    .columns
-      .column.is-10.is-offset-1.content
-        = raw @certification.activities
-  = if length(@similars) > 0 do
-    section.section#similars
-      h2.title.is-2 Diplômes similaires
+  = if Vae.String.is_present?(@certification.abilities) do
+    section.section.is-small#abilities
       .columns
-        = for similar <- @similars do
-          .column.is-4
-            = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: similar
+        .column.is-10.is-offset-1
+          h3.subtitle.is-3 Compétences attestées
+          .content= raw @certification.abilities
+  = if Vae.String.is_present?(@certification.activity_area) do
+    section.section.is-small#activity_area
+      .columns
+        .column.is-10.is-offset-1
+          h3.subtitle.is-3 Secteurs d'activités
+          .content= raw @certification.activity_area
+  = if Vae.String.is_present?(@certification.accessible_job_type) do
+    section.section.is-small#accessible_job_type
+      .columns
+        .column.is-10.is-offset-1
+          h3.subtitle.is-3 Type d'emplois accessibles
+          .content= raw @certification.accessible_job_type
+  = if length(@similars) > 0 do
+    section.section.is-small#similars
+      .columns
+        .column.is-10.is-offset-1
+          h3.subtitle.is-3 Nos candidats s'intéressent aussi à ces diplômes similaires
+          .columns
+            = for similar <- @similars do
+              .column.is-4
+                = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: similar

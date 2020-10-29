@@ -5,6 +5,7 @@ defmodule VaeWeb.CertificationController do
   alias Vae.{
     Certification,
     Profession,
+    Repo,
     Rome
   }
 
@@ -52,8 +53,8 @@ defmodule VaeWeb.CertificationController do
     active_certifications_query = from c in Certification, where: [is_active: true]
     with(
       {:ok, filtered_query, filter_values} <- apply_filters(active_certifications_query, conn),
-      ordered_query <- order_by_popularity(filtered_query),
-      page <- Repo.paginate(ordered_query, params)
+      ordered_query <- Certification.sort_by_popularity(filtered_query),
+      page <- Repo.paginate(ordered_query, Map.merge(params, %{page_size: 9}))
     ) do
       render(
         conn,
@@ -62,7 +63,6 @@ defmodule VaeWeb.CertificationController do
           certifications: page.entries,
           no_results: count_without_level_filter(params) == 0,
           page: page,
-          page_size: 9,
           params: params,
           level: nil
         }
@@ -84,25 +84,16 @@ defmodule VaeWeb.CertificationController do
         )
       else
         certification =
-          Repo.preload(certification, [:certifiers, romes: [certifications: :certifiers]])
+          Repo.preload(certification, [:certifiers, romes: [active_certifications: :certifiers]])
 
         similars =
-          certification
-          |> Map.get(:romes)
-          |> Enum.flat_map(fn r -> r.certifications end)
-          |> Enum.reject(fn c -> c.id == certification.id end)
-          |> Enum.uniq()
-          |> Enum.sort_by(
-            fn c ->
-              common_certifiers =
-                Enum.filter(certification.certifiers, fn el -> Enum.member?(c.certifiers, el) end)
-
-              level_diff_ratio = (4 - abs(certification.level - c.level)) / 4
-              length(common_certifiers) + level_diff_ratio
-            end,
-            &>=/2
-          )
-          |> Enum.take(3)
+          from(c in Certification)
+          |> join(:left, [c], r in assoc(c, :romes))
+          |> where([c, r], r.id in ^Enum.map(certification.romes, &(&1.id)))
+          |> where([c, r], c.id != ^certification.id)
+          |> Certification.sort_by_popularity()
+          |> limit(3)
+          |> Repo.all()
 
         render(
           conn,
@@ -159,12 +150,4 @@ defmodule VaeWeb.CertificationController do
       Repo.aggregate(filtered_query, :count, :id)
     end
   end
-
-  def order_by_popularity(query) do
-    query
-    |> join(:left, [c], a in assoc(c, :applications))
-    |> group_by([c], c.id)
-    |> order_by([c, a], [desc: count(a.id)])
-  end
-
 end

@@ -53,8 +53,8 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def prepare_avril_data() do
-    FileLogger.clear_log_file("matches.log")
-    FileLogger.clear_log_file("men_rejected.log")
+    FileLogger.reinitialize_log_file("matches.csv", ~w(class input found score))
+    FileLogger.reinitialize_log_file("men_rejected.csv", ~w(rncp_id acronym label is_active))
     update_all_slugs()
     store_former_certification_ids()
     make_all_certifications_inactive()

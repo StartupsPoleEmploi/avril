@@ -279,14 +279,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
           v when is_binary(v) -> "string"
           _ -> "unknown"
         end
-        FileLogger.log_into_file("matches.log", """
-          ####### MATCH #######
-          Class: #{klass}
-          Input: #{string}
-          Found: #{map_fn.(best_match)}
-          Score: #{best_distance}
-          #####################
-        """)
+        FileLogger.log_into_file("matches.csv", [klass, string, map_fn.(best_match), best_distance])
       end
       best_match
     end

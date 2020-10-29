@@ -35,6 +35,13 @@ defmodule VaeWeb do
         # TODO: add a year key
       end
 
+      def sort_by_popularity(query \\ __MODULE__) do
+        query
+        |> join(:left, [q], u in assoc(q, :applications))
+        |> group_by([q, u], q.id)
+        |> order_by([q, u], [desc: count(u.id)])
+      end
+
       def put_param_assoc(%Ecto.Changeset{data: %struct{} = element} = changeset, key, params) do
         with(
           changeset <- %Ecto.Changeset{changeset | data: Repo.preload(element, key)},

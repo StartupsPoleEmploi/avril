@@ -51,16 +51,15 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     accessible_vae && !ignored_intitule
   end
 
-  def rejected_educ_nat_certifiers(certifiers, %{acronym: acronym, rncp_id: rncp_id, label: label}) do
+  def rejected_educ_nat_certifiers(certifiers, %{
+    acronym: acronym,
+    rncp_id: rncp_id,
+    label: label,
+    is_currently_active: is_currently_active
+  }) do
     Enum.reject(certifiers, fn c ->
       if Certifier.is_educ_nat?(c) && Enum.member?(@ignored_acronyms_for_educ_nat, acronym) do
-        FileLogger.log_into_file("men_rejected.log", """
-          ####### REJECT #######
-          RNCP_ID: #{rncp_id}
-          ACRONYM: #{acronym}
-          LIBELLE: #{label}
-          #####################
-        """)
+        FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_currently_active])
         true
       end
     end)

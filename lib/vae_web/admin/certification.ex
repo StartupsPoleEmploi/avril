@@ -30,7 +30,7 @@ defmodule Vae.ExAdmin.Certification do
       panel "ROME" do
         table_for certification.romes do
           column(:id)
-          column(:label)
+          column(:label, &Helpers.link_to_resource(&1, namify: fn r -> r.label end))
           column(:code)
         end
       end

@@ -30,6 +30,17 @@
     text-overflow: ellipsis;
     overflow: hidden;
     flex-grow: 1;
+    column-width: 1000px;
+    column-gap: 2rem;
+    position: relative;
+    .content {
+      font-size: 1.1rem;
+    }
+  }
+  .more-link {
+    position: absolute;
+    bottom: 4rem;
+    right: 2rem;
   }
 
   .card-footer {

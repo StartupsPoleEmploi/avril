@@ -22,6 +22,7 @@ docker-compose.override.yml
 /priv/tabs/*.tab
 /priv/rncp*.xml
 /priv/*.log
+/priv/*.csv
 
 !/**/.gitkeep
 /.elixir_ls/
