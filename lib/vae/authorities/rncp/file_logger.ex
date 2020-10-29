@@ -6,7 +6,7 @@ defmodule Vae.Authorities.Rncp.FileLogger do
   def reinitialize_log_file(log_file, columns) do
     Logger.info("Remove previous log file")
     File.rm("priv/#{log_file}")
-    log_into_file(log_file, "#{Enum.join(columns, @separator)}\n")
+    log_into_file(log_file, columns)
   end
 
   def log_into_file(log_file, row) do
