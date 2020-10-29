@@ -1,3 +1,5 @@
+# Deprecated : not used anymore
+# TODO: remove this
 defmodule Vae.ExAdmin.Process do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers

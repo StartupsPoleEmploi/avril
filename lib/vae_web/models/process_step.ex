@@ -1,5 +1,5 @@
-# Note: this model/table is not used (anymore)
-# Steps are statically stored in the Process model.
+# Deprecated : not used anymore
+# TODO: remove this
 
 defmodule Vae.ProcessStep do
   use VaeWeb, :model

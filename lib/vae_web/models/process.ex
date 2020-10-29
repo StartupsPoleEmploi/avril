@@ -1,3 +1,5 @@
+# Deprecated : not used anymore
+# TODO: remove this
 defmodule Vae.Process do
   use VaeWeb, :model
 
