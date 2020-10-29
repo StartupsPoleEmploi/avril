@@ -186,6 +186,21 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     end)
   end
 
+  def associate_all_ministere_solidarite_to_education_nationale() do
+    men = Repo.get_by(Certifier, slug: "ministere-de-l-education-nationale")
+
+    Repo.get_by(Certifier, slug: "ministere-charge-de-la-solidarite")
+    |> Repo.preload([active_certifications: :certifiers])
+    |> Repo.all()
+    |> Map.get(:active_certifications)
+    |> Enum.each(fn c ->
+      Certification.changeset(c, %{
+        certifiers: c.certifiers ++ [men]
+      })
+      |> Repo.update()
+    end)
+  end
+
   def deassociate_some_ministere_de_la_jeunesse() do
     mej = Repo.get_by(Certifier, slug: "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale")
 
