@@ -187,8 +187,8 @@ defmodule Vae.Certification do
   end
 
   def remove_acronym_in_label(%Changeset{} = changeset) do
-    if String.starts_with?(get_field(changeset, :label), get_field(changeset, :acronym)) do
-      put_change(changeset, :label, String.replace_prefix(get_field(changeset, :label), get_field(changeset, :acronym), ""))
+    if String.starts_with?(get_field(changeset, :label), get_field(changeset, :acronym) || "") do
+      put_change(changeset, :label, String.replace_prefix(get_field(changeset, :label), get_field(changeset, :acronym) || "", ""))
     else
       changeset
     end
