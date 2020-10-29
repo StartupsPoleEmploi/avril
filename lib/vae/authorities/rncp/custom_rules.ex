@@ -191,7 +191,6 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
     Repo.get_by(Certifier, slug: "ministere-charge-de-la-solidarite")
     |> Repo.preload([active_certifications: :certifiers])
-    |> Repo.all()
     |> Map.get(:active_certifications)
     |> Enum.each(fn c ->
       Certification.changeset(c, %{
