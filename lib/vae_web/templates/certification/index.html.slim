@@ -23,7 +23,7 @@
       ul
         li
           button name="level" type="submit" value="" id="level_all" class="button is-rounded is-info is-togglable #{if is_nil(@level), do: "is-active"}"
-            | Toutes les équivalences
+            | Tous les niveaux
         = for level <- 3..8 |> Enum.to_list() do
           li
             button name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"

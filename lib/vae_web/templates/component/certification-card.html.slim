@@ -3,7 +3,7 @@
     h4.title.is-4
       = link(Vae.Certification.name(@certification), to: Routes.certification_path(@conn, :show, @certification))
     p.description
-      span.label-avril Équivalence #{level_info_by_level(@certification.level)}
+      span.label-avril Niveau #{level_info_by_level(@certification.level)}
   .card-content
     .content
       = raw @certification.activities

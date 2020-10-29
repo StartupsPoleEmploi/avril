@@ -13,7 +13,7 @@ defmodule VaeWeb.ViewHelpers do
   def level_info_by_level(5), do: "Bac +2 / DUT / BTS"
   def level_info_by_level(6), do: "Bac +3 / Bac +4"
   def level_info_by_level(7), do: "Bac +5 et plus"
-  def level_info_by_level(8), do: "Bac +8 et plus"
+  def level_info_by_level(8), do: "Bac +8"
   def level_info_by_level(_), do: "Sans Diplôme"
 
   def meta_certification(%{rome: r, delegate: d}) when not is_nil(r) and not is_nil(d) do

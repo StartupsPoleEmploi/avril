@@ -4,7 +4,7 @@
     .has-text-centered
       h1.title.is-1= Vae.Certification.name(@certification)
       p.subtile
-        span.label-avril Équivalence #{level_info_by_level(@certification.level)}
+        span.label-avril Niveau #{level_info_by_level(@certification.level)}
   section.section.is-small#activities
     .columns
       .column.is-10.is-offset-1
@@ -39,7 +39,7 @@
     section.section.is-small#similars
       .columns
         .column.is-10.is-offset-1
-          h3.subtitle.is-3 Nos candidats s'intéressent aussi à ces diplômes similaires
+          h3.subtitle.is-3 Nos candidats s'intéressent aussi à ces diplômes
           .columns
             = for similar <- @similars do
               .column.is-4

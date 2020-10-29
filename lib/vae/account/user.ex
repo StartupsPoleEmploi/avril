@@ -146,6 +146,7 @@ defmodule Vae.User do
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
+    |> downcase_email()
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
@@ -165,6 +166,7 @@ defmodule Vae.User do
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
+    |> downcase_email()
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
@@ -180,18 +182,20 @@ defmodule Vae.User do
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
     |> sync_name_with_first_and_last(params)
+    |> downcase_email()
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
     |> put_job_seeker(params[:job_seeker])
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
   end
 
   def update_changeset(model, params) do
     model
     |> cast(params, @fields)
+    |> downcase_email()
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
@@ -375,5 +379,9 @@ defmodule Vae.User do
       path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path || "/"}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
+  end
+
+  def downcase_email(changeset) do
+    put_change(changeset, :email, String.downcase(get_field(changeset, :email)))
   end
 end
