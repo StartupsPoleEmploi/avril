@@ -200,10 +200,14 @@ defmodule Vae.Certification do
 
   def sanitize_html_fields(%Ecto.Changeset{} = changeset, fields) do
     Enum.reduce(fields, changeset, fn field, cs ->
-      new_value = get_field(cs, field)
-      |> String.replace(~r/<p>\s+<\/p>/iu, "")
-      |> String.trim()
-      put_change(cs, field, new_value)
+      case get_field(cs, field) do
+        str when is_binary(str) ->
+          new_value = str
+          |> String.replace(~r/<p>\s+<\/p>/iu, "")
+          |> String.trim()
+          put_change(cs, field, new_value)
+        _ -> cs
+      end
     end)
   end
 
