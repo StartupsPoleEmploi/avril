@@ -68,6 +68,16 @@ defmodule VaeWeb.AuthController do
     )
   end
 
+  defp handle_error(
+         conn,
+         %Ecto.Changeset{errors: [email: {"can't be blank", _opts}]}
+       ) do
+    handle_error(
+      conn,
+      "Il semblerait que vous n'ayez pas confirmé votre adresse email auprès de Pôle emploi. Merci de revenir une fois cette opération effectuée."
+    )
+  end
+
   defp handle_error(conn, %Ecto.Changeset{} = changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       error =
