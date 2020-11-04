@@ -35,6 +35,14 @@ defmodule VaeWeb do
         # TODO: add a year key
       end
 
+      def is_active(query \\ __MODULE__) do
+        if :is_active in __MODULE__.__schema__(:fields) do
+          where(query, [q], q.is_active == true)
+        else
+          query
+        end
+      end
+
       def sort_by_popularity(query \\ __MODULE__) do
         query
         |> join(:left, [q], u in assoc(q, :applications))
