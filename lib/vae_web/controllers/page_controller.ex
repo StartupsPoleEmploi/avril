@@ -9,7 +9,7 @@ defmodule VaeWeb.PageController do
     render(conn, "index.html",
       title: "Comment faire une VAE ?",
       certification_examples: Certification.is_active() |> Certification.sort_by_popularity() |> limit(10) |> Repo.all() |> Enum.take_random(2),
-      delegate_examples: Certification.is_active() |> Delegate.sort_by_popularity() |> limit(10) |> Repo.all() |> Enum.take_random(2)
+      delegate_examples: Delegate.is_active() |> Delegate.sort_by_popularity() |> limit(10) |> Repo.all() |> Enum.take_random(2)
     )
   end
 
