@@ -382,6 +382,9 @@ defmodule Vae.User do
   end
 
   def downcase_email(changeset) do
-    put_change(changeset, :email, String.downcase(get_field(changeset, :email)))
+    case get_field(changeset, :email) do
+      nil -> changeset
+      email -> put_change(changeset, :email, String.downcase(email))
+    end
   end
 end
