@@ -17,10 +17,9 @@ defmodule Vae.ExAdmin.UserApplication do
       column(:certification)
       column(:delegate)
 
-      column(:certifier, fn a ->
-        Enum.map(a.certifiers, &Helpers.link_to_resource/1)
-      end)
-
+      # column(:certifiers, fn d ->
+      #   Enum.map(d.certifiers, &Helpers.link_to_resource(&1)) |> Enum.intersperse(", ")
+      # end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:status, &application_status/1)
       column(:url, fn a -> if a.submitted_at, do: Phoenix.HTML.Link.link("URL", to: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash), target: "_blank") end)
@@ -118,9 +117,9 @@ defmodule Vae.ExAdmin.UserApplication do
     end
 
     filter([:meeting, :booklet_1, :booklet_hash])
-    filter(:certification, order_by: [:acronym, :label])
-    filter(:delegate, order_by: :name)
-    filter(:certifiers, order_by: :name)
+    # filter(:certification, order_by: [:acronym, :label])
+    # filter(:delegate, order_by: :name)
+    # filter(:certifiers, order_by: :name)
     filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
 
     @all_preloads [:delegate, :user, :certification, :certifiers]
