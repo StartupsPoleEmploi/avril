@@ -15,10 +15,10 @@ defmodule Mix.Tasks.RncpUpdate do
   ]
 
   @static_certifiers_with_delegate [
+    "Université de Paris",
     "Université Paris-Saclay",
     "Université de Corse - Pasquale Paoli",
     "Université de Paris 8 | Vincennes",
-    "Université de Paris",
     "Université Pierre et Marie Curie - Paris 6",
     "Université Paris-Est-Créteil-Val-de-Marne",
     "Université Paris-Est Marne-la-Vallée (UPEM)",
