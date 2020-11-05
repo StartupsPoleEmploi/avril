@@ -215,11 +215,14 @@ defmodule Vae.UserApplication do
   end
 
   def certifier_name(%UserApplication{} = application) do
-    application
-    |> Repo.preload(delegate: :certifiers)
-    |> case do
-      %UserApplication{delegate: %Delegate{certifiers: [%Certifier{name: name} | _rest]}} -> name
-      _ -> nil
+    with(
+      %UserApplication{
+        delegate: %Delegate{certifiers: delegate_certifiers},
+        certification: %Certification{certifiers: certification_certifiers}
+      } <- application |> Repo.preload([delegate: :certifiers, certification: :certifiers]),
+      %Certifier{name: name} <- Enum.find(delegate_certifiers, &Enum.member?(certification_certifiers, &1))
+    ) do
+      name
     end
   end
 
