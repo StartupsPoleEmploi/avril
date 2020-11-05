@@ -32,7 +32,7 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
       nomNaiss: nil,
       prenom: identity.first_name,
       dateNaissance: format_birthday(identity.birthday),
-      lieuNaissance: identity.birth_place,
+      lieuNaissance: "#{identity.birth_place.city}, #{identity.birth_place.country}",
       adresse: identity.full_address.street,
       adresseBis: nil,
       cp: identity.full_address.postal_code,
@@ -58,9 +58,9 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
   defp format_birthday(birthday, _for), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
 
   defp format_gender(gender) do
-    case gender do
-      "male" -> 1
-      "female" -> 2
+    case String.first(gender) do
+      "m" -> 1
+      "f" -> 2
       _other -> nil
     end
   end
