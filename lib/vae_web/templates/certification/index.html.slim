@@ -1,6 +1,6 @@
-- level_label = if assigns[:level], do: "équivalence #{level_info_by_level(assigns[:level])}"
+- level_label = if assigns[:level], do: "niveau #{level_info_by_level(assigns[:level])}"
 - filter_object = assigns[:profession] || assigns[:rome]
-.container
+.container.certification-index
   section.section#title
     = if @level do
       = link("Retirer le filtre", to: Phoenix.Controller.current_path(@conn, Map.drop(@params, ["level"])), class: "button is-back")
@@ -25,13 +25,17 @@
           button name="level" type="submit" value="" id="level_all" class="button is-rounded is-info is-togglable #{if is_nil(@level), do: "is-active"}"
             | Tous les niveaux
         = for level <- 3..8 |> Enum.to_list() do
+          - subtotal = @by_level_total[level]
           li
-            button name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
-              = level_info_by_level(level)
+            button disabled=(subtotal == 0) title="#{(if subtotal > 0, do: Vae.String.inflect(@by_level_total[level], "résultat"), else: "Aucun résultat")}" name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
+              = if subtotal > 0 do
+                span.tag.is-info.is-rounded= subtotal
+              span= level_info_by_level(level)
   section.section#results
-    = if length(@certifications) == 0 do
+    = if @total == 0 do
       = render("no-results.html", level: @level)
     - else
+      h6.title.is-6 Avril vous propose #{Vae.String.inflect(length(@certifications), "diplôme")} pour le métier que vous avez sélectionné :
       = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
         .columns
           = for certification <- chunk do

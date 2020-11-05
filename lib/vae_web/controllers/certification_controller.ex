@@ -53,6 +53,8 @@ defmodule VaeWeb.CertificationController do
     active_certifications_query = from c in Certification, where: [is_active: true]
     with(
       {:ok, filtered_query, filter_values} <- apply_filters(active_certifications_query, conn),
+      total <- Repo.aggregate(filtered_query, :count, :id),
+      by_level_total <- count_with_level(filtered_query),
       ordered_query <- Certification.sort_by_popularity(filtered_query),
       page <- Repo.paginate(ordered_query, Map.merge(params, %{page_size: 9}))
     ) do
@@ -61,7 +63,8 @@ defmodule VaeWeb.CertificationController do
         "index.html",
         %{
           certifications: page.entries,
-          no_results: count_without_level_filter(params) == 0,
+          total: total,
+          by_level_total: by_level_total,
           page: page,
           params: params,
           level: nil
@@ -137,17 +140,13 @@ defmodule VaeWeb.CertificationController do
 
   defp enrich_filter_values(filters), do: filters
 
-  defp count_without_level_filter(params) do
-    conn_without_filter_level = %Plug.Conn{
-      params: Map.drop(params, ["levels"])
-    }
+  def count_with_level(query) do
+    Enum.reduce(3..8, %{}, fn level, result ->
+      count =
+        from(c in query, [where: c.level == ^level])
+        |> Repo.aggregate(:count, :id)
 
-    with {:ok, filtered_query, _filter_values} <-
-           apply_filters(
-             Certification,
-             conn_without_filter_level
-           ) do
-      Repo.aggregate(filtered_query, :count, :id)
-    end
+      Map.put(result, level, count)
+    end)
   end
 end
