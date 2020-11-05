@@ -44,7 +44,8 @@
                   .atome
                     label
                       | Nature, intitulé complet et niveau de la certification :
-                    p.title.is-6.is-uppercase.is-spaced= @certification_name
+                    p.title.is-6.is-uppercase.is-spaced
+                      = "#{@certification_level + 1} - #{@certification_name}"
                 .column
                   .atome
                     label
