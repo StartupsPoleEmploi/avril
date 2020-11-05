@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   alias Vae.{Certifier, Repo}
   alias Vae.Authorities.Rncp.FileLogger
 
-  @ignored_words ~w(de du la le d des et)
+  @ignored_words ~w(de du la le d des et en)
   @pre_capitalization ~w(d' l')
   @middle_capitalization ~w(( -)
 
@@ -204,13 +204,15 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-paris-est",
       "universite-de-marne-la-vallee"
     ],
-    "universite-paris-ouest-nanterre-la-defense" => [
-      "upl",
-      "universite-paris-nanterre",
-      "universite-paris-lumiere",
+    "universite-paris-nanterre" => [
+      "universite-paris-ouest-nanterre-la-defense",
       "universite-paris-ouest-nanterre-la-defense-paris-10"
     ],
+    "universite-paris-lumiere" => [
+      "upl",
+    ],
     "universite-de-paris-8-vincennes" => [
+      "universite-de-paris-8-paris-vincenn",
       "universite-paris-nord-sorbonne",
       "universite-paris-13",
       "universite-paris-8",
@@ -255,6 +257,9 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     "universite-cote-d-azur" => [
       "universite-de-nice",
       "universite-nice-sophia-antipolis"
+    ],
+    "universite-jean-jaures-toulouse-2" => [
+      "universite-de-toulouse-jean-jaures"
     ]
   }
 
@@ -354,6 +359,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     |> Enum.with_index()
     |> Enum.map(fn {word, i} ->
       case String.downcase(word) do
+        "st" -> "Saint"
         "universite" -> "Université"
         "ministere" -> "Ministère"
         "defense" -> "Défense"

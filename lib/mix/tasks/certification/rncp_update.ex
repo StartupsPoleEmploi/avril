@@ -25,11 +25,13 @@ defmodule Mix.Tasks.RncpUpdate do
     "Université de Cergy-Pontoise",
     "Université PSL (Paris, Sciences & Lettres)",
     "Université Paris 2 Panthéon-Assas",
-    "Université Paris Ouest Nanterre la Défense",
+    "Université Paris Nanterre",
+    "Université Paris Lumières",
     "Université Paris 1 Panthéon-Sorbonne",
     "Université Paris-Dauphine - PSL",
     "Université Côte d'Azur",
-    "Aix-Marseille Université"
+    "Aix-Marseille Université",
+    "Université Paul Valéry"
   ]
 
   def run([]) do
@@ -89,7 +91,7 @@ defmodule Mix.Tasks.RncpUpdate do
     |> Enum.each(&FicheHandler.match_or_build_certifier(%{name: &1}, tolerance: 1, build: :force))
 
     @static_certifiers_with_delegate
-    |> Enum.each(&FicheHandler.match_or_build_certifier(%{name: &1}, with_delegate: true, build: :force))
+    |> Enum.each(&FicheHandler.match_or_build_certifier(%{name: &1}, tolerance: 0.99, with_delegate: true, build: :force))
   end
 
   def attach_asp_to_dhos() do
