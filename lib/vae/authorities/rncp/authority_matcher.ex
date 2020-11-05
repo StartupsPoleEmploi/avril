@@ -194,7 +194,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     "universite-de-corse-pasquale-paoli" => [
       "universite-de-corse-p-paoli"
     ],
-    "universite-paris-est-creteil" => [
+    "universite-paris-est-creteil-val-de-marne" => [
       "upec",
       "universite-paris-12"
     ],
@@ -214,18 +214,27 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-paris-nord-sorbonne",
       "universite-paris-13",
       "universite-paris-8",
-      "universite-paris-8-vincennes-st-denis"
+      "universite-paris-8-vincennes-st-denis",
+      "universite-paris-xiii-nord-institut-universitaire-de-technologie-de-saint-denis"
     ],
     "universite-pierre-et-marie-curie-paris-6" => [
       "universite-sorbonne-nouvelle",
       "paris-sorbonne-paris-4",
-      "upms-paris-6"
+      "upms-paris-6",
+      "universite-paris-6-pierre-et-marie-curie",
+      "universite-pierre-et-marie-curie-paris-paris-6-upmc"
+    ],
+    "universite-paris-1-pantheon-sorbonne" => [
+      "universite-pantheon-sorbonne-paris-1",
+      "universite-paris-1-pantheon-sorbonne",
+      "universite-sorbonne-paris-cite"
     ],
     "universite-de-paris" => [
       "universite-paris-7",
       "universite-paris-descartes-paris-5",
       "universite-de-paris-5-rene-descartes",
-      "universite-paris-diderot"
+      "universite-paris-diderot",
+      "universite-paris-descartes-iut"
     ],
     "universite-de-cergy-pontoise" => [
       "cy-cergy-paris-universite",
@@ -237,12 +246,20 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-psl"
     ],
     "universite-paris-2-pantheon-assas" => [
-      "universite-pantheon-assas-paris-2"
+      "universite-pantheon-assas-paris-2",
+      "universite-paris-2-pantheon-assas"
+    ],
+    "universite-paris-dauphine-psl" =>[
+      "universite-paris-dauphine"
+    ],
+    "universite-cote-d-azur" => [
+      "universite-de-nice",
+      "universite-nice-sophia-antipolis"
     ]
   }
 
   def slug_with_aliases(slug) do
-    case @aliases |> Enum.find(fn {_k, v} -> find_by_custom_jaro_distance(v, slug, 0.98) end) do
+    case @aliases |> Enum.find(fn {k, v} -> (k == slug) || Enum.member?(v, slug) || find_by_custom_jaro_distance(v, slug, 1) end) do
       {actual_slug, _alias_slug} -> actual_slug
       _ -> slug
     end
@@ -259,8 +276,10 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     |> Vae.String.parameterize()
     |> slug_with_aliases()
 
+    mapper = if klass == Delegate, do: &(Vae.String.parameterize(&1.name)), else: &(&1.slug)
+
     Repo.get_by(klass, slug: slug) ||
-      (if tolerance < 1, do: find_by_custom_jaro_distance(Repo.all(klass), slug, tolerance || 0.95, &(&1.slug)))
+      (if tolerance < 1, do: find_by_custom_jaro_distance(Repo.all(klass), slug, tolerance || 0.95, mapper))
   end
 
   def find_by_custom_jaro_distance(list, string, tolerance \\ 0.95, map_fn \\ &(&1)) do
@@ -272,7 +291,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
         end
       end)
 
-    if best_distance > tolerance do
+    if best_distance >= tolerance do
       if string != map_fn.(best_match) do
         klass = case List.first(list) do
           %struct{} -> struct
@@ -290,25 +309,27 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       [wordify(string1), wordify(string2)]
       |> Enum.sort_by(&(length(&1)))
 
-    short
+    words_score = short
     |> Enum.map(fn word1 ->
       long
       |> Enum.map(&custom_word_distance(word1, &1))
       |> Enum.max()
     end)
-    |> (fn d ->
-      case d do
-        [] -> 0
-        d -> Enum.sum(d)/length(d)
-      end
-    end).()
+    |> case do
+      [] -> 0
+      d -> Enum.sum(d)/length(d)
+    end
+
+    length_diff_penalty = abs(length(long) - length(short)) * 0.001
+
+    words_score - length_diff_penalty
   end
 
   defp custom_word_distance(word1, word2) do
     cond do
       Integer.parse(word1) !== :error && Integer.parse(word2) !== :error ->
         (if word1 == word2, do: 1, else: 0)
-      Enum.member?(@cities, word1) ->
+      Enum.member?(@cities, word1) || Enum.member?(@cities, word2) ->
         (if word1 == word2, do: 1, else: 0)
       true ->
         String.jaro_distance(word1, word2)
@@ -319,8 +340,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     string1
     |> Vae.String.parameterize()
     |> String.split("-")
-    |> Enum.filter(fn w -> !Enum.member?(@ignored_words, w) end)
-    |> Enum.filter(&Vae.String.is_present?(&1))
+    |> Enum.reject(&Enum.member?(@ignored_words, &1))
+    |> Enum.reject(&Vae.String.is_blank?(&1))
   end
 
   defp replace_roman_numbers(word) do

@@ -20,11 +20,16 @@ defmodule Mix.Tasks.RncpUpdate do
     "Université de Paris 8 | Vincennes",
     "Université de Paris",
     "Université Pierre et Marie Curie - Paris 6",
+    "Université Paris-Est-Créteil-Val-de-Marne",
     "Université Paris-Est Marne-la-Vallée (UPEM)",
     "Université de Cergy-Pontoise",
     "Université PSL (Paris, Sciences & Lettres)",
     "Université Paris 2 Panthéon-Assas",
-    "Université Paris Ouest Nanterre la Défense"
+    "Université Paris Ouest Nanterre la Défense",
+    "Université Paris 1 Panthéon-Sorbonne",
+    "Université Paris-Dauphine - PSL",
+    "Université Côte d'Azur",
+    "Aix-Marseille Université"
   ]
 
   def run([]) do
@@ -55,23 +60,16 @@ defmodule Mix.Tasks.RncpUpdate do
   def prepare_avril_data() do
     FileLogger.reinitialize_log_file("matches.csv", ~w(class input found score))
     FileLogger.reinitialize_log_file("men_rejected.csv", ~w(rncp_id acronym label is_active))
+    make_all_certifications_inactive()
     update_all_slugs()
     store_former_certification_ids()
-    make_all_certifications_inactive()
     create_static_certifiers()
     attach_asp_to_dhos()
   end
 
   def clean_avril_data() do
+    # IO.gets("On clean ? Vérifions id_rncp 4877 d'abord")
     CustomRules.match_cci_former_certifiers()
-    CustomRules.custom_acronym()
-    CustomRules.deactivate_deamp()
-    CustomRules.deactivate_all_bep()
-    CustomRules.deactivate_culture_ministry_certifications()
-    CustomRules.special_rules_for_educ_nat()
-    CustomRules.associate_some_enseignement_superieur_to_education_nationale()
-    CustomRules.associate_all_ministere_solidarite_to_education_nationale()
-    CustomRules.deassociate_some_ministere_de_la_jeunesse()
     remove_certifiers_without_certifications()
     clear_certifier_internal_notes()
   end

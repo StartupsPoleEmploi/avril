@@ -1,6 +1,6 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
-  alias Vae.{Certifier, Certification, Delegate, Process, Repo}
+  alias Vae.{Certifier, Certification, Delegate, Process, Repo, Rome}
   import Ecto.Query
   import SweetXml
   alias Vae.Authorities.Rncp.FileLogger
@@ -34,6 +34,12 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     "Titre ingénieur",
   ]
 
+  @slugs %{
+    mes: "ministere-de-l-enseignement-superieur",
+    men: "ministere-de-l-education-nationale",
+    mcs: "ministere-charge-de-la-solidarite"
+  }
+
   def buildable_certifier?(name) do
     slug = Vae.String.parameterize(name)
     String.contains?(slug, "universite") &&
@@ -51,51 +57,68 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     accessible_vae && !ignored_intitule
   end
 
-  def rejected_educ_nat_certifiers(certifiers, %{
+  def reject_educ_nat_certifiers(certifiers, %{
     acronym: acronym,
     rncp_id: rncp_id,
     label: label,
     is_currently_active: is_currently_active
   }) do
-    Enum.reject(certifiers, fn c ->
-      if Certifier.is_educ_nat?(c) && Enum.member?(@ignored_acronyms_for_educ_nat, acronym) do
+    Enum.reject(certifiers, fn %Certifier{slug: slug} ->
+      is_educ_nat = slug == @slug[:men]
+      is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
+      is_custom_rncp = rncp_id in ["4505"]
+      if is_educ_nat && (is_ignored_acronym || is_custom_rncp)  do
         FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_currently_active])
         true
       end
     end)
   end
 
-  def custom_acronym() do
-    Logger.info("Statically setting BATC acronym")
-    Repo.get_by(Certification, rncp_id: "23909")
-    |> Certification.changeset(%{acronym: "BATC"})
-    |> Repo.update()
+  def add_educ_nat_certifiers(certifiers, %{
+    acronym: acronym,
+    rncp_id: rncp_id,
+    is_currently_active: is_currently_active
+  }) do
+    is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @slugs[:mes]))
+    is_solidarite = Enum.any?(certifiers, &(&1.slug == @slugs[:mcs]))
+    is_bts = acronym == "BTS"
+    is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34828"]
+
+    if is_currently_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
+      certifiers ++ [Repo.get_by(Certifier, slug: @slugs[:men])]
+    else
+      certifiers
+    end
   end
 
-  def deactivate_deamp() do
-    Logger.info("Statically deactivating DEAMP")
-    Repo.get_by(Certification, rncp_id: "4504")
-    |> Certification.changeset(%{is_active: false})
-    |> Repo.update()
+  def custom_data_transformations(%{
+    rncp_id: "23909"
+  } = data) do
+    Map.merge(data, %{acronym: "BATC"})
   end
 
-  def deactivate_all_bep() do
-    Logger.info("Statically deactivating all BEP")
-    from(c in Certification, where: [acronym: "BEP"])
-    |> Repo.update_all(set: [is_active: false])
+  def custom_data_transformations(%{
+    rncp_id: rncp_id,
+    acronym: acronym
+  } = data) when rncp_id in ["4504", "31191"] or acronym == "BEP" do
+    Map.merge(data, %{is_active: false})
   end
 
-  def deactivate_culture_ministry_certifications() do
-    Logger.info("Statically deactivating certifications Ministère de la culture")
-    Repo.get_by(Certifier, slug: "ministere-charge-de-la-culture")
-    |> Repo.preload(:certifications)
-    |> Map.get(:certifications)
-    |> Enum.each(fn c ->
-      c
-      |> Certification.changeset(%{is_active: false})
-      |> Repo.update()
-    end)
+  def custom_data_transformations(%{
+    rncp_id: "4877",
+    romes: romes
+  } = data) do
+    Map.merge(data, %{romes: romes ++ [Repo.get_by(Rome, code: "M1203")]})
   end
+
+  def custom_data_transformations(%{
+    rncp_id: "492",
+    certifiers: certifiers
+  } = data) do
+    Map.merge(data, %{certifiers: Enum.reject(certifiers, &(&1.slug == "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"))})
+  end
+
+  def custom_data_transformations(data), do: data
 
   def match_cci_former_certifiers() do
     %Certifier{} = cci_france = Repo.get_by(Certifier, slug: "cci-france")
@@ -104,12 +127,6 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     other_delegates = Repo.get_by(Process, name: "CCI")
     |> Repo.preload([delegates: :certifiers])
     |> Map.get(:delegates)
-
-    # other_delegates = from(d in Delegate,
-    #   where: like(d.name, "CCI%"),
-    #   preload: [:certifiers]
-    # )
-    # |> Repo.all()
 
     Enum.uniq(cci_france.delegates ++ other_delegates)
     |> Enum.each(fn d ->
@@ -131,8 +148,6 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       })
       |> Repo.update()
     end)
-
-    # IO.gets("Regarde les logs puis entrée pour terminer.")
   end
 
   defp get_certifier_previous_certifications(certifier) do
@@ -152,79 +167,5 @@ defmodule Vae.Authorities.Rncp.CustomRules do
           where: cf.id in ^ids and cf.is_active == true
         ) |> Repo.all()
     end
-  end
-
-  def associate_some_enseignement_superieur_to_education_nationale() do
-    mes = Repo.get_by(Certifier, slug: "ministere-de-l-enseignement-superieur")
-
-    men = Repo.get_by(Certifier, slug: "ministere-de-l-education-nationale")
-
-    from(c in Certification,
-      join: certifier in assoc(c, :certifiers),
-      where: c.is_active and certifier.id == ^mes.id and c.acronym == "BTS"
-    )
-    |> Repo.all()
-    |> Enum.each(fn c ->
-      c = Repo.preload(c, :certifiers)
-      Certification.changeset(c, %{
-        certifiers: c.certifiers ++ [men]
-      })
-      |> Repo.update()
-    end)
-
-    from(c in Certification,
-      join: certifier in assoc(c, :certifiers),
-      where: certifier.id == ^mes.id and c.rncp_id in ["4877", "4875", "34825", "34828"]
-    )
-    |> Repo.all()
-    |> Enum.each(fn c ->
-      c = Repo.preload(c, :certifiers)
-      Certification.changeset(c, %{
-        certifiers: c.certifiers ++ [men]
-      })
-      |> Repo.update()
-    end)
-  end
-
-  def associate_all_ministere_solidarite_to_education_nationale() do
-    men = Repo.get_by(Certifier, slug: "ministere-de-l-education-nationale")
-
-    Repo.get_by(Certifier, slug: "ministere-charge-de-la-solidarite")
-    |> Repo.preload([active_certifications: :certifiers])
-    |> Map.get(:active_certifications)
-    |> Enum.each(fn c ->
-      Certification.changeset(c, %{
-        certifiers: c.certifiers ++ [men]
-      })
-      |> Repo.update()
-    end)
-  end
-
-  def deassociate_some_ministere_de_la_jeunesse() do
-    mej = Repo.get_by(Certifier, slug: "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale")
-
-    cert = Repo.get_by(Certification, rncp_id: "492")
-    |> Repo.preload(:certifiers)
-
-    Certification.changeset(cert, %{
-      certifiers: Enum.reject(cert.certifiers, &(&1.id == mej.id))
-    }) |> Repo.update()
-  end
-
-  def special_rules_for_educ_nat() do
-    certification = Repo.get_by(Certification, rncp_id: "4505")
-    |> Repo.preload(:certifiers)
-
-    certification
-    |> Certification.changeset(%{
-      certifiers: Enum.reject(certification.certifiers, &Certifier.is_educ_nat?(&1))
-    })
-    |> Repo.update()
-
-    Repo.get_by(Certification, rncp_id: "31191")
-    |> Certification.changeset(%{
-      is_active: false
-    })
-    |> Repo.update()
   end
 end

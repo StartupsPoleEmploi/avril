@@ -25,10 +25,10 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       will_soon_be_inactive: ~x"./DATE_FIN_ENREGISTREMENT/text()"s |> transform_by(fn d ->
         with(
           {:ok, datetime} <- Timex.parse(d, "%d/%m/%Y", :strftime),
-          date <- datetime |> DateTime.to_date()
+          date <- datetime |> DateTime.to_date(),
+          today <- Date.utc_today()
         ) do
-          today = Date.utc_today()
-          Timex.after?(today, Timex.set(today, [month: 6, day: 30])) &&
+          Timex.after?(date, Timex.set(today, [month: 6, day: 30])) &&
           Timex.before?(date, Timex.end_of_year(today))
         end
       end)
@@ -47,7 +47,8 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end)
       |> Enum.map(&match_or_build_certifier(&1, [with_delegate: true, build: (if data.is_currently_active, do: :allow)]))
       |> Enum.filter(&not(is_nil(&1)))
-      |> CustomRules.rejected_educ_nat_certifiers(data)
+      |> CustomRules.reject_educ_nat_certifiers(data)
+      |> CustomRules.add_educ_nat_certifiers(data)
       |> Enum.uniq_by(&(&1.slug))
 
     is_educ_nat = Enum.any?(certifiers, &Certifier.is_educ_nat?(&1))
@@ -60,6 +61,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       romes: romes,
       certifiers: certifiers
     })
+    |> CustomRules.custom_data_transformations()
     |> insert_or_update_by_rncp_id()
   end
 
