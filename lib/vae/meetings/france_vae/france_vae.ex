@@ -91,11 +91,17 @@ defmodule Vae.Meetings.FranceVae do
          {:ok, body} <- response.body |> Jason.decode() do
       case response.status_code do
         200 -> {:ok, body}
-        _ -> {:error, body["error"]}
+        _ ->
+          Logger.error("###########")
+          Logger.error(fn -> inspect(response) end)
+          Logger.error("###########")
+          {:error, body["error"]}
       end
     else
       {:error, msg} = error ->
+        Logger.error("%%%%%%%%%%%%%%%")
         Logger.error(fn -> inspect(msg) end)
+        Logger.error("%%%%%%%%%%%%%%%")
         error
     end
   end
