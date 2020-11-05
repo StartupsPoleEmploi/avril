@@ -24,25 +24,24 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
             commentaire: nil
 
   def from_application(application = %Vae.UserApplication{}) do
-    user = application.user
+    identity = application.user.identity
 
-    Map.merge(
-      %__MODULE__{
-        civilite: format_gender(user.gender),
-        nom: user.last_name,
-        nomNaiss: nil,
-        prenom: user.first_name,
-        dateNaissance: format_birthday(user.birthday),
-        lieuNaissance: user.birth_place,
-        cp: user.postal_code,
-        commune: user.city_label,
-        courrier: user.email,
-        telephonePortable: format_phone_number(user.phone_number),
-        diplomeVise: format_diplome_vise(application.certification.acronym),
-        commentaire: Vae.Certification.name(application.certification)
-      },
-      format_address(user)
-    )
+    %__MODULE__{
+      civilite: format_gender(identity.gender),
+      nom: identity.last_name,
+      nomNaiss: nil,
+      prenom: identity.first_name,
+      dateNaissance: format_birthday(identity.birthday),
+      lieuNaissance: "#{identity.birth_place.city}, #{identity.birth_place.country}",
+      adresse: identity.full_address.street,
+      adresseBis: nil,
+      cp: identity.full_address.postal_code,
+      commune: identity.full_address.city,
+      courrier: identity.email,
+      telephonePortable: format_phone_number(identity.mobile_phone),
+      diplomeVise: format_diplome_vise(application.certification.acronym),
+      commentaire: Vae.Certification.name(application.certification)
+    }
   end
 
   def new_meeting_registration(application, meeting_id) do
@@ -58,27 +57,10 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
   defp format_birthday(nil, _for), do: nil
   defp format_birthday(birthday, _for), do: Timex.format!(birthday, "%d/%m/%Y", :strftime)
 
-  defp format_address(user) do
-    Enum.reduce(
-      [user.address1, user.address2, user.address3, user.address4],
-      %{adresse: nil, adresseBis: nil},
-      fn
-        address_part, %{adresse: nil, adresseBis: part2} ->
-          %{adresse: address_part, adresseBis: part2}
-
-        address_part, %{adresse: part1, adresseBis: nil} ->
-          %{adresse: part1, adresseBis: address_part}
-
-        address_part, %{adresse: part1, adresseBis: part2} ->
-          %{adresse: part1, adresseBis: Enum.join([part2, address_part], ", ")}
-      end
-    )
-  end
-
   defp format_gender(gender) do
-    case gender do
-      "male" -> 1
-      "female" -> 2
+    case String.first(gender) do
+      "m" -> 1
+      "f" -> 2
       _other -> nil
     end
   end
