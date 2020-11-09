@@ -3,7 +3,7 @@ defmodule Vae.Search.Client.Algolia do
 
   @behaviour Vae.Search.Client
 
-  @meetings_indice Application.get_env(:vae, :meetings_indice)
+  @indice_prefix Application.get_env(:algolia, :indice_prefix)
 
   def get_delegates(certifiers, geoloc) do
     query =
@@ -103,12 +103,8 @@ defmodule Vae.Search.Client.Algolia do
     build_filters(query) ++ build_geo(query)
   end
 
-  def save_objects(:meetings, objects) do
-    Algolia.save_objects(@meetings_indice, objects, id_attribute: :id)
-  end
-
   def save_objects(:fvae_meetings, objects) do
-    Algolia.save_objects("fvae_meetings", objects, id_attribute: :meeting_id)
+    Algolia.save_objects(get_index_name("fvae_meetings"), objects, id_attribute: :meeting_id)
   end
 
   defp add_and_filter(query, filter) do
@@ -153,11 +149,10 @@ defmodule Vae.Search.Client.Algolia do
 
   defp execute(:delegate, query, opts), do: search("delegate", query, opts)
 
-  defp execute(:meetings, query, opts), do: search(@meetings_indice, query, opts)
-
   defp execute(:fvae_meetings, query, opts), do: search("fvae_meetings", query, opts)
 
   defp search(index_name, query, opts) do
+    index_name = get_index_name(index_name)
     merged_query = Keyword.merge(query, opts)
 
     Algolia.search(index_name, "", merged_query)
@@ -181,11 +176,16 @@ defmodule Vae.Search.Client.Algolia do
   end
 
   def get_index_name(model) do
-    model
-    |> to_string()
-    |> String.split(".")
-    |> List.last()
-    |> String.downcase()
+    if is_atom(model) && Code.ensure_compiled?(model) do
+      model
+      |> to_string()
+      |> String.split(".")
+      |> List.last()
+      |> String.downcase()
+    else
+      "#{model}"
+    end
+    |> String.replace_prefix("", "#{@indice_prefix}")
   end
 
   def clear_index(index) do

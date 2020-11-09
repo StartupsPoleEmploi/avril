@@ -12,10 +12,7 @@ config :vae,
   places_cache: Vae.Places.Cache,
   search_client: Vae.Search.Client.Algolia,
   meetings_state_holder: Vae.Meetings.StateHolder,
-  meetings_indice: System.get_env("ALGOLIA_MEETINGS_INDICE"),
   places_ets_table_name: :places_dev,
-  algolia_places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
-  algolia_places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
   authentication: [
     client_id: System.get_env("PE_CONNECT_CLIENT_ID"),
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),
@@ -136,7 +133,10 @@ config :absinthe,
 config :algolia,
   application_id: System.get_env("ALGOLIA_APP_ID"),
   api_key: System.get_env("ALGOLIA_API_KEY"),
-  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY")
+  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY"),
+  places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
+  places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY")
+
 
 config :ex_admin,
   head_template: {VaeWeb.AdminView, "admin_layout.html"},

@@ -8,3 +8,6 @@ config :vae, VaeWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :logger, level: :debug
+
+config :algolia,
+  indice_prefix: "#{Mix.env()}_"

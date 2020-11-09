@@ -94,8 +94,8 @@ defmodule Vae.Places.Client.Algolia do
   def get_algolia_app_id(), do: get_config(:algolia_places_app_id)
   def get_algolia_api_key(), do: get_config(:algolia_places_api_key)
 
-  def get_config(:algolia_places_app_id), do: Application.get_env(:vae, :algolia_places_app_id)
-  def get_config(:algolia_places_api_key), do: Application.get_env(:vae, :algolia_places_api_key)
+  def get_config(:algolia_places_app_id), do: Application.get_env(:algolia, :places_app_id)
+  def get_config(:algolia_places_api_key), do: Application.get_env(:algolia, :places_api_key)
 
   # ------------------------#
   #         STATS          #

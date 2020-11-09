@@ -34,6 +34,20 @@ defmodule Mix.Tasks.RncpUpdate do
     "Université Paul Valéry"
   ]
 
+  @moduledoc """
+  Update DB content with rncp xml file
+
+  ## Examples
+    mix RncpUpdate -f priv/rncp-2020-20-23.xml
+
+  ## Command line options
+
+  * `-f`, `--filename` - the XML source file
+  * `-i`, `--interactive` - ask if user applications should be removed in case of doublon of former certification
+  * `-x`, `--index` - should algolia indexes be updated?
+  """
+
+
   def run([]) do
     Logger.error("RNCP filename argument required. Ex: mix RncpUpdate -f priv/rncp-2020-08-03.xml")
   end
@@ -42,7 +56,10 @@ defmodule Mix.Tasks.RncpUpdate do
     System.put_env("ALGOLIA_SYNC", "disable")
     {:ok, _} = Application.ensure_all_started(:vae)
 
-    {options, [], []} = OptionParser.parse(args, aliases: [i: :interactive, f: :filename], strict: [filename: :string, interactive: :boolean])
+    {options, [], []} = OptionParser.parse(args,
+      aliases: [i: :interactive, f: :filename, x: :index],
+      strict: [filename: :string, interactive: :boolean, index: :boolean]
+    )
 
     Logger.info("Start update RNCP with #{options[:filename]}")
     prepare_avril_data()
@@ -58,6 +75,7 @@ defmodule Mix.Tasks.RncpUpdate do
     )
 
     clean_avril_data()
+    if options[:index], do: update_search_indexes()
   end
 
   def prepare_avril_data() do
@@ -71,7 +89,6 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def clean_avril_data() do
-    # IO.gets("On clean ? Vérifions id_rncp 4877 d'abord")
     CustomRules.match_cci_former_certifiers()
     remove_certifiers_without_certifications()
     clear_certifier_internal_notes()
@@ -154,5 +171,10 @@ defmodule Mix.Tasks.RncpUpdate do
   def clear_certifier_internal_notes() do
     Logger.info("Clear certifier internal notes")
     Repo.update_all(Certifier, set: [internal_notes: nil])
+  end
+
+  def update_search_indexes() do
+    Logger.info("Update Algolia Indexes")
+    Mix.Tasks.Search.Index.run(~w|-m Vae.Certification -m Vae.Delegate -c|)
   end
 end

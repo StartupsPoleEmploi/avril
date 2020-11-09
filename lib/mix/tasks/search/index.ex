@@ -5,9 +5,7 @@ defmodule Mix.Tasks.Search.Index do
 
   import Vae.Search.Client.Algolia, only: [get_index_name: 1]
 
-  alias Vae.Repo
-  alias Vae.Delegate
-  alias Vae.Profession
+  alias Vae.{Delegate, Repo, Profession}
 
   @moduledoc """
   Index DB entries for the given model.
@@ -23,8 +21,6 @@ defmodule Mix.Tasks.Search.Index do
   """
 
   def run(args) do
-    # ensure_started(Repo, [])
-    # {:ok, _started} = Application.ensure_all_started(:httpoison)
     {:ok, _} = Application.ensure_all_started(:vae)
 
     with {parsed, _argv, []} <- option_parser(args),

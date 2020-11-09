@@ -125,8 +125,16 @@ defmodule VaeWeb.ComponentView do
        <script>
        window.algolia_app_id = '#{Application.get_env(:algolia, :application_id)}'
        window.algolia_search_api_key = '#{Application.get_env(:algolia, :search_api_key)}'
-       window.algolia_places_app_id = '#{Application.get_env(:vae, :algolia_places_app_id)}'
-       window.algolia_places_api_key = '#{Application.get_env(:vae, :algolia_places_api_key)}'
+       window.algolia_indice_prefix = '#{Application.get_env(:algolia, :indice_prefix)}'
+       </script>
+     """}
+  end
+  def render("algolia_places_credentials", _) do
+    {:safe,
+     """
+       <script>
+       window.algolia_places_app_id = '#{Application.get_env(:algolia, :places_app_id)}'
+       window.algolia_places_api_key = '#{Application.get_env(:algolia, :places_api_key)}'
        </script>
      """}
   end

@@ -23,6 +23,8 @@ const clientOptionsWithProxy = (key, needProxy) => {
   } : null;
 }
 
+const indexName = baseName => `${window.algolia_indice_prefix || ''}${baseName}`
+
 const setupSearchBar = needProxy => {
   const client = algoliasearch(
     window.algolia_app_id,
@@ -42,7 +44,7 @@ const setupSearchBar = needProxy => {
     },
     minLength: 3,
   }, [{
-    source: autocomplete.sources.hits(client.initIndex('profession'), {
+    source: autocomplete.sources.hits(client.initIndex(indexName('profession')), {
       hitsPerPage: 5,
       queryType: 'prefixAll',
     }),
@@ -53,7 +55,7 @@ const setupSearchBar = needProxy => {
       suggestion: suggestion => `<a href="${professionToPath(suggestion)}">${suggestion._highlightResult.label.value}</a>`,
     }
   }, {
-    source: autocomplete.sources.hits(client.initIndex('certification'), {
+    source: autocomplete.sources.hits(client.initIndex(indexName('certification')), {
       hitsPerPage: 3,
       queryType: 'prefixAll',
       facetFilters: 'is_active:true',
