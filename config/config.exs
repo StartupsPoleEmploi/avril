@@ -8,11 +8,6 @@ use Mix.Config
 # General application configuration
 config :vae,
   ecto_repos: [Vae.Repo],
-  places_client: Vae.Places.Client.Algolia,
-  places_cache: Vae.Places.Cache,
-  search_client: Vae.Search.Client.Algolia,
-  meetings_state_holder: Vae.Meetings.StateHolder,
-  places_ets_table_name: :places_dev,
   authentication: [
     client_id: System.get_env("PE_CONNECT_CLIENT_ID"),
     client_secret: System.get_env("PE_CONNECT_CLIENT_SECRET"),

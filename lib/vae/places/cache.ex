@@ -1,15 +1,13 @@
 defmodule Vae.Places.Cache do
   require Logger
   use GenServer
+  alias Vae.Places.Client.Algolia
 
-  @name PlacesCache
-
-  @places_ets_table_name Application.get_env(:vae, :places_ets_table_name)
-  @places_client Application.get_env(:vae, :places_client)
+  @places_ets_table_name :places_dev
 
   @doc false
   def start_link() do
-    GenServer.start_link(__MODULE__, Map.new(), name: @name)
+    GenServer.start_link(__MODULE__, Map.new(), name: PlacesCache)
   end
 
   @impl true
@@ -56,7 +54,7 @@ defmodule Vae.Places.Cache do
     do: {:reply, get_geoloc_from_postal_code(postal_code), state}
 
   def handle_call({:get_city, city}, _from, state) do
-    {:reply, @places_client.get_geoloc_from_city(city), state}
+    {:reply, Algolia.get_geoloc_from_city(city), state}
   end
 
   # -----------#
@@ -82,7 +80,7 @@ defmodule Vae.Places.Cache do
   end
 
   defp insert(postal_code) do
-    geoloc = @places_client.get_geoloc_from_postal_code(postal_code)
+    geoloc = Algolia.get_geoloc_from_postal_code(postal_code)
     :ets.insert(@places_ets_table_name, {postal_code, geoloc})
     {postal_code, geoloc}
   end

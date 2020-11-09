@@ -1,14 +1,12 @@
 defmodule Vae.Places do
-  @places_client Application.get_env(:vae, :places_client)
-  @places_cache Application.get_env(:vae, :places_cache)
+  alias Vae.Places.{Client.Algolia, Cache}
 
-  defdelegate get_geoloc_from_address(address), to: @places_client
+  defdelegate get_geoloc_from_address(address), to: Algolia
+  defdelegate get_geoloc_from_city(city), to: Algolia
+  defdelegate get_geoloc_from_geo(geo), to: Algolia
 
-  defdelegate get_geoloc_from_postal_code(postal_code), to: @places_cache
+  defdelegate get_geoloc_from_postal_code(postal_code), to: Cache
 
-  defdelegate get_geoloc_from_city(city), to: @places_client
-
-  defdelegate get_geoloc_from_geo(geo), to: @places_client
 
   def get_city(geolocation) do
     case get_cities(geolocation) do

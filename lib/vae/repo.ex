@@ -6,7 +6,8 @@ defmodule Vae.Repo do
   alias Vae.{Certification, Delegate, Profession, Rome}
   alias __MODULE__
 
-  @search_client Application.get_env(:vae, :search_client)
+  import Vae.Search.Client.Algolia, only: [get_index_name: 1]
+
   @entities [Certification, Delegate, Profession, Rome]
 
   defoverridable update: 2, update!: 2, insert: 2, insert!: 2, delete: 2, delete!: 2
@@ -80,7 +81,7 @@ defmodule Vae.Repo do
     if should_save_to_index?() do
       with {:format, struct_to_index} <- {:format, type.format_for_index(struct)} do
         type
-        |> @search_client.get_index_name()
+        |> get_index_name()
         |> Algolia.save_object(struct_to_index, id_attribute: :id)
 
         {:ok, struct}
@@ -107,7 +108,7 @@ defmodule Vae.Repo do
 
   defp delete_object_index(%type{} = struct) do
     type
-    |> @search_client.get_index_name()
+    |> get_index_name()
     |> Algolia.delete_object(struct.id)
 
     struct

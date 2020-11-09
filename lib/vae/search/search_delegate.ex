@@ -1,10 +1,7 @@
 defmodule Vae.SearchDelegate do
   require Logger
 
-  alias Vae.Delegate
-  alias Vae.Repo
-
-  @search_client Application.get_env(:vae, :search_client)
+  alias Vae.{Delegate, Repo, Search.Client.Algolia}
 
   def get_delegate(certification, geo, postcode, _administrative) do
     case get_delegates(certification, geo, postcode) do
@@ -23,7 +20,7 @@ defmodule Vae.SearchDelegate do
     certification
     |> Ecto.assoc(:certifiers)
     |> Repo.all()
-    |> @search_client.get_delegates(geo)
+    |> Algolia.get_delegates(geo)
     |> case do
       {:ok, delegates} ->
         administrative = Vae.Places.get_administrative_from_postal_code(postcode)
