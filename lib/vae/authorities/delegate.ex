@@ -192,8 +192,9 @@ defmodule Vae.Delegate do
   end
 
   def format_for_index(%Delegate{} = delegate) do
+    delegate = delegate |> Repo.preload(:certifiers)
+
     delegate
-    |> Repo.preload(:certifiers)
     |> Map.take(Delegate.__schema__(:fields))
     |> Map.drop([
       :website,
