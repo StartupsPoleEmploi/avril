@@ -3,7 +3,7 @@ defmodule VaeWeb.Resolvers.Application do
 
   import VaeWeb.Resolvers.ErrorHandler
 
-  alias Vae.{Applications, Authorities, Meeting}
+  alias Vae.{Applications, Authorities, Meeting, Search.Client.Algolia}
 
   @application_not_found "La candidature est introuvable"
   @delegate_not_found "Le certificateur est introuvable"
@@ -36,10 +36,10 @@ defmodule VaeWeb.Resolvers.Application do
         %{context: %{current_user: user}}
       ) do
     with application when not is_nil(application) <-
-           Applications.get_application_from_id_and_user_id(application_id, user.id),
-         delegates <-
-           Authorities.search_delegates(application.certification, geoloc, postal_code) do
-      {:ok, delegates}
+           Applications.get_application_from_id_and_user_id(application_id, user.id) do
+           # Authorities.search_delegates(, geoloc, postal_code) do
+      # {:ok, delegates}
+      Algolia.get_delegates(application.certification, geoloc)
     else
       _ ->
         error_response(@application_not_found, format_application_error_message(application_id))

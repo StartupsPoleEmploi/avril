@@ -192,19 +192,18 @@ defmodule Vae.Delegate do
   end
 
   def format_for_index(%Delegate{} = delegate) do
-    delegate = delegate |> Repo.preload(:certifiers)
+    delegate = delegate |> Repo.preload(:certifications)
 
     delegate
     |> Map.take(Delegate.__schema__(:fields))
     |> Map.drop([
       :website,
       :address,
-      :is_active,
       :geolocation,
       :city,
       :administrative
     ])
-    |> Map.put(:certifiers, Enum.map(delegate.certifiers, &(&1.id)))
+    |> Map.put(:certifications, Enum.map(delegate.certifications, &(&1.id)))
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
   def format_for_index(_), do: nil

@@ -1,15 +1,15 @@
 defmodule Vae.Search.Client.Algolia do
   require Logger
-
+  alias Vae.Certification
   @behaviour Vae.Search.Client
 
   @indice_prefix Application.get_env(:algolia, :indice_prefix)
 
-  def get_delegates(certifiers, geoloc) do
+  def get_delegates(certification, geoloc) do
     query =
       init()
       |> build_active_filter()
-      |> build_certifier_filter(certifiers)
+      |> build_certification_filter(certification)
       |> build_geoloc(geoloc)
       |> build_query()
 
@@ -74,6 +74,10 @@ defmodule Vae.Search.Client.Algolia do
 
   def build_active_filter(query) do
     add_and_filter(query, "is_active:true")
+  end
+
+  def build_certification_filter(query, %Certification{id: id}) do
+    add_and_filter(query, "certifications:#{id}")
   end
 
   def build_certifier_filter(query, certifiers) do

@@ -18,6 +18,7 @@ defmodule Vae.Authorities do
       %{"lat" => lat, "lng" => lng},
       postal_code
     )
+    |> IO.inspect()
     |> Enum.map(& &1[:id])
     |> get_delegates_from_ids()
   end

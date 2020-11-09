@@ -78,13 +78,22 @@ defmodule Mix.Tasks.Search.Index do
     |> Repo.preload(:rome)
   end
 
+  defp get(Delegate) do
+    Delegate
+    |> Repo.all()
+    |> Repo.preload(:certifications)
+  end
+
   defp get(model) do
     Repo.all(model)
   end
 
   defp index_settings(Delegate) do
     settings = %{
-      "attributesForFaceting" => ["is_active"],
+      "attributesForFaceting" => [
+        "is_active",
+        "certifications"
+      ],
       "attributeForDistinct" => "name",
       "distinct" => 1
     }
