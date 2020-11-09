@@ -1,9 +1,23 @@
 defmodule Vae.Search.Client.Algolia do
   require Logger
-  alias Vae.Certification
+  alias Vae.{Certification, Delegate, Repo}
+  import Ecto.Query
   @behaviour Vae.Search.Client
 
   @indice_prefix Application.get_env(:algolia, :indice_prefix)
+
+  def get_index_name(model) do
+    if is_atom(model) && Code.ensure_compiled?(model) do
+      model
+      |> to_string()
+      |> String.split(".")
+      |> List.last()
+      |> String.downcase()
+    else
+      "#{model}"
+    end
+    |> String.replace_prefix("", "#{@indice_prefix}")
+  end
 
   def get_delegates(certification, geoloc) do
     query =
@@ -96,6 +110,10 @@ defmodule Vae.Search.Client.Algolia do
     add_aroundLatLng(query, geo)
   end
 
+  def build_geoloc(query, %{lat: lat, lng: lng} = geo) when nil not in [lat, lng] do
+    add_aroundLatLng(query, geo)
+  end
+
   def build_geoloc(query, _), do: query
 
   def build_academy_filter(query, nil), do: add_and_filter(query, "has_academy:false")
@@ -125,6 +143,11 @@ defmodule Vae.Search.Client.Algolia do
     end)
   end
 
+  defp add_aroundLatLng(query, %{lat: lat, lng: lng}) do
+    query
+    |> update_in([:aroundLatLng], fn _ -> [lat, lng] end)
+    |> update_in([:aroundRadius], fn _ -> 250_000 end)
+  end
   defp add_aroundLatLng(query, %{"lat" => lat, "lng" => lng}) do
     update_in(query, [:aroundLatLng], fn _ -> [lat, lng] end)
   end
@@ -145,31 +168,27 @@ defmodule Vae.Search.Client.Algolia do
 
   defp build_geo(%{aroundLatLng: []}), do: []
 
-  defp build_geo(%{aroundLatLng: lat_lng}) do
-    [aroundLatLng: lat_lng]
+  defp build_geo(%{aroundLatLng: lat_lng, aroundRadius: radius}) do
+    [aroundLatLng: lat_lng, aroundRadius: radius]
   end
 
   defp execute(index, query, opts \\ [])
 
-  defp execute(:delegate, query, opts), do: search("delegate", query, opts)
+  defp execute(:delegate, query, opts), do: search(Delegate, query, opts)
 
   defp execute(:fvae_meetings, query, opts), do: search("fvae_meetings", query, opts)
 
   defp search(index_name, query, opts) do
-    index_name = get_index_name(index_name)
     merged_query = Keyword.merge(query, opts)
 
-    Algolia.search(index_name, "", merged_query)
+    Algolia.search(get_index_name(index_name), "", merged_query)
     |> case do
       {:ok, response} ->
         {:ok,
          response
          |> Map.get("hits")
-         |> Enum.map(fn item ->
-           Enum.reduce(item, %{}, fn {key, val}, acc ->
-             Map.put(acc, String.to_atom(key), val)
-           end)
-         end)}
+         |> string_keys_to_atom(index_name)
+        }
 
       {:error, code, msg} ->
         {:error, "#{code}: #{msg}"}
@@ -179,17 +198,12 @@ defmodule Vae.Search.Client.Algolia do
     end
   end
 
-  def get_index_name(model) do
-    if is_atom(model) && Code.ensure_compiled?(model) do
-      model
-      |> to_string()
-      |> String.split(".")
-      |> List.last()
-      |> String.downcase()
-    else
-      "#{model}"
-    end
-    |> String.replace_prefix("", "#{@indice_prefix}")
+  def string_keys_to_atom(hits, index_name) do
+    Enum.map(hits, fn item ->
+      Enum.reduce(item, %{}, fn {key, val}, acc ->
+        Map.put(acc, String.to_atom(key), val)
+      end)
+    end)
   end
 
   def clear_index(index) do

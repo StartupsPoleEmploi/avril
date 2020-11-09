@@ -2,8 +2,9 @@ defmodule VaeWeb.Resolvers.Application do
   require Logger
 
   import VaeWeb.Resolvers.ErrorHandler
+  import Ecto.Query
 
-  alias Vae.{Applications, Authorities, Meeting, Search.Client.Algolia}
+  alias Vae.{Applications, Authorities, Delegate, Meeting, Search.Client.Algolia, Repo}
 
   @application_not_found "La candidature est introuvable"
   @delegate_not_found "Le certificateur est introuvable"
@@ -35,11 +36,17 @@ defmodule VaeWeb.Resolvers.Application do
         %{application_id: application_id, geo: geoloc, postal_code: postal_code},
         %{context: %{current_user: user}}
       ) do
-    with application when not is_nil(application) <-
-           Applications.get_application_from_id_and_user_id(application_id, user.id) do
-           # Authorities.search_delegates(, geoloc, postal_code) do
-      # {:ok, delegates}
-      Algolia.get_delegates(application.certification, geoloc)
+    with(
+      application when not is_nil(application) <-
+           Applications.get_application_from_id_and_user_id(application_id, user.id),
+      {:ok, algolia_delegates} <- Algolia.get_delegates(application.certification, geoloc),
+      ids <- Enum.map(algolia_delegates, &(&1.id)),
+      delegates <- from(el in Delegate, [where: el.id in ^ids])
+        |> preload([el], :certifiers)
+        |> order_by([el], fragment("array_position(?, ?)", ^ids, el.id))
+        |> Repo.all()
+    ) do
+      {:ok, delegates}
     else
       _ ->
         error_response(@application_not_found, format_application_error_message(application_id))

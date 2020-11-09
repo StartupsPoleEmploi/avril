@@ -198,10 +198,7 @@ defmodule Vae.Delegate do
     |> Map.take(Delegate.__schema__(:fields))
     |> Map.drop([
       :website,
-      :address,
       :geolocation,
-      :city,
-      :administrative
     ])
     |> Map.put(:certifications, Enum.map(delegate.certifications, &(&1.id)))
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
