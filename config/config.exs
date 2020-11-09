@@ -86,7 +86,7 @@ config :vae, Vae.Repo,
       }/#{System.get_env("POSTGRES_DB")}",
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: false,
-  timeout: 60_000
+  timeout: String.to_integer(System.get_env("POSTGRES_TIMEOUT") || "60000")
 
 config :vae, VaeWeb.Mailer,
   adapter: Swoosh.Adapters.Mailjet,

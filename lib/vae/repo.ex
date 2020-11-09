@@ -102,7 +102,7 @@ defmodule Vae.Repo do
   end
 
   defp should_save_to_index?() do
-    Mix.env() == :prod
+    Mix.env() == :prod && System.get_env("ALGOLIA_SYNC") != "disable"
   end
 
   defp delete_object_index(%type{} = struct) do

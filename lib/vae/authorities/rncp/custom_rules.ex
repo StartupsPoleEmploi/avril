@@ -62,7 +62,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     is_currently_active: is_currently_active
   }) do
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
-      is_educ_nat = slug == @slug[:men]
+      is_educ_nat = slug == @slugs[:men]
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in ["4505"]
       if is_educ_nat && (is_ignored_acronym || is_custom_rncp)  do

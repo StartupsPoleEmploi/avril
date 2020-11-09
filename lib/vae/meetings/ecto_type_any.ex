@@ -13,4 +13,10 @@ defmodule Vae.Meetings.EctoTypeAny do
 
   @impl Type
   def dump(value), do: Type.dump(:any, value)
+
+  @impl Type
+  def embed_as(value), do: Type.embed_as(:any, value)
+
+  @impl Type
+  def equal?(value1, value2), do: Type.equal?(:any, value1, value2)
 end
