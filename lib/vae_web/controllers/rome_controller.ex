@@ -27,7 +27,7 @@ defmodule VaeWeb.RomeController do
       Rome.is_subcategory?(rome) ->
         render(conn, "index.html",
           rome: rome,
-          romes: Rome.romes(rome, [preload: [:certifications, :professions]]),
+          romes: Rome.romes(rome, [preload: [:active_certifications, :professions]]),
           category: Rome.category(rome),
           subcategory: rome
         )

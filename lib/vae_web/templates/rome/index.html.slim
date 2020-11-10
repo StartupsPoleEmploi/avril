@@ -17,11 +17,11 @@ section.section#title
             ul
               = for rome <- @romes do
                 = if assigns[:rome] && Vae.Rome.is_subcategory?(@rome) do
-                  = if length(rome.certifications) >= 1 do
+                  = if length(rome.active_certifications) >= 1 do
                     li
                       = link(to: Routes.certification_path(@conn, :index, rome_code: rome)) do
                         = rome.label
-                        |  (#{Vae.String.inflect("#{length(rome.certifications)} diplôme associé", length(rome.certifications))})
+                        |  (#{Vae.String.inflect("#{length(rome.active_certifications)} diplôme associé", length(rome.active_certifications))})
                   - else
                     li
                       = rome.label

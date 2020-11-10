@@ -9,9 +9,6 @@
     = if assigns[:rome] do
       = render VaeWeb.RomeView, "breadcrumbs.html", conn: @conn, assigns: assigns
     = if filter_object do
-      = if assigns[:rome] do
-        h2.subtitle.is-5
-          | #{Vae.String.inflect(length(@certifications), "diplôme disponible")} en VAE #{level_label} pour les métiers :
       h1.title.is-1
         = filter_object.label
     - else
@@ -35,7 +32,14 @@
     = if @total == 0 do
       = render("no-results.html", level: @level)
     - else
-      h6.title.is-6 Avril vous propose #{Vae.String.inflect(length(@certifications), "diplôme")} pour le métier que vous avez sélectionné :
+      h5.title.is-5
+        | Avril vous propose #{Vae.String.inflect(@total, "diplôme")}
+        = if assigns[:profession] do
+          |  pour le métier #{@profession.label}
+        - else
+          = if assigns[:rome] do
+            |  pour les métiers #{@rome.label}
+        |  :
       = for {chunk, i} <- Enum.with_index(Enum.chunk_every(@certifications, 3)) do
         .columns
           = for certification <- chunk do
