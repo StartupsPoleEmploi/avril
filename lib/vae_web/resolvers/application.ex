@@ -148,7 +148,7 @@ defmodule VaeWeb.Resolvers.Application do
   end
 
   def get_booklet(_, %{application_id: application_id}, %{context: %{current_user: user}}) do
-    with {:application, application} <-
+    with {:application, application} when not is_nil(application) <-
            {:application,
             Applications.get_application_from_id_and_user_id(application_id, user.id)},
          {:ok, booklet} <- Applications.get_booklet(application) do

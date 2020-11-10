@@ -223,6 +223,8 @@ defmodule Vae.UserApplication do
       %Certifier{name: name} <- Enum.find(delegate_certifiers, &Enum.member?(certification_certifiers, &1))
     ) do
       name
+    else
+      _ -> nil
     end
   end
 
