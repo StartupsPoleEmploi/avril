@@ -183,7 +183,7 @@ defmodule VaeWeb.Router do
          get_session(conn, :app_status_closed) != Vae.String.encode(status.message) &&
          (is_nil(status.starts_at) || Timex.before?(status.starts_at, Timex.now())) &&
          (is_nil(status.ends_at) || Timex.after?(status.ends_at, Timex.now())) do
-      Map.merge(conn, %{app_status: status})
+      Plug.Conn.assign(conn, :app_status, status)
     else
       conn
     end

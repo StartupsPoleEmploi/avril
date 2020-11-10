@@ -130,7 +130,7 @@ defmodule VaeWeb.PageController do
   end
 
   def close_status(conn, _params) do
-    message = conn |> Map.get(:app_status) |> Map.get(:message)
+    message = Map.get(conn.assigns[:app_status] || %{}, :message)
 
     conn
     |> put_session(:app_status_closed, Vae.String.encode(message))

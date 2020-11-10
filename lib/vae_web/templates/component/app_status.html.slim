@@ -1,5 +1,5 @@
-= if Map.has_key?(@conn, :app_status) do
-  - %{message: message, level: level} = @conn.app_status
+= if status = @conn.assigns[:app_status] do
+  - %{message: message, level: level} = status
   .app-status.notification.is-top role="alert" class="is-#{level}"
     button.delete aria-label="Fermer" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token()
     .container
