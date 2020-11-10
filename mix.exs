@@ -4,8 +4,8 @@ defmodule Vae.Mixfile do
   def project do
     [
       app: :vae,
-      version: "0.9.6",
-      elixir: "~> 1.2",
+      version: "1.3.0",
+      elixir: "~> 1.8.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
@@ -22,32 +22,6 @@ defmodule Vae.Mixfile do
     [
       mod: {Vae.Application, []},
       extra_applications: [:logger, :runtime_tools]
-      # applications: [
-      #  :phoenix,
-      #  :phoenix_pubsub,
-      #  :phoenix_html,
-      #  :cowboy,
-      #  :logger,
-      #  :tzdata,
-      #  :gettext,
-      #  :phoenix_ecto,
-      #  :postgrex,
-      #  :phoenix_slime,
-      #  :scrivener_ecto,
-      #  :scrivener_html,
-      #  :httpoison,
-      #  :sentry,
-      #  :algolia,
-      #  :persistent_ets,
-      #  :pdf_generator,
-      #  :observer_cli,
-      #  :oauth2,
-      #  :swoosh,
-      #  :ex_aws,
-      #  :pow,
-      #  :hackney,
-      #  :poison
-      # ]
     ]
   end
 
