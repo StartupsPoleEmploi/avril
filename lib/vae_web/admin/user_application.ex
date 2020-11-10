@@ -37,13 +37,15 @@ defmodule Vae.ExAdmin.UserApplication do
           delegate_hash: application.delegate_access_hash
         )
 
-      action_item_link("View Delegate Application", href: href, target: "_blank")
+      if application.delegate_access_hash do
+        action_item_link("View Delegate Application", href: href, target: "_blank")
+      end
     end)
 
     action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
 
-      if application.booklet_1 do
+      if application.delegate_access_hash && application.booklet_1 do
         action_item_link("Check CERFA",
           href: VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :cerfa, application, delegate_hash: application.delegate_access_hash),
           target: "_blank"

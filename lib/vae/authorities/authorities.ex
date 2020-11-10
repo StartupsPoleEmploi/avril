@@ -4,10 +4,12 @@ defmodule Vae.Authorities do
   alias Vae.Delegate
   alias Vae.{SearchDelegate, Repo}
 
-  def get_first_certifier_from_delegate(%Delegate{} = delegate) do
-    Ecto.assoc(delegate, :certifiers)
-    |> Repo.all()
-    |> hd()
+  def get_first_certifier_from_delegate(%Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
+    get_first_certifier_from_delegate(Repo.preload(delegate, :certifiers))
+  end
+
+  def get_first_certifier_from_delegate(%Delegate{certifiers: {[%Certifier{} = certifier | _]}}) do
+    certifier
   end
 
   def get_first_certifier_from_delegate(_), do: nil
