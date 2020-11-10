@@ -98,7 +98,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   def custom_data_transformations(%{
     rncp_id: rncp_id,
     acronym: acronym
-  } = data) when rncp_id in ["4504", "31191"] or acronym == "BEP" do
+  } = data) when rncp_id in ["4504", "31191", "5440"] or acronym == "BEP" do
     Map.merge(data, %{is_active: false})
   end
 
