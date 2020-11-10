@@ -4,9 +4,11 @@
     .has-text-centered
       h1.title.is-1= Vae.Certification.name(@certification)
       p.subtile
-        span.label-avril Niveau #{level_info_by_level(@certification.level)}
+        span.label-avril
+          | Niveau #{level_info_by_level(@certification.level)}
         = " - "
-        strong RNCP #{@certification.rncp_id}
+        strong
+          = link("RNCP #{@certification.rncp_id}", to: "https://www.francecompetences.fr/recherche/rncp/#{@certification.rncp_id}/", target: "_blank")
   - {intro, rest} = VaeWeb.CertificationView.split_intro(@certification)
   = if intro do
     section.section.is-small#activities
