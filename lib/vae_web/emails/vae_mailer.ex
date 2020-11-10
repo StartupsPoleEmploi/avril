@@ -8,11 +8,12 @@ defmodule VaeWeb.Mailer do
     layout: {VaeWeb.EmailsView, :layout}
 
   alias Swoosh.Email
-  alias Vae.{Account, JobSeeker, User}
+  alias Vae.{Account, Delegate, JobSeeker, User}
 
   @config Application.get_env(:vae, VaeWeb.Mailer)
   @override_to System.get_env("DEV_EMAILS")
   @whitelist (System.get_env("WHITELIST_EMAILS") || "") |> String.downcase() |> String.split(";")
+  @afpa_cc (System.get_env("AFPA_CC_ADDRESS") || "")
 
   def build_email(template_name_or_id, from, to) do
     build_email(template_name_or_id, from, to, %{})
@@ -69,7 +70,7 @@ defmodule VaeWeb.Mailer do
   defp format_mailer!(%{Name: name, Email: email}), do: {name, String.downcase(email)}
   defp format_mailer!(%{email: email}), do: String.downcase(email)
   defp format_mailer!({name, email}), do: {name, String.downcase(email)}
-  defp format_mailer!(emails) when is_list(emails), do: Enum.flat_map(emails, &format_mailer!/1)
+  defp format_mailer!(emails) when is_list(emails), do: Enum.map(emails, &format_mailer!/1)
 
   defp format_mailer!(email) when is_binary(email) do
     case String.split(email, ",") do
@@ -81,12 +82,17 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: Logger.warn(anything)
 
+
   def format_mailer(:to, to) when not is_nil(@override_to) do
     case format_mailer!(to) do
       {_name, email} = tuple when email in @whitelist -> tuple
       email when is_binary(email) and email in @whitelist -> email
       _ -> format_mailer!(@override_to)
     end
+  end
+
+  def format_mailer(:to, %Delegate{slug: "afpa-" <> _} = d) when not is_nil(@afpa_cc) do
+    [format_mailer!(d) | format_mailer!(@afpa_cc)]
   end
 
   def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
