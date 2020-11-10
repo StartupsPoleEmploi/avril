@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   import Ecto.Query
   import SweetXml
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
-  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules}
+  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
 
   def fiche_to_certification(fiche) do
 
@@ -22,17 +22,17 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
       end),
       is_currently_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui")),
-      will_soon_be_inactive: ~x"./DATE_FIN_ENREGISTREMENT/text()"s |> transform_by(fn d ->
-        with(
-          {:ok, datetime} <- Timex.parse(d, "%d/%m/%Y", :strftime),
-          date <- datetime |> DateTime.to_date(),
-          today <- Date.utc_today()
-        ) do
-          Timex.after?(date, Timex.set(today, [month: 6, day: 30])) &&
-          Timex.before?(date, Timex.end_of_year(today))
+      inactive_date: ~x"./DATE_FIN_ENREGISTREMENT/text()"s |> transform_by(fn d ->
+        case Timex.parse(d, "%d/%m/%Y", :strftime) do
+          {:ok, datetime} -> datetime |> DateTime.to_date()
+          _ -> nil
         end
       end)
     )
+
+    if data.is_currently_active && data.inactive_date == ~D[2024-01-01] do
+      FileLogger.log_into_file("inactive_date.csv", [data.rncp_id, data.acronym, data.label])
+    end
 
     romes = SweetXml.xpath(fiche, ~x"./CODES_ROME/ROME"l)
       |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./CODE/text()"s) end)
@@ -52,12 +52,15 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       |> Enum.uniq_by(&(&1.slug))
 
     is_educ_nat = Enum.any?(certifiers, &Certifier.is_educ_nat?(&1))
+    will_soon_be_inactive = data.inactive_date &&
+      Timex.after?(data.inactive_date, Timex.set(Date.utc_today(), [month: 6, day: 30])) &&
+      Timex.before?(data.inactive_date, Timex.end_of_year(Date.utc_today()))
 
     Logger.info("Updating RNCP_ID: #{data.rncp_id}")
 
     data
     |> Map.merge(%{
-      is_active: data.is_currently_active && (if is_educ_nat, do: !data.will_soon_be_inactive, else: true),
+      is_active: data.is_currently_active && (if is_educ_nat, do: !will_soon_be_inactive, else: true),
       romes: romes,
       certifiers: certifiers
     })
@@ -117,7 +120,9 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
 
   def create_certifier_and_maybe_delegate(%{name: name} = params, opts \\ []) do
     certifier = %Certifier{}
-    |> Certifier.changeset(params) |> Repo.insert!()
+    |> Certifier.changeset(params)
+    |> FileLogger.log_changeset()
+    |> Repo.insert!()
 
     if opts[:with_delegate] && (not is_nil(certifier)) do
       (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
@@ -125,6 +130,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       |> Delegate.changeset(%{
         certifiers: [certifier]
       })
+      |> FileLogger.log_changeset()
       |> Repo.insert_or_update!()
     end
 
@@ -139,6 +145,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     end
     |> Repo.preload([:certifiers, :romes])
     |> Certification.changeset(fields)
+    |> FileLogger.log_changeset()
     |> Repo.insert_or_update()
   end
 end

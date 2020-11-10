@@ -81,17 +81,20 @@ defmodule Mix.Tasks.RncpUpdate do
   def prepare_avril_data() do
     FileLogger.reinitialize_log_file("matches.csv", ~w(class input found score))
     FileLogger.reinitialize_log_file("men_rejected.csv", ~w(rncp_id acronym label is_active))
-    make_all_certifications_inactive()
-    update_all_slugs()
-    store_former_certification_ids()
-    create_static_certifiers()
-    attach_asp_to_dhos()
+    FileLogger.reinitialize_log_file("inactive_date.csv", ~w(rncp_id acronym label))
+    FileLogger.reinitialize_log_file("changes.log")
+
+    # update_all_slugs()
+    # make_all_certifications_inactive()
+    # store_former_certification_ids()
+    # create_static_certifiers()
+    # attach_asp_to_dhos()
   end
 
   def clean_avril_data() do
-    CustomRules.match_cci_former_certifiers()
+    # CustomRules.match_cci_former_certifiers()
     remove_certifiers_without_certifications()
-    clear_certifier_internal_notes()
+    # clear_certifier_internal_notes()
   end
 
   defp update_all_slugs() do

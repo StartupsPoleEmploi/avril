@@ -160,7 +160,7 @@ defmodule Vae.Delegate do
     #    get_change(changeset, :included_certifications) ||
     #    get_change(changeset, :excluded_certifications) do
 
-      # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
+    #   changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
 
       rncp_certifications = get_field(changeset, :certifiers)
         |> Repo.preload(:active_certifications)
