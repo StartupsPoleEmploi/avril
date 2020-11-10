@@ -3,13 +3,15 @@ defmodule VaeWeb.CertificationView do
   use Scrivener.HTML
   alias Vae.Certification
 
-  def split_intro(%Certification{activities: activities}) do
+  def split_intro(%Certification{activities: activities}) when not is_nil(activities) do
     [intro, rest] = activities
     |> String.replace(~r/<br\s*\/?>/i, "</p><p>", global: false)
     |> String.split("</p>", parts: 2)
 
     {"#{intro}</p>", rest}
   end
+
+  def split_intro(_), do: {nil, nil}
 
   def render_steps(process, opts \\ []) do
     process
