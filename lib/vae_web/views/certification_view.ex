@@ -4,11 +4,11 @@ defmodule VaeWeb.CertificationView do
   alias Vae.Certification
 
   def split_intro(%Certification{activities: activities}) when not is_nil(activities) do
-    [intro, rest] = activities
+    [intro | rest] = activities
     |> String.replace(~r/<br\s*\/?>/i, "</p><p>", global: false)
     |> String.split("</p>", parts: 2)
 
-    {"#{intro}</p>", rest}
+    {"#{intro}</p>", List.first(rest)}
   end
 
   def split_intro(_), do: {nil, nil}
