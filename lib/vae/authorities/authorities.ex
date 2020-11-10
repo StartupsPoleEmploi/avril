@@ -1,7 +1,7 @@
 defmodule Vae.Authorities do
   import Ecto.Query
 
-  alias Vae.Delegate
+  alias Vae.{Certifier, Delegate}
   alias Vae.{SearchDelegate, Repo}
 
   def get_first_certifier_from_delegate(%Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
