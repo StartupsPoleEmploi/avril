@@ -76,10 +76,8 @@ defmodule VaeWeb.UserApplicationController do
       identity: application.user.identity,
       booklet: booklet,
       education: booklet.education || %Education{},
-      experiences: booklet.experiences |> Enum.sort_by(
-        fn e -> Enum.map(e.periods, &(&1.end_date || Date.utc_today())) |> Enum.max() end,
-        fn d1, d2 -> Date.compare(d1, d2) == :gt end
-      )
+      experiences: booklet.experiences |> Enum.reject(&(&1.periods == [])) |> Enum.sort_by(
+        fn e -> Enum.max_by(e.periods, &Date.to_erl(&1.start_date), fn -> Date.utc_today() end) end)
     }
 
     if params["format"] == "pdf" do
