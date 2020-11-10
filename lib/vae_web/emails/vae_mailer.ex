@@ -8,12 +8,11 @@ defmodule VaeWeb.Mailer do
     layout: {VaeWeb.EmailsView, :layout}
 
   alias Swoosh.Email
-  alias Vae.{Account, Delegate, JobSeeker, User}
+  alias Vae.{Account, JobSeeker, User}
 
   @config Application.get_env(:vae, VaeWeb.Mailer)
   @override_to System.get_env("DEV_EMAILS")
   @whitelist (System.get_env("WHITELIST_EMAILS") || "") |> String.downcase() |> String.split(";")
-  @afpa_cc (System.get_env("AFPA_CC_ADDRESS") || "")
 
   def build_email(template_name_or_id, from, to) do
     build_email(template_name_or_id, from, to, %{})
@@ -24,6 +23,7 @@ defmodule VaeWeb.Mailer do
     |> to(format_mailer(:to, to))
     |> from(format_mailer(:from, from))
     |> reply_to_if_present_or_from_avril(Map.get(params, :reply_to), from)
+    |> cc_if_present(Map.get(params, :cc))
     |> custom_id_if_present(Map.get(params, :custom_id))
     |> attach_if_attachment(Map.get(params, :attachment))
     |> render_body_or_template_id(template_name_or_id, params, to)
@@ -91,10 +91,6 @@ defmodule VaeWeb.Mailer do
     end
   end
 
-  def format_mailer(:to, %Delegate{slug: "afpa-" <> _} = d) when not is_nil(@afpa_cc) do
-    [format_mailer!(d) | format_mailer!(@afpa_cc)]
-  end
-
   def format_mailer(role, :avril) when role in [:to, :reply_to], do: format_mailer!(:avril_to)
   def format_mailer(_role, :avril), do: format_mailer!(:avril_from)
 
@@ -113,6 +109,11 @@ defmodule VaeWeb.Mailer do
       nil -> string_email
     end
   end
+
+  def cc_if_present(email, cc_value) when not is_nil(cc_value) do
+    cc(email, format_mailer(:to, cc_value))
+  end
+  def cc_if_present(email, nil), do: email
 
   defp reply_to_if_present_or_from_avril(email, reply_to, _from) when not is_nil(reply_to),
     do: reply_to(email, format_mailer(:reply_to, reply_to))
