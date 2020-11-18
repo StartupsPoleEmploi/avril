@@ -39,17 +39,20 @@ defmodule Vae.Rome do
     |> unique_constraint(:slug)
   end
 
+  def preload_for_index(), do: []
+
   def format_for_index(struct) do
     struct
     |> Map.take(__schema__(:fields))
     |> Map.drop([:inserted_at, :updated_at])
   end
 
-  def get(nil), do: nil
-  def get(id), do: Repo.get(Rome, id)
-
-  def get_by_code(nil), do: nil
-  def get_by_code(code), do: Repo.get_by(Rome, code: code)
+  def settings_for_index() do
+    %{
+      attributeForDistinct: :slug,
+      distinct: 1
+    }
+  end
 
   def code_parts(rome) do
     %{

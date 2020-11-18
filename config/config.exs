@@ -130,7 +130,9 @@ config :algolia,
   api_key: System.get_env("ALGOLIA_API_KEY"),
   search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY"),
   places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
-  places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY")
+  places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
+  is_sync_active: System.get_env("ALGOLIA_SYNC") != "disable",
+  indice_prefix: nil
 
 
 config :ex_admin,

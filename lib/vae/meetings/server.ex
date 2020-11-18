@@ -2,7 +2,7 @@ defmodule Vae.Meetings.Server do
   require Logger
   use GenServer
 
-  alias Vae.Search.Client.Algolia, as: AlgoliaClient
+  alias Vae.Search.Algolia, as: AlgoliaClient
 
   @name MeetingsServer
 
@@ -31,7 +31,7 @@ defmodule Vae.Meetings.Server do
   @impl true
   def handle_call({:index, meetings}, _from, state) do
     with {:ok, %{"taskID" => task_id, "indexName" => index}} <-
-           AlgoliaClient.save_objects(:fvae_meetings, meetings) do
+           AlgoliaClient.index_meetings(meetings) do
       {:reply, {:ok, %{task_id: task_id, index: index}}, state}
     else
       {:error, msg} ->

@@ -3,9 +3,7 @@ defmodule Mix.Tasks.Search.Index do
 
   require Logger
 
-  import Vae.Search.Client.Algolia, only: [get_index_name: 1]
-
-  alias Vae.{Delegate, Repo, Profession}
+  alias Vae.Search.Algolia
 
   @moduledoc """
   Index DB entries for the given model.
@@ -24,12 +22,12 @@ defmodule Mix.Tasks.Search.Index do
     {:ok, _} = Application.ensure_all_started(:vae)
 
     with {parsed, _argv, []} <- option_parser(args),
-         {:ok, models} <- get_models(parsed) do
+         {:ok, models} <- cli_option_to_modules(parsed) do
       if Keyword.get(parsed, :clear_before, false) do
-        Enum.each(models, &clear_index/1)
+        Enum.each(models, &Algolia.clear_index(&1))
       end
 
-      Enum.map(models, &get_and_index/1)
+      Enum.map(models, &set_settings_and_index(&1))
     else
       {_parsed, _args, errors} -> Logger.error(fn -> inspect(errors) end)
       {:error, msg} -> Logger.error(fn -> inspect(msg) end)
@@ -43,7 +41,7 @@ defmodule Mix.Tasks.Search.Index do
     )
   end
 
-  defp get_models(parsed) do
+  defp cli_option_to_modules(parsed) do
     models = Keyword.get_values(parsed, :model)
 
     if models != [] do
@@ -53,16 +51,11 @@ defmodule Mix.Tasks.Search.Index do
     end
   end
 
-  defp clear_index(model) do
-    model
-    |> get_index_name()
-    |> Algolia.clear_index()
-  end
-
-  defp get_and_index(model) do
-    with entries <- get(model),
-         {:ok, _index_details} <- index_settings(model),
-         {:ok, index_info} <- index(entries, model) do
+  defp set_settings_and_index(model) do
+    with(
+      {:ok, _settings_infos} <- Algolia.set_settings(model),
+      {:ok, index_info} <- Algolia.index(model)
+    ) do
       Logger.info(
         "#{length(index_info["objectIDs"])} #{index_info["indexName"]} have been indexed"
       )
@@ -72,41 +65,4 @@ defmodule Mix.Tasks.Search.Index do
     end
   end
 
-  defp get(Profession) do
-    Profession
-    |> Repo.all()
-    |> Repo.preload(:rome)
-  end
-
-  defp get(Delegate) do
-    Delegate
-    |> Repo.all()
-    |> Repo.preload(:certifications)
-  end
-
-  defp get(model) do
-    Repo.all(model)
-  end
-
-  defp index_settings(Delegate) do
-    settings = %{
-      "attributesForFaceting" => [
-        "is_active",
-        "certifications"
-      ],
-      "attributeForDistinct" => "name",
-      "distinct" => 1
-    }
-
-    Algolia.set_settings("delegate", settings)
-  end
-
-  defp index_settings(_model) do
-    {:ok, nil}
-  end
-
-  defp index(entries, model) do
-    objects = Enum.map(entries, &model.format_for_index/1)
-    Algolia.save_objects(get_index_name(model), objects, id_attribute: :id)
-  end
 end

@@ -191,9 +191,9 @@ defmodule Vae.Delegate do
     |> put_embed(:meeting_places, meetings)
   end
 
-  def format_for_index(%Delegate{} = delegate) do
-    delegate = delegate |> Repo.preload(:certifications)
+  def preload_for_index(), do: [:certifications]
 
+  def format_for_index(%Delegate{} = delegate) do
     delegate
     |> Map.take(Delegate.__schema__(:fields))
     |> Map.drop([
@@ -203,7 +203,14 @@ defmodule Vae.Delegate do
     |> Map.put(:certifications, Enum.map(delegate.certifications, &(&1.id)))
     |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
   end
-  def format_for_index(_), do: nil
+
+  def settings_for_index() do
+    %{
+      attributesForFaceting: [:is_active, :certifications],
+      attributeForDistinct: :slug,
+      distinct: 1
+    }
+  end
 
   def is_asp?(%Delegate{name: name}) do
     String.starts_with?(name, "ASP")
