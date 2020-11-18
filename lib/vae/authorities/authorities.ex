@@ -1,9 +1,9 @@
 defmodule Vae.Authorities do
   import Ecto.Query
 
-  alias Vae.{Certifier, Delegate}
-  alias Vae.{SearchDelegate, Repo}
+  alias Vae.{Certifier, Delegate, Repo}
 
+  # TODO: use UserApplication.certifier_name\1
   def get_first_certifier_from_delegate(%Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
     get_first_certifier_from_delegate(Repo.preload(delegate, :certifiers))
   end
@@ -13,23 +13,6 @@ defmodule Vae.Authorities do
   end
 
   def get_first_certifier_from_delegate(_), do: nil
-
-  def search_delegates(certification, %{lat: lat, lng: lng}, postal_code) do
-    SearchDelegate.get_delegates(
-      certification,
-      %{"lat" => lat, "lng" => lng},
-      postal_code
-    )
-    |> Enum.map(& &1[:id])
-    |> get_delegates_from_ids()
-  end
-
-  def get_delegates_from_ids(ids) do
-    from(d in Delegate,
-      where: d.id in ^ids
-    )
-    |> Repo.all()
-  end
 
   def get_delegate(id) do
     Repo.get(Delegate, id)

@@ -25,7 +25,21 @@ defmodule Vae.ExAdmin.Certification do
     end
 
     show certification do
-      attributes_table()
+      attributes_table() do
+        row(:id)
+        row(:rncp_id, fn c -> Phoenix.HTML.Link.link(c.rncp_id, to: "https://www.francecompetences.fr/recherche/rncp/#{c.rncp_id}/", target: "_blank") end)
+        row(:is_active)
+        row(:slug)
+        row(:acronym)
+        row(:label)
+        row(:level)
+        row(:activities)
+        row(:abilities)
+        row(:activity_area)
+        row(:accessible_job_type)
+        row(:newer_certification)
+        row(:older_certification)
+      end
 
       panel "ROME" do
         table_for certification.romes do
@@ -59,9 +73,9 @@ defmodule Vae.ExAdmin.Certification do
 
       panel "user applications" do
         table_for certification.applications do
-          column(:id)
-          column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
-          column(:application_delegate, fn a -> Helpers.link_to_resource(a.delegate) end)
+          column(:id, &Helpers.link_to_resource(&1))
+          column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.Identity.fullname(&1))) end)
+          column(:application_delegate, &Helpers.link_to_resource(&1.delegate))
           column(:submitted_at)
           column(:admissible_at)
           column(:inadmissible_at)
@@ -88,7 +102,7 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
-    filter [:is_active, :id, :rncp_id, :slug, :acronym, :label, :level, :activities]
+    filter [:is_active, :id, :rncp_id, :slug, :acronym, :label, :level, :activities, :newer_certification, :older_certification]
     filter(:certifiers, order_by: :name)
 
 
@@ -98,7 +112,7 @@ defmodule Vae.ExAdmin.Certification do
       %{
         index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :delegates, :applications]],
         show: [
-          preload: [:certifiers, :included_delegates, :excluded_delegates, [delegates: :certifiers], :romes, :newer_certification] ++ [
+          preload: [:certifiers, :included_delegates, :excluded_delegates, [delegates: :certifiers], :romes, :newer_certification, :older_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]
           ]
         ],

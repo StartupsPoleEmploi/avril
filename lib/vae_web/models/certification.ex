@@ -12,12 +12,13 @@ defmodule Vae.Certification do
     field(:acronym, :string)
     field(:label, :string)
     field(:level, :integer)
-    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
     field(:activities, :string)
     field(:abilities, :string)
     field(:activity_area, :string)
     field(:accessible_job_type, :string)
 
+    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
+    has_one(:older_certification, Certification, foreign_key: :newer_certification_id)
 
     many_to_many(
       :certifiers,
@@ -93,10 +94,12 @@ defmodule Vae.Certification do
     end
     struct
     |> Repo.preload([
+      :applications,
       :certifiers,
       :delegates,
       :included_delegates,
-      :excluded_delegates
+      :excluded_delegates,
+      :older_certification
     ])
     |> cast(params, [
       :is_active,
@@ -117,13 +120,14 @@ defmodule Vae.Certification do
     |> validate_required([:label, :slug, :rncp_id])
     |> unique_constraint(:slug)
     |> unique_constraint(:rncp_id)
-    |> put_param_assoc(:newer_certification, params)
+    |> put_param_assoc(:older_certification, params)
     |> put_param_assoc(:romes, params)
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_delegates, params)
     |> put_param_assoc(:excluded_delegates, params)
     |> link_delegates()
     |> make_inactive_if_no_delegates()
+    |> move_applications_if_older_certification()
   end
 
   def link_delegates(changeset) do
@@ -140,7 +144,7 @@ defmodule Vae.Certification do
 
       included_delegates = get_field(changeset, :included_delegates)
       excluded_delegates = get_field(changeset, :excluded_delegates)
-
+      # TODO: sort to get no order change?
       delegates = Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
 
       changeset
@@ -200,6 +204,15 @@ defmodule Vae.Certification do
 
   def make_inactive_if_no_delegates(%Ecto.Changeset{} = changeset) do
     unless List.first(get_field(changeset, :delegates)), do: put_change(changeset, :is_active, false), else: changeset
+  end
+
+  def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do
+    if older_certification = get_field(changeset, :older_certification) do
+      %{applications: older_applications} = older_certification |> Repo.preload(:applications)
+      put_assoc(changeset, :applications, get_field(changeset, :applications) ++ Enum.filter(older_applications, &(is_nil(&1.submitted_at))))
+    else
+      changeset
+    end
   end
 
   def sanitize_html_fields(%Ecto.Changeset{} = changeset, fields) do

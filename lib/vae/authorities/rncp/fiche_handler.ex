@@ -1,6 +1,5 @@
 defmodule Vae.Authorities.Rncp.FicheHandler do
   require Logger
-  import Ecto.Query
   import SweetXml
   alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
   alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
@@ -74,21 +73,24 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     end))
 
     with(
-      %Certification{id: certification_id, is_active: false} = certification <-
-        Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload([:newer_certification]),
+      %Certification{is_active: false} = certification <-
+        Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload([:older_certification]),
       newer_rncp_id when not is_nil(newer_rncp_id) <-
-        SweetXml.xpath(fiche, ~x"./NOUVELLE_CERTIFICATION/text()"s
-          |> transform_by(fn nb ->
-            String.replace_prefix(nb, "RNCP", "")
-          end)),
-      %Certification{id: newer_certification_id, is_active: true} = newer_certification <-
-        Repo.get_by(Certification, rncp_id: newer_rncp_id),
-      {:ok, _} <- Certification.changeset(certification, %{newer_certification: newer_certification}) |> Repo.update()
+        SweetXml.xpath(fiche, ~x"./NOUVELLE_CERTIFICATION/text()"l
+          |> transform_by(fn l ->
+            l
+            |> Enum.map(&String.replace_prefix(to_string(&1), "RNCP", ""))
+            |> Enum.sort_by(&String.to_integer(&1))
+            |> List.last()
+          end)
+        ),
+      %Certification{is_active: true} = newer_certification <-
+        Repo.get_by(Certification, rncp_id: newer_rncp_id)
     ) do
       try do
-        from(a in UserApplication,
-          where: [certification_id: ^certification_id]
-        ) |> Repo.update_all(set: [certification_id: newer_certification_id])
+        newer_certification
+        |> Certification.changeset(%{older_certification: certification})
+        |> Repo.update()
       rescue
         e in Postgrex.Error ->
           Logger.warn(inspect(e))
