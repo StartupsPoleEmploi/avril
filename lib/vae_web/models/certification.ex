@@ -116,10 +116,6 @@ defmodule Vae.Certification do
     |> add_army_acronym()
     |> add_default_acronym()
     |> remove_acronym_in_label()
-    |> slugify()
-    |> validate_required([:label, :slug, :rncp_id])
-    |> unique_constraint(:slug)
-    |> unique_constraint(:rncp_id)
     |> put_param_assoc(:older_certification, params)
     |> put_param_assoc(:romes, params)
     |> put_param_assoc(:certifiers, params)
@@ -128,6 +124,10 @@ defmodule Vae.Certification do
     |> link_delegates()
     |> make_inactive_if_no_delegates()
     |> move_applications_if_older_certification()
+    |> slugify()
+    |> validate_required([:label, :slug, :rncp_id])
+    |> unique_constraint(:slug)
+    |> unique_constraint(:rncp_id)
   end
 
   def link_delegates(changeset) do

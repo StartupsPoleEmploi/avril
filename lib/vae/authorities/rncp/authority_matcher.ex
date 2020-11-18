@@ -167,7 +167,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "ministere-de-l-education-nationale-et-de-la-jeunesse"
     ],
     "ministere-des-affaires-sociales-et-de-la-sante" => [
-      "ministere-charge-des-affaires-sociales"
+      "ministere-charge-des-affaires-sociales",
+      "ministere-charge-de-la-sante"
     ],
     "ministere-du-travail" => [
       "ministere-charge-de-l-emploi",

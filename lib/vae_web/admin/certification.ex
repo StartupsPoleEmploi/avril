@@ -26,9 +26,10 @@ defmodule Vae.ExAdmin.Certification do
 
     show certification do
       attributes_table() do
-        row(:id)
-        row(:rncp_id, fn c -> Phoenix.HTML.Link.link(c.rncp_id, to: "https://www.francecompetences.fr/recherche/rncp/#{c.rncp_id}/", target: "_blank") end)
         row(:is_active)
+        row(:rncp_id, fn c -> Phoenix.HTML.Link.link(c.rncp_id, to: "https://www.francecompetences.fr/recherche/rncp/#{c.rncp_id}/", target: "_blank") end)
+        row(:newer_certification)
+        row(:older_certification)
         row(:slug)
         row(:acronym)
         row(:label)
@@ -37,8 +38,6 @@ defmodule Vae.ExAdmin.Certification do
         row(:abilities)
         row(:activity_area)
         row(:accessible_job_type)
-        row(:newer_certification)
-        row(:older_certification)
       end
 
       panel "ROME" do
