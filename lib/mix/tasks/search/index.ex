@@ -57,7 +57,7 @@ defmodule Mix.Tasks.Search.Index do
       {:ok, index_info} <- Algolia.index(model)
     ) do
       Logger.info(
-        "#{length(index_info["objectIDs"])} #{index_info["indexName"]} have been indexed"
+        "#{length(index_info["objectIDs"])} #{model} have been indexed in #{index_info["indexName"]}"
       )
     else
       {:error, msg} -> Logger.error(fn -> inspect(msg) end)

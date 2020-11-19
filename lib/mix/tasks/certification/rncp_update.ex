@@ -140,10 +140,8 @@ defmodule Mix.Tasks.RncpUpdate do
     |> Repo.all()
     |> Repo.preload([delegates: :certifiers])
     |> Enum.each(fn c ->
-      IO.inspect("Deleting certifier #{c.name} ...")
       case %Certifier{id: id, name: name} = c do
         %Certifier{delegates: [%Delegate{name: dname, certifiers: [%Certifier{id: cid}]}]} when id == cid and name == dname ->
-          IO.inspect("... and delegate")
           Enum.each(c.delegates, &(Repo.delete(&1)))
         _ -> nil
       end

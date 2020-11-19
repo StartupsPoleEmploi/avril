@@ -1,10 +1,19 @@
 defmodule VaeWeb.Resolvers.Authorities do
-  alias Vae.Authorities
-  alias Vae.Delegate
+  alias Vae.{Certification, Delegate, Repo, UserApplication}
 
-  def certifier_item(%Delegate{} = delegate, _args, _) do
-    {:ok, Authorities.get_first_certifier_from_delegate(delegate)}
+  def certifier_item(%UserApplication{} = ua, _args, _) do
+    {:ok, UserApplication.certifier(ua)}
   end
 
   def certifier_item(_, _args, _), do: {:ok, nil}
+
+  def certifiers_list(%Certification{certifiers: %Ecto.Association.NotLoaded{}} = certification, args, other) do
+    certification
+    |> Repo.preload(:certifiers)
+    |> certifiers_list(args, other)
+  end
+
+  def certifiers_list(%Certification{certifiers: certifiers}, _args, _), do: {:ok, certifiers}
+  def certifiers_list(_, _args, _), do: {:ok, nil}
+
 end

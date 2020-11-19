@@ -9,14 +9,19 @@ defmodule Vae.Search.QueryBuilder do
   def build_certification_filter(query, %Certification{id: id}),
     do: add_and_filter(query, "certifications:#{id}")
 
+  def build_administrative_filter(query, administrative) when administrative not in [nil, ""],
+    do: add_and_filter(query, "administrative:#{administrative}")
+
+  def build_administrative_filter(query, _), do: query
+
   def build_certifier_filter(query, certifiers),
     do: Enum.reduce(certifiers, query, &add_or_filter(&2, "certifiers=#{&1.id}"))
 
   def build_certifier_ids_filter(query, certifiers),
     do: Enum.reduce(certifiers, query, &add_or_filter(&2, "certifier_id=#{&1.id}"))
 
-  def build_geoloc(query, %{lat: lat, lng: lng} = geo, radius \\ :all) when nil not in [lat, lng],
-    do: query |> add_aroundLatLng(geo) |> add_radius(radius)
+  def build_geoloc(query, %{lat: lat, lng: lng} = geo, radius \\ nil) when nil not in [lat, lng],
+    do: query |> add_aroundLatLng(geo) |> add_radius(radius || :all)
 
   def build_geoloc(query, _, _), do: query
 

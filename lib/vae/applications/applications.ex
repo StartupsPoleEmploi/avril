@@ -128,17 +128,19 @@ defmodule Vae.Applications do
   end
 
   defp base_query() do
-    from(a in UserApplication,
-      join: c in Certification,
-      on: a.certification_id == c.id,
-      left_join: d in Delegate,
-      on: a.delegate_id == d.id,
-      left_join: u in User,
-      on: a.user_id == u.id,
-      left_join: r in Resume,
-      on: a.id == r.application_id,
-      preload: [delegate: d, certification: c, user: u, resumes: r]
-    )
+    from(a in UserApplication)
+    |> preload([[delegate: :certifiers], [certification: :certifiers], :user, :resumes])
+    # from(a in UserApplication,
+    #   join: c in Certification,
+    #   on: a.certification_id == c.id,
+    #   left_join: d in Delegate,
+    #   on: a.delegate_id == d.id,
+    #   left_join: u in User,
+    #   on: a.user_id == u.id,
+    #   left_join: r in Resume,
+    #   on: a.id == r.application_id,
+    #   preload: [delegate: d, certification: c, user: u, resumes: r]
+    # )
   end
 
   defp build_query(query, criterion) do

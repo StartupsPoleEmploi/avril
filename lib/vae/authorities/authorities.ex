@@ -1,23 +1,8 @@
 defmodule Vae.Authorities do
+  # Depreciated
   import Ecto.Query
 
   alias Vae.{Certifier, Delegate, Repo}
-
-  # TODO: use UserApplication.certifier_name\1
-  def get_first_certifier_from_delegate(%Delegate{certifiers: %Ecto.Association.NotLoaded{}} = delegate) do
-    get_first_certifier_from_delegate(Repo.preload(delegate, :certifiers))
-  end
-
-  def get_first_certifier_from_delegate(%Delegate{certifiers: {[%Certifier{} = certifier | _]}}) do
-    certifier
-  end
-
-  def get_first_certifier_from_delegate(_), do: nil
-
-  def get_delegate(id) do
-    Repo.get(Delegate, id)
-    |> Repo.preload(:certifiers)
-  end
 
   def fetch_fvae_delegate_meetings() do
     get_france_vae_delegates()

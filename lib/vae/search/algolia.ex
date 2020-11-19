@@ -10,12 +10,13 @@ defmodule Vae.Search.Algolia do
   # Searches #
   ############
 
-  def get_delegates(certification, geoloc) do
+  def get_delegates(certification, geoloc, radius, administrative) do
     query =
       QueryBuilder.init()
       |> QueryBuilder.build_active_filter()
+      |> QueryBuilder.build_administrative_filter(administrative)
       |> QueryBuilder.build_certification_filter(certification)
-      |> QueryBuilder.build_geoloc(geoloc)
+      |> QueryBuilder.build_geoloc(geoloc, radius)
       |> QueryBuilder.build_query()
 
     search(Delegate, query)

@@ -34,6 +34,9 @@ defmodule VaeWeb.Schema.ApplicationTypes do
 
     field(:delegate, :delegate)
     field(:certification, :certification)
+    field(:certifier, :certifier) do
+      resolve(&Resolvers.Authorities.certifier_item/3)
+    end
     field(:booklet_1, :booklet)
     field(:resumes, list_of(:resume))
   end

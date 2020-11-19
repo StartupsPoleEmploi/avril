@@ -193,6 +193,12 @@ defmodule Vae.Delegate do
 
   def preload_for_index(), do: [:certifications]
 
+  def format_for_index(%Delegate{certifications: %Ecto.Association.NotLoaded{}} = delegate) do
+    delegate
+    |> Repo.preload(:certifications)
+    |> format_for_index()
+  end
+
   def format_for_index(%Delegate{} = delegate) do
     delegate
     |> Map.take(Delegate.__schema__(:fields))
@@ -206,7 +212,7 @@ defmodule Vae.Delegate do
 
   def settings_for_index() do
     %{
-      attributesForFaceting: [:is_active, :certifications],
+      attributesForFaceting: [:is_active, :certifications, :administrative],
       attributeForDistinct: :slug,
       distinct: 1
     }

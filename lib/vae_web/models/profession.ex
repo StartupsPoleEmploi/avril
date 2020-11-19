@@ -2,6 +2,7 @@ defmodule Vae.Profession do
   use VaeWeb, :model
 
   alias __MODULE__
+  alias Vae.Repo
 
   schema "professions" do
     field(:slug, :string)
@@ -27,6 +28,7 @@ defmodule Vae.Profession do
 
   def format_for_index(struct) do
     struct
+    |> Repo.preload(preload_for_index())
     |> Map.take(__schema__(:fields))
     |> Map.put_new(:rome_code, get_in(Map.from_struct(struct.rome), [:code]))
     |> Map.put_new(:length, String.length(struct.label))

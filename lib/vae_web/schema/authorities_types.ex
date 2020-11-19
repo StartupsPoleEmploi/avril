@@ -8,7 +8,9 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
     field(:delegates_search, list_of(:delegate)) do
       arg(:application_id, non_null(:id))
       arg(:geo, non_null(:geo_input))
-      arg(:postal_code, non_null(:string))
+      arg(:radius, :integer)
+      arg(:administrative, :string)
+      # arg(:postal_code, non_null(:string))
 
       resolve(&Resolvers.Application.delegates_search/3)
     end
@@ -22,10 +24,6 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
     field(:address, :string)
     field(:telephone, :string)
     field(:meeting_places, list_of(:meeting_place))
-
-    field(:certifier, :certifier) do
-      resolve(&Resolvers.Authorities.certifier_item/3)
-    end
   end
 
   object :meeting_place do

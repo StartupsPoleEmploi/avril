@@ -4,7 +4,7 @@ defmodule VaeWeb.Resolvers.Application do
   import VaeWeb.Resolvers.ErrorHandler
   import Ecto.Query
 
-  alias Vae.{Applications, Authorities, Delegate, Meeting, Search.Client.Algolia, Repo}
+  alias Vae.{Applications, Delegate, Meeting, Search.Algolia, Repo}
 
   @application_not_found "La candidature est introuvable"
   @delegate_not_found "Le certificateur est introuvable"
@@ -33,13 +33,13 @@ defmodule VaeWeb.Resolvers.Application do
 
   def delegates_search(
         _,
-        %{application_id: application_id, geo: geoloc, postal_code: postal_code},
+        %{application_id: application_id, geo: geoloc, radius: radius, administrative: administrative},
         %{context: %{current_user: user}}
       ) do
     with(
       application when not is_nil(application) <-
            Applications.get_application_from_id_and_user_id(application_id, user.id),
-      {:ok, algolia_delegates} <- Algolia.get_delegates(application.certification, geoloc),
+      {:ok, algolia_delegates} <- Algolia.get_delegates(application.certification, geoloc, radius, administrative),
       ids <- Enum.map(algolia_delegates, &(&1.id)),
       delegates <- from(el in Delegate, [where: el.id in ^ids])
         |> preload([el], :certifiers)
@@ -62,7 +62,7 @@ defmodule VaeWeb.Resolvers.Application do
            {:application,
             Applications.get_application_from_id_and_user_id(application_id, user.id)},
          {_, delegate} when not is_nil(delegate) <-
-           {:delegate, Authorities.get_delegate(delegate_id)},
+           {:delegate, Repo.get(Delegate, delegate_id) |> Repo.preload(:certifiers)},
          {:ok, updated_application} <-
            Applications.attach_delegate(application, delegate) do
       {:ok, updated_application}
