@@ -13,6 +13,8 @@ section.section
           ul
             li
               strong= @delegate.name
+            = if @delegate.address_name do
+              li= @delegate.address_name
             li= @delegate.address
             = if @delegate.person_name do
               li Nom du contact : #{@delegate.person_name}

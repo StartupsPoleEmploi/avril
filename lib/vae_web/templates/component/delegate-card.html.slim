@@ -3,6 +3,7 @@
     h4.title.is-4
       = link(@delegate.name, to: Routes.delegate_path(@conn, :show, Vae.String.parameterize(@delegate.administrative), Vae.String.parameterize(@delegate.city), @delegate))
   .card-content
+    p= @delegate.address_name
     p= @delegate.address
   .card-footer
     = link("Démarrez votre VAE", to: Routes.signup_path(@conn, :new), class: "button has-text-weight-bold is-transparent")

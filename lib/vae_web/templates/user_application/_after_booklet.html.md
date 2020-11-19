@@ -8,7 +8,7 @@ Prochaines étapes à suivre :
 <%= if @application.delegate.process.booklet_address do %>
 **<%= @application.delegate.process.booklet_address %>**
 <% else %>
-**<%= @application.delegate.name %>**<br /><%= @application.delegate.address %>
+**<%= @application.delegate.name %>**<br /><%= @application.delegate.address_name %><br /><%= @application.delegate.address %>
 <% end %>
 
 

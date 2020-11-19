@@ -16,6 +16,7 @@ defmodule Vae.Delegate do
     field(:name, :string)
     field(:academy_id, :string)
     field(:website, :string)
+    field(:address_name, :string)
     field(:address, :string)
     field(:telephone, :string)
     field(:email, :string)
@@ -105,6 +106,7 @@ defmodule Vae.Delegate do
     |> cast(params, [
       :name,
       :website,
+      :address_name,
       :address,
       :telephone,
       :email,

@@ -21,6 +21,7 @@ defmodule VaeWeb.Schema.AuthoritiesTypes do
     field(:name, :string)
     field(:person_name, :string)
     field(:email, :string)
+    field(:address_name, :string)
     field(:address, :string)
     field(:telephone, :string)
     field(:meeting_places, list_of(:meeting_place))
