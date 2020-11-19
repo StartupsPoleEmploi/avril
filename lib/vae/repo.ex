@@ -46,7 +46,7 @@ defmodule Vae.Repo do
   end
 
   defp error_wrapper(result, func) do
-    case func.(result) do
+    case func.({:ok, result}) do
       {:ok, object} -> object
       {:error, error} -> raise error
     end
