@@ -132,6 +132,7 @@ defmodule Vae.ExAdmin.Delegate do
 
         input(delegate, :name)
         input(delegate, :website)
+        input(delegate, :address_name)
         input(delegate, :address)
         input(delegate, :geo, type: :hidden)
         input(delegate, :telephone)
