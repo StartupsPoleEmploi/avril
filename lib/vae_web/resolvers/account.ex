@@ -3,7 +3,7 @@ defmodule VaeWeb.Resolvers.Account do
 
   alias Vae.Account
 
-  @update_profile_error "Erreur de mise à jour du profile"
+  @update_profile_error "Erreur de mise à jour du profil"
   @update_password_error "Erreur lors de la mise à jour du mot de passe"
 
   def identity_item(_, _, %{context: %{current_user: user}}) do
