@@ -5,6 +5,8 @@ defmodule Vae.ExAdmin.Delegate do
   alias Vae.{Delegate, Process, Repo}
   require Ecto.Query
 
+  @marie_cc System.get_env("MARIE_CC_ADDRESS")
+
   register_resource Vae.Delegate do
     index do
       selectable_column()
@@ -118,7 +120,7 @@ defmodule Vae.ExAdmin.Delegate do
       delegate = Vae.Repo.get(Vae.Delegate, id) |> Vae.Repo.preload(:recent_applications)
 
       if length(delegate.recent_applications) > 0 do
-        case VaeWeb.DelegateEmail.applications_raise(delegate, %{cc: :avril})
+        case VaeWeb.DelegateEmail.applications_raise(delegate, %{cc: @marie_cc})
         |> VaeWeb.Mailer.send() do
           {:ok, _pid} ->
             conn

@@ -82,7 +82,6 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(anything), do: Logger.warn(anything)
 
-
   def format_mailer(role, to) when not is_nil(@override_to) and role in [:to, :cc] do
     case format_mailer!(to) do
       {_name, email} = tuple when email in @whitelist -> tuple
