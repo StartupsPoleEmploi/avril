@@ -1285,7 +1285,7 @@ autocomplete.js@^0.37.0:
 
 avril@StartupsPoleEmploi/avril-shared:
   version "1.0.0"
-  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/1e68965cffdb055a12f59bac44cc829998fd0bbd"
+  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/19813173d58f011cb4b5034c53e59c3e4d3d6862"
   dependencies:
     "@trevoreyre/autocomplete-vue" "^2.1.1"
     algoliasearch "^3.35.1"
@@ -2281,10 +2281,10 @@ date-fns@^2.6.0:
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.12.0.tgz#01754c8a2f3368fc1119cf4625c3dad8c1845ee6"
   integrity sha512-qJgn99xxKnFgB1qL4jpxU7Q2t0LOn1p8KMIveef3UZD7kqjT3tpFNNdXJelEHhE+rUgffriXriw/sOSU+cS1Hw==
 
-date-format-parse@^0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/date-format-parse/-/date-format-parse-0.2.5.tgz#6acd7672058e59cb34c85e0d82c04bceeac9d652"
-  integrity sha512-PzvB3p9bTxrGQbz3ZlO/kxgXzKZhMo4l0OQfPqVYjuwixHRS9yHH6cUJI9JG2Hh6iUQgh17T7w95lzQ131dS/g==
+date-format-parse@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/date-format-parse/-/date-format-parse-0.2.6.tgz#7ed42817efb6ec39532169eada9670ae3c627aa7"
+  integrity sha512-sdxnYAWmLopeb+6Hmw+vo3or4OCJOnh4+YoJ9p+Id3o2EnNP0INpTqx7wr8UregfMpgaSZAH473R/ytiaB3gVg==
 
 debounce@^1.2.0:
   version "1.2.0"
@@ -6657,12 +6657,11 @@ vm-browserify@^1.0.1:
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vue2-datepicker@^3.4.1:
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.7.0.tgz#fc461bdda98e760a0b3632ec616786d2ecfc69c0"
-  integrity sha512-XB5slJZLXf3sbPIOMxjYPw2UlOI/utX4cHGQwGvRQqyiKzwpsGlPI6M3zUGw412Sm2tv2jMkXd9+k+yOSRf2OQ==
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.8.0.tgz#aa5da2d24a312f07da49f971bfcca4ed6262ad91"
+  integrity sha512-FRofR4z0o/+gXBUdzAc/DBWTfhEvy1A7QhTI4l8GgU21+Veawpw5p7/toE+Gj9hWkYXN833SSjXSDW7+BGQ7nQ==
   dependencies:
-    date-fns "^2.0.1"
-    date-format-parse "^0.2.5"
+    date-format-parse "^0.2.6"
 
 vue@^2.6.11:
   version "2.6.12"

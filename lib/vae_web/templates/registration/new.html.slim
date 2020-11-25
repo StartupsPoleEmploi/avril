@@ -1,8 +1,8 @@
 section.section.is-vertical.register-page.pow-page
   .container
-    .columns.is-reverse-tablet.is-vcentered
-      .column.is-6.is-5-widescreen
-        .section.is-horizontal.is-large
+    .columns.is-reverse-tablet.is-centered
+      .column.is-6.is-5-widescreen.has-equal-height
+        .section.is-horizontal
           h2.title.is-2 Ouvrir mon compte VAE
           = form_for @changeset, Routes.signup_path(@conn, :create), [as: :user], fn f ->
             = hidden_input f, :persistent_session, value: true
@@ -18,11 +18,9 @@ section.section.is-vertical.register-page.pow-page
             .field
               .control
                 = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email"
-                / = error_tag f, :email
             .field
               .control
                 = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe", minlength: Application.get_env(:vae, :pow)[:password_min_length]
-                / = error_tag f, :password
             .field
               label.checkbox
                 input type="checkbox" value="true" id="consent" required="required"
@@ -35,7 +33,7 @@ section.section.is-vertical.register-page.pow-page
                 span.is-hidden-mobile &nbsp;gratuit maintenant
             .field.has-text-right
               = link("J'ai déjà un compte", to: Routes.login_path(@conn, :new), class: "button is-text is-rounded", data: [analytics: "Profil#deja"])
-      .column.is-6.is-5-widescreen.is-offset-1-widescreen
+      .column.is-6.is-5-widescreen.has-equal-height
         .section.is-green.has-bubble.has-text-centered.features
           ul.feature-checklist
             li Votre candidature remplie à votre rythme

@@ -16,14 +16,8 @@
 
 .register-page {
   .features {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    height: 100%;
     position: relative;
-    overflow: hidden;
-    @include tablet {
-      min-height: 600px;
-    }
     ul.feature-checklist {
       list-style: none;
       font-weight: bold;
