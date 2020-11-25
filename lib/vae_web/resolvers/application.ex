@@ -51,7 +51,7 @@ defmodule VaeWeb.Resolvers.Application do
     else
       {:error, msg} ->
         error_response(@no_delegate_found, msg)
-      error ->
+      _error ->
         error_response(@application_not_found, format_application_error_message(application_id))
     end
   end

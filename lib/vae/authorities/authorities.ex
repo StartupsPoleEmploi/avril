@@ -2,7 +2,7 @@ defmodule Vae.Authorities do
   # Depreciated
   import Ecto.Query
 
-  alias Vae.{Certifier, Delegate, Repo}
+  alias Vae.{Delegate, Repo}
 
   def fetch_fvae_delegate_meetings() do
     get_france_vae_delegates()

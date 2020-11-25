@@ -1,7 +1,7 @@
 defmodule Vae.Applications do
   import Ecto.Query
 
-  alias Vae.{Account, Booklet, Certification, Delegate, Meetings, Resume, User, UserApplication}
+  alias Vae.{Account, Booklet, Certification, Meetings, Resume, User, UserApplication}
   alias Vae.Repo
 
   @doc "Lists applications from a User ID"

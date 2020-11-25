@@ -176,7 +176,10 @@ defmodule Vae.ExAdmin.User do
       }
     end
 
-    member_action :"override-current-user", &__MODULE__.override_current_user/2, label: "Connect as User"
+    member_action :"override-current-user",
+      &__MODULE__.override_current_user/2,
+      label: "Connect as User",
+      icon: "user"
 
     def override_current_user(conn, %{id: id}) do
       if Vae.Repo.get(Vae.User, id) do

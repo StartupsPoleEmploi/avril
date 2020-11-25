@@ -23,27 +23,25 @@ defmodule Vae.ExAdmin.Delegate do
     end
 
     show delegate do
-      attributes_table(
-        only: [
-          :id,
-          :is_active,
-          :slug,
-          :name,
-          :address_name,
-          :address,
-          :city,
-          :administrative,
-          :telephone,
-          :website,
-          :email,
-          :person_name,
-          :secondary_email,
-          :secondary_person_name,
-          :process_id,
-          :academy_id,
-          :internal_notes
-        ]
-      )
+      attributes_table() do
+        row(:is_active)
+        row(:slug)
+        row(:name)
+        row(:address_name)
+        row(:address)
+        row(:city)
+        row(:administrative)
+        row(:telephone)
+        row(:website)
+        row(:email)
+        row(:person_name)
+        row(:secondary_email)
+        row(:secondary_person_name)
+        row(:academy_id)
+        row(:internal_notes)
+        row(:recent_applications, fn d -> length(d.recent_applications) end)
+      end
+
       panel "certifiers" do
         table_for delegate.certifiers do
           column(:id)
@@ -100,7 +98,8 @@ defmodule Vae.ExAdmin.Delegate do
 
     collection_action :"refresh-meetings",
       &__MODULE__.refresh_meetings/2,
-      label: "Refresh meetings"
+      label: "Refresh meetings",
+      icon: "refresh"
 
     def refresh_meetings(conn, _infos) do
       Task.async(fn ->
@@ -109,6 +108,31 @@ defmodule Vae.ExAdmin.Delegate do
       conn
       |> Phoenix.Controller.put_flash(:notice, "Rafraichissement en cours")
       |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Delegate))
+    end
+
+    member_action :"send-recap",
+      &__MODULE__.send_recap/2,
+      label: "Re-send recap Email",
+      icon: "envelope"
+
+    def send_recap(conn, %{id: id}) do
+      delegate = Vae.Repo.get(Vae.Delegate, id) |> Vae.Repo.preload(:recent_applications)
+
+      if length(delegate.recent_applications) > 0 do
+        case VaeWeb.DelegateEmail.applications_raise(delegate, %{cc: :avril})
+        |> VaeWeb.Mailer.send() do
+          {:ok, _pid} ->
+            conn
+            |> Phoenix.Controller.put_flash(:notice, "Récapitulatif envoyé")
+          _ ->
+            conn
+            |> Phoenix.Controller.put_flash(:danger, "Le message n'a pas pu être envoyé")
+        end
+      else
+        conn
+        |> Phoenix.Controller.put_flash(:warning, "Pas de candidatures dans les 15 derniers jours")
+      end
+      |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(delegate))
     end
 
     form delegate do
@@ -161,7 +185,7 @@ defmodule Vae.ExAdmin.Delegate do
     query do
       %{
         index: [preload: [:process, :certifiers, :certifications, :applications], default_sort: [asc: :id]],
-        show: [preload: [:process, :certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers]]],
+        show: [preload: [:process, :certifiers, :recent_applications, :included_certifications, :excluded_certifications, [certifications: :certifiers]]],
         edit: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
         update: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
       }

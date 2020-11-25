@@ -20,7 +20,8 @@ defmodule Vae.Search.QueryBuilder do
   def build_certifier_ids_filter(query, certifiers),
     do: Enum.reduce(certifiers, query, &add_or_filter(&2, "certifier_id=#{&1.id}"))
 
-  def build_geoloc(query, %{lat: lat, lng: lng} = geo, radius \\ nil) when nil not in [lat, lng],
+  def build_geoloc(query, geo, radius \\ nil)
+  def build_geoloc(query, %{lat: lat, lng: lng} = geo, radius) when nil not in [lat, lng],
     do: query |> add_aroundLatLng(geo) |> add_radius(radius || :all)
 
   def build_geoloc(query, _, _), do: query

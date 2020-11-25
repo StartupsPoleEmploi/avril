@@ -1,5 +1,5 @@
 defmodule VaeWeb.Resolvers.Authorities do
-  alias Vae.{Certification, Delegate, Repo, UserApplication}
+  alias Vae.{Certification, Repo, UserApplication}
 
   def certifier_item(%UserApplication{} = ua, _args, _) do
     {:ok, UserApplication.certifier(ua)}
