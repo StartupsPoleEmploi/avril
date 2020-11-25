@@ -7,6 +7,7 @@ defmodule VaeWeb.Resolvers.Application do
   alias Vae.{Applications, Delegate, Meeting, Search.Algolia, Repo}
 
   @application_not_found "La candidature est introuvable"
+  @no_delegate_found "Aucun certificateur n'a été trouvé"
   @delegate_not_found "Le certificateur est introuvable"
   @attach_delegate_error "L'ajout du certificateur à votre candidature a échoué"
   @register_meeting_error "La prise de rendez-vous a échoué"
@@ -48,8 +49,9 @@ defmodule VaeWeb.Resolvers.Application do
     ) do
       {:ok, delegates}
     else
+      {:error, msg} ->
+        error_response(@no_delegate_found, msg)
       error ->
-        IO.inspect(error)
         error_response(@application_not_found, format_application_error_message(application_id))
     end
   end

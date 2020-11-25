@@ -10,7 +10,7 @@ defmodule Vae.Search.QueryBuilder do
     do: add_and_filter(query, "certifications:#{id}")
 
   def build_administrative_filter(query, administrative) when administrative not in [nil, ""],
-    do: add_and_filter(query, "administrative:#{administrative}")
+    do: add_and_filter(query, "administrative:\"#{administrative}\"")
 
   def build_administrative_filter(query, _), do: query
 
