@@ -39,13 +39,26 @@ defmodule Vae.ExAdmin.Delegate do
         row(:secondary_person_name)
         row(:academy_id)
         row(:internal_notes)
-        row(:recent_applications, fn d -> length(d.recent_applications) end)
+        row(:nb_recent_applications, fn d -> length(d.recent_applications) end)
       end
 
       panel "certifiers" do
         table_for delegate.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
+        end
+      end
+
+      panel "Recent applications" do
+        table_for delegate.recent_applications do
+          column(:id)
+          column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
+
+          column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+
+          column(:submitted_at)
+          column(:admissible_at)
+          column(:inadmissible_at)
         end
       end
 
@@ -64,20 +77,6 @@ defmodule Vae.ExAdmin.Delegate do
           column(:name, &Helpers.link_to_resource/1)
         end
       end
-
-
-      # panel "Applications" do
-      #   table_for delegate.applications do
-      #     column(:id)
-      #     column(:application_user, fn a -> Helpers.link_to_resource(a.user) end)
-
-      #     column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
-
-      #     column(:submitted_at)
-      #     column(:admissible_at)
-      #     column(:inadmissible_at)
-      #   end
-      # end
 
       panel "Meetings" do
         table_for delegate.meeting_places
@@ -185,7 +184,7 @@ defmodule Vae.ExAdmin.Delegate do
     query do
       %{
         index: [preload: [:process, :certifiers, :certifications, :applications], default_sort: [asc: :id]],
-        show: [preload: [:process, :certifiers, :recent_applications, :included_certifications, :excluded_certifications, [certifications: :certifiers]]],
+        show: [preload: [:process, :certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
         edit: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
         update: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
       }
