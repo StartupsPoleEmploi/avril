@@ -43,13 +43,6 @@ defmodule Vae.Mixfile do
       {:plug_cowboy, "~> 2.0"},
       {:plug, "~> 1.7"},
       {:pow, "~> 1.0.20"},
-      # {:pow, github: "augnustin/pow"},
-      # {:pow, path: "../pow", in_umbrella: true}, # When debugging pow locally
-      # Pow added features in own version:
-      # - allow unconfirmed access: https://github.com/danschultzer/pow/issues/428
-      # - resend_confirmation_email (should come with the above)
-      # - custom after_sign_in(conn)::conn https://github.com/danschultzer/pow/issues/440
-      # - get the disconnected user in after_sign_out_path https://github.com/danschultzer/pow/issues/433
       {:bcrypt_elixir, "~> 1.1.1"},
       {:sweet_xml, "~> 0.6.5"},
       {:csv, "~> 2.3.1"},
@@ -65,7 +58,6 @@ defmodule Vae.Mixfile do
       {:ex_admin, github: "augnustin/ex_admin"},
       # {:coherence, "~> 0.5.2"}, # TODO: move to POW
       # {:coherence, git: "https://github.com/johannesE/coherence", branch: "#394"}, # Ecto 3.0 compatible
-      {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.14.0"},
@@ -77,8 +69,6 @@ defmodule Vae.Mixfile do
       {:filterable, "~> 0.7.0"},
       {:oauth2, "~> 0.9"},
       {:inflex, "~> 1.10.0"},
-      # {:swoosh,
-      #  github: "nresni/swoosh", ref: "b4188c3913486e41f17b0f21cca2b29913b54f53", override: true},
       {:swoosh, "~> 0.25"},
       {:phoenix_swoosh, "~> 0.2"},
       {:plug_static_index_html, "~> 1.0"},
@@ -93,6 +83,7 @@ defmodule Vae.Mixfile do
       {:quantum, "~> 3.0"},
       {:struct_access, "~> 1.1.2"},
       {:html_entities, "~> 0.4"},
+      {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:ex_machina, "~> 2.3", only: :test}
     ]
   end

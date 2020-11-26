@@ -1,6 +1,6 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
-  alias Vae.{Certifier, Certification, Delegate, Process, Repo, Rome}
+  alias Vae.{Certifier, Certification, Delegate, Repo, Rome}
   import Ecto.Query
   import SweetXml
   alias Vae.Authorities.Rncp.FileLogger
@@ -117,36 +117,6 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   end
 
   def custom_data_transformations(data), do: data
-
-  def match_cci_former_certifiers() do
-    %Certifier{} = cci_france = Repo.get_by(Certifier, slug: "cci-france")
-    |> Repo.preload([:certifications, [delegates: :certifiers]])
-
-    other_delegates = Repo.get_by(Process, name: "CCI")
-    |> Repo.preload([delegates: :certifiers])
-    |> Map.get(:delegates)
-
-    Enum.uniq(cci_france.delegates ++ other_delegates)
-    |> Enum.each(fn d ->
-
-      previous_certifications = d.certifiers
-      |> Enum.flat_map(&get_certifier_previous_certifications(&1))
-
-      extra_certifications =
-        Enum.reject(previous_certifications, &Enum.member?(cci_france.certifications, &1))
-
-      rejected_certifications =
-        Enum.reject(cci_france.certifications, &Enum.member?(previous_certifications, &1))
-
-      d
-      |> Delegate.changeset(%{
-        certifiers: d.certifiers ++ [cci_france],
-        included_certifications: extra_certifications,
-        excluded_certifications: rejected_certifications
-      })
-      |> Repo.update()
-    end)
-  end
 
   defp get_certifier_previous_certifications(certifier) do
     (certifier.internal_notes || "")

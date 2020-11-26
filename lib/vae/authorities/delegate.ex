@@ -7,7 +7,6 @@ defmodule Vae.Delegate do
     Certification,
     Certifier,
     Places,
-    Process,
     Repo
   }
 
@@ -28,8 +27,6 @@ defmodule Vae.Delegate do
     field(:city, :string)
     field(:administrative, :string)
     field(:internal_notes, :string)
-
-    belongs_to(:process, Process)
 
     many_to_many(
       :certifiers,

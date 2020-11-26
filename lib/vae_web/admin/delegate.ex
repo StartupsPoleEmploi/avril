@@ -2,7 +2,7 @@ defmodule Vae.ExAdmin.Delegate do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-  alias Vae.{Delegate, Process, Repo}
+  alias Vae.{Delegate, Repo}
   require Ecto.Query
 
   @marie_cc System.get_env("MARIE_CC_ADDRESS")
@@ -165,7 +165,6 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :person_name)
         input(delegate, :secondary_email)
         input(delegate, :secondary_person_name)
-        input(delegate, :process, collection: Repo.all(Process))
         input(delegate, :internal_notes, type: :text)
 
         content do

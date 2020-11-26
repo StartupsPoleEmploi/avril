@@ -92,7 +92,6 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def clean_avril_data() do
-    # CustomRules.match_cci_former_certifiers()
     remove_certifiers_without_certifications()
     # clear_certifier_internal_notes()
   end
