@@ -56,8 +56,6 @@ defmodule Vae.Mixfile do
       {:phoenix_slime, "~> 0.12.0"},
       # {:ex_admin, path: "../ex_admin", in_umbrella: true}, # When debugging ex_admin locally
       {:ex_admin, github: "augnustin/ex_admin"},
-      # {:coherence, "~> 0.5.2"}, # TODO: move to POW
-      # {:coherence, git: "https://github.com/johannesE/coherence", branch: "#394"}, # Ecto 3.0 compatible
       {:algolia, "~> 0.8.0"},
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.14.0"},
