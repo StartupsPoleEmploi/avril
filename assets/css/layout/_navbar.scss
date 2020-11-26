@@ -28,9 +28,9 @@ nav.navbar {
     }
   }
 
-  .navbar-dropdown {
-    width: 200px;
-  }
+  // .navbar-dropdown {
+  //   width: 200px;
+  // }
 
   .permanent-burger {
     @include hamburger($navbar-height);

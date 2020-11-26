@@ -3,6 +3,7 @@ Merci de votre visite sur notre site et bravo pour votre projet !
 Ce formulaire de contact vous permettra exclusivement de joindre notre équipe technique et de lui signaler vos difficultés d'utilisation du service ou vos remarques techniques.
 
 Si vous avez des questions sur votre projet et/ou sur la VAE, nous vous invitons  :
+- à [consulter notre FAQ](/faq)
 - à lire nos pages d'informations et les étapes de la VAE du diplôme choisi:
   - [C'est quoi une VAE ?](/vae)
   - [C'est quoi un certificateur ?](/certificateur-vae-definition)

@@ -11,7 +11,15 @@
           span aria-hidden="true"
     .navbar-menu
       .navbar-end
-        = render VaeWeb.ComponentView, "active_link.html", text: "C’est quoi la VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :vae), conn: @conn
+        .navbar-item.has-dropdown.is-hoverable
+          = link("Ma VAE avec Avril", [to: "#", class: "navbar-link"])
+          .navbar-dropdown
+            = render "active_link.html", text: "C’est quoi la VAE ?", class: "navbar-item", to: Routes.page_path(@conn, :vae), conn: @conn
+            = render "active_link.html", text: "Bien choisir son diplôme", class: "navbar-item", to: Routes.page_path(@conn, :choose_certification), conn: @conn
+            = render "active_link.html", text: "Comment financer ma VAE?", class: "navbar-item", to: Routes.page_path(@conn, :financement), conn: @conn
+            = render "active_link.html", text: "C'est quoi un certificateur ?", class: "navbar-item", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
+            = render "active_link.html", text: "Qui sont les Points Relais Conseil ?", class: "navbar-item", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+            = render "active_link.html", text: "FAQ", class: "navbar-item", to: Routes.page_path(@conn, :faq), conn: @conn
         = if Pow.Plug.current_user(@conn) do
           li.navbar-item
             = link "Mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-primary is-rounded"
