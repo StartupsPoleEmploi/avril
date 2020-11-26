@@ -1,8 +1,8 @@
 defmodule VaeWeb.PageController do
   use VaeWeb, :controller
-
+  import Ecto.Query
   alias VaeWeb.Mailer
-  alias Vae.{Certification, ContactForm, Delegate}
+  alias Vae.{Certification, ContactForm, Delegate, Repo, FAQ}
   alias VaeWeb.ContactEmail
 
   def index(conn, _params) do
@@ -10,6 +10,14 @@ defmodule VaeWeb.PageController do
       title: "Comment faire une VAE ?",
       certification_examples: Certification.is_active() |> Certification.sort_by_popularity() |> limit(10) |> Repo.all() |> Enum.take_random(2),
       delegate_examples: Delegate.is_active() |> Delegate.sort_by_popularity() |> limit(10) |> Repo.all() |> Enum.take_random(2)
+    )
+  end
+
+  def faq(conn, _params) do
+    render(conn, "faq.html",
+      title: "Foire aux questions",
+      description: "Nous répondons aux questions que vous vous posez sur Avril.",
+      questions: from(f in FAQ, order_by: [asc: :order]) |> Repo.all()
     )
   end
 

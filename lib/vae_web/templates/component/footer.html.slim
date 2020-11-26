@@ -11,6 +11,7 @@ footer.footer
             li= render "active_link.html", text: "Comment financer ma VAE?", class: "", to: Routes.page_path(@conn, :financement), conn: @conn
             li= render "active_link.html", text: "C'est quoi un certificateur ?", class: "", to: Routes.page_path(@conn, :certificateur_vae_definition), conn: @conn
             li= render "active_link.html", text: "Qui sont les Points Relais Conseil ?", class: "", to: Routes.page_path(@conn, :point_relais_conseil), conn: @conn
+            li= render "active_link.html", text: "FAQ", class: "", to: Routes.page_path(@conn, :faq), conn: @conn
             li= render "active_link.html", text: "Tester mon éligibilité", class: "", to: Routes.user_path(@conn, :eligibility), conn: @conn
           ul
             li

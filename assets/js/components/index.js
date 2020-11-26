@@ -1,1 +1,2 @@
+import './accordion';
 import './searchbar';

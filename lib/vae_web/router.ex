@@ -54,6 +54,7 @@ defmodule VaeWeb.Router do
     # Landing pages
     get("/", VaeWeb.PageController, :index, as: :root)
     get("/vae", VaeWeb.PageController, :vae)
+    get("/faq", VaeWeb.PageController, :faq)
     get("/conditions-generales-d-utilisation", VaeWeb.PageController, :terms_of_use)
     get("/justificatifs-vae", VaeWeb.PageController, :receipts)
     get("/synthese-vae", VaeWeb.PageController, :synthesis)

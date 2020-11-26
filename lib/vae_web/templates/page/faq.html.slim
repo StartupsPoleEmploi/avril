@@ -1,0 +1,25 @@
+section.section.is-horizontal.faq-page
+  .container
+    section.section.is-small.is-vertical
+      = render VaeWeb.ComponentView, "back_button", conn: @conn
+      .has-text-centered
+        h1.title.is-1 FAQ
+        h2.subtitle Nous répondons à vos questions
+
+    section.section.is-small.is-vertical
+      .container
+        .columns.is-centered
+          .column.is-8
+            = for {question, i} <- Enum.with_index(@questions) do
+              .panel.is-info.is-accordion class=(if i==0, do: "is-expanded") data-nb=(i+1)
+                .panel-heading #{i+1}. #{question.question}
+                .panel-block
+                  .wrapper
+                    .content= raw question.answer
+
+
+    section.section.is-small.is-vertical
+      .has-text-centered
+        h4.title.is-4.has-text-centered C'est tout bon ?
+        p.subtitle n'attendez plus pour vous lancer
+        = link "Trouver ma VAE", to: Routes.root_path(@conn, :index), class: "button is-primary is-rounded is-medium"

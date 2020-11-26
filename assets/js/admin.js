@@ -75,12 +75,9 @@ const textareaToSimditor = () => {
         'ol',
         'ul',
         'blockquote',
-        'table',
         'link',
         'hr',
-        'indent',
-        'outdent',
-        'alignment'
+        'image'
       ],
       toolbarFloat: false,
       defaultImage: 'http://temp.im/150x150'

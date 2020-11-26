@@ -1,0 +1,33 @@
+.panel.is-accordion {
+  .panel-heading {
+    cursor: pointer;
+    &:before {
+      float: right;
+      content: '+';
+    }
+  }
+  .panel-block {
+    overflow: hidden;
+    padding: 0;
+
+    .wrapper {
+      max-height: 0;
+      // transition: max-height 0.2s ease;
+      transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+
+      .content {
+        margin: 1.25em;
+      }
+    }
+  }
+  &.is-expanded {
+    .panel-heading:before {
+      content: '-';
+    }
+    .panel-block .wrapper {
+      max-height: 1000px;
+      transition: max-height 1s ease-in-out;
+
+    }
+  }
+}
