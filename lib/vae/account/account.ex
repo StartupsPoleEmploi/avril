@@ -12,54 +12,9 @@ defmodule Vae.Account do
     Repo.get_by(User, pe_id: pe_id)
   end
 
-  # Deprecated
-  # def update_identity(attrs \\ %{}, %User{} = user) do
-  #   user
-  #   |> User.update_identity_changeset(attrs)
-  #   |> Repo.update!()
-  # end
-
   def update_identity_item(attrs \\ %{}, %User{} = user) do
     user
-    |> User.update_identity_changeset(attrs)
-    |> maybe_update_user_email(attrs)
-    |> Repo.update()
-  end
-
-  def maybe_update_user_email(changeset, _attrs) do
-    if changeset.valid? && email_change?(changeset) do
-      changeset
-      |> User.update_user_email_changeset(get_identity_email_change(changeset))
-    else
-      changeset
-    end
-  end
-
-  def email_change?(changeset) do
-    changeset
-    |> get_identity_email_change()
-    |> Kernel.!=(nil)
-  end
-
-  def get_identity_email_change(changeset) do
-    changeset
-    |> get_identity_changes()
-    |> case do
-      nil -> nil
-      identity -> Ecto.Changeset.get_change(identity, :email)
-    end
-  end
-
-  def get_identity_changes(changeset), do: Ecto.Changeset.get_change(changeset, :identity)
-
-  def update_profile_item(attrs \\ %{}, %User{} = user) do
-    user
-    |> User.update_changeset(attrs)
-    |> Repo.update()
-  end
-
-  def update_user_password(%User{} = user, attrs) do
-    User.update_password_changeset(user, attrs)
+    |> User.changeset(attrs)
     |> Repo.update()
   end
 
@@ -73,25 +28,14 @@ defmodule Vae.Account do
     end
   end
 
-  def create_user_from_pe(user_info) do
-    user_info
-    |> User.create_user_from_pe_changeset()
-    |> Repo.insert()
-  end
-
-  def maybe_update_user_from_pe(user, user_info) do
-    user
-    |> User.update_user_from_pe_changeset(user_info)
-    |> Repo.update()
-  end
-
   def complete_user_profile({:error, _} = error, _token), do: error
 
   def complete_user_profile({:ok, _user} = upsert, token) do
     {:ok, user} = fill_with_api_fields(upsert, token)
-    identity_params = %{identity: Identity.from_user(user)}
 
-    User.update_identity_changeset(user, identity_params)
+    user
+    |> IO.inspect()
+    |> User.changeset(%{identity: IO.inspect(Identity.from_user(user))})
     |> Repo.update()
   end
 
@@ -104,7 +48,8 @@ defmodule Vae.Account do
         user
 
       data, {:ok, user} ->
-        User.update_user_from_pe_changeset(user, data)
+        user
+        |> User.changeset(data)
         |> Repo.update()
 
       _data, {:error, _changeset} ->

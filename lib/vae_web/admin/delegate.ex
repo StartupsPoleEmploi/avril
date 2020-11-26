@@ -2,7 +2,7 @@ defmodule Vae.ExAdmin.Delegate do
   use ExAdmin.Register
   alias Vae.ExAdmin.Helpers
 
-  alias Vae.{Delegate, Repo}
+  alias Vae.Delegate
   require Ecto.Query
 
   @marie_cc System.get_env("MARIE_CC_ADDRESS")

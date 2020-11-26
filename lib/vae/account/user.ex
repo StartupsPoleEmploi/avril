@@ -17,11 +17,11 @@ defmodule Vae.User do
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
 
   alias __MODULE__
-  alias Vae.Identity
 
   alias Vae.{
     UserApplication,
     Experience,
+    Identity,
     JobSeeker,
     ProvenExperience,
     Repo,
@@ -137,51 +137,15 @@ defmodule Vae.User do
     |> changeset(Map.drop(params, @password_fields))
   end
 
-  # @TODO Remove in favor of create_changeset
   def changeset(model, params) do
-    # @TODO Can do better ....
-    params = Map.put(params, "identity", params)
+    params = Map.put(params, :identity, params)
 
     model
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
-    |> sync_name_with_first_and_last(params)
-    |> downcase_email()
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
-    |> put_embed_if_necessary(params, :skills)
-    |> put_embed_if_necessary(params, :experiences)
-    |> put_embed_if_necessary(params, :proven_experiences)
-    |> cast_embed(:identity)
-    |> put_job_seeker(params[:job_seeker])
-  end
-
-  @doc "Changeset for update a user from admin"
-  @deprecated "Until we can find a better way"
-  def admin_changeset(model, params) do
-    # params = Map.put(params, :identity, params)
-
-    model
-    |> cast(params, @fields)
-    |> pow_extension_changeset(params)
-    |> sync_name_with_first_and_last(params)
-    |> downcase_email()
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
-    |> put_embed_if_necessary(params, :skills)
-    |> put_embed_if_necessary(params, :experiences)
-    |> put_embed_if_necessary(params, :proven_experiences)
-    |> cast_embed(:identity)
-    |> put_job_seeker(params[:job_seeker])
-  end
-
-  def create_changeset(model, params) do
-    model
-    |> cast(params, @fields)
-    |> pow_extension_changeset(params)
-    |> sync_name_with_first_and_last(params)
+    |> IO.inspect()
+    |> maybe_put_identity(params)
+    |> extract_identity_data()
     |> downcase_email()
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
@@ -192,36 +156,17 @@ defmodule Vae.User do
     |> put_job_seeker(params[:job_seeker])
   end
 
-  def update_changeset(model, params) do
-    model
-    |> cast(params, @fields)
-    |> downcase_email()
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
+  def maybe_put_identity(%Ecto.Changeset{data: %User{identity: identity}} = changeset, %{identity: identity_params}) do
+    put_embed(changeset, :identity, Identity.changeset(identity, IO.inspect(identity_params)))
   end
 
-  def create_user_from_pe_changeset(user_info) do
-    params = map_params_from_pe(user_info)
+  def maybe_put_identity(changeset, _), do: changeset
 
-    %__MODULE__{}
-    |> create_changeset(params)
-  end
-
-  def update_user_from_pe_changeset(user, params) do
+  # TODO refactor with changeset password case
+  def update_password_changeset(user, attrs) do
     user
-    |> cast(params, @fields)
-    |> put_embed_if_necessary(params, :skills)
-    |> put_embed_if_necessary(params, :experiences)
-    |> put_embed_if_necessary(params, :proven_experiences)
-  end
-
-  def update_user_email_changeset(changeset, email) do
-    changeset
-    |> change(%{email: email})
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
+    |> pow_password_changeset(attrs)
+    |> pow_current_password_changeset(attrs)
   end
 
   def map_params_from_pe(user_info) do
@@ -270,12 +215,6 @@ defmodule Vae.User do
 
   def extra_fields_for_create(_), do: {:error, %{}}
 
-  def update_identity_changeset(model, params) do
-    model
-    |> cast(params, [])
-    |> cast_embed(:identity)
-  end
-
   def register_identity_fields_required_changeset(model, _params \\ %{}) do
     model
     |> cast(%{identity: %{}}, [])
@@ -318,19 +257,6 @@ defmodule Vae.User do
 
   def fill_with_api_fields({:error, _msg} = error, _client_with_token), do: error
 
-  def sync_name_with_first_and_last(user_changeset, params) do
-    first_name = params[:first_name] || user_changeset.data.first_name
-    last_name = params[:last_name] || user_changeset.data.last_name
-
-    cast(
-      user_changeset,
-      %{
-        name: "#{first_name} #{last_name}"
-      },
-      [:name]
-    )
-  end
-
   def address(user) do
     [
       Vae.Account.address_street(user),
@@ -357,12 +283,6 @@ defmodule Vae.User do
     Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
   end
 
-  def update_password_changeset(user, attrs) do
-    user
-    |> pow_password_changeset(attrs)
-    |> pow_current_password_changeset(attrs)
-  end
-
   def profile_url(endpoint, path \\ nil)
 
   def profile_url(endpoint, %UserApplication{} = application) do
@@ -379,6 +299,17 @@ defmodule Vae.User do
       path: "#{System.get_env("NUXT_PROFILE_PATH")}#{path || "/"}"
     }
     |> Vae.URI.to_absolute_string(endpoint)
+  end
+
+  def extract_identity_data(changeset) do
+    duplicated_fields = ~w(email first_name last_name)a
+
+    Enum.reduce(duplicated_fields, changeset, fn field, changeset ->
+      value = changeset
+      |> get_field(:identity)
+      |> Map.get(field)
+      put_change(changeset, field, value || get_field(changeset, field))
+    end)
   end
 
   def downcase_email(changeset) do

@@ -7,6 +7,7 @@ defmodule VaeWeb.AuthController do
   alias Vae.PoleEmploi
   alias Vae.PoleEmploi.OAuth
   alias Vae.PoleEmploi.OAuth.Clients
+  alias Vae.User
 
   def save_session_and_redirect(conn, _params) do
     referer = List.first(get_req_header(conn, "referer"))
@@ -25,8 +26,9 @@ defmodule VaeWeb.AuthController do
     with {:ok, {token, user_info}} <- PoleEmploi.get_user_info(state, code) do
       case Account.get_user_by_pe(user_info["idIdentiteExterne"]) do
         nil ->
-          user_info
-          |> Account.create_user_from_pe()
+          %User{}
+          |> User.changeset(User.map_params_from_pe(user_info))
+          |> Repo.insert()
           |> Account.complete_user_profile(token)
 
         user ->

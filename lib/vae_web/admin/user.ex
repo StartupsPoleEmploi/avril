@@ -65,9 +65,6 @@ defmodule Vae.ExAdmin.User do
       column(:pe_id)
     end
 
-    create_changeset(:admin_changeset)
-    update_changeset(:admin_changeset)
-
     show user do
       attributes_table() do
         row(:gender)
