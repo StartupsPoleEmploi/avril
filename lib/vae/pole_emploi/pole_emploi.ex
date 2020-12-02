@@ -14,10 +14,12 @@ defmodule Vae.PoleEmploi do
   @skills_path "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences"
 
   def get_complete_user_infos(state, code) do
-    with({:ok, token} <- get_token(state, code)) do
-      user_infos = fetch_all(token)
+    with(
+      {:ok, token} <- get_token(state, code),
+      {:ok, user_infos} <- fetch_all(token)
+    ) do
 
-      Map.put(user_infos, :identity, Identity.from_pe_connect_infos(user_infos))
+      {:ok, Map.put(user_infos, :identity, Identity.from_pe_connect_infos(user_infos))}
     end
   end
 

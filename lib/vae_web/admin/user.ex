@@ -10,7 +10,6 @@ defmodule Vae.ExAdmin.User do
       column(:first_name)
       column(:last_name)
       column(:email)
-      column(:city_label)
       column(:is_admin)
 
       actions()
@@ -28,17 +27,9 @@ defmodule Vae.ExAdmin.User do
     end
 
     filter([
-      :identity,
       :first_name,
       :last_name,
       :email,
-      :postal_code,
-      :address1,
-      :address2,
-      :address3,
-      :address4,
-      :city_label,
-      :country_label,
       :pe_id
     ])
 
@@ -47,44 +38,17 @@ defmodule Vae.ExAdmin.User do
       column(:first_name)
       column(:last_name)
       column(:email)
-      column(:email_confirmed_at)
       column(:is_admin)
-      column(:gender)
-      column(:phone_number)
-      column(:postal_code)
-      column(:address1)
-      column(:address2)
-      column(:address3)
-      column(:address4)
-      column(:insee_code)
-      column(:country_code)
-      column(:city_label)
-      column(:country_label)
-      column(:birthday)
-      column(:birth_place)
       column(:pe_id)
+      column(:identity)
     end
 
     show user do
       attributes_table() do
-        row(:gender)
         row(:first_name)
         row(:last_name)
         row(:email)
-        row(:email_confirmed_at)
         row(:is_admin)
-        row(:phone_number)
-        row(:postal_code)
-        row(:address1)
-        row(:address2)
-        row(:address3)
-        row(:address4)
-        row(:insee_code)
-        row(:country_code)
-        row(:city_label)
-        row(:country_label)
-        row(:birthday)
-        row(:birth_place)
         row(:pe_id)
         row(:identity, fn a -> Helpers.print_in_json(a.identity) end)
       end
@@ -147,24 +111,6 @@ defmodule Vae.ExAdmin.User do
         end
       end
     end
-
-    # action_item(:show, fn id ->
-    #   user = Vae.Repo.get(Vae.User, id)
-
-    #   href =
-    #     VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
-
-    #   action_item_link("Connect as #{Vae.User.fullname(user)}", href: href, "data-method": :put)
-    # end)
-
-
-    # if Plug.Conn.get_session(conn, :admin_current_user_id) do
-    #   action_item(:index, fn ->
-    #     href =
-    #       VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
-    #     action_item_link("Disconnect as #{Vae.User.fullname(user)}", href: href, "data-method": :put)
-    #   end)
-    # end
 
     query do
       %{

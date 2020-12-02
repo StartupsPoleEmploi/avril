@@ -5,7 +5,7 @@ section.section.eligibility-page
         = if @current_user do
           = if @is_eligible do
             h1.title.is-1 Excellente nouvelle !
-            h2.title.is-2 #{Vae.Identity.fullname(@current_user)}, vous êtes éligible !
+            h2.title.is-2 #{Vae.User.fullname(@current_user)}, vous êtes éligible !
             p.subtitle Félicitations pour cette bonne nouvelle !
             p.subtitle Avril va maintenant vous aider à faire rimer expérience et diplôme !
             p= link("Choisir mon diplôme", to: Routes.root_path(@conn, :index), class: "button is-primary is-medium is-rounded", data: [analytics: "Eligibilite#yes"])
@@ -13,12 +13,12 @@ section.section.eligibility-page
             h1.title.is-1 Vous y êtes presque ...
             = if @worked_hours > 0 do
               h4.title.is-4
-                ' #{Vae.Identity.fullname(@current_user)}, depuis ces 13 derniers mois,
+                ' #{Vae.User.fullname(@current_user)}, depuis ces 13 derniers mois,
                 ' vous justifiez de
                 strong #{Vae.String.inflect(@worked_hours, "heure")} d'expérience professionnelle
                 |  sur les #{@total_hours} requises.
             - else
-              h4.title.is-4 #{Vae.Identity.fullname(@current_user)}, aucune période d'emploi n'est enregistrée par nos services, la VAE reste quand même accessible !
+              h4.title.is-4 #{Vae.User.fullname(@current_user)}, aucune période d'emploi n'est enregistrée par nos services, la VAE reste quand même accessible !
             .content
               p Avez-vous d'autres expériences que celles connues par Pôle emploi ?
               p Oui ? Alors poursuivez la démarche si vous totalisez au moins 1 an d'expérience !

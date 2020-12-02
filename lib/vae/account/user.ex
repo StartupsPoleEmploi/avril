@@ -8,10 +8,7 @@ defmodule Vae.User do
     password_hash_methods: {&Bcrypt.hash_pwd_salt/1, &Bcrypt.verify_pass/2}
 
   use Pow.Extension.Ecto.Schema,
-    extensions: [
-      # PowEmailConfirmation,
-      PowResetPassword
-    ]
+    extensions: [PowResetPassword]
 
   import Pow.Ecto.Schema.Changeset,
     only: [new_password_changeset: 3, confirm_password_changeset: 3]
@@ -19,6 +16,7 @@ defmodule Vae.User do
   alias __MODULE__
 
   alias Vae.{
+    Booklet.Address,
     UserApplication,
     Experience,
     Identity,
@@ -31,31 +29,10 @@ defmodule Vae.User do
   schema "users" do
     pow_user_fields()
 
-    # Legacy fields to keep data
-    # field :confirmation_token, :string
-    # field :confirmed_at, :utc_datetime
-
-    field(:gender, :string, default: "female")
-    field(:name, :string)
     field(:first_name, :string)
     field(:last_name, :string)
-    # field(:email, :string)
-    field(:email_confirmed_at, :utc_datetime)
-    field(:phone_number, :string)
     field(:is_admin, :boolean)
-    field(:postal_code, :string)
-    field(:address1, :string)
-    field(:address2, :string)
-    field(:address3, :string)
-    field(:address4, :string)
-    field(:insee_code, :string)
-    field(:country_code, :string)
-    field(:city_label, :string)
-    field(:country_label, :string)
-    field(:birthday, :date)
-    field(:birth_place, :string)
     field(:pe_id, :string)
-    field(:pe_connect_token, :string)
 
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
@@ -70,25 +47,10 @@ defmodule Vae.User do
   end
 
   @fields ~w(
-    gender
+    email
     first_name
     last_name
-    email
-    email_confirmed_at
-    phone_number
-    postal_code
-    address1
-    address2
-    address3
-    address4
-    insee_code
-    country_code
-    city_label
-    country_label
-    birthday
-    birth_place
     pe_id
-    pe_connect_token
     is_admin
   )a
 
@@ -97,17 +59,6 @@ defmodule Vae.User do
     password_confirmation
     current_password
   )
-
-  @application_submit_fields ~w(
-    gender
-    first_name
-    last_name
-    email
-    postal_code
-    city_label
-    country_label
-    birthday
-  )a
 
   def changeset(model, params \\ %{})
 
@@ -163,6 +114,7 @@ defmodule Vae.User do
 
   def can_submit_or_register?(%User{} = user) do
     %Ecto.Changeset{valid?: valid} = changeset = user
+    |> cast(%{identity: %{}}, [])
     |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
 
     if valid, do: {:ok, changeset}, else: {:error, changeset}
@@ -175,10 +127,6 @@ defmodule Vae.User do
        do: confirm_password_changeset(changeset, attrs, @pow_config)
 
   defp maybe_confirm_password(changeset, _attrs), do: changeset
-
-  def submit_application_required_missing_fields(user) do
-    Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
-  end
 
   def worked_hours(%User{} = user) do
     user.proven_experiences
@@ -220,16 +168,12 @@ defmodule Vae.User do
   }), do:
     Vae.String.blank_is_nil("#{identity[:first_name] || first_name} #{identity[:last_name] || last_name}") || email
 
-  def formatted_email(%User{
-    email: email,
-    identity: %Identity{
-      first_name: first_name,
-      last_name: last_name,
-    }
-  } = user) do
+  def formatted_email(%User{email: email} = user) do
     case fullname(user) do
       name when name == email -> email
       name -> {name, email}
     end
   end
+
+  def address(%{identity: %Identity{full_address: address}}), do: Address.address(address)
 end

@@ -108,47 +108,46 @@ defmodule Vae.UserApplication do
   end
 
   # Deprecated
-  def submit(application, auto_submitted \\ false) do
-    application = Repo.preload(application, [:user, :delegate])
+  # def submit(application, auto_submitted \\ false) do
+  #   application = Repo.preload(application, [:user, :delegate])
 
-    case User.submit_application_required_missing_fields(application.user) do
-      [] ->
-        if is_nil(application.submitted_at) do
-          with(
-            {:ok, application} <-
-              Repo.update(
-                __MODULE__.changeset(application, %{
-                  delegate_access_hash: generate_hash(64),
-                  delegate_access_refreshed_at: DateTime.utc_now()
-                })
-              ),
-            {:ok, _messages} <-
-              Mailer.send(
-                if Delegate.is_asp?(application.delegate),
-                  do: ApplicationEmail.asp_user_submission_confirmation(application),
-                  else: [
-                    ApplicationEmail.delegate_submission(application),
-                    ApplicationEmail.user_submission_confirmation(application)
-                  ]
-              )
-          ) do
-            Repo.update(
-              __MODULE__.changeset(application, %{
-                has_just_been_auto_submitted: auto_submitted,
-                submitted_at: DateTime.utc_now()
-              })
-            )
-          else
-            error -> error
-          end
-        else
-          {:ok, application}
-        end
+  #   case User.can_submit_or_register?(application.user) do
+  #     {:ok, _valid} ->
+  #       if is_nil(application.submitted_at) do
+  #         with(
+  #           {:ok, application} <-
+  #             Repo.update(
+  #               __MODULE__.changeset(application, %{
+  #                 delegate_access_hash: generate_hash(64),
+  #                 delegate_access_refreshed_at: DateTime.utc_now()
+  #               })
+  #             ),
+  #           {:ok, _messages} <-
+  #             Mailer.send(
+  #               if Delegate.is_asp?(application.delegate),
+  #                 do: ApplicationEmail.asp_user_submission_confirmation(application),
+  #                 else: [
+  #                   ApplicationEmail.delegate_submission(application),
+  #                   ApplicationEmail.user_submission_confirmation(application)
+  #                 ]
+  #             )
+  #         ) do
+  #           Repo.update(
+  #             __MODULE__.changeset(application, %{
+  #               has_just_been_auto_submitted: auto_submitted,
+  #               submitted_at: DateTime.utc_now()
+  #             })
+  #           )
+  #         else
+  #           error -> error
+  #         end
+  #       else
+  #         {:ok, application}
+  #       end
 
-      missing_fields ->
-        {:error, "Remplissez d'abord les données manquantes : #{Enum.join(missing_fields, ", ")}"}
-    end
-  end
+  #     error -> error
+  #   end
+  # end
 
   def list_from_last_month(%Date{} = end_date) do
     start_date = Vae.Date.get_previous_month(end_date)

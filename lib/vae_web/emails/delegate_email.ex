@@ -1,7 +1,7 @@
 defmodule VaeWeb.DelegateEmail do
   alias VaeWeb.Mailer
 
-  alias Vae.{Certification, Repo, URI}
+  alias Vae.{Certification, User, Repo, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
   @afpa_cc System.get_env("AFPA_CC_ADDRESS")
