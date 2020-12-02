@@ -60,7 +60,7 @@ defmodule VaeWeb.UserApplicationController do
         :resumes
       ])
     booklet = application.booklet_1 || %Cerfa{}
-    title = "Recevabilité VAE de #{User.fullname(application.user.identity)} pour un diplôme de #{
+    title = "Recevabilité VAE de #{User.fullname(application.user)} pour un diplôme de #{
       Certification.name(application.certification)
     }"
     assigns = %{
