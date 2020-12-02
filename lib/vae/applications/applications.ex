@@ -1,8 +1,7 @@
 defmodule Vae.Applications do
   import Ecto.Query
 
-  alias Vae.{Account, Booklet, Certification, Meetings, Resume, User, UserApplication}
-  alias Vae.Repo
+  alias Vae.{Booklet, Certification, Meetings, Repo, Resume, User, UserApplication}
 
   @doc "Lists applications from a User ID"
   def get_applications(user_id) do
@@ -50,7 +49,7 @@ defmodule Vae.Applications do
     do: {:error, "You must provide a meeting_id"}
 
   def register_to_a_meeting(application, meeting_id) do
-    with user <- Account.get_user(application.user_id),
+    with user <- Repo.get(User, application.user_id),
          {:ok, _valid} <-
           User.can_submit_or_register?(user),
          {:ok, meeting} <-

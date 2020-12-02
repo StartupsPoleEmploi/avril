@@ -8,7 +8,7 @@ defmodule VaeWeb.Mailer do
     layout: {VaeWeb.EmailsView, :layout}
 
   alias Swoosh.Email
-  alias Vae.{Account, JobSeeker, User}
+  alias Vae.{JobSeeker, User}
 
   @config Application.get_env(:vae, VaeWeb.Mailer)
   @override_to System.get_env("DEV_EMAILS")
@@ -64,7 +64,7 @@ defmodule VaeWeb.Mailer do
 
   defp format_mailer!(:avril_from), do: {@config[:avril_name], String.downcase(@config[:avril_from])}
   defp format_mailer!(:avril_to), do: {@config[:avril_name], String.downcase(@config[:avril_to])}
-  defp format_mailer!(%User{} = user), do: Account.formatted_email(user)
+  defp format_mailer!(%User{} = user), do: User.formatted_email(user)
   defp format_mailer!(%JobSeeker{} = job_seeker), do: JobSeeker.formatted_email(job_seeker)
   defp format_mailer!(%{name: name, email: email}), do: {name, String.downcase(email)}
   defp format_mailer!(%{Name: name, Email: email}), do: {name, String.downcase(email)}

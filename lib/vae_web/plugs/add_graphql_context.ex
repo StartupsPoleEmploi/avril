@@ -1,5 +1,6 @@
 defmodule VaeWeb.Plugs.AddGraphqlContext do
   @behaviour Plug
+  alias Vae.{Repo, User}
 
   def init(opts), do: opts
 
@@ -19,13 +20,13 @@ defmodule VaeWeb.Plugs.AddGraphqlContext do
         Vae.Repo.preload(conn.assigns[:current_application], :user).user
       else
         if conn.assigns[:current_user] do
-          Vae.Account.get_user(conn.assigns[:current_user].id)
+          Repo.get(User, conn.assigns[:current_user].id)
         end
       end
 
     user_id = Plug.Conn.get_session(conn, Application.get_env(:ex_admin, :override_user_id_session_key))
     if user_id && current_user && current_user.is_admin do
-      Vae.Account.get_user(user_id)
+      Repo.get(User, user_id)
     else
       current_user
     end

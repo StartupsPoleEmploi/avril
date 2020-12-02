@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, UserApplication, Repo}
+  alias Vae.{UserApplications.Polls, Certification, Delegate, User, UserApplication, Repo}
   alias Vae.Booklet.{Cerfa, Education}
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
@@ -37,7 +37,7 @@ defmodule VaeWeb.UserApplicationController do
 
     render(conn, "show.html", %{
       title:
-        "Candidature VAE de #{Identity.fullname(application.user)} pour un diplôme de #{
+        "Candidature VAE de #{User.fullname(application.user)} pour un diplôme de #{
           Certification.name(application.certification)
         }",
       remove_navbar: true,
@@ -60,7 +60,7 @@ defmodule VaeWeb.UserApplicationController do
         :resumes
       ])
     booklet = application.booklet_1 || %Cerfa{}
-    title = "Recevabilité VAE de #{Identity.fullname(application.user.identity)} pour un diplôme de #{
+    title = "Recevabilité VAE de #{User.fullname(application.user.identity)} pour un diplôme de #{
       Certification.name(application.certification)
     }"
     assigns = %{

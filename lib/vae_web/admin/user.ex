@@ -154,7 +154,7 @@ defmodule Vae.ExAdmin.User do
     #   href =
     #     VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
 
-    #   action_item_link("Connect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
+    #   action_item_link("Connect as #{Vae.User.fullname(user)}", href: href, "data-method": :put)
     # end)
 
 
@@ -162,7 +162,7 @@ defmodule Vae.ExAdmin.User do
     #   action_item(:index, fn ->
     #     href =
     #       VaeWeb.Router.Helpers.api_path(VaeWeb.Endpoint, :set_current_user, user)
-    #     action_item_link("Disconnect as #{Vae.Identity.fullname(user)}", href: href, "data-method": :put)
+    #     action_item_link("Disconnect as #{Vae.User.fullname(user)}", href: href, "data-method": :put)
     #   end)
     # end
 

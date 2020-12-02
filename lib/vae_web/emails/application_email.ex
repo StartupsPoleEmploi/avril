@@ -3,7 +3,7 @@ defmodule VaeWeb.ApplicationEmail do
 
   @date_format "%d/%m/%Y à %H:%M"
 
-  alias Vae.{Account, Certification, Delegate, Repo, User, URI}
+  alias Vae.{Certification, Delegate, Repo, User, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
   def delegate_submission(application, endpoint \\ URI.endpoint()) do
@@ -18,7 +18,7 @@ defmodule VaeWeb.ApplicationEmail do
           Routes.user_application_url(endpoint, :show, application,
             hash: application.delegate_access_hash
           ),
-        username: Account.fullname(application.user),
+        username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         date_format: @date_format,
         meeting: application.meeting,
@@ -36,7 +36,7 @@ defmodule VaeWeb.ApplicationEmail do
       application.user,
       %{
         url: User.profile_url(endpoint, application),
-        username: Account.fullname(application.user),
+        username: User.fullname(application.user),
         meeting: application.meeting,
         is_france_vae: application.delegate && application.delegate.academy_id,
         is_afpa: application.delegate && Delegate.is_afpa?(application.delegate),
@@ -62,7 +62,7 @@ defmodule VaeWeb.ApplicationEmail do
       application.user,
       %{
         url: User.profile_url(endpoint, application),
-        username: Account.fullname(application.user),
+        username: User.fullname(application.user),
         meeting: application.meeting,
         certification_name: Certification.name(application.certification),
         delegate_person_name: application.delegate.person_name,
@@ -84,7 +84,7 @@ defmodule VaeWeb.ApplicationEmail do
       %{
         url: User.profile_url(endpoint, "/mes-rendez-vous"),
         meeting: application.meeting,
-        username: Account.fullname(application.user),
+        username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_phone_number: application.delegate.telephone,
         image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
@@ -98,7 +98,7 @@ defmodule VaeWeb.ApplicationEmail do
     application = Repo.preload(application, [:user, :certification])
     finish_booklet_todo = application.booklet_1 && application.booklet_1.inserted_at
     certification_name = Certification.name(application.certification)
-    username = Account.fullname(application.user)
+    username = User.fullname(application.user)
 
     Mailer.build_email(
       "application/user_raise.html",

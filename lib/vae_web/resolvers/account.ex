@@ -1,7 +1,7 @@
 defmodule VaeWeb.Resolvers.Account do
   import VaeWeb.Resolvers.ErrorHandler
 
-  alias Vae.{Account, User, Repo}
+  alias Vae.{User, Repo}
 
   @update_profile_error "Erreur de mise à jour du profil"
   @update_password_error "Erreur lors de la mise à jour du mot de passe"
@@ -14,13 +14,10 @@ defmodule VaeWeb.Resolvers.Account do
     user
     |> User.changeset(%{identity: params})
     |> Repo.update()
-    # |> Account.update_identity_item(user)
     |> case do
+      {:ok, %User{identity: identity}} -> {:ok, identity}
       {:error, changeset} ->
         error_response(@update_profile_error, changeset)
-
-      {:ok, updated_user} ->
-        {:ok, Account.get_user(updated_user.id).identity}
     end
   end
 
@@ -29,11 +26,10 @@ defmodule VaeWeb.Resolvers.Account do
     |> User.update_password_changeset(params)
     |> Repo.update()
     |> case do
+      {:ok, %User{identity: identity}} -> {:ok, identity}
       {:error, changeset} ->
         error_response(@update_password_error, changeset)
 
-      {:ok, updated_user} ->
-        {:ok, Account.get_user(updated_user.id).identity}
     end
   end
 end

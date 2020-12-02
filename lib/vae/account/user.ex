@@ -143,6 +143,24 @@ defmodule Vae.User do
     |> pow_current_password_changeset(attrs)
   end
 
+  def extract_identity_data(changeset) do
+    duplicated_fields = ~w(email first_name last_name)a
+
+    Enum.reduce(duplicated_fields, changeset, fn field, changeset ->
+      value = (get_field(changeset, :identity) || %{})
+        |> Map.get(field)
+
+      put_change(changeset, field, value || get_field(changeset, field))
+    end)
+  end
+
+  def downcase_email(changeset) do
+    case get_field(changeset, :email) do
+      email when is_binary(email) -> put_change(changeset, :email, String.downcase(email))
+      nil -> changeset
+    end
+  end
+
   def can_submit_or_register?(%User{} = user) do
     %Ecto.Changeset{valid?: valid} = changeset = user
     |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
@@ -158,13 +176,9 @@ defmodule Vae.User do
 
   defp maybe_confirm_password(changeset, _attrs), do: changeset
 
-  # def address(user) do
-  #   [
-  #     Vae.Account.address_street(user),
-  #     Vae.Account.address_city(user)
-  #   ]
-  #   |> Vae.Enum.join_keep_nil("\n")
-  # end
+  def submit_application_required_missing_fields(user) do
+    Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
+  end
 
   def worked_hours(%User{} = user) do
     user.proven_experiences
@@ -178,10 +192,6 @@ defmodule Vae.User do
 
   def is_eligible(%User{} = user) do
     worked_hours(user) >= 1607 || worked_days(user) >= 500
-  end
-
-  def submit_application_required_missing_fields(user) do
-    Enum.filter(@application_submit_fields, fn field -> is_nil(Map.get(user, field)) end)
   end
 
   def profile_url(endpoint, path \\ nil)
@@ -202,21 +212,24 @@ defmodule Vae.User do
     |> Vae.URI.to_absolute_string(endpoint)
   end
 
-  def extract_identity_data(changeset) do
-    duplicated_fields = ~w(email first_name last_name)a
+  def fullname(%User{
+    first_name: first_name,
+    last_name: last_name,
+    email: email,
+    identity: identity
+  }), do:
+    Vae.String.blank_is_nil("#{identity[:first_name] || first_name} #{identity[:last_name] || last_name}") || email
 
-    Enum.reduce(duplicated_fields, changeset, fn field, changeset ->
-      value = (get_field(changeset, :identity) || %{})
-        |> Map.get(field)
-
-      put_change(changeset, field, value || get_field(changeset, field))
-    end)
-  end
-
-  def downcase_email(changeset) do
-    case get_field(changeset, :email) do
-      email when is_binary(email) -> put_change(changeset, :email, String.downcase(email))
-      nil -> changeset
+  def formatted_email(%User{
+    email: email,
+    identity: %Identity{
+      first_name: first_name,
+      last_name: last_name,
+    }
+  } = user) do
+    case fullname(user) do
+      name when name == email -> email
+      name -> {name, email}
     end
   end
 end

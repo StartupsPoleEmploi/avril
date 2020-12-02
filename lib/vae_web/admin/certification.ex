@@ -73,7 +73,7 @@ defmodule Vae.ExAdmin.Certification do
       panel "user applications" do
         table_for certification.applications do
           column(:id, &Helpers.link_to_resource(&1))
-          column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.Identity.fullname(&1))) end)
+          column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
           column(:application_delegate, &Helpers.link_to_resource(&1.delegate))
           column(:submitted_at)
           column(:admissible_at)

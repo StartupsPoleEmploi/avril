@@ -1,7 +1,7 @@
 defmodule VaeWeb.DelegateEmail do
   alias VaeWeb.Mailer
 
-  alias Vae.{Certification, Identity, Repo, URI}
+  alias Vae.{Certification, Repo, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
   @afpa_cc System.get_env("AFPA_CC_ADDRESS")
@@ -15,7 +15,7 @@ defmodule VaeWeb.DelegateEmail do
       Map.merge(%{
         delegate: delegate,
         applications: delegate.recent_applications,
-        label: fn a -> "#{Identity.fullname(a.user.identity)} : #{Certification.name(a.certification)}" end,
+        label: fn a -> "#{User.fullname(a.user)} : #{Certification.name(a.certification)}" end,
         link: fn a -> Routes.user_application_url(endpoint, :show, a, [delegate_hash: a.delegate_access_hash]) end,
         footer_note: :delegate,
         cc: (if String.starts_with?(delegate.slug, "afpa") && @afpa_cc, do: @afpa_cc)

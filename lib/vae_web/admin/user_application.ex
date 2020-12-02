@@ -3,7 +3,7 @@ defmodule Vae.ExAdmin.UserApplication do
   alias Vae.ExAdmin.Helpers
 
   # Note: Vae.UserApplication cannot be aliased here: ex_admin fails
-  alias Vae.{Account, Certification, Delegate, Repo}
+  alias Vae.{Certification, Delegate, Repo}
 
   require Ecto.Query
 
@@ -13,7 +13,7 @@ defmodule Vae.ExAdmin.UserApplication do
     index do
       selectable_column()
       column(:id)
-      column(:user, fn a -> Account.fullname(a.user) end)
+      column(:user, fn a -> Vae.User.fullname(a.user) end)
       column(:certification)
       column(:delegate)
 
@@ -55,7 +55,7 @@ defmodule Vae.ExAdmin.UserApplication do
 
     show application do
       attributes_table() do
-        row(:user, fn a -> Account.fullname(a.user) end)
+        row(:user, fn a -> Vae.User.fullname(a.user) end)
         row(:certification)
         row(:delegate)
         row(:inserted_at)

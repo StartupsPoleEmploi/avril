@@ -91,24 +91,6 @@ defmodule Vae.Identity do
     }
   end
 
-  def fullname(nil), do: nil
-
-  def fullname(%{first_name: first_name, last_name: last_name, email: email}) do
-    Vae.String.blank_is_nil("#{first_name} #{last_name}") || email
-  end
-
-  def fullname(%{email: email}), do: email
-
-  def formatted_email(%{identity: %{}} = user), do: user.email
-
-  def formatted_email(%{identity: identity} = user) do
-    if fullname(user) == identity.email do
-      String.downcase(identity.email)
-    else
-      {fullname(user), String.downcase(identity.email)}
-    end
-  end
-
   def is_man?(%Identity{gender: gender}) do
     String.starts_with?(gender, "m")
   end
