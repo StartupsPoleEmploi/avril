@@ -62,13 +62,12 @@ defmodule Vae.User do
 
   def changeset(model, params \\ %{})
 
-  def changeset(model, %{"password" => _pw} = params) do
+  def changeset(model, %{password: _pw, current_password: _cpw} = params) do
     model
     |> pow_user_id_field_changeset(params)
     |> pow_current_password_changeset(params)
     |> new_password_changeset(params, @pow_config)
-    |> maybe_confirm_password(params)
-    |> changeset(Map.drop(params, @password_fields))
+    |> confirm_password_changeset(params, @pow_config)
   end
 
   def changeset(model, params) do
@@ -85,13 +84,6 @@ defmodule Vae.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-  end
-
-  # TODO refactor with changeset password case
-  def update_password_changeset(user, attrs) do
-    user
-    |> pow_password_changeset(attrs)
-    |> pow_current_password_changeset(attrs)
   end
 
   def extract_identity_data(changeset) do
@@ -119,14 +111,6 @@ defmodule Vae.User do
 
     if valid, do: {:ok, changeset}, else: {:error, changeset}
   end
-
-  defp maybe_confirm_password(
-         changeset,
-         %{"password_confirmation" => _password_confirmation} = attrs
-       ),
-       do: confirm_password_changeset(changeset, attrs, @pow_config)
-
-  defp maybe_confirm_password(changeset, _attrs), do: changeset
 
   def worked_hours(%User{} = user) do
     user.proven_experiences
