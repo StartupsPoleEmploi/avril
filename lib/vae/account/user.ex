@@ -120,16 +120,7 @@ defmodule Vae.User do
     |> changeset(Map.drop(params, @password_fields))
   end
 
-  # TODO refactor with changeset password case
-  def update_password_changeset(user, attrs) do
-    user
-    |> pow_password_changeset(attrs)
-    |> pow_current_password_changeset(attrs)
-  end
-
   def changeset(model, params) do
-    # params = Map.put(params, :identity, params)
-
     model
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
@@ -145,60 +136,18 @@ defmodule Vae.User do
     |> unique_constraint(:email)
   end
 
-  def create_with_pe_infos(token) do
-    Repo.get_by()
+  # TODO refactor with changeset password case
+  def update_password_changeset(user, attrs) do
+    user
+    |> pow_password_changeset(attrs)
+    |> pow_current_password_changeset(attrs)
   end
 
-  def map_params_from_pe(user_info) do
-    user_info
-    |> extra_fields_for_create()
-    |> case do
-      {:ok, extra_fields} ->
-        Map.merge(extra_fields, %{
-          gender: user_info["gender"],
-          first_name: Vae.String.capitalize(user_info["given_name"]),
-          last_name: Vae.String.capitalize(user_info["family_name"]),
-          pe_id: user_info["idIdentiteExterne"],
-          job_seeker:
-            Repo.get_by(JobSeeker,
-              email: String.downcase(user_info["email"])
-            ),
-          email_confirmed_at: Timex.now()
-        })
-        |> Enum.reject(fn {_, v} -> is_nil(v) end)
-        |> Map.new()
-
-      {:incomplete, default} ->
-        default
-
-      {:error, default} ->
-        default
-    end
-  end
-
-  def extra_fields_for_create(%{"idIdentiteExterne" => pe_id, "email" => email}) do
-    tmp_password = "AVRIL_#{pe_id}_TMP_PASSWORD"
-
-    {:ok,
-     %{
-       email: String.downcase(email),
-       current_password: nil,
-       password: tmp_password,
-       password_confirmatin: tmp_password
-     }}
-  end
-
-  def extra_fields_for_create(%{"idIdentiteExterne" => pe_id}) do
-    Logger.error(fn -> "Missing email for #{pe_id}" end)
-    {:incomplete, %{}}
-  end
-
-  def extra_fields_for_create(_), do: {:error, %{}}
-
-  def register_identity_fields_required_changeset(model, _params \\ %{}) do
-    model
-    |> cast(%{identity: %{}}, [])
+  def can_submit_or_register?(%User{} = user) do
+    %Ecto.Changeset{valid?: valid} = changeset = user
     |> cast_embed(:identity, with: &Identity.validate_required_fields/2)
+
+    if valid, do: {:ok, changeset}, else: {:error, changeset}
   end
 
   defp maybe_confirm_password(
@@ -209,38 +158,13 @@ defmodule Vae.User do
 
   defp maybe_confirm_password(changeset, _attrs), do: changeset
 
-  def put_embed_if_necessary(changeset, params, key, _options \\ []) do
-    klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
-    klass = [Elixir, Vae, klass_name] |> Module.concat()
-
-    case params[key] do
-      nil ->
-        changeset
-
-      values when is_list(values) ->
-        put_embed(
-          changeset,
-          key,
-          Enum.uniq_by(
-            Map.get(changeset.data, key) ++ values,
-            &klass.unique_key/1
-          )
-        )
-
-      value ->
-        put_embed(changeset, key, value)
-    end
-  end
-
-  def fill_with_api_fields({:error, _msg} = error, _client_with_token), do: error
-
-  def address(user) do
-    [
-      Vae.Account.address_street(user),
-      Vae.Account.address_city(user)
-    ]
-    |> Vae.Enum.join_keep_nil("\n")
-  end
+  # def address(user) do
+  #   [
+  #     Vae.Account.address_street(user),
+  #     Vae.Account.address_city(user)
+  #   ]
+  #   |> Vae.Enum.join_keep_nil("\n")
+  # end
 
   def worked_hours(%User{} = user) do
     user.proven_experiences

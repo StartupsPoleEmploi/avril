@@ -52,7 +52,7 @@ defmodule Vae.Applications do
   def register_to_a_meeting(application, meeting_id) do
     with user <- Account.get_user(application.user_id),
          {:ok, _valid} <-
-           Account.validate_required_fields_to_register_meeting(user),
+          User.can_submit_or_register?(user),
          {:ok, meeting} <-
            Meetings.register_france_vae_meetings(meeting_id, application) do
       application
@@ -85,7 +85,7 @@ defmodule Vae.Applications do
 
   @doc "Prepare the application before sending to the delegate"
   def prepare_submit(%UserApplication{submitted_at: nil} = application) do
-    with {:ok, _valid} <- Account.validate_required_fields_to_register_meeting(application.user) do
+    with {:ok, _valid} <- User.can_submit_or_register?(application.user) do
       generate_delegate_access_hash(application)
     else
       error ->

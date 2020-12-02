@@ -50,6 +50,29 @@ defmodule VaeWeb do
         |> order_by([q, u], [desc: count(u.id)])
       end
 
+      def put_embed_if_necessary(changeset, params, key, _options \\ []) do
+        klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
+        klass = [Elixir, Vae, klass_name] |> Module.concat()
+
+        case params[key] do
+          nil ->
+            changeset
+
+          values when is_list(values) ->
+            put_embed(
+              changeset,
+              key,
+              Enum.uniq_by(
+                Map.get(changeset.data, key) ++ values,
+                &klass.unique_key/1
+              )
+            )
+
+          value ->
+            put_embed(changeset, key, value)
+        end
+      end
+
       def put_param_assoc(%Ecto.Changeset{data: %struct{} = element} = changeset, key, params) do
         with(
           changeset <- %Ecto.Changeset{changeset | data: Repo.preload(element, key)},

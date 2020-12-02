@@ -3,22 +3,16 @@ defmodule VaeWeb.AuthController do
 
   require Logger
 
-  alias Vae.Account
-  alias Vae.PoleEmploi
-  alias Vae.PoleEmploi.OAuth
-  alias Vae.PoleEmploi.OAuth.Clients
-  alias Vae.Identity
-  alias Vae.User
-  alias Vae.Repo
+  alias Vae.{PoleEmploi, Repo, User}
 
   def save_session_and_redirect(conn, _params) do
     referer = List.first(get_req_header(conn, "referer"))
 
-    client = OAuth.init_client()
+    client = PoleEmploi.OAuth.init_client()
 
-    {:ok, client} = Clients.add_client(client, client.params[:state], client.params[:nonce])
+    {:ok, client} = PoleEmploi.OAuth.Clients.add_client(client, client.params[:state], client.params[:nonce])
 
-    url = OAuth.get_authorize_url!(client)
+    url = PoleEmploi.OAuth.get_authorize_url!(client)
 
     put_session(conn, :referer, referer)
     |> redirect(external: url)
@@ -29,7 +23,7 @@ defmodule VaeWeb.AuthController do
       {:ok, %{pe_id: pe_id} = user_infos} <- PoleEmploi.get_complete_user_infos(state, code)
     ) do
       case Repo.get_by(User, pe_id: pe_id) do
-        %User{} = u -> User.changeset(user_infos)
+        %User{} = u -> User.changeset(u, user_infos)
         nil -> User.changeset(%User{}, Map.merge(user_infos, %{
           current_password: nil,
           password: "AVRIL_#{pe_id}_TMP_PASSWORD",
