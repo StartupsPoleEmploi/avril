@@ -29,6 +29,7 @@ defmodule VaeWeb.JobSeekerEmail do
         job_seeker_id: id,
         job_seeker_msg: true,
         footer_note: :inscrit_de,
+        can_unsubscribe: true,
         custom_id: UUID.uuid5(nil, email)
       }
     )
