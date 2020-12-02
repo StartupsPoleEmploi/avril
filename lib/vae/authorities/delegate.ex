@@ -92,7 +92,6 @@ defmodule Vae.Delegate do
   def changeset(struct, params \\ %{}) do
     struct
     |> Repo.preload([
-      :process,
       :recent_applications,
       :applications,
       :certifiers,
@@ -124,7 +123,6 @@ defmodule Vae.Delegate do
     |> validate_format(:email, ~r/@/)
     |> validate_format(:secondary_email, ~r/@/)
     |> add_geolocation(params)
-    |> put_param_assoc(:process, params)
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
@@ -241,8 +239,7 @@ defmodule Vae.Delegate do
     else
       # This case should not happen after academy_ids are set
       if is_educ_nat?(delegate) && !is_corse?(delegate) do
-        Repo.preload(delegate, :process).process.booklet_1 ||
-          Vae.Meetings.FranceVae.Config.get_domain_name()
+        Vae.Meetings.FranceVae.Config.get_domain_name()
       end
     end
   end

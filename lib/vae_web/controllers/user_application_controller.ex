@@ -21,7 +21,7 @@ defmodule VaeWeb.UserApplicationController do
       conn.assigns[:current_application]
       |> Repo.preload([
         :user,
-        [delegate: [:process, :certifiers]],
+        [delegate: [:certifiers]],
         :certification,
         :resumes
       ])
@@ -55,7 +55,7 @@ defmodule VaeWeb.UserApplicationController do
       conn.assigns[:current_application]
       |> Repo.preload([
         :user,
-        [delegate: [:process, :certifiers]],
+        [delegate: [:certifiers]],
         :certification,
         :resumes
       ])

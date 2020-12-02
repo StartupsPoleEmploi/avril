@@ -184,10 +184,10 @@ defmodule Vae.ExAdmin.Delegate do
 
     query do
       %{
-        index: [preload: [:process, :certifiers, :certifications, :applications], default_sort: [asc: :id]],
-        show: [preload: [:process, :certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
-        edit: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
-        update: [preload: [:process, :rncp_certifications, :included_certifications, :excluded_certifications]],
+        index: [preload: [:certifiers, :certifications, :applications], default_sort: [asc: :id]],
+        show: [preload: [:certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
+        edit: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
+        update: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
       }
     end
   end

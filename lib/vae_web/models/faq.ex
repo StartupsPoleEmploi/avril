@@ -8,8 +8,8 @@ defmodule Vae.FAQ do
     timestamps()
   end
 
-  def changeset(process, params \\ %{}) do
-    process
+  def changeset(model, params \\ %{}) do
+    model
     |> cast(
       params,
       ~w(question answer order)a
