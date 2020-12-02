@@ -125,6 +125,7 @@ defmodule VaeWeb.ApplicationEmail do
         admissible_url: Routes.user_application_url(endpoint, :admissible, application),
         inadmissible_url: Routes.user_application_url(endpoint, :inadmissible, application),
         text_center: true,
+        can_unsubscribe: true,
         footer_note: :mise_en_relation
       }
     )
