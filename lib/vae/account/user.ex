@@ -60,27 +60,10 @@ defmodule Vae.User do
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
     has_many(:applications, UserApplication, on_replace: :delete, on_delete: :delete_all)
-    # Deprecated
-    has_one(:current_application, UserApplication, on_replace: :delete, on_delete: :delete_all)
-
-    has_one(
-      :current_delegate,
-      through: [:current_application, :delegate],
-      on_delete: :nilify
-    )
-
-    has_one(
-      :current_certification,
-      through: [:current_application, :certification],
-      on_delete: :nilify
-    )
 
     embeds_many(:skills, Skill, on_replace: :delete)
-
     embeds_many(:experiences, Experience, on_replace: :delete)
-
     embeds_many(:proven_experiences, ProvenExperience, on_replace: :delete)
-
     embeds_one(:identity, Identity, on_replace: :update)
 
     timestamps()
@@ -137,36 +120,33 @@ defmodule Vae.User do
     |> changeset(Map.drop(params, @password_fields))
   end
 
-  def changeset(model, params) do
-    params = Map.put(params, :identity, params)
-
-    model
-    |> cast(params, @fields)
-    |> pow_extension_changeset(params)
-    |> IO.inspect()
-    |> maybe_put_identity(params)
-    |> extract_identity_data()
-    |> downcase_email()
-    |> validate_required([:email])
-    |> validate_format(:email, ~r/@/)
-    |> unique_constraint(:email)
-    |> put_embed_if_necessary(params, :skills)
-    |> put_embed_if_necessary(params, :experiences)
-    |> put_embed_if_necessary(params, :proven_experiences)
-    |> put_job_seeker(params[:job_seeker])
-  end
-
-  def maybe_put_identity(%Ecto.Changeset{data: %User{identity: identity}} = changeset, %{identity: identity_params}) do
-    put_embed(changeset, :identity, Identity.changeset(identity, IO.inspect(identity_params)))
-  end
-
-  def maybe_put_identity(changeset, _), do: changeset
-
   # TODO refactor with changeset password case
   def update_password_changeset(user, attrs) do
     user
     |> pow_password_changeset(attrs)
     |> pow_current_password_changeset(attrs)
+  end
+
+  def changeset(model, params) do
+    # params = Map.put(params, :identity, params)
+
+    model
+    |> cast(params, @fields)
+    |> pow_extension_changeset(params)
+    |> put_embed_if_necessary(params, :identity)
+    |> put_embed_if_necessary(params, :skills)
+    |> put_embed_if_necessary(params, :experiences)
+    |> put_embed_if_necessary(params, :proven_experiences)
+    |> put_param_assoc(:job_seeker, params)
+    |> extract_identity_data()
+    |> downcase_email()
+    |> validate_required([:email])
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
+  end
+
+  def create_with_pe_infos(token) do
+    Repo.get_by()
   end
 
   def map_params_from_pe(user_info) do
@@ -228,9 +208,6 @@ defmodule Vae.User do
        do: confirm_password_changeset(changeset, attrs, @pow_config)
 
   defp maybe_confirm_password(changeset, _attrs), do: changeset
-
-  defp put_job_seeker(changeset, nil), do: changeset
-  defp put_job_seeker(changeset, job_seeker), do: put_assoc(changeset, :job_seeker, job_seeker)
 
   def put_embed_if_necessary(changeset, params, key, _options \\ []) do
     klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
@@ -305,17 +282,17 @@ defmodule Vae.User do
     duplicated_fields = ~w(email first_name last_name)a
 
     Enum.reduce(duplicated_fields, changeset, fn field, changeset ->
-      value = changeset
-      |> get_field(:identity)
-      |> Map.get(field)
+      value = (get_field(changeset, :identity) || %{})
+        |> Map.get(field)
+
       put_change(changeset, field, value || get_field(changeset, field))
     end)
   end
 
   def downcase_email(changeset) do
     case get_field(changeset, :email) do
+      email when is_binary(email) -> put_change(changeset, :email, String.downcase(email))
       nil -> changeset
-      email -> put_change(changeset, :email, String.downcase(email))
     end
   end
 end

@@ -1,6 +1,7 @@
 defmodule Vae.PoleEmploi do
   require Logger
 
+  alias Vae.Identity
   alias Vae.PoleEmploi.Mappers
   alias Vae.PoleEmploi.OAuth
   alias Vae.PoleEmploi.OAuth.Clients
@@ -12,43 +13,36 @@ defmodule Vae.PoleEmploi do
   @proven_experiences_path "https://api.emploi-store.fr/partenaire/peconnect-experiencesprofessionellesdeclareesparlemployeur/v1/contrats"
   @skills_path "https://api.emploi-store.fr/partenaire/peconnect-competences/v2/competences"
 
-  def get_user_info(state, code) do
-    with(
-      {:ok, token} <- get_token(state, code),
-      {:ok, user_info} <- get(token, @user_info_path)
-    ) do
-      {:ok, {token, user_info}}
-    else
-      {:error, :unknown_client} = unknown_client ->
-        Logger.error(fn -> "Unable to retrieve token for state #{state} and code #{code}" end)
-        unknown_client
+  def get_complete_user_infos(state, code) do
+    with({:ok, token} <- get_token(state, code)) do
+      user_infos = fetch_all(token)
 
-      error ->
-        error
+      Map.put(user_infos, :identity, Identity.from_pe_connect_infos(user_infos))
     end
   end
 
-  def fetch_all(map, token) do
+  def fetch_all(token) do
     [
+      {Mappers.UserInfoMapper, &get_user_info/1},
       {Mappers.CivilStatusMapper, &get_civil_status/1},
       {Mappers.ExperiencesMapper, &get_experiences/1},
       {Mappers.ContactMapper, &get_contact/1},
       {Mappers.ProvenExperiencesMapper, &get_proven_experiences/1},
       {Mappers.SkillsMapper, &get_skills/1}
     ]
-    |> Enum.map(fn {mapper, f} ->
+    |> Enum.map(fn {mapper, getter} ->
       Task.async(fn ->
-        if(is_missing?(mapper, map)) do
-          f.(token)
-        else
-          %{}
-        end
+        token
+        |> getter.()
       end)
     end)
     |> Enum.map(&Task.await(&1, 15_000))
+    |> Enum.reduce({:ok, %{}}, fn api_data, {:ok, result} -> {:ok, Map.merge(result, api_data)} end)
   end
 
   def is_missing?(mapper, map), do: apply(mapper, :is_missing?, [map])
+
+  def get_user_info(token), do: get(token, @user_info_path, Mappers.UserInfoMapper)
 
   def get_civil_status(token), do: get(token, @civil_status_path, Mappers.CivilStatusMapper)
 

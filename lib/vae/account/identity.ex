@@ -69,34 +69,24 @@ defmodule Vae.Identity do
     |> cast_embed(:full_address, with: &Address.validate_required_fields/2)
   end
 
-  def from_user(user) do
+  def from_pe_connect_infos(pe_connect_infos) do
     %{
-      gender: user.gender,
-      birthday: user.birthday,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      usage_name: nil,
-      email: user.email,
-      home_phone: nil,
-      mobile_phone: user.phone_number,
-      is_handicapped: false,
-      birth_place: %{
-        city: user.birth_place,
-        county: nil
-      },
+      gender: pe_connect_infos[:gender],
+      birthday: pe_connect_infos[:birthday],
+      first_name: pe_connect_infos[:first_name],
+      last_name: pe_connect_infos[:last_name],
+      email: pe_connect_infos[:email],
       full_address: %{
-        city: user.city_label,
+        city: pe_connect_infos[:city_label],
         county: nil,
-        country: user.country_label,
+        country: pe_connect_infos[:country_label],
         lat: nil,
         lng: nil,
-        street: Vae.Account.address_street(user),
-        postal_code: user.postal_code
-      },
-      current_situation: %{},
-      nationality: %{
-        country: nil,
-        country_code: nil
+        street: [:address1, :address2, :address3, :address4]
+          |> Enum.map(&(pe_connect_infos[&1]))
+          |> Enum.reject(&Vae.String.is_blank?(&1))
+          |> Enum.join(", "),
+        postal_code: pe_connect_infos[:postal_code]
       }
     }
   end

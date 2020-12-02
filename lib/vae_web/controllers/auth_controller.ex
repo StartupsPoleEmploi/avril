@@ -7,7 +7,9 @@ defmodule VaeWeb.AuthController do
   alias Vae.PoleEmploi
   alias Vae.PoleEmploi.OAuth
   alias Vae.PoleEmploi.OAuth.Clients
+  alias Vae.Identity
   alias Vae.User
+  alias Vae.Repo
 
   def save_session_and_redirect(conn, _params) do
     referer = List.first(get_req_header(conn, "referer"))
@@ -23,17 +25,18 @@ defmodule VaeWeb.AuthController do
   end
 
   def callback(conn, %{"code" => code, "state" => state}) do
-    with {:ok, {token, user_info}} <- PoleEmploi.get_user_info(state, code) do
-      case Account.get_user_by_pe(user_info["idIdentiteExterne"]) do
-        nil ->
-          %User{}
-          |> User.changeset(User.map_params_from_pe(user_info))
-          |> Repo.insert()
-          |> Account.complete_user_profile(token)
-
-        user ->
-          {:ok, user}
+    with(
+      {:ok, %{pe_id: pe_id} = user_infos} <- PoleEmploi.get_complete_user_infos(state, code)
+    ) do
+      case Repo.get_by(User, pe_id: pe_id) do
+        %User{} = u -> User.changeset(user_infos)
+        nil -> User.changeset(%User{}, Map.merge(user_infos, %{
+          current_password: nil,
+          password: "AVRIL_#{pe_id}_TMP_PASSWORD",
+          password_confirmation: "AVRIL_#{pe_id}_TMP_PASSWORD"
+        }))
       end
+      |> Repo.insert_or_update()
       |> case do
         {:ok, upserted_user} ->
           conn = Pow.Plug.create(conn, upserted_user)
