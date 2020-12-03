@@ -25,14 +25,14 @@ defmodule Vae.PoleEmploi do
 
   def fetch_all(token) do
     [
-      {Mappers.UserInfoMapper, &get_user_info/1},
-      {Mappers.CivilStatusMapper, &get_civil_status/1},
-      {Mappers.ExperiencesMapper, &get_experiences/1},
-      {Mappers.ContactMapper, &get_contact/1},
-      {Mappers.ProvenExperiencesMapper, &get_proven_experiences/1},
-      {Mappers.SkillsMapper, &get_skills/1}
+      &get_user_info/1,
+      &get_civil_status/1,
+      &get_experiences/1,
+      &get_contact/1,
+      &get_proven_experiences/1,
+      &get_skills/1
     ]
-    |> Enum.map(fn {mapper, getter} ->
+    |> Enum.map(fn getter ->
       Task.async(fn ->
         token
         |> getter.()
@@ -68,7 +68,7 @@ defmodule Vae.PoleEmploi do
     end
   end
 
-  defp get(token, path, mapper \\ nil)
+  defp get(token, path, mapper)
 
   defp get(token, path, nil = _mapper) do
     with %OAuth2.Response{body: body} <- OAuth.get(token, path) do

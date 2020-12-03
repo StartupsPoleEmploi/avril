@@ -54,12 +54,6 @@ defmodule Vae.User do
     is_admin
   )a
 
-  @password_fields ~w(
-    password
-    password_confirmation
-    current_password
-  )
-
   def changeset(model, params \\ %{})
 
   def changeset(model, %{password: _pw, current_password: _cpw} = params) do

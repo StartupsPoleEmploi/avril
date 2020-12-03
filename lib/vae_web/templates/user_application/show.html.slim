@@ -40,8 +40,19 @@
             .field
               .control
                 .fake-input
-                  = if @user.phone_number do
-                    = link(@user.phone_number, to: "tel:#{@user.phone_number}")
+                  = if home_phone = @user.identity[:home_phone] do
+                    = link(home_phone, to: "tel:#{home_phone}")
+                  - else
+                    span Non renseigné par le candidat
+        .field.is-horizontal
+          .field-label.is-normal
+            label.label Portable :
+          .field-body
+            .field
+              .control
+                .fake-input
+                  = if mobile_phone = @user.identity[:mobile_phone] do
+                    = link(mobile_phone, to: "tel:#{mobile_phone}")
                   - else
                     span Non renseigné par le candidat
       .column.is-6

@@ -1,6 +1,6 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
-  alias Vae.{Certifier, Certification, Delegate, Repo, Rome}
+  alias Vae.{Certifier, Certification, Repo, Rome}
   import Ecto.Query
   import SweetXml
   alias Vae.Authorities.Rncp.FileLogger
@@ -118,22 +118,22 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
   def custom_data_transformations(data), do: data
 
-  defp get_certifier_previous_certifications(certifier) do
-    (certifier.internal_notes || "")
-    |> String.split(",")
-    |> Enum.map(fn id ->
-      case Integer.parse(id) do
-        :error -> nil
-        {int, _rest} -> int
-      end
-    end)
-    |> Enum.reject(&is_nil(&1))
-    |> case do
-      [] -> []
-      ids ->
-        (from cf in Certification,
-          where: cf.id in ^ids and cf.is_active == true
-        ) |> Repo.all()
-    end
-  end
+  # defp get_certifier_previous_certifications(certifier) do
+  #   (certifier.internal_notes || "")
+  #   |> String.split(",")
+  #   |> Enum.map(fn id ->
+  #     case Integer.parse(id) do
+  #       :error -> nil
+  #       {int, _rest} -> int
+  #     end
+  #   end)
+  #   |> Enum.reject(&is_nil(&1))
+  #   |> case do
+  #     [] -> []
+  #     ids ->
+  #       (from cf in Certification,
+  #         where: cf.id in ^ids and cf.is_active == true
+  #       ) |> Repo.all()
+  #   end
+  # end
 end

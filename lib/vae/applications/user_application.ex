@@ -3,9 +3,6 @@ defmodule Vae.UserApplication do
 
   use VaeWeb, :model
 
-  alias VaeWeb.ApplicationEmail
-  alias VaeWeb.Mailer
-
   alias Vae.{
     Certifier,
     Certification,
