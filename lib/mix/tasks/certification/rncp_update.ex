@@ -96,15 +96,15 @@ defmodule Mix.Tasks.RncpUpdate do
     # clear_certifier_internal_notes()
   end
 
-  defp update_all_slugs() do
-    Logger.info("Update slugs")
-    Enum.each([Delegate], fn klass ->
-      Repo.all(klass)
-      |> Enum.each(fn %klass{} = c ->
-        klass.changeset(c) |> Repo.update()
-      end)
-    end)
-  end
+  # defp update_all_slugs() do
+  #   Logger.info("Update slugs")
+  #   Enum.each([Delegate], fn klass ->
+  #     Repo.all(klass)
+  #     |> Enum.each(fn %klass{} = c ->
+  #       klass.changeset(c) |> Repo.update()
+  #     end)
+  #   end)
+  # end
 
   def create_static_certifiers() do
     @static_certifiers
@@ -124,10 +124,10 @@ defmodule Mix.Tasks.RncpUpdate do
     }) |> Repo.update()
   end
 
-  defp make_all_certifications_inactive() do
-    Logger.info("Make all certifications inactive")
-    Repo.update_all(Certification, set: [is_active: false])
-  end
+  # defp make_all_certifications_inactive() do
+  #   Logger.info("Make all certifications inactive")
+  #   Repo.update_all(Certification, set: [is_active: false])
+  # end
 
   def remove_certifiers_without_certifications() do
     Logger.info("Remove certifiers without active certifications")

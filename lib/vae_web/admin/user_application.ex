@@ -77,7 +77,7 @@ defmodule Vae.ExAdmin.UserApplication do
       end
     end
 
-    member_action :"delete",
+    member_action :delete,
       &__MODULE__.delete_user_application/2,
       label: "Delete User Application",
       icon: "minus-square"

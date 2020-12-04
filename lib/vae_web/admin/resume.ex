@@ -33,7 +33,7 @@ defmodule Vae.ExAdmin.Resume do
       end
     end
 
-    member_action :"delete",
+    member_action :delete,
       &__MODULE__.delete_resume/2,
       label: "Delete Resume",
       icon: "minus-square"
