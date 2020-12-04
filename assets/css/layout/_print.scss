@@ -4,8 +4,9 @@
   }
 
   nav.navbar {
-    margin-bottom: 100px;
+    margin-bottom: 60px;
     height: 0;
+    min-height: 0;
     // position: relative;
     .navbar-brand {
       a.navbar-item {

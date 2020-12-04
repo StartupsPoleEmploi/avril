@@ -1,6 +1,6 @@
 .container.avril-cerfa
-  .columns.is-centered
-    .column.is-5.is-hidden-print
+  .columns.is-centered.is-hidden-print
+    .column.is-5
       = link("Retour", to: (if @is_delegate_view, do: Routes.user_application_path(@conn, :show, @application, delegate_hash: @application.delegate_access_hash), else:  Vae.User.profile_url(@conn, @application)), class: "button is-back")
     .column.is-5.has-text-right
       = link("Télécharger en PDF", to: Routes.user_application_path(@conn, :cerfa, @application, delegate_hash: @application.delegate_access_hash, format: :pdf), class: "button is-primary is-rounded")
@@ -372,7 +372,7 @@
               h2.title.is-4.has-text-weight-light
                 | Rubrique 6 : Déclaration sur l'honneur
               .control.atome.box
-                input[type="checkbox"]
+                input[type="checkbox" checked=(@booklet.condamnation_free)]
                 label
                   |  Je ne fais pas l'objet d'une mesure pénale ou administrative d'interdiction de présentation devant un jury d'examen ou de validation des acquis de l'expérience
               .control.atome.box
@@ -380,11 +380,11 @@
                 label
                   |  Je certifie que toutes les informations fournies sont exactes
               .control.atome.box
-                input[type="checkbox"]
+                input[type="checkbox" checked=(@booklet.only_certification_application)]
                 label
                   |  Je certifie que la présente candidature constitue l'unique demande pour cette certification pour la même année civile
               .control.atome.box
-                input[type="checkbox"]
+                input[type="checkbox" checked=(@booklet.less_than_3_applications)]
                 label
                   |  Je m'engage également à ne pas présenter plus de trois candidatures à la validation des acquis de l'expérience pour des diplômes, certificats ou titres différents durant la présente année civile
               .control.atome

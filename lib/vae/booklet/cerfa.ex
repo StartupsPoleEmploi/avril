@@ -7,12 +7,12 @@ defmodule Vae.Booklet.Cerfa do
   @primary_key false
   @derive Jason.Encoder
   embedded_schema do
+    field(:condamnation_free, :boolean)
+    field(:only_certification_application, :boolean)
+    field(:less_than_3_applications, :boolean)
     field(:inserted_at, :utc_datetime)
     field(:updated_at, :utc_datetime)
     field(:completed_at, :utc_datetime)
-    # field(:certification_name, :string)
-    # field(:certifier_name, :string)
-    # embeds_one(:civility, Identity, on_replace: :delete)
     embeds_one(:education, Education, on_replace: :delete)
     embeds_many(:experiences, Experience, on_replace: :delete)
     # timestamps() # Unfortunately doesn't work: inserted_at always updated
@@ -21,9 +21,18 @@ defmodule Vae.Booklet.Cerfa do
   def changeset(struct, params) do
     struct
     |> cast(params, [:completed_at])
-    |> cast(%{inserted_at: struct.inserted_at || Timex.now(), updated_at: Timex.now()}, [
+    |> cast(%{
+      inserted_at: struct.inserted_at || Timex.now(),
+      updated_at: Timex.now(),
+      condamnation_free: !!params.completed_at,
+      only_certification_application: !!params.completed_at,
+      less_than_3_applications: !!params.completed_at
+    }, [
       :inserted_at,
-      :updated_at
+      :updated_at,
+      :condamnation_free,
+      :only_certification_application,
+      :less_than_3_applications
     ])
     |> cast_embed(:education)
     |> cast_embed(:experiences)
