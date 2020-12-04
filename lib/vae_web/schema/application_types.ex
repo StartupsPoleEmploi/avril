@@ -115,6 +115,12 @@ defmodule VaeWeb.Schema.ApplicationTypes do
       resolve(&Resolvers.Application.submit_application/3)
     end
 
+    @desc "Delete an application"
+    field(:delete_application, :application) do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Application.delete_application/3)
+    end
+
     @desc "Upload and attach a resume to an application"
     field(:upload_resume, :application) do
       arg(:resume, non_null(:upload))
@@ -127,6 +133,7 @@ defmodule VaeWeb.Schema.ApplicationTypes do
       arg(:input, non_null(:booklet_input))
       resolve(&Resolvers.Application.set_booklet/3)
     end
+
   end
 
   input_object :attach_delegate_input do

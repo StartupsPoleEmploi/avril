@@ -16,8 +16,6 @@ defmodule Vae.UserApplication do
   alias __MODULE__
 
   schema "applications" do
-    # Triggers an analytics event at the front
-    field(:has_just_been_auto_submitted, :boolean, virtual: true)
     field(:submitted_at, :utc_datetime)
     field(:delegate_access_refreshed_at, :utc_datetime)
     field(:delegate_access_hash, :string)
@@ -42,7 +40,7 @@ defmodule Vae.UserApplication do
     timestamps()
   end
 
-  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash has_just_been_auto_submitted)a
+  @fields ~w(user_id delegate_id certification_id submitted_at delegate_access_refreshed_at delegate_access_hash)a
 
   def changeset(struct, params \\ %{}) do
     struct
@@ -71,6 +69,18 @@ defmodule Vae.UserApplication do
 
   def init_booklet_hash(changeset) do
     change(changeset, booklet_hash: changeset.data.booklet_hash || generate_hash(64))
+  end
+
+  def delete_with_resumes(%UserApplication{} = ua) do
+    %UserApplication{resumes: resumes} = ua |> Repo.preload(:resumes)
+
+    Enum.reduce(resumes, {:ok, nil}, fn resume, {:ok, _} ->
+      Resume.delete(resume)
+    end)
+    |> case do
+      {:ok, _} -> Repo.delete(ua)
+      error -> error
+    end
   end
 
   def find_or_create_with_params(%{user_id: user_id, certification_id: certification_id} = params)
@@ -103,48 +113,6 @@ defmodule Vae.UserApplication do
       submitted_at: DateTime.utc_now() |> DateTime.truncate(:second)
     })
   end
-
-  # Deprecated
-  # def submit(application, auto_submitted \\ false) do
-  #   application = Repo.preload(application, [:user, :delegate])
-
-  #   case User.can_submit_or_register?(application.user) do
-  #     {:ok, _valid} ->
-  #       if is_nil(application.submitted_at) do
-  #         with(
-  #           {:ok, application} <-
-  #             Repo.update(
-  #               __MODULE__.changeset(application, %{
-  #                 delegate_access_hash: generate_hash(64),
-  #                 delegate_access_refreshed_at: DateTime.utc_now()
-  #               })
-  #             ),
-  #           {:ok, _messages} <-
-  #             Mailer.send(
-  #               if Delegate.is_asp?(application.delegate),
-  #                 do: ApplicationEmail.asp_user_submission_confirmation(application),
-  #                 else: [
-  #                   ApplicationEmail.delegate_submission(application),
-  #                   ApplicationEmail.user_submission_confirmation(application)
-  #                 ]
-  #             )
-  #         ) do
-  #           Repo.update(
-  #             __MODULE__.changeset(application, %{
-  #               has_just_been_auto_submitted: auto_submitted,
-  #               submitted_at: DateTime.utc_now()
-  #             })
-  #           )
-  #         else
-  #           error -> error
-  #         end
-  #       else
-  #         {:ok, application}
-  #       end
-
-  #     error -> error
-  #   end
-  # end
 
   def list_from_last_month(%Date{} = end_date) do
     start_date = Vae.Date.get_previous_month(end_date)

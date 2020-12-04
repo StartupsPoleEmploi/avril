@@ -4,7 +4,7 @@ defmodule VaeWeb.Resolvers.Application do
   import VaeWeb.Resolvers.ErrorHandler
   import Ecto.Query
 
-  alias Vae.{Applications, Delegate, Meeting, Search.Algolia, Repo}
+  alias Vae.{Applications, Delegate, Meeting, Search.Algolia, Repo, UserApplication}
 
   @application_not_found "La candidature est introuvable"
   @no_delegate_found "Aucun certificateur n'a été trouvé"
@@ -119,6 +119,24 @@ defmodule VaeWeb.Resolvers.Application do
           Logger.error(fn -> "Error, while sending application #{inspect(msg)}" end)
           error_response("Une erreur est survenue", inspect(msg))
       end
+    else
+      {:application, _error} ->
+        error_response(@application_not_found, format_application_error_message(application_id))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@submit_error, changeset)
+
+      _ ->
+        error_response("Une erreur est survenue", "")
+    end
+  end
+
+  def delete_application(_, %{id: application_id}, %{context: %{current_user: user}}) do
+    with(
+      {:application, application} <-
+        {:application, Applications.get_application_from_id_and_user_id(application_id, user.id)}
+    ) do
+      UserApplication.delete_with_resumes(application)
     else
       {:application, _error} ->
         error_response(@application_not_found, format_application_error_message(application_id))

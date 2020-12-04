@@ -5,6 +5,7 @@ defmodule VaeWeb.Schema.CertificationTypes do
 
   object :certification do
     field(:id, :id)
+    field(:is_active, :boolean)
     field(:slug, :string)
     field(:acronym, :string)
     field(:label, :string)
