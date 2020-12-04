@@ -10,7 +10,7 @@ defmodule Vae.ExAdmin.Resume do
       actions()
     end
 
-    action_items except: [:new]
+    action_items except: [:new, :delete]
 
     show _resume do
       attributes_table() do
@@ -33,18 +33,26 @@ defmodule Vae.ExAdmin.Resume do
       end
     end
 
-    # action_item :show, fn id ->
-    #   resume = Vae.Repo.get(Vae.Resume, id) |> Vae.Repo.preload(:application)
-    #   href = VaeWeb.Router.Helpers.user_application_resume_path(VaeWeb.Endpoint, :delete, resume.application, resume)
-    #   action_item_link "Delete Resume", href: href, "data-method": :delete
-    # end
+    member_action :"delete",
+      &__MODULE__.delete_resume/2,
+      label: "Delete Resume",
+      icon: "minus-square"
+
+    def delete_resume(conn, %{id: id}) do
+      resume = Vae.Repo.get(Vae.Resume, id)
+
+      case Vae.Resume.delete(resume) do
+        {:ok, _} ->
+          conn
+          |> Phoenix.Controller.put_flash(:notice, "Résumé supprimé")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Resume))
+        _ ->
+          conn
+          |> Phoenix.Controller.put_flash(:danger, "Le résumé n'a pas été supprimé.")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(resume))
+      end
+    end
 
     filter([:id, :content_type, :filename, :url, :inserted_at, :updated_at])
-
-    # query do
-    #   %{
-    #     all: [preload: [:application]]
-    #   }
-    # end
   end
 end

@@ -8,7 +8,7 @@ defmodule Vae.ExAdmin.UserApplication do
   require Ecto.Query
 
   register_resource Vae.UserApplication do
-    action_items except: [:new, :create]
+    action_items except: [:new, :create, :delete]
 
     index do
       selectable_column()
@@ -74,6 +74,26 @@ defmodule Vae.ExAdmin.UserApplication do
           column(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url) end)
           column(:inserted_at)
         end
+      end
+    end
+
+    member_action :"delete",
+      &__MODULE__.delete_user_application/2,
+      label: "Delete User Application",
+      icon: "minus-square"
+
+    def delete_user_application(conn, %{id: id}) do
+      ua = Vae.Repo.get(Vae.UserApplication, id)
+
+      case Vae.UserApplication.delete_with_resumes(ua) do
+        {:ok, _} ->
+          conn
+          |> Phoenix.Controller.put_flash(:notice, "Candidature supprimée")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(UserApplication))
+        _ ->
+          conn
+          |> Phoenix.Controller.put_flash(:danger, "La candidature n'a pas été supprimée.")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(ua))
       end
     end
 
