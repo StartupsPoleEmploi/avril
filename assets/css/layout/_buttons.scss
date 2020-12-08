@@ -15,6 +15,10 @@
     }
   }
 
+  .is-yellow.has-bubble &.is-yellow {
+    background-color: darken(palette(yellow, background), 10%) !important;
+  }
+
   &.is-transparent {
     background: transparent;
     border: none;

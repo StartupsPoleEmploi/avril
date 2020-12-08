@@ -9,48 +9,64 @@
         = " - "
         strong
           = link("RNCP #{@certification.rncp_id}", to: "https://www.francecompetences.fr/recherche/rncp/#{@certification.rncp_id}/", target: "_blank")
-  - {intro, rest} = VaeWeb.CertificationView.split_intro(@certification)
-  = if intro do
-    section.section.is-small#activities
-      .columns
-        .column.is-10.is-offset-1
-          h3.subtitle.is-3 Activités visées
-          .content= raw intro
-  section.section.is-small#call-to-action
-    .notification.is-blue.has-bubble
-      .columns
-        .column.is-8.is-offset-2.has-text-centered.content.is-medium
-          h2.title.is-2 Commencer en douceur ma VAE
-          p Prenez quelques minutes pour créer tranquillement votre compte, renseigner votre profil et remplir votre candidature à votre rythme. Rassurez-vous, quoique vous fassiez sur notre site, rien n'est engageant car la décision finale, vous la prendrez avec le certificateur. A vous de jouer pour un diplôme !
-          = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
-  = if Vae.String.is_present?(rest) do
-    section.section.is-small#activities_rest
-      .columns
-        .column.is-10.is-offset-1
-          .content= raw rest
-  = if Vae.String.is_present?(@certification.abilities) do
-    section.section.is-small#abilities
-      .columns
-        .column.is-10.is-offset-1
-          h3.subtitle.is-3 Compétences attestées
-          .content= raw @certification.abilities
-  = if Vae.String.is_present?(@certification.activity_area) do
-    section.section.is-small#activity_area
-      .columns
-        .column.is-10.is-offset-1
-          h3.subtitle.is-3 Secteurs d'activités
-          .content= raw @certification.activity_area
-  = if Vae.String.is_present?(@certification.accessible_job_type) do
-    section.section.is-small#accessible_job_type
-      .columns
-        .column.is-10.is-offset-1
-          h3.subtitle.is-3 Type d'emplois accessibles
-          .content= raw @certification.accessible_job_type
+  = if @certification.is_active do
+    - {intro, rest} = VaeWeb.CertificationView.split_intro(@certification)
+    = if intro do
+      section.section.is-small#activities
+        .columns
+          .column.is-10.is-offset-1
+            h3.subtitle.is-3 Activités visées
+            .content= raw intro
+    section.section.is-small#call-to-action
+      .notification.is-blue.has-bubble
+        .columns
+          .column.is-8.is-offset-2.has-text-centered.content.is-medium
+            h2.title.is-2 Commencer en douceur ma VAE
+            p Prenez quelques minutes pour créer tranquillement votre compte, renseigner votre profil et remplir votre candidature à votre rythme. Rassurez-vous, quoique vous fassiez sur notre site, rien n'est engageant car la décision finale, vous la prendrez avec le certificateur. A vous de jouer pour un diplôme !
+            = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
+    = if Vae.String.is_present?(rest) do
+      section.section.is-small#activities_rest
+        .columns
+          .column.is-10.is-offset-1
+            .content= raw rest
+    = if Vae.String.is_present?(@certification.abilities) do
+      section.section.is-small#abilities
+        .columns
+          .column.is-10.is-offset-1
+            h3.subtitle.is-3 Compétences attestées
+            .content= raw @certification.abilities
+    = if Vae.String.is_present?(@certification.activity_area) do
+      section.section.is-small#activity_area
+        .columns
+          .column.is-10.is-offset-1
+            h3.subtitle.is-3 Secteurs d'activités
+            .content= raw @certification.activity_area
+    = if Vae.String.is_present?(@certification.accessible_job_type) do
+      section.section.is-small#accessible_job_type
+        .columns
+          .column.is-10.is-offset-1
+            h3.subtitle.is-3 Type d'emplois accessibles
+            .content= raw @certification.accessible_job_type
+  - else
+    section.section.is-small#call-to-action
+      .notification.is-yellow.has-bubble
+        .columns
+          .column.is-8.is-offset-2.has-text-centered.content.is-medium
+            h2.title.is-3 Ce diplôme est inactif sur Avril
+            p Bienvenue sur Avril !
+            p
+              | Vous avez l'air intéressé par le #{Vae.String.prepend_if_not_repeat("diplôme", Vae.Certification.name(@certification))} !
+              | Même si ce diplôme n'est pas proposé en accès VAE chez nous, vous pouvez consulter les diplômes les plus proches ou effectuer une recherche par métier !
+            = link("Rechercher mon diplôme en VAE", to: Routes.root_path(@conn, :index), class: "button is-yellow is-medium is-rounded")
   = if length(@similars) > 0 do
     section.section.is-small#similars
       .columns
         .column.is-10.is-offset-1
-          h3.subtitle.is-3 Nos candidats s'intéressent aussi à ces diplômes
+          h3.subtitle.is-3
+            = if @certification.is_active do
+              | Nos candidats s'intéressent aussi à ces diplômes
+            - else
+              | Diplômes actifs les plus proches
           .columns
             = for similar <- @similars do
               .column.is-4

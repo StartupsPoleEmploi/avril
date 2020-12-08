@@ -92,4 +92,8 @@ defmodule Vae.String do
   def inflect(count, words, opts) when is_binary(words) and is_integer(count) do
     "#{count} #{inflect(words, count, opts)}"
   end
+
+  def prepend_if_not_repeat(prepend, string) do
+    if String.starts_with?(String.downcase(string), String.downcase(prepend)), do: string, else: "#{prepend} #{string}"
+  end
 end

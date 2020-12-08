@@ -50,27 +50,12 @@ defmodule VaeWeb.LayoutView do
   defp dynamic_meta(%{
          view_module: VaeWeb.CertificationView,
          view_template: "show.html",
-         certification: c,
-         delegate: d
-       }) do
-    %{
-      title: "Diplôme #{Vae.Certification.name(c)} en VAE à #{d.name}",
-      description:
-        "Découvrez toutes les étapes VAE pour le diplôme #{Vae.Certification.name(c)} en VAE à #{
-          d.name
-        } et démarrez un suivi personnalisé."
-    }
-  end
-
-  defp dynamic_meta(%{
-         view_module: VaeWeb.CertificationView,
-         view_template: "show.html",
          certification: c
        }) do
     %{
-      title: "Diplôme #{Vae.Certification.name(c)} en VAE",
+      title: "#{Vae.String.prepend_if_not_repeat("Diplôme", Vae.Certification.name(c))} en VAE",
       description:
-        "Découvrez toutes les étapes VAE pour le diplôme #{Vae.Certification.name(c)} en VAE et trouvez votre centre VAE."
+        "Découvrez toutes les étapes VAE pour le #{Vae.String.prepend_if_not_repeat("diplôme", Vae.Certification.name(c))} en VAE et trouvez votre centre VAE."
     }
   end
 
