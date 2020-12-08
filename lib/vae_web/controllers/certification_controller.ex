@@ -86,8 +86,10 @@ defmodule VaeWeb.CertificationController do
           to: Routes.certification_path(conn, :show, certification, conn.query_params)
         )
       else
-        certification =
+        %Certification{is_active: is_active} = certification =
           Repo.preload(certification, [:certifiers, romes: [active_certifications: :certifiers]])
+
+        nb_similars = if is_active, do: 3, else: 6
 
         similars =
           from(c in Certification)
@@ -95,7 +97,7 @@ defmodule VaeWeb.CertificationController do
           |> where([c, r], r.id in ^Enum.map(certification.romes, &(&1.id)))
           |> where([c, r], c.id != ^certification.id)
           |> Certification.sort_by_popularity()
-          |> limit(3)
+          |> limit(^nb_similars)
           |> Repo.all()
 
         render(
