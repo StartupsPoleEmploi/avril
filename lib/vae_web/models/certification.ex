@@ -7,11 +7,14 @@ defmodule Vae.Certification do
 
   schema "certifications" do
     field(:rncp_id, :string)
+    field(:is_rncp_active, :boolean)
     field(:is_active, :boolean)
     field(:slug, :string)
     field(:acronym, :string)
     field(:label, :string)
     field(:level, :integer)
+    field(:last_rncp_import_date, :date)
+    field(:end_of_rncp_validity, :date)
     field(:activities, :string)
     field(:abilities, :string)
     field(:activity_area, :string)
@@ -103,10 +106,13 @@ defmodule Vae.Certification do
     ])
     |> cast(params, [
       :is_active,
+      :is_rncp_active,
       :label,
       :acronym,
       :level,
       :rncp_id,
+      :last_rncp_import_date,
+      :end_of_rncp_validity,
       :activities,
       :abilities,
       :activity_area,

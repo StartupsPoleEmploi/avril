@@ -52,11 +52,8 @@
       .notification.is-yellow.has-bubble
         .columns
           .column.is-8.is-offset-2.has-text-centered.content.is-medium
-            h2.title.is-3 Ce diplôme est inactif sur Avril
-            p Bienvenue sur Avril !
-            p
-              | Vous avez l'air intéressé par le #{Vae.String.prepend_if_not_repeat("diplôme", Vae.Certification.name(@certification))} !
-              | Même si ce diplôme n'est pas proposé en accès VAE chez nous, vous pouvez consulter les diplômes les plus proches ou effectuer une recherche par métier !
+            h2.title.is-3 Bienvenue sur Avril !
+            p Vous avez l'air intéressé par le #{Vae.String.prepend_if_not_repeat("diplôme", Vae.Certification.name(@certification))} ! Même si ce diplôme n'est pas proposé en accès VAE chez nous, vous pouvez consulter ci-dessous les diplômes les plus proches ou démarrer une nouvelle recherche !
   = if length(@similars) > 0 do
     section.section.is-small#similars
       .columns
@@ -71,7 +68,7 @@
               .column.is-4
                 = render VaeWeb.ComponentView, "certification-card.html", conn: @conn, certification: similar
   = unless @certification.is_active do
-    section.section.is-small#similars
+    section.section.is-medium#similars
       .has-text-centered
         h4.subtitle.is-4 Besoin d'approfondir les recherches ?
-        = link("Rechercher mon diplôme en VAE", to: Routes.root_path(@conn, :index), class: "button is-yellow is-medium is-rounded")
+        = link("Rechercher mon diplôme en VAE", to: Routes.root_path(@conn, :index), class: "button is-yellow is-large is-rounded")

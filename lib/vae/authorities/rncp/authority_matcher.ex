@@ -7,6 +7,19 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   @pre_capitalization ~w(d' l')
   @middle_capitalization ~w(( -)
 
+  @ignored_certifier_slugs ~w(
+    universite-de-nouvelle-caledonie
+    universite-de-la-nouvelle-caledonie
+    universite-de-la-polynesie-francaise
+    sncf-universite-de-la-surete
+    universite-du-vin
+    universite-scienchumaines-lettres-arts
+    universite-de-technologie-belfort-montbeliard
+    universite-catholique-de-l-ouest
+    centre-universitaire-des-sciences-et-techniques-de-l-universite-clermont-ferrand
+    universite-europeenne-des-senteurs-et-des-saveurs
+  )
+
   @cities ~w(
     aix
     amiens
@@ -161,7 +174,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
 
   @aliases %{
     "cnam" => [
-      "conservatoire-national-des-arts-et-metiers-cnam"
+      "conservatoire-national-des-arts-et-metiers-cnam",
+      "conservatoire-national-des-arts-et-metiers"
     ],
     "ministere-de-l-education-nationale" => [
       "ministere-de-l-education-nationale-et-de-la-jeunesse"
@@ -263,6 +277,13 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-de-toulouse-jean-jaures"
     ]
   }
+
+  def buildable_certifier?(name) do
+    slug = Vae.String.parameterize(name)
+    String.contains?(slug, "universite") &&
+      not String.contains?(slug, "polytech") &&
+      not Enum.member?(@ignored_certifier_slugs, slug)
+  end
 
   def slug_with_aliases(slug) do
     case @aliases |> Enum.find(fn {k, v} -> (k == slug) || Enum.member?(v, slug) || find_by_custom_jaro_distance(v, slug, 1) end) do

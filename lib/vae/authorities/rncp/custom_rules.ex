@@ -4,20 +4,9 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   import SweetXml
   alias Vae.Authorities.Rncp.FileLogger
 
-  @ignored_certifier_slugs ~w(
-    universite-de-nouvelle-caledonie
-    universite-de-la-nouvelle-caledonie
-    universite-de-la-polynesie-francaise
-    sncf-universite-de-la-surete
-    universite-du-vin
-    universite-scienchumaines-lettres-arts
-    universite-de-technologie-belfort-montbeliard
-    universite-catholique-de-l-ouest
-    centre-universitaire-des-sciences-et-techniques-de-l-universite-clermont-ferrand
-    universite-europeenne-des-senteurs-et-des-saveurs
-  )
+  @current_year Date.utc_today().year
 
-  @ignored_certifications [
+  @ignored_fiche_intitules [
     "Un des meilleurs ouvriers de France",
     "Ecole polytechnique"
   ]
@@ -31,24 +20,23 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     "Titre ingénieur",
   ]
 
-  @slugs %{
-    mes: "ministere-de-l-enseignement-superieur",
-    men: "ministere-de-l-education-nationale",
-    mcs: "ministere-charge-de-la-solidarite"
-  }
+  @cci_certifications_rncp_ids ~w(
+    28669, 23937, 23870, 27095, 27413, 23966,
+    23872, 26286, 16615, 28736, 23827, 26901,
+    27096, 32362, 23940, 29535, 27365, 28764,
+    23675, 23939, 23869, 23970, 28627, 23932
+  )
 
-  def buildable_certifier?(name) do
-    slug = Vae.String.parameterize(name)
-    String.contains?(slug, "universite") &&
-      not String.contains?(slug, "polytech") &&
-      not Enum.member?(@ignored_certifier_slugs, slug)
-  end
+  @educ_nat "ministere-de-l-enseignement-superieur"
+  @ens_sup "ministere-de-l-enseignement-superieur"
+  @solidarite "ministere-charge-de-la-solidarite"
+  @sports "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"
 
   def accepted_fiche?(fiche) do
     accessible_vae = xpath(fiche, ~x"./SI_JURY_VAE/text()"s) == "Oui"
 
     intitule = xpath(fiche, ~x"./INTITULE/text()"s) |> String.downcase()
-    ignored_intitule = @ignored_certifications
+    ignored_intitule = @ignored_fiche_intitules
       |> Enum.any?(&String.starts_with?(intitule, String.downcase(&1)))
 
     accessible_vae && !ignored_intitule
@@ -61,7 +49,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     is_currently_active: is_currently_active
   }) do
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
-      is_educ_nat = slug == @slugs[:men]
+      is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in ["4505"]
       if is_educ_nat && (is_ignored_acronym || is_custom_rncp)  do
@@ -76,16 +64,23 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     rncp_id: rncp_id,
     is_currently_active: is_currently_active
   }) do
-    is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @slugs[:mes]))
-    is_solidarite = Enum.any?(certifiers, &(&1.slug == @slugs[:mcs]))
+    is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
+    is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))
     is_bts = acronym == "BTS"
     is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34828"]
 
     if is_currently_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
-      certifiers ++ [Repo.get_by(Certifier, slug: @slugs[:men])]
+      certifiers ++ [Repo.get_by(Certifier, slug: @educ_nat)]
     else
       certifiers
     end
+  end
+
+  def custom_data_transformations(%{
+    certifiers: [%Certifier{slug: @educ_nat} | _],
+    end_of_rncp_validity: %Date{year: year, month: month}
+  } = data) when year == @current_year and month >= 7 do
+    Map.merge(data, %{is_active: false})
   end
 
   def custom_data_transformations(%{
@@ -97,7 +92,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   def custom_data_transformations(%{
     rncp_id: rncp_id,
     acronym: acronym
-  } = data) when rncp_id in ["4504", "31191", "5440"] or acronym == "BEP" do
+  } = data) when rncp_id in ["4504", "31191", "5440", "462"] or acronym == "BEP" do
     Map.merge(data, %{is_active: false})
   end
 
@@ -112,27 +107,15 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     rncp_id: "492",
     certifiers: certifiers
   } = data) do
-    Map.merge(data, %{certifiers: Enum.reject(certifiers, &(&1.slug == "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"))})
+    Map.merge(data, %{certifiers: Enum.reject(certifiers, &(&1.slug == @sports))})
+  end
+
+  def custom_data_transformations(%{
+    rncp_id: rncp_id,
+    certifiers: [%Certifier{slug: "cci-france"} | _]
+  } = data) when rncp_id not in @cci_certifications_rncp_ids do
+    Map.merge(data, %{is_active: false})
   end
 
   def custom_data_transformations(data), do: data
-
-  # defp get_certifier_previous_certifications(certifier) do
-  #   (certifier.internal_notes || "")
-  #   |> String.split(",")
-  #   |> Enum.map(fn id ->
-  #     case Integer.parse(id) do
-  #       :error -> nil
-  #       {int, _rest} -> int
-  #     end
-  #   end)
-  #   |> Enum.reject(&is_nil(&1))
-  #   |> case do
-  #     [] -> []
-  #     ids ->
-  #       (from cf in Certification,
-  #         where: cf.id in ^ids and cf.is_active == true
-  #       ) |> Repo.all()
-  #   end
-  # end
 end
