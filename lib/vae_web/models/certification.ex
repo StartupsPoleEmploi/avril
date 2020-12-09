@@ -21,7 +21,7 @@ defmodule Vae.Certification do
     field(:accessible_job_type, :string)
 
     belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
-    has_one(:older_certification, Certification, foreign_key: :newer_certification_id)
+    has_one(:older_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
 
     many_to_many(
       :certifiers,
@@ -151,8 +151,9 @@ defmodule Vae.Certification do
       included_delegates = get_field(changeset, :included_delegates)
       excluded_delegates = get_field(changeset, :excluded_delegates)
       # TODO: sort to get no order change?
-      delegates = Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
-
+      delegates =
+        Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
+        |> Enum.sort(&(&1.id))
       changeset
       |> put_assoc(:delegates, delegates)
     # else
@@ -226,7 +227,14 @@ defmodule Vae.Certification do
   def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do
     if older_certification = get_field(changeset, :older_certification) do
       %{applications: older_applications} = older_certification |> Repo.preload(:applications)
-      put_assoc(changeset, :applications, get_field(changeset, :applications) ++ Enum.filter(older_applications, &(is_nil(&1.submitted_at))))
+      put_assoc(
+        changeset,
+        :applications,
+        (
+          get_field(changeset, :applications) ++
+          Enum.filter(older_applications, &(is_nil(&1.submitted_at)))
+        ) |> Enum.sort(&(&1.id))
+      )
     else
       changeset
     end

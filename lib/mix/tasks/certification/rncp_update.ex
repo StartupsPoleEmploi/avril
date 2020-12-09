@@ -28,11 +28,11 @@ defmodule Mix.Tasks.RncpUpdate do
     {:ok, _} = Application.ensure_all_started(:vae)
 
     {options, [], []} = OptionParser.parse(args,
-      aliases: [i: :interactive, f: :filename, x: :index],
-      strict: [filename: :string, interactive: :boolean, index: :boolean]
+      aliases: [f: :filename, i: :index],
+      strict: [filename: :string, index: :boolean]
     )
     %{filename: filename} = options =
-      Map.merge(%{import_date: Date.utc_today(), interactive: false, index: Mix.env() == :prod}, Map.new(options))
+      Map.merge(%{import_date: Date.utc_today(), index: Mix.env() == :prod}, Map.new(options))
 
     Logger.info("Start update RNCP with #{filename}")
     prepare_avril_data()
@@ -44,7 +44,7 @@ defmodule Mix.Tasks.RncpUpdate do
 
     build_and_transform_stream(
       filename,
-      &FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1, options)
+      &FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1)
     )
 
     clean_avril_data(options)

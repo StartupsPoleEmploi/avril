@@ -9,3 +9,5 @@ alias Vae.{
 }
 
 import Ecto.Query
+
+IEx.configure(inspect: [limit: :infinity])

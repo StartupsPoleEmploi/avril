@@ -65,14 +65,14 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       |> Enum.sort_by(&(&1.id))
   end
 
-  def move_applications_if_inactive_and_set_newer_certification(fiche, %{interactive: interactive}) do
+  def move_applications_if_inactive_and_set_newer_certification(fiche) do
     rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
       String.replace_prefix(nb, "RNCP", "")
     end))
 
     with(
-      %Certification{is_active: false} = certification <-
-        Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload([:older_certification]),
+      %Certification{is_rncp_active: false, applications: old_applications} = certification <-
+        Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload([:applications, :older_certification]),
       newer_rncp_id when not is_nil(newer_rncp_id) <-
         SweetXml.xpath(fiche, ~x"./NOUVELLE_CERTIFICATION/text()"l
           |> transform_by(fn l ->
@@ -82,26 +82,21 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
             |> List.last()
           end)
         ),
-      %Certification{is_active: true} = newer_certification <-
-        Repo.get_by(Certification, rncp_id: newer_rncp_id)
+      %Certification{is_rncp_active: true, applications: new_applications} = newer_certification <-
+        Repo.get_by(Certification, rncp_id: newer_rncp_id) |> Repo.preload(:applications)
     ) do
-      try do
-        newer_certification
-        |> Certification.changeset(%{older_certification: certification})
-        |> Repo.update()
-      rescue
-        e in Postgrex.Error ->
-          Logger.warn(inspect(e))
-          if interactive do
-            id = IO.gets("Quel ID supprime-t-on ? ")
-            |> String.trim()
-            |> String.to_integer()
 
-            Repo.get(UserApplication, id) |> Repo.delete()
-          else
-            Logger.warn("Ignored. Run with -i option to make it interactive")
+      Enum.each(old_applications, fn
+        %UserApplication{user_id: user_id} = a1 ->
+          if a2 = Enum.find(new_applications, &(&1.user_id == user_id)) do
+            (if UserApplication.get_comparison_score(a1, a2) > 0, do: a2, else: a1)
+            |> Repo.delete()
           end
-      end
+      end)
+
+      newer_certification
+      |> Certification.changeset(%{older_certification: certification})
+      |> Repo.update()
     end
   end
 

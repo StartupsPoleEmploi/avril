@@ -239,4 +239,31 @@ defmodule Vae.UserApplication do
   defp generate_hash(length) do
     :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end
+
+  def merge_applications_with_unicity_constraint(list1, list2) do
+    Enum.reduce(list1, list2, fn %UserApplication{user_id: user_id, certification_id: certification_id} = a1, result ->
+      case Vae.Enum.reject_and_find(result, &(&1.user_id == user_id && &1.certification_id == certification_id)) do
+        {result, nil} -> [a1 | result]
+        {result, a2} -> [(if get_comparison_score(a1, a2) > 0, do: a1, else: a2) | result]
+      end
+    end)
+  end
+
+  def get_comparison_score(%UserApplication{} = a1, %UserApplication{} = a2) do
+    [delegate_id: 3, inserted_at: 1, submitted_at: 20, meeting: 3, booklet_1: 2]
+    |> Enum.reduce(0, fn {k, v}, score ->
+      case {Map.get(a1, k), Map.get(a2, k)} do
+        {val, nil} when not is_nil(val) -> v
+        {nil, val} when not is_nil(val) -> -v
+        {%Vae.Booklet.Cerfa{experiences: e1}, %Vae.Booklet.Cerfa{experiences: e2}} -> v * (length(e1) - length(e2))
+        {v1, v2} ->
+          if Timex.Comparable.impl_for(v1) && Timex.Comparable.impl_for(v2) do
+            if Timex.after?(v1, v2), do: v, else: -v
+          else
+            0
+          end
+      end + score
+    end)
+  end
+
 end

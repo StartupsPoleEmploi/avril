@@ -165,7 +165,9 @@ defmodule Vae.Delegate do
       included_certifications = get_field(changeset, :included_certifications)
       excluded_certifications = get_field(changeset, :excluded_certifications)
 
-      certifications = Enum.uniq(rncp_certifications ++ included_certifications) -- excluded_certifications
+      certifications =
+        Enum.uniq(rncp_certifications ++ included_certifications) -- excluded_certifications
+        |> Enum.sort(&(&1.id))
       # TODO: sort to get no order change?
       changeset
       |> put_assoc(:certifications, certifications)
