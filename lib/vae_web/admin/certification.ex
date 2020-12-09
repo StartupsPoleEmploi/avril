@@ -104,7 +104,7 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
-    filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :activities, :newer_certification, :older_certification]
+    filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :last_rncp_import_date, :end_of_rncp_validity, :activities, :newer_certification]
     filter(:certifiers, order_by: :name)
 
 

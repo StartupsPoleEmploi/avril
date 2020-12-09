@@ -27,7 +27,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end)
     )
 
-    if data.is_rncp_active && data.inactive_date == ~D[2024-01-01] do
+    if data.is_rncp_active && data.end_of_rncp_validity == ~D[2024-01-01] do
       FileLogger.log_into_file("inactive_date.csv", [data.rncp_id, data.acronym, data.label])
     end
 

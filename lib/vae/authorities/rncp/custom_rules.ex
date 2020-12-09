@@ -46,14 +46,14 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     acronym: acronym,
     rncp_id: rncp_id,
     label: label,
-    is_currently_active: is_currently_active
+    is_rncp_active: is_rncp_active
   }) do
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
       is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in ["4505"]
       if is_educ_nat && (is_ignored_acronym || is_custom_rncp)  do
-        FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_currently_active])
+        FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_rncp_active])
         true
       end
     end)
@@ -62,14 +62,14 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   def add_educ_nat_certifiers(certifiers, %{
     acronym: acronym,
     rncp_id: rncp_id,
-    is_currently_active: is_currently_active
+    is_rncp_active: is_rncp_active
   }) do
     is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
     is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))
     is_bts = acronym == "BTS"
     is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34828"]
 
-    if is_currently_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
+    if is_rncp_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
       certifiers ++ [Repo.get_by(Certifier, slug: @educ_nat)]
     else
       certifiers

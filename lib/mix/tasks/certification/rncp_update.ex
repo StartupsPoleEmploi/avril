@@ -32,7 +32,7 @@ defmodule Mix.Tasks.RncpUpdate do
       strict: [filename: :string, interactive: :boolean, index: :boolean]
     )
     %{filename: filename} = options =
-      Map.merge(%{import_date: Date.utc_today(), interactive: false, index: Mix.env.prod?()}, Map.new(options))
+      Map.merge(%{import_date: Date.utc_today(), interactive: false, index: Mix.env() == :prod}, Map.new(options))
 
     Logger.info("Start update RNCP with #{filename}")
     prepare_avril_data()
