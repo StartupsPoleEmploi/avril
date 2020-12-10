@@ -134,7 +134,6 @@ config :algolia,
   is_sync_active: System.get_env("ALGOLIA_SYNC") != "disable",
   indice_prefix: nil
 
-
 config :ex_admin,
   head_template: {VaeWeb.AdminView, "admin_layout.html"},
   repo: Vae.Repo,

@@ -140,22 +140,20 @@ defmodule Vae.Certification do
     # if get_change(changeset, :certifiers) ||
     #    get_change(changeset, :included_delegates) ||
     #    get_change(changeset, :excluded_delegates) do
+      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
 
-      # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
-
-      # rncp_delegates = get_field(changeset, :rncp_delegates)
-      rncp_delegates = get_field(changeset, :certifiers)
-        |> Repo.preload(:active_delegates)
-        |> Enum.flat_map(&(&1.active_delegates))
+      rncp_delegates = get_field(changeset, :rncp_delegates)
+      # rncp_delegates = get_field(changeset, :certifiers)
+      #   |> Repo.preload(:active_delegates)
+      #   |> Enum.flat_map(&(&1.active_delegates))
 
       included_delegates = get_field(changeset, :included_delegates)
       excluded_delegates = get_field(changeset, :excluded_delegates)
-      # TODO: sort to get no order change?
+
       delegates =
         Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
-        |> Enum.sort(&(&1.id))
       changeset
-      |> put_assoc(:delegates, delegates)
+      |> put_assoc_no_useless_updates(:delegates, delegates)
     # else
     #   changeset
     # end
@@ -225,15 +223,15 @@ defmodule Vae.Certification do
   end
 
   def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do
-    if older_certification = get_field(changeset, :older_certification) do
+    if older_certification = get_change(changeset, :older_certification) do
       %{applications: older_applications} = older_certification |> Repo.preload(:applications)
-      put_assoc(
+      put_assoc_no_useless_updates(
         changeset,
         :applications,
         (
           get_field(changeset, :applications) ++
           Enum.filter(older_applications, &(is_nil(&1.submitted_at)))
-        ) |> Enum.sort(&(&1.id))
+        )
       )
     else
       changeset

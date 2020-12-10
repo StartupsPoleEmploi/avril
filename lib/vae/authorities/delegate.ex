@@ -156,21 +156,21 @@ defmodule Vae.Delegate do
     # if get_change(changeset, :certifiers) ||
     #    get_change(changeset, :included_certifications) ||
     #    get_change(changeset, :excluded_certifications) do
+      changeset = %Ecto.Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
 
-    #   changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
+      rncp_certifications = get_field(changeset, :rncp_certifications)
 
-      rncp_certifications = get_field(changeset, :certifiers)
-        |> Repo.preload(:active_certifications)
-        |> Enum.flat_map(&(&1.active_certifications))
+      # rncp_certifications = get_field(changeset, :certifiers)
+      #   |> Repo.preload(:active_certifications)
+      #   |> Enum.flat_map(&(&1.active_certifications))
       included_certifications = get_field(changeset, :included_certifications)
       excluded_certifications = get_field(changeset, :excluded_certifications)
 
       certifications =
         Enum.uniq(rncp_certifications ++ included_certifications) -- excluded_certifications
-        |> Enum.sort(&(&1.id))
-      # TODO: sort to get no order change?
+
       changeset
-      |> put_assoc(:certifications, certifications)
+      |> put_assoc_no_useless_updates(:certifications, certifications)
     # else
     #   changeset
     # end

@@ -50,6 +50,22 @@ defmodule VaeWeb do
         |> order_by([q, u], [desc: count(u.id)])
       end
 
+      def put_assoc_no_useless_updates(changeset, key, value) do
+        %Ecto.Changeset{changes: changes, data: data} = changeset = put_assoc(changeset, key, value)
+        %{changeset | changes: Vae.Map.map_values(changes, fn {k, v} ->
+          case v do
+            v when is_list(v) ->
+              Enum.reject(v, fn el ->
+                case el do
+                  %Ecto.Changeset{action: :update, changes: %{}, data: assoc} -> Enum.member?(Map.get(data, key), assoc)
+                  _ -> false
+                end
+              end)
+            v -> v
+          end
+        end) |> Enum.into(%{})}
+      end
+
       def put_embed_if_necessary(changeset, params, key, _options \\ []) do
         klass_name = key |> Inflex.camelize() |> Inflex.singularize() |> String.to_atom()
         klass = [Elixir, Vae, klass_name] |> Module.concat()
@@ -95,7 +111,7 @@ defmodule VaeWeb do
             _ -> nil
           end
           |> case do
-            value when not is_nil(value) -> put_assoc(changeset, key, value)
+            value when not is_nil(value) -> put_assoc_no_useless_updates(changeset, key, value)
             nil -> changeset
           end
         else
