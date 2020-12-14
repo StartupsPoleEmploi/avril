@@ -46,9 +46,9 @@ defmodule Vae.Profession do
     profession |> Repo.preload(rome: :certifications) |> Map.get(:rome) |> Map.get(:certifications)
   end
 
-  def to_slug(%Profession{label: label} = _profession) do
-    Vae.String.parameterize(label)
-  end
+  def name(%Profession{label: label}), do: label
+
+  def to_slug(%Profession{} = p), do: Vae.String.parameterize(name(p))
 
   def slugify(changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))

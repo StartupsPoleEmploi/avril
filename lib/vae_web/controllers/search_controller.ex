@@ -2,6 +2,8 @@ defmodule VaeWeb.SearchController do
   require Logger
   use VaeWeb, :controller
 
+  alias Vae.{Certification, Profession}
+
   def search(conn, _params) do
     conn
     |> put_flash(
@@ -12,13 +14,27 @@ defmodule VaeWeb.SearchController do
   end
 
   def public_search(conn, %{"query" => query, "index" => index}) when index in ["certification", "profession"] do
-    res = from(e in Module.concat(Vae, index |> String.capitalize() |> String.to_atom()))
-    |> or_where([e], ilike(field(e, :label), ^"%#{query}%"))
-    |> Vae.Maybe.if(index == "certification", &or_where(&1, [e], ilike(field(e, :acronym), ^"%#{query}%")))
-    |> limit(10)
+    module = Module.concat(Vae, index |> String.capitalize() |> String.to_atom())
+
+    res = build_query(module, query)
+    |> limit(5)
     |> Vae.Repo.all()
-    |> Enum.map(&(%{id: &1.id, label: &1.label}))
+    |> Enum.map(fn %module{id: id, slug: slug} = e -> %{id: id, name: module.name(e), slug: slug, index: index} end)
 
     json(conn, res)
   end
+
+  def build_query(Certification, query) do
+    from(e in Certification, where: e.is_active)
+    |> where([e], ilike(field(e, :label), ^"%#{query}%"))
+    # |> or_where([e], ilike(field(e, :acronym), ^"%#{query}%"))
+    |> Certification.sort_by_popularity()
+  end
+
+  def build_query(Profession, query) do
+    from(e in Profession)
+    |> or_where([e], ilike(field(e, :label), ^"%#{query}%"))
+    |> order_by([e], desc: e.priority)
+  end
+
 end

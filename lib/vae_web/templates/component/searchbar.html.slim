@@ -2,8 +2,7 @@
   .wrapper
     span.icon.is-left.is-xlarge
       = img_tag Routes.static_path(@conn, "/images/icons/search.svg")
-    = search_input(f, :query, class: "input is-xlarge searchbar", required: true, placeholder: 'Assistante maternelle, cariste...')
+    = search_input(f, :query, class: "input is-xlarge searchbar", required: true, placeholder: 'Assistante maternelle, cariste...', autocomplete: 'off')
     label.label for="search_query"
       span.is-hidden-mobile Tapez le métier pour lequel vous souhaitez obtenir un diplôme
       span.is-hidden-tablet Tapez votre métier
-    #search_results

@@ -1285,7 +1285,7 @@ autocomplete.js@^0.37.0:
 
 avril@StartupsPoleEmploi/avril-shared:
   version "1.0.0"
-  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/19813173d58f011cb4b5034c53e59c3e4d3d6862"
+  resolved "https://codeload.github.com/StartupsPoleEmploi/avril-shared/tar.gz/5fbf174faad9359dc0e848473c16b73cdf873526"
   dependencies:
     "@trevoreyre/autocomplete-vue" "^2.1.1"
     algoliasearch "^3.35.1"
@@ -6657,9 +6657,9 @@ vm-browserify@^1.0.1:
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
 
 vue2-datepicker@^3.4.1:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.8.0.tgz#aa5da2d24a312f07da49f971bfcca4ed6262ad91"
-  integrity sha512-FRofR4z0o/+gXBUdzAc/DBWTfhEvy1A7QhTI4l8GgU21+Veawpw5p7/toE+Gj9hWkYXN833SSjXSDW7+BGQ7nQ==
+  version "3.8.2"
+  resolved "https://registry.yarnpkg.com/vue2-datepicker/-/vue2-datepicker-3.8.2.tgz#5bba391d39eda949ae1f68cd9adab0037a32b417"
+  integrity sha512-GUoNLyzPl3Xi7ruSQFF59BzMXWuflxzP9yM3P4ARz9GfhzLLFgYVLAEkJi6DNQU7zozBMzz+VNIQDwPaDNMo6Q==
   dependencies:
     date-format-parse "^0.2.6"
 

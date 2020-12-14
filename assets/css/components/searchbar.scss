@@ -22,34 +22,38 @@
       width: 100%;
       line-height: 1rem;
     }
+    .twitter-typeahead {
+      width: 100%;
+      input.searchbar {
+        width: 100%;
+        margin-top: 2rem;
+        padding-left: 4rem;
 
-    input.searchbar {
-      margin-top: 2rem;
-      padding-left: 4rem;
-
-      &:not(:focus) {
-        &::placeholder {
-          color: $white;
+        &:not(:focus) {
+          color: transparent;
+          &::placeholder {
+            color: transparent;
+          }
         }
-        & + label {
-          line-height: 5rem;
-          top: 2rem;
-          padding-left: 4rem;
-          margin-bottom: 0;
-          font-size: 1.2em;
-          color: $gray-avril;
-          @include tablet {
-            font-size: 1em;
-          }
-          @include desktop {
-            font-size: 0.8em;
-          }
-          @include widescreen {
-            font-size: 1em;
-          }
-          @include fullhd {
-            font-size: 1.25em;
-          }
+      }
+      &:not(.is-focused) + label {
+        line-height: 5rem;
+        top: 2rem;
+        padding-left: 4rem;
+        margin-bottom: 0;
+        font-size: 1.2em;
+        color: $gray-avril;
+        @include tablet {
+          font-size: 1em;
+        }
+        @include desktop {
+          font-size: 0.8em;
+        }
+        @include widescreen {
+          font-size: 1em;
+        }
+        @include fullhd {
+          font-size: 1.25em;
         }
       }
     }
@@ -63,39 +67,34 @@ input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance:none;
 }
 
-.algolia-autocomplete {
+// .avril-input, .avril-hint, .twitter-typeahead {
+//   width: 100%;
+// }
+.avril-hint {
+  color: #999;
+}
+.avril-dropdown-menu {
+  @extend .is-default;
   width: 100%;
-  .avril-input, .avril-hint {
-    width: 100%;
+  border: 1px solid $border;
+  border-top: none;
+  .title {
+    padding: 0.5rem 1rem;
+    margin: 0;
   }
-  .avril-hint {
-    color: #999;
+  .avril-cursor {
+    background-color: palette(blue, background);
   }
-  .avril-dropdown-menu {
-    @extend .is-default;
-    width: 100%;
-    border: 1px solid $border;
-    border-top: none;
-
-    .title {
-      padding: 0.5rem 1rem;
-      margin: 0;
-    }
-    .avril-suggestion {
-      cursor: pointer;
-      padding: 0.5rem 1rem;
-      font-size: 1.2rem;
-      &.avril-cursor {
-        background-color: palette(blue, background);
-      }
-      a {
-        text-decoration: none;
-        display: block;
-      }
-      em {
-        font-weight: bold;
-        font-style: normal;
-      }
+  .avril-pending, .avril-empty {
+    padding: 0.5rem 1rem;
+  }
+  .avril-selectable {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-size: 1.2rem;
+    a {
+      text-decoration: none !important;
+      display: block;
     }
   }
 }
