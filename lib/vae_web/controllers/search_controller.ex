@@ -26,15 +26,21 @@ defmodule VaeWeb.SearchController do
 
   def build_query(Certification, query) do
     from(e in Certification, where: e.is_active)
-    |> where([e], ilike(field(e, :label), ^"%#{query}%"))
+    |> where([e], like(field(e, :slug), ^"%#{format_query(query)}%"))
     # |> or_where([e], ilike(field(e, :acronym), ^"%#{query}%"))
     |> Certification.sort_by_popularity()
   end
 
   def build_query(Profession, query) do
     from(e in Profession)
-    |> or_where([e], ilike(field(e, :label), ^"%#{query}%"))
+    |> or_where([e], like(field(e, :slug), ^"%#{format_query(query)}%"))
     |> order_by([e], desc: e.priority)
+  end
+
+  def format_query(query) do
+    query
+    |> String.downcase()
+    |> String.replace(" ", "-")
   end
 
 end
