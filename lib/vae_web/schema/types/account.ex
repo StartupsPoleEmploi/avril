@@ -1,4 +1,4 @@
-defmodule VaeWeb.Schema.AccountTypes do
+defmodule VaeWeb.Schema.Types.Account do
   use Absinthe.Schema.Notation
 
   alias VaeWeb.Resolvers

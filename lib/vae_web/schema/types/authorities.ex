@@ -1,4 +1,4 @@
-defmodule VaeWeb.Schema.AuthoritiesTypes do
+defmodule VaeWeb.Schema.Types.Authorities do
   use Absinthe.Schema.Notation
 
   alias VaeWeb.Resolvers

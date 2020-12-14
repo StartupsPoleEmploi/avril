@@ -1,7 +1,4 @@
 = form_for @conn, Routes.search_path(@conn, :search), [as: :search, id: "certification_finder"], fn f ->
-  = hidden_input(f, :profession, value: Plug.Conn.get_session(@conn, :search_profession))
-  = hidden_input(f, :rome_code, value: Plug.Conn.get_session(@conn, :search_rome))
-  = hidden_input(f, :certification, value: Plug.Conn.get_session(@conn, :search_certification))
   .wrapper
     span.icon.is-left.is-xlarge
       = img_tag Routes.static_path(@conn, "/images/icons/search.svg")
@@ -9,3 +6,4 @@
     label.label for="search_query"
       span.is-hidden-mobile Tapez le métier pour lequel vous souhaitez obtenir un diplôme
       span.is-hidden-tablet Tapez votre métier
+    #search_results

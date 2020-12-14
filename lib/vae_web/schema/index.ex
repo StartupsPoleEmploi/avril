@@ -2,10 +2,12 @@ defmodule VaeWeb.Schema do
   use Absinthe.Schema
 
   import_types(Absinthe.Type.Custom)
-  import_types(__MODULE__.AccountTypes)
-  import_types(__MODULE__.ApplicationTypes)
-  import_types(__MODULE__.AuthoritiesTypes)
-  import_types(__MODULE__.CertificationTypes)
+  import_types(VaeWeb.Schema.Types.Account)
+  import_types(VaeWeb.Schema.Types.Application)
+  import_types(VaeWeb.Schema.Types.Authorities)
+  import_types(VaeWeb.Schema.Types.Certification)
+  import_types(VaeWeb.Schema.Types.Profession)
+  import_types(VaeWeb.Schema.Types.Search)
 
   alias VaeWeb.Resolvers.Resume
 
@@ -13,6 +15,8 @@ defmodule VaeWeb.Schema do
     import_fields(:account_queries)
     import_fields(:application_queries)
     import_fields(:authorities_queries)
+
+    import_fields(:public_searches)
   end
 
   mutation do

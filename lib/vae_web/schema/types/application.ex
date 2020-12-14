@@ -1,4 +1,4 @@
-defmodule VaeWeb.Schema.ApplicationTypes do
+defmodule VaeWeb.Schema.Types.Application do
   use Absinthe.Schema.Notation
 
   alias VaeWeb.Resolvers

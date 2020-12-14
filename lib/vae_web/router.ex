@@ -82,9 +82,6 @@ defmodule VaeWeb.Router do
       put("/select", VaeWeb.CertificationController, :select, as: :select)
     end
 
-    # Search endpoint
-    post("/search", VaeWeb.SearchController, :search)
-
     # OAuth
     get("/:provider/callback", VaeWeb.AuthController, :callback)
     get("/:provider/redirect", VaeWeb.AuthController, :save_session_and_redirect)
@@ -108,6 +105,8 @@ defmodule VaeWeb.Router do
     get("/certifications/:id", VaeWeb.Redirector, to: "/diplomes/:id")
     get("/certifiers/:id", VaeWeb.Redirector, to: "/certificateurs?organisme=:id")
     get("/processes/:id", VaeWeb.Redirector, to: "/", msg: "La page demandée n'existe plus.")
+
+    post("/search", VaeWeb.SearchController, :search)
   end
 
   scope "/", VaeWeb do
@@ -145,34 +144,48 @@ defmodule VaeWeb.Router do
   scope "/" do
     pipe_through [:accepts_json]
     post("/mail_events", VaeWeb.MailEventsController, :new_event)
-  end
 
-  scope "/api" do
-    pipe_through [
-      :accepts_json,
-      :api_authenticated
-    ]
+    get("/search", VaeWeb.SearchController, :public_search)
 
-    forward "/v2", Absinthe.Plug,
+    # API
+    forward "/api/v2", Absinthe.Plug,
       schema: VaeWeb.Schema,
       before_send: {__MODULE__, :logout?},
       json_codec: Jason
 
-    forward "/graphiql", Absinthe.Plug.GraphiQL,
-      schema: VaeWeb.Schema,
-      before_send: {__MODULE__, :logout?},
-      interface: :playground,
-      json_codec: Jason
+    if Mix.env() == :dev do
+      forward "/api/graphiql", Absinthe.Plug.GraphiQL,
+        schema: VaeWeb.Schema,
+        before_send: {__MODULE__, :logout?},
+        interface: :playground,
+        json_codec: Jason
+    end
   end
+
+  # # Private API
+  # scope "/api" do
+  #   pipe_through [
+  #     :accepts_json,
+  #     :api_authenticated
+  #   ]
+
+  #   forward "/v2", Absinthe.Plug,
+  #     schema: VaeWeb.Schema.Private,
+  #     before_send: {__MODULE__, :logout?},
+  #     json_codec: Jason
+
+  # end
 
   def logout?(conn, %Absinthe.Blueprint{} = blueprint) do
-    if blueprint.execution.context[:current_user] do
-      conn
-    else
-      conn
-      |> Plug.Conn.assign(:signed_out_user, Pow.Plug.current_user(conn))
-      |> Pow.Plug.delete()
-    end
+    conn
+    # IO.inspect(Absinthe.Blueprint.current_operation(blueprint))
+    # if blueprint.execution.context[:current_user] do
+    #   conn
+    # else
+    #   conn
+    #   |> Plug.Conn.assign(:signed_out_user, Pow.Plug.current_user(conn))
+    #   |> Pow.Plug.delete()
+    # end
   end
 
   defp fetch_app_status(conn, _opts) do

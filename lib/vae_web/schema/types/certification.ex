@@ -1,4 +1,4 @@
-defmodule VaeWeb.Schema.CertificationTypes do
+defmodule VaeWeb.Schema.Types.Certification do
   use Absinthe.Schema.Notation
 
   alias VaeWeb.Resolvers.Authorities
