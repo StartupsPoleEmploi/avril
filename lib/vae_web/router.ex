@@ -148,44 +148,42 @@ defmodule VaeWeb.Router do
     get("/search", VaeWeb.SearchController, :public_search)
 
     # API
-    forward "/api/v2", Absinthe.Plug,
+    # forward "/api/v2", Absinthe.Plug,
+    #   schema: VaeWeb.Schema,
+    #   before_send: {__MODULE__, :logout?},
+    #   json_codec: Jason
+
+    # if Mix.env() == :dev do
+    #   forward "/api/graphiql", Absinthe.Plug.GraphiQL,
+    #     schema: VaeWeb.Schema,
+    #     before_send: {__MODULE__, :logout?},
+    #     interface: :playground,
+    #     json_codec: Jason
+    # end
+  end
+
+  # # Private API
+  scope "/api" do
+    pipe_through [
+      :accepts_json,
+      :api_authenticated
+    ]
+
+    forward "/v2", Absinthe.Plug,
       schema: VaeWeb.Schema,
       before_send: {__MODULE__, :logout?},
       json_codec: Jason
 
-    if Mix.env() == :dev do
-      forward "/api/graphiql", Absinthe.Plug.GraphiQL,
-        schema: VaeWeb.Schema,
-        before_send: {__MODULE__, :logout?},
-        interface: :playground,
-        json_codec: Jason
-    end
   end
 
-  # # Private API
-  # scope "/api" do
-  #   pipe_through [
-  #     :accepts_json,
-  #     :api_authenticated
-  #   ]
-
-  #   forward "/v2", Absinthe.Plug,
-  #     schema: VaeWeb.Schema.Private,
-  #     before_send: {__MODULE__, :logout?},
-  #     json_codec: Jason
-
-  # end
-
   def logout?(conn, %Absinthe.Blueprint{} = blueprint) do
-    conn
-    # IO.inspect(Absinthe.Blueprint.current_operation(blueprint))
-    # if blueprint.execution.context[:current_user] do
-    #   conn
-    # else
-    #   conn
-    #   |> Plug.Conn.assign(:signed_out_user, Pow.Plug.current_user(conn))
-    #   |> Pow.Plug.delete()
-    # end
+    if blueprint.execution.context[:current_user] do
+      conn
+    else
+      conn
+      |> Plug.Conn.assign(:signed_out_user, Pow.Plug.current_user(conn))
+      |> Pow.Plug.delete()
+    end
   end
 
   defp fetch_app_status(conn, _opts) do
