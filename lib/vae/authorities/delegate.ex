@@ -24,6 +24,7 @@ defmodule Vae.Delegate do
     field(:secondary_person_name, :string)
     field(:is_active, :boolean, default: false)
     field(:geolocation, :map)
+    field(:geom, Geo.PostGIS.Geometry)
     field(:city, :string)
     field(:administrative, :string)
     field(:internal_notes, :string)
@@ -110,6 +111,7 @@ defmodule Vae.Delegate do
       :secondary_email,
       :secondary_person_name,
       :is_active,
+      :geom,
       :geolocation,
       :city,
       :administrative,
@@ -126,18 +128,19 @@ defmodule Vae.Delegate do
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
-    |> link_certifications()
+    # |> link_certifications()
     |> put_param_assoc(:applications, params)
   end
 
   defp add_geolocation(%{changes: %{address: _}} = changeset, %{geo: encoded})
        when not is_nil(encoded) do
-    geolocation = Poison.decode!(encoded)
+    %{"_geoloc" => %{"lng" => lng, "lat" => lat}} = geolocation = Poison.decode!(encoded)
 
     changeset
     |> put_change(:city, Places.get_city(geolocation))
     |> put_change(:administrative, Places.get_administrative(geolocation))
     |> put_change(:geolocation, geolocation)
+    |> put_change(:geom, %Geo.Point{coordinates: {lng, lat}})
   end
 
   defp add_geolocation(

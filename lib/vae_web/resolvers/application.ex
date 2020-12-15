@@ -3,6 +3,7 @@ defmodule VaeWeb.Resolvers.Application do
 
   import VaeWeb.Resolvers.ErrorHandler
   import Ecto.Query
+  import Geo.PostGIS
 
   alias Vae.{Applications, Delegate, Meeting, Search.Algolia, Repo, UserApplication}
 
@@ -34,17 +35,22 @@ defmodule VaeWeb.Resolvers.Application do
 
   def delegates_search(
         _,
-        %{application_id: application_id, geo: geoloc, radius: radius, administrative: administrative},
+        %{application_id: application_id, geo: %{lng: lng, lat: lat}, radius: radius, administrative: administrative},
         %{context: %{current_user: user}}
       ) do
     with(
       application when not is_nil(application) <-
            Applications.get_application_from_id_and_user_id(application_id, user.id),
-      {:ok, algolia_delegates} <- Algolia.get_delegates(application.certification, geoloc, radius, administrative),
-      ids <- Enum.map(algolia_delegates, &(&1.id)),
-      delegates <- from(el in Delegate, [where: el.id in ^ids])
-        |> preload([el], :certifiers)
-        |> order_by([el], fragment("array_position(?, ?)", ^ids, el.id))
+      geom <- %Geo.Point{coordinates: {lng, lat}},
+      delegates <- from(d in Delegate)
+        |> join(:inner, [d], assoc(d, :certifications))
+        |> where([d], d.is_active)
+        |> Vae.Maybe.if(is_binary(administrative), &where(&1, [d], d.administrative == ^administrative))
+        |> where([d, c], c.id == ^application.certification_id)
+        |> where([d], st_dwithin_in_meters(d.geom, ^geom, ^radius))
+        |> preload([d], [:certifiers])
+        |> order_by([d], [asc: st_distance(d.geom, ^geom)])
+        |> limit(6)
         |> Repo.all()
     ) do
       {:ok, delegates}

@@ -40,6 +40,7 @@ defmodule Vae.Mixfile do
       {:phoenix_html, "~> 2.13.3"},
       {:ecto_sql, "~> 3.3.4"},
       {:postgrex, "~> 0.15.3"},
+      {:geo_postgis, "~> 3.1"},
       {:plug_cowboy, "~> 2.0"},
       {:plug, "~> 1.7"},
       {:pow, "~> 1.0.20"},
