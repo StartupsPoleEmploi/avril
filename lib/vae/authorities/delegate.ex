@@ -128,7 +128,7 @@ defmodule Vae.Delegate do
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
-    # |> link_certifications()
+    |> link_certifications()
     |> put_param_assoc(:applications, params)
   end
 
