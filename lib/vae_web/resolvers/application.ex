@@ -41,7 +41,7 @@ defmodule VaeWeb.Resolvers.Application do
       application when not is_nil(application) <-
            Applications.get_application_from_id_and_user_id(application_id, user.id),
       {:ok, algolia_delegates} <- Algolia.get_delegates(application.certification, geoloc, radius, administrative),
-      ids <- Enum.map(IO.inspect(algolia_delegates), &(&1.id)),
+      ids <- Enum.map(algolia_delegates, &(&1.id)),
       delegates <- from(el in Delegate, [where: el.id in ^ids])
         |> preload([el], :certifiers)
         |> order_by([el], fragment("array_position(?, ?)", ^ids, el.id))
