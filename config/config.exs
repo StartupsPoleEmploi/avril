@@ -119,7 +119,19 @@ config :vae, Vae.Scheduler,
     fvae_meetings_task: [
       schedule: "0 5 * * *",
       task: &Vae.Authorities.fetch_fvae_delegate_meetings/0
+    ],
+    registered_campaign_task: [
+      schedule: "30 10 * * 2",
+      task: fn () ->
+        Vae.CampaignDiffuser.Handler.execute_registered(Vae.Date.last_monday())
+      end
     ]
+    # new_registered_campaign_task: [
+    #   schedule: "30 14 * * 2",
+    #   task: fn () ->
+    #     Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
+    #   end
+    # ]
   ], else: []
 
 config :absinthe,
