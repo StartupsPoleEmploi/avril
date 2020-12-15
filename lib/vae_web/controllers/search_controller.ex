@@ -19,28 +19,22 @@ defmodule VaeWeb.SearchController do
     res = build_query(module, query)
     |> limit(5)
     |> Vae.Repo.all()
-    |> Enum.map(fn %module{id: id, slug: slug} = e -> %{id: id, name: module.name(e), slug: slug, index: index} end)
+    |> Enum.map(fn e -> Map.merge(e, %{name: module.name(struct(module, e)), index: index}) end)
+    |> Enum.sort_by(&(-&1.sort))
 
     json(conn, res)
   end
 
   def build_query(Certification, query) do
     from(e in Certification, where: e.is_active)
-    |> where([e], like(field(e, :slug), ^"%#{format_query(query)}%"))
-    # |> or_where([e], ilike(field(e, :acronym), ^"%#{query}%"))
-    |> Certification.sort_by_popularity()
+    |> Vae.Search.FullTextSearch.run(query)
+    |> select([e, v], %{id: e.id, label: e.label, acronym: e.acronym, slug: e.slug, sort: v.count})
   end
 
   def build_query(Profession, query) do
     from(e in Profession)
-    |> or_where([e], like(field(e, :slug), ^"%#{format_query(query)}%"))
-    |> order_by([e], desc: e.priority)
-  end
-
-  def format_query(query) do
-    query
-    |> String.downcase()
-    |> String.replace(" ", "-")
+    |> Vae.Search.FullTextSearch.run(query)
+    |> select([e, v], %{id: e.id, label: e.label, slug: e.slug, sort: e.priority, rank: v.rank})
   end
 
 end

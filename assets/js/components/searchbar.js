@@ -17,9 +17,9 @@ const setBuilder = ({indexName, header}) => {
     async: true,
     display: res => res.name,
     templates: {
-      header: () => `<h5 class="title">${header}</h3>`,
+      header: () => `<h5 class="title is-4">${header}</h5>`,
       pending: () => `<h6 class="title is-6">Recherche des ${header} en cours ...</h6>`,
-      notFound: ({query}) => `<h5 class="title is-4">Aucun ${singularize(header.toLowerCase())} trouvé pour ${query}</h5>`,
+      notFound: ({query}) => `<h6 class="title is-6">Aucun ${singularize(header.toLowerCase())} trouvé pour ${query}</h6>`,
       suggestion: res => `<p><a href="${url(indexName)(res)}">${res.name}</a></p>`,
     },
     source: debounce((query, _, callback) => {
