@@ -72,6 +72,7 @@ services:
       - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
     working_dir: /app
   postgres:
+    image: mdillon/postgis:11-alpine
     env_file:
       - ./.env
     healthcheck:
@@ -80,8 +81,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 15s
-    # image: postgres:11.6-alpine
-    image: mdillon/postgis:11-alpine
     restart: always
     volumes:
       - ./db/data:/var/lib/postgresql/data

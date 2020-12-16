@@ -56,5 +56,5 @@ $('#search_query').typeahead({
   $(e.target).parents('.twitter-typeahead').removeClass('is-focused');
 })
 .on('typeahead:select', function(e, res){
-  window.location = url(res.indexName)(res);
+  window.location = url(res.index)(res);
 })
