@@ -47,10 +47,10 @@ defmodule VaeWeb.Resolvers.Application do
         |> where([d], d.is_active)
         |> Vae.Maybe.if(is_binary(administrative), &where(&1, [d], d.administrative == ^administrative))
         |> where([d, c], c.id == ^application.certification_id)
-        |> where([d], st_dwithin_in_meters(d.geom, ^geom, ^radius))
+        |> Vae.Maybe.if(is_number(radius), &where(&1, [d], st_dwithin_in_meters(d.geom, ^geom, ^radius)))
         |> preload([d], [:certifiers])
         |> order_by([d], [asc: st_distance(d.geom, ^geom)])
-        |> limit(6)
+        |> limit(12)
         |> Repo.all()
     ) do
       {:ok, delegates}
