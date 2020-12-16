@@ -46,7 +46,7 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_phone_number: application.delegate && application.delegate.telephone,
         delegate_email: application.delegate && application.delegate.email,
         date_format: @date_format,
-        image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
+        image_url: URI.static_url(endpoint, "/images/group.png"),
         text_center: true,
         footer_note: :inscrit_avril
       }
@@ -69,7 +69,7 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
         delegate_website: application.delegate.website,
-        image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
+        image_url: URI.static_url(endpoint, "/images/group.png"),
         footer_note: :inscrit_avril
       }
     )
@@ -87,7 +87,7 @@ defmodule VaeWeb.ApplicationEmail do
         username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_phone_number: application.delegate.telephone,
-        image_url: Routes.static_url(VaeWeb.Endpoint, "/images/group.png"),
+        image_url: URI.static_url(endpoint, "/images/group.png"),
         date_format: @date_format,
         footer_note: :inscrit_avril
       }

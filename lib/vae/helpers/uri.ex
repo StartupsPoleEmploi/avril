@@ -1,8 +1,16 @@
 defmodule Vae.URI do
   require Logger
+  alias VaeWeb.Router.Helpers, as: Routes
 
   def endpoint() do
     struct(URI, Application.get_env(:vae, VaeWeb.Endpoint)[:url])
+  end
+
+  def static_url(%Plug.Conn{private: _private} = conn, path), do: Routes.static_url(conn, path)
+  def static_url(%_{endpoint: _endpoint} = conn, path), do: Routes.static_url(conn, path)
+  def static_url(endpoint, path) when is_atom(endpoint), do: Routes.static_url(endpoint, path)
+  def static_url(endpoint, path) do
+    "#{Routes.url(endpoint)}#{path}"
   end
 
   def to_absolute_string(%URI{} = query_path, %URI{} = base) do

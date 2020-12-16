@@ -20,11 +20,7 @@ defmodule VaeWeb.JobSeekerEmail do
             utm_medium: "email",
             js_id: id
           ),
-        image_url:
-          Routes.static_url(
-            VaeWeb.Endpoint,
-            "/images/mon-diplome.jpg"
-          ),
+        image_url: URI.static_url(endpoint, "/images/mon-diplome.jpg"),
         text_center: true,
         job_seeker_id: id,
         job_seeker_msg: true,
