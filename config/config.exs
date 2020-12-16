@@ -127,13 +127,13 @@ config :vae, Vae.Scheduler,
       task: fn () ->
         Vae.CampaignDiffuser.Handler.execute_registered(Vae.Date.last_monday())
       end
+    ],
+    new_registered_campaign_task: [
+      schedule: "30 14 * * 2",
+      task: fn () ->
+        Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
+      end
     ]
-    # new_registered_campaign_task: [
-    #   schedule: "30 14 * * 2",
-    #   task: fn () ->
-    #     Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
-    #   end
-    # ]
   ], else: []
 
 config :absinthe,
