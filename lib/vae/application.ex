@@ -9,20 +9,19 @@ defmodule Vae.Application do
     repo_children = %{
       should_start: true,
       children: [
-        supervisor(Vae.Repo, [])
+        supervisor(Vae.Repo, []),
+        worker(Vae.Places.Cache, [])
       ]
     }
 
     server_children = %{
       should_start: Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
-      # should_start: true,
       children: [
+        supervisor(VaeWeb.Endpoint, []),
         Vae.Scheduler,
         Pow.Store.Backend.MnesiaCache,
-        supervisor(VaeWeb.Endpoint, []),
         supervisor(Vae.Event.EventSupervisor, []),
         worker(Vae.Status.Server, []),
-        worker(Vae.Places.Cache, []),
         Vae.PoleEmploi.OAuth.Clients,
         worker(Vae.Meetings.Server, []),
         worker(Vae.Meetings.FranceVae.Server, []),
