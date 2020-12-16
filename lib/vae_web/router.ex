@@ -153,13 +153,6 @@ defmodule VaeWeb.Router do
     #   before_send: {__MODULE__, :logout?},
     #   json_codec: Jason
 
-    # if Mix.env() == :dev do
-    #   forward "/api/graphiql", Absinthe.Plug.GraphiQL,
-    #     schema: VaeWeb.Schema,
-    #     before_send: {__MODULE__, :logout?},
-    #     interface: :playground,
-    #     json_codec: Jason
-    # end
   end
 
   # # Private API
@@ -174,6 +167,13 @@ defmodule VaeWeb.Router do
       before_send: {__MODULE__, :logout?},
       json_codec: Jason
 
+    if Mix.env() == :dev do
+      forward "/graphiql", Absinthe.Plug.GraphiQL,
+        schema: VaeWeb.Schema,
+        before_send: {__MODULE__, :logout?},
+        interface: :playground,
+        json_codec: Jason
+    end
   end
 
   def logout?(conn, %Absinthe.Blueprint{} = blueprint) do

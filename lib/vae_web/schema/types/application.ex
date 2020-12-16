@@ -116,7 +116,7 @@ defmodule VaeWeb.Schema.Types.Application do
     end
 
     @desc "Delete an application"
-    field(:delete_application, :application) do
+    field(:delete_application, list_of(:application)) do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Application.delete_application/3)
     end
