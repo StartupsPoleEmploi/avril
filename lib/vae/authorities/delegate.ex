@@ -139,19 +139,19 @@ defmodule Vae.Delegate do
     changeset
     |> put_change(:city, Places.get_city(geolocation))
     |> put_change(:administrative, Places.get_administrative(geolocation))
-    |> put_change(:geolocation, geolocation)
+    # |> put_change(:geolocation, geolocation)
     |> put_change(:geom, %Geo.Point{coordinates: {lng, lat}})
   end
 
-  defp add_geolocation(
-         changeset,
-         %{geolocation: %{"city" => city, "administrative" => administrative}} = geolocation
-       ) do
-    changeset
-    |> put_change(:city, List.first(city))
-    |> put_change(:administrative, List.first(administrative))
-    |> put_change(:geolocation, geolocation)
-  end
+  # defp add_geolocation(
+  #        changeset,
+  #        %{geolocation: %{"city" => city, "administrative" => administrative}} = geolocation
+  #      ) do
+  #   changeset
+  #   |> put_change(:city, List.first(city))
+  #   |> put_change(:administrative, List.first(administrative))
+  #   |> put_change(:geolocation, geolocation)
+  # end
 
   defp add_geolocation(changeset, _params), do: changeset
 

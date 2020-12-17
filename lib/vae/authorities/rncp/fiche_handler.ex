@@ -31,7 +31,9 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       FileLogger.log_into_file("inactive_date.csv", [data.rncp_id, data.acronym, data.label])
     end
 
+    Logger.info("#################################")
     Logger.info("Updating RNCP_ID: #{data.rncp_id}")
+    Logger.info("#################################")
 
     data
     |> Map.merge(%{
@@ -44,12 +46,14 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   end
 
   def parse_romes(fiche) do
+    Logger.info("Parsing romes")
     SweetXml.xpath(fiche, ~x"./CODES_ROME/ROME"l)
       |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./CODE/text()"s) end)
       |> Enum.map(fn code -> Repo.get_by(Rome, code: code) end)
   end
 
   def parse_certifiers(fiche, data) do
+    Logger.info("Parsing certifiers")
     SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
       |> Enum.map(fn node ->
         SweetXml.xmap(node,
