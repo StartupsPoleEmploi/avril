@@ -8,7 +8,7 @@ defmodule Vae.Certification do
   schema "certifications" do
     field(:rncp_id, :string)
     field(:is_rncp_active, :boolean)
-    field(:is_active, :boolean)
+    field(:is_active, :boolean, default: true)
     field(:slug, :string)
     field(:acronym, :string)
     field(:label, :string)
@@ -91,10 +91,11 @@ defmodule Vae.Certification do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
-    params = case params[:rncp_id] do
-      v when is_integer(v) -> Map.put(params, :rncp_id, Integer.to_string(v))
-      _ -> params
-    end
+    # params = case params[:rncp_id] do
+    #   v when is_integer(v) -> Map.put(params, :rncp_id, Integer.to_string(v))
+    #   _ -> params
+    # end
+
     struct
     |> Repo.preload([
       :applications,
@@ -140,12 +141,12 @@ defmodule Vae.Certification do
     # if get_change(changeset, :certifiers) ||
     #    get_change(changeset, :included_delegates) ||
     #    get_change(changeset, :excluded_delegates) do
-      changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
+      # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
+      # rncp_delegates = get_field(changeset, :rncp_delegates)
 
-      rncp_delegates = get_field(changeset, :rncp_delegates)
-      # rncp_delegates = get_field(changeset, :certifiers)
-      #   |> Repo.preload(:active_delegates)
-      #   |> Enum.flat_map(&(&1.active_delegates))
+      rncp_delegates = get_field(changeset, :certifiers)
+        |> Repo.preload(:active_delegates)
+        |> Enum.flat_map(&(&1.active_delegates))
 
       included_delegates = get_field(changeset, :included_delegates)
       excluded_delegates = get_field(changeset, :excluded_delegates)
@@ -153,7 +154,8 @@ defmodule Vae.Certification do
       delegates =
         Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
       changeset
-      |> put_assoc_no_useless_updates(:delegates, delegates)
+      |> put_assoc(:delegates, delegates)
+      # |> put_assoc_no_useless_updates(:delegates, delegates)
     # else
     #   changeset
     # end
@@ -223,8 +225,8 @@ defmodule Vae.Certification do
   end
 
   def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do
-    if older_certification = get_change(changeset, :older_certification) do
-      %{applications: older_applications} = older_certification |> Repo.preload(:applications)
+    if get_change(changeset, :older_certification) do
+      %Certification{applications: older_applications} = get_field(changeset, :older_certification) |> Repo.preload(:applications)
       put_assoc_no_useless_updates(
         changeset,
         :applications,

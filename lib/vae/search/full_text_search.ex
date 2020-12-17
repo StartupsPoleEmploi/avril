@@ -72,6 +72,10 @@ defmodule Vae.Search.FullTextSearch do
     )
   end
 
+  def refresh_materialized_view(modules \\ @searchable_entities)
+  def refresh_materialized_view(modules) when is_list(modules), do:
+    Enum.reduce(modules, {:ok, nil}, fn module, {:ok, _} -> refresh_materialized_view(module) end)
+
   def refresh_materialized_view(module) when module in @searchable_entities,
     do: Repo.query("REFRESH MATERIALIZED VIEW CONCURRENTLY #{module_to_table(module)}_search;", [], timeout: :infinity)
 

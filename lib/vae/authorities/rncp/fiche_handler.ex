@@ -85,6 +85,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       %Certification{is_rncp_active: true, applications: new_applications} = newer_certification <-
         Repo.get_by(Certification, rncp_id: newer_rncp_id) |> Repo.preload(:applications)
     ) do
+      Logger.info("RNCP#{rncp_id} has newer version #{newer_rncp_id}")
 
       Enum.each(old_applications, fn
         %UserApplication{user_id: user_id} = a1 ->
@@ -133,14 +134,18 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   end
 
   defp insert_or_update_by_rncp_id(%{rncp_id: rncp_id} = fields) do
-    Repo.get_by(Certification, rncp_id: rncp_id)
-    |> case do
-      nil -> %Certification{rncp_id: rncp_id}
-      %Certification{} = c -> c
+    try do
+      Repo.get_by(Certification, rncp_id: rncp_id)
+      |> case do
+        nil -> %Certification{rncp_id: rncp_id}
+        %Certification{} = c -> c
+      end
+      |> Repo.preload([:certifiers, :romes])
+      |> Certification.changeset(fields)
+      |> FileLogger.log_changeset()
+      |> Repo.insert_or_update()
+    rescue
+      e -> Logger.error(inspect(e))
     end
-    |> Repo.preload([:certifiers, :romes])
-    |> Certification.changeset(fields)
-    |> FileLogger.log_changeset()
-    |> Repo.insert_or_update()
   end
 end

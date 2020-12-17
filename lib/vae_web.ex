@@ -111,7 +111,7 @@ defmodule VaeWeb do
             _ -> nil
           end
           |> case do
-            value when not is_nil(value) -> put_assoc_no_useless_updates(changeset, key, value)
+            value when not is_nil(value) -> put_assoc(changeset, key, value)
             nil -> changeset
           end
         else

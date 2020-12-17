@@ -15,8 +15,6 @@ defmodule Mix.Tasks.RncpUpdate do
   ## Command line options
 
   * `-f`, `--filename` - required - the XML source file
-  * `-i`, `--interactive` - default: false - ask if user applications should be removed in case of doublon of former certification
-  * `-x`, `--index` - default: env() == :prod - should algolia indexes be updated?
   """
 
   def run([]) do
@@ -24,24 +22,26 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def run(args) do
-    System.put_env("ALGOLIA_SYNC", "disable")
+    # System.put_env("ALGOLIA_SYNC", "disable")
     {:ok, _} = Application.ensure_all_started(:vae)
 
     {options, [], []} = OptionParser.parse(args,
-      aliases: [f: :filename, i: :index],
-      strict: [filename: :string, index: :boolean]
+      aliases: [f: :filename],
+      strict: [filename: :string]
     )
     %{filename: filename} = options =
-      Map.merge(%{import_date: Date.utc_today(), index: Mix.env() == :prod}, Map.new(options))
+      Map.merge(%{import_date: Date.utc_today()}, Map.new(options))
 
     Logger.info("Start update RNCP with #{filename}")
     prepare_avril_data()
 
+    Logger.info("Parsing fiches to certifications")
     build_and_transform_stream(
       filename,
       &FicheHandler.fiche_to_certification(&1, options)
     )
 
+    Logger.info("Linking old certifications with new ones")
     build_and_transform_stream(
       filename,
       &FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1)
@@ -51,16 +51,17 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def prepare_avril_data() do
+    Logger.info("Reset log files")
     FileLogger.reinitialize_log_file("matches.csv", ~w(class input found score))
     FileLogger.reinitialize_log_file("men_rejected.csv", ~w(rncp_id acronym label is_active))
     FileLogger.reinitialize_log_file("inactive_date.csv", ~w(rncp_id acronym label))
     FileLogger.reinitialize_log_file("changes.log")
   end
 
-  def clean_avril_data(%{index: index, import_date: import_date}) do
-    remove_certifiers_without_certifications()
+  def clean_avril_data(%{import_date: import_date}) do
+    # remove_certifiers_without_certifications()
     make_not_updated_certifications_inactive(import_date)
-    if index, do: update_search_indexes()
+    update_search_indexes()
   end
 
   def remove_certifiers_without_certifications() do
@@ -84,9 +85,10 @@ defmodule Mix.Tasks.RncpUpdate do
 
   def make_not_updated_certifications_inactive(import_date) do
     Logger.info("Make not updated certifications inactive")
-    from(c in Certification,
+    {nb_updated, _} = from(c in Certification,
       where: c.last_rncp_import_date != ^import_date
-    ) |> Repo.update_all(is_active: false)
+    ) |> Repo.update_all(set: [is_active: false])
+    Logger.info("#{nb_updated} certifications made inactive")
   end
 
   defp build_and_transform_stream(filename, transform) do
@@ -98,7 +100,7 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def update_search_indexes() do
-    Logger.info("Update Algolia Indexes")
-    Mix.Tasks.Search.Index.run(~w|-m Vae.Certification -m Vae.Delegate -c|)
+    Logger.info("Update Search Index")
+    Vae.Search.FullTextSearch.refresh_materialized_view()
   end
 end

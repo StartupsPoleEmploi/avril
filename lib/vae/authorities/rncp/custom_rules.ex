@@ -27,7 +27,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     23675, 23939, 23869, 23970, 28627, 23932
   )
 
-  @educ_nat "ministere-de-l-enseignement-superieur"
+  @educ_nat "ministere-de-l-education-nationale"
   @ens_sup "ministere-de-l-enseignement-superieur"
   @solidarite "ministere-charge-de-la-solidarite"
   @sports "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"
@@ -40,6 +40,20 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       |> Enum.any?(&String.starts_with?(intitule, String.downcase(&1)))
 
     accessible_vae && !ignored_intitule
+
+    # test = fiche
+    # |> xpath(~x"./NUMERO_FICHE/text()"s)
+    # |> String.replace_prefix("RNCP", "")
+    # |> String.equivalent?("18704")
+
+    # if test do
+    #   IO.inspect("##############")
+    #   IO.inspect("VAE? #{accessible_vae}")
+    #   IO.inspect("Ignoré ? #{ignored_intitule}")
+    #   IO.inspect("Donc : #{accessible_vae && !ignored_intitule}")
+    #   IO.inspect("##############")
+    # end
+    # test
   end
 
   def reject_educ_nat_certifiers(certifiers, %{
