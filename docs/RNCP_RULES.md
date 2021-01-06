@@ -12,9 +12,9 @@ Du fait qu'il n'existe pas de référentiel pour les institutions fournissant de
 ne sont pas normalisés. Aussi il est nécessaire d'effectuer un rapprochement sur les noms avec notamment
 pour règles :
 
-- transformer les chiffres romains en chiffres arabes (paris-vii == paris-7)
-- ignorer l'ordre des mots et certains mots de liaison (université de Paris == Paris université)
-- permettre des imprécisions d'orthographe sauf pour les noms propres (Vincennes != Vincenne)
+- transformer les chiffres romains en chiffres arabes (`paris-vii == paris-7`)
+- ignorer l'ordre des mots et certains mots de liaison (`université de Paris == Paris université`)
+- permettre des imprécisions d'orthographe sauf pour les noms propres (`Vincennes != Vincenne`)
 
 ## Certifications ignorées (non importées dans Avril) :
 
