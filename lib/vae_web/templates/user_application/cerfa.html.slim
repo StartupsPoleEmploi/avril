@@ -96,16 +96,16 @@
                   .atome
                     label
                       | Commune de naissance :
-                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.city || "-"
+                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place && @identity.birth_place.city || "-"
                   .atome
                     label
                       | Département ou collectivité outre-mer de naissance :
-                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.county || "-"
+                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place && @identity.birth_place.county || "-"
                 .column
                   .atome
                     label
                       | Pays de naissance :
-                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place.country || "-"
+                    p.title.is-6.is-uppercase.is-spaced= @identity.birth_place && @identity.birth_place.country || "-"
                   .atome
                     label
                       | Nationalité :
