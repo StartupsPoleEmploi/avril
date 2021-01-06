@@ -87,6 +87,6 @@ pour règles :
 
 - La fiche à l'ID RNCP 23909
 
-# Certifications avec un code ROME supplémentaire M1203
+## Certifications avec un code ROME supplémentaire M1203
 
 - La fiche à l'ID RNCP 4877
