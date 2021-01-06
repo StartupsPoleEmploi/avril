@@ -180,6 +180,25 @@ defmodule Vae.ExAdmin.Delegate do
       end
     end
 
+    csv do
+      column(:id)
+      column(:is_active)
+      column(:slug)
+      column(:name)
+      column(:address_name)
+      column(:address)
+      column(:city)
+      column(:administrative)
+      column(:telephone)
+      column(:website)
+      column(:email)
+      column(:person_name)
+      column(:secondary_email)
+      column(:secondary_person_name)
+      column(:academy_id)
+      column(:internal_notes)
+    end
+
     filter([:is_active, :id, :slug, :email, :city, :administrative])
     filter(:certifiers, order_by: :name)
 
