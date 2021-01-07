@@ -15,10 +15,15 @@ Votre inscription à la réunion d'information a bien été enregistrée :
 <% else %>
 Contactez dès maintenant votre centre VAE au <%= @delegate_phone_number %> ou par email <%= @delegate_email %> pour être mis en relation avec votre conseiller VAE !
 
-Le centre vous apportera des précisions sur ses procédures internes et, les éléments de candidature saisis dans Avril faciliteront la suite de votre parcours.
+Le centre vous apportera des précisions sur ses procédures internes : réunions d'informations, entretien individuel préalable, dossier de candidature spécifique, etc.
+
+Les éléments de candidature saisis dans Avril faciliteront la suite de votre parcours et permettront à votre conseiller de mieux connaitre votre projet pour le prendre en charge.
 <% end %>
 
-Vous retrouverez ces éléments dans votre profil. Sachez aussi qu’ils ont  été transmis à votre centre VAE.
+Vous retrouverez ces éléments dans votre profil et aussi grâce au lien ci-dessous. Sachez aussi qu’ils ont  été transmis à votre centre VAE. 
+Malgré notre vigilance, il arrive que certains centres ne reçoivent pas nos mails aussi est-il important que vous preniez contact avec eux afin de confirmer votre projet.
+
+L'équipe Avril vous présente tous ses voeux de réussite !
 
 **[Voir ma candidature](<%= @url %>)**
 
