@@ -1,8 +1,10 @@
 defmodule Vae.Meeting do
   use VaeWeb, :model
 
+  import Geo.PostGIS
+
   alias __MODULE__
-  alias Vae.Places.Ban
+  alias Vae.{Delegate, Places.Ban}
 
   schema "meetings" do
     field(:source, :string)
@@ -47,11 +49,6 @@ defmodule Vae.Meeting do
   end
 
   def add_geometry(%Ecto.Changeset{} = changeset) do
-    # IO.inspect("######")
-    # IO.inspect(get_change(get_change(changeset, :data), :address))
-    # # IO.inspect(get_field(changeset, :data).postal_code)
-    # # IO.inspect(get_field(changeset, :data))
-    # IO.inspect("######")
     with(
       data_change when not is_nil(data_change) <- get_change(changeset, :data),
       address_change when not is_nil(address_change) <- get_change(data_change, :address),
@@ -71,6 +68,17 @@ defmodule Vae.Meeting do
       |> where([m], m.source == ^"#{source}")
       |> where([_q], fragment("(data->>'meeting_id' = ?)", ^meeting_id))
       |> Repo.one()
+  end
+
+  def find_future_meetings_for_delegate(%Delegate{academy_id: academy_id, geom: geom} = d, radius \\ 50_000) do
+    sql_formatted_date = Timex.format!(Date.utc_today(), "%Y-%m-%d", :strftime)
+
+    from(m in Meeting)
+      |> where([m], m.source == ^"#{Delegate.get_meeting_source(d)}")
+      |> Vae.Maybe.if(not is_nil(academy_id), fn q -> where(q, [_q], fragment("data->>'academy_id' = ?", ^academy_id)) end)
+      |> where([_q], fragment("TO_DATE(data->>'start_date', 'YYYY-MM-DD') > TO_DATE(?, 'YYYY-MM-DD')", ^sql_formatted_date))
+      |> where([m], st_dwithin_in_meters(m.geom, ^geom, ^radius))
+      |> Repo.all()
   end
 
   defimpl ExAdmin.Render, for: __MODULE__ do

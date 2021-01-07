@@ -10,6 +10,7 @@ defmodule VaeWeb.Resolvers.Application do
   @application_not_found "La candidature est introuvable"
   @no_delegate_found "Aucun certificateur n'a été trouvé"
   @delegate_not_found "Le certificateur est introuvable"
+  @no_meeting_found "Nous n'avons pas pu récupérer les réunions d'information"
   @attach_delegate_error "L'ajout du certificateur à votre candidature a échoué"
   @register_meeting_error "La prise de rendez-vous a échoué"
   @submit_error "Une erreur est survenue lors de la transmission de la candidature"
@@ -60,6 +61,19 @@ defmodule VaeWeb.Resolvers.Application do
         error_response(@no_delegate_found, msg)
       _error ->
         error_response(@application_not_found, format_application_error_message(application_id))
+    end
+  end
+
+  def meetings_search(
+        _,
+        %{delegate_id: delegate_id},
+        %{context: %{current_user: _user}}
+      ) do
+    with(%Delegate{} = delegate <- Repo.get(Delegate, delegate_id)) do
+      {:ok, Meeting.find_future_meetings_for_delegate(delegate)}
+    else
+      {:error, msg} ->
+        error_response(@no_meeting_found, msg)
     end
   end
 

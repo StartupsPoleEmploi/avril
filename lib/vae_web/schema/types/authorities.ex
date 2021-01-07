@@ -14,6 +14,16 @@ defmodule VaeWeb.Schema.Types.Authorities do
 
       resolve(&Resolvers.Application.delegates_search/3)
     end
+
+    field(:meetings_search, list_of(:meeting)) do
+      arg(:delegate_id, non_null(:id))
+      # arg(:geo, non_null(:geo_input))
+      # arg(:radius, :integer)
+      # arg(:administrative, :string)
+      # arg(:postal_code, non_null(:string))
+
+      resolve(&Resolvers.Application.meetings_search/3)
+    end
   end
 
   object :delegate do
@@ -24,12 +34,6 @@ defmodule VaeWeb.Schema.Types.Authorities do
     field(:address_name, :string)
     field(:address, :string)
     field(:telephone, :string)
-    field(:meeting_places, list_of(:meeting_place))
-  end
-
-  object :meeting_place do
-    field(:name, :string)
-    field(:meetings, list_of(:meeting))
   end
 
   object :meeting do
