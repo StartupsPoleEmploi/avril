@@ -20,8 +20,9 @@ Le centre vous apportera des précisions sur ses procédures internes : réunion
 Les éléments de candidature saisis dans Avril faciliteront la suite de votre parcours et permettront à votre conseiller de mieux connaitre votre projet pour le prendre en charge.
 <% end %>
 
-Vous retrouverez ces éléments dans votre profil. Sachez aussi qu’ils ont  été transmis à votre centre VAE. 
+Vous retrouverez ces éléments dans votre profil et aussi gràace au lien ci-dessous. Sachez aussi qu’ils ont  été transmis à votre centre VAE. 
 Malgré notre vigilance, il arrive que certains centres ne reçoivent pas nos mails aussi est-il important que vous preniez contact avec eux afin de confirmer votre projet.
+
 L'équipe Avril vous présente tous ses voeux de réussite !
 
 **[Voir ma candidature](<%= @url %>)**
