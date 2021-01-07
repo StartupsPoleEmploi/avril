@@ -39,7 +39,7 @@ defmodule Vae.Places.Ban do
 
   def get_field(_, _), do: nil
 
-  defp fetch_ban_api(query) do
+  defp fetch_ban_api(%{q: q} = query) when not is_nil(q) do
     with {:ok, response} <- HTTPoison.get("#{@base_url}?#{URI.encode_query(query)}"),
          {:ok, %{
             "attribution" => "BAN",
@@ -53,8 +53,12 @@ defmodule Vae.Places.Ban do
     else
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
-        []
+        empty_result(query)
     end
   end
+  defp fetch_ban_api(query), do: empty_result(query)
 
+  defp empty_result(query) do
+    if query.limit == 1, do: nil, else: []
+  end
 end

@@ -9,7 +9,10 @@ defmodule Vae.Application do
     repo_children = %{
       should_start: true,
       children: [
-        supervisor(Vae.Repo, [])
+        supervisor(Vae.Repo, []),
+        Vae.Meetings.FranceVae.Connection.Cache,
+        worker(Vae.Meetings.FranceVae.Server, []),
+        worker(Vae.Meetings.Afpa.Server, [])
       ]
     }
 
@@ -22,9 +25,6 @@ defmodule Vae.Application do
         supervisor(Vae.Event.EventSupervisor, []),
         worker(Vae.Status.Server, []),
         Vae.PoleEmploi.OAuth.Clients,
-        worker(Vae.Meetings.Server, []),
-        worker(Vae.Meetings.FranceVae.Server, []),
-        Vae.Meetings.FranceVae.Connection.Cache
       ]
     }
 

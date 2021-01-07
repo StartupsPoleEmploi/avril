@@ -5,7 +5,7 @@ defmodule Vae.Repo.Migrations.CreateMeetings do
     create table(:meetings) do
       add :source, :string, null: false
       add :data, :map, null: false
-      add :geom, :geometry, null: false
+      add :geom, :geometry
 
       timestamps()
     end

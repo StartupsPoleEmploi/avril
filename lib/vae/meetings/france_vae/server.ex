@@ -14,7 +14,7 @@ defmodule Vae.Meetings.FranceVae.Server do
   @impl true
   def init(_init_state) do
     Logger.info("[DAVA] Init #{@name} server")
-    {:ok, FranceVae.get_academies() |> IO.inspect()}
+    {:ok, FranceVae.get_academies()}
   end
 
   @impl true
@@ -24,7 +24,8 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   @impl true
   def handle_call(:fetch, _from, academies) do
-    {:reply, FranceVae.fetch_all_meetings(academies), academies}
+    {:ok, meetings} = FranceVae.fetch_all_meetings(academies) |> IO.inspect()
+    {:reply, meetings, academies}
   end
 
   @impl true

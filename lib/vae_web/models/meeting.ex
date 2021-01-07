@@ -22,13 +22,13 @@ defmodule Vae.Meeting do
 
       def changeset(module, params) do
         module
-        |> cast(params, ~w(academy_id meeting_id place address postal_code geolocation target start_date end_date)a)
+        |> cast(params, ~w(academy_id meeting_id place address postal_code target start_date end_date)a)
         |> validate_required([
-          :academy_id,
+          # :academy_id,
           :meeting_id,
           :place,
-          :address,
-          :postal_code,
+          # :address,
+          # :postal_code,
           :start_date,
           :end_date
         ])
@@ -40,30 +40,35 @@ defmodule Vae.Meeting do
 
   def changeset(%Meeting{} = meeting, params \\ %{}) do
     meeting
-    |> cast(params, ~w(source data)a)
+    |> cast(params, ~w(source)a)
+    |> cast_embed(:data)
     |> add_geometry()
-    |> validate_required([
-      :source,
-      :geom,
-      :data
-    ])
+    |> validate_required([:source, :data])
   end
 
   def add_geometry(%Ecto.Changeset{} = changeset) do
-    if get_change(changeset, :data) do
-      result =
+    # IO.inspect("######")
+    # IO.inspect(get_change(get_change(changeset, :data), :address))
+    # # IO.inspect(get_field(changeset, :data).postal_code)
+    # # IO.inspect(get_field(changeset, :data))
+    # IO.inspect("######")
+    with(
+      data_change when not is_nil(data_change) <- get_change(changeset, :data),
+      address_change when not is_nil(address_change) <- get_change(data_change, :address),
+      ban_result <-
         Ban.get_geoloc_from_address(get_field(changeset, :data).address) ||
-        Ban.get_geoloc_from_postal_code(get_field(changeset, :data).postal_code)
-
-      put_change(changeset, :geom, %Geo.Point{coordinates: Ban.get_field(result, :lng_lat)})
+        Ban.get_geoloc_from_postal_code(get_field(changeset, :data).postal_code),
+      coordinates when not is_nil(coordinates) <- Ban.get_field(ban_result, :lng_lat)
+    ) do
+      put_change(changeset, :geom, %Geo.Point{coordinates: coordinates})
     else
-      changeset
+      _err -> changeset
     end
   end
 
   def get_by_meeting_id(source, meeting_id) do
     from(m in Meeting)
-      |> where([m], m.source == ^source)
+      |> where([m], m.source == ^"#{source}")
       |> where([_q], fragment("(data->>'meeting_id' = ?)", ^meeting_id))
       |> Repo.one()
   end

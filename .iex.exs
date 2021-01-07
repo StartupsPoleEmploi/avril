@@ -2,6 +2,7 @@ alias Vae.{
   Certification,
   Certifier,
   Delegate,
+  Meeting,
   Rome,
   Repo,
   UserApplication,

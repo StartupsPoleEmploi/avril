@@ -20,8 +20,10 @@ defmodule Vae.Meetings.FranceVae do
       {"Accept", "application/json"}
     ]
 
-    with {:ok, response} <- HTTPoison.get("#{Config.get_base_url()}/academies", headers),
-         {:ok, academies} <- response.body |> Jason.decode() do
+    with(
+      {:ok, response} <- HTTPoison.get("#{Config.get_base_url()}/academies", headers),
+      {:ok, academies} <- response.body |> Jason.decode()
+    ) do
       academies
     else
       {:error, reason} ->
@@ -31,8 +33,9 @@ defmodule Vae.Meetings.FranceVae do
   end
 
   def fetch_all_meetings(academies) do
-    Enum.reduce(academies, {:ok, nil}, fn academy_id, {:ok, _} ->
-      fetch_meetings(academy_id)
+    Enum.reduce(academies, {:ok, []}, fn %{"id" => academy_id}, {:ok, results} ->
+      {:ok, meetings} = fetch_meetings(academy_id)
+      {:ok, results ++ meetings}
     end)
   end
 
@@ -43,7 +46,7 @@ defmodule Vae.Meetings.FranceVae do
       {"Authorization", "Bearer #{token}"}
     ]
 
-    Logger.info("[DAVA] Retrieve meetings for academy_id: #{academy_id} in source #{@source}")
+    Logger.info("[DAVA] Fetching meetings for academy_id: #{academy_id} in source #{@source}")
 
     with {:ok, response} <-
            HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers,
@@ -53,10 +56,7 @@ defmodule Vae.Meetings.FranceVae do
       json
       |> Map.get("reunions")
       |> case do
-        nil ->
-          []
-
-        meetings ->
+        meetings when is_list(meetings) ->
           Logger.info("[DAVA] Retrieved #{length(meetings)} meetings for academy_id: #{academy_id} in source #{@source}")
 
           meetings
@@ -66,18 +66,26 @@ defmodule Vae.Meetings.FranceVae do
             |> String.trim()
             |> Kernel.in(["CAP au BTS", "Tout public", ""])
           end)
-          |> Enum.reduce({:ok, nil}, fn api_meeting, {:ok, _} ->
+          |> Enum.reduce({:ok, []}, fn api_meeting, {:ok, results} ->
             meeting_data = to_meeting_data(api_meeting, academy_id)
 
-            (Meeting.get_by_meeting_id(@source, meeting_data.meeting_id) || %Meeting{source: @source})
-              |> Meeting.changeset(meeting_data)
-              |> Repo.insert_or_update()
+            case (Meeting.get_by_meeting_id(@source, meeting_data.meeting_id) || %Meeting{source: "#{@source}"})
+              |> Meeting.changeset(%{data: meeting_data})
+              |> Repo.insert_or_update() do
+              {:ok, new_meeting} -> {:ok, [new_meeting | results]}
+              {:error, changeset} ->
+                Logger.warn("Meeting could not be created:")
+                Logger.warn(inspect(changeset))
+                Logger.warn("Continuing anyway ...")
+                {:ok, results}
+            end
           end)
+        nil -> {:ok, []}
       end
     else
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
-        {:error, []}
+        {:ok, []}
     end
   end
 

@@ -104,9 +104,8 @@ defmodule Vae.ExAdmin.Delegate do
       icon: "refresh"
 
     def refresh_meetings(conn, _infos) do
-      Task.async(fn ->
-        Vae.Authorities.fetch_fvae_delegate_meetings()
-      end)
+      Task.async(fn -> Vae.Meetings.fetch_meetings() end)
+
       conn
       |> Phoenix.Controller.put_flash(:notice, "Rafraichissement en cours")
       |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Delegate))

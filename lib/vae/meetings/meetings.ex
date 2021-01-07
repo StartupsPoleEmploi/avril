@@ -22,7 +22,7 @@ defmodule Vae.Meetings do
 
   def fetch_meetings(source) when source in @meeting_sources do
     if Process.whereis(source) do
-      GenServer.call(source, :fetch_meetings)
+      GenServer.call(source, :fetch, 1000 * 60 * 15)
     else
       Logger.warn("#{source} gen server not started")
     end
