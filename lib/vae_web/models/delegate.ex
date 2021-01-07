@@ -6,7 +6,7 @@ defmodule Vae.Delegate do
     UserApplication,
     Certification,
     Certifier,
-    Places,
+    Places.Ban,
     Repo
   }
 
@@ -23,7 +23,6 @@ defmodule Vae.Delegate do
     field(:secondary_email, :string)
     field(:secondary_person_name, :string)
     field(:is_active, :boolean, default: false)
-    field(:geolocation, :map)
     field(:geom, Geo.PostGIS.Geometry)
     field(:city, :string)
     field(:administrative, :string)
@@ -78,8 +77,6 @@ defmodule Vae.Delegate do
       through: [:applications, :user]
     )
 
-    embeds_many(:meeting_places, Vae.MeetingPlace, on_replace: :delete)
-
     timestamps()
   end
 
@@ -112,7 +109,6 @@ defmodule Vae.Delegate do
       :secondary_person_name,
       :is_active,
       :geom,
-      :geolocation,
       :city,
       :administrative,
       :academy_id,
@@ -124,7 +120,7 @@ defmodule Vae.Delegate do
     |> unique_constraint(:slug)
     |> validate_format(:email, ~r/@/)
     |> validate_format(:secondary_email, ~r/@/)
-    |> add_geolocation(params)
+    |> add_geolocation()
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
@@ -132,28 +128,15 @@ defmodule Vae.Delegate do
     |> put_param_assoc(:applications, params)
   end
 
-  defp add_geolocation(%{changes: %{address: _}} = changeset, %{geo: encoded})
-       when not is_nil(encoded) do
-    %{"_geoloc" => %{"lng" => lng, "lat" => lat}} = geolocation = Poison.decode!(encoded)
-
+  defp add_geolocation(%Ecto.Changeset{changes: %{address: _}} = changeset) do
+    result = Ban.get_geoloc_from_address(get_field(changeset, :address))
     changeset
-    |> put_change(:city, Places.get_city(geolocation))
-    |> put_change(:administrative, Places.get_administrative(geolocation))
-    # |> put_change(:geolocation, geolocation)
-    |> put_change(:geom, %Geo.Point{coordinates: {lng, lat}})
+    |> put_change(:city, Ban.get_field(result, :city))
+    |> put_change(:administrative, Ban.get_field(result, :administrative))
+    |> put_change(:geom, %Geo.Point{coordinates: Ban.get_field(result, :lng_lat)})
   end
 
-  # defp add_geolocation(
-  #        changeset,
-  #        %{geolocation: %{"city" => city, "administrative" => administrative}} = geolocation
-  #      ) do
-  #   changeset
-  #   |> put_change(:city, List.first(city))
-  #   |> put_change(:administrative, List.first(administrative))
-  #   |> put_change(:geolocation, geolocation)
-  # end
-
-  defp add_geolocation(changeset, _params), do: changeset
+  defp add_geolocation(changeset), do: changeset
 
   defp link_certifications(changeset) do
     # if get_change(changeset, :certifiers) ||
@@ -187,38 +170,9 @@ defmodule Vae.Delegate do
     if is_nil(get_field(changeset, :email)), do: put_change(changeset, :is_active, false), else: changeset
   end
 
-  def put_meeting_places(delegate, meetings) do
-    delegate
-    |> change
-    |> put_embed(:meeting_places, meetings)
-  end
-
-  def preload_for_index(), do: [:certifications]
-
-  def format_for_index(%Delegate{certifications: %Ecto.Association.NotLoaded{}} = delegate) do
-    delegate
-    |> Repo.preload(:certifications)
-    |> format_for_index()
-  end
-
-  def format_for_index(%Delegate{} = delegate) do
-    delegate
-    |> Map.take(Delegate.__schema__(:fields))
-    |> Map.drop([
-      :website,
-      :geolocation,
-    ])
-    |> Map.put(:certifications, Enum.map(delegate.certifications, &(&1.id)))
-    |> Map.put(:_geoloc, delegate.geolocation["_geoloc"])
-  end
-
-  def settings_for_index() do
-    %{
-      attributesForFaceting: [:is_active, :certifications, :administrative],
-      attributeForDistinct: :slug,
-      distinct: 1
-    }
-  end
+  def get_meeting_source(%Delegate{academy_id: academy_id}) when not is_nil(academy_id), do: :france_vae
+  def get_meeting_source(%Delegate{name: "AFPA" <> _rest}), do: :afpa
+  def get_meeting_source(%Delegate{}), do: nil
 
   def is_asp?(%Delegate{name: name}) do
     String.starts_with?(name, "ASP")

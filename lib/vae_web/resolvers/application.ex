@@ -5,7 +5,7 @@ defmodule VaeWeb.Resolvers.Application do
   import Ecto.Query
   import Geo.PostGIS
 
-  alias Vae.{Applications, Delegate, Meeting, Search.Algolia, Repo, UserApplication}
+  alias Vae.{Applications, Delegate, Meeting, Repo, UserApplication}
 
   @application_not_found "La candidature est introuvable"
   @no_delegate_found "Aucun certificateur n'a été trouvé"

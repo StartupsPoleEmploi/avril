@@ -3,6 +3,7 @@ defmodule Vae.JobSeeker do
 
   alias Ecto.Changeset
   alias Vae.{Analytic, Event, Repo}
+  alias __MODULE__
 
   schema "job_seekers" do
     field(:identifier, :string)
@@ -17,7 +18,6 @@ defmodule Vae.JobSeeker do
     field(:tracking_last_visit_at, :utc_datetime)
 
     field(:subscribed, :boolean, default: true)
-    field(:geolocation, :map)
 
     embeds_many(:events, Event, on_replace: :delete)
     embeds_many(:analytics, Analytic, on_replace: :delete)
@@ -26,7 +26,7 @@ defmodule Vae.JobSeeker do
   end
 
   @doc false
-  def changeset(%__MODULE__{} = job_seeker, attrs) do
+  def changeset(%JobSeeker{} = job_seeker, attrs) do
     job_seeker
     |> cast(attrs, [
       :identifier,
@@ -38,15 +38,14 @@ defmodule Vae.JobSeeker do
       :experience,
       :education_level,
       :tracking_last_visit_at,
-      :subscribed,
-      :geolocation
+      :subscribed
     ])
   end
 
   def create_from_event(event) do
     event_changeset = Event.changeset(%Event{}, event)
 
-    %__MODULE__{}
+    %JobSeeker{}
     |> changeset(%{email: event.email})
     |> put_embed(:events, [event_changeset])
   end
@@ -109,7 +108,7 @@ defmodule Vae.JobSeeker do
   end
 
   def retrieve_by_email(email) do
-    Repo.get_by(__MODULE__, email: email)
+    Repo.get_by(JobSeeker, email: email)
   end
 
   def init_analytic(job_seeker) do
@@ -185,7 +184,7 @@ defmodule Vae.JobSeeker do
   end
 
   def insert_or_update!(job_seeker) do
-    case Repo.get_by(__MODULE__, email: job_seeker.email) do
+    case Repo.get_by(JobSeeker, email: job_seeker.email) do
       nil ->
         insert!(job_seeker)
 
@@ -195,7 +194,7 @@ defmodule Vae.JobSeeker do
   end
 
   def insert!(job_seeker) do
-    %__MODULE__{}
+    %JobSeeker{}
     |> __MODULE__.changeset(job_seeker)
     |> Repo.insert!()
   end

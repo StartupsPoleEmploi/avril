@@ -24,24 +24,6 @@ defmodule Vae.Profession do
     |> unique_constraint(:slug)
   end
 
-  def preload_for_index(), do: [:rome]
-
-  def format_for_index(struct) do
-    struct
-    |> Repo.preload(preload_for_index())
-    |> Map.take(__schema__(:fields))
-    |> Map.put_new(:rome_code, get_in(Map.from_struct(struct.rome), [:code]))
-    |> Map.put_new(:length, String.length(struct.label))
-    |> Map.drop([:inserted_at, :updated_at])
-  end
-
-  def settings_for_index() do
-    %{
-      attributeForDistinct: :slug,
-      distinct: 1
-    }
-  end
-
   def get_certifications(%Profession{} = profession) do
     profession |> Repo.preload(rome: :certifications) |> Map.get(:rome) |> Map.get(:certifications)
   end

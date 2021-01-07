@@ -4,7 +4,6 @@ defmodule Mix.Tasks.Profession.CompleteProfession do
 
   alias Ecto.Multi
 
-  alias Vae.Search.Algolia
   alias Vae.Repo
   alias Vae.{Profession, Rome}
 
@@ -26,7 +25,7 @@ defmodule Mix.Tasks.Profession.CompleteProfession do
       |> delete_and_insert()
       |> case do
         {:ok, professions} ->
-          Algolia.index(professions)
+          {:ok, professions}
 
         {:error, error} ->
           Logger.error(fn -> inspect(error) end)

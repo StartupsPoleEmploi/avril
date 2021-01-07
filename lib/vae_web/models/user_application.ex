@@ -26,6 +26,7 @@ defmodule Vae.UserApplication do
     belongs_to(:user, User, foreign_key: :user_id)
     belongs_to(:delegate, Delegate, foreign_key: :delegate_id, on_replace: :nilify)
     belongs_to(:certification, Certification, foreign_key: :certification_id)
+    belongs_to(:meeting, Meeting, foreign_key: :meeting_id)
 
     has_many(:resumes, Resume, on_delete: :delete_all, foreign_key: :application_id)
 
@@ -34,7 +35,6 @@ defmodule Vae.UserApplication do
       through: [:certification, :certifiers]
     )
 
-    embeds_one(:meeting, Meeting, on_replace: :delete)
     embeds_one(:booklet_1, Vae.Booklet.Cerfa, on_replace: :delete)
 
     timestamps()
@@ -61,10 +61,10 @@ defmodule Vae.UserApplication do
     |> put_assoc(:resumes, [resume | struct.resumes])
   end
 
-  def register_meeting_changeset(struct, params) do
+  def register_meeting_changeset(struct, meeting) do
     struct
     |> change()
-    |> put_embed(:meeting, params)
+    |> put_assoc(:meeting, meeting)
   end
 
   def init_booklet_hash(changeset) do

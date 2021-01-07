@@ -5,8 +5,7 @@ defmodule Mix.Tasks.AddCciCertifications do
   import Ecto.Query
   import SweetXml
 
-  alias Vae.{Certification, Certifier, Delegate}
-  alias Vae.{Places, Repo}
+  alias Vae.{Certification, Certifier, Delegate, Repo}
 
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
@@ -46,7 +45,6 @@ defmodule Mix.Tasks.AddCciCertifications do
       %{
         name: name,
         address: address,
-        geolocation: Places.get_geoloc_from_address(address),
         person_name: "#{first_name} #{last_name}",
         email: email,
         telephone: "0#{phone}",

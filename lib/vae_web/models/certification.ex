@@ -161,30 +161,6 @@ defmodule Vae.Certification do
     # end
   end
 
-  def preload_for_index(), do: []
-
-  def format_for_index(struct) do
-    struct
-    |> Map.take(__schema__(:fields))
-    |> Map.drop([
-      :inserted_at,
-      :updated_at,
-      :activities,
-      :abilities,
-      :activity_area,
-      :accessible_job_type
-    ])
-  end
-
-  def settings_for_index() do
-    %{
-      searchableAttributes: [:acronym, :label],
-      attributesForFaceting: [:is_active],
-      attributeForDistinct: :slug,
-      distinct: 1
-    }
-  end
-
   def name(%Certification{acronym: acronym, label: label}) do
     [acronym, label] |> Enum.reject(&is_nil/1) |> Enum.join(" ")
   end

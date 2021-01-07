@@ -1,12 +1,16 @@
 defmodule Vae.Meetings.FranceVae do
   require Logger
 
-  alias Vae.Meetings.FranceVae.Connection.Cache
-  alias Vae.Meetings.FranceVae.Config
-  alias Vae.Meetings.FranceVae.UserRegistration
-  alias Vae.Meeting
+  alias Vae.Meetings.FranceVae.{Config, Connection.Cache, UserRegistration}
+  alias Vae.{
+    Delegate,
+    Meeting,
+    UserApplication,
+    Repo
+  }
 
   @name FranceVae
+  @source :france_vae
 
   def get_academies() do
     token = get_token()
@@ -26,14 +30,20 @@ defmodule Vae.Meetings.FranceVae do
     end
   end
 
-  def get_meetings(academy_id) do
+  def fetch_all_meetings(academies) do
+    Enum.reduce(academies, {:ok, nil}, fn academy_id, {:ok, _} ->
+      fetch_meetings(academy_id)
+    end)
+  end
+
+  def fetch_meetings(academy_id) do
     token = get_token()
 
     headers = [
       {"Authorization", "Bearer #{token}"}
     ]
 
-    Logger.info("[DAVA] Retrieve meetings from fvae for academy_id: #{academy_id}")
+    Logger.info("[DAVA] Retrieve meetings for academy_id: #{academy_id} in source #{@source}")
 
     with {:ok, response} <-
            HTTPoison.get("#{Config.get_base_url()}/reunions/#{academy_id}", headers,
@@ -47,29 +57,32 @@ defmodule Vae.Meetings.FranceVae do
           []
 
         meetings ->
+          Logger.info("[DAVA] Retrieved #{length(meetings)} meetings for academy_id: #{academy_id} in source #{@source}")
+
           meetings
-          |> Enum.filter(fn meeting ->
-            meeting
+          |> Enum.filter(fn api_meeting ->
+            api_meeting
             |> Map.get("cible")
             |> String.trim()
             |> Kernel.in(["CAP au BTS", "Tout public", ""])
           end)
-          |> Enum.map(fn meeting ->
-            to_meeting(meeting, academy_id)
+          |> Enum.reduce({:ok, nil}, fn api_meeting, {:ok, _} ->
+            meeting_data = to_meeting_data(api_meeting, academy_id)
+
+            (Meeting.get_by_meeting_id(@source, meeting_data.meeting_id) || %Meeting{source: @source})
+              |> Meeting.changeset(meeting_data)
+              |> Repo.insert_or_update()
           end)
       end
     else
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
-        []
+        {:error, []}
     end
   end
 
-  def register(%{academy_id: academy_id, meeting_id: meeting_id} = _meeting, application) do
-    register(academy_id, meeting_id, application)
-  end
-
-  def register(academy_id, meeting_id, application) do
+  def register(%Meeting{data: %{meeting_id: meeting_id}}, application) do
+    %UserApplication{delegate: %Delegate{academy_id: academy_id}} = application |> Repo.preload(:delegate)
     token = get_token()
 
     headers = [
@@ -148,8 +161,8 @@ defmodule Vae.Meetings.FranceVae do
     end
   end
 
-  defp to_meeting(params, academy_id) do
-    %Meeting{
+  defp to_meeting_data(params, academy_id) do
+    %{
       academy_id: academy_id,
       meeting_id: Integer.to_string(params["id"]),
       place: params["lieu"],

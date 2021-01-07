@@ -5,7 +5,7 @@ defmodule VaeWeb.JobSeekerEmail do
   alias VaeWeb.Mailer
   alias VaeWeb.Router.Helpers, as: Routes
 
-  def campaign(%JobSeeker{id: id, email: email, geolocation: geolocation} = job_seeker, endpoint \\ URI.endpoint()) do
+  def campaign(%JobSeeker{id: id, email: email} = job_seeker, endpoint \\ URI.endpoint()) do
     Mailer.build_email(
       "job_seeker/campaign.html",
       :avril,
@@ -16,7 +16,7 @@ defmodule VaeWeb.JobSeekerEmail do
             endpoint,
             :index,
             utm_campaign: "mj-#{Date.utc_today() |> to_string()}",
-            utm_source: (geolocation["administrative"] || []) |> List.first(),
+            utm_source: "inscription_pole_emploi_invitation_avril",
             utm_medium: "email",
             js_id: id
           ),

@@ -9,8 +9,7 @@ defmodule Vae.Application do
     repo_children = %{
       should_start: true,
       children: [
-        supervisor(Vae.Repo, []),
-        worker(Vae.Places.Cache, [])
+        supervisor(Vae.Repo, [])
       ]
     }
 

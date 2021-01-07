@@ -1,7 +1,18 @@
+# TODO: remove this
 defmodule Vae.Applications do
   import Ecto.Query
 
-  alias Vae.{Booklet, Certification, Meetings, Repo, Resume, User, UserApplication}
+  alias Vae.{
+    Booklet,
+    Certification,
+    Delegate,
+    Meeting,
+    Meetings,
+    Repo,
+    Resume,
+    User,
+    UserApplication
+  }
 
   @doc "Lists applications from a User ID"
   def get_applications(user_id) do
@@ -49,11 +60,12 @@ defmodule Vae.Applications do
     do: {:error, "You must provide a meeting_id"}
 
   def register_to_a_meeting(application, meeting_id) do
-    with user <- Repo.get(User, application.user_id),
-         {:ok, _valid} <-
-          User.can_submit_or_register?(user),
-         {:ok, meeting} <-
-           Meetings.register_france_vae_meetings(meeting_id, application) do
+    with(
+      %UserApplication{user: user, delegate: delegate} = application <- Repo.preload(application, :delegate, :user),
+      {:ok, _valid} <- User.can_submit_or_register?(user),
+      {:ok, meeting} <- Meeting.get_by_meeting_id(Delegate.get_meeting_source(delegate), meeting_id),
+      {:ok, meeting} <- Meetings.register(meeting, application)
+    ) do
       application
       |> UserApplication.register_meeting_changeset(meeting)
       |> Repo.update()

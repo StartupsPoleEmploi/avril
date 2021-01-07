@@ -7,7 +7,6 @@ defmodule Vae.Meetings.StateHolderMock do
     address: "502  Raccoon Run",
     postal_code: "98115",
     city: "Seattle",
-    geolocation: %{},
     target: "You",
     remaining_places: 12,
     start_date: ~N[2020-04-01 10:00:00],

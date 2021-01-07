@@ -1,21 +1,11 @@
 defmodule Vae.Meetings do
   require Logger
+  alias Vae.{Meeting, UserApplication}
 
-  def fetch_france_vae_meetings(academy_id) do
-    Vae.Meetings.Server.fetch(:fvae, academy_id)
-  end
-
-  def index_france_vae_meetings(meetings) do
-    Vae.Meetings.Server.index(meetings)
-  end
-
-  def get_france_vae_meetings(delegate) do
-    Vae.Meetings.Server.get_by_delegate(delegate)
-  end
-
-  def register_france_vae_meetings(meeting_id, application) do
-    Vae.Meetings.Server.register(meeting_id, application)
-  end
+  @meeting_sources [
+    # :afpa,
+    :france_vae
+  ]
 
   def get_france_vae_academies() do
     if Process.whereis(:france_vae) do
@@ -24,5 +14,21 @@ defmodule Vae.Meetings do
       Logger.warn("France VAE gen server not started")
       []
     end
+  end
+
+  def fetch_meetings() do
+    Enum.each(@meeting_sources, &fetch_meetings(&1))
+  end
+
+  def fetch_meetings(source) when source in @meeting_sources do
+    if Process.whereis(source) do
+      GenServer.call(source, :fetch_meetings)
+    else
+      Logger.warn("#{source} gen server not started")
+    end
+  end
+
+  def register(%Meeting{source: source} = meeting, %UserApplication{} = application) do
+    GenServer.call(source, {:register, meeting, application}, 15_000)
   end
 end

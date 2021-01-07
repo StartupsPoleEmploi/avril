@@ -18,23 +18,6 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     age
   )
 
-  @allowed_administratives ~w(
-    Bretagne
-    Île-de-France
-    Centre-Val de Loire
-    Occitanie
-    Bourgogne-Franche-Comté
-    Provence-Alpes-Côte d'Azur
-    Corse
-    Hauts-de-France
-    Auvergne-Rhône-Alpes
-    Nouvelle-Aquitaine
-    Grand-Est
-    Pays-de-la-Loire
-    Normandie
-    Guadeloupe
-  )
-
   def build_enumerable(type, date) do
     with {:ok, output_path} <- extract(type, date),
          stream <- File.stream!(output_path) do
@@ -80,23 +63,8 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
     flow |> Flow.map(&build_job_seeker/1)
   end
 
-  def add_geolocation_flow(flow) do
-    flow
-    |> Flow.reduce(fn -> [] end, fn job_seeker, acc ->
-      [
-        build_geolocation(job_seeker)
-        | acc
-      ]
-    end)
-  end
-
   def build_path(type, date) do
     "#{System.get_env("CAMPAIGN_BASE_PATH")}/avril_de_#{type}_delta_#{Timex.format!(date, "{YYYY}{0M}{0D}")}*.bz2"
-  end
-
-  defp build_geolocation(job_seeker) do
-    geolocation = Vae.Places.get_geoloc_from_postal_code(job_seeker.postal_code)
-    Map.put(job_seeker, :geolocation, geolocation)
   end
 
   defp build_job_seeker(line) do
@@ -123,19 +91,6 @@ defmodule Vae.CampaignDiffuser.FileExtractor.CsvExtractor do
             Map.put_new(acc, List.first(exp), List.last(exp))
         end)
     }
-  end
-
-  def is_allowed_administrative?(job_seeker) do
-    administrative =
-      job_seeker
-      |> get_in([:geolocation])
-      |> Vae.Places.get_administrative()
-
-    if Enum.member?(@allowed_administratives, administrative) do
-      {:allowed, job_seeker}
-    else
-      {:not_allowed, job_seeker}
-    end
   end
 
   defp clean_email(nil), do: nil
