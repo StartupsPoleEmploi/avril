@@ -21,7 +21,6 @@ defmodule VaeWeb.ApplicationEmail do
         username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         date_format: @date_format,
-        meeting: application.meeting,
         footer_note: :delegate
       }
     )
@@ -37,7 +36,6 @@ defmodule VaeWeb.ApplicationEmail do
       %{
         url: User.profile_url(endpoint, application),
         username: User.fullname(application.user),
-        meeting: application.meeting,
         is_france_vae: application.delegate && application.delegate.academy_id,
         is_afpa: application.delegate && Delegate.is_afpa?(application.delegate),
         certification_name: Certification.name(application.certification),
@@ -63,7 +61,6 @@ defmodule VaeWeb.ApplicationEmail do
       %{
         url: User.profile_url(endpoint, application),
         username: User.fullname(application.user),
-        meeting: application.meeting,
         certification_name: Certification.name(application.certification),
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
@@ -76,14 +73,14 @@ defmodule VaeWeb.ApplicationEmail do
   end
 
   def user_meeting_confirmation(application, endpoint \\ URI.endpoint()) do
-    application = Repo.preload(application, [:user, :delegate])
+    application = Repo.preload(application, [:user, :delegate, :certification, :meeting])
     Mailer.build_email(
       "application/meeting_confirmation.html",
       :avril,
       application.user,
       %{
         url: User.profile_url(endpoint, "/mes-rendez-vous"),
-        meeting: application.meeting,
+        meeting: application.meeting.data,
         username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         delegate_phone_number: application.delegate.telephone,

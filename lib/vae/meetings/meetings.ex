@@ -29,6 +29,6 @@ defmodule Vae.Meetings do
   end
 
   def register(%Meeting{source: source} = meeting, %UserApplication{} = application) do
-    GenServer.call(source, {:register, meeting, application}, 15_000)
+    GenServer.call(String.to_atom(source), {:register, meeting, application}, 15_000)
   end
 end

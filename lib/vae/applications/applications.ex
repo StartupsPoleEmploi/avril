@@ -61,19 +61,17 @@ defmodule Vae.Applications do
 
   def register_to_a_meeting(application, meeting_id) do
     with(
-      %UserApplication{user: user, delegate: delegate} = application <- Repo.preload(application, :delegate, :user),
+      %UserApplication{user: user, delegate: delegate} = application <- Repo.preload(application, [:delegate, :user, :meeting]),
       {:ok, _valid} <- User.can_submit_or_register?(user),
-      {:ok, meeting} <- Meeting.get_by_meeting_id(Delegate.get_meeting_source(delegate), meeting_id),
-      {:ok, meeting} <- Meetings.register(meeting, application)
+      {:ok, %Meeting{} = meeting} <- {:ok, Meeting.get_by_meeting_id(Delegate.get_meeting_source(delegate), meeting_id)},
+      {:ok, _message} <- Meetings.register(meeting, application)
     ) do
       application
       |> UserApplication.register_meeting_changeset(meeting)
       |> Repo.update()
     else
-      {:error, _msg} = error ->
-        error
-
       error ->
+        IO.inspect(error)
         {:error, error}
     end
   end
@@ -140,7 +138,7 @@ defmodule Vae.Applications do
 
   defp base_query() do
     from(a in UserApplication)
-    |> preload([[delegate: :certifiers], [certification: :certifiers], :user, :resumes])
+    |> preload([[delegate: :certifiers], [certification: :certifiers], :user, :resumes, :meeting])
     # from(a in UserApplication,
     #   join: c in Certification,
     #   on: a.certification_id == c.id,

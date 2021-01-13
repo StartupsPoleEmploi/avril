@@ -70,7 +70,7 @@ defmodule VaeWeb.Resolvers.Application do
         %{context: %{current_user: _user}}
       ) do
     with(%Delegate{} = delegate <- Repo.get(Delegate, delegate_id)) do
-      {:ok, Meeting.find_future_meetings_for_delegate(delegate)}
+      {:ok, Meeting.find_future_meetings_for_delegate(delegate) |> Enum.map(fn %Meeting{data: data} -> data end)}
     else
       {:error, msg} ->
         error_response(@no_meeting_found, msg)

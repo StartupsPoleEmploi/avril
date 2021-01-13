@@ -103,8 +103,8 @@ defmodule Vae.ExAdmin.UserApplication do
         if application.user do
           input(application, :user, collection: [application.user])
         end
-        input(application, :certification, collection: Repo.all(Certification))
-        input(application, :delegate, collection: Repo.all(Delegate))
+        input(application, :certification, collection: Repo.all(Certification, order_by: [asc: :id]))
+        input(application, :delegate, collection: Repo.all(from(d in Delegate, order_by: [asc: d.name])))
         input(application, :submitted_at)
         input(application, :meeting)
       end
@@ -144,7 +144,7 @@ defmodule Vae.ExAdmin.UserApplication do
     # filter(:certifiers, order_by: :name)
     filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
 
-    @all_preloads [:delegate, :user, :certification, :certifiers]
+    @all_preloads [:delegate, :user, :certification, :certifiers, :meeting]
 
     query do
       %{

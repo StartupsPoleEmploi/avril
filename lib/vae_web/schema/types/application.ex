@@ -1,6 +1,7 @@
 defmodule VaeWeb.Schema.Types.Application do
   use Absinthe.Schema.Notation
 
+  alias Vae.{UserApplication, Repo, Meeting}
   alias VaeWeb.Resolvers
 
   import_types(Absinthe.Plug.Types)
@@ -30,7 +31,15 @@ defmodule VaeWeb.Schema.Types.Application do
     field(:inserted_at, :naive_datetime)
     field(:submitted_at, :naive_datetime)
 
-    field(:meeting, :meeting)
+    field(:meeting, :meeting) do
+      resolve(fn %UserApplication{} = ua, _args, _ ->
+        %UserApplication{meeting: meeting} = Repo.preload(ua, [:meeting])
+        case meeting do
+          nil -> {:ok, nil}
+          %Meeting{data: data} -> {:ok, data}
+        end
+      end)
+    end
 
     field(:delegate, :delegate)
     field(:certification, :certification)
