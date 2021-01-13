@@ -140,20 +140,20 @@ defmodule Vae.ExAdmin.Delegate do
       inputs do
         input(delegate, :is_active)
 
-        academies_options_tags =
-          Vae.Meetings.get_france_vae_academies()
-          |> Enum.sort_by(& &1["nom"])
-          |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
+        # academies_options_tags =
+        #   Vae.Meetings.get_france_vae_academies()
+        #   |> Enum.sort_by(& &1["nom"])
+        #   |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
 
-        academies_options_tags =
-          if length(academies_options_tags) > 0,
-            do: academies_options_tags,
-            else: [{nil, "No academies: France VAE not connected"}]
+        # academies_options_tags =
+        #   if length(academies_options_tags) > 0,
+        #     do: academies_options_tags,
+        #     else: [{nil, "No academies: France VAE not connected"}]
 
-        input(delegate, :academy_id,
-          label: "Académies",
-          collection: academies_options_tags
-        )
+        # input(delegate, :academy_id,
+        #   label: "Académies",
+        #   collection: academies_options_tags
+        # )
 
         input(delegate, :name)
         input(delegate, :website)

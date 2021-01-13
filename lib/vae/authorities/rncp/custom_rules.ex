@@ -81,7 +81,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
     is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))
     is_bts = acronym == "BTS"
-    is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34828"]
+    is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34828", "35044"]
 
     if is_rncp_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
       certifiers ++ [Repo.get_by(Certifier, slug: @educ_nat)]
