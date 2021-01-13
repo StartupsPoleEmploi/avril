@@ -6,7 +6,7 @@ Vous avez au moins 1 an d'expérience ?
 
 Vous pouvez obtenir un diplôme en lien avec votre expérience sans suivre de formation !
 
-80% des diplômés par la VAE ont retrouvé un emploi.
+75% des diplômés par la VAE ont retrouvé un emploi.
 
 **[Essayez vous aussi !](<%= @url %>)**
 
