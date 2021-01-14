@@ -46,8 +46,19 @@ defmodule Vae.ExAdmin.Delegate do
         row(:academy_id)
         row(:nb_recent_applications, fn d -> length(d.recent_applications) end)
         row(:certifications, fn d -> length(d.certifications) end)
-        row(:nb_meetings, fn d -> length(meetings) end)
+        row(:nb_meetings, fn _d -> length(meetings) end)
         row(:internal_notes)
+      end
+
+      div ".box" do
+        div ".box-header.with-border" do
+          h3 "Map"
+        end
+        div ".box-body" do
+          %Geo.Point{coordinates: {lng, lat}, properties: %{}, srid: nil} = delegate.geom
+
+          div "#delegate_map", [{:"data-lat", lat}, {:"data-lng", lng}]
+        end
       end
 
       panel "certifiers" do
@@ -143,26 +154,25 @@ defmodule Vae.ExAdmin.Delegate do
       inputs do
         input(delegate, :is_active)
 
-        # academies_options_tags =
-        #   Vae.Meetings.get_france_vae_academies()
-        #   |> Enum.sort_by(& &1["nom"])
-        #   |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
+        academies_options_tags =
+          Vae.Meetings.get_france_vae_academies()
+          |> Enum.sort_by(& &1["nom"])
+          |> Enum.map(&{"#{&1["id"]}", "#{&1["nom"]}"})
 
-        # academies_options_tags =
-        #   if length(academies_options_tags) > 0,
-        #     do: academies_options_tags,
-        #     else: [{nil, "No academies: France VAE not connected"}]
+        academies_options_tags =
+          if length(academies_options_tags) > 0,
+            do: academies_options_tags,
+            else: [{nil, "No academies: France VAE not connected"}]
 
-        # input(delegate, :academy_id,
-        #   label: "Académies",
-        #   collection: academies_options_tags
-        # )
+        input(delegate, :academy_id,
+          label: "Académies",
+          collection: academies_options_tags
+        )
 
         input(delegate, :name)
         input(delegate, :website)
         input(delegate, :address_name)
         input(delegate, :address)
-        input(delegate, :geo, type: :hidden)
         input(delegate, :telephone)
         input(delegate, :email)
         input(delegate, :person_name)
@@ -201,7 +211,7 @@ defmodule Vae.ExAdmin.Delegate do
       column(:internal_notes)
     end
 
-    filter([:is_active, :id, :slug, :email, :city, :administrative])
+    filter([:is_active, :id, :slug, :email, :city, :administrative, :geom])
     filter(:certifiers, order_by: :name)
 
     query do

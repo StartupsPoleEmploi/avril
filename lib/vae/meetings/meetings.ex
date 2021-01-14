@@ -24,7 +24,7 @@ defmodule Vae.Meetings do
     safe_genserver_call(source, {:register, meeting, application}, 15_000)
   end
 
-  defp safe_genserver_call(source, params, timeout \\ nil)
+  defp safe_genserver_call(source, params, timeout \\ 5_000)
 
   defp safe_genserver_call(source, params, timeout) when is_binary(source), do:
     safe_genserver_call(String.to_atom(source), params, timeout)

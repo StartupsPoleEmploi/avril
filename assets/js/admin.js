@@ -58,6 +58,22 @@ const doubleClickUncheckPresenceRadioInputs = () => {
 //   }
 // }
 
+const addDelegateGeolocationMap = () => {
+  if (!document.getElementById('delegate_map')) return;
+  const dataset = document.getElementById('delegate_map').dataset;
+  const delegateMap = L.map('delegate_map', {
+    center: [dataset.lat, dataset.lng],
+    zoom: 13,
+  });
+
+  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    id: 'mapbox.streets'
+  }).addTo(delegateMap);
+
+  L.marker([dataset.lat, dataset.lng]).addTo(delegateMap);
+}
+
 const textareaToSimditor = () => {
   Simditor.locale = 'fr-FR';
 
@@ -94,6 +110,7 @@ const selectMultipleWithMultiSelect = () => {
 
 $(document).ready(() => {
   // algoliaAutocompleteDelegateAddress();
+  addDelegateGeolocationMap();
   textareaToSimditor();
   selectFiltersWithChosen();
   selectMultipleWithMultiSelect();
