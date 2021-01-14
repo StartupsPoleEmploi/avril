@@ -4,7 +4,6 @@ import 'chosen-js';
 import 'chosen-js/chosen.css';
 
 import he from 'he';
-import places from 'places.js';
 import './admin/tables';
 import './admin/charts';
 import './admin/statusEditor';
@@ -36,28 +35,28 @@ const doubleClickUncheckPresenceRadioInputs = () => {
   });
 }
 
-const algoliaAutocompleteDelegateAddress = () => {
-  if(document.querySelector('#delegate_address')) {
-    var placesAutocomplete = places({
-      appId: window.algolia_places_app_id,
-      apiKey: window.algolia_places_api_key,
-      container: document.querySelector('#delegate_address'),
-      language: 'fr',
-      countries: ['fr'],
-      templates: {
-        value: ({ name, postcode, city }) => city ? `${name} ${postcode} ${city}` : `${postcode} ${name}`
-      }
-    });
+// const algoliaAutocompleteDelegateAddress = () => {
+//   if(document.querySelector('#delegate_address')) {
+//     var placesAutocomplete = places({
+//       appId: window.algolia_places_app_id,
+//       apiKey: window.algolia_places_api_key,
+//       container: document.querySelector('#delegate_address'),
+//       language: 'fr',
+//       countries: ['fr'],
+//       templates: {
+//         value: ({ name, postcode, city }) => city ? `${name} ${postcode} ${city}` : `${postcode} ${name}`
+//       }
+//     });
 
-    placesAutocomplete.on('change', function(e) {
-      delegate_geo.value = JSON.stringify(e.suggestion.hit);
-    });
+//     placesAutocomplete.on('change', function(e) {
+//       delegate_geo.value = JSON.stringify(e.suggestion.hit);
+//     });
 
-    placesAutocomplete.on('clear', function() {
-      delegate_geo.value = '';
-    });
-  }
-}
+//     placesAutocomplete.on('clear', function() {
+//       delegate_geo.value = '';
+//     });
+//   }
+// }
 
 const textareaToSimditor = () => {
   Simditor.locale = 'fr-FR';
@@ -94,7 +93,7 @@ const selectMultipleWithMultiSelect = () => {
 }
 
 $(document).ready(() => {
-  algoliaAutocompleteDelegateAddress();
+  // algoliaAutocompleteDelegateAddress();
   textareaToSimditor();
   selectFiltersWithChosen();
   selectMultipleWithMultiSelect();
