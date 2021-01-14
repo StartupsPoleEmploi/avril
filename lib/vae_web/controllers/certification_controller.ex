@@ -103,6 +103,7 @@ defmodule VaeWeb.CertificationController do
         render(
           conn,
           "show.html",
+          is_asp: Certification.is_asp?(certification),
           certification: certification,
           similars: similars
         )

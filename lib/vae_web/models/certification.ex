@@ -180,6 +180,14 @@ defmodule Vae.Certification do
     end
   end
 
+  def is_asp?(%Certification{} = certification) do
+    %Certification{delegates: delegates} = certification |> Repo.preload(:delegates)
+      case delegates do
+        [%Delegate{slug: "asp-" <> _}] -> true
+        _ -> false
+      end
+  end
+
   def add_default_acronym(%Changeset{} = changeset) do
     if Vae.String.is_blank?(get_field(changeset, :acronym)) do
       put_change(changeset, :acronym, "Diplôme")
