@@ -50,7 +50,7 @@ defmodule Vae.Meetings.Afpa.Scraper do
         if info_node_children == [] || time_node_children == [] do
           nil
         else
-          [name, address, postal_city] =
+          center_infos =
             info_node_children
             |> filter_nodes_by_tag_name("br")
             |> Enum.map(fn node ->
@@ -59,6 +59,10 @@ defmodule Vae.Meetings.Afpa.Scraper do
               |> String.replace(~r/\s+/, " ")
               |> String.trim()
             end)
+          [name, address, postal_city] = case center_infos do
+            infos when length(center_infos) == 3 -> infos
+            [name | [ postal_city | []]] -> [name, nil, postal_city]
+          end
 
           [postal_code, city] = String.split(postal_city, " ", parts: 2)
 
@@ -89,6 +93,42 @@ defmodule Vae.Meetings.Afpa.Scraper do
         Logger.error(reason)
         %{}
     end
+  end
+
+  def scrape_place(url) do
+    Logger.info("[AFPA] Scraping #{url}")
+
+    case HTTPoison.get(url) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+
+        [address | [postal_city | _r]] =
+          Floki.find(body, ".back-identity div") |> List.first()
+          |> Floki.text()
+          |> String.split("\n")
+          |> Enum.map(fn e ->
+            e
+            |> String.replace(~r/\r|\n|\t/, "")
+            |> String.replace(~r/\s+/, " ")
+            |> String.trim()
+          end)
+          |> Enum.filter(&Vae.String.is_present?(&1))
+        [postal_code, city] = String.split(postal_city, " ", parts: 2)
+
+        %{
+          address: address,
+          postal_code: postal_code,
+          city: city
+        }
+
+      {:ok, %HTTPoison.Response{status_code: 404}} ->
+        Logger.warn("Not found :(")
+        %{}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        Logger.error(reason)
+        %{}
+    end
+
   end
 
   defp node_children(node_list) do

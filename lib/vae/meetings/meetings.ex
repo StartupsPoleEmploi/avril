@@ -8,12 +8,7 @@ defmodule Vae.Meetings do
   ]
 
   def get_france_vae_academies() do
-    if Process.whereis(:france_vae) do
-      GenServer.call(:france_vae, :get_academies)
-    else
-      Logger.warn("France VAE gen server not started")
-      []
-    end
+    safe_genserver_call(:france_vae, :get_academies) || []
   end
 
   def fetch_meetings() do
@@ -21,14 +16,25 @@ defmodule Vae.Meetings do
   end
 
   def fetch_meetings(source) when source in @meeting_sources do
-    if Process.whereis(source) do
-      GenServer.call(source, :fetch, 1000 * 60 * 15)
-    else
-      Logger.warn("#{source} gen server not started")
-    end
+    meetings = safe_genserver_call(source, :fetch, 1000 * 60 * 15)
+    Logger.info("#{length(meetings)} inserted or updated in source #{source}")
   end
 
   def register(%Meeting{source: source} = meeting, %UserApplication{} = application) do
-    GenServer.call(String.to_atom(source), {:register, meeting, application}, 15_000)
+    safe_genserver_call(source, {:register, meeting, application}, 15_000)
+  end
+
+  defp safe_genserver_call(source, params, timeout \\ nil)
+
+  defp safe_genserver_call(source, params, timeout) when is_binary(source), do:
+    safe_genserver_call(String.to_atom(source), params, timeout)
+
+  defp safe_genserver_call(source, params, timeout) do
+    if Process.whereis(source) do
+      GenServer.call(source, params, timeout)
+    else
+      :ok = Logger.warn("#{source} gen server not started")
+      nil
+    end
   end
 end

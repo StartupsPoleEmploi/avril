@@ -69,9 +69,10 @@ defmodule Vae.Meetings.FranceVae do
           |> Enum.reduce({:ok, []}, fn api_meeting, {:ok, results} ->
             meeting_data = to_meeting_data(api_meeting, academy_id)
 
-            case (Meeting.get_by_meeting_id(@source, meeting_data.meeting_id) || %Meeting{source: "#{@source}"})
-              |> Meeting.changeset(%{data: meeting_data})
-              |> Repo.insert_or_update() do
+            (Meeting.get_by_meeting_id(@source, meeting_data.meeting_id) || %Meeting{source: "#{@source}"})
+            |> Meeting.changeset(%{data: meeting_data})
+            |> Repo.insert_or_update()
+            |> case do
               {:ok, new_meeting} -> {:ok, [new_meeting | results]}
               {:error, changeset} ->
                 Logger.warn("Meeting could not be created:")
@@ -113,16 +114,10 @@ defmodule Vae.Meetings.FranceVae do
       case response.status_code do
         200 -> {:ok, body}
         _ ->
-          Logger.error("###########")
-          Logger.error(fn -> inspect(response) end)
-          Logger.error("###########")
           {:error, body["error"]}
       end
     else
       {:error, msg} = error ->
-        Logger.error("%%%%%%%%%%%%%%%")
-        Logger.error(fn -> inspect(msg) end)
-        Logger.error("%%%%%%%%%%%%%%%")
         error
     end
   end

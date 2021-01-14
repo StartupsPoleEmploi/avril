@@ -26,13 +26,9 @@ defmodule Vae.Meeting do
         module
         |> cast(params, ~w(academy_id meeting_id place address postal_code target start_date end_date)a)
         |> validate_required([
-          # :academy_id,
           :meeting_id,
           :place,
-          # :address,
-          # :postal_code,
-          :start_date,
-          :end_date
+          :start_date
         ])
       end
     end

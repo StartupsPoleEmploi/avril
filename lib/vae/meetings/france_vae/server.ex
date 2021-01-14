@@ -24,7 +24,7 @@ defmodule Vae.Meetings.FranceVae.Server do
 
   @impl true
   def handle_call(:fetch, _from, academies) do
-    {:ok, meetings} = FranceVae.fetch_all_meetings(academies) |> IO.inspect()
+    {:ok, meetings} = FranceVae.fetch_all_meetings(academies)
     {:reply, meetings, academies}
   end
 

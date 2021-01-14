@@ -2,74 +2,55 @@ defmodule Vae.Meetings.Afpa.Server do
   require Logger
   use GenServer
 
-  alias Vae.Meetings.Afpa.Scraper
-  alias Vae.Meeting
+  alias Vae.{Meetings.Afpa.Scraper, Meeting, Repo}
 
-  @name :afpa
+  @source :afpa
 
   @doc false
   def start_link() do
-    GenServer.start_link(__MODULE__, [], name: @name)
+    GenServer.start_link(__MODULE__, [], name: @source)
   end
 
   @impl true
   def init(state) do
-    Logger.info("[AFPA] Init #{@name} server")
+    Logger.info("[AFPA] Init #{@source} server")
     {:ok, state}
   end
 
   @impl true
-  def handle_cast({:fetch, pid, delegate}, state) do
-    new_state =
-      Map.merge(
-        state,
-        %{
-          req_id: delegate.req_id,
-          updated_at: delegate.updated_at,
-          meetings: [
-            %{
-              certifier_id: 4,
-              academy_id: nil,
-              meetings: get_data(pid, delegate.req_id)
-            }
-          ]
-        }
-      )
-
-    {:noreply, new_state}
+  def handle_call(:fetch, _from, state) do
+    {:ok, new_meetings} = get_data()
+    {:reply, new_meetings, state}
   end
 
   @impl true
   def handle_call({:register, {meeting, _application}}, _from, state) do
+    # Nothing is done on the afpa side
     {:reply, {:ok, meeting}, state}
   end
 
-  defp get_data(_pid, _req_id) do
+  defp get_data() do
     Scraper.scrape_all_events()
     |> Flow.from_enumerable(max_demand: 5, window: Flow.Window.count(10))
     |> Flow.map(fn id ->
       Scraper.scrape_event("https://www.afpa.fr/agenda/#{id}")
     end)
     |> Flow.filter(&(not is_nil(&1) && Map.has_key?(&1, :place)))
-    |> Flow.partition(key: {:key, :place})
-    |> Flow.reduce(fn -> [] end, fn
-      meeting, acc when meeting == [] or is_nil(meeting) ->
-        acc
-
-      meeting, acc ->
-        [
-          %{
-            struct(%Meeting{}, meeting)
-            | meeting_id:
-                UUID.uuid5(
-                  nil,
-                  "#{meeting[:place]} #{meeting[:start_date]}"
-                ),
-              end_date: Timex.add(meeting[:start_date], Timex.Duration.from_hours(3))
-          }
-          | acc
-        ]
-    end)
     |> Enum.to_list()
+    |> Enum.reduce({:ok, []}, fn meeting_params, {:ok, results} ->
+      meeting_id = UUID.uuid5(nil, "#{meeting_params[:place]} #{meeting_params[:start_date]}")
+
+      (Meeting.get_by_meeting_id(@source, meeting_id) || %Meeting{source: "#{@source}"})
+      |> Meeting.changeset(%{data: Map.merge(meeting_params, %{meeting_id: meeting_id})})
+      |> Repo.insert_or_update()
+      |> case do
+        {:ok, new_meeting} -> {:ok, [new_meeting | results]}
+        {:error, changeset} ->
+          Logger.warn("Meeting could not be created:")
+          Logger.warn(inspect(changeset))
+          Logger.warn("Continuing anyway ...")
+          {:ok, results}
+      end
+    end)
   end
 end
