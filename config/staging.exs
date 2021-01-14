@@ -9,5 +9,3 @@ config :vae, VaeWeb.Endpoint,
 
 config :logger, level: :debug
 
-config :algolia,
-  indice_prefix: "#{Mix.env()}_"

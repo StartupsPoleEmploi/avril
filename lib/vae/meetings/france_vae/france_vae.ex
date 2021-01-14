@@ -117,7 +117,7 @@ defmodule Vae.Meetings.FranceVae do
           {:error, body["error"]}
       end
     else
-      {:error, msg} = error ->
+      {:error, _msg} = error ->
         error
     end
   end

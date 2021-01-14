@@ -24,9 +24,6 @@ config :vae, VaeWeb.Endpoint,
     ]
   ]
 
-config :algolia,
-  indice_prefix: "#{System.get_env("ALGOLIA_ENVIRONMENT_PREFIX") || Mix.env()}_"
-
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

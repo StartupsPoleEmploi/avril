@@ -26,6 +26,9 @@ defmodule Vae.ExAdmin.Delegate do
     end
 
     show delegate do
+      meetings = Vae.Meeting.find_future_meetings_for_delegate(delegate)
+        |> Enum.map(&(&1.data))
+
       attributes_table() do
         row(:is_active)
         row(:slug)
@@ -41,8 +44,10 @@ defmodule Vae.ExAdmin.Delegate do
         row(:secondary_email)
         row(:secondary_person_name)
         row(:academy_id)
-        row(:internal_notes)
         row(:nb_recent_applications, fn d -> length(d.recent_applications) end)
+        row(:certifications, fn d -> length(d.certifications) end)
+        row(:nb_meetings, fn d -> length(meetings) end)
+        row(:internal_notes)
       end
 
       panel "certifiers" do
@@ -82,10 +87,8 @@ defmodule Vae.ExAdmin.Delegate do
       end
 
       panel "Meetings" do
-        table_for delegate.meeting_places
-                  |> Enum.flat_map(fn %{meetings: meetings} -> meetings end) do
+        table_for meetings do
           column(:meeting_id)
-          # column(:name)
           column(:target)
           column(:place)
           column(:address)

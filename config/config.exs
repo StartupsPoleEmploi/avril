@@ -139,15 +139,6 @@ config :vae, Vae.Scheduler,
 config :absinthe,
   log: false
 
-config :algolia,
-  application_id: System.get_env("ALGOLIA_APP_ID"),
-  api_key: System.get_env("ALGOLIA_API_KEY"),
-  search_api_key: System.get_env("ALGOLIA_SEARCH_API_KEY"),
-  places_app_id: System.get_env("ALGOLIA_PLACES_APP_ID"),
-  places_api_key: System.get_env("ALGOLIA_PLACES_API_KEY"),
-  is_sync_active: System.get_env("ALGOLIA_SYNC") != "disable",
-  indice_prefix: nil
-
 config :ex_admin,
   head_template: {VaeWeb.AdminView, "admin_layout.html"},
   repo: Vae.Repo,

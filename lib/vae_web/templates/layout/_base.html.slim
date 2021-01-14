@@ -35,7 +35,6 @@ html lang="fr"
   body class="#{if @assigns[:is_landing], do: "landing-page"} #{@assigns[:body_class]}"
     = @contents
 
-    = render VaeWeb.ComponentView, "algolia_credentials", conn: @conn
     script src=Routes.static_path(@conn,"/js/app.js") async=true
     = if Mix.env == :prod do
       = render VaeWeb.ComponentView, "hotjar", conn: @conn
