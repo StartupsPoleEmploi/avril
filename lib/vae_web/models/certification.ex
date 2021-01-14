@@ -203,7 +203,7 @@ defmodule Vae.Certification do
   def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do
     if get_change(changeset, :older_certification) do
       %Certification{applications: older_applications} = get_field(changeset, :older_certification) |> Repo.preload(:applications)
-      put_assoc_no_useless_updates(
+      put_assoc(
         changeset,
         :applications,
         (

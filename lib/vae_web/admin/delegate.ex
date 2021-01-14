@@ -97,6 +97,15 @@ defmodule Vae.ExAdmin.Delegate do
         end
       end
 
+      # panel "excluded_certifications" do
+      #   table_for delegate.excluded_certifications do
+      #     column(:id)
+      #     column(:rncp_id)
+      #     column(:is_active)
+      #     column(:name, &Helpers.link_to_resource/1)
+      #   end
+      # end
+
       panel "Meetings" do
         table_for meetings do
           column(:meeting_id)

@@ -125,7 +125,7 @@ defmodule Vae.Delegate do
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
     |> link_certifications()
-    |> put_param_assoc(:applications, params)
+    # |> put_param_assoc(:applications, params)
   end
 
   defp add_geolocation(%Ecto.Changeset{changes: %{address: _}} = changeset) do
@@ -156,7 +156,7 @@ defmodule Vae.Delegate do
         Enum.uniq(rncp_certifications ++ included_certifications) -- excluded_certifications
 
       changeset
-      |> put_assoc_no_useless_updates(:certifications, certifications)
+      |> put_assoc(:certifications, certifications)
     # else
     #   changeset
     # end
