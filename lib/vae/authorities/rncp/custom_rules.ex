@@ -8,7 +8,11 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
   @ignored_fiche_intitules [
     "Un des meilleurs ouvriers de France",
-    "Ecole polytechnique"
+    "Ecole polytechnique",
+  ]
+
+  @ignored_fiche_acronyms [
+    "BEPA"
   ]
 
   @ignored_acronyms_for_educ_nat [
@@ -39,21 +43,10 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     ignored_intitule = @ignored_fiche_intitules
       |> Enum.any?(&String.starts_with?(intitule, String.downcase(&1)))
 
-    accessible_vae && !ignored_intitule
+    acronym = xpath(fiche, ~x"./ABREGE/CODE/text()"s)
+    ignored_acronym = acronym in @ignored_fiche_acronyms
 
-    # test = fiche
-    # |> xpath(~x"./NUMERO_FICHE/text()"s)
-    # |> String.replace_prefix("RNCP", "")
-    # |> String.equivalent?("18704")
-
-    # if test do
-    #   IO.inspect("##############")
-    #   IO.inspect("VAE? #{accessible_vae}")
-    #   IO.inspect("Ignoré ? #{ignored_intitule}")
-    #   IO.inspect("Donc : #{accessible_vae && !ignored_intitule}")
-    #   IO.inspect("##############")
-    # end
-    # test
+    accessible_vae && !ignored_intitule && !ignored_acronym
   end
 
   def reject_educ_nat_certifiers(certifiers, %{
@@ -81,7 +74,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
     is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))
     is_bts = acronym == "BTS"
-    is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34828", "35044"]
+    is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34826", "34828", "35044"]
 
     if is_rncp_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
       certifiers ++ [Repo.get_by(Certifier, slug: @educ_nat)]
@@ -115,6 +108,13 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     romes: romes
   } = data) do
     Map.merge(data, %{romes: romes ++ [Repo.get_by(Rome, code: "M1203")]})
+  end
+
+  def custom_data_transformations(%{
+    rncp_id: "25467",
+    romes: romes
+  } = data) do
+    Map.merge(data, %{romes: romes ++ [Repo.get_by(Rome, code: "K1304")]})
   end
 
   def custom_data_transformations(%{
