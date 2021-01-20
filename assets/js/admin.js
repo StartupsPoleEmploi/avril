@@ -66,7 +66,7 @@ const addDelegateGeolocationMap = () => {
     zoom: 13,
   });
 
-  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 20,
     id: 'mapbox.streets'
   }).addTo(delegateMap);
