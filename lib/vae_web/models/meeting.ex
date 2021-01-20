@@ -40,7 +40,7 @@ defmodule Vae.Meeting do
     meeting
     |> cast(params, ~w(source)a)
     |> cast_embed(:data)
-    |> add_geometry(force: true)
+    |> add_geometry()
     |> validate_required([:source, :data])
   end
 
