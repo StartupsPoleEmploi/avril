@@ -44,7 +44,7 @@ defmodule Vae.ExAdmin.Delegate do
         row(:secondary_email)
         row(:secondary_person_name)
         row(:academy_id)
-        row(:has_coords, fn d -> if not is_nil(d.geom), do: "Yes :)", else: "No :(" end)
+        row(:has_coordinates, fn d -> if not is_nil(d.geom), do: "Yes :)", else: "No :(" end)
         row(:nb_recent_applications, fn d -> length(d.recent_applications) end)
         row(:certifications, fn d -> length(d.certifications) end)
         row(:nb_meetings, fn _d -> length(meetings) end)

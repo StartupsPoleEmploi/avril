@@ -111,7 +111,8 @@ defmodule VaeWeb do
             _ -> nil
           end
           |> case do
-            struct_value when not is_nil(struct_value) -> put_assoc(changeset, key, struct_value)
+            struct_value when not is_nil(struct_value) ->
+              put_assoc(changeset, key, struct_value)
             nil -> changeset
           end
         else

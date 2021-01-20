@@ -48,7 +48,7 @@ defmodule Vae.Certification do
     # Manually excluded delegates in admin
     many_to_many(
       :excluded_delegates,
-      Certification,
+      Delegate,
       join_through: "certifications_delegates_exclusions",
       on_delete: :delete_all,
       on_replace: :delete
@@ -57,7 +57,7 @@ defmodule Vae.Certification do
     # Manually included delegates in admin
     many_to_many(
       :included_delegates,
-      Certification,
+      Delegate,
       join_through: "certifications_delegates_inclusions",
       on_delete: :delete_all,
       on_replace: :delete

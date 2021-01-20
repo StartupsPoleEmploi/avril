@@ -18,6 +18,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     universite-catholique-de-l-ouest
     centre-universitaire-des-sciences-et-techniques-de-l-universite-clermont-ferrand
     universite-europeenne-des-senteurs-et-des-saveurs
+    languedoc-roussillon-universites
   )
 
   @cities ~w(
