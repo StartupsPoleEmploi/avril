@@ -26,7 +26,7 @@ defmodule Vae.ExAdmin.Delegate do
     end
 
     show delegate do
-      meetings = Vae.Meeting.find_future_meetings_for_delegate(delegate)
+      meetings = (Vae.Meeting.find_future_meetings_for_delegate(delegate) || [])
         |> Enum.map(&(&1.data))
 
       attributes_table() do
@@ -44,21 +44,24 @@ defmodule Vae.ExAdmin.Delegate do
         row(:secondary_email)
         row(:secondary_person_name)
         row(:academy_id)
+        row(:has_coords, fn d -> if not is_nil(d.geom), do: "Yes :)", else: "No :(" end)
         row(:nb_recent_applications, fn d -> length(d.recent_applications) end)
         row(:certifications, fn d -> length(d.certifications) end)
         row(:nb_meetings, fn _d -> length(meetings) end)
         row(:internal_notes)
       end
 
-      div ".box" do
-        div ".box-header.with-border" do
-          h3 "Map"
-        end
-        div ".box-body" do
-          %Geo.Point{coordinates: {lng, lat}, properties: %{}, srid: nil} = delegate.geom
-
-          div "#delegate_map", [{:"data-lat", lat}, {:"data-lng", lng}]
-        end
+      case delegate.geom do
+        nil -> nil
+        %Geo.Point{coordinates: {lng, lat}, properties: %{}, srid: nil} ->
+          div ".box" do
+            div ".box-header.with-border" do
+              h3 "Map"
+            end
+            div ".box-body" do
+              div "#delegate_map", [{:"data-lat", lat}, {:"data-lng", lng}]
+            end
+          end
       end
 
       panel "certifiers" do
@@ -225,6 +228,7 @@ defmodule Vae.ExAdmin.Delegate do
 
     query do
       %{
+        all: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
         index: [preload: [:certifiers, :certifications, :applications], default_sort: [asc: :id]],
         show: [preload: [:certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
         edit: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
