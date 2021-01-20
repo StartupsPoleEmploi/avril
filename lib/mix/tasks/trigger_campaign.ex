@@ -15,7 +15,7 @@ defmodule Mix.Tasks.TriggerCampaign do
       case Date.from_iso8601(date_str) do
         {:ok, date} ->
           Vae.CampaignDiffuser.Handler.execute(type, date)
-        {:error, error} -> IO.inspect(error)
+        {:error, error} -> error
       end
     else
       IO.puts("Possible type values: #{Enum.join(@possible_types, " - ")}")

@@ -24,7 +24,7 @@ defmodule Vae.Meeting do
 
       def changeset(module, params) do
         module
-        |> cast(params, ~w(academy_id meeting_id place address postal_code target start_date end_date)a)
+        |> cast(params, ~w(academy_id meeting_id place city address postal_code target start_date end_date)a)
         |> validate_required([
           :meeting_id,
           :place,
@@ -40,22 +40,34 @@ defmodule Vae.Meeting do
     meeting
     |> cast(params, ~w(source)a)
     |> cast_embed(:data)
-    |> add_geometry()
+    |> add_geometry(force: true)
     |> validate_required([:source, :data])
   end
 
-  def add_geometry(%Ecto.Changeset{} = changeset) do
-    with(
+  def add_geometry(%Ecto.Changeset{} = changeset, opts \\ []) do
+    changeset_needs_to_update_geometry = with(
       data_change when not is_nil(data_change) <- get_change(changeset, :data),
-      address_change when not is_nil(address_change) <- get_change(data_change, :address),
+      address_change when not is_nil(address_change) <-
+        get_change(data_change, :address) ||
+        get_change(data_change, :postal_code) ||
+        get_change(data_change, :city)
+    ) do
+      true
+    else
+      _ -> false
+    end
+
+    with(
+      true <- opts[:force] || changeset_needs_to_update_geometry,
+      %{address: address, postal_code: postal_code, city: city} <- get_field(changeset, :data),
       ban_result <-
-        Ban.get_geoloc_from_address(get_field(changeset, :data).address) ||
-        Ban.get_geoloc_from_postal_code(get_field(changeset, :data).postal_code),
+        Ban.get_geoloc_from_address("#{address} #{postal_code} #{city}") ||
+        Ban.get_geoloc_from_postal_code(postal_code),
       coordinates when not is_nil(coordinates) <- Ban.get_field(ban_result, :lng_lat)
     ) do
       put_change(changeset, :geom, %Geo.Point{coordinates: coordinates})
     else
-      _err -> changeset
+      _ -> changeset
     end
   end
 

@@ -60,11 +60,8 @@ defmodule Vae.Meetings.FranceVae do
           Logger.info("[DAVA] Retrieved #{length(meetings)} meetings for academy_id: #{academy_id} in source #{@source}")
 
           meetings
-          |> Enum.filter(fn api_meeting ->
-            api_meeting
-            |> Map.get("cible")
-            |> String.trim()
-            |> Kernel.in(["CAP au BTS", "Tout public", ""])
+          |> Enum.filter(fn %{"cible" => cible} ->
+            String.trim(cible) in ["CAP au BTS", "Tout public", ""]
           end)
           |> Enum.reduce({:ok, []}, fn api_meeting, {:ok, results} ->
             meeting_data = to_meeting_data(api_meeting, academy_id)
@@ -164,7 +161,7 @@ defmodule Vae.Meetings.FranceVae do
     end
   end
 
-  defp to_meeting_data(params, academy_id) do
+  def to_meeting_data(params, academy_id) do
     %{
       academy_id: academy_id,
       meeting_id: Integer.to_string(params["id"]),

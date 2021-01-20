@@ -71,7 +71,6 @@ defmodule Vae.Applications do
       |> Repo.update()
     else
       error ->
-        IO.inspect(error)
         {:error, error}
     end
   end
