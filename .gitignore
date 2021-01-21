@@ -21,6 +21,7 @@ docker-compose.override.yml
 /priv/mnesia/*
 /priv/tabs/*.tab
 /priv/rncp*.xml
+/priv/export_fiches_RNCP*.xml
 /priv/*.log
 /priv/*.csv
 

@@ -100,7 +100,8 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end)
 
       newer_certification
-      |> Certification.changeset(%{older_certification: certification})
+      |> Repo.preload(:applications, force: true)
+      |> Certification.changeset(%{older_certification: Repo.preload(certification, :applications, force: true)})
       |> Repo.update()
     end
   end

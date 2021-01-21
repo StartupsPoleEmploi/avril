@@ -250,15 +250,18 @@ defmodule Vae.UserApplication do
   end
 
   def get_comparison_score(%UserApplication{} = a1, %UserApplication{} = a2) do
-    [delegate_id: 3, inserted_at: 1, submitted_at: 20, meeting: 3, booklet_1: 2]
+    a1 = Repo.preload(a1, :resumes)
+    a2 = Repo.preload(a2, :resumes)
+    [delegate_id: 3, inserted_at: 1, submitted_at: 20, meeting: 3, booklet_1: 2, resumes: 1]
     |> Enum.reduce(0, fn {k, v}, score ->
-      case {Map.get(a1, k), Map.get(a2, k)} do
-        {val, nil} when not is_nil(val) -> v
-        {nil, val} when not is_nil(val) -> -v
-        {%Vae.Booklet.Cerfa{experiences: e1}, %Vae.Booklet.Cerfa{experiences: e2}} -> v * (length(e1) - length(e2))
+      case {k, Map.get(a1, k), Map.get(a2, k)} do
+        {_, val, nil} when not is_nil(val) -> v
+        {_, nil, val} when not is_nil(val) -> -v
+        {:booklet_1, %Vae.Booklet.Cerfa{experiences: e1}, %Vae.Booklet.Cerfa{experiences: e2}} -> v * (length(e1) - length(e2))
+        {:resumes, r1, r2} -> v * length(r1) - length(r2)
         {v1, v2} ->
           if Timex.Comparable.impl_for(v1) && Timex.Comparable.impl_for(v2) do
-            if Timex.after?(v1, v2), do: v, else: -v
+            if Timex.after?(v1, v2), do: 1, else: -1
           else
             0
           end

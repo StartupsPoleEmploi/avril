@@ -9,13 +9,14 @@ RUN apt-get install -y \
     xfonts-utils \
     xfonts-base \
     xfonts-75dpi \
-    apt-transport-https \
-    ca-certificates \
-    postgresql-client
+    # apt-transport-https \
+    # ca-certificates \
+    # postgresql-client \
+    sshpass
 
 # Install wkhtmltopdf
-RUN wget -P /root https://downloads.wkhtmltopdf.org/0.12/0.12.5/wkhtmltox_0.12.5-1.stretch_amd64.deb
-RUN dpkg -i /root/wkhtmltox_0.12.5-1.stretch_amd64.deb || true
+RUN wget -P /root https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.stretch_amd64.deb
+RUN dpkg -i /root/wkhtmltox_0.12.6-1.stretch_amd64.deb || true
 
 # Install goon
 RUN wget -P /root https://github.com/alco/goon/releases/download/v1.1.1/goon_linux_amd64.tar.gz
