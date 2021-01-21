@@ -154,10 +154,13 @@ defmodule VaeWeb.Resolvers.Application do
 
   def delete_application(_, %{id: application_id}, %{context: %{current_user: user}}) do
     with(
-      {:application, application} <-
-        {:application, Applications.get_application_from_id_and_user_id(application_id, user.id)},
+      {:application, %UserApplication{submitted_at: submitted_at} = application} <-
+        {:application, Applications.get_application_from_id_and_user_id(application_id, user.id) |> Repo.preload(:user, :delegate, :certification)},
       {:ok, _deleted} <- UserApplication.delete_with_resumes(application)
     ) do
+      if not is_nil(submitted_at) do
+        {:ok, _} = ApplicationEmail.delegate_cancelled_application(application) |> VaeWeb.Mailer.send()
+      end
       {:ok, Applications.get_applications(user.id)}
     else
       {:application, _error} ->

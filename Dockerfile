@@ -1,7 +1,8 @@
 FROM elixir:1.8.2
 
 RUN apt-get update
-RUN apt-get install -y \
+RUN apt-get install --fix-missing -y \
+    sshpass \
     inotify-tools \
     libfontenc1 \
     libxfont1 \
@@ -11,8 +12,7 @@ RUN apt-get install -y \
     xfonts-75dpi \
     # apt-transport-https \
     # ca-certificates \
-    # postgresql-client \
-    sshpass
+    postgresql-client
 
 # Install wkhtmltopdf
 RUN wget -P /root https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.stretch_amd64.deb

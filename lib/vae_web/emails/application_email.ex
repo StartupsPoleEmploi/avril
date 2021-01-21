@@ -26,6 +26,21 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
+  def delegate_cancelled_application(application, endpoint \\ URI.endpoint()) do
+    application = Repo.preload(application, [:user, :delegate, :certification])
+
+    Mailer.build_email(
+      "application/delegate_cancelled_application.html",
+      :avril,
+      application.delegate,
+      %{
+        username: User.fullname(application.user),
+        certification_name: Certification.name(application.certification),
+        footer_note: :delegate
+      }
+    )
+  end
+
   def user_submission_confirmation(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :delegate, :certification])
 
