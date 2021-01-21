@@ -118,10 +118,6 @@ config :vae, Vae.Scheduler,
       schedule: "45 5 1,15 * *",
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
-    meetings_task: [
-      schedule: "0 5 * * *",
-      task: &Vae.Meetings.fetch_meetings/0
-    ],
     registered_campaign_task: [
       schedule: "30 10 * * 2",
       task: fn () ->
@@ -133,6 +129,14 @@ config :vae, Vae.Scheduler,
       task: fn () ->
         Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
       end
+    ],
+    meetings_task: [
+      schedule: "0 5 * * *",
+      task: &Vae.Meetings.fetch_meetings/0
+    ],
+    update_certification_search_view: [
+      schedule: "0 3 * * *",
+      task: &Vae.Search.FullTextSearch.refresh_materialized_view/0
     ]
   ], else: []
 
