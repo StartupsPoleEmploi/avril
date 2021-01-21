@@ -59,9 +59,11 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in ["4505", "25467", "4503", "34824", "34827", "2028", "2514", "4505", "367", "34829"]
-      if is_educ_nat && (is_ignored_acronym || is_custom_rncp)  do
+      if is_educ_nat && (is_ignored_acronym || is_custom_rncp) do
         FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_rncp_active])
         true
+      else
+        false
       end
     end)
   end

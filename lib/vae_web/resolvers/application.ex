@@ -6,6 +6,7 @@ defmodule VaeWeb.Resolvers.Application do
   import Geo.PostGIS
 
   alias Vae.{Applications, Delegate, Meeting, Repo, UserApplication}
+  alias VaeWeb.ApplicationEmail
 
   @application_not_found "La candidature est introuvable"
   @no_delegate_found "Aucun certificateur n'a été trouvé"
@@ -155,11 +156,18 @@ defmodule VaeWeb.Resolvers.Application do
   def delete_application(_, %{id: application_id}, %{context: %{current_user: user}}) do
     with(
       {:application, %UserApplication{submitted_at: submitted_at} = application} <-
-        {:application, Applications.get_application_from_id_and_user_id(application_id, user.id) |> Repo.preload(:user, :delegate, :certification)},
+        {
+          :application,
+          Applications.get_application_from_id_and_user_id(application_id, user.id)
+            |> Repo.preload([:user, :delegate, :certification])
+        },
       {:ok, _deleted} <- UserApplication.delete_with_resumes(application)
     ) do
+      IO.inspect("##########")
+      IO.inspect(submitted_at)
+      IO.inspect("##########")
       if not is_nil(submitted_at) do
-        {:ok, _} = ApplicationEmail.delegate_cancelled_application(application) |> VaeWeb.Mailer.send()
+        {:ok, _} = ApplicationEmail.delegate_cancelled_application(application) |> VaeWeb.Mailer.send() |> IO.inspect()
       end
       {:ok, Applications.get_applications(user.id)}
     else
@@ -169,7 +177,7 @@ defmodule VaeWeb.Resolvers.Application do
       {:error, %Ecto.Changeset{} = changeset} ->
         error_response(@delete_error, changeset)
 
-      _ ->
+      _err ->
         error_response("Une erreur est survenue", "")
     end
   end
