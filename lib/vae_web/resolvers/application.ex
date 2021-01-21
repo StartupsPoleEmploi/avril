@@ -163,9 +163,6 @@ defmodule VaeWeb.Resolvers.Application do
         },
       {:ok, _deleted} <- UserApplication.delete_with_resumes(application)
     ) do
-      IO.inspect("##########")
-      IO.inspect(submitted_at)
-      IO.inspect("##########")
       if not is_nil(submitted_at) do
         {:ok, _} = ApplicationEmail.delegate_cancelled_application(application) |> VaeWeb.Mailer.send() |> IO.inspect()
       end
