@@ -25,10 +25,10 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   ]
 
   @cci_certifications_rncp_ids ~w(
-    28669, 23937, 23870, 27095, 27413, 23966,
-    23872, 26286, 16615, 28736, 23827, 26901,
-    27096, 32362, 23940, 29535, 27365, 28764,
-    23675, 23939, 23869, 23970, 28627, 23932
+    28669 23937 23870 27095 27413 23966
+    23872 26286 16615 28736 23827 26901
+    27096 32362 23940 29535 27365 28764
+    23675 23939 23869 23970 28627 23932
   )
 
   @educ_nat "ministere-de-l-education-nationale"
@@ -58,7 +58,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
       is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
-      is_custom_rncp = rncp_id in ["4505"]
+      is_custom_rncp = rncp_id in ["4505", "25467", "4503", "34824", "34827", "2028", "2514", "4505", "367", "34829"]
       if is_educ_nat && (is_ignored_acronym || is_custom_rncp)  do
         FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_rncp_active])
         true
