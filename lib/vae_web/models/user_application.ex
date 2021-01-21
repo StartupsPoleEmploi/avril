@@ -259,7 +259,7 @@ defmodule Vae.UserApplication do
         {_, nil, val} when not is_nil(val) -> -v
         {:booklet_1, %Vae.Booklet.Cerfa{experiences: e1}, %Vae.Booklet.Cerfa{experiences: e2}} -> v * (length(e1) - length(e2))
         {:resumes, r1, r2} -> v * length(r1) - length(r2)
-        {v1, v2} ->
+        {_, v1, v2} ->
           if Timex.Comparable.impl_for(v1) && Timex.Comparable.impl_for(v2) do
             if Timex.after?(v1, v2), do: 1, else: -1
           else
