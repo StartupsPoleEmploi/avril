@@ -91,10 +91,11 @@ defmodule Vae.Certification do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
-    # params = case params[:rncp_id] do
-    #   v when is_integer(v) -> Map.put(params, :rncp_id, Integer.to_string(v))
-    #   _ -> params
-    # end
+    # rncp_id is mistakenly parsed as integer while a string is expected here
+    params = case params[:rncp_id] do
+      v when is_integer(v) -> Map.put(params, :rncp_id, Integer.to_string(v))
+      _ -> params
+    end
 
     struct
     |> Repo.preload([
