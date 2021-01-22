@@ -88,6 +88,12 @@ defmodule Vae.Delegate do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
+    # academy_id is mistakenly parsed as integer while a string is expected here
+    params = case params[:academy_id] do
+      v when is_integer(v) -> Map.put(params, :academy_id, Integer.to_string(v))
+      _ -> params
+    end
+
     struct
     |> Repo.preload([
       :recent_applications,
