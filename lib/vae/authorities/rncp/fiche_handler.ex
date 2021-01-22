@@ -63,8 +63,8 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end)
       |> Enum.map(&match_or_build_certifier(&1, [with_delegate: true, build: (if data.is_rncp_active, do: :allow)]))
       |> Enum.filter(&not(is_nil(&1)))
-      |> CustomRules.reject_educ_nat_certifiers(data)
       |> CustomRules.add_educ_nat_certifiers(data)
+      |> CustomRules.reject_educ_nat_certifiers(data)
       |> Enum.uniq_by(&(&1.slug))
       |> Enum.sort_by(&(&1.id))
   end

@@ -25,16 +25,27 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   ]
 
   @cci_certifications_rncp_ids ~w(
-    28669 23937 34928 27095 27413 34353
-    23872 34965 34999 35010 23827 26901
-    27096 32362 23940 29535 27365 28764
-    23939 23869 11200 35001 23932
+    11200 23827 23869 23872 23932
+    23937 23939 23940 26901 27095
+    27096 27365 27413 28669 28764
+    29535 32362 34353 34928 34965
+    34999 35001 35010
   )
+
+  @wrong_educ_nat_certifiers ~w(
+    230 367 2028 2514 4495 4496 4500 4503 4505
+    18363 25467 34824 34827 34829 34862
+  )
+  @missing_educ_nat_certifiers ~w(4875 34825 34826 34828 35044)
 
   @educ_nat "ministere-de-l-education-nationale"
   @ens_sup "ministere-de-l-enseignement-superieur"
   @solidarite "ministere-charge-de-la-solidarite"
   @sports "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"
+
+  def cci_certifications_rncp_ids(), do: @cci_certifications_rncp_ids
+  def wrong_educ_nat_certifiers(), do: @wrong_educ_nat_certifiers
+  def missing_educ_nat_certifiers, do: @missing_educ_nat_certifiers
 
   def accepted_fiche?(fiche) do
     accessible_vae = xpath(fiche, ~x"./SI_JURY_VAE/text()"s) == "Oui"
@@ -58,7 +69,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
       is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
-      is_custom_rncp = rncp_id in ["4505", "25467", "4503", "34824", "34827", "2028", "2514", "4505", "367", "34829"]
+      is_custom_rncp = rncp_id in @wrong_educ_nat_certifiers
       if is_educ_nat && (is_ignored_acronym || is_custom_rncp) do
         FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_rncp_active])
         true
@@ -76,7 +87,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
     is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))
     is_bts = acronym == "BTS"
-    is_in_custom_list = rncp_id in ["4877", "4875", "34825", "34826", "34828", "35044"]
+    is_in_custom_list = rncp_id in @missing_educ_nat_certifiers
 
     if is_rncp_active && (is_solidarite || (is_enseignement_superieur && (is_bts || is_in_custom_list))) do
       certifiers ++ [Repo.get_by(Certifier, slug: @educ_nat)]
