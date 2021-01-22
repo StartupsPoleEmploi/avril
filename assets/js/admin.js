@@ -105,7 +105,10 @@ const selectFiltersWithChosen = () => {
 }
 
 const selectMultipleWithMultiSelect = () => {
-  $('section.content form select[multiple]').multiSelect();
+  $('section.content form select[multiple]').multiSelect({
+    selectableHeader: ' : all possible choices',
+    selectionHeader: ' : actually selected choices'
+  });
 }
 
 $(document).ready(() => {

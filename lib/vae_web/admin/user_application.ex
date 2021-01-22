@@ -22,12 +22,23 @@ defmodule Vae.ExAdmin.UserApplication do
       # end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:status, &application_status/1)
-      column(:url, fn a -> if a.submitted_at, do: Phoenix.HTML.Link.link("URL", to: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash), target: "_blank") end)
-      column(:meeting)
+      column(:delegate_application_url, fn a -> if a.submitted_at, do: Phoenix.HTML.Link.link("URL", to: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash), target: "_blank") end)
+      column(:meeting_subscription, fn a -> if a.meeting, do: "Yes", else: "No" end)
       column(:booklet_1)
 
       actions()
     end
+
+    action_item(:show, fn id ->
+      application = Vae.Repo.get(Vae.UserApplication, id)
+
+      if application.delegate_access_hash && application.booklet_1 do
+        action_item_link("View CERFA",
+          href: VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :cerfa, application, delegate_hash: application.delegate_access_hash),
+          target: "_blank"
+        )
+      end
+    end)
 
     action_item(:show, fn id ->
       application = Vae.Repo.get(Vae.UserApplication, id)
@@ -38,18 +49,7 @@ defmodule Vae.ExAdmin.UserApplication do
         )
 
       if application.delegate_access_hash do
-        action_item_link("View Delegate Application", href: href, target: "_blank")
-      end
-    end)
-
-    action_item(:show, fn id ->
-      application = Vae.Repo.get(Vae.UserApplication, id)
-
-      if application.delegate_access_hash && application.booklet_1 do
-        action_item_link("Check CERFA",
-          href: VaeWeb.Router.Helpers.user_application_path(VaeWeb.Endpoint, :cerfa, application, delegate_hash: application.delegate_access_hash),
-          target: "_blank"
-        )
+        action_item_link("View Delegate Application", href: href, target: "_blank", class: "strong")
       end
     end)
 
@@ -58,6 +58,7 @@ defmodule Vae.ExAdmin.UserApplication do
         row(:user, fn a -> Vae.User.fullname(a.user) end)
         row(:certification)
         row(:delegate)
+        row(:delegate_application_url, fn a -> if a.submitted_at, do: Phoenix.HTML.Link.link("Click to visit or right click \"Save link as ...\"", to: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash), target: "_blank") end)
         row(:inserted_at)
         row(:submitted_at)
         row(:admissible_at)
