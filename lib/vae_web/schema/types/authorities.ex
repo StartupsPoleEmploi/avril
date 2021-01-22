@@ -34,6 +34,7 @@ defmodule VaeWeb.Schema.Types.Authorities do
     field(:address_name, :string)
     field(:address, :string)
     field(:telephone, :string)
+    field(:website, :string)
   end
 
   object :meeting do
