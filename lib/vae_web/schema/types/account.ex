@@ -41,6 +41,7 @@ defmodule VaeWeb.Schema.Types.Account do
   end
 
   object :address do
+    field(:administrative, :string)
     field(:city, :string)
     field(:county, :string)
     field(:country, :string)

@@ -207,6 +207,7 @@ defmodule VaeWeb.Schema.Types.Application do
     field(:city, :string)
     field(:county, :string)
     field(:country, :string)
+    field(:country_code, :string)
     field(:lat, :float)
     field(:lng, :float)
     field(:street, :string)
