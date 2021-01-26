@@ -55,7 +55,7 @@ Une fois `docker-compose` installé, il ne reste plus qu'à faire `docker-compos
 
 ## Variables d'environnement
 
-Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Algolia/Mailjet).
+Dupliquer le fichier `.env.example` en `.env`. Récupérer les clés API des différents services utilisés (Mailjet).
 
 ## Installer le dump de la BDD
 

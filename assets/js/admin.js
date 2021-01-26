@@ -35,29 +35,6 @@ const doubleClickUncheckPresenceRadioInputs = () => {
   });
 }
 
-// const algoliaAutocompleteDelegateAddress = () => {
-//   if(document.querySelector('#delegate_address')) {
-//     var placesAutocomplete = places({
-//       appId: window.algolia_places_app_id,
-//       apiKey: window.algolia_places_api_key,
-//       container: document.querySelector('#delegate_address'),
-//       language: 'fr',
-//       countries: ['fr'],
-//       templates: {
-//         value: ({ name, postcode, city }) => city ? `${name} ${postcode} ${city}` : `${postcode} ${name}`
-//       }
-//     });
-
-//     placesAutocomplete.on('change', function(e) {
-//       delegate_geo.value = JSON.stringify(e.suggestion.hit);
-//     });
-
-//     placesAutocomplete.on('clear', function() {
-//       delegate_geo.value = '';
-//     });
-//   }
-// }
-
 const addDelegateGeolocationMap = () => {
   if (!document.getElementById('delegate_map')) return;
   const dataset = document.getElementById('delegate_map').dataset;
@@ -112,7 +89,6 @@ const selectMultipleWithMultiSelect = () => {
 }
 
 $(document).ready(() => {
-  // algoliaAutocompleteDelegateAddress();
   addDelegateGeolocationMap();
   textareaToSimditor();
   selectFiltersWithChosen();

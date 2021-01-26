@@ -22,7 +22,6 @@ defmodule Mix.Tasks.RncpUpdate do
   end
 
   def run(args) do
-    # System.put_env("ALGOLIA_SYNC", "disable")
     {:ok, _} = Application.ensure_all_started(:vae)
 
     {options, [], []} = OptionParser.parse(args,
