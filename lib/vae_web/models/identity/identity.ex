@@ -91,7 +91,9 @@ defmodule Vae.Identity do
     }
   end
 
-  def is_man?(%Identity{gender: gender}) do
+  def is_man?(%Identity{gender: gender}) when is_binary(gender) do
     String.starts_with?(gender, "m")
   end
+
+  def is_man?(_), do: true
 end
