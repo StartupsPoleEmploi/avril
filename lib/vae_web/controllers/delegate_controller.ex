@@ -21,7 +21,7 @@ defmodule VaeWeb.DelegateController do
         cities: cities |> Enum.map(fn [_a, c] -> c end)
       )
     else
-      raise Ecto.NoResultsError, queryable: Delegate
+      warning_and_redirect(conn)
     end
   end
   def geo(conn, _params) do
@@ -38,7 +38,7 @@ defmodule VaeWeb.DelegateController do
         administratives: administratives
       )
     else
-      raise Ecto.NoResultsError, queryable: Delegate
+      warning_and_redirect(conn)
     end
   end
 
@@ -64,7 +64,7 @@ defmodule VaeWeb.DelegateController do
         )
       end
     else
-      raise Ecto.NoResultsError, queryable: Delegate
+      warning_and_redirect(conn)
     end
   end
 
@@ -105,5 +105,11 @@ defmodule VaeWeb.DelegateController do
       |> put_flash(level, msg)
       |> redirect(to: Routes.user_application_path(conn, :show, application, %{hash: application.delegate_access_hash}))
     end
+  end
+
+  defp warning_and_redirect(conn) do
+    conn
+    |> put_flash(:warning, "Aucun certificateur n'a été trouvé dans cette zone.")
+    |> redirect(to: Routes.delegate_path(conn, :geo))
   end
 end
