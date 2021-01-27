@@ -193,11 +193,17 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :internal_notes, type: :text)
 
         content do
-          Helpers.form_select_tag(delegate, :excluded_certifications, [options: delegate.rncp_certifications, label: "Certifications from certifier that should not be associated to this delegate"])
+          %Delegate{rncp_certifications: rncp_certifications} = delegate = Vae.Repo.preload(delegate, :rncp_certifications)
+          Helpers.form_select_tag(delegate, :excluded_certifications, [options: rncp_certifications, label: "Certifications from certifier that should not be associated to this delegate"])
         end
 
         content do
-          other_certifications = Vae.Repo.all(Ecto.Query.from(c in Vae.Certification, where: [is_active: true])) -- delegate.rncp_certifications
+          %Delegate{rncp_certifications: rncp_certifications} = delegate = Vae.Repo.preload(delegate, :rncp_certifications)
+          other_certifications =
+            from(c in Vae.Certification)
+            |> where([c], c.is_active)
+            |> where([c], c.id not in ^Enum.map(rncp_certifications, &(&1.id)))
+            |> Vae.Repo.all()
           Helpers.form_select_tag(delegate, :included_certifications, [options: other_certifications, label: "Certifications not associated to certifier but should be associated to this delegate"])
         end
 
