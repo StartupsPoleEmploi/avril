@@ -7,8 +7,11 @@ span
   = if @period.week_hours_duration do
     '  :
     strong #{@period.week_hours_duration} h/semaine
-  '  soit
-  strong
-    = @period.total_hours || (Vae.Date.workdays_between(@period.start_date, @period.end_date) * @period.week_hours_duration |> div(5))
-    |  heures
-  |  en cumulé.
+  = if @period.total_hours || @period.week_hours_duration do
+    '  soit
+    strong
+      = @period.total_hours || (Vae.Date.workdays_between(@period.start_date, @period.end_date) * @period.week_hours_duration |> div(5))
+      |  heures
+    |  en cumulé.
+  - else
+    |  : nombre d'heures inconnu
