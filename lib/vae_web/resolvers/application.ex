@@ -42,12 +42,13 @@ defmodule VaeWeb.Resolvers.Application do
         %{context: %{current_user: user}}
       ) do
     with(
-      application when not is_nil(application) <-
-           Applications.get_application_from_id_and_user_id(application_id, user.id),
+      %UserApplication{delegate_id: delegate_id} = application <-
+        Applications.get_application_from_id_and_user_id(application_id, user.id),
       geom <- %Geo.Point{coordinates: {lng, lat}},
       delegates <- from(d in Delegate)
         |> join(:inner, [d], assoc(d, :certifications))
         |> where([d], d.is_active)
+        |> Vae.Maybe.if(not is_nil(delegate_id), &where(&1, [d], d.id != ^delegate_id))
         |> Vae.Maybe.if(is_binary(administrative), &where(&1, [d], d.administrative == ^administrative))
         |> where([d, c], c.id == ^application.certification_id)
         |> Vae.Maybe.if(is_number(radius), &where(&1, [d], st_dwithin_in_meters(d.geom, ^geom, ^radius)))
@@ -79,17 +80,24 @@ defmodule VaeWeb.Resolvers.Application do
   end
 
   def attach_delegate(
-        _,
-        %{input: %{application_id: application_id, delegate_id: delegate_id}},
-        %{context: %{current_user: user}}
-      ) do
-    with {_, application} when not is_nil(application) <-
-           {:application,
-            Applications.get_application_from_id_and_user_id(application_id, user.id)},
-         {_, delegate} when not is_nil(delegate) <-
-           {:delegate, Repo.get(Delegate, delegate_id) |> Repo.preload(:certifiers)},
-         {:ok, updated_application} <-
-           Applications.attach_delegate(application, delegate) do
+    _,
+    %{input: %{application_id: application_id, delegate_id: delegate_id}},
+    %{context: %{current_user: user}}
+  ) do
+    with(
+      {:application, %UserApplication{delegate: existing_delegate, submitted_at: submitted_at} = application} <-
+        {:application,
+          Applications.get_application_from_id_and_user_id(application_id, user.id)
+          |> Repo.preload(:delegate)
+        },
+      {:delegate, %Delegate{} = delegate} <- {:delegate, Repo.get(Delegate, delegate_id)},
+      {:ok, updated_application} <- Applications.attach_delegate(application, delegate)
+    ) do
+      if not is_nil(existing_delegate) && not is_nil(submitted_at) do
+        {:ok, _} = application
+        |> VaeWeb.ApplicationEmail.delegate_cancelled_application()
+        |> VaeWeb.Mailer.send()
+      end
       {:ok, updated_application}
     else
       {:error, changeset} ->

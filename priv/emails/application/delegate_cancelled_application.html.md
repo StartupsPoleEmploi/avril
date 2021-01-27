@@ -5,6 +5,16 @@ Bonjour,
 Afin de faciliter le suivi de vos dossiers, Avril vous informe que **<%= @username %>** vient
 d'annuler sa candidature auprès de vos services pour la certification **<%= @certification_name %>**.
 
+<%= if @meeting do %>
+<%= @username %> s'était inscrit à la réunion d'information suivante:
+
+- Date: <%= Timex.format!(@meeting.start_date, @date_format, :strftime) %>
+- Lieu : <%= @meeting.place %>
+- Adresse : <%= @meeting.address %> <%= @meeting.postal_code %>
+
+Merci d'annuler cette inscription.
+<% end %>
+
 Nous restons à disposition pour tout complément d'information.
 
 L'équipe Avril

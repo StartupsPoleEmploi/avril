@@ -50,7 +50,12 @@ defmodule Vae.UserApplication do
 
   def attach_delegate_changeset(struct, %Delegate{} = delegate) do
     struct
-    |> change()
+    |> change(%{
+      submitted_at: nil,
+      delegate_access_hash: nil,
+      delegate_access_refreshed_at: nil,
+      meeting: nil
+    })
     |> put_assoc(:delegate, delegate)
   end
 
