@@ -5,7 +5,7 @@ section.section.container
       h1.title.is-1.has-text-centered Contactez-nous
 section.section.container#warning
   .columns
-    .column.is-8.is-offset-2
+    .column.is-6.is-offset-3
       .content
         = render "_contact.html", assigns
         .section.has-text-centered
@@ -19,25 +19,25 @@ section.section.container#form.is-hidden
             = label f, :name, "Votre nom :", class: "label"
           .field-body
             .field
-              = text_input f, :name, class: "input", placeholder: "Nom", required: true
+              = text_input f, :name, class: "input", placeholder: "Nom (requis)", required: true
         .field.is-horizontal
           .field-label.is-normal
             = label f, :email, "Votre adresse e-mail :", class: "label"
           .field-body
             .field
-              = email_input f, :email, class: "input", placeholder: "Email", required: true
+              = email_input f, :email, class: "input", placeholder: "Email (requis)", required: true
         .field.is-horizontal
           .field-label.is-normal
-            = label f, :object, "Objet :", class: "label"
+            = label f, :object, "Sujet :", class: "label"
           .field-body
             .field
-              = text_input f, :object, class: "input", placeholder: "Objet", required: true
+              = text_input f, :object, class: "input", placeholder: "Sujet (requis)", required: true
         .field.is-horizontal
           .field-label.is-normal
             = label f, :body, "Votre message :", class: "label"
           .field-body
             .field
-              = textarea f, :body, class: "textarea", placeholder: "Contenu", required: true, rows: 5
+              = textarea f, :body, class: "textarea", placeholder: "Contenu (requis)", required: true, rows: 5
         .field.is-horizontal
           .field-label
           .field-body
