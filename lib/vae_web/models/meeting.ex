@@ -85,7 +85,7 @@ defmodule Vae.Meeting do
       |> where([m], m.source == ^"#{Delegate.get_meeting_source(d)}")
       |> Vae.Maybe.if(not is_nil(academy_id), fn q -> where(q, [_q], fragment("data->>'academy_id' = ?", ^academy_id)) end)
       |> where([_q], fragment("TO_DATE(data->>'start_date', 'YYYY-MM-DD') > TO_DATE(?, 'YYYY-MM-DD')", ^sql_formatted_date))
-      |> where([m], st_dwithin_in_meters(m.geom, ^geom, ^radius))
+      |> where([m], st_dwithin_in_meters(m.geom, ^geom, ^radius) or is_nil(m.geom))
       |> Repo.all()
   end
 
