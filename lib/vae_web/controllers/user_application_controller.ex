@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplications.Polls, Certification, Delegate, User, UserApplication, Repo}
+  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, User, UserApplication, Repo}
   alias Vae.Booklet.{Cerfa, Education}
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
@@ -73,8 +73,8 @@ defmodule VaeWeb.UserApplicationController do
       certification_level: application.certification.level,
       certification_name: Certification.name(application.certification),
       certifier_name: UserApplication.certifier_name(application),
-      identity: application.user.identity,
-      booklet: booklet,
+      identity: application.user.identity || %Identity{},
+      booklet: booklet || %Cerfa{},
       education: booklet.education || %Education{},
       experiences: booklet.experiences |> Enum.reject(&(&1.periods == [])) |> Enum.sort_by(
         fn e -> Enum.max_by(e.periods, &Date.to_erl(&1.start_date), fn -> Date.utc_today() end) end)
