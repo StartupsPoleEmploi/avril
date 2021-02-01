@@ -8,9 +8,9 @@ d'annuler sa candidature auprès de vos services pour la certification **<%= @ce
 <%= if @meeting do %>
 <%= @username %> s'était inscrit à la réunion d'information suivante:
 
-- Date: <%= Timex.format!(@meeting.start_date, @date_format, :strftime) %>
-- Lieu : <%= @meeting.place %>
-- Adresse : <%= @meeting.address %> <%= @meeting.postal_code %>
+- Date: <%= Timex.format!(@meeting.data.start_date, @date_format, :strftime) %>
+- Lieu : <%= @meeting.data.place %>
+- Adresse : <%= @meeting.data.address %> <%= @meeting.data.postal_code %>
 
 Merci d'annuler cette inscription.
 <% end %>
