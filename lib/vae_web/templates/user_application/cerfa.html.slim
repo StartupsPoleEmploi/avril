@@ -142,82 +142,82 @@
                   .control.box
                     .columns
                       .column.is-narrow
-                        input[type="checkbox" checked=(@identity.current_situation.status == "working")]
+                        input[type="checkbox" checked=(@current_situation.status == "working")]
                         label
                           |  1. En situation d'emploi :
                       .column
                         ul
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "permanent")]
+                            input[type="checkbox" checked=(@current_situation.employment_type == "permanent")]
                             label CDI
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "contract")]
+                            input[type="checkbox" checked=(@current_situation.employment_type == "contract")]
                             label CDD, CDD d'usage et intérim
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "independant")]
+                            input[type="checkbox" checked=(@current_situation.employment_type == "independant")]
                             label travailleur indépendant, artisan, profession libérale
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "public")]
+                            input[type="checkbox" checked=(@current_situation.employment_type == "public")]
                             label fonctionnaire
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "military")]
+                            input[type="checkbox" checked=(@current_situation.employment_type == "military")]
                             label militaire
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.employment_type == "alternance")]
+                            input[type="checkbox" checked=(@current_situation.employment_type == "alternance")]
                             label contrat aidé ou contrat en alternance
                   .control.box
                     .columns
                       .column
-                        input[type="checkbox" checked=(@identity.current_situation.status == "inactive")]
+                        input[type="checkbox" checked=(@current_situation.status == "inactive")]
                         label 2. En inactivité
                   .control.box
                     .columns[style="margin-bottom: 0;"]
                       .column
-                        input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking")]
+                        input[type="checkbox" checked=(@current_situation.status == "jobseeking")]
                         label 3. En recherche d'emploi :
                     .columns
                       .column.is-11.is-offset-1.is-print-fullwidth.content
                         ul
                           li
                             | Inscrit à Pôle-emploi :
-                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.register_to_pole_emploi)]
+                            input[type="checkbox" checked=(@current_situation.status == "jobseeking" && @current_situation.register_to_pole_emploi)]
                             label Oui
-                            = if @identity.current_situation.register_to_pole_emploi_since do
-                              span depuis le #{Vae.Date.format_iso(@identity.current_situation.register_to_pole_emploi_since)}
-                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && !@identity.current_situation.register_to_pole_emploi)]
+                            = if @current_situation.register_to_pole_emploi_since do
+                              span depuis le #{Vae.Date.format_iso(@current_situation.register_to_pole_emploi_since)}
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && !@current_situation.register_to_pole_emploi)]
                             label Non
                           li
                             | Vous touchez l'assurance chômage (allocation de retour à l'emploi) :
-                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "jobless")]
+                            input[type="checkbox" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type == "jobless")]
                             label Oui
-                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type != "jobless")]
                             label Non
                           li
                             label
                               | Vous touchez l'assurance chômage des intermittents du spectacle :
-                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "artist")]
+                            input[type="checkbox" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type == "artist")]
                             label Oui
-                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "jobless")]
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type != "jobless")]
                             label Non
                           li
                             label
                               | Vous êtes allocataire de minima sociaux :
-                            input[type="checkbox" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type == "poor")]
+                            input[type="checkbox" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type == "poor")]
                             label Oui
-                            input[type="checkbox" style="margin-left: 1rem;" checked=(@identity.current_situation.status == "jobseeking" && @identity.current_situation.compensation_type != "poor")]
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type != "poor")]
                             label Non
                   .control.box
                     .columns
                       .column.is-narrow
-                        input[type="checkbox" checked=(@identity.current_situation.status == "volontary" && @identity.current_situation.status == "election")]
+                        input[type="checkbox" checked=(@current_situation.status == "volontary" && @current_situation.status == "election")]
                         label 4. Autres :
                       .column
                         ul
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.status == "volontary")]
+                            input[type="checkbox" checked=(@current_situation.status == "volontary")]
                             label Volontaire
                           li
-                            input[type="checkbox" checked=(@identity.current_situation.status == "election")]
+                            input[type="checkbox" checked=(@current_situation.status == "election")]
                             label Mandat électoral
           .columns.message-group
             .column

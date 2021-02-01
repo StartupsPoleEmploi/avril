@@ -3,7 +3,7 @@ defmodule VaeWeb.UserApplicationController do
   use VaeWeb, :controller
 
   alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, User, UserApplication, Repo}
-  alias Vae.Booklet.{Cerfa, Education}
+  alias Vae.Booklet.{Cerfa, Education, CurrentSituation}
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
 
@@ -59,7 +59,6 @@ defmodule VaeWeb.UserApplicationController do
         :certification,
         :resumes
       ])
-    booklet = application.booklet_1 || %Cerfa{}
     title = "Recevabilité VAE de #{User.fullname(application.user)} pour un diplôme de #{
       Certification.name(application.certification)
     }"
@@ -73,11 +72,15 @@ defmodule VaeWeb.UserApplicationController do
       certification_level: application.certification.level,
       certification_name: Certification.name(application.certification),
       certifier_name: UserApplication.certifier_name(application),
-      identity: application.user.identity || %Identity{},
-      booklet: booklet || %Cerfa{},
-      education: booklet.education || %Education{},
-      experiences: booklet.experiences |> Enum.reject(&(&1.periods == [])) |> Enum.sort_by(
-        fn e -> Enum.max_by(e.periods, &Date.to_erl(&1.start_date), fn -> Date.utc_today() end) end)
+      identity: Vae.Maybe.try(application, [:user, :identity], %Identity{}),
+      current_situation: Vae.Maybe.try(application, [:user, :current_situation], %CurrentSituation{}),
+      booklet: Vae.Maybe.try(application, :booklet_1, %Cerfa{}),
+      education: Vae.Maybe.try(application, [:booklet_1, :education], %Education{}),
+      experiences: Vae.Maybe.try(application, [:booklet_1, :experiences], [])
+        |> Enum.reject(&(&1.periods == []))
+        |> Enum.sort_by(fn e ->
+          Enum.max_by(e.periods, &Date.to_erl(&1.start_date), fn -> Date.utc_today() end)
+        end)
     }
 
     if params["format"] == "pdf" do

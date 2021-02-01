@@ -18,4 +18,13 @@ defmodule Vae.Maybe do
     when is_function(else_action, 1),
     do: else_action.(data)
 
+  def try(val, attrs, default_value \\ nil)
+  def try(val, fnc, default_value) when is_function(fnc), do: try(fnc.(val), nil, default_value)
+  def try(val, index, default_value) when is_list(val) and is_integer(index), do: try(val, &Enum.at(&1, index), default_value)
+  def try(val, key, default_value) when is_map(val) and not is_nil(key) and (is_atom(key) or is_binary(key)), do: try(val, &Map.get(&1, key), default_value)
+  def try(val, keys, default_value) when is_list(keys) do
+    Enum.reduce(keys, val, &try(&2, &1, default_value))
+  end
+  def try(_val, params, default_value) when not is_nil(params), do: default_value
+  def try(val, _, default_value), do: val || default_value
 end
