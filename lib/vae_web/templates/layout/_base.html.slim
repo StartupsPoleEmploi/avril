@@ -36,6 +36,6 @@ html lang="fr"
     = @contents
 
     script src=Routes.static_path(@conn,"/js/app.js") async=true
-    = render VaeWeb.ComponentView, "hotjar", conn: @conn
-    = render VaeWeb.ComponentView, "crisp", conn: @conn
+    / = render VaeWeb.ComponentView, "hotjar", conn: @conn
+    / = render VaeWeb.ComponentView, "crisp", conn: @conn
     = render VaeWeb.ComponentView, "tag_commander", conn: @conn
