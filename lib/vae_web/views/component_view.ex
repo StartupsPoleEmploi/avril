@@ -120,7 +120,9 @@ defmodule VaeWeb.ComponentView do
   end
   def render("tag_commander", _) do
     if @tracking_config[:tag_commander] do
-      url = "http://cdn.tagcommander.com/#{@tracking_config[:tag_commander]}.js"
+      url = @tracking_config[:tag_commander]
+      |> String.replace_prefix("", "https://cdn.tagcommander.com/")
+      |> String.replace_suffix("", ".js")
 
       {:safe, "<script type=\"text/javascript\" src=\"#{url}\" async />"}
     end
