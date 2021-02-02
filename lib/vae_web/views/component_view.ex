@@ -118,4 +118,12 @@ defmodule VaeWeb.ComponentView do
        """}
     end
   end
+  def render("tag_commander", _) do
+    if @tracking_config[:tag_commander] do
+      {:safe,
+       """
+        <script type="text/javascript" src="http://cdn.tagcommander.com/#{@tracking_config[:tag_commander]}.js" async />
+       """}
+    end
+  end
 end

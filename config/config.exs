@@ -23,7 +23,8 @@ config :vae,
     analytics_bis: System.get_env("GA_PE_API_KEY"),
     crisp: System.get_env("CRISP_WEBSITE_ID"),
     hotjar: System.get_env("HOTJAR_ID"),
-    optimize: System.get_env("GO_TEST_KEY")
+    optimize: System.get_env("GO_TEST_KEY"),
+    tag_commander: System.get_env("TAG_COMMANDER")
   ],
   reminders: [
     stock: [
