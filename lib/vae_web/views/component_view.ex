@@ -124,7 +124,7 @@ defmodule VaeWeb.ComponentView do
       |> String.replace_prefix("", "https://cdn.tagcommander.com/")
       |> String.replace_suffix("", ".js")
 
-      {:safe, "<script type=\"text/javascript\" src=\"#{url}\" async />"}
+      {:safe, "<script type='text/javascript' src='#{url}' async></script"}
     end
   end
 end
