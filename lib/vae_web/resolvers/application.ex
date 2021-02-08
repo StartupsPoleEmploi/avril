@@ -49,7 +49,7 @@ defmodule VaeWeb.Resolvers.Application do
         |> join(:inner, [d], assoc(d, :certifications))
         |> where([d], d.is_active)
         |> Vae.Maybe.if(not is_nil(delegate_id), &where(&1, [d], d.id != ^delegate_id))
-        |> Vae.Maybe.if(is_binary(administrative), &where(&1, [d], d.administrative == ^administrative))
+        |> Vae.Maybe.if(is_binary(administrative), &where(&1, [d], fragment("slugify(?)", d.administrative) == ^Vae.String.parameterize(administrative)))
         |> where([d, c], c.id == ^application.certification_id)
         |> Vae.Maybe.if(is_number(radius), &where(&1, [d], st_dwithin_in_meters(d.geom, ^geom, ^radius)))
         |> preload([d], [:certifiers])
