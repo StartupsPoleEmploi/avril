@@ -1,5 +1,11 @@
 .button {
   border: transparent;
+
+  &.is-multiline {
+    height: auto;
+    white-space: normal;
+  }
+
   &.is-text {
     // position: relative;
     // left: -1em;

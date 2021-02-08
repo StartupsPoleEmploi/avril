@@ -8,9 +8,20 @@ defmodule VaeWeb.ErrorHelpers do
   @doc """
   Generates tag for inlined form input errors.
   """
+  # def error_tag(errors, field) when is_list(errors) and is_atom(field) do
+  #   case Keyword.fetch(errors, field) do
+  #     {:ok, message} -> content_tag :span, (humanize(field) <> " " <> translate_error(message)), class: "help-block"
+  #     :error -> html_escape("")
+  #   end
+  # end
+
+  def form_field_error(form, field) do
+    Enum.find(form.source.errors, fn {k, v} -> k == field end)
+  end
+
   def error_tag(form, field) do
-    if error = form.errors[field] do
-      content_tag(:span, translate_error(error), class: "help-block")
+    if error = form_field_error(form, field) do
+      content_tag(:p, translate_error(elem(error, 1)), class: "help is-danger")
     end
   end
 
@@ -18,19 +29,6 @@ defmodule VaeWeb.ErrorHelpers do
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do
-    # Because error messages were defined within Ecto, we must
-    # call the Gettext module passing our Gettext backend. We
-    # also use the "errors" domain as translations are placed
-    # in the errors.po file.
-    # Ecto will pass the :count keyword if the error message is
-    # meant to be pluralized.
-    # On your own code and templates, depending on whether you
-    # need the message to be pluralized or not, this could be
-    # written simply as:
-    #
-    #     dngettext "errors", "1 file", "%{count} files", count
-    #     dgettext "errors", "is invalid"
-    #
     if count = opts[:count] do
       Gettext.dngettext(VaeWeb.Gettext, "errors", msg, msg, count, opts)
     else

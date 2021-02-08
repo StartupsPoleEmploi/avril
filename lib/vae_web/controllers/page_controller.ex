@@ -114,26 +114,32 @@ defmodule VaeWeb.PageController do
       title: "Contacter l'équipe Avril",
       description:
         "Nous sommes disponibles pour répondre à toutes les questions techniques concernant la plateforme Avril.",
-      contact_changeset: ContactForm.changeset(%ContactForm{})
+      contact_changeset: %ContactForm{} |> Ecto.Changeset.change()
     )
   end
 
   def submit_contact(conn, %{
         "contact_form" => %{} = variables
       }) do
-    with {:ok, _messages} <-
-           Mailer.send([
-             ContactEmail.submit(variables),
-             ContactEmail.confirm(variables)
-           ]) do
+    with(
+      %Ecto.Changeset{valid?: true} = changeset <- ContactForm.changeset(%ContactForm{}, variables),
+      {:ok, _messages} <- Mailer.send([ContactEmail.submit(variables), ContactEmail.confirm(variables)])
+    ) do
       conn
       |> put_flash(:success, "Votre message a bien été envoyé.")
       |> redirect(to: Routes.root_path(conn, :index))
     else
+      %Ecto.Changeset{} = changeset ->
+        conn
+        |> put_flash(:danger, "Votre message n'a pas pu être envoyé. Les erreurs sont décrites ci-dessous.")
+        |> render("contact.html",
+          title: "Contacter l'équipe Avril",
+          contact_changeset: changeset
+        )
       error ->
         conn
-        |> put_flash(:danger, "Votre message n'a pas pu être envoyé : #{inspect(error)}. Merci de réessayer plus tard.")
-        |> redirect(to: Routes.root_path(conn, :index))
+         |> put_flash(:danger, "Votre message n'a pas pu être envoyé : #{inspect(error)}. Merci de réessayer plus tard.")
+         |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 

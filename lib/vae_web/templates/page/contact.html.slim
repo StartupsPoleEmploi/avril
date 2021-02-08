@@ -3,14 +3,14 @@ section.section.container
   .columns
     .column.is-8.is-offset-2
       h1.title.is-1.has-text-centered Contactez-nous
-section.section.container#warning
+section.section.container#warning class="#{if @contact_changeset.valid?, do: "", else: "is-hidden"}"
   .columns
     .column.is-6.is-offset-3
       .content
         = render "_contact.html", assigns
         .section.has-text-centered
-          button.button.is-primary.is-medium.is-rounded onclick="$('#form').removeClass('is-hidden');$('#warning').addClass('is-hidden');" J'ai compris, mon message concerne un problème technique
-section.section.container#form.is-hidden
+          button.button.is-primary.is-medium.is-rounded.is-multiline onclick="$('#form').removeClass('is-hidden');$('#warning').addClass('is-hidden');" J'ai compris, mon message concerne un problème technique
+section.section.container#form class="#{if @contact_changeset.valid?, do: "is-hidden"}"
   .columns
     .column.is-8.is-offset-2
       = form_for @contact_changeset, Routes.page_path(@conn, :submit_contact), [class: "form"], fn f ->
@@ -19,25 +19,37 @@ section.section.container#form.is-hidden
             = label f, :name, "Votre nom :", class: "label"
           .field-body
             .field
-              = text_input f, :name, class: "input", placeholder: "Nom (requis)", required: true
+              = text_input f, :name, class: "input #{if form_field_error(f, :name), do: "is-danger"}", placeholder: "Nom (requis)", required: false
+              = error_tag f, :name
         .field.is-horizontal
           .field-label.is-normal
             = label f, :email, "Votre adresse e-mail :", class: "label"
           .field-body
             .field
-              = email_input f, :email, class: "input", placeholder: "Email (requis)", required: true
+              = email_input f, :email, class: "input #{if form_field_error(f, :email), do: "is-danger"}", placeholder: "Email (requis)", required: false
+              = error_tag f, :email
         .field.is-horizontal
           .field-label.is-normal
             = label f, :object, "Sujet :", class: "label"
           .field-body
             .field
-              = text_input f, :object, class: "input", placeholder: "Sujet (requis)", required: true
+              = text_input f, :object, class: "input #{if form_field_error(f, :object), do: "is-danger"}", placeholder: "Sujet (requis)", required: false
+              = error_tag f, :object
         .field.is-horizontal
           .field-label.is-normal
             = label f, :body, "Votre message :", class: "label"
           .field-body
             .field
-              = textarea f, :body, class: "textarea", placeholder: "Contenu (requis)", required: true, rows: 5
+              = textarea f, :body, class: "textarea #{if form_field_error(f, :body), do: "is-danger"}", placeholder: "Contenu (requis)", required: false, rows: 5
+              = error_tag f, :body
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :check, "Etes-vous un humain ?", class: "label"
+          .field-body
+            .field
+              | Quel jour de la semaine étions-nous hier ?
+              = text_input f, :check, class: "input #{if form_field_error(f, :check), do: "is-danger"}", placeholder: "Ex: Lundi (avec ou sans majuscules)", required: false
+              = error_tag f, :check
         .field.is-horizontal
           .field-label
           .field-body
