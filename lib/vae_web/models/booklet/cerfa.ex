@@ -24,7 +24,7 @@ defmodule Vae.Booklet.Cerfa do
     |> cast(%{
       inserted_at: struct.inserted_at || Timex.now(),
       updated_at: Timex.now(),
-      completed_at: if params.completed_at, do: Timex.now(),
+      completed_at: (if params.completed_at, do: Timex.now()),
       condamnation_free: !!params.completed_at,
       only_certification_application: !!params.completed_at,
       less_than_3_applications: !!params.completed_at
