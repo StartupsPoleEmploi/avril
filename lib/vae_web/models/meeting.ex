@@ -90,8 +90,7 @@ defmodule Vae.Meeting do
   end
 
   defimpl ExAdmin.Render, for: __MODULE__ do
-    def to_string(data) do
-      if data, do: ExAdmin.Render.to_string(data.start_date)
-    end
+    def to_string(%Vae.Meeting{data: %{start_date: start_date}}), do:
+      ExAdmin.Render.to_string(start_date)
   end
 end
