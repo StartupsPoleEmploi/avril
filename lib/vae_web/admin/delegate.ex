@@ -194,7 +194,11 @@ defmodule Vae.ExAdmin.Delegate do
 
         content do
           %Delegate{rncp_certifications: rncp_certifications} = delegate = Vae.Repo.preload(delegate, :rncp_certifications)
-          Helpers.form_select_tag(delegate, :excluded_certifications, [options: rncp_certifications, label: "Certifications from certifier that should not be associated to this delegate"])
+          Helpers.form_select_tag(delegate, :excluded_certifications, [
+            options: rncp_certifications,
+            label: "Certifications from certifier that should not be associated to this delegate",
+            namify: &("#{&1.rncp_id} - #{Vae.Certification.name(&1)}")
+          ])
         end
 
         content do
@@ -204,7 +208,11 @@ defmodule Vae.ExAdmin.Delegate do
             |> where([c], c.is_active)
             |> where([c], c.id not in ^Enum.map(rncp_certifications, &(&1.id)))
             |> Vae.Repo.all()
-          Helpers.form_select_tag(delegate, :included_certifications, [options: other_certifications, label: "Certifications not associated to certifier but should be associated to this delegate"])
+          Helpers.form_select_tag(delegate, :included_certifications, [
+            options: other_certifications,
+            label: "Certifications not associated to certifier but should be associated to this delegate",
+            namify: &("#{&1.rncp_id} - #{Vae.Certification.name(&1)}")
+          ])
         end
 
       end
