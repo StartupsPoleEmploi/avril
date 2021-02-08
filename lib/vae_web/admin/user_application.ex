@@ -64,7 +64,7 @@ defmodule Vae.ExAdmin.UserApplication do
         row(:admissible_at)
         row(:inadmissible_at)
         row(:updated_at)
-        row(:meeting, fn a -> Helpers.print_in_json(a.meeting) end)
+        row(:meeting_infos, fn a -> Helpers.print_in_json(a.meeting) end)
         row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
         row(:booklet_hash)
       end

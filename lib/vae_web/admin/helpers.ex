@@ -54,9 +54,14 @@ defmodule Vae.ExAdmin.Helpers do
 
   def print_in_json(nil), do: nil
 
-  def print_in_json(data) do
+  def print_in_json(struct) do
     markup do
-      pre(Jason.encode!(Map.from_struct(data), pretty: true))
+      struct
+      |> Map.from_struct()
+      |> Map.delete(:__meta__)
+      |> Jason.encode!(pretty: true)
+      |> pre()
+      |> Phoenix.HTML.raw()
     end
   end
 
