@@ -27,7 +27,7 @@ defmodule Vae.ContactForm do
   end
 
   defp validate_human_check(changeset) do
-    validate_change(changeset, :check, fn (current_field, value) ->
+    validate_change(changeset, :check, fn (_current_field, value) ->
       if value |> String.downcase() |> String.trim() == french_day_of_week() do
         []
       else
@@ -40,5 +40,4 @@ defmodule Vae.ContactForm do
     ~w(lundi mardi mercredi jeudi vendredi samedi dimanche)
     |> Enum.at((Date.utc_today() |> Date.add(-1) |> Date.day_of_week()) - 1)
   end
-
 end

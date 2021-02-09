@@ -119,11 +119,11 @@ defmodule VaeWeb.PageController do
   end
 
   def submit_contact(conn, %{
-        "contact_form" => %{} = variables
+        "contact_form" => variables
       }) do
     with(
-      %Ecto.Changeset{valid?: true} = changeset <- ContactForm.changeset(%ContactForm{}, variables),
-      {:ok, _messages} <- Mailer.send([ContactEmail.submit(variables), ContactEmail.confirm(variables)])
+      %Ecto.Changeset{valid?: true, changes: changes} <- ContactForm.changeset(%ContactForm{}, variables),
+      {:ok, _messages} <- Mailer.send([ContactEmail.submit(changes), ContactEmail.confirm(changes)])
     ) do
       conn
       |> put_flash(:success, "Votre message a bien été envoyé.")

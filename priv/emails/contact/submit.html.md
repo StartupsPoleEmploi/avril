@@ -9,4 +9,4 @@ Sujet : __<%= @object %>__
 <%= @body %>
 ```
 
-Vous pouvez répondre à cet email ici.
+Vous pouvez répondre à cet email en faisant "répondre" dans votre client mail.
