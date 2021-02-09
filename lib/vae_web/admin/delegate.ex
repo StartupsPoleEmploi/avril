@@ -73,7 +73,7 @@ defmodule Vae.ExAdmin.Delegate do
 
       panel "Recent applications" do
         table_for delegate.recent_applications do
-          column(:id)
+          column(:id, fn a -> Helpers.link_to_resource(a, namify: &(&1.id)) end)
           column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
 
           column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)

@@ -122,7 +122,7 @@ defmodule VaeWeb.ComponentView do
     if @tracking_config[:tag_commander] do
       url = "https://cdn.tagcommander.com#{@tracking_config[:tag_commander]}.js"
 
-      {:safe, "<script type=\"text/javascript\" src=\"#{url}\" async />"}
+      {:safe, "<script type=\"text/javascript\" src=\"#{url}\" async></script>"}
     end
   end
 end
