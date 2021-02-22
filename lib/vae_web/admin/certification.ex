@@ -19,7 +19,7 @@ defmodule Vae.ExAdmin.Certification do
         Enum.map(d.certifiers, &Helpers.link_to_resource/1) |> Enum.intersperse(", ")
       end)
       column(:nb_active_delegates, fn a -> length(a.delegates) end)
-      column(:nb_applications, fn a -> length(a.applications) end)
+      column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
 
       actions()
     end
@@ -35,6 +35,7 @@ defmodule Vae.ExAdmin.Certification do
         row(:acronym)
         row(:label)
         row(:level)
+        row(:nb_applications, &Helpers.count_and_link_to_all(&1, :applications))
         row(:last_rncp_import_date)
         row(:end_of_rncp_validity)
         row(:activities)
@@ -73,16 +74,16 @@ defmodule Vae.ExAdmin.Certification do
         end
       end
 
-      panel "user applications" do
-        table_for certification.applications do
-          column(:id, &Helpers.link_to_resource(&1))
-          column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
-          column(:application_delegate, &Helpers.link_to_resource(&1.delegate))
-          column(:submitted_at)
-          column(:admissible_at)
-          column(:inadmissible_at)
-        end
-      end
+      # panel "user applications" do
+      #   table_for certification.applications do
+      #     column(:id, &Helpers.link_to_resource(&1))
+      #     column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
+      #     column(:application_delegate, &Helpers.link_to_resource(&1.delegate))
+      #     column(:submitted_at)
+      #     column(:admissible_at)
+      #     column(:inadmissible_at)
+      #   end
+      # end
     end
 
     form certification do
@@ -112,7 +113,7 @@ defmodule Vae.ExAdmin.Certification do
       preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]
 
       %{
-        index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :delegates, :applications]],
+        index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :delegates, :recent_applications]],
         show: [
           preload: [:certifiers, :included_delegates, :excluded_delegates, [delegates: :certifiers], :romes, :newer_certification, :older_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]

@@ -65,11 +65,11 @@ defmodule Vae.ExAdmin.Helpers do
     end
   end
 
-  def form_select_tag(%struct{} = object, association_name, options \\ nil) do
+  def form_select_tag(%struct{} = object, association_name, options \\ []) do
     object = Repo.preload(object, association_name)
 
     association_struct = struct.__schema__(:association, association_name).related
-    label = options[:label] || (association_name |> Atom.to_string() |> String.replace("_", " ") |> String.capitalize())
+    label = options[:label] || struct_to_string(association_struct)
     possible_options = options[:options] || Repo.all(association_struct)
 
     options =
@@ -82,7 +82,7 @@ defmodule Vae.ExAdmin.Helpers do
         ])
       end)
 
-    object_name = object.__struct__ |> Atom.to_string() |> String.split(".") |> List.last() |> String.downcase()
+    object_name = object.__struct__ |> struct_to_string() |> String.downcase()
     # association_name_ids = association_name |> Atom.to_string() # |> String.replace_suffix("s", "_ids")
 
     content_tag(
@@ -110,5 +110,18 @@ defmodule Vae.ExAdmin.Helpers do
       ],
       class: "form-group"
     )
+  end
+
+  def count_and_link_to_all(%struct{} = object, association_name, options \\ []) do
+    object = Repo.preload(object, association_name)
+    struct_name = struct |> struct_to_string()
+    association_struct = struct.__schema__(:association, association_name).related
+    label = options[:label] || struct_to_string(association_struct)
+
+    Phoenix.HTML.Link.link("#{Vae.String.inflect(length(Map.get(object, association_name)), label)}", to: VaeWeb.Router.Helpers.admin_resource_path(Vae.URI.endpoint(), :index, Inflex.underscore(Inflex.pluralize(struct_to_string(association_struct))), %{"q[#{String.downcase(struct_name)}_id_eq]" => object.id}))
+  end
+
+  def struct_to_string(struct) do
+    struct |> Atom.to_string() |> String.split(".") |> List.last()
   end
 end

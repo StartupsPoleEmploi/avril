@@ -78,6 +78,7 @@ defmodule Vae.Certification do
     )
 
     has_many(:applications, UserApplication, on_replace: :nilify)
+    has_many(:recent_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '16 days'"}])
 
     has_many(
       :users,

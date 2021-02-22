@@ -18,7 +18,7 @@ defmodule Vae.ExAdmin.Delegate do
         Enum.map(d.certifiers, &Helpers.link_to_resource(&1)) |> Enum.intersperse(", ")
       end)
       column(:nb_active_certifications, fn a -> length(a.certifications) end)
-      column(:nb_applications, fn a -> length(a.applications) end)
+      column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
       column(:administrative)
       column(:city)
 
@@ -45,8 +45,7 @@ defmodule Vae.ExAdmin.Delegate do
         row(:secondary_person_name)
         row(:academy_id)
         row(:has_coordinates, fn d -> if not is_nil(d.geom), do: "Yes :)", else: "No :(" end)
-        row(:nb_recent_applications, fn d -> length(d.recent_applications) end)
-        row(:certifications, fn d -> length(d.certifications) end)
+        row(:nb_applications, &Helpers.count_and_link_to_all(&1, :applications))
         row(:nb_meetings, fn _d -> length(meetings) end)
         row(:internal_notes)
       end
@@ -71,18 +70,18 @@ defmodule Vae.ExAdmin.Delegate do
         end
       end
 
-      panel "Recent applications" do
-        table_for delegate.recent_applications do
-          column(:id, fn a -> Helpers.link_to_resource(a, namify: &(&1.id)) end)
-          column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
+      # panel "Recent applications" do
+      #   table_for delegate.recent_applications do
+      #     column(:id, fn a -> Helpers.link_to_resource(a, namify: &(&1.id)) end)
+      #     column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
 
-          column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
+      #     column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
 
-          column(:submitted_at)
-          column(:admissible_at)
-          column(:inadmissible_at)
-        end
-      end
+      #     column(:submitted_at)
+      #     column(:admissible_at)
+      #     column(:inadmissible_at)
+      #   end
+      # end
 
       panel "certifications" do
         table_for delegate.certifications do
@@ -194,9 +193,7 @@ defmodule Vae.ExAdmin.Delegate do
 
         content do
           %Delegate{certifiers: certifiers} = delegate = Vae.Repo.preload(delegate, :certifiers)
-          Helpers.form_select_tag(delegate, :certifiers, [
-            options: Vae.Repo.all(Vae.Certifier)
-          ])
+          Helpers.form_select_tag(delegate, :certifiers)
         end
 
         content do
@@ -250,7 +247,7 @@ defmodule Vae.ExAdmin.Delegate do
     query do
       %{
         all: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
-        index: [preload: [:certifiers, :certifications, :applications], default_sort: [asc: :id]],
+        index: [preload: [:certifiers, :certifications, :recent_applications], default_sort: [asc: :id]],
         show: [preload: [:certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
         edit: [preload: [:certifiers, :rncp_certifications, :included_certifications, :excluded_certifications]],
         update: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
