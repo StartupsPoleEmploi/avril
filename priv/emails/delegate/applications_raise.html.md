@@ -10,6 +10,8 @@ Ces 15 derniers jours, nous vous avons transmis <%= length @applications %> cand
   <% end %>
 </ul>
 
+Les candidats ont certifié exacte l'intégralité des renseignements fournis dans leur dossier de recevabilité.
+
 Voilà de belles VAE en perspective !
 
 Très bonne fin de journée à vous et à votre équipe.
