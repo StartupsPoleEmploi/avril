@@ -1,13 +1,15 @@
 defmodule Vae.Meeting do
   use VaeWeb, :model
+  require Logger
 
   import Geo.PostGIS
 
   alias __MODULE__
-  alias Vae.{Delegate, Places.Ban}
+  alias Vae.{Delegate, Places.Ban, UserApplication}
 
   schema "meetings" do
     field(:source, :string)
+    field(:deleted_at, :utc_datetime)
     field(:geom, Geo.PostGIS.Geometry)
     embeds_one(:data, MeetingData, on_replace: :update) do
       @derive Jason.Encoder
@@ -32,6 +34,8 @@ defmodule Vae.Meeting do
         ])
       end
     end
+
+    has_many(:applications, UserApplication, foreign_key: :meeting_id)
 
     timestamps()
   end
@@ -71,6 +75,14 @@ defmodule Vae.Meeting do
     end
   end
 
+  def source_string(source) do
+    case source do
+      :france_vae -> "France VAE"
+      :afpa -> "AFPA"
+      other -> other
+    end
+  end
+
   def get_by_meeting_id(source, meeting_id) do
     from(m in Meeting)
       |> where([m], m.source == ^"#{source}")
@@ -79,14 +91,42 @@ defmodule Vae.Meeting do
   end
 
   def find_future_meetings_for_delegate(%Delegate{academy_id: academy_id, geom: geom} = d, radius \\ 50_000) do
-    sql_formatted_date = Timex.format!(Date.utc_today(), "%Y-%m-%d", :strftime)
 
     from(m in Meeting)
       |> where([m], m.source == ^"#{Delegate.get_meeting_source(d)}")
       |> Vae.Maybe.if(not is_nil(academy_id), fn q -> where(q, [_q], fragment("data->>'academy_id' = ?", ^academy_id)) end)
-      |> where([_q], fragment("TO_DATE(data->>'start_date', 'YYYY-MM-DD') > TO_DATE(?, 'YYYY-MM-DD')", ^sql_formatted_date))
+      |> where_future_start_date()
       |> where([m], st_dwithin_in_meters(m.geom, ^geom, ^radius) or is_nil(m.geom))
       |> Repo.all()
+  end
+
+  def mark_as_deleted_and_inform(%Meeting{} = meeting) do
+    %Meeting{applications: applications} = Repo.preload(meeting, [applications: :user])
+
+    meeting
+    |> change(%{deleted_at: DateTime.truncate(DateTime.utc_now(), :second)})
+    |> Repo.update()
+    |> case do
+      {:ok, meeting} -> Enum.each(applications, &VaeWeb.ApplicationEmail.user_meeting_cancelled(&1, meeting))
+      {:error, error} -> Logger.error(error)
+    end
+    meeting
+  end
+
+  def mark_elders_as_deleted(source, update_started_at) do
+    Meeting
+    |> where([m], m.source == ^"#{source}")
+    |> where([m], is_nil(m.deleted_at))
+    |> where_future_start_date()
+    |> where([m], m.updated_at < ^DateTime.truncate(update_started_at, :second))
+    |> Repo.all()
+    |> Enum.map(&mark_as_deleted_and_inform(&1))
+  end
+
+  defp where_future_start_date(query) do
+    sql_formatted_date = Timex.format!(Date.utc_today(), "%Y-%m-%d", :strftime)
+    query
+    |> where([_q], fragment("TO_DATE(data->>'start_date', 'YYYY-MM-DD') > TO_DATE(?, 'YYYY-MM-DD')", ^sql_formatted_date))
   end
 
   defimpl ExAdmin.Render, for: __MODULE__ do

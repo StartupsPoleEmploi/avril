@@ -192,7 +192,7 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :internal_notes, type: :text)
 
         content do
-          %Delegate{certifiers: certifiers} = delegate = Vae.Repo.preload(delegate, :certifiers)
+          delegate = Vae.Repo.preload(delegate, :certifiers)
           Helpers.form_select_tag(delegate, :certifiers)
         end
 

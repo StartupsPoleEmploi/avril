@@ -108,6 +108,22 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
+  def user_meeting_cancelled(application, meeting, endpoint \\ URI.endpoint()) do
+    Mailer.build_email(
+      "application/user_meeting_cancelled.html",
+      :avril,
+      application.user,
+      %{
+        url: User.profile_url(endpoint, application),
+        meeting: meeting.data,
+        source: Vae.Meeting.source_string(meeting.source),
+        username: User.fullname(application.user),
+        date_format: @date_format,
+        footer_note: :inscrit_avril
+      }
+    )
+  end
+
   def user_raise(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :certification])
     finish_booklet_todo = application.booklet_1 && application.booklet_1.inserted_at

@@ -16,8 +16,11 @@ defmodule Vae.Meetings do
   end
 
   def fetch_meetings(source) when source in @meeting_sources do
-    meetings = safe_genserver_call(source, :fetch, 1000 * 60 * 15)
-    Logger.info("#{length(meetings)} inserted or updated in source #{source}")
+    start_time = DateTime.utc_now()
+    updated_meetings = safe_genserver_call(source, :fetch, 1000 * 60 * 15)
+    Logger.info("#{length(updated_meetings)} inserted or updated in source #{source}")
+    deleted_meetings = Meeting.mark_elders_as_deleted(source, start_time)
+    Logger.info("#{length(deleted_meetings)} marked as deleted in source #{source}")
   end
 
   def register(%Meeting{source: source} = meeting, %UserApplication{} = application) do
