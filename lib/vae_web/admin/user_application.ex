@@ -139,10 +139,11 @@ defmodule Vae.ExAdmin.UserApplication do
       column(:booklet_1@completed_at, fn a -> a.booklet_1 && a.booklet_1.completed_at end)
     end
 
-    filter([:meeting, :booklet_1, :booklet_hash])
-    # filter(:certification, order_by: [:acronym, :label])
-    # filter(:delegate, order_by: :name)
-    # filter(:certifiers, order_by: :name)
+    filter([:booklet_1, :booklet_hash])
+    filter(:meeting, type: :present_only)
+    filter(:delegate, type: :hidden)
+    filter(:certification, type: :hidden)
+    filter(:user, type: :hidden)
     filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
 
     @all_preloads [:delegate, :user, :certification, :certifiers, :meeting]

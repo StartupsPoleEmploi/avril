@@ -26,6 +26,7 @@ defmodule VaeWeb.SessionController do
   end
 
   def delete(conn, _params) do
+
     redirect_to = case Pow.Plug.current_user(conn) do
       %Vae.User{pe_id: pe_id} when not is_nil(pe_id) ->
         {:external, "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{pe_id}&redirect_uri=#{Routes.root_url(conn, :index)}" }
@@ -34,6 +35,7 @@ defmodule VaeWeb.SessionController do
     end
 
     conn
+    |> Plug.Conn.delete_session(Application.get_env(:ex_admin, :override_user_id_session_key))
     |> Pow.Plug.delete()
     |> PowPersistentSession.Plug.delete()
     |> put_flash(:info, "Vous êtes maintenant déconnecté")
