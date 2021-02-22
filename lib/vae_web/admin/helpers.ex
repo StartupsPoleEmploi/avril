@@ -78,7 +78,7 @@ defmodule Vae.ExAdmin.Helpers do
       |> Enum.map(fn asso ->
         content_tag(:option, resource_name(asso, options[:namify]), [
           value: asso.id,
-          selected: Enum.member?(Map.get(object, association_name), asso)
+          selected: Enum.member?(Map.get(object, association_name) |> Enum.map(&(&1.id)), asso.id)
         ])
       end)
 

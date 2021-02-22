@@ -193,6 +193,13 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :internal_notes, type: :text)
 
         content do
+          %Delegate{certifiers: certifiers} = delegate = Vae.Repo.preload(delegate, :certifiers)
+          Helpers.form_select_tag(delegate, :certifiers, [
+            options: Vae.Repo.all(Vae.Certifier)
+          ])
+        end
+
+        content do
           %Delegate{rncp_certifications: rncp_certifications} = delegate = Vae.Repo.preload(delegate, :rncp_certifications)
           Helpers.form_select_tag(delegate, :excluded_certifications, [
             options: rncp_certifications,
@@ -245,7 +252,7 @@ defmodule Vae.ExAdmin.Delegate do
         all: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
         index: [preload: [:certifiers, :certifications, :applications], default_sort: [asc: :id]],
         show: [preload: [:certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
-        edit: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
+        edit: [preload: [:certifiers, :rncp_certifications, :included_certifications, :excluded_certifications]],
         update: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
       }
     end
