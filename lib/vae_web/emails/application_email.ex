@@ -37,6 +37,7 @@ defmodule VaeWeb.ApplicationEmail do
         username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
         meeting: application.meeting,
+        date_format: @date_format,
         footer_note: :delegate
       }
     )
