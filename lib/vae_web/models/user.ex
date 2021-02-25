@@ -58,6 +58,7 @@ defmodule Vae.User do
 
   def changeset(model, %{password: _pw, current_password: _cpw} = params) do
     model
+    |> changeset(params |> Map.delete(:password) |> Map.delete(:current_password))
     |> pow_user_id_field_changeset(params)
     |> pow_current_password_changeset(params)
     |> new_password_changeset(params, @pow_config)

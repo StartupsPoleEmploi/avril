@@ -20,9 +20,10 @@ defmodule VaeWeb.AuthController do
 
   def callback(conn, %{"code" => code, "state" => state}) do
     with(
-      {:ok, %{pe_id: pe_id} = user_infos} <- PoleEmploi.get_complete_user_infos(state, code)
+      {:ok, %{pe_id: pe_id, email: email} = user_infos} <- PoleEmploi.get_complete_user_infos(state, code)
     ) do
-      case Repo.get_by(User, pe_id: pe_id) do
+      # Allow email matching temporarily
+      case Repo.get_by(User, pe_id: pe_id) || Repo.get_by(User, email: email) do
         %User{} = u -> User.changeset(u, user_infos)
         nil -> User.changeset(%User{}, Map.merge(user_infos, %{
           current_password: nil,
