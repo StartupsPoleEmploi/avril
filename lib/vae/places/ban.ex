@@ -33,8 +33,9 @@ defmodule Vae.Places.Ban do
   def get_field(%{"properties" => %{"city" => city}}, :city), do: city
   def get_field(%{"properties" => %{"postcode" => postal_code}}, :postal_code), do: postal_code
   def get_field(%{"properties" => %{"context" => context}}, :administrative) do
-    [_dpt_nb, _dpt_name, administrative] = String.split(context, ", ", parts: 3)
-    administrative
+    String.split(context, ", ", parts: 3)
+    |> Enum.reverse()
+    |> List.first()
   end
 
   def get_field(_, _), do: nil
