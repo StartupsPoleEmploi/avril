@@ -26,7 +26,7 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
-  def delegate_cancelled_application(application, endpoint \\ URI.endpoint()) do
+  def delegate_cancelled_application(application) do
     application = Repo.preload(application, [:user, :delegate, :certification, :meeting])
 
     Mailer.build_email(

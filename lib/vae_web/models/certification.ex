@@ -130,8 +130,8 @@ defmodule Vae.Certification do
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_delegates, params)
     |> put_param_assoc(:excluded_delegates, params)
-    |> link_delegates()
-    |> make_inactive_if_no_delegates_or_rncp_inactive()
+    # |> link_delegates()
+    |> make_inactive_if_rncp_inactive()
     |> move_applications_if_older_certification()
     |> slugify()
     |> validate_required([:label, :slug, :rncp_id])
@@ -139,29 +139,29 @@ defmodule Vae.Certification do
     |> unique_constraint(:rncp_id)
   end
 
-  def link_delegates(changeset) do
-    # if get_change(changeset, :certifiers) ||
-    #    get_change(changeset, :included_delegates) ||
-    #    get_change(changeset, :excluded_delegates) do
-      # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
-      # rncp_delegates = get_field(changeset, :rncp_delegates)
+  # def link_delegates(changeset) do
+  #   # if get_change(changeset, :certifiers) ||
+  #   #    get_change(changeset, :included_delegates) ||
+  #   #    get_change(changeset, :excluded_delegates) do
+  #     # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
+  #     # rncp_delegates = get_field(changeset, :rncp_delegates)
 
-      rncp_delegates = get_field(changeset, :certifiers)
-        |> Repo.preload(:active_delegates)
-        |> Enum.flat_map(&(&1.active_delegates))
+  #     rncp_delegates = get_field(changeset, :certifiers)
+  #       |> Repo.preload(:active_delegates)
+  #       |> Enum.flat_map(&(&1.active_delegates))
 
-      included_delegates = get_field(changeset, :included_delegates)
-      excluded_delegates = get_field(changeset, :excluded_delegates)
+  #     included_delegates = get_field(changeset, :included_delegates)
+  #     excluded_delegates = get_field(changeset, :excluded_delegates)
 
-      delegates =
-        Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
-      changeset
-      |> put_assoc(:delegates, delegates)
-      # |> put_assoc_no_useless_updates(:delegates, delegates)
-    # else
-    #   changeset
-    # end
-  end
+  #     delegates =
+  #       Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
+  #     changeset
+  #     |> put_assoc(:delegates, delegates)
+  #     # |> put_assoc_no_useless_updates(:delegates, delegates)
+  #   # else
+  #   #   changeset
+  #   # end
+  # end
 
   def name(%Certification{acronym: acronym, label: label}) do
     [acronym, label] |> Enum.reject(&is_nil/1) |> Enum.join(" ")
@@ -206,8 +206,8 @@ defmodule Vae.Certification do
     end
   end
 
-  def make_inactive_if_no_delegates_or_rncp_inactive(%Ecto.Changeset{} = changeset) do
-    if !get_field(changeset, :is_rncp_active) || get_field(changeset, :delegates) == [], do: put_change(changeset, :is_active, false), else: changeset
+  def make_inactive_if_rncp_inactive(%Ecto.Changeset{} = changeset) do
+    if !get_field(changeset, :is_rncp_active), do: put_change(changeset, :is_active, false), else: changeset
   end
 
   def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do

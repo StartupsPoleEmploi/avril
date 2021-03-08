@@ -16,7 +16,7 @@ defmodule VaeWeb.ErrorHelpers do
   # end
 
   def form_field_error(form, field) do
-    Enum.find(form.source.errors, fn {k, v} -> k == field end)
+    Enum.find(form.source.errors, fn {k, _v} -> k == field end)
   end
 
   def error_tag(form, field) do
