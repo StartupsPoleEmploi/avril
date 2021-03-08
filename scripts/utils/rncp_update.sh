@@ -24,7 +24,12 @@ else
 fi
 
 
-./scripts/wait-for-postgres.sh && \
-mix ecto.migrate && \
-POSTGRES_TIMEOUT=500000 \
-mix RncpUpdate -f $XML_FILEPATH
+read -p "Let's import with this file $XML_FILENAME ? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+  ./scripts/wait-for-postgres.sh && \
+  mix ecto.migrate && \
+  POSTGRES_TIMEOUT=500000 \
+  mix RncpUpdate -f $XML_FILEPATH
+fi

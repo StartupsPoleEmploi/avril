@@ -36,11 +36,12 @@ defmodule VaeWeb.Resolvers.Application do
 
   def application(_, _args, _), do: {:ok, nil}
 
-  def delegates_search(
-        _,
-        %{application_id: application_id, geo: %{lng: lng, lat: lat}, radius: radius, administrative: administrative},
-        %{context: %{current_user: user}}
-      ) do
+  def delegates_search(_, %{
+    application_id: application_id,
+    geo: %{lng: lng, lat: lat},
+    radius: radius,
+    administrative: administrative
+  }, %{context: %{current_user: user}}) do
     with(
       %UserApplication{delegate_id: delegate_id} = application <-
         Applications.get_application_from_id_and_user_id(application_id, user.id),
@@ -48,10 +49,21 @@ defmodule VaeWeb.Resolvers.Application do
       delegates <- from(d in Delegate)
         |> join(:inner, [d], assoc(d, :certifications))
         |> where([d], d.is_active)
-        |> Vae.Maybe.if(not is_nil(delegate_id), &where(&1, [d], d.id != ^delegate_id))
-        |> Vae.Maybe.if(is_binary(administrative), &where(&1, [d], fragment("slugify(?)", d.administrative) == ^Vae.String.parameterize(administrative)))
+        |> Vae.Maybe.if(
+          not is_nil(delegate_id),
+          &where(&1, [d], d.id != ^delegate_id)
+        )
+        |> Vae.Maybe.if(
+          is_binary(administrative),
+          &where(&1, [d], fragment("slugify(?)",
+            d.administrative) == ^Vae.String.parameterize(administrative)
+          )
+        )
         |> where([d, c], c.id == ^application.certification_id)
-        |> Vae.Maybe.if(is_number(radius), &where(&1, [d], st_dwithin_in_meters(d.geom, ^geom, ^radius)))
+        |> Vae.Maybe.if(
+          is_number(radius),
+          &where(&1, [d], st_dwithin_in_meters(d.geom, ^geom, ^radius))
+        )
         |> preload([d], [:certifiers])
         |> order_by([d], [asc: st_distance(d.geom, ^geom)])
         |> limit(12)

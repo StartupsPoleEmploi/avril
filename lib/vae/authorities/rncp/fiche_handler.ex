@@ -61,7 +61,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
           siret: ~x"./SIRET_CERTIFICATEUR/text()"s |> transform_by(&String.replace(&1, ~r/\s+/, ""))
         )
       end)
-      |> Enum.map(&match_or_build_certifier(&1, [with_delegate: true, build: (if data.is_rncp_active, do: :allow)]))
+      |> Enum.map(&match_or_build_certifier(&1))
       |> Enum.filter(&not(is_nil(&1)))
       |> CustomRules.add_educ_nat_certifiers(data)
       |> CustomRules.reject_educ_nat_certifiers(data)
@@ -113,9 +113,9 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         Certifier.changeset(c, %{siret: siret}) |> Repo.update!()
       %Certifier{} = c -> c
       nil ->
-        if opts[:build] == :force || (AuthorityMatcher.buildable_certifier?(name) && opts[:build] == :allow) do
+        # if opts[:build] == :force || (AuthorityMatcher.buildable_certifier?(name) && opts[:build] == :allow) do
           create_certifier_and_maybe_delegate(params, opts)
-        end
+        # end
     end
   end
 
@@ -125,15 +125,15 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     |> FileLogger.log_changeset()
     |> Repo.insert!()
 
-    if opts[:with_delegate] && (not is_nil(certifier)) do
-      (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
-        %Delegate{name: name})
-      |> Delegate.changeset(%{
-        certifiers: [certifier]
-      })
-      |> FileLogger.log_changeset()
-      |> Repo.insert_or_update!()
-    end
+    # if opts[:with_delegate] && (not is_nil(certifier)) do
+    #   (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
+    #     %Delegate{name: name})
+    #   |> Delegate.changeset(%{
+    #     certifiers: [certifier]
+    #   })
+    #   |> FileLogger.log_changeset()
+    #   |> Repo.insert_or_update!()
+    # end
 
     certifier
   end
