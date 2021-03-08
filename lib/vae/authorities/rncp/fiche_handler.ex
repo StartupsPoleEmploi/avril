@@ -1,7 +1,7 @@
 defmodule Vae.Authorities.Rncp.FicheHandler do
   require Logger
   import SweetXml
-  alias Vae.{Certification, Certifier, Delegate, Rome, Repo, UserApplication}
+  alias Vae.{Certification, Certifier, Rome, Repo, UserApplication}
   alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
 
   def fiche_to_certification(fiche, %{import_date: import_date}) do
@@ -119,7 +119,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     end
   end
 
-  def create_certifier_and_maybe_delegate(%{name: name} = params, opts \\ []) do
+  def create_certifier_and_maybe_delegate(%{name: _name} = params, _opts \\ []) do
     certifier = %Certifier{}
     |> Certifier.changeset(params)
     |> FileLogger.log_changeset()

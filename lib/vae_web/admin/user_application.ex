@@ -11,15 +11,10 @@ defmodule Vae.ExAdmin.UserApplication do
     action_items except: [:new, :create, :delete]
 
     index do
-      selectable_column()
       column(:id)
       column(:user, fn a -> Vae.User.fullname(a.user) end)
       column(:certification)
       column(:delegate)
-
-      # column(:certifiers, fn d ->
-      #   Enum.map(d.certifiers, &Helpers.link_to_resource(&1)) |> Enum.intersperse(", ")
-      # end)
       column(:administrative, fn a -> a.delegate && a.delegate.administrative end)
       column(:status, &application_status/1)
       column(:delegate_application_url, fn a -> if a.submitted_at, do: Phoenix.HTML.Link.link("URL", to: VaeWeb.Router.Helpers.user_application_url(VaeWeb.Endpoint, :show, a, delegate_hash: a.delegate_access_hash), target: "_blank") end)
@@ -146,7 +141,7 @@ defmodule Vae.ExAdmin.UserApplication do
     filter(:user, type: :hidden)
     filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
 
-    @all_preloads [:delegate, :user, :certification, :certifiers, :meeting]
+    @all_preloads [:delegate, :user, :certification, :meeting]
 
     query do
       %{
