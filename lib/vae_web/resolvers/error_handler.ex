@@ -7,11 +7,12 @@ defmodule VaeWeb.Resolvers.ErrorHandler do
     do: {:error, message: message, details: details}
 
   def error_response(message, %Ecto.Changeset{} = changeset) do
+    log_error(changeset)
     {:error, message: message, details: transform_errors(changeset)}
   end
 
   def error_response(_message, error) do
-    Logger.error(fn -> inspect(error, limit: :infinity) end)
+    log_error(error)
     {:error, message: @global_error, details: ""}
   end
 
@@ -27,5 +28,9 @@ defmodule VaeWeb.Resolvers.ErrorHandler do
     Enum.reduce(opts, msg, fn {key, value}, acc ->
       String.replace(acc, "%{#{key}}", inspect(value))
     end)
+  end
+
+  defp log_error(error) do
+    Logger.error(fn -> inspect(error, limit: :infinity) end)
   end
 end
