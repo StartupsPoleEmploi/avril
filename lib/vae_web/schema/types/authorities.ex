@@ -28,6 +28,7 @@ defmodule VaeWeb.Schema.Types.Authorities do
 
   object :delegate do
     field(:id, :id)
+    field(:is_active, :boolean)
     field(:name, :string)
     field(:person_name, :string)
     field(:email, :string)

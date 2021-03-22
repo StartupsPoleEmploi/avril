@@ -6,9 +6,8 @@ defmodule VaeWeb.Plugs.ErrorHandlers.Browser do
   @spec call(Conn.t(), :not_found) :: Conn.t()
   def call(conn, :not_found) do
     conn
-    |> put_status(:not_found)
-    |> put_view(VaeWeb.ErrorView)
-    |> render("404.html", layout: false)
+    |> put_flash(:warning, "La candidature n'a pas été trouvée ou a été supprimée par le candidat entre temps.")
+    |> redirect(to: Routes.root_path(conn, :index))
   end
 
   @spec call(Conn.t(), :internal_server_error) :: Conn.t()

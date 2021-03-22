@@ -1,7 +1,7 @@
 defmodule VaeWeb.Schema.Types.Application do
   use Absinthe.Schema.Notation
 
-  alias Vae.{UserApplication, Repo, Meeting}
+  alias Vae.{UserApplication, Certification, Delegate, Repo, Meeting}
   alias VaeWeb.Resolvers
 
   import_types(Absinthe.Plug.Types)
@@ -38,6 +38,15 @@ defmodule VaeWeb.Schema.Types.Application do
           nil -> {:ok, nil}
           %Meeting{data: data} -> {:ok, data}
         end
+      end)
+    end
+
+    field(:is_certification_delegate_available, :boolean) do
+      resolve(fn %UserApplication{} = ua, _args, _ ->
+        %UserApplication{certification: %Certification{id: certification_id}, delegate: %Delegate{
+          certifications: delegate_certifications
+        }} = Repo.preload(ua, [:certification, delegate: [:certifications]])
+        {:ok, Enum.any?(delegate_certifications, &(&1.id == certification_id))}
       end)
     end
 
