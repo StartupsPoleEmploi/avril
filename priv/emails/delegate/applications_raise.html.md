@@ -14,6 +14,17 @@ Les candidats ont certifié exacte l'intégralité des renseignements fournis da
 
 Voilà de belles VAE en perspective !
 
+> **Le saviez-vous?** 
+>
+> Vous pouvez modifier vos coordonnées connus d'Avril directement en cliquant sur l'une des candidatures ci-dessus.
+>
+> Voici les informations dont nous disposons actuellement :
+> - Nom du contact : <%= @delegate.person_name %>
+> - Adresse : <%= @delegate.address %>
+> - Email : <%= @delegate.email %>
+> - Tél : <%= @delegate.telephone %>
+> - Site internet : <%= @delegate.website %>
+
 Très bonne fin de journée à vous et à votre équipe.
 
 L’équipe d’Avril

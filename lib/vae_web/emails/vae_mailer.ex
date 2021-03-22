@@ -193,6 +193,11 @@ defmodule VaeWeb.Mailer do
     html_content
     |> replace_button_style(:primary)
     |> replace_button_style(:secondary)
+    |> add_blockquote_background()
+  end
+
+  def add_blockquote_background(html_content) do
+    String.replace(html_content, "<blockquote>", "<blockquote style=\"background-color: #f5f9fb; margin: 0; padding: 1em 2em;\">")
   end
 
   def replace_button_style(html_content, type) do
