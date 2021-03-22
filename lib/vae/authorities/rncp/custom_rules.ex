@@ -117,6 +117,12 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   end
 
   def custom_data_transformations(%{
+    rncp_id: rncp_id,
+  } = data) when rncp_id in ["25520", "25522", "25471"] do
+    Map.merge(data, %{is_active: true})
+  end
+
+  def custom_data_transformations(%{
     rncp_id: "4877",
     romes: romes
   } = data) do

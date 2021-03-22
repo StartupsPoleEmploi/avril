@@ -131,7 +131,7 @@ defmodule Vae.Certification do
     |> put_param_assoc(:included_delegates, params)
     |> put_param_assoc(:excluded_delegates, params)
     # |> link_delegates()
-    |> make_inactive_if_rncp_inactive()
+    # |> make_inactive_if_rncp_inactive()
     |> move_applications_if_older_certification()
     |> slugify()
     |> validate_required([:label, :slug, :rncp_id])
@@ -206,6 +206,7 @@ defmodule Vae.Certification do
     end
   end
 
+  # Depreciated
   def make_inactive_if_rncp_inactive(%Ecto.Changeset{} = changeset) do
     if !get_field(changeset, :is_rncp_active), do: put_change(changeset, :is_active, false), else: changeset
   end

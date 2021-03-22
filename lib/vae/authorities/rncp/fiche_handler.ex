@@ -19,6 +19,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
       end),
       is_rncp_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui")),
+      is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui")),
       end_of_rncp_validity: ~x"./DATE_FIN_ENREGISTREMENT/text()"s |> transform_by(fn d ->
         case Timex.parse(d, "%d/%m/%Y", :strftime) do
           {:ok, datetime} -> datetime |> DateTime.to_date()
