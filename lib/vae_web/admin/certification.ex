@@ -106,9 +106,7 @@ defmodule Vae.ExAdmin.Certification do
     end
 
     filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :last_rncp_import_date, :end_of_rncp_validity, :activities]
-    filter(:certifiers, order_by: :name)
     filter(:newer_certification, type: :present_only)
-
 
     query do
       preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]

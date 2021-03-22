@@ -241,8 +241,8 @@ defmodule Vae.ExAdmin.Delegate do
       column(:internal_notes)
     end
 
+    filter(:internal_notes)
     filter([:is_active, :id, :slug, :email, :city, :administrative, :geom])
-    filter(:certifiers, order_by: :name)
 
     query do
       %{
