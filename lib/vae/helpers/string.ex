@@ -72,7 +72,7 @@ defmodule Vae.String do
     end
   end
 
-  def pluralize(words, opts\\[]) do
+  def pluralize(words, opts \\ []) do
     if opts[:lang] == :en do
       pluralize_word(words)
     else
