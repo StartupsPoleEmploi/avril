@@ -8,6 +8,21 @@ import './admin/tables';
 import './admin/charts';
 import './admin/statusEditor';
 
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function() {
+    var context = this, args = arguments;
+    var later = function() {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+};
+
 const trimPaste = () => {
   const $filters = document.querySelector('form.filter_form');
 
@@ -82,10 +97,48 @@ const selectFiltersWithChosen = () => {
 }
 
 const selectMultipleWithMultiSelect = () => {
-  $('section.content form select[multiple]').multiSelect({
-    selectableHeader: ' : all possible choices',
-    selectionHeader: ' : actually selected choices'
-  });
+
+  const isMatching = (field, query) => {
+    return field.toLowerCase().replace(/\s/, ' ').includes(query.toLowerCase().replace(/\s/, ' '))
+  }
+
+  const addSearchField = ($input, selector) => {
+    $input.on('keydown', debounce(e => {
+      const searchField = e.target.value;
+      const values = $(selector).each((i, el) => {
+        if (searchField && !isMatching($(el).text(), searchField)) {
+          $(el).addClass('hidden');
+        } else {
+          $(el).removeClass('hidden');
+        }
+      });
+    }, 500));
+  };
+
+  const resetSearch = that => {
+    $(`#${that.$container.attr('id')} .ms-elem-selectable:not(.ms-selected)`).removeClass('hidden');
+    $(`#${that.$container.attr('id')} .ms-elem-selection.ms-selected`).removeClass('hidden');
+    that.$selectableUl.next().val('');
+    that.$selectionUl.next().val('');
+  }
+
+  const input = '<input type="text" class="search form-control" autocomplete="off" placeholder="Filter ...">';
+
+  const labelize = label => `<p><strong>${label}</strong></p>`;
+
+  $('section.content form select[multiple]').each((i, el) => {
+
+    $(el).multiSelect({
+      selectableHeader: labelize($(el).attr('data-selectable')),
+      selectionHeader: labelize($(el).attr('data-selection')),
+      selectableFooter: input,
+      selectionFooter: input,
+      afterInit: function(ms){
+        addSearchField(this.$selectableUl.next(), `#${this.$container.attr('id')} .ms-elem-selectable:not(.ms-selected)`);
+        addSearchField(this.$selectionUl.next(), `#${this.$container.attr('id')} .ms-elem-selection.ms-selected`);
+      },
+    });
+  })
 }
 
 $(document).ready(() => {

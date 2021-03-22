@@ -95,12 +95,22 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :level, readonly: true)
 
         content do
-          Helpers.form_select_tag(certification, :excluded_delegates, [options: certification.rncp_delegates, label: "Delegates from certifier that should not be associated to this certification"])
+          Helpers.form_select_tag(certification, :excluded_delegates, [
+            options: certification.rncp_delegates,
+            label: "Excluded delegates",
+            selectable_label: "All delegates from RNCP",
+            selection_label: "Excluded delegates",
+          ])
         end
 
         content do
           other_delegates = Vae.Repo.all(Ecto.Query.from(d in Vae.Delegate, where: [is_active: true])) -- certification.rncp_delegates
-          Helpers.form_select_tag(certification, :included_delegates, [options: other_delegates, label: "Delegates not associated to certifier but should be associated to this certification"])
+          Helpers.form_select_tag(certification, :included_delegates, [
+            options: other_delegates,
+            label: "Extra delegates",
+            selectable_label: "All delegates in Avril",
+            selection_label: "Extra delegates",
+          ])
         end
       end
     end

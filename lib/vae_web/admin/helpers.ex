@@ -69,10 +69,10 @@ defmodule Vae.ExAdmin.Helpers do
     object = Repo.preload(object, association_name)
 
     association_struct = struct.__schema__(:association, association_name).related
-    label = options[:label] || struct_to_string(association_struct)
+    label = options[:label] || (struct_to_string(association_struct) |> Vae.String.pluralize())
     possible_options = options[:options] || Repo.all(association_struct)
 
-    options =
+    select_options =
       possible_options
       |> Enum.sort_by(&(resource_name(&1, options[:namify])))
       |> Enum.map(fn asso ->
@@ -99,10 +99,14 @@ defmodule Vae.ExAdmin.Helpers do
             Phoenix.HTML.Form.hidden_input(String.to_atom(object_name), association_name, id: "fake_#{object_name}_#{association_name}"),
             content_tag(
               :select,
-              options,
+              select_options,
               id: "#{object_name}_#{association_name}",
               name: "#{object_name}[#{association_name}][]",
-              multiple: true
+              multiple: true,
+              data: [
+                selectable: options[:selectable_label] || "All possible #{String.downcase(label)}",
+                selection: options[:selection_label] || "Selected #{String.downcase(label)}"
+              ]
             )
           ],
           class: "col-sm-10"

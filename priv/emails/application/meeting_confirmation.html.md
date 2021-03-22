@@ -11,6 +11,6 @@ Votre inscription a bien été enregistrée :
 - Adresse : <%= @meeting.address %> <%= @meeting.postal_code %>
 - Tel: <%= @delegate_phone_number %>
 
-Nous comptons sur votre présence !
+Nous comptons sur votre participation !
 
 **[Voir mes rendez-vous](<%= @url %>)**

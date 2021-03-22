@@ -102,7 +102,7 @@
                 .field
                   .control
                     .buttons style="justify-content: space-between;"
-                      = submit "Enregistrer", class: "button is-primary is-rounded"
+                      = submit "Enregistrer", class: "button is-primary is-rounded", data: [disable_with: "Enregistrement ..."]
                       button.button.is-text.is-rounded.toggle-mode Annuler
           .field.is-readonly-mode
             p

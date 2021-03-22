@@ -16,7 +16,7 @@ Voilà de belles VAE en perspective !
 
 > **Le saviez-vous?** 
 >
-> Vous pouvez modifier vos coordonnées connus d'Avril directement en cliquant sur l'une des candidatures ci-dessus.
+> Vous pouvez modifier vos coordonnées connues d'Avril directement en cliquant sur l'une des candidatures ci-dessus.
 >
 > Voici les informations dont nous disposons actuellement :
 > - Nom du contact : <%= @delegate.person_name %>

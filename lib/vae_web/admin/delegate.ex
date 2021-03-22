@@ -192,15 +192,30 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :internal_notes, type: :text)
 
         content do
+          content_tag(:p, class: "text-center") do
+            [
+              content_tag(:span, "The final list of certifications is : "),
+              content_tag(:strong, "Certifications of #1 - #2 + #3")
+            ]
+          end
+        end
+
+        content do
           delegate = Vae.Repo.preload(delegate, :certifiers)
-          Helpers.form_select_tag(delegate, :certifiers)
+          Helpers.form_select_tag(delegate, :certifiers, [
+            options: Vae.Repo.all(from c in Vae.Certifier, preload: [:active_certifications]),
+            selection_label: "#1 - Selected certifiers",
+            namify: &("#{&1.name} (#{Vae.String.inflect(length(&1.active_certifications), "active certifications")})")
+          ])
         end
 
         content do
           %Delegate{rncp_certifications: rncp_certifications} = delegate = Vae.Repo.preload(delegate, :rncp_certifications)
           Helpers.form_select_tag(delegate, :excluded_certifications, [
             options: rncp_certifications,
-            label: "Certifications from certifier that should not be associated to this delegate",
+            label: "Excluded certifications",
+            selectable_label: "All certifications from RNCP",
+            selection_label: "#2 - Excluded certifications",
             namify: &("#{&1.rncp_id} - #{Vae.Certification.name(&1)}")
           ])
         end
@@ -214,11 +229,12 @@ defmodule Vae.ExAdmin.Delegate do
             |> Vae.Repo.all()
           Helpers.form_select_tag(delegate, :included_certifications, [
             options: other_certifications,
-            label: "Certifications not associated to certifier but should be associated to this delegate",
+            label: "Extra certifications",
+            selectable_label: "All certifications in Avril",
+            selection_label: "#3 - Extra certifications",
             namify: &("#{&1.rncp_id} - #{Vae.Certification.name(&1)}")
           ])
         end
-
       end
     end
 
