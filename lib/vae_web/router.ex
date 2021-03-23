@@ -167,7 +167,7 @@ defmodule VaeWeb.Router do
       before_send: {__MODULE__, :logout?},
       json_codec: Jason
 
-    if Mix.env() == :dev do
+    if Mix.env() != :prod do
       forward "/graphiql", Absinthe.Plug.GraphiQL,
         schema: VaeWeb.Schema,
         before_send: {__MODULE__, :logout?},
