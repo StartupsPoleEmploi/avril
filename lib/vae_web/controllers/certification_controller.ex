@@ -50,9 +50,8 @@ defmodule VaeWeb.CertificationController do
   end
 
   def index(conn, params) do
-    active_certifications_query = from c in Certification, where: [is_active: true]
     with(
-      {:ok, filtered_query, filter_values} <- apply_filters(active_certifications_query, conn),
+      {:ok, filtered_query, filter_values} <- apply_filters(Certification.searchable_query(), conn),
       total <- Repo.aggregate(filtered_query, :count, :id),
       by_level_total <- count_with_level(filtered_query),
       ordered_query <- Certification.sort_by_popularity(filtered_query),

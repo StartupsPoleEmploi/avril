@@ -26,7 +26,7 @@ defmodule VaeWeb.SearchController do
   end
 
   def build_query(Certification, query) do
-    from(e in Certification, where: e.is_active)
+    Certification.searchable_query()
     |> Vae.Search.FullTextSearch.run(query)
     |> select([e, v], %{id: e.id, label: e.label, acronym: e.acronym, slug: e.slug, sort: v.count})
   end

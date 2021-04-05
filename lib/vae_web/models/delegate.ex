@@ -69,6 +69,13 @@ defmodule Vae.Delegate do
       on_replace: :delete
     )
 
+    many_to_many(
+      :active_certifications,
+      Certification,
+      join_through: "certifications_delegates",
+      where: [is_active: true]
+    )
+
     has_many(:applications, UserApplication)
     has_many(:recent_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '16 days'"}])
 
@@ -130,7 +137,6 @@ defmodule Vae.Delegate do
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
-    # |> link_certifications()
   end
 
   defp add_geolocation(%Ecto.Changeset{changes: %{address: _}} = changeset) do
@@ -142,30 +148,6 @@ defmodule Vae.Delegate do
   end
 
   defp add_geolocation(changeset), do: changeset
-
-  # defp link_certifications(changeset) do
-  #   # if get_change(changeset, :certifiers) ||
-  #   #    get_change(changeset, :included_certifications) ||
-  #   #    get_change(changeset, :excluded_certifications) do
-  #     changeset = %Ecto.Changeset{changeset | data: Repo.preload(changeset.data, :rncp_certifications)}
-
-  #     rncp_certifications = get_field(changeset, :rncp_certifications)
-
-  #     # rncp_certifications = get_field(changeset, :certifiers)
-  #     #   |> Repo.preload(:active_certifications)
-  #     #   |> Enum.flat_map(&(&1.active_certifications))
-  #     included_certifications = get_field(changeset, :included_certifications)
-  #     excluded_certifications = get_field(changeset, :excluded_certifications)
-
-  #     certifications =
-  #       Enum.uniq(rncp_certifications ++ included_certifications) -- excluded_certifications
-
-  #     changeset
-  #     |> put_assoc(:certifications, certifications)
-  #   # else
-  #   #   changeset
-  #   # end
-  # end
 
   def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(data, changes)))
@@ -207,8 +189,6 @@ defmodule Vae.Delegate do
       end
     end
   end
-
-  # def display_name(%Delegate{} = delegate), do: delegate.name
 
   def to_slug(%Delegate{} = delegate) do
     Vae.String.parameterize(

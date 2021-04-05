@@ -72,6 +72,13 @@ defmodule Vae.Certification do
       on_delete: :delete_all
     )
 
+    many_to_many(
+      :active_delegates,
+      Delegate,
+      join_through: "certifications_delegates",
+      where: [is_active: true]
+    )
+
     has_many(
       :professions,
       through: [:romes, :professions]
@@ -130,8 +137,6 @@ defmodule Vae.Certification do
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_delegates, params)
     |> put_param_assoc(:excluded_delegates, params)
-    # |> link_delegates()
-    # |> make_inactive_if_rncp_inactive()
     |> move_applications_if_older_certification()
     |> slugify()
     |> validate_required([:label, :slug, :rncp_id])
@@ -139,29 +144,20 @@ defmodule Vae.Certification do
     |> unique_constraint(:rncp_id)
   end
 
-  # def link_delegates(changeset) do
-  #   # if get_change(changeset, :certifiers) ||
-  #   #    get_change(changeset, :included_delegates) ||
-  #   #    get_change(changeset, :excluded_delegates) do
-  #     # changeset = %Changeset{changeset | data: Repo.preload(changeset.data, :rncp_delegates)}
-  #     # rncp_delegates = get_field(changeset, :rncp_delegates)
-
-  #     rncp_delegates = get_field(changeset, :certifiers)
-  #       |> Repo.preload(:active_delegates)
-  #       |> Enum.flat_map(&(&1.active_delegates))
-
-  #     included_delegates = get_field(changeset, :included_delegates)
-  #     excluded_delegates = get_field(changeset, :excluded_delegates)
-
-  #     delegates =
-  #       Enum.uniq(rncp_delegates ++ included_delegates) -- excluded_delegates
-  #     changeset
-  #     |> put_assoc(:delegates, delegates)
-  #     # |> put_assoc_no_useless_updates(:delegates, delegates)
-  #   # else
-  #   #   changeset
-  #   # end
-  # end
+  def searchable_query() do
+    from(c in Certification,
+      where: c.is_active and fragment("""
+        EXISTS (
+          SELECT * FROM delegates
+          INNER JOIN certifications_delegates
+          ON delegates.id = certifications_delegates.delegate_id
+          INNER JOIN certifications
+          ON certifications_delegates.certification_id = ?
+          WHERE delegates.is_active
+        )
+      """, c.id)
+    )
+  end
 
   def name(%Certification{acronym: acronym, label: label}) do
     [acronym, label] |> Enum.reject(&is_nil/1) |> Enum.join(" ")
@@ -204,11 +200,6 @@ defmodule Vae.Certification do
     else
       changeset
     end
-  end
-
-  # Depreciated
-  def make_inactive_if_rncp_inactive(%Ecto.Changeset{} = changeset) do
-    if !get_field(changeset, :is_rncp_active), do: put_change(changeset, :is_active, false), else: changeset
   end
 
   def move_applications_if_older_certification(%Ecto.Changeset{} = changeset) do
