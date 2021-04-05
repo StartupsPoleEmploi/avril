@@ -73,14 +73,12 @@ defmodule ExAdmin.ApiController do
   def sql(conn, %{"query" => query} = params) do
     start_date = Vae.String.blank_is_nil(params["start_date"])
     end_date = Vae.String.blank_is_nil(params["end_date"])
-    type = Vae.String.blank_is_nil(params["type"])
     certifier_id = Vae.String.blank_is_nil(params["certifier_id"], &String.to_integer/1)
 
     query =
       apply(__MODULE__, :"#{query}_query", [
         start_date,
         end_date,
-        type,
         certifier_id
       ])
 
@@ -94,27 +92,28 @@ defmodule ExAdmin.ApiController do
           query: %{
             certifier_id: certifier_id,
             start_date: start_date,
-            end_date: end_date,
-            type: type
+            end_date: end_date
           }
         }
       )
     )
   end
 
-  def join_certifier(certifier_id, base_name \\ "delegate")
+  def join_certifier(certifier_id, base_name \\ "delegate", foreign_key \\ nil)
 
-  def join_certifier(certifier_id, base_name) when not is_nil(certifier_id) do
+  def join_certifier(certifier_id, base_name, foreign_key) when not is_nil(certifier_id) do
+    foreign_key_with_default = foreign_key || "#{base_name}s.id"
+    join_table = if base_name == "certification", do: "certifier_certifications", else: "certifiers_#{base_name}s"
     """
-    INNER JOIN certifiers_#{base_name}s
-    ON certifiers_#{base_name}s.#{base_name}_id = applications.#{base_name}_id
-    AND certifiers_#{base_name}s.certifier_id = #{certifier_id}
+    INNER JOIN #{join_table}
+    ON #{join_table}.#{base_name}_id = #{foreign_key_with_default}
+    AND #{join_table}.certifier_id = #{certifier_id}
     """
   end
 
-  def join_certifier(_, _), do: ""
+  def join_certifier(_, _, _), do: ""
 
-  def applications_query(start_date, end_date, _type, certifier_id) do
+  def applications_query(start_date, end_date, certifier_id) do
     # Check Vae.Repo.Migrations.AddApplicationStatusSQLFunction
     # to see status(application) SQL function definition
 
@@ -124,14 +123,14 @@ defmodule ExAdmin.ApiController do
       status(applications.*) as status,
       count(applications.*) as count
     FROM applications
-    #{join_certifier(certifier_id)}
+    #{join_certifier(certifier_id, "delegate", "applications.delegate_id")}
     #{where_applications_date_filter(start_date, end_date)}
     GROUP BY week_number, status
     ORDER BY week_number, status;
     """
   end
 
-  def delegates_query(start_date, end_date, _type, _certifier_id) do
+  def delegates_query(start_date, end_date, certifier_id) do
     """
     SELECT
       q.delegate_name,
@@ -149,12 +148,13 @@ defmodule ExAdmin.ApiController do
       (#{applications_base_query("delegate", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
       (#{applications_base_query("delegate", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
       FROM delegates
+      #{join_certifier(certifier_id, "delegate")}
     ) q
     ORDER BY admissible_percent DESC NULLS LAST, total DESC
     """
   end
 
-  def certifications_query(start_date, end_date, _type, _certifier_id) do
+  def certifications_query(start_date, end_date, certifier_id) do
     """
     SELECT
       q.certification_name,
@@ -172,6 +172,7 @@ defmodule ExAdmin.ApiController do
       (#{applications_base_query("certification", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
       (#{applications_base_query("certification", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
       FROM certifications
+      #{join_certifier(certifier_id, "certification")}
     ) q
     ORDER BY admissible_percent DESC NULLS LAST, total DESC
     """

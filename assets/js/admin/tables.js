@@ -53,6 +53,7 @@ const renderTable = name => {
                 data={mapRowDefinitions(columns, rows)}
                 className="btn btn-primary"
                 style={{marginBottom: '1rem'}}
+                download={`${name}.csv`}
               >Télécharger en CSV</CSVLink>
             </div>
             <ReactTable

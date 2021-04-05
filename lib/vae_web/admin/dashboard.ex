@@ -41,7 +41,7 @@ defmodule Vae.ExAdmin.Dashboard do
               end
             end
           end
-          div ".row", [style: "margin-bottom: 1rem"] do
+          div ".row", [style: "margin-bottom: 1rem; max-width: 30rem; margin-left: auto; margin-right: auto;"] do
             div ".form-group" do
               label "Certifier : ", [for: "certifier_id", style: "padding-right: 0.5rem;"]
               div ".input-group" do
@@ -66,29 +66,21 @@ defmodule Vae.ExAdmin.Dashboard do
       end
       hr()
       div ".section" do
-        # div ".absolute-right" do
-        #   Xain.form [method: "GET"] do
-        #     Xain.input type: "hidden", name: "start_date", value: start_date
-        #     Xain.input type: "hidden", name: "end_date", value: end_date
-        #     Xain.input type: "hidden", name: "certifier_id", value: certifier_id
-        #     Xain.button (if type == "submissions",  do: "Vue Livret 1", else: "Vue Transmissions"), [type: "submit", name: "type", value: (if type == "submissions",  do: "booklet", else: "submissions"), class: "btn btn-primary"]
-        #   end
-        # end
         h2 "Candidatures #{if certifier, do: certifier.name} par semaines", [class: "text-center"]
         h4 between_dates_string(start_date, end_date)
-        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&type=#{type}&certifier_id=#{certifier_id}"]
+        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}"]
       end
       hr()
       div ".section" do
-        h2 "Candidatures par delegate"
+        h2 "Candidatures #{if certifier, do: certifier.name} par delegate"
         h4 between_dates_string(start_date, end_date)
-        div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}"]
+        div "#delegates-table", ["data-url": "/admin/sql?query=delegates&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}"]
       end
       hr()
       div ".section" do
-        h2 "Candidatures par certification"
+        h2 "Candidatures #{if certifier, do: certifier.name} par certification"
         h4 between_dates_string(start_date, end_date)
-        div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}"]
+        div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}"]
       end
     end
   end
