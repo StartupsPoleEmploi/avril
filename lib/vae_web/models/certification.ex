@@ -146,14 +146,14 @@ defmodule Vae.Certification do
 
   def searchable_query() do
     from(c in Certification,
+      # where: c.is_active
       where: c.is_active and fragment("""
         EXISTS (
-          SELECT * FROM delegates
+          SELECT null FROM delegates
           INNER JOIN certifications_delegates
           ON delegates.id = certifications_delegates.delegate_id
-          INNER JOIN certifications
-          ON certifications_delegates.certification_id = ?
           WHERE delegates.is_active
+          AND certifications_delegates.certification_id = ?
         )
       """, c.id)
     )
