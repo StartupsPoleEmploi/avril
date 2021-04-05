@@ -16,8 +16,8 @@ defmodule VaeWeb.JobSeekerEmail do
             endpoint,
             :index,
             utm_campaign: "mj-#{Date.utc_today() |> to_string()}",
-            utm_source: "inscription_pole_emploi_invitation_avril",
-            utm_medium: "email",
+            utm_medium: "inscription_pole_emploi_invitation_avril",
+            utm_source: "email",
             js_id: id
           ),
         image_url: URI.static_url(endpoint, "/images/mon-diplome.jpg"),

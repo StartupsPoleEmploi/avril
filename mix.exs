@@ -59,7 +59,7 @@ defmodule Vae.Mixfile do
       {:ex_admin, github: "augnustin/ex_admin"},
       {:remote_ip, "~> 0.1.0"},
       {:flow, "~> 0.14.0"},
-      {:timex, "~> 3.6.1"},
+      {:timex, "~> 3.7.5"},
       {:elixir_uuid, "~> 1.2"},
       {:persistent_ets, "~> 0.1.0"},
       {:pdf_generator, ">=0.5.0"},
