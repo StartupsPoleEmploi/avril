@@ -174,6 +174,10 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   }
 
   @aliases %{
+    "assemblee-permanente-chambres-de-metiers-et-de-l-artisanat" => [
+      "cma",
+      "apcma-cma-france"
+    ],
     "cnam" => [
       "conservatoire-national-des-arts-et-metiers-cnam",
       "conservatoire-national-des-arts-et-metiers"
