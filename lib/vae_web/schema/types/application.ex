@@ -43,10 +43,13 @@ defmodule VaeWeb.Schema.Types.Application do
 
     field(:is_certification_delegate_available, :boolean) do
       resolve(fn %UserApplication{} = ua, _args, _ ->
-        %UserApplication{certification: %Certification{id: certification_id}, delegate: %Delegate{
-          certifications: delegate_certifications
-        }} = Repo.preload(ua, [:certification, delegate: [:certifications]])
-        {:ok, Enum.any?(delegate_certifications, &(&1.id == certification_id))}
+        %UserApplication{certification_id: certification_id, delegate: delegate} =
+          Repo.preload(ua, [delegate: [:certifications]])
+        result = case delegate do
+          nil -> false
+          %Delegate{certifications: certifications} -> Enum.any?(certifications, &(&1.id == certification_id))
+        end
+        {:ok, result}
       end)
     end
 
