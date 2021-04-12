@@ -58,9 +58,12 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
 
   defp has_access?(nil, _user, _verification), do: {:error, :not_found}
 
-  defp has_access?(%UserApplication{} = application, %User{} = current_user, verification_func) do
-    application = application |> Repo.preload(:user)
-    if (current_user == application.user) || current_user.is_admin do
+  defp has_access?(
+    %UserApplication{user_id: user_id} = application,
+    %User{id: current_user_id, is_admin: current_user_admin},
+    verification_func
+  ) do
+    if (current_user_id == user_id) || current_user_admin do
       {:ok, application}
     else
       has_access?(application, nil, verification_func)

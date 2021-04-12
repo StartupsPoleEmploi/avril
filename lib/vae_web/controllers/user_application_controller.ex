@@ -73,7 +73,7 @@ defmodule VaeWeb.UserApplicationController do
       certification_name: Certification.name(application.certification),
       certifier_name: UserApplication.certifier_name(application),
       identity: Vae.Maybe.try(application, [:user, :identity], %Identity{}),
-      current_situation: Vae.Maybe.try(application, [:user, :current_situation], %CurrentSituation{}),
+      current_situation: Vae.Maybe.try(application, [:user, :identity, :current_situation], %CurrentSituation{}),
       booklet: Vae.Maybe.try(application, :booklet_1, %Cerfa{}),
       education: Vae.Maybe.try(application, [:booklet_1, :education], %Education{}),
       experiences: Vae.Maybe.try(application, [:booklet_1, :experiences], [])

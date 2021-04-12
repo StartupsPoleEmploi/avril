@@ -183,7 +183,8 @@
                             input[type="checkbox" checked=(@current_situation.status == "jobseeking" && @current_situation.register_to_pole_emploi)]
                             label Oui
                             = if @current_situation.register_to_pole_emploi_since do
-                              span depuis le #{Vae.Date.format_iso(@current_situation.register_to_pole_emploi_since)}
+                              span
+                                |  depuis le #{Vae.Date.format_iso(@current_situation.register_to_pole_emploi_since)}
                             input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && !@current_situation.register_to_pole_emploi)]
                             label Non
                           li
@@ -197,7 +198,7 @@
                               | Vous touchez l'assurance chômage des intermittents du spectacle :
                             input[type="checkbox" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type == "artist")]
                             label Oui
-                            input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type != "jobless")]
+                            input[type="checkbox" style="margin-left: 1rem;" checked=(@current_situation.status == "jobseeking" && @current_situation.compensation_type != "artist")]
                             label Non
                           li
                             label
