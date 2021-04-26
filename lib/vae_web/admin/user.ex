@@ -26,6 +26,7 @@ defmodule Vae.ExAdmin.User do
       end
     end
 
+    filter(:applications)
     filter([
       :first_name,
       :last_name,

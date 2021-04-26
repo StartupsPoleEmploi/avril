@@ -70,19 +70,6 @@ defmodule Vae.ExAdmin.Delegate do
         end
       end
 
-      # panel "Recent applications" do
-      #   table_for delegate.recent_applications do
-      #     column(:id, fn a -> Helpers.link_to_resource(a, namify: &(&1.id)) end)
-      #     column(:application_user, fn a -> Helpers.link_to_resource(a.user, namify: &(Vae.User.fullname(&1))) end)
-
-      #     column(:application_certification, fn a -> Helpers.link_to_resource(a.certification) end)
-
-      #     column(:submitted_at)
-      #     column(:admissible_at)
-      #     column(:inadmissible_at)
-      #   end
-      # end
-
       panel "certifications" do
         table_for delegate.certifications do
           column(:id)
@@ -98,15 +85,6 @@ defmodule Vae.ExAdmin.Delegate do
           column(:name, &Helpers.link_to_resource/1)
         end
       end
-
-      # panel "excluded_certifications" do
-      #   table_for delegate.excluded_certifications do
-      #     column(:id)
-      #     column(:rncp_id)
-      #     column(:is_active)
-      #     column(:name, &Helpers.link_to_resource/1)
-      #   end
-      # end
 
       panel "Meetings" do
         table_for meetings do
@@ -257,8 +235,9 @@ defmodule Vae.ExAdmin.Delegate do
       column(:internal_notes)
     end
 
-    filter(:internal_notes)
-    filter([:is_active, :id, :slug, :email, :city, :administrative, :geom])
+    filter(:applications, scope: :recent)
+    # filter(:certifications, scope: :active)
+    filter([:is_active, :id, :slug, :email, :city, :administrative, :internal_notes])
 
     query do
       %{

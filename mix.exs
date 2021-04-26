@@ -38,7 +38,7 @@ defmodule Vae.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 4.1.0"},
       {:phoenix_html, "~> 2.13.3"},
-      {:ecto_sql, "~> 3.3.4"},
+      {:ecto_sql, "~> 3.6.1"},
       {:postgrex, "~> 0.15.3"},
       {:geo_postgis, "~> 3.1"},
       {:plug_cowboy, "~> 2.0"},

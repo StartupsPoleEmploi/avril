@@ -1,7 +1,7 @@
 defmodule VaeWeb.Schema.Types.Application do
   use Absinthe.Schema.Notation
 
-  alias Vae.{UserApplication, Certification, Delegate, Repo, Meeting}
+  alias Vae.{UserApplication, Delegate, Repo, Meeting}
   alias VaeWeb.Resolvers
 
   import_types(Absinthe.Plug.Types)

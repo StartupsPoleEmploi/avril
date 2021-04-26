@@ -36,6 +36,9 @@ defmodule Vae.ExAdmin.Certifier do
       end
     end
 
+    filter(:delegates, scope: :active)
+    filter(:certifications, scope: :active)
+    filter([:id, :slug, :name, :siret, :internal_notes, :inserted_at, :updated_at])
 
     query do
       %{

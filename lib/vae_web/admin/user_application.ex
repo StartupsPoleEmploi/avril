@@ -130,7 +130,9 @@ defmodule Vae.ExAdmin.UserApplication do
       column(:booklet_1@completed_at, fn a -> a.booklet_1 && a.booklet_1.completed_at end)
     end
 
-    filter([:booklet_1, :booklet_hash])
+    filter(:resumes)
+    filter(:booklet_hash, type: :present_only)
+    filter(:booklet_1, type: :present_only)
     filter(:meeting, type: :present_only)
     filter(:delegate, type: :hidden)
     filter(:certification, type: :hidden)
