@@ -36,6 +36,15 @@ defmodule Vae.ExAdmin.Certifier do
       end
     end
 
+    form certifier do
+      inputs do
+        input(certifier, :name)
+        input(certifier, :siret)
+        input(certifier, :external_notes, type: :text, placeholder: "Extra infos for the candidate")
+        input(certifier, :internal_notes, type: :text, placeholder: "Internal Avril notes")
+      end
+    end
+
     filter(:delegates, scope: :active)
     filter(:certifications, scope: :active)
     filter([:id, :slug, :name, :siret, :internal_notes, :inserted_at, :updated_at])

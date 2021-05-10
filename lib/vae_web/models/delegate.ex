@@ -28,6 +28,7 @@ defmodule Vae.Delegate do
     field(:city, :string)
     field(:administrative, :string)
     field(:internal_notes, :string)
+    field(:external_notes, :string)
 
     many_to_many(
       :certifiers,
@@ -127,7 +128,8 @@ defmodule Vae.Delegate do
       :city,
       :administrative,
       :academy_id,
-      :internal_notes
+      :internal_notes,
+      :external_notes
     ])
     |> slugify()
     |> make_inactive_if_email_missing()

@@ -9,6 +9,7 @@ defmodule Vae.Certifier do
     field(:name, :string)
     field(:siret, :string)
     field(:internal_notes, :string)
+    field(:external_notes, :string)
 
     many_to_many(
       :certifications,
@@ -51,7 +52,7 @@ defmodule Vae.Certifier do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :siret, :internal_notes])
+    |> cast(params, [:name, :siret, :internal_notes, :external_notes])
     |> slugify()
     |> validate_required([:name, :slug])
     |> unique_constraint([:slug, :siret])

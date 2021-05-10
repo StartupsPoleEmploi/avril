@@ -48,6 +48,7 @@ defmodule Vae.ExAdmin.Delegate do
         row(:has_coordinates, fn d -> if not is_nil(d.geom), do: "Yes :)", else: "No :(" end)
         row(:nb_applications, &Helpers.count_and_link_to_all(&1, :applications))
         row(:nb_meetings, fn _d -> length(meetings) end)
+        row(:external_notes)
         row(:internal_notes)
       end
 
@@ -169,7 +170,8 @@ defmodule Vae.ExAdmin.Delegate do
         input(delegate, :person_name)
         input(delegate, :secondary_email)
         input(delegate, :secondary_person_name)
-        input(delegate, :internal_notes, type: :text)
+        input(delegate, :external_notes, type: :text, placeholder: "Extra infos for the candidate")
+        input(delegate, :internal_notes, type: :text, placeholder: "Internal Avril notes")
 
         content do
           content_tag(:p, class: "text-center") do
