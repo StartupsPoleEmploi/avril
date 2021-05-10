@@ -77,7 +77,7 @@ defmodule VaeWeb.CertificationController do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
-      certification <- Repo.get!(Certification, id)
+      certification when not is_nil(certification) <- Repo.get(Certification, id)
     ) do
       if certification.slug != slug do
         # Slug is not up-to-date
@@ -107,6 +107,11 @@ defmodule VaeWeb.CertificationController do
           similars: similars
         )
       end
+    else
+      nil ->
+        conn
+        |> put_flash(:warning, "La certification demandée n'a pas été trouvée. Merci d'effectuer une nouvelle recherche.")
+        |> redirect(to: Routes.root_path(conn, :index))
     end
   end
 
