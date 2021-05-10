@@ -146,7 +146,6 @@ defmodule Vae.Certification do
 
   def searchable_query() do
     from(c in Certification,
-      # where: c.is_active
       where: c.is_active and fragment("""
         EXISTS (
           SELECT null FROM delegates

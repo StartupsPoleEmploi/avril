@@ -9,7 +9,7 @@
         = " - "
         strong
           = link("RNCP #{@certification.rncp_id}", to: "https://www.francecompetences.fr/recherche/rncp/#{@certification.rncp_id}/", target: "_blank")
-  = if @certification.is_active do
+  = if @certification.is_active and length(@certification.delegates) > 0 do
     - {intro, rest} = VaeWeb.CertificationView.split_intro(@certification)
     = if intro do
       section.section.is-small#activities
@@ -61,17 +61,17 @@
       .notification.is-yellow.has-bubble
         .columns
           .column.is-8.is-offset-2.has-text-centered.content.is-medium
-            h2.title.is-3 Bienvenue sur Avril !
-            p Vous avez l'air intéressé par le #{Vae.String.prepend_if_not_repeat("diplôme", Vae.Certification.name(@certification))} ! Même si ce diplôme n'est pas proposé en accès VAE chez nous, vous pouvez consulter ci-dessous les diplômes les plus proches ou démarrer une nouvelle recherche !
+            h2.title.is-3 Ce diplôme n'est pas actif
+            p Vous avez l'air intéressé par le #{Vae.String.prepend_if_not_repeat("diplôme", Vae.Certification.name(@certification))} ! Ce diplôme n'est pas proposé en accès VAE chez nous, mais vous pouvez consulter ci-dessous les diplômes les plus proches ou démarrer une nouvelle recherche !
   = if length(@similars) > 0 do
     section.section.is-small#similars
       .columns
         .column.is-10.is-offset-1
-          h3.subtitle.is-3
+          h3.subtitle.is-3 style="margin-bottom: 2rem"
             = if @certification.is_active do
-              | Nos candidats s'intéressent aussi à ces diplômes
+              | Nos candidats s'intéressent aussi à ces diplômes :
             - else
-              | Diplômes actifs les plus proches
+              | Diplômes actifs les plus proches :
           .columns.is-multiline
             = for similar <- @similars do
               .column.is-4

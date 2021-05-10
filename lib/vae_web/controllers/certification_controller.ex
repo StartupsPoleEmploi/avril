@@ -86,12 +86,12 @@ defmodule VaeWeb.CertificationController do
         )
       else
         %Certification{is_active: is_active} = certification =
-          Repo.preload(certification, [:certifiers, romes: [active_certifications: :certifiers]])
+          Repo.preload(certification, [:delegates, romes: [:active_certifications]])
 
-        nb_similars = if is_active, do: 3, else: 6
+        nb_similars = if is_active and length(certification.delegates) > 0, do: 3, else: 6
 
         similars =
-          from(c in Certification)
+          Certification.searchable_query()
           |> join(:left, [c], r in assoc(c, :romes))
           |> where([c, r], r.id in ^Enum.map(certification.romes, &(&1.id)))
           |> where([c, r], c.id != ^certification.id)
