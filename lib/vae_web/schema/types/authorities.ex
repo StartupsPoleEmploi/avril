@@ -36,6 +36,7 @@ defmodule VaeWeb.Schema.Types.Authorities do
     field(:address, :string)
     field(:telephone, :string)
     field(:website, :string)
+    field(:external_notes, :string)
   end
 
   object :meeting do
@@ -53,6 +54,7 @@ defmodule VaeWeb.Schema.Types.Authorities do
 
   object :certifier do
     field(:name, :string)
+    field(:external_notes, :string)
   end
 
   input_object :geo_input do
