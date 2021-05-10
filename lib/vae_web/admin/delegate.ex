@@ -33,6 +33,7 @@ defmodule Vae.ExAdmin.Delegate do
         row(:is_active)
         row(:slug)
         row(:name)
+        row(:is_prc)
         row(:address_name)
         row(:address)
         row(:city)
@@ -159,11 +160,12 @@ defmodule Vae.ExAdmin.Delegate do
         )
 
         input(delegate, :name)
-        input(delegate, :website)
+        input(delegate, :is_prc)
         input(delegate, :address_name)
         input(delegate, :address)
         input(delegate, :telephone)
         input(delegate, :email)
+        input(delegate, :website)
         input(delegate, :person_name)
         input(delegate, :secondary_email)
         input(delegate, :secondary_person_name)
@@ -221,6 +223,7 @@ defmodule Vae.ExAdmin.Delegate do
       column(:is_active)
       column(:slug)
       column(:name)
+      column(:is_prc)
       column(:address_name)
       column(:address)
       column(:city)
@@ -235,6 +238,7 @@ defmodule Vae.ExAdmin.Delegate do
       column(:internal_notes)
     end
 
+    filter([:is_prc])
     filter(:applications, scope: :recent)
     # filter(:certifications, scope: :active)
     filter([:is_active, :id, :slug, :email, :city, :administrative, :internal_notes])

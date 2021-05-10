@@ -11,6 +11,8 @@ defmodule Vae.Delegate do
   }
 
   schema "delegates" do
+    field(:is_active, :boolean, default: false)
+    field(:is_prc, :boolean, default: false)
     field(:slug, :string)
     field(:name, :string)
     field(:academy_id, :string)
@@ -22,7 +24,6 @@ defmodule Vae.Delegate do
     field(:person_name, :string)
     field(:secondary_email, :string)
     field(:secondary_person_name, :string)
-    field(:is_active, :boolean, default: false)
     field(:geom, Geo.PostGIS.Geometry)
     field(:city, :string)
     field(:administrative, :string)
@@ -121,6 +122,7 @@ defmodule Vae.Delegate do
       :secondary_email,
       :secondary_person_name,
       :is_active,
+      :is_prc,
       :geom,
       :city,
       :administrative,
