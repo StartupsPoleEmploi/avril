@@ -1,0 +1,21 @@
+.card.selector-card.delegate-card title=@delegate.name
+  .card-header
+    h4.title.is-4
+      = @delegate.name
+  .card-content
+    p= @delegate.address_name
+    p= @delegate.address
+    = if @delegate.telephone do
+      p
+        strong Tél :
+        =< link(@delegate.telephone, to: "tel:#{String.replace(@delegate.telephone, " ","")}")
+    = if @delegate.email do
+      p
+        strong Email :
+        =< link(@delegate.email, to: "mailto:#{@delegate.email}")
+    = if @delegate.website do
+      p
+        strong Site internet :
+        =< link(@delegate.website, to: @delegate.website, target: "_blank")
+  .card-footer
+    = link("Démarrez votre VAE", to: Routes.signup_path(@conn, :new), class: "button has-text-weight-bold is-transparent")

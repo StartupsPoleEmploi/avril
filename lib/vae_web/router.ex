@@ -60,7 +60,6 @@ defmodule VaeWeb.Router do
     get("/synthese-vae", VaeWeb.PageController, :synthesis)
     get("/bien-choisir-son-diplome-vae", VaeWeb.PageController, :choose_certification)
     get("/avril-aime-tous-ses-utilisateurs", VaeWeb.PageController, :accessibility_promess)
-    get("/point-relais-conseil-vae", VaeWeb.PageController, :point_relais_conseil)
     get("/certificateur-vae-definition", VaeWeb.PageController, :certificateur_vae_definition)
     get("/pourquoi-une-certification", VaeWeb.PageController, :pourquoi_une_certification)
     get("/contact", VaeWeb.PageController, :contact)
@@ -76,6 +75,10 @@ defmodule VaeWeb.Router do
     get("/certificateurs/:administrative", VaeWeb.DelegateController, :geo)
     resources("/certificateurs/:administrative/:city", VaeWeb.DelegateController,
       only: [:index, :show, :update]
+    )
+    get("/point-relais-conseil-vae", VaeWeb.DelegateController, :geo, as: :prc)
+    resources("/point-relais-conseil-vae/:administrative", VaeWeb.DelegateController,
+      only: [:index], as: :prc
     )
 
     resources("/diplomes", VaeWeb.CertificationController, only: [:index, :show]) do

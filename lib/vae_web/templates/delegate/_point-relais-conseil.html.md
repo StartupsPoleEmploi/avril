@@ -1,13 +1,3 @@
-# _Les Points Relais Conseil (PRC)_
-
-## Vous souhaitez élaborer votre projet de VAE ?
-
-Vous hésitez sur le choix du diplôme ?
-
-Vous voulez une aide pour constituer votre demande de VAE ?
-
-Prenez un [rendez-vous](http://www.vae.gouv.fr/?page=carte-prc) gratuit avec un conseiller VAE spécialisé.
-
 Les centres de conseil en VAE peuvent vous renseigner par téléphone, mail ou directement sur place sur votre projet VAE.
 
 Ils peuvent vous conseiller lors d’un entretien individuel, neutre et confidentiel pour :
@@ -20,5 +10,3 @@ Ils peuvent vous conseiller lors d’un entretien individuel, neutre et confiden
 - Elaborer un planning prévisionnel de votre parcours de VAE  en fonction des dates de jury potentielles
 - Explorer les pistes alternatives si nécessaire : formation, bilan de compétences...
 - Orienter sur la prochaine étape (certificateur ou autre piste) et fournir les ressources nécessaires (référentiel de certification, dossier de recevabilité, coordonnées des certificateurs, financeurs, d’opérateurs CEP...)
-
-**[Trouver votre PRC](http://www.vae.gouv.fr/?page=carte-prc)**

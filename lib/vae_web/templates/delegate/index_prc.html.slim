@@ -1,0 +1,14 @@
+section.section#title
+  .container
+    = render VaeWeb.ComponentView, "back_button", conn: @conn, label: "Retour aux régions", to: Routes.prc_path(@conn, :geo)
+    h1.title.is-1 #{Vae.String.inflect("Point", length(@delegates))} Relais Conseil VAE en #{@administrative}
+section.section#results
+  .container
+    = for chunk <- Enum.chunk_every(@delegates, 3) do
+      .columns
+        = for delegate <- chunk do
+          .column.is-4 style="display: flex;"
+            = render VaeWeb.ComponentView, "prc-card.html", conn: @conn, delegate: delegate
+- paginate_path = fn conn, route, params -> Routes.prc_path(conn, route, @administrative_slug, params) end
+= render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: paginate_path
+

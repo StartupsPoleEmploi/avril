@@ -4,22 +4,32 @@ section.section
       = render VaeWeb.ComponentView, "back_button", conn: @conn, label: "Régions", default_to: Routes.delegate_path(@conn, :geo)
     - else
       = render VaeWeb.ComponentView, "back_button", conn: @conn
-    .results.has-text-centered
-      h1.title.is-1
-        | Explorer les certificateurs VAE
-        = if assigns[:administrative] do
-          |  de la région #{assigns[:administrative]}
+    .results
+      h1.title.is-1.has-text-centered
+        = if @is_prc do
+          | Les Points Relais Conseil (PRC)
         - else
-          |  par région
+          | Explorer les certificateurs VAE
+          = if assigns[:administrative] do
+            |  de la région #{assigns[:administrative]}
+          - else
+            |  par région
       - elements = assigns[:cities] || assigns[:administratives]
-      p.subtitle Nous avous identifié des certificateurs dans #{Vae.String.inflect("la #{if assigns[:cities], do: "ville", else: "région"} suivante", length(elements))} :
+      = if @is_prc do
+        .columns.is-centered
+          .column.is-6.content
+            = render "_point-relais-conseil.html", assigns
 
-      = if assigns[:administratives] do
-        ul
-          = for administrative <- @administratives do
-            li= link(administrative, to: Routes.delegate_path(@conn, :geo, Vae.String.parameterize(administrative)))
-      = if assigns[:cities] do
-        ul
-          = for city <- @cities do
-            li= link(city, to: Routes.delegate_path(@conn, :index, Vae.String.parameterize(assigns[:administrative]), Vae.String.parameterize(city)))
+      .has-text-centered
+        p.subtitle
+          | Nous avous identifié des #{if @is_prc, do: "Points Relais Conseil", else: "certificateurs"} dans #{Vae.String.inflect("la #{if assigns[:cities], do: "ville", else: "région"} suivante", length(elements))} :
+        = if assigns[:administratives] do
+          ul
+            = for administrative <- @administratives do
+              li
+                = link(administrative, to: (if @is_prc, do: Routes.prc_path(@conn, :index, Vae.String.parameterize(administrative)), else: Routes.delegate_path(@conn, :geo, Vae.String.parameterize(administrative))))
+        = if assigns[:cities] do
+          ul
+            = for city <- @cities do
+              li= link(city, to: Routes.delegate_path(@conn, :index, Vae.String.parameterize(assigns[:administrative]), Vae.String.parameterize(city)))
 
