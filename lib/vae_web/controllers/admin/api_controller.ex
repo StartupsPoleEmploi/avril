@@ -70,6 +70,20 @@ defmodule ExAdmin.ApiController do
     json(conn, GenServer.call(Status, :get))
   end
 
+  def sql(conn, %{"query" => "users"}) do
+    query = """
+    SELECT u.identity -> 'current_situation' -> 'status' status, COUNT(*)
+    FROM users u
+    GROUP BY status;
+    """
+
+    %{rows: rows} = Ecto.Adapters.SQL.query!(Vae.Repo, query)
+    result = Enum.reduce(rows, %{}, fn [k, v], acc ->
+      Map.put(acc, k || "unknown", v + (acc[k || "unknown"] || 0))
+    end)
+    json(conn, result)
+  end
+
   def sql(conn, %{"query" => query} = params) do
     start_date = Vae.String.blank_is_nil(params["start_date"])
     end_date = Vae.String.blank_is_nil(params["end_date"])

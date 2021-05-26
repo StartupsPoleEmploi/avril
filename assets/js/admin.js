@@ -1,11 +1,9 @@
 /* global $ */
 
-import 'chosen-js';
-import 'chosen-js/chosen.css';
-
 import he from 'he';
 import './admin/tables';
 import './admin/charts';
+import './admin/pies';
 import './admin/statusEditor';
 
 function debounce(func, wait, immediate) {

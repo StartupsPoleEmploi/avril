@@ -82,6 +82,11 @@ defmodule Vae.ExAdmin.Dashboard do
         h4 between_dates_string(start_date, end_date)
         div "#certifications-table", ["data-url": "/admin/sql?query=certifications&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}"]
       end
+      hr()
+      div ".section" do
+        h2 "Situation actuelle des utilisateurs"
+        div "#users-pie", ["data-url": "/admin/sql?query=users"]
+      end
     end
   end
 

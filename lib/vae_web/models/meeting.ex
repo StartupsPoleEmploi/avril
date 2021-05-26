@@ -90,7 +90,7 @@ defmodule Vae.Meeting do
       |> Repo.one()
   end
 
-  def find_future_meetings_for_delegate(%Delegate{academy_id: academy_id, geom: geom} = d, radius \\ 50_000) do
+  def find_future_meetings_for_delegate(%Delegate{academy_id: academy_id, geom: geom} = d, radius \\ 200_000) do
 
     from(m in Meeting)
       |> where([m], m.source == ^"#{Delegate.get_meeting_source(d)}")

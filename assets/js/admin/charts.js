@@ -160,8 +160,8 @@ const renderChart = name => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="semaine" tickFormatter={formatWeekNumber} interval="preserveStartEnd" minTickGap={30} />
                 <YAxis />
-                {getLines(data.query.type).map(line =>
-                  <ReferenceLine x={line.date.format('YYYY-ww')} stroke={line.color}>
+                {getLines(data.query.type).map((line, idx) =>
+                  <ReferenceLine key={idx} x={line.date.format('YYYY-ww')} stroke={line.color}>
                     <Label value={line.label} angle={90} position="left"/>
                   </ReferenceLine>
                 )}
