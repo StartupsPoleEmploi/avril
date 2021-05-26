@@ -101,15 +101,18 @@ defmodule Vae.Meeting do
   end
 
   def mark_as_deleted_and_inform(%Meeting{} = meeting) do
-    %Meeting{applications: applications} = Repo.preload(meeting, [applications: :user])
+    %Meeting{applications: applications} = meeting |> Repo.preload([applications: :user])
 
-    meeting
+    {:ok, _} = Enum.reduce(applications, {:ok, nil}, fn application, {:ok, _} ->
+      application
+      |> VaeWeb.ApplicationEmail.user_meeting_cancelled()
+      |> VaeWeb.Mailer.send()
+    end)
+
+    {:ok, _} = meeting
     |> change(%{deleted_at: DateTime.truncate(DateTime.utc_now(), :second)})
     |> Repo.update()
-    |> case do
-      {:ok, meeting} -> Enum.each(applications, &VaeWeb.ApplicationEmail.user_meeting_cancelled(&1, meeting))
-      {:error, error} -> Logger.error(error)
-    end
+
     meeting
   end
 

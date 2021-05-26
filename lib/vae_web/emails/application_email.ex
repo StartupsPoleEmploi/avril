@@ -1,9 +1,10 @@
 defmodule VaeWeb.ApplicationEmail do
+  require Logger
   alias VaeWeb.Mailer
 
   @date_format "%d/%m/%Y à %H:%M"
 
-  alias Vae.{Certification, Delegate, Repo, User, URI}
+  alias Vae.{Certification, Delegate, Repo, User, UserApplication, URI}
   alias VaeWeb.Router.Helpers, as: Routes
 
   def delegate_submission(application, endpoint \\ URI.endpoint()) do
@@ -108,20 +109,25 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
-  def user_meeting_cancelled(application, meeting, endpoint \\ URI.endpoint()) do
-    Mailer.build_email(
-      "application/user_meeting_cancelled.html",
-      :avril,
-      application.user,
-      %{
-        url: User.profile_url(endpoint, application),
-        meeting: meeting.data,
-        source: Vae.Meeting.source_string(meeting.source),
-        username: User.fullname(application.user),
-        date_format: @date_format,
-        footer_note: :inscrit_avril
-      }
-    )
+  def user_meeting_cancelled(application, endpoint \\ URI.endpoint()) do
+    %UserApplication{meeting: meeting} = application |> Repo.preload(:meeting)
+    if not is_nil(meeting) do
+      Mailer.build_email(
+        "application/user_meeting_cancelled.html",
+        :avril,
+        application.user,
+        %{
+          url: User.profile_url(endpoint, application),
+          meeting: meeting.data,
+          source: Vae.Meeting.source_string(meeting.source),
+          username: User.fullname(application.user),
+          date_format: @date_format,
+          footer_note: :inscrit_avril
+        }
+      )
+    else
+      Logger.warn("Application #{application.id} has no meeting")
+    end
   end
 
   def user_raise(application, endpoint \\ URI.endpoint()) do
