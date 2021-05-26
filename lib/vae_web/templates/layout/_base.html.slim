@@ -36,6 +36,7 @@ html lang="fr"
     = @contents
 
     script src=Routes.static_path(@conn,"/js/app.js") async=true
+    script src="https://cdn.tagcommander.com#{Application.get_env(:vae, :tracking)[:tag_commander]}.js" async=true
     / = render VaeWeb.ComponentView, "hotjar", conn: @conn
     / = render VaeWeb.ComponentView, "crisp", conn: @conn
     = render VaeWeb.ComponentView, "tag_commander", conn: @conn
