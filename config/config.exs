@@ -132,7 +132,7 @@ config :vae, Vae.Scheduler,
       end
     ],
     meetings_task: [
-      schedule: "0 5 * * *",
+      schedule: "0 5,13 * * *",
       task: &Vae.Meetings.fetch_meetings/0
     ],
     update_certification_search_view: [
