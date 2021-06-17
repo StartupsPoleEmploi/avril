@@ -23,9 +23,7 @@ const renderPie = name => {
     fetch($container.dataset.url)
       .then(res => res.json())
       .then(objData => {
-        const data = Object.entries(objData)
-          .map(([name, value]) => ({name, value}))
-          .sort((a, b) => b.value - a.value);
+        const data = objData.sort((a, b) => b.value - a.value);
         const total = data.reduce((acc, d) => acc + d.value, 0);
         render(
           <div style={{height: '400px'}}>
@@ -37,7 +35,7 @@ const renderPie = name => {
                   minAngle={4}
                   startAngle={180}
                   endAngle={-180}
-                  label={entry => `${entry.value} ${entry.name} : ${parseInt(entry.percent * 100)}%`}
+                  label={entry => `${entry.value} ${entry.label} : ${parseInt(entry.percent * 100)}%`}
                 >
                   {
                     data.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]}/>)

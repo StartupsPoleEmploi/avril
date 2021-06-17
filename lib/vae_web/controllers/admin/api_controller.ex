@@ -79,8 +79,14 @@ defmodule ExAdmin.ApiController do
 
     %{rows: rows} = Ecto.Adapters.SQL.query!(Vae.Repo, query)
     result = Enum.reduce(rows, %{}, fn [k, v], acc ->
-      Map.put(acc, k || "unknown", v + (acc[k || "unknown"] || 0))
+      key = k || "unknown"
+      acc
+      |> Map.put(key, %{
+        value: v + (if acc[key], do: acc[key].value, else: 0),
+        label: Vae.Booklet.CurrentSituation.current_situation_label(key)
+      })
     end)
+    |> Map.values()
     json(conn, result)
   end
 

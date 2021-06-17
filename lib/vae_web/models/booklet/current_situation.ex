@@ -1,6 +1,5 @@
 defmodule Vae.Booklet.CurrentSituation do
   use Ecto.Schema
-
   import Ecto.Changeset
 
   @primary_key false
@@ -28,4 +27,16 @@ defmodule Vae.Booklet.CurrentSituation do
       :compensation_type
     ])
   end
+
+  def current_situation_label(status) do
+    case status do
+      "working" -> "En situation d'emploi"
+      "inactive" -> "En inactivité"
+      "jobseeking" -> "En recherche d'emploi"
+      "volontary" -> "Volontaire"
+      "election" -> "Mandat électoral"
+      "unknown" -> "Inconnu"
+    end
+  end
+
 end
