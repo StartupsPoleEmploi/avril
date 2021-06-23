@@ -16,6 +16,17 @@ defmodule VaeWeb.ViewHelpers do
   def level_info_by_level(8), do: "Bac +8"
   def level_info_by_level(_), do: "Sans Diplôme"
 
+  def resume_category_label("self_employed"), do: "Activité non salariée"
+  def resume_category_label("employment_certification"), do: "Attestation employeur"
+  def resume_category_label("volunteering"), do: "Bénévolat"
+  def resume_category_label("job_certification"), do: "Contrat de travail"
+  def resume_category_label("resume"), do: "CV"
+  def resume_category_label("certification"), do: "Diplôme"
+  def resume_category_label("payslip"), do: "Fiche de paie"
+  def resume_category_label("id"), do: "Pièce d'identité"
+  def resume_category_label("other"), do: "Autre"
+  def resume_category_label(_label), do: "Inconnu"
+
   def meta_certification(%{rome: r, delegate: d}) when not is_nil(r) and not is_nil(d) do
     " pour #{r.label} à #{d.name}"
   end

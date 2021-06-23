@@ -120,11 +120,15 @@
                 li
                   strong
                     = link("Livret de recevabilité complété (L1)", to: Routes.user_application_path(VaeWeb.Endpoint, :cerfa, @application, delegate_hash: @application.delegate_access_hash))
-              = for resume <- @application.resumes do
+              = for {category, resumes} <- Enum.group_by(@application.resumes, &(&1.category)) do
                 li.document
-                  = link to: resume.url, class: "download", download: resume.filename, data: [analytics: "CV#download certificateur"] do
-                    span.fa.fa-download
-                    = resume.filename
+                  = "#{resume_category_label(category)} : "
+                  ul
+                    = for resume <- resumes do
+                      li
+                        = link to: resume.url, class: "download", download: resume.name do
+                          span.fa.fa-download
+                          = resume.name
     = if not Enum.empty?(@user.experiences) do
       section.section.is-vertical
         h4.title.is-4 Ses expériences professionnelles

@@ -5,7 +5,8 @@ defmodule Vae.ExAdmin.Resume do
 
     index do
       column(:id)
-      column(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url) end)
+      column(:category, fn r -> VaeWeb.ViewHelpers.resume_category_label(r.category) end)
+      column(:file, fn r -> Phoenix.HTML.Link.link(r.name, to: r.url) end)
       column(:inserted_at)
       actions()
     end
@@ -15,9 +16,8 @@ defmodule Vae.ExAdmin.Resume do
     show _resume do
       attributes_table() do
         row(:id)
-        row(:name)
-        row(:category)
-        row(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url, target: "_blank", download: r.filename) end)
+        row(:category, fn r -> VaeWeb.ViewHelpers.resume_category_label(r.category) end)
+        row(:file, fn r -> Phoenix.HTML.Link.link(r.name, to: r.url, target: "_blank", download: r.name) end)
         row(:content_type)
         row(:inserted_at)
         row(:updated_at)
