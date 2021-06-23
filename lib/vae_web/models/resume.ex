@@ -9,6 +9,8 @@ defmodule Vae.Resume do
   alias __MODULE__
 
   schema "resumes" do
+    field(:name, :string)
+    field(:category, :string)
     field(:content_type, :string)
     field(:filename, :string)
     field(:url, :string)
@@ -29,9 +31,9 @@ defmodule Vae.Resume do
   @doc false
   def changeset(resume, params \\ %{}) do
     resume
-    |> cast(params, [:filename, :content_type, :url])
-    |> put_param_assoc(:application, params)
-    |> validate_required([:filename, :content_type, :url, :application])
+    |> cast(params, [:name, :category])
+    # |> put_param_assoc(:application, params)
+    # |> validate_required([:filename, :content_type, :url])
   end
 
   def attach_resume_to_application(application, file) do

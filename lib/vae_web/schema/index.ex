@@ -11,6 +11,11 @@ defmodule VaeWeb.Schema do
 
   alias VaeWeb.Resolvers.Resume
 
+  input_object :edit_resume_input do
+    field(:name, non_null(:string))
+    field(:category, non_null(:string))
+  end
+
   query do
     import_fields(:account_queries)
     import_fields(:application_queries)
@@ -23,6 +28,12 @@ defmodule VaeWeb.Schema do
     import_fields(:account_mutations)
     import_fields(:application_mutations)
 
+    @desc "Edit a resume by its id"
+    field(:edit_resume, :resume) do
+      arg(:id, non_null(:id))
+      arg(:params, non_null(:edit_resume_input))
+      resolve(&Resume.edit_resume/3)
+    end
     @desc "Delete a resume by its id"
     field(:delete_resume, :resume) do
       arg(:id, non_null(:id))

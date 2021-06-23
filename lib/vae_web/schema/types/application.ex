@@ -112,6 +112,8 @@ defmodule VaeWeb.Schema.Types.Application do
 
   object :resume do
     field(:id, :id)
+    field(:name, :string)
+    field(:category, :string)
     field(:content_type, :string)
     field(:filename, :string)
     field(:url, :string)

@@ -15,6 +15,8 @@ defmodule Vae.ExAdmin.Resume do
     show _resume do
       attributes_table() do
         row(:id)
+        row(:name)
+        row(:category)
         row(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url, target: "_blank", download: r.filename) end)
         row(:content_type)
         row(:inserted_at)
@@ -25,6 +27,8 @@ defmodule Vae.ExAdmin.Resume do
 
     form resume do
       inputs do
+        input(resume, :name)
+        input(resume, :category)
         input(resume, :filename)
         input(resume, :url)
         input(resume, :content_type)
