@@ -108,7 +108,7 @@ defmodule Vae.UserApplication do
 
   def generate_delegate_access_hash_changeset(application) do
     change(application, %{
-      delegate_access_hash: generate_hash(64),
+      delegate_access_hash: application.delegate_access_hash || generate_hash(64),
       delegate_access_refreshed_at: DateTime.utc_now() |> DateTime.truncate(:second)
     })
   end

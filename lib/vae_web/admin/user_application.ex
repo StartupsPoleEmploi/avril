@@ -67,7 +67,8 @@ defmodule Vae.ExAdmin.UserApplication do
       panel "Resumes" do
         table_for application.resumes do
           column(:id, fn r -> Helpers.link_to_resource(r, namify: fn r -> r.id end) end)
-          column(:file, fn r -> Phoenix.HTML.Link.link(r.filename, to: r.url) end)
+          column(:category)
+          column(:file, fn r -> Phoenix.HTML.Link.link(r.name, to: r.url, download: r.name, target: '_blank') end)
           column(:inserted_at)
         end
       end
