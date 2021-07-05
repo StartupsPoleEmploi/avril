@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { render } from 'react-dom';
 import moment from 'moment';
+import sortBy from 'lodash.sortby';
 import {
   Bar,
   BarChart,
@@ -18,19 +19,19 @@ import {
 
 const KEY_MAP = {
   week_number: 'semaine',
-  created: 'Créée',
-  delegated: 'Avec certificateur',
-  booklet_started: 'Livret 1 démarré',
-  booklet_finished: 'Livret 1 terminé',
-  resumed: 'Avec pièce jointe',
-  admissible: 'Candidatures transmises admissible après relance',
-  inadmissible: 'Candidatures transmises pas encore admissible après relance',
-  submitted: 'Candidatures transmises',
+  created: '1. Créée',
+  delegated: '2. Avec certificateur',
+  booklet_started: '3. Livret 1 démarré',
+  booklet_finished: '4. Livret 1 terminé',
+  resumed: '5. Avec pièce jointe',
+  submitted: '6. Candidatures transmises',
+  inadmissible: '7. Candidatures transmises pas encore admissible après relance',
+  admissible: '7bis. Candidatures transmises admissible après relance',
 }
 
 const COLORS = {
-  'created': '#dddddd',
-  'delegated': '#c7eeff',
+  'created': '#808080',
+  'delegated': '#66d1ff',
   'booklet_started': '#3498db',
   'booklet_finished': '#1f6390',
   'resumed': '#2c3e50',
@@ -110,12 +111,13 @@ const Aggregate = ({data}) => {
     }, result)
   }, {});
   const total = Object.values(aggregatedData).reduce((t, d) => (t+d), 0)
+  console.log(aggregatedData)
   return (
     <ul>
-      { Object.keys(aggregatedData).map(k =>
-        <li key={k}>{k}: {valueWithPercent(aggregatedData[k], total)} </li>
+      { sortBy(Object.entries(aggregatedData), ([k, v]) => k).map(([k, v]) =>
+        <li key={k}>{k}: {valueWithPercent(v, total)} </li>
       )}
-      <li>Total: {total} (100%)</li>
+      <li><strong>Total: {total} (100%)</strong></li>
     </ul>
   );
 }
