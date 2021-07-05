@@ -15,10 +15,11 @@ defmodule VaeWeb.JobSeekerEmail do
           Routes.root_url(
             endpoint,
             :index,
-            utm_campaign: "mj-#{Date.utc_today() |> to_string()}",
-            utm_medium: "inscription_pole_emploi_invitation_avril",
-            utm_source: "email",
-            js_id: id
+            at_campaign: "mail_hebdo_de_primo",
+            at_send_date: Date.utc_today() |> Timex.format!("{YYYY}0{M}0{D}"),
+            at_link: "call_to_action",
+            at_medium: "email",
+            at_emailtype: "acquisition"
           ),
         image_url: URI.static_url(endpoint, "/images/mon-diplome.jpg"),
         text_center: true,
