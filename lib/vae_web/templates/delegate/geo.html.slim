@@ -22,7 +22,7 @@ section.section
 
       .has-text-centered
         p.subtitle
-          | Nous avous identifié des #{if @is_prc, do: "Points Relais Conseil", else: "certificateurs"} dans #{Vae.String.inflect("la #{if assigns[:cities], do: "ville", else: "région"} suivante", length(elements))} :
+          | Nous avons identifié des #{if @is_prc, do: "Points Relais Conseil", else: "certificateurs"} dans #{Vae.String.inflect("la #{if assigns[:cities], do: "ville", else: "région"} suivante", length(elements))} :
         = if assigns[:administratives] do
           ul
             = for administrative <- @administratives do
