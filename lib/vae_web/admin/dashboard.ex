@@ -4,8 +4,8 @@ defmodule Vae.ExAdmin.Dashboard do
   register_page "Dashboard" do
     menu priority: 1, label: "Statistiques"
     content do
-      latest_campaign_job_seeker = Vae.Repo.one(from x in Vae.JobSeeker, where: not is_nil(x.identifier), order_by: [desc: x.id], limit: 1)
-
+      latest_campaign_job_seeker_date = Vae.Repo.one(from x in Vae.JobSeeker, where: not is_nil(x.identifier), order_by: [desc: x.id], limit: 1).inserted_at |> DateTime.to_date()
+      [nb_latest_campaign_job_seekers] = Vae.Repo.all(from x in Vae.JobSeeker, where: not is_nil(x.identifier) and fragment("?::date", x.updated_at) == ^latest_campaign_job_seeker_date, select: count(x.id))
       query = from c in Vae.Certifier, select: [:id, :name], order_by: [:id]
 
       certifier_id = Vae.String.blank_is_nil(conn.query_params["certifier_id"], &String.to_integer/1)
@@ -19,7 +19,7 @@ defmodule Vae.ExAdmin.Dashboard do
       h1 "“#{daily_quote()}”"
       hr()
 
-      p ".text-center Dernière campagne de mailing: #{Timex.format!(latest_campaign_job_seeker.inserted_at, "%d/%m/%Y", :strftime)}"
+      p ".text-center Dernière campagne de mailing: #{Timex.format!(latest_campaign_job_seeker_date, "%d/%m/%Y", :strftime)}. #{nb_latest_campaign_job_seekers} demandeurs contactés"
 
       hr()
       div ".text-center" do
