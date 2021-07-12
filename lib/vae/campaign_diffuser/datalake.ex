@@ -1,7 +1,7 @@
 defmodule Vae.CampaignDiffuser.Datalake do
   require Logger
-  alias Vae.{JobSeeker, Mailer, Repo}
-  alias VaeWeb.JobSeekerEmail
+  alias Vae.{JobSeeker, Repo}
+  alias VaeWeb.{JobSeekerEmail, Mailer}
 
   def process_primo_inscrits(date \\ nil), do:
     process(:primo_inscrits, date)
@@ -10,9 +10,11 @@ defmodule Vae.CampaignDiffuser.Datalake do
     process(:reinscrits, date)
 
   defp process(type, date \\ nil) when type in [:primo_inscrits, :reinscrits] do
-    extract_zip(type, date || Vae.Date.last_monday())
+    results = extract_zip(type, date || Vae.Date.last_monday())
     |> extract_csv()
-    |> Enum.each(&handle_row(&1))
+    |> Enum.map(&handle_row(&1))
+
+    Logger.info("#{length(results)} campaign mails sent")
   end
 
   defp handle_row({:ok, csv_row}) do
