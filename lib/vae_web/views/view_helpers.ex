@@ -24,8 +24,8 @@ defmodule VaeWeb.ViewHelpers do
   def resume_category_label("certification"), do: "Diplôme"
   def resume_category_label("payslip"), do: "Fiche de paie"
   def resume_category_label("id"), do: "Pièce d'identité"
-  def resume_category_label("other"), do: "Autre"
-  def resume_category_label(_label), do: "Inconnu"
+  def resume_category_label("other"), do: "Autre document"
+  def resume_category_label(_label), do: "Pièce jointe"
 
   def meta_certification(%{rome: r, delegate: d}) when not is_nil(r) and not is_nil(d) do
     " pour #{r.label} à #{d.name}"

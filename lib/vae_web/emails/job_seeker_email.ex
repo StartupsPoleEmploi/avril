@@ -31,16 +31,4 @@ defmodule VaeWeb.JobSeekerEmail do
       }
     )
   end
-
-  def stock(job_seeker) do
-    Mailer.build_email(
-      Vae.UserApplications.Config.get_stock_template_id(),
-      :avril,
-      job_seeker,
-      %{
-        job_seeker_id: job_seeker.id,
-        footer_note: :mise_en_relation
-      }
-    )
-  end
 end

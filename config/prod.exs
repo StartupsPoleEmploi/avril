@@ -9,19 +9,3 @@ config :vae, VaeWeb.Endpoint,
 
 # Do not print debug messages in production
 config :logger, level: :info
-
-# config :vae, Vae.Scheduler,
-#   jobs: [
-#     registered_campaign_task: [
-#       schedule: "30 10 * * 2",
-#       task: fn () ->
-#         Vae.CampaignDiffuser.Handler.execute_registered(Vae.Date.last_monday())
-#       end
-#     ],
-#     new_registered_campaign_task: [
-#       schedule: "30 14 * * 2",
-#       task: fn () ->
-#         Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
-#       end
-#     ]
-#   ]

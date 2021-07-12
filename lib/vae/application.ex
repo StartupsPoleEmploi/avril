@@ -28,20 +28,8 @@ defmodule Vae.Application do
       ]
     }
 
-    meetings_children = %{
-      should_start:
-        Application.get_env(:vae, :meetings_indice) &&
-          Phoenix.Endpoint.server?(:vae, VaeWeb.Endpoint),
-      children: [
-        #        worker(Vae.Meetings.StateHolder, []),
-        # worker(Vae.Meetings.FranceVae.Server, []),
-        #        worker(Vae.Meetings.Afpa.Server, []),
-        # Vae.Meetings.FranceVae.Connection.Cache
-      ]
-    }
-
     Supervisor.start_link(
-      [repo_children, server_children, meetings_children]
+      [repo_children, server_children]
       |> Enum.filter(fn c -> c.should_start end)
       |> Enum.map(fn c -> c.children end)
       |> Enum.concat(),

@@ -122,7 +122,7 @@
                     = link("Livret de recevabilité complété (L1)", to: Routes.user_application_path(VaeWeb.Endpoint, :cerfa, @application, delegate_hash: @application.delegate_access_hash))
               = for {category, resumes} <- Enum.group_by(@application.resumes, &(&1.category)) do
                 li.document
-                  = "#{resume_category_label(category)} : "
+                  = "#{resume_category_label(category) |> Vae.String.inflect(length(resumes))} : "
                   ul
                     = for resume <- resumes do
                       li
