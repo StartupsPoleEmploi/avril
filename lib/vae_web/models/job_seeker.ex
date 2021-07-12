@@ -179,30 +179,4 @@ defmodule Vae.JobSeeker do
     end
   end
 
-  def insert_or_update!(job_seekers) when is_list(job_seekers) do
-    Enum.map(job_seekers, &insert_or_update!(&1))
-  end
-
-  def insert_or_update!(job_seeker) do
-    case Repo.get_by(JobSeeker, email: String.downcase(job_seeker.email)) do
-      nil ->
-        insert!(job_seeker)
-
-      actual_job_seeker ->
-        update!(actual_job_seeker, job_seeker)
-    end
-  end
-
-  def insert!(job_seeker) do
-    %JobSeeker{}
-    |> __MODULE__.changeset(job_seeker)
-    |> Repo.insert!()
-  end
-
-  def update!(current_job_seeker, job_seeker) do
-    current_job_seeker
-    |> Changeset.change(job_seeker)
-    |> Repo.update!()
-  end
-
 end
