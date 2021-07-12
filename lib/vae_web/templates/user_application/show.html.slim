@@ -126,9 +126,9 @@
                   ul
                     = for resume <- resumes do
                       li
-                        = link to: resume.url, class: "download", download: resume.name do
+                        = link to: resume.url, class: "download", download: Vae.Resume.filename(resume) do
                           span.fa.fa-download
-                          = resume.name
+                          = Vae.Resume.filename(resume)
     = if not Enum.empty?(@user.experiences) do
       section.section.is-vertical
         h4.title.is-4 Ses expériences professionnelles

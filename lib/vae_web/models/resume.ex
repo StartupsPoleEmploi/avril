@@ -20,6 +20,8 @@ defmodule Vae.Resume do
     belongs_to(:application, Vae.UserApplication, foreign_key: :application_id)
   end
 
+  def filename(%Resume{filename: filename, name: name}), do: name || filename
+
   def from_file_and_application_id(file, application_id) do
     %Resume{
       content_type: file.content_type,
