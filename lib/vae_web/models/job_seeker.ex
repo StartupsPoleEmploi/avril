@@ -184,7 +184,7 @@ defmodule Vae.JobSeeker do
   end
 
   def insert_or_update!(job_seeker) do
-    case Repo.get_by(JobSeeker, email: job_seeker.email) do
+    case Repo.get_by(JobSeeker, email: String.downcase(job_seeker.email)) do
       nil ->
         insert!(job_seeker)
 

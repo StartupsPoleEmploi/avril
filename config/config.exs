@@ -121,15 +121,11 @@ config :vae, Vae.Scheduler,
     ],
     registered_campaign_task: [
       schedule: "30 10 * * 2",
-      task: fn () ->
-        Vae.CampaignDiffuser.Handler.execute_registered(Vae.Date.last_monday())
-      end
+      task: &Vae.CampaignDiffuser.Datalake.process_reinscrits/0
     ],
     new_registered_campaign_task: [
       schedule: "30 14 * * 2",
-      task: fn () ->
-        Vae.CampaignDiffuser.Handler.execute_new_registered(Vae.Date.last_monday())
-      end
+      task: &Vae.CampaignDiffuser.Datalake.process_primo_inscrits/0
     ],
     meetings_task: [
       schedule: "0 5,13 * * *",
