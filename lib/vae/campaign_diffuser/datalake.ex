@@ -3,6 +3,11 @@ defmodule Vae.CampaignDiffuser.Datalake do
   alias Vae.{JobSeeker, Repo}
   alias VaeWeb.{JobSeekerEmail, Mailer}
 
+  def process_both(date \\ nil) do
+    process_primo_inscrits(date)
+    process_reinscrits(date)
+  end
+
   def process_primo_inscrits(date \\ nil), do:
     process(:primo_inscrits, date)
 
