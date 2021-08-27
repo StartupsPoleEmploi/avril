@@ -24,7 +24,7 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
             commentaire: nil
 
   def from_application(application = %Vae.UserApplication{}) do
-    identity = application.user.identity
+    identity = Vae.Maybe.try(application, [:user, :identity])
 
     %__MODULE__{
       civilite: format_gender(identity.gender),
@@ -32,11 +32,11 @@ defmodule Vae.Meetings.FranceVae.UserRegistration do
       nomNaiss: nil,
       prenom: identity.first_name,
       dateNaissance: format_birthday(identity.birthday),
-      lieuNaissance: "#{identity.birth_place.city}, #{identity.birth_place.country}",
-      adresse: identity.full_address.street,
+      lieuNaissance: "#{Vae.Maybe.try(identity, [:birth_place, :city])}, #{Vae.Maybe.try(identity, [:birth_place, :country])}",
+      adresse: Vae.Maybe.try(identity, [:full_address, :street]),
       adresseBis: nil,
-      cp: identity.full_address.postal_code,
-      commune: identity.full_address.city,
+      cp: Vae.Maybe.try(identity, [:full_address, :postal_code]),
+      commune: Vae.Maybe.try(identity, [:full_address, :city]),
       courrier: identity.email,
       telephonePortable: format_phone_number(identity.mobile_phone),
       diplomeVise: format_diplome_vise(application.certification.acronym),
