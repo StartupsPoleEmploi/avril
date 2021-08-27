@@ -26,7 +26,7 @@ Prenez connaissance de la [fiche ROME](https://www.pole-emploi.fr/candidat/les-f
 
 **_2_**
 
-Prenez connaissance du contenu du « résumé du référentiel emploi et éléments de compétence acquis » du [RNCP](http://www.rncp.cncp.gouv.fr) (Répertoire National des Certifications Professionnelles) du diplôme retenu. Vous devez alors observer si ces éléments correspondent assez largement au(x)poste(s) que vous avez occupé(s).
+Prenez connaissance du contenu du « résumé du référentiel emploi et éléments de compétence acquis » du [RNCP](https://www.francecompetences.fr/recherche_certificationprofessionnelle/) (Répertoire National des Certifications Professionnelles) du diplôme retenu. Vous devez alors observer si ces éléments correspondent assez largement au(x)poste(s) que vous avez occupé(s).
 
 **_3_**
 
