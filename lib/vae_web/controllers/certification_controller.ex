@@ -52,7 +52,6 @@ defmodule VaeWeb.CertificationController do
   def index(conn, params) do
     with(
       {:ok, filtered_query, filter_values} <- apply_filters(Certification.searchable_query(), conn),
-      total <- Repo.aggregate(filtered_query, :count, :id),
       by_level_total <- count_with_level(filtered_query),
       ordered_query <- Certification.sort_by_popularity(filtered_query),
       page <- Repo.paginate(ordered_query, Map.merge(params, %{page_size: 9}))
@@ -62,7 +61,6 @@ defmodule VaeWeb.CertificationController do
         "index.html",
         %{
           certifications: page.entries,
-          total: total,
           by_level_total: by_level_total,
           page: page,
           params: params,
@@ -148,12 +146,31 @@ defmodule VaeWeb.CertificationController do
   defp enrich_filter_values(filters), do: filters
 
   def count_with_level(query) do
-    Enum.reduce(3..8, %{}, fn level, result ->
-      count =
-        from(c in query, [where: c.level == ^level])
-        |> Repo.aggregate(:count, :id)
+    levels = Enum.to_list(3..8)
 
-      Map.put(result, level, count)
+    counts = from(c in query, [
+      where: c.level in ^levels,
+      select: %{
+        level: c.level,
+        count: count(c.id)
+      },
+      group_by: c.level
+    ]) |> Repo.all()
+
+    Enum.reduce(levels, %{total: 0}, fn level, result ->
+      value = counts
+      |> Enum.find(&(&1.level == level))
+      |> case do
+        %{count: count} when is_integer(count) -> count
+        _ -> 0
+      end
+
+      result
+      |> Map.put(
+        level,
+        value
+      )
+      |> Map.put(:total, result.total + value)
     end)
   end
 end

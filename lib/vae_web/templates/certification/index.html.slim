@@ -24,16 +24,16 @@
         = for level <- 3..8 |> Enum.to_list() do
           - subtotal = @by_level_total[level]
           li
-            button disabled=(subtotal == 0) title="#{(if subtotal > 0, do: Vae.String.inflect(@by_level_total[level], "résultat"), else: "Aucun résultat")}" name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
+            button disabled=(subtotal == 0) title="#{(if subtotal > 0, do: Vae.String.inflect(subtotal, "résultat"), else: "Aucun résultat")}" name="level" type="submit" value=level id="level_#{level}" class="button is-rounded is-info is-togglable #{if @level == level, do: "is-active"}"
               = if subtotal > 0 do
                 span.tag.is-info.is-rounded= subtotal
               span= level_info_by_level(level)
   section.section#results
-    = if @total == 0 do
+    = if @by_level_total[:total] == 0 do
       = render("no-results.html", level: @level)
     - else
       h5.title.is-5
-        | Avril vous propose #{Vae.String.inflect(@total, "diplôme")}
+        | Avril vous propose #{Vae.String.inflect(@by_level_total[:total], "diplôme")}
         = if assigns[:profession] do
           |  pour le métier #{@profession.label}
         - else
