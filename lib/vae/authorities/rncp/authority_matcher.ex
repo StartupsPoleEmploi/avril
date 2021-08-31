@@ -203,7 +203,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "ministere-de-la-defense"
     ],
     "ministere-charge-de-l-agriculture" => [
-      "ministere-de-l-agriculture-et-de-la-peche"
+      "ministere-de-l-agriculture-et-de-la-peche",
+      "ministere-de-l-agriculture-et-de-l-alimentation"
     ],
     "universite-paris-saclay" => [
       "communaute-d-universites-et-etablissements-universite-paris-saclay",
