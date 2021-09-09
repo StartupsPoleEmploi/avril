@@ -6,11 +6,6 @@ ZIP_FILENAME="$FILENAME.zip"
 XML_FILENAME="$FILENAME.xml"
 XML_FILEPATH=${1:-"./priv/$XML_FILENAME"}
 
-echo "coucou"
-echo $XML_FILEPATH
-
-# XML_FILENAME=$(basename $XML_FILEPATH)
-
 cd "$(dirname "$0")/../.."
 
 if [ -f $XML_FILEPATH ]; then
