@@ -231,6 +231,15 @@ defmodule Vae.Delegate do
     other_delegates |> Enum.each(&Repo.delete(&1))
   end
 
+  def website(%Delegate{website: website}) do
+    case website do
+      "http://" <> rest -> website
+      "https://" <> rest -> website
+      other -> "http://#{website}"
+    end
+    |> String.trim()
+  end
+
   defimpl Phoenix.Param, for: Vae.Delegate do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"

@@ -23,7 +23,7 @@ section.section
             = if @delegate.website do
               li
                 span= "Site internet : "
-                a href=@delegate.website target="_blank"= @delegate.website
+                a href=Vae.Delegate.website(@delegate) target="_blank"= @delegate.website
         .section.is-small.has-text-centered
           .field
             = link("Démarrez votre VAE avec ce certificateur", to: Routes.signup_path(@conn, :new), class: "button is-primary is-rounded")
