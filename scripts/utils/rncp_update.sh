@@ -3,7 +3,7 @@
 TODAY=$(date '+%Y-%m-%d')
 FILENAME="export_fiches_RNCP_V2_0_$TODAY"
 ZIP_FILENAME="$FILENAME.zip"
-XML_FILEPATH=${1:-./priv/$XML_FILENAME}
+XML_FILEPATH=${1:-"./priv/$XML_FILENAME"}
 XML_FILENAME=$(basename $XML_FILEPATH)
 
 cd "$(dirname "$0")/../.."
