@@ -10,7 +10,7 @@ cd "$(dirname "$0")/../.."
 
 if [ -f $XML_FILEPATH ]; then
   echo "[info] $XML_FILENAME already here, cleaning former xml files and starting ..."
-  find ./priv/*.xml -type f -not -name "$XML_FILENAME" -print0 | xargs -0 -I {} rm -v {}
+  # find ./priv/*.xml -type f -not -name "$XML_FILENAME" -print0 | xargs -0 -I {} rm -v {}
 else
   echo "[info] $XML_FILENAME missing. Downloading ..."
   sshpass -p $RNCP_PASS sftp -o StrictHostKeyChecking=no -P $RNCP_PORT $RNCP_USERNAME@$RNCP_HOST:/xml_export/$ZIP_FILENAME /tmp
