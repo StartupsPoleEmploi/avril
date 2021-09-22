@@ -17,6 +17,13 @@ input.input {
 }
 
 form {
+  &.form {
+    .field-label label.is-required:after {
+      content: ' *';
+      color: red;
+    }
+  }
+
   &.toggler {
     ul li {
       display: inline-block;

@@ -5,6 +5,7 @@ import './admin/tables';
 import './admin/charts';
 import './admin/pies';
 import './admin/statusEditor';
+import autocomplete from './tools/autocomplete';
 
 function debounce(func, wait, immediate) {
   var timeout;
@@ -139,28 +140,29 @@ const selectMultipleWithMultiSelect = () => {
   })
 }
 
-const autocompleteDelegateAddress = () => {
-  const $input = $('input#delegate_address');
-  if ($input.length) {
-    $input.typeahead({highlight: true}, {
-      name: 'Address',
-      async: true,
-      display: result => result.properties.label,
-      templates: {
-        pending: e => (e.query.length > 5 ? 'Searching ...' : ''),
-        notFound: () => '<span>No results (<a href="https://adresse.data.gouv.fr/base-adresse-nationale" target="_blank">Verify</a>)</span>',
-      },
-      source: debounce((query, syncResults, asyncResults) => {
-        if (!query.length > 5) return;
-        syncResults([]);
-        fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}`)
-          .then(fetched => fetched.json())
-          .then(results => asyncResults(results.features))
-          .catch(err => asyncResults([]))
-      }, 500),
-    });
-  }
-}
+const autocompleteDelegateAddress = () => autocomplete('input#delegate_address');
+// {
+//   const $input = $('input#delegate_address');
+//   if ($input.length) {
+//     $input.typeahead({highlight: true}, {
+//       name: 'Address',
+//       async: true,
+//       display: result => result.properties.label,
+//       templates: {
+//         pending: e => (e.query.length > 5 ? 'Searching ...' : ''),
+//         notFound: () => '<span>No results (<a href="https://adresse.data.gouv.fr/base-adresse-nationale" target="_blank">Verify</a>)</span>',
+//       },
+//       source: debounce((query, syncResults, asyncResults) => {
+//         if (!query.length > 5) return;
+//         syncResults([]);
+//         fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}`)
+//           .then(fetched => fetched.json())
+//           .then(results => asyncResults(results.features))
+//           .catch(err => asyncResults([]))
+//       }, 500),
+//     });
+//   }
+// }
 
 $(document).ready(() => {
   addDelegateGeolocationMap();

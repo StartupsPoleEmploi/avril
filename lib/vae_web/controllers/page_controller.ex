@@ -2,7 +2,7 @@ defmodule VaeWeb.PageController do
   use VaeWeb, :controller
   import Ecto.Query
   alias VaeWeb.Mailer
-  alias Vae.{Certification, ContactForm, Delegate, Repo, FAQ}
+  alias Vae.{Certification, ContactForm, Delegate, DelegateContactForm, Repo, FAQ}
   alias VaeWeb.ContactEmail
 
   def index(conn, _params) do
@@ -108,6 +108,44 @@ defmodule VaeWeb.PageController do
       is_landing: true
     )
   end
+
+  def delegate_contact(conn, _params) do
+    render(conn, "delegate_contact.html",
+      title: "Me répertorier en tant que certificateur sur Avril",
+      description:
+        "Ecrivez-nous pour être référencé sur Avril en tant que certificateur VAE.",
+      contact_changeset: %DelegateContactForm{} |> Ecto.Changeset.change()
+    )
+  end
+
+  def submit_delegate_contact(conn, %{
+        "delegate_contact_form" => variables
+      }) do
+    with(
+      %Ecto.Changeset{valid?: true, changes: changes} <- DelegateContactForm.changeset(%DelegateContactForm{}, variables),
+      {:ok, _messages} <- Mailer.send([
+        ContactEmail.delegate_submit(changes),
+        ContactEmail.delegate_confirm(changes)
+      ])
+    ) do
+      conn
+      |> put_flash(:success, "Votre demande a bien été envoyée.")
+      |> redirect(to: Routes.root_path(conn, :index))
+    else
+      %Ecto.Changeset{} = changeset ->
+        conn
+        |> put_flash(:danger, "Votre demande n'a pas pu être envoyée. Les erreurs sont décrites ci-dessous.")
+        |> render("contact.html",
+          title: "Contacter l'équipe Avril",
+          contact_changeset: changeset
+        )
+      error ->
+        conn
+         |> put_flash(:danger, "Votre demande n'a pas pu être envoyée : #{inspect(error)}. Merci de réessayer plus tard.")
+         |> redirect(to: Routes.root_path(conn, :index))
+    end
+  end
+
 
   def contact(conn, _params) do
     render(conn, "contact.html",

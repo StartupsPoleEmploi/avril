@@ -64,6 +64,8 @@ defmodule VaeWeb.Router do
     get("/pourquoi-une-certification", VaeWeb.PageController, :pourquoi_une_certification)
     get("/contact", VaeWeb.PageController, :contact)
     post("/contact", VaeWeb.PageController, :submit_contact)
+    get("/delegate_contact", VaeWeb.PageController, :delegate_contact)
+    post("/delegate_contact", VaeWeb.PageController, :submit_delegate_contact)
     get("/financement-vae", VaeWeb.PageController, :financement)
     get("/tester-mon-eligibilite-vae", VaeWeb.UserController, :eligibility)
     post("/close-app-status", VaeWeb.PageController, :close_status)

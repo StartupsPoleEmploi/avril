@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import autocomplete from '../tools/autocomplete.js';
 
 $('#contact-form').on('submit', e => {
   e.preventDefault();
@@ -21,3 +22,5 @@ $('#contact-form').on('submit', e => {
     }
   });
 });
+
+autocomplete('#delegate_address');

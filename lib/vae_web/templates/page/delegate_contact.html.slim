@@ -1,0 +1,85 @@
+section.section.container
+  = render VaeWeb.ComponentView, "back_button", conn: @conn
+  .columns
+    .column.is-10.is-offset-1
+      h1.title.is-1.has-text-centered Demande de référencement sur Avril en tant que certificateur
+      .notification.is-warning
+        p
+          strong Conseil :
+          '  Avez-vous vérifié que vous n'étiez pas déjà référencé dans
+          = link("notre base", to: Routes.delegate_path(@conn, :geo))
+          |  ?
+
+section.section.container#form
+  .columns
+    .column.is-7.is-offset-1
+      = form_for @contact_changeset, Routes.page_path(@conn, :submit_delegate_contact), [class: "form"], fn f ->
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :name, "Nom de l'institution", class: "label is-required"
+          .field-body
+            .field
+              = text_input f, :name, class: "input #{if form_field_error(f, :name), do: "is-danger"}", placeholder: "Formation VAE", required: true
+              = error_tag f, :name
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :address, "Adresse", class: "label is-required"
+          .field-body
+            .field
+              = text_input f, :address, class: "input #{if form_field_error(f, :address), do: "is-danger"}", placeholder: "11 rue du village, 33333 Ma Ville", required: true, id: "delegate_address"
+              = error_tag f, :address
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :email, "Email", class: "label is-required"
+          .field-body
+            .field
+              = email_input f, :email, class: "input #{if form_field_error(f, :email), do: "is-danger"}", placeholder: "contact@exemple.com", required: true
+              = error_tag f, :email
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :tel, "Tél", class: "label is-required"
+          .field-body
+            .field
+              = telephone_input f, :tel, class: "input #{if form_field_error(f, :tel), do: "is-danger"}", placeholder: "01 23 45 67 89", required: true
+              = error_tag f, :tel
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :website, "Site internet", class: "label"
+          .field-body
+            .field
+              = text_input f, :website, class: "input #{if form_field_error(f, :website), do: "is-danger"}", placeholder: "https://www.exemple.com", required: false
+              = error_tag f, :website
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :person_name, "Nom du contact", class: "label"
+          .field-body
+            .field
+              = text_input f, :person_name, class: "input #{if form_field_error(f, :person_name), do: "is-danger"}", placeholder: "Monsieur Dupont", required: false
+              = error_tag f, :person_name
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :comment, "Commentaire", class: "label"
+          .field-body
+            .field
+              = textarea f, :comment, class: "textarea #{if form_field_error(f, :comment), do: "is-danger"}", placeholder: "Indiquez ici s'il y a plusieurs organismes qui vous représentent dans les territoires.", required: false, rows: 5
+              = error_tag f, :comment
+        .field.is-horizontal
+          .field-label.is-normal
+            = label f, :check, "Etes-vous un humain ?", class: "label is-required"
+          .field-body
+            .field
+              | Quel jour de la semaine étions-nous hier ?
+              = text_input f, :check, class: "input #{if form_field_error(f, :check), do: "is-danger"}", placeholder: "Ex: Lundi (avec ou sans majuscules)", required: true
+              = error_tag f, :check
+        .field.is-horizontal
+          .field-label
+          .field-body
+            .field
+              .control
+                = submit "Envoyer", class: "button is-primary", data: [disable_with: "Envoi en cours ..."]
+
+    .column.is-3
+      .notification.is-info
+        p
+          strong Etre référencé sur Avril, qu'est-ce que ça veut dire ?
+        p Vous vous engagez à répondre aux candidatures etc.

@@ -1,0 +1,20 @@
+.twitter-typeahead {
+  width: 100%;
+
+  .tt-menu {
+    background: white;
+    right: 0;
+    border: thin solid #d2d6de;
+    border-top: none;
+    box-shadow: 0 5px 5px #ccc;
+    padding: 1rem;
+  }
+
+  .tt-suggestion {
+    cursor: pointer;
+    &:not(:last-child) {
+      padding-bottom: 1rem;
+    }
+  }
+
+}

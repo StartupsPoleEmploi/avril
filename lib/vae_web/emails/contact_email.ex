@@ -39,4 +39,55 @@ defmodule VaeWeb.ContactEmail do
       }
     )
   end
+
+  def delegate_submit(%{
+    name: name,
+    address: address,
+    email: email,
+    tel: tel,
+    website: website,
+    person_name: person_name,
+    comment: comment
+  }) do
+    Mailer.build_email(
+      "contact/delegate_submit.html",
+      :avril,
+      :avril,
+      %{
+        reply_to: {name, email},
+        name: name,
+        address: address,
+        email_address: email,
+        tel: tel,
+        website: website,
+        person_name: person_name,
+        comment: comment
+      }
+    ) |> IO.inspect()
+  end
+
+  def delegate_confirm(%{
+    name: name,
+    address: address,
+    email: email,
+    tel: tel,
+    website: website,
+    person_name: person_name,
+    comment: comment
+  }) do
+    Mailer.build_email(
+      "contact/delegate_confirm.html",
+      :avril,
+      {name, email},
+      %{
+        name: name,
+        address: address,
+        email_address: email,
+        tel: tel,
+        website: website,
+        person_name: person_name,
+        comment: comment
+      }
+    )
+  end
 end

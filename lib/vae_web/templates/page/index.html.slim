@@ -79,6 +79,8 @@
                 = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
           .section.is-vertical.is-small.has-text-centered
             = link("Explorer les certificateurs", to: Routes.delegate_path(@conn, :geo), class: "button is-yellow is-rounded is-medium")
+            hr.is-invisible
+            = link("Demander à être référencé en tant que certificateur", to: Routes.page_path(@conn, :delegate_contact), class: "button is-text is-rounded is-small")
 
   section.section.is-medium.is-default#callback
     .container.content.is-medium

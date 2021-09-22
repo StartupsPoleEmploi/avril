@@ -14,4 +14,11 @@
               = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
 - paginate_path = fn conn, route, params -> Routes.delegate_path(conn, route, @administrative_slug, @city_slug, params) end
 = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: paginate_path
-
+  section.section
+    .container
+    .notification.is-info
+      p
+        strong Vous êtes certificateur VAE et vous n'êtes pas listé ?
+        '  Remplissez une
+        = link("demande de référencement", to: Routes.page_path(@conn, :delegate_contact))
+        |  sans attendre.
