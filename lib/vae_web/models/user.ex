@@ -69,7 +69,11 @@ defmodule Vae.User do
     model
     |> cast(params, @fields)
     |> pow_extension_changeset(params)
-    |> put_embed_if_necessary(params, :identity)
+    |> put_embed_if_necessary(Map.merge(params, %{
+      identity: Map.merge(%{
+        email: params["email"]
+      }, params["identity"] || params[:identity] || %{})
+    }), :identity)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
