@@ -20,11 +20,11 @@ section.section.pow-page
             p Ou bien
           .field
             .control
-              = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email"
+              = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email", autocomplete: "off"
               = error_tag f, :email
           .field
             .control
-              = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe"
+              = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe", autocomplete: "off"
               = error_tag f, :password
           .field
             label.checkbox

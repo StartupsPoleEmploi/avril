@@ -13,7 +13,7 @@ section.section.pow-page
                   li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
           .field
             .control
-              = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email"
+              = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email", autocomplete: "off"
               = error_tag f, :email
           .field.has-text-centered
             = submit "Recevoir par email un lien de réinitialisation", class: "button is-primary is-rounded is-medium", data: ["disable-with": "Envoi ..."]
