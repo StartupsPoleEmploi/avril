@@ -52,6 +52,7 @@ defmodule VaeWeb.Endpoint do
     Plug.Session,
     store: :cookie,
     key: "_vae_key",
+    secure: Mix.env() !== :dev,
     signing_salt: "2nvfILl2",
     extra: "SameSite=Strict"
   )
