@@ -13,6 +13,8 @@ docker-compose.override.yml
 /assets/static/robots.txt
 
 /db/dumps/*.dump
+/db/dumps/*.dump.bz2
+/db/dumps/*.dump.gz
 /db/pgadmin
 /db/data
 
