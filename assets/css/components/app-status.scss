@@ -1,0 +1,12 @@
+.app-status.notification {
+  .content {
+    strong a {
+      @extend .button;
+      @extend .is-primary;
+      @extend .is-rounded;
+      color: $white !important;
+      text-decoration: none;
+      vertical-align: middle;
+    }
+  }
+}

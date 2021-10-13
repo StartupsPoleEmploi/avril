@@ -103,6 +103,9 @@ class StatusForm extends React.Component {
           <div>
             <p>Le message suivant sera affiché {this.renderDateRange()} : </p>
             <div className={`app-status alert alert-${this.state.status.level}`} dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.status.message)}}></div>
+            {this.state.status.image && (
+              <p>Avec l'image <img src={`/images/${this.state.status.image}`} style={{maxWidth: '15rem'}} /></p>
+            )}
             <div className="row">
               <div className="col-sm-2">
                 <button onClick={e => this.setState({isEdit: true})} className="btn btn-primary">Editer le message</button>
@@ -124,11 +127,11 @@ class StatusForm extends React.Component {
                   onChange={e => this.editStatus('level', e.target.value)}
                   value={this.state.status && this.state.status.level || ''}
                 >
-                  <option className="text-info" value="info">Info (gris)</option>
+                  <option className="text-info" value="info">Info (bleu clair)</option>
+                  <option className="text-primary" value="primary">Primary (bleu foncé)</option>
                   <option className="text-warning" value="warning">Warning (jaune)</option>
                   <option className="text-danger" value="danger">Danger (rouge)</option>
                   <option className="text-success" value="success">Success (vert)</option>
-                  <option className="text-primary" value="primary">Primary (vert avril)</option>
                 </select>
               </div>
             </div>
@@ -177,6 +180,24 @@ class StatusForm extends React.Component {
                   onChange={date => this.editStatus('ends_at', date)}
                   selected={this.state.status && this.state.status.ends_at && new Date(this.state.status.ends_at)}
                 />
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="status" className="col-sm-2 control-label">Image</label>
+              <div className="col-sm-10">
+                <select
+                  className="form-control"
+                  onChange={e => this.editStatus('image', e.target.value)}
+                  value={this.state.status && this.state.status.image || ''}
+                >
+                  <option value="">Aucune</option>
+                  <option value="certificateur.svg">Certificateur</option>
+                  <option value="couple.svg">Couple</option>
+                  <option value="group.png">Groupe</option>
+                  <option value="mon-diplome.png">Diplôme</option>
+                  <option value="recevabilite.svg">Recevabilité</option>
+                  <option value="tampon-vae.svg">Tampon</option>
+                </select>
               </div>
             </div>
             <div className="form-group">
