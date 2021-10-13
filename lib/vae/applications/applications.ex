@@ -123,9 +123,10 @@ defmodule Vae.Applications do
   end
 
   def with_static_fields(booklet, application) do
-    application = Repo.preload(application, :certification)
+    application = Repo.preload(application, [certification: :romes])
 
     booklet
+    |> Map.put(:certification_romes, application.certification.romes)
     |> Map.put(:certification_name, Certification.name(application.certification))
     |> Map.put(:certifier_name, UserApplication.certifier_name(application))
   end

@@ -67,10 +67,16 @@ defmodule VaeWeb.Schema.Types.Application do
     field(:updated_at, :naive_datetime)
     field(:completed_at, :naive_datetime)
     field(:certification_name, :string)
+    field(:certification_romes, list_of(:rome))
     field(:certifier_name, :string)
     # field(:civility, :identity)
     field(:experiences, list_of(:experience))
     field(:education, :education)
+  end
+
+  object :rome do
+    field(:code, :string)
+    field(:label, :string)
   end
 
   object :experience do
