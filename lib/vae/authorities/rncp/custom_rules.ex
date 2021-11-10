@@ -42,6 +42,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   @ens_sup "ministere-de-l-enseignement-superieur"
   @solidarite "ministere-charge-de-la-solidarite"
   @sports "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"
+  @gobelins "gobelins-l-ecole-de-l-image"
 
   def cci_certifications_rncp_ids(), do: @cci_certifications_rncp_ids
   def wrong_educ_nat_certifiers(), do: @wrong_educ_nat_certifiers
@@ -108,6 +109,14 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   } = data) do
     Map.merge(data, %{acronym: "BATC"})
   end
+
+  def custom_data_transformations(%{
+    rncp_id: rncp_id
+    } = data) when rncp_id in ["31181", "31182", "25471", "34595", "35864", "25522", "31519"] do
+      Map.merge(data, %{
+        certifiers: [Repo.get_by(Certifier, slug: @gobelins)]
+      })
+    end
 
   def custom_data_transformations(%{
     rncp_id: rncp_id,
