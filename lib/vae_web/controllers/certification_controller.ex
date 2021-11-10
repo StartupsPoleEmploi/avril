@@ -97,9 +97,12 @@ defmodule VaeWeb.CertificationController do
           |> limit(^nb_similars)
           |> Repo.all()
 
+        existing_application = Enum.find(Repo.preload(Pow.Plug.current_user(conn), :applications).applications, &(&1.certification_id == certification.id))
+
         render(
           conn,
           "show.html",
+          existing_application: existing_application,
           is_asp: Certification.is_asp?(certification),
           certification: certification,
           similars: similars

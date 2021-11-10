@@ -29,9 +29,14 @@
         .notification.is-blue.has-bubble
           .columns
             .column.is-8.is-offset-2.has-text-centered.content.is-medium
-              h2.title.is-2 Commencer en douceur ma VAE
-              p Prenez quelques minutes pour créer tranquillement votre compte, renseigner votre profil et remplir votre candidature à votre rythme. Rassurez-vous, quoique vous fassiez sur notre site, rien n'est engageant car la décision finale, vous la prendrez avec le certificateur. A vous de jouer pour un diplôme !
-              = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
+              = if @existing_application do
+                h2.title.is-2 Candidature en cours
+                p Vous avez déjà démarré une candidature pour ce diplôme.
+                = link("Poursuivre ma candidature dans mon espace VAE", to: Vae.User.profile_url(@conn, @existing_application), class: "button is-primary is-rounded is-medium")
+              - else
+                h2.title.is-2 Commencer en douceur ma VAE
+                p Prenez quelques minutes pour créer tranquillement votre compte, renseigner votre profil et remplir votre candidature à votre rythme. Rassurez-vous, quoique vous fassiez sur notre site, rien n'est engageant car la décision finale, vous la prendrez avec le certificateur. A vous de jouer pour un diplôme !
+                = render VaeWeb.ComponentView, "select-certification-button.html", conn: @conn, certification: @certification, class: "button is-primary is-rounded is-medium", label: "Démarrer ma VAE"
 
     = if Vae.String.is_present?(rest) do
       section.section.is-small#activities_rest
