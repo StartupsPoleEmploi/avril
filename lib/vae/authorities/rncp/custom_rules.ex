@@ -34,7 +34,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
   @wrong_educ_nat_certifiers ~w(
     230 367 2028 2514 4495 4496 4500 4503 4505
-    18363 25467 34824 34827 34829 34862
+    18363 25467 28557 34824 34827 34829 34862
   )
   @missing_educ_nat_certifiers ~w(4875 34825 34826 34828 35044)
 
