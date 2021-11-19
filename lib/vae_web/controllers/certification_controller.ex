@@ -6,7 +6,8 @@ defmodule VaeWeb.CertificationController do
     Certification,
     Profession,
     Repo,
-    Rome
+    Rome,
+    User
   }
 
   def cast_array(str), do: String.split(str, ",") |> Enum.map(&String.to_integer/1)
@@ -97,7 +98,11 @@ defmodule VaeWeb.CertificationController do
           |> limit(^nb_similars)
           |> Repo.all()
 
-        existing_application = Enum.find(Repo.preload(Pow.Plug.current_user(conn), :applications).applications, &(&1.certification_id == certification.id))
+        existing_application = case Repo.preload(Pow.Plug.current_user(conn), :applications) do
+          %User{applications: applications} ->
+            Enum.find(applications, &(&1.certification_id == certification.id))
+          _ -> nil
+        end
 
         render(
           conn,
