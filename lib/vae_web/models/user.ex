@@ -84,8 +84,7 @@ defmodule Vae.User do
   end
 
   def do_password_changeset(changeset, %{
-    password: password,
-    current_password: current_password
+    password: password
   } = params) do
     case changeset.data.password_hash do
       existing_password -> pow_current_password_changeset(changeset, params)
