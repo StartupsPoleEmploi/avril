@@ -22,7 +22,10 @@
             = render "active_link.html", text: "FAQ", class: "navbar-item", to: Routes.page_path(@conn, :faq), conn: @conn
         = if Pow.Plug.current_user(@conn) do
           li.navbar-item
-            = link "Mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-primary is-rounded"
+            = if Pow.Plug.current_user(@conn).is_delegate do
+              = link "Mes candidatures VAE", to: Routes.my_applications_path(@conn, :my_applications), class: "button is-primary is-rounded"
+            - else
+              = link "Mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-primary is-rounded"
           = link("Me déconnecter", to: Routes.logout_path(@conn, :delete), method: :delete, data: [analytics: "?bouton=logout"], class: "navbar-item")
         - else
           = link "Me connecter", to: Routes.login_path(@conn, :new), class: "navbar-item"

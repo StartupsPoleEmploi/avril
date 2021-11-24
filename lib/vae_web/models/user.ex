@@ -11,7 +11,7 @@ defmodule Vae.User do
     extensions: [PowResetPassword]
 
   import Pow.Ecto.Schema.Changeset,
-    only: [new_password_changeset: 3, confirm_password_changeset: 3]
+    only: [password_changeset: 3]
 
   alias __MODULE__
 
@@ -32,6 +32,7 @@ defmodule Vae.User do
     field(:first_name, :string)
     field(:last_name, :string)
     field(:is_admin, :boolean)
+    field(:is_delegate, :boolean)
     field(:pe_id, :string)
 
     belongs_to(:job_seeker, JobSeeker, on_replace: :update)
@@ -52,28 +53,25 @@ defmodule Vae.User do
     last_name
     pe_id
     is_admin
+    is_delegate
   )a
 
   def changeset(model, params \\ %{})
 
-  def changeset(model, %{password: _pw, current_password: _cpw} = params) do
-    model
-    |> changeset(params |> Map.delete(:password) |> Map.delete(:current_password))
-    |> pow_user_id_field_changeset(params)
-    |> pow_current_password_changeset(params)
-    |> new_password_changeset(params, @pow_config)
-    |> confirm_password_changeset(params, @pow_config)
-  end
-
   def changeset(model, params) do
+    params = Vae.Map.ensure_atom_keys(params)
+
+    synchronized_email =
+      get_in(params, [:email]) ||
+      get_in(params, [:identity, :email]) ||
+      model.email ||
+      get_in(model.identity || %{}, [:email])
+
     model
-    |> cast(params, @fields)
+    |> cast(Map.merge(params, %{email: synchronized_email}), @fields)
+    |> do_password_changeset(params)
     |> pow_extension_changeset(params)
-    |> put_embed_if_necessary(Map.merge(params, %{
-      identity: Map.merge(%{
-        email: params["email"]
-      }, params["identity"] || params[:identity] || %{})
-    }), :identity)
+    |> put_embed_if_necessary(Map.merge(params, %{identity: Map.merge(get_in(params, [:identity]) || %{}, %{email: synchronized_email})}), :identity)
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
@@ -84,6 +82,21 @@ defmodule Vae.User do
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
   end
+
+  def do_password_changeset(changeset, %{
+    password: password,
+    current_password: current_password
+  } = params) do
+    case changeset.data.password_hash do
+      existing_password -> pow_current_password_changeset(changeset, params)
+      _ -> changeset
+    end
+    |> password_changeset(Map.merge(params, %{
+      password_confirmation: password
+    }), @pow_config)
+  end
+
+  def do_password_changeset(changeset, _), do: changeset
 
   def extract_identity_data(changeset) do
     duplicated_fields = ~w(email first_name last_name)a

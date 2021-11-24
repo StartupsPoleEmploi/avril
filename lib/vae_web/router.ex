@@ -29,7 +29,11 @@ defmodule VaeWeb.Router do
     )
   end
 
-  pipeline :admin do
+  pipeline :is_delegate do
+    plug(VaeWeb.Plugs.CheckIsDelegate)
+  end
+
+  pipeline :is_admin do
     plug(VaeWeb.Plugs.CheckAdmin)
     plug(VaeWeb.Plugs.RemoveOverrideUser)
   end
@@ -135,9 +139,16 @@ defmodule VaeWeb.Router do
     get("/disconnect", SessionController, :delete)
   end
 
+
+  scope "/espace-certificateurs", VaeWeb do
+    pipe_through [:browser, :authenticated, :is_delegate]
+
+    get("/mes-candidatures", DelegateAuthenticatedController, :my_applications, as: :my_applications)
+  end
+
   # Admin
   scope "/admin", ExAdmin do
-    pipe_through([:browser, :authenticated, :admin])
+    pipe_through([:browser, :authenticated, :is_admin])
     get("/sql", ApiController, :sql)
     get("/status", ApiController, :get_status)
     post("/status", ApiController, :put_status)

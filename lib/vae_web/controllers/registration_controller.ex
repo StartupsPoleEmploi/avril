@@ -2,6 +2,8 @@ defmodule VaeWeb.RegistrationController do
   require Logger
   use VaeWeb, :controller
 
+  alias Vae.{Delegate, User}
+
   def new(conn, _params) do
     changeset = Pow.Plug.change_user(conn)
     render(conn, "new.html", changeset: changeset)
@@ -13,7 +15,7 @@ defmodule VaeWeb.RegistrationController do
     |> case do
       {:ok, _user, conn} ->
         conn
-        |> maybe_make_session_persistent(user_params)
+        |> maybe_add_is_delegate()
         |> maybe_create_application_and_redirect()
 
       {:error, changeset, conn} ->
@@ -21,39 +23,42 @@ defmodule VaeWeb.RegistrationController do
     end
   end
 
-  def maybe_make_session_persistent(conn, %{"persistent_session" => "true"}) do
-    PowPersistentSession.Plug.create(conn, Pow.Plug.current_user(conn))
-  end
-
-  def maybe_make_session_persistent(conn, _user_params) do
-    PowPersistentSession.Plug.delete(conn)
-  end
-
-  def maybe_create_application_and_redirect(conn, certification_id \\ nil) do
+  defp maybe_add_is_delegate(conn) do
     with(
       current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
-      certification_id when not is_nil(certification_id) <-
-        certification_id || Plug.Conn.get_session(conn, :certification_id),
+      true <- Repo.exists?(from d in Delegate, where: [email: ^current_user.email])
+    ) do
+      case current_user |> User.changeset(%{is_delegate: true}) |> Repo.update() do
+        {:ok, updated_user} -> sync_user(conn, updated_user)
+        _ -> conn
+      end
+    else
+      _error -> conn
+    end
+  end
+
+  def maybe_create_application_and_redirect(conn) do
+    conn = with(
+      current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
+      certification_id when not is_nil(certification_id) <- conn.assigns[:certification_id],
       {:ok, application} when not is_nil(application) <-
         Vae.UserApplication.find_or_create_with_params(%{
           user_id: current_user.id,
           certification_id: certification_id
         })
     ) do
-      Plug.Conn.delete_session(conn, :certification_id)
-      |> redirect_to_user_space(application)
+      Plug.Conn.assign(conn, :current_application, application)
     else
-      _error ->
-        redirect_to_user_space(conn)
+      _error -> conn
     end
+    redirect(conn, external: IO.inspect(get_after_signup_path(conn)))
   end
 
-  defp redirect_to_user_space(conn, application \\ nil) do
-    if Pow.Plug.current_user(conn) do
-      redirect(conn, external: Vae.User.profile_url(conn, application))
-    else
-      redirect(conn, to: Routes.signup_path(conn, :new))
+  def get_after_signup_path(conn) do
+    case Pow.Plug.current_user(conn) do
+      %User{is_delegate: true} -> Routes.my_applications_path(conn, :my_applications)
+      %User{} -> Vae.User.profile_url(conn, conn.assigns[:current_application])
+      _ -> Routes.signup_path(conn, :new)
     end
   end
-
 end

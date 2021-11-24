@@ -13,8 +13,9 @@ defmodule VaeWeb.SessionController do
     |> case do
       {:ok, conn} ->
         conn
-        |> VaeWeb.RegistrationController.maybe_make_session_persistent(user_params)
+        |> maybe_make_session_persistent(user_params)
         |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
+        |> redirect(external: VaeWeb.RegistrationController.get_after_signup_path(conn))
 
       {:error, conn} ->
         changeset = Pow.Plug.change_user(conn, conn.params["user"])
@@ -40,6 +41,14 @@ defmodule VaeWeb.SessionController do
     |> PowPersistentSession.Plug.delete()
     |> put_flash(:info, "Vous êtes maintenant déconnecté")
     |> redirect([redirect_to])
+  end
+
+  def maybe_make_session_persistent(conn, %{"persistent_session" => "true"}) do
+    PowPersistentSession.Plug.create(conn, Pow.Plug.current_user(conn))
+  end
+
+  def maybe_make_session_persistent(conn, _user_params) do
+    PowPersistentSession.Plug.delete(conn)
   end
 end
 

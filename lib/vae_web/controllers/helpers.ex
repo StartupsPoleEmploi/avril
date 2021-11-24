@@ -6,4 +6,6 @@ defmodule VaeWeb.Controllers.Helpers do
       external: referer || opts[:default] || VaeWeb.Router.Helpers.root_path(conn, :index)
     )
   end
+
+  def sync_user(conn, user), do: Pow.Plug.create(conn, user)
 end

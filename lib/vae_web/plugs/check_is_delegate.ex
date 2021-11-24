@@ -1,4 +1,4 @@
-defmodule VaeWeb.Plugs.CheckAdmin do
+defmodule VaeWeb.Plugs.CheckIsDelegate do
   import Phoenix.Controller
   import Plug.Conn
   alias VaeWeb.Router.Helpers, as: Routes
@@ -7,8 +7,9 @@ defmodule VaeWeb.Plugs.CheckAdmin do
   def init(opts), do: opts
 
   def call(conn, _opts) do
+    IO.inspect(Pow.Plug.current_user(conn))
     case Pow.Plug.current_user(conn) do
-      %User{is_admin: true} -> conn
+      %User{is_delegate: is_delegate, is_admin: is_admin} when is_delegate or is_admin -> conn
       %User{} ->
         conn
         |> put_flash(:danger, "Vous n'avez pas accès.")

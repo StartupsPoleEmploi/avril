@@ -1,4 +1,20 @@
 defmodule Vae.Map do
+  def ensure_atom_keys(map) do
+    Enum.reduce(map, %{}, fn ({key, val}, acc) ->
+      Map.put(acc,
+        case key do
+          k when is_binary(k) -> String.to_atom(k)
+          other -> other
+        end,
+        case val do
+          %struct{} = v when struct in [Date, DateTime, NaiveDateTime] -> v
+          v when is_map(v) -> Vae.Map.ensure_atom_keys(v)
+          other -> other
+        end
+      )
+    end)
+  end
+
   def map_values(map, map_func) do
     Map.new(map, fn {k, v} -> {k, map_func.({k, v})} end)
   end

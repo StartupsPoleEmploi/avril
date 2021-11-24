@@ -11,6 +11,7 @@ defmodule Vae.ExAdmin.User do
       column(:last_name)
       column(:email)
       column(:is_admin)
+      column(:is_delegate)
 
       actions()
     end
@@ -21,6 +22,7 @@ defmodule Vae.ExAdmin.User do
         input(user, :last_name)
         input(user, :email)
         input(user, :is_admin)
+        input(user, :is_delegate)
         input(user, :pe_id)
       end
     end
@@ -39,6 +41,7 @@ defmodule Vae.ExAdmin.User do
       column(:last_name)
       column(:email)
       column(:is_admin)
+      column(:is_delegate)
       column(:pe_id)
       column(:identity)
     end
@@ -49,6 +52,7 @@ defmodule Vae.ExAdmin.User do
         row(:last_name)
         row(:email)
         row(:is_admin)
+        row(:is_delegate)
         row(:pe_id)
         row(:identity, fn a -> Helpers.print_in_json(a.identity) end)
       end

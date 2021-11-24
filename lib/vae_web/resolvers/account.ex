@@ -29,8 +29,7 @@ defmodule VaeWeb.Resolvers.Account do
     |> case do
       {:ok, %User{identity: identity}} -> {:ok, identity}
       {:error, changeset} ->
-        error_response(@update_password_error, Logger.error(inspect(changeset)))
-
+        error_response(@update_password_error, changeset)
     end
   end
 end
