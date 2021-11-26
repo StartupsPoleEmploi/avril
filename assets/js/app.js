@@ -1,6 +1,6 @@
 // import '../css/app.scss';
 
-import 'phoenix_html';
+import '../vendor/phoenix_html.js';
 import jQuery from 'jquery';
 
 import './tools/index';
