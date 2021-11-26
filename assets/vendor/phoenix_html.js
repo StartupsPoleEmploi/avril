@@ -1,6 +1,7 @@
 "use strict";
 
 (function() {
+  console.log('heyo')
   var PolyfillEvent = eventConstructor();
 
   function eventConstructor() {
