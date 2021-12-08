@@ -21,7 +21,22 @@ defmodule VaeWeb.DelegateAuthenticatedController do
   end
 
   def edit(conn, _params) do
-    render(conn, "edit.html")
+    render(conn, "edit.html", %{
+      delegate: conn.assigns[:current_delegate]
+    })
+  end
+
+  def update(conn, %{"id" => id} = params) do
+    delegate = conn.assigns[:current_delegate]
+
+    {level, msg} =
+      case Delegate.changeset(delegate, params["delegate"]) |> Repo.update() do
+        {:ok, _delegate} -> {:success, "Coordonnées enregistrées"}
+        {:error, error} -> {:error, "Une erreur est survenue: #{inspect(error)}"}
+      end
+    conn
+    |> put_flash(level, msg)
+    |> redirect(to: Routes.delegate_authenticated_path(conn, :show, delegate))
   end
 
   def show(conn, _params) do

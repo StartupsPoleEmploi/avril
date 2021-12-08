@@ -1,1 +1,57 @@
-h1 coucou
+section.section
+  .container
+    = render VaeWeb.ComponentView, "back_button", conn: @conn, to: Routes.delegate_authenticated_path(@conn, :show, @delegate)
+
+    .has-text-centered
+      h1.title.is-1=@delegate.name
+      h2.subtitle.is-2 Modifier les coordonnées
+
+section.section
+  .container
+    .columns
+      .column.is-6.is-offset-3
+        = form_for Vae.Delegate.changeset(@delegate, %{}), Routes.delegate_authenticated_path(@conn, :update, @delegate), [class: "form"], fn f ->
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Nom du contact :
+            .field-body
+              .field
+                .control
+                  = text_input f, :person_name, class: "input", placeholder: "Nom du contact", required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Adresse :
+            .field-body
+              .field
+                .control
+                  = text_input f, :address, class: "input", placeholder: "Adresse", required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Email :
+            .field-body
+              .field
+                .control
+                  = email_input f, :email, class: "input", placeholder: "Email", readonly: true, required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Tél :
+            .field-body
+              .field
+                .control
+                  = telephone_input f, :telephone, class: "input", placeholder: "Tél", required: true
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label Site internet :
+            .field-body
+              .field
+                .control
+                  = text_input f, :website, class: "input", placeholder: "https://www.exemple.fr", required: true
+          .is-edit-mode
+            .field.is-horizontal
+              .field-label
+              .field-body
+                .field
+                  .control
+                    .buttons style="justify-content: space-between;"
+                      = submit "Enregistrer", class: "button is-primary is-rounded", data: [disable_with: "Enregistrement ..."]
+                      = link("Annuler", to: Routes.delegate_authenticated_path(@conn, :show, @delegate), class: "button is-text is-rounded")
