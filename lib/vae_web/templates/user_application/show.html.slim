@@ -173,6 +173,7 @@
     = if not Enum.empty?(@user.skills) do
       section.section.is-vertical
         h4.title.is-4 Ses compétences
+        p.subtitle Compétences déclarées par le candidat dans son espace personnel Pôle emploi
         .content
           ul
             = for skill <- @user.skills do

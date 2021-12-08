@@ -3,15 +3,32 @@ section.section
     = render VaeWeb.ComponentView, "back_button", conn: @conn, to: Routes.delegate_authenticated_path(@conn, :show, @delegate)
 
     .has-text-centered
-      h1.title.is-1 Candidatures #{@delegate.name}
+      h1.title.is-1=@delegate.name
+      h2.subtitle.is-2 Candidatures en cours
 
 section.section
   .container
-    p Voici les candidatures en cours :
+    table.table
+      thead
+        tr
+          th Nom du candidat
+          th Nom du diplôme
+          th Date de transmission
+          th L1 Complété
+          th Nombre de pièces jointes
+          th Actions
+      tbody
+        = for application <- @applications do
+          tr
+            td= Vae.User.fullname(application.user)
+            td= Vae.Certification.name(application.certification)
+            td= Timex.format!(application.submitted_at, "le %d/%m/%Y à %Hh%M", :strftime)
+            td
+              = if application.booklet_1 && application.booklet_1.completed_at do
+                | Oui
+              - else
+                | Non
+            td= length(application.resumes)
+            td= link("Voir la candidature", to: Routes.user_application_path(@conn, :show, application), target: "_blank", class: "button is-info is-rounded is-small")
 
-    ul
-      = for application <- @applications do
-        li
-          = link("Candidature de #{Vae.User.fullname(application.user)} pour le diplôme #{Vae.Certification.name(application.certification)}", to: Routes.user_application_path(@conn, :show, application))
-          p
-            small Transmise le #{application.submitted_at}
+    = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.delegate_authenticated_applications_path(@conn, :applications, @delegate, &1)

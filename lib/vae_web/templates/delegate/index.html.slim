@@ -12,8 +12,7 @@
           = for delegate <- chunk do
             .column.is-4 style="display: flex;"
               = render VaeWeb.ComponentView, "delegate-card.html", conn: @conn, delegate: delegate
-- paginate_path = fn conn, route, params -> Routes.delegate_path(conn, route, @administrative_slug, @city_slug, params) end
-= render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: paginate_path
+= render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.delegate_path(@conn, :index, @administrative_slug, @city_slug, &1)
   section.section
     .container
     .notification.is-info

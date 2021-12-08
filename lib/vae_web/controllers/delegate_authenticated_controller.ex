@@ -43,18 +43,20 @@ defmodule VaeWeb.DelegateAuthenticatedController do
     })
   end
 
-  def applications(conn, _params) do
+  def applications(conn, params) do
 
-    applications = Repo.all(
+    query =
       from a in UserApplication,
       where: a.delegate_id == ^conn.assigns[:current_delegate].id and not is_nil(a.submitted_at),
-      order_by: {:desc, a.inserted_at},
-      preload: [:delegate, :certification, :user]
-    )
+      order_by: {:desc, a.submitted_at},
+      preload: [:delegate, :certification, :user, :resumes]
+
+    page = Repo.paginate(query, Map.merge(params, %{page_size: 20}))
 
     render(conn, "applications.html", %{
       delegate: conn.assigns[:current_delegate],
-      applications: applications
+      applications: page.entries,
+      page: page
     })
   end
 

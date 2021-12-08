@@ -14,6 +14,6 @@ section.section
           p Vous pouvez effectuer les actions suivantes :
 
           ul
-            li= link("Editer vos coordonnées", to: Routes.delegate_authenticated_path(@conn, :edit, @delegate))
-            li= link("Consulter la liste de diplômes que vous proposez à la VAE", to: Routes.delegate_authenticated_certifications_path(@conn, :certifications, @delegate))
-            li= link("Administrer les candidatures", to: Routes.delegate_authenticated_applications_path(@conn, :applications, @delegate))
+            li= link("Modifier les coordonnées de votre établissement", to: Routes.delegate_authenticated_path(@conn, :edit, @delegate))
+            li= link("Consulter la liste des certifications que votre établissement propose en voie d'accès VAE", to: Routes.delegate_authenticated_certifications_path(@conn, :certifications, @delegate))
+            li= link("Consulter les candidatures", to: Routes.delegate_authenticated_applications_path(@conn, :applications, @delegate))

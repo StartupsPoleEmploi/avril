@@ -54,6 +54,6 @@
               .column.is-7
                 p Choisir le diplôme qui correspond le mieux à votre expérience peut-être compliqué. N'hésitez pas à consulter notre rubrique de conseils sur le sujet ! Vous y apprendrez par exemple que même si vous n'avez aucun diplôme vous pouvez obtenir directement une licence par la VAE, si votre expérience le justifie !
 
-    = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path/3
+    = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.certification_path(@conn, :index, &1)
 
 

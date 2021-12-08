@@ -5,8 +5,8 @@
   - page_buttons = [1] ++ (Enum.to_list(@page.page_number-2..@page.page_number+2)) ++ [@page.total_pages] |> Enum.reject(fn i -> (i < 1 || i > @page.total_pages) end) |> Enum.uniq()
   section.section.is-vertical.container
     nav.pagination.is-centered aria-label="pagination" role="navigation"
-      = link("Précédent", to: (if is_first_page, do: "#", else: @path.(@conn, :index, params_with_page.(@page.page_number - 1))), aria_label: "Précédent", class: "pagination-previous", disabled: is_first_page)
-      = link("Suivant", to: (if is_last_page, do: "#", else: @path.(@conn, :index, params_with_page.(@page.page_number + 1))), aria_label: "Suivant", class: "pagination-next", disabled: is_last_page)
+      = link("Précédent", to: (if is_first_page, do: "#", else: @path.(params_with_page.(@page.page_number - 1))), aria_label: "Précédent", class: "pagination-previous", disabled: is_first_page)
+      = link("Suivant", to: (if is_last_page, do: "#", else: @path.(params_with_page.(@page.page_number + 1))), aria_label: "Suivant", class: "pagination-next", disabled: is_last_page)
       ul.pagination-list
         = for {button_nb, i} <- Enum.with_index(page_buttons) do
           = if i > 0 && Enum.at(page_buttons, i - 1) != button_nb - 1 do
@@ -15,4 +15,4 @@
             = if button_nb == @page.page_number do
               = link(button_nb, to: "#", class: "pagination-link is-current", aria_label: "Page #{button_nb}")
             - else
-              = link(button_nb, to: @path.(@conn, :index, params_with_page.(button_nb)), class: "pagination-link", aria_label: "Aller page #{button_nb}")
+              = link(button_nb, to: @path.(params_with_page.(button_nb)), class: "pagination-link", aria_label: "Aller page #{button_nb}")
