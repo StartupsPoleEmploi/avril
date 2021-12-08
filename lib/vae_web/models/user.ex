@@ -17,13 +17,14 @@ defmodule Vae.User do
 
   alias Vae.{
     Booklet.Address,
-    UserApplication,
+    Delegate,
     Experience,
     Identity,
     JobSeeker,
     ProvenExperience,
     Repo,
-    Skill
+    Skill,
+    UserApplication
   }
 
   schema "users" do
@@ -171,4 +172,17 @@ defmodule Vae.User do
   end
 
   def address(%{identity: %Identity{full_address: address}}), do: Address.address(address)
+
+  def delegates(%User{is_delegate: true, email: email}) do
+    Repo.all(
+      from d in Delegate,
+      where: d.email == ^email,
+      order_by: {:asc, d.name}
+    )
+  end
+
+  def delegates(_), do: []
+
+  def delegate_ids(user), do: Enum.map(User.delegates(user), &(&1.id))
+
 end

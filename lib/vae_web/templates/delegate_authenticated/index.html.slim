@@ -1,0 +1,14 @@
+section.section
+  .container
+    .has-text-centered
+      h1.title.is-1 Mon espace certificateur
+
+  .container
+    .columns
+      .column.is-6.is-offset-3.content
+        .section.is-vertical.is-small
+          p Vous administrez les certificateurs suivants :
+
+          ul
+            = for delegate <- @delegates do
+              li= link(delegate.name, to: Routes.delegate_authenticated_path(@conn, :applications, delegate))

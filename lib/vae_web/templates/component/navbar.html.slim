@@ -23,7 +23,7 @@
         = if Pow.Plug.current_user(@conn) do
           li.navbar-item
             = if Pow.Plug.current_user(@conn).is_delegate do
-              = link "Mes candidatures VAE", to: Routes.my_applications_path(@conn, :my_applications), class: "button is-primary is-rounded"
+              = link "Mon espace certificateur", to: Routes.delegate_authenticated_path(@conn, :index), class: "button is-primary is-rounded"
             - else
               = link "Mon espace VAE", to: Vae.User.profile_url(@conn), class: "button is-primary is-rounded"
           = link("Me déconnecter", to: Routes.logout_path(@conn, :delete), method: :delete, data: [analytics: "?bouton=logout"], class: "navbar-item")

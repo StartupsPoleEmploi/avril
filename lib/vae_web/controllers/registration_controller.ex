@@ -56,7 +56,7 @@ defmodule VaeWeb.RegistrationController do
 
   def get_after_signup_path(conn) do
     case Pow.Plug.current_user(conn) do
-      %User{is_delegate: true} -> Routes.my_applications_path(conn, :my_applications)
+      %User{is_delegate: true} -> Routes.delegate_authenticated_path(conn, :index)
       %User{} -> Vae.User.profile_url(conn, conn.assigns[:current_application])
       _ -> Routes.signup_path(conn, :new)
     end

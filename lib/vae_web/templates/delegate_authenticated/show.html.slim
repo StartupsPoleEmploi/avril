@@ -1,0 +1,19 @@
+section.section
+  .container
+    = if @has_multiple_delegates do
+      = render VaeWeb.ComponentView, "back_button", conn: @conn, to: Routes.delegate_authenticated_path(@conn, :index)
+
+    .has-text-centered
+      h1.title.is-1 Mon espace certificateur
+      h2.subtitle.is-2= @delegate.name
+
+  .container
+    .columns
+      .column.is-6.is-offset-3.content
+        .section.is-vertical.is-small
+          p Vous pouvez effectuer les actions suivantes :
+
+          ul
+            li= link("Editer vos coordonnées", to: Routes.delegate_authenticated_path(@conn, :edit, @delegate))
+            li= link("Consulter la liste de diplômes que vous proposez à la VAE", to: Routes.delegate_authenticated_certifications_path(@conn, :certifications, @delegate))
+            li= link("Administrer les candidatures", to: Routes.delegate_authenticated_applications_path(@conn, :applications, @delegate))

@@ -1,0 +1,17 @@
+section.section
+  .container
+    = render VaeWeb.ComponentView, "back_button", conn: @conn, to: Routes.delegate_authenticated_path(@conn, :show, @delegate)
+
+    .has-text-centered
+      h1.title.is-1 Candidatures #{@delegate.name}
+
+section.section
+  .container
+    p Voici les candidatures en cours :
+
+    ul
+      = for application <- @applications do
+        li
+          = link("Candidature de #{Vae.User.fullname(application.user)} pour le diplôme #{Vae.Certification.name(application.certification)}", to: Routes.user_application_path(@conn, :show, application))
+          p
+            small Transmise le #{application.submitted_at}

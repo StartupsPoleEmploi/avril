@@ -19,6 +19,7 @@ defmodule Vae.String do
     param
     |> String.split("-")
     |> List.first()
+    |> String.to_integer()
   end
 
   def to_id(_param), do: nil

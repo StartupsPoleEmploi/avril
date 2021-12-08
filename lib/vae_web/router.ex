@@ -140,10 +140,13 @@ defmodule VaeWeb.Router do
   end
 
 
-  scope "/espace-certificateurs", VaeWeb do
+  scope "/mon-espace-certificateur", VaeWeb do
     pipe_through [:browser, :authenticated, :is_delegate]
+    resources("/", DelegateAuthenticatedController, only: [:index, :show, :edit, :update]) do
+      get("/candidatures", DelegateAuthenticatedController, :applications, as: :applications)
+      get("/diplomes", DelegateAuthenticatedController, :certifications, as: :certifications)
 
-    get("/mes-candidatures", DelegateAuthenticatedController, :my_applications, as: :my_applications)
+    end
   end
 
   # Admin

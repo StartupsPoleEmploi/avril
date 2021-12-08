@@ -59,14 +59,17 @@ defmodule VaeWeb.Plugs.ApplicationAccess do
   defp has_access?(nil, _user, _verification), do: {:error, :not_found}
 
   defp has_access?(
-    %UserApplication{user_id: user_id} = application,
-    %User{id: current_user_id, is_admin: current_user_admin},
+    %UserApplication{user_id: user_id, delegate_id: delegate_id} = application,
+    %User{id: current_user_id, is_admin: current_user_admin, is_delegate: current_user_delegate} = user,
     verification_func
   ) do
-    if (current_user_id == user_id) || current_user_admin do
-      {:ok, application}
-    else
-      has_access?(application, nil, verification_func)
+    cond do
+      current_user_id == user_id -> {:ok, application}
+      current_user_admin ->  {:ok, application}
+      current_user_delegate and delegate_id in Vae.User.delegate_ids(user) ->
+        {:ok, application}
+      true ->
+        has_access?(application, nil, verification_func)
     end
   end
 
