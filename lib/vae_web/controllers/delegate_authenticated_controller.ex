@@ -1,7 +1,7 @@
 defmodule VaeWeb.DelegateAuthenticatedController do
   use VaeWeb, :controller
 
-  alias Vae.{Delegate, UserApplication, User}
+  alias Vae.{Certification, Delegate, UserApplication, User}
 
   plug :check_delegate_access when action not in [:index]
 
@@ -33,13 +33,21 @@ defmodule VaeWeb.DelegateAuthenticatedController do
     })
   end
 
-  def certifications(conn, _params) do
+  def certifications(conn, params) do
     %Delegate{certifications: certifications} = conn.assigns[:current_delegate]
     |> Repo.preload(:certifications)
 
+    query = from(c in Certification, where: c.is_active)
+      |> join(:inner, [c], d in assoc(c, :delegates))
+      |> where([c, d], d.id == ^conn.assigns[:current_delegate].id)
+      |> order_by([c, d], [c.acronym, c.label])
+
+    page = Repo.paginate(query, Map.merge(params, %{page_size: 20}))
+
     render(conn, "certifications.html", %{
       delegate: conn.assigns[:current_delegate],
-      certifications: certifications
+      certifications: page.entries,
+      page: page
     })
   end
 

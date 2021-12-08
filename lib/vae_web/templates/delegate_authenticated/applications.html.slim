@@ -8,21 +8,21 @@ section.section
 
 section.section
   .container
-    table.table
+    table.table.is-striped.is-fullwidth
       thead
         tr
+          th Date de transmission
           th Nom du candidat
           th Nom du diplôme
-          th Date de transmission
           th L1 Complété
           th Nombre de pièces jointes
           th Actions
       tbody
         = for application <- @applications do
           tr
+            td= Timex.format!(application.submitted_at, "le %d/%m/%Y à %Hh%M", :strftime)
             td= Vae.User.fullname(application.user)
             td= Vae.Certification.name(application.certification)
-            td= Timex.format!(application.submitted_at, "le %d/%m/%Y à %Hh%M", :strftime)
             td
               = if application.booklet_1 && application.booklet_1.completed_at do
                 | Oui

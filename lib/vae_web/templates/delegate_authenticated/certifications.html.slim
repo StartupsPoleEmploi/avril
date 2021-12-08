@@ -1,0 +1,28 @@
+section.section
+  .container
+    = render VaeWeb.ComponentView, "back_button", conn: @conn, to: Routes.delegate_authenticated_path(@conn, :show, @delegate)
+
+    .has-text-centered
+      h1.title.is-1=@delegate.name
+      h2.subtitle.is-2 Diplômes proposés en voie d'accès VAE
+      p
+        ' Vous constatez une erreur ?
+        = link("Contactez-nous !", to: Routes.page_path(@conn, :contact))
+section.section
+  .container
+    table.table.is-striped.is-fullwidth
+      thead
+        tr
+          th RNCP ID
+          th Nom
+          th Niveau
+          th Actions
+      tbody
+        = for certification <- @certifications do
+          tr
+            td= certification.rncp_id
+            td= Vae.Certification.name(certification)
+            td= certification.level
+            td= link("Voir la fiche", to: Routes.certification_path(@conn, :show, certification), target: "_blank", class: "button is-info is-rounded is-small")
+
+    = render VaeWeb.ComponentView, "pagination.html", conn: @conn, page: @page, path: &Routes.delegate_authenticated_certifications_path(@conn, :certifications, @delegate, &1)
