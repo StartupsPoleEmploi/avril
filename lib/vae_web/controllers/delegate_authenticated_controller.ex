@@ -3,7 +3,7 @@ defmodule VaeWeb.DelegateAuthenticatedController do
 
   alias Vae.{Certification, Delegate, UserApplication, User}
 
-  plug :check_delegate_access when action not in [:index]
+  plug :check_delegate_access when action not in [:index, :activate]
 
   def index(conn, _params) do
     delegates = User.delegates(Pow.Plug.current_user(conn))
@@ -83,14 +83,28 @@ defmodule VaeWeb.DelegateAuthenticatedController do
     })
   end
 
+  def activate(conn, params) do
+    case Pow.Plug.current_user(conn) |> User.changeset(%{is_delegate: true}) |> Repo.update() do
+      {:ok, updated_user} ->
+        conn
+        |> sync_user(updated_user)
+        |> put_flash(:success, "Bienvenue sur votre espace certificateur !")
+        |> redirect(to: Routes.delegate_authenticated_path(conn, :index))
+      _ ->
+        conn
+        |> put_flash(:danger, "Une erreur est survenue. Merci de réessayer plus tard")
+        |> redirect(to: Routes.root_path(conn, :index))
+    end
+  end
+
   defp check_delegate_access(%{params: params} = conn, _opts) do
     delegate_id = params["delegate_authenticated_id"] || params["id"]
     if delegate = Enum.find(User.delegates(Pow.Plug.current_user(conn)), &(&1.id == Vae.String.to_id(delegate_id))) do
       Plug.Conn.assign(conn, :current_delegate, delegate)
     else
       conn
-      |> put_flash(:danger, "Vous n'avez pas accès")
-      |> redirect(to: Routes.root_path(conn, :index))
+      |> put_flash(:danger, "Vous n'avez pas accès. Connectez-vous au préalable.")
+      |> redirect(to: Routes.login_path(conn, :new))
     end
   end
 end

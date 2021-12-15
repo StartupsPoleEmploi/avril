@@ -13,28 +13,25 @@ defmodule VaeWeb.RegistrationController do
     conn
     |> Pow.Plug.create_user(user_params)
     |> case do
-      {:ok, _user, conn} ->
-        conn
-        |> maybe_add_is_delegate()
-        |> maybe_create_application_and_redirect()
+      {:ok, current_user, conn} ->
+        if Repo.exists?(from d in Delegate, where: [email: ^current_user.email]) do
+          send_delegate_access_confirmation_email(conn, current_user)
+        else
+          maybe_create_application_and_redirect(conn)
+        end
 
       {:error, changeset, conn} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
-  defp maybe_add_is_delegate(conn) do
-    with(
-      current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
-      true <- Repo.exists?(from d in Delegate, where: [email: ^current_user.email])
-    ) do
-      case current_user |> User.changeset(%{is_delegate: true}) |> Repo.update() do
-        {:ok, updated_user} -> sync_user(conn, updated_user)
-        _ -> conn
-      end
-    else
-      _error -> conn
-    end
+  defp send_delegate_access_confirmation_email(conn, current_user) do
+    VaeWeb.UserEmail.activate_delegate_access(current_user, conn)
+    |> VaeWeb.Mailer.send()
+
+    conn
+    |> put_flash(:info, "Un email vient de vous être envoyé afin d'activer votre espace certificateur. Merci de vérifier votre boîte de réception.")
+    |> redirect(to: Routes.root_path(conn, :index))
   end
 
   def maybe_create_application_and_redirect(conn) do
@@ -51,7 +48,7 @@ defmodule VaeWeb.RegistrationController do
     else
       _error -> conn
     end
-    redirect(conn, external: IO.inspect(get_after_signup_path(conn)))
+    redirect(conn, external: get_after_signup_path(conn))
   end
 
   def get_after_signup_path(conn) do

@@ -86,6 +86,7 @@ defmodule VaeWeb.Router do
     resources("/point-relais-conseil-vae/:administrative", VaeWeb.DelegateController,
       only: [:index], as: :prc
     )
+    get("/activate_delegate_access", VaeWeb.DelegateAuthenticatedController, :activate)
 
     resources("/diplomes", VaeWeb.CertificationController, only: [:index, :show]) do
       put("/select", VaeWeb.CertificationController, :select, as: :select)
