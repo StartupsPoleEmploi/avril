@@ -88,7 +88,7 @@ defmodule Vae.User do
     password: password
   } = params) do
     case changeset.data.password_hash do
-      existing_password -> pow_current_password_changeset(changeset, params)
+      existing_password when is_binary(existing_password) -> pow_current_password_changeset(changeset, params)
       _ -> changeset
     end
     |> password_changeset(Map.merge(params, %{

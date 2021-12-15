@@ -10,7 +10,7 @@ defmodule VaeWeb.DelegateAuthenticatedController do
     case delegates do
       [] -> conn
         |> put_flash(:danger, "Aucun certificateur n'est associé à votre compte. Merci de nous contacter pour avoir plus d'informations à ce sujet.")
-        |> redirect(to: Routes.root_path(:index))
+        |> redirect(to: Routes.root_path(conn, :index))
       [%Delegate{} = delegate] ->
         redirect(conn, to: Routes.delegate_authenticated_path(conn, :show, delegate))
       _ ->
@@ -26,7 +26,7 @@ defmodule VaeWeb.DelegateAuthenticatedController do
     })
   end
 
-  def update(conn, %{"id" => id} = params) do
+  def update(conn, params) do
     delegate = conn.assigns[:current_delegate]
 
     {level, msg} =
@@ -49,9 +49,6 @@ defmodule VaeWeb.DelegateAuthenticatedController do
   end
 
   def certifications(conn, params) do
-    %Delegate{certifications: certifications} = conn.assigns[:current_delegate]
-    |> Repo.preload(:certifications)
-
     query = from(c in Certification, where: c.is_active)
       |> join(:inner, [c], d in assoc(c, :delegates))
       |> where([c, d], d.id == ^conn.assigns[:current_delegate].id)
@@ -83,7 +80,7 @@ defmodule VaeWeb.DelegateAuthenticatedController do
     })
   end
 
-  def activate(conn, params) do
+  def activate(conn, _params) do
     case Pow.Plug.current_user(conn) |> User.changeset(%{is_delegate: true}) |> Repo.update() do
       {:ok, updated_user} ->
         conn
