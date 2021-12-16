@@ -64,7 +64,8 @@ defmodule VaeWeb.Endpoint do
     session_ttl_renewal: :timer.minutes(1),
     credentials_cache_store: {
       Pow.Store.CredentialsCache,
-      ttl: :timer.hours(24)
+      ttl: :timer.hours(24),
+      reload: true # can be removed after some time as it refetches the user on each query
     }
   )
 
