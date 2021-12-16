@@ -30,8 +30,8 @@ defmodule VaeWeb.CertificationController do
     end
 
     @options param: :rome_code,
-             default: nil,
-             cast: &Vae.String.to_id/1
+             default: nil
+             # cast: &Vae.String.to_id/1
     filter rome_code(query, value, _conn) do
       query
       |> join(:inner, [r], r in assoc(r, :romes))
@@ -130,7 +130,7 @@ defmodule VaeWeb.CertificationController do
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do
-    rome = Repo.get_by(Rome, code: Vae.String.to_id(rome_code)) |> Repo.preload(:professions)
+    rome = Repo.get_by(Rome, code: rome_code) |> Repo.preload(:professions)
 
     if rome do
       Map.merge(filters, %{
