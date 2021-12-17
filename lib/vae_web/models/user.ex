@@ -62,11 +62,15 @@ defmodule Vae.User do
   def changeset(model, params) do
     params = Vae.Map.ensure_atom_keys(params)
 
-    synchronized_email =
+    synchronized_email = (
       get_in(params, [:email]) ||
       get_in(params, [:identity, :email]) ||
       model.email ||
       get_in(model.identity || %{}, [:email])
+    ) |> case do
+      string when is_binary(string) -> string |> String.downcase() |> String.trim()
+      _ -> nil
+    end
 
     model
     |> cast(Map.merge(params, %{email: synchronized_email}), @fields)
@@ -78,7 +82,6 @@ defmodule Vae.User do
     |> put_embed_if_necessary(params, :proven_experiences)
     |> put_param_assoc(:job_seeker, params)
     |> extract_identity_data()
-    |> downcase_email()
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
