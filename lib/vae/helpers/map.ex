@@ -7,7 +7,7 @@ defmodule Vae.Map do
           other -> other
         end,
         case val do
-          %struct{} = v when struct in [Date, DateTime, NaiveDateTime] -> v
+          %{__struct__: _} = v -> v
           v when is_map(v) -> Vae.Map.ensure_atom_keys(v)
           other -> other
         end
