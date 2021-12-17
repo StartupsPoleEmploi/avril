@@ -233,9 +233,9 @@ defmodule Vae.Delegate do
 
   def website(%Delegate{website: website}) do
     case website do
-      "http://" <> rest -> website
-      "https://" <> rest -> website
-      other -> "http://#{website}"
+      "http://" <> _rest -> website
+      "https://" <> _rest -> website
+      _other -> "http://#{website}"
     end
     |> String.trim()
   end

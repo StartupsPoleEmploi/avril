@@ -1,7 +1,6 @@
 defmodule Vae.JobSeeker do
   use VaeWeb, :model
 
-  alias Ecto.Changeset
   alias Vae.{Analytic, Event, Repo}
   alias __MODULE__
 

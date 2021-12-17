@@ -14,7 +14,7 @@ defmodule Vae.CampaignDiffuser.Datalake do
   def process_reinscrits(date \\ nil), do:
     process(:reinscrits, date)
 
-  defp process(type, date \\ nil) when type in [:primo_inscrits, :reinscrits] do
+  defp process(type, date) when type in [:primo_inscrits, :reinscrits] do
     results = extract_zip(type, date || Vae.Date.last_monday())
     |> extract_csv()
     |> Enum.map(&handle_row(&1))
