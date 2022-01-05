@@ -1,6 +1,8 @@
 defmodule VaeWeb.ComponentView do
   use VaeWeb, :view
 
+  @tracking_config Application.get_env(:vae, :tracking)
+
   def render("back_button", %{conn: conn} = params) do
     referer = case Plug.Conn.get_req_header(conn, "referer") do
       [("http" <> referer_url) = hd | _] when not is_nil(referer_url) -> hd
@@ -11,8 +13,6 @@ defmodule VaeWeb.ComponentView do
     label = params[:label] || (if URI.parse(to).path === home_page, do: "Retour à l'accueil", else: "Retour")
     Phoenix.HTML.Link.link(label, to: to, class: "button is-back #{params[:class]}")
   end
-
-  @tracking_config Application.get_env(:vae, :tracking)
 
   def render("analytics", %{conn: conn}) do
     dimension1 =
@@ -121,18 +121,18 @@ defmodule VaeWeb.ComponentView do
 
 
 
-  def render("tag_commander", _) do
-    if @tracking_config[:tag_commander] do
-      url = "https://cdn.tagcommander.com#{@tracking_config[:tag_commander]}.js"
-
-      {:safe, ""}
-    end
-  end
   # def render("tag_commander", _) do
   #   if @tracking_config[:tag_commander] do
   #     url = "https://cdn.tagcommander.com#{@tracking_config[:tag_commander]}.js"
 
-  #     {:safe, "<script type=\"text/javascript\" src=\"#{url}\" async></script>"}
+  #     {:safe, ""}
   #   end
   # end
+  def render("tag_commander", _) do
+    if @tracking_config[:tag_commander] do
+      url = "https://cdn.tagcommander.com#{@tracking_config[:tag_commander]}.js"
+
+      {:safe, "<script type=\"text/javascript\" src=\"#{url}\" async></script>"}
+    end
+  end
 end
