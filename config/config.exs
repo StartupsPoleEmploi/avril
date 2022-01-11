@@ -119,14 +119,14 @@ config :vae, Vae.Scheduler,
       schedule: "45 5 1,15 * *",
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
-    registered_campaign_task: [
-      schedule: "30 10 * * 2",
-      task: &Vae.CampaignDiffuser.Datalake.process_reinscrits/0
-    ],
-    new_registered_campaign_task: [
-      schedule: "30 14 * * 2",
-      task: &Vae.CampaignDiffuser.Datalake.process_primo_inscrits/0
-    ],
+    # registered_campaign_task: [
+    #   schedule: "30 10 * * 2",
+    #   task: &Vae.CampaignDiffuser.Datalake.process_reinscrits/0
+    # ],
+    # new_registered_campaign_task: [
+    #   schedule: "30 14 * * 2",
+    #   task: &Vae.CampaignDiffuser.Datalake.process_primo_inscrits/0
+    # ],
     meetings_task: [
       schedule: "0 5,13 * * *",
       task: &Vae.Meetings.fetch_meetings/0
