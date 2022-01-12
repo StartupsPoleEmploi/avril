@@ -32,9 +32,10 @@ defmodule VaeWeb.CertificationController do
     @options param: :rome_code,
              default: nil
     filter rome_code(query, value, _conn) do
+      code = Vae.String.to_id_string value
       query
       |> join(:inner, [r], r in assoc(r, :romes))
-      |> where([c, r], r.code == ^value)
+      |> where([c, r], r.code == ^code)
     end
   end
 

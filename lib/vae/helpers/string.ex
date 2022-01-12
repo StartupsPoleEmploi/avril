@@ -17,9 +17,14 @@ defmodule Vae.String do
 
   def to_id(param) when is_binary(param) do
     param
+    |> to_id_string()
+    |> String.to_integer()
+  end
+
+  def to_id_string(param) when is_binary(param) do
+    param
     |> String.split("-")
     |> List.first()
-    |> String.to_integer()
   end
 
   def to_id(_param), do: nil
