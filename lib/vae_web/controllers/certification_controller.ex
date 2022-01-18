@@ -32,7 +32,7 @@ defmodule VaeWeb.CertificationController do
     @options param: :rome_code,
              default: nil
     filter rome_code(query, value, _conn) do
-      code = Vae.String.to_id_string value
+      code = Vae.String.to_id_string(value)
       query
       |> join(:inner, [r], r in assoc(r, :romes))
       |> where([c, r], r.code == ^code)
@@ -57,6 +57,7 @@ defmodule VaeWeb.CertificationController do
       ordered_query <- Certification.sort_by_popularity(filtered_query),
       page <- Repo.paginate(ordered_query, Map.merge(params, %{page_size: 9}))
     ) do
+
       render(
         conn,
         "index.html",
@@ -129,25 +130,30 @@ defmodule VaeWeb.CertificationController do
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do
-    rome = Repo.get_by(Rome, code: rome_code) |> Repo.preload(:professions)
+    case Repo.get_by(Rome, code: Vae.String.to_id_string(rome_code)) |> Repo.preload(:professions) do
+      %Rome{} = rome ->
+        Rome.increase_views(rome)
 
-    if rome do
-      Map.merge(filters, %{
-        rome: rome,
-        subcategory: Rome.subcategory(rome),
-        category: Rome.category(rome)
-      })
-    else
-      filters
+        Map.merge(filters, %{
+          rome: rome,
+          subcategory: Rome.subcategory(rome),
+          category: Rome.category(rome)
+        })
+      _ -> filters
     end
   end
 
   defp enrich_filter_values(%{profession: profession_id} = filters) do
-    profession = Repo.get(Profession, profession_id)
 
-    Map.merge(filters, %{
-      profession: profession
-    })
+    case Repo.get(Profession, profession_id) |> Repo.preload(:rome) do
+      %Profession{rome: rome} = profession ->
+        Rome.increase_views(rome)
+
+        Map.merge(filters, %{
+          profession: profession
+        })
+      _ -> filters
+    end
   end
 
   defp enrich_filter_values(filters), do: filters

@@ -8,6 +8,7 @@ defmodule Vae.Rome do
     field(:slug, :string)
     field(:code, :string)
     field(:label, :string)
+    field(:views, :integer)
     field(:url, :string)
 
     has_many(:professions, Profession)
@@ -33,9 +34,9 @@ defmodule Vae.Rome do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:code, :label, :url])
+    |> cast(params, [:code, :label, :url, :views])
     |> slugify()
-    |> validate_required([:code, :label, :slug])
+    |> validate_required([:code, :label, :slug, :views])
     |> unique_constraint(:slug)
   end
 
@@ -116,6 +117,13 @@ defmodule Vae.Rome do
 
   def slugify(changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(changeset.data, changeset.changes)))
+  end
+
+  # TODO: move to analytics?
+  def increase_views(%Rome{} = rome) do
+    rome
+    |> Rome.changeset(%{views: rome.views + 1})
+    |> Repo.update()
   end
 
   defimpl Phoenix.Param, for: Vae.Rome do

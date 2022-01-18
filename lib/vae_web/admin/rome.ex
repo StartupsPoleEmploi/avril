@@ -8,6 +8,7 @@ defmodule Vae.ExAdmin.Rome do
       column(:id)
       column(:code)
       column(:label)
+      column(:views)
       column(:url)
 
       actions()
@@ -20,6 +21,7 @@ defmodule Vae.ExAdmin.Rome do
         row(:subcategory, fn r -> Vae.Rome.subcategory(r) |> Helpers.link_to_resource() end)
         row(:code)
         row(:label)
+        row(:views)
         row(:url)
       end
 
