@@ -81,16 +81,23 @@ defmodule VaeWeb.DelegateAuthenticatedController do
   end
 
   def activate(conn, _params) do
-    case Pow.Plug.current_user(conn) |> User.changeset(%{is_delegate: true}) |> Repo.update() do
-      {:ok, updated_user} ->
+    case Pow.Plug.current_user(conn) do
+      nil ->
         conn
-        |> sync_user(updated_user)
-        |> put_flash(:success, "Bienvenue sur votre espace certificateur !")
-        |> redirect(to: Routes.delegate_authenticated_path(conn, :index))
-      _ ->
-        conn
-        |> put_flash(:danger, "Une erreur est survenue. Merci de réessayer plus tard")
-        |> redirect(to: Routes.root_path(conn, :index))
+        |> put_flash(:warning, "Vous devez d'abord vous connecter puis cliquer de nouveau sur le lien fourni dans l'email")
+        |> redirect(to: Routes.login_path(conn, :new))
+      %User{} = current_user ->
+        case current_user |> User.changeset(%{is_delegate: true}) |> Repo.update() do
+          {:ok, updated_user} ->
+            conn
+            |> sync_user(updated_user)
+            |> put_flash(:success, "Bienvenue sur votre espace certificateur !")
+            |> redirect(to: Routes.delegate_authenticated_path(conn, :index))
+          _ ->
+            conn
+            |> put_flash(:danger, "Une erreur est survenue. Merci de réessayer plus tard")
+            |> redirect(to: Routes.root_path(conn, :index))
+        end
     end
   end
 
