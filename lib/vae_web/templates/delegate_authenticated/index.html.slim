@@ -11,4 +11,4 @@ section.section
 
           ul
             = for delegate <- @delegates do
-              li= link(delegate.name, to: Routes.delegate_authenticated_path(@conn, :applications, delegate))
+              li= link(delegate.name, to: Routes.delegate_authenticated_applications_path(@conn, :applications, delegate))
