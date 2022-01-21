@@ -26,7 +26,6 @@ defmodule Vae.Booklet.Address do
   end
 
   @required_fields_for_submission ~w(
-    postal_code
     city
     country
   )a
