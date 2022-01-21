@@ -46,9 +46,8 @@ defmodule VaeWeb.ContactEmail do
     email: email,
     tel: tel,
     website: website,
-    person_name: person_name,
-    comment: comment
-  }) do
+    person_name: person_name
+  } = params) do
     Mailer.build_email(
       "contact/delegate_submit.html",
       :avril,
@@ -61,7 +60,7 @@ defmodule VaeWeb.ContactEmail do
         tel: tel,
         website: website,
         person_name: person_name,
-        comment: comment
+        comment: params[:comment]
       }
     ) |> IO.inspect()
   end
