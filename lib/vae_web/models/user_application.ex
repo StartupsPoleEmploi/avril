@@ -34,6 +34,10 @@ defmodule Vae.UserApplication do
       :certifiers,
       through: [:certification, :certifiers]
     )
+    has_many(
+      :delegate_certifiers,
+      through: [:delegate, :certifiers]
+    )
 
     embeds_one(:booklet_1, Vae.Booklet.Cerfa, on_replace: :delete)
 

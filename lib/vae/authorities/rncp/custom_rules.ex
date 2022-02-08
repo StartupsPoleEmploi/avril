@@ -67,11 +67,13 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     label: label,
     is_rncp_active: is_rncp_active
   }) do
+    certifier_slugs = Enum.map(certifiers, fn %Certifier{slug: slug} -> slug end)
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
       is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in @wrong_educ_nat_certifiers
-      if is_educ_nat && (is_ignored_acronym || is_custom_rncp) do
+      is_already_sports = Enum.member?(certifier_slugs, @sports)
+      if is_educ_nat && (is_ignored_acronym || is_custom_rncp || is_already_sports) do
         FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_rncp_active])
         true
       else

@@ -150,6 +150,23 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
+  def wrong_educ_nat(application, endpoint \\ URI.endpoint()) do
+    application = Repo.preload(application, [:user, :delegate, :certification])
+
+    Mailer.build_email(
+      "application/wrong_educ_nat.html",
+      :avril,
+      application.user,
+      %{
+        url:
+          Routes.user_application_url(endpoint, :show, application),
+        username: User.fullname(application.user),
+        certification_name: Certification.name(application.certification),
+        footer_note: :inscrit_avril
+      }
+    )
+  end
+
   def monthly_status(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user])
 
