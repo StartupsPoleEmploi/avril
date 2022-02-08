@@ -22,4 +22,16 @@ defmodule VaeWeb.DelegateEmail do
       }, options)
     )
   end
+
+  def delegate_access_info(delegate, endpoint \\ URI.endpoint()) do
+    Mailer.build_email(
+      "delegate/delegate_access_info.html",
+      :avril,
+      delegate,
+      %{
+        delegate_name: delegate.name,
+        footer_note: :delegate,
+      }
+    )
+  end
 end
