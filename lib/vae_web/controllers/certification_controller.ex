@@ -125,7 +125,7 @@ defmodule VaeWeb.CertificationController do
     certification_id = Vae.String.to_id(certification_id)
 
     conn
-    |> Plug.Conn.assign(:certification_id, certification_id)
+    |> Plug.Conn.put_session(:certification_id, certification_id)
     |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
   end
 
