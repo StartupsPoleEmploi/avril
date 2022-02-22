@@ -21,6 +21,7 @@ defmodule VaeWeb.ApplicationEmail do
           ),
         username: User.fullname(application.user),
         certification_name: Certification.name(application.certification),
+        has_booklet: application.booklet_1 && application.booklet_1.completed_at,
         date_format: @date_format,
         footer_note: :delegate
       }
