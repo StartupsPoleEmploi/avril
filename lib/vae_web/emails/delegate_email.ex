@@ -34,4 +34,16 @@ defmodule VaeWeb.DelegateEmail do
       }
     )
   end
+
+  def inform_optional_booklet(delegate, endpoint \\ URI.endpoint()) do
+    Mailer.build_email(
+      "delegate/inform_optional_booklet.html",
+      :avril,
+      delegate,
+      %{
+        delegate_name: delegate.name,
+        footer_note: :delegate,
+      }
+    )
+  end
 end
