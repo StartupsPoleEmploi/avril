@@ -21,23 +21,25 @@ const KEY_MAP = {
   week_number: 'semaine',
   created: '1. Créée',
   delegated: '2. Avec certificateur',
-  booklet_started: '3. Livret 1 démarré',
-  booklet_finished: '4. Livret 1 terminé',
-  resumed: '5. Avec pièce jointe',
-  submitted: '6. Candidatures transmises',
-  inadmissible: '7. Candidatures transmises pas encore admissible après relance',
-  admissible: '7bis. Candidatures transmises admissible après relance',
+  submitted: '3. Candidatures transmises',
+  inadmissible: '4. Candidatures transmises pas encore admissible après relance',
+  admissible: '4bis. Candidatures transmises admissible après relance',
+  no_booklet: '1. Pas de livret 1',
+  booklet_started: '2. Livret 1 démarré',
+  booklet_finished: '3. Livret 1 terminé',
+  resumed: '4. Avec pièce jointe',
 }
 
 const COLORS = {
   'created': '#808080',
   'delegated': '#66d1ff',
-  'booklet_started': '#3498db',
-  'booklet_finished': '#1f6390',
-  'resumed': '#2c3e50',
   'submitted': '#0aea69',
   'inadmissible': '#d35400',
   'admissible': '#06632d',
+  'no_booklet': '#808080',
+  'booklet_started': '#3498db',
+  'booklet_finished': '#1f6390',
+  'resumed': '#2c3e50',
 }
 
 const statusToKey = s => {
@@ -139,6 +141,10 @@ const getLines = type => {
     label: 'MEP 1.2',
     color: 'green',
     date: moment('2020-05-15'),
+  }, {
+    label: 'MEP Livret 1 facultatif',
+    color: '#3498db',
+    date: moment('2022-02-22'),
   }]
 }
 

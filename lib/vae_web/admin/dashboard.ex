@@ -13,7 +13,7 @@ defmodule Vae.ExAdmin.Dashboard do
       certifier = if certifier_id, do: Vae.Repo.get(Vae.Certifier, certifier_id)
       start_date = Vae.String.blank_is_nil(conn.query_params["start_date"])
       end_date = Vae.String.blank_is_nil(conn.query_params["end_date"])
-      type = conn.query_params["type"] || "submissions"
+      type = conn.query_params["type"] || ""
 
       p ".text-center Citation du jour:"
       h1 "“#{daily_quote()}”"
@@ -71,9 +71,12 @@ defmodule Vae.ExAdmin.Dashboard do
       end
       hr()
       div ".section" do
+        div [style: "margin-bottom: 4rem;"] do
+          a ".btn.btn-default.pull-right #{if type == "booklet", do: "Voir les candidatures", else: "Voir la recevabilité"}", href: "?type=#{if type == "booklet", do: "applications", else: "booklet"}"
+        end
         h2 "Candidatures #{if certifier, do: certifier.name} par semaines", [class: "text-center"]
         h4 between_dates_string(start_date, end_date)
-        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}"]
+        div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}&type=#{type}"]
       end
       hr()
       div ".section" do

@@ -94,13 +94,15 @@ defmodule ExAdmin.ApiController do
   def sql(conn, %{"query" => query} = params) do
     start_date = Vae.String.blank_is_nil(params["start_date"])
     end_date = Vae.String.blank_is_nil(params["end_date"])
+    type = Vae.String.blank_is_nil(params["type"])
     certifier_id = Vae.String.blank_is_nil(params["certifier_id"], &String.to_integer/1)
 
     query =
       apply(__MODULE__, :"#{query}_query", [
         start_date,
         end_date,
-        certifier_id
+        certifier_id,
+        type
       ])
 
     result = Ecto.Adapters.SQL.query!(Vae.Repo, query)
@@ -113,7 +115,8 @@ defmodule ExAdmin.ApiController do
           query: %{
             certifier_id: certifier_id,
             start_date: start_date,
-            end_date: end_date
+            end_date: end_date,
+            type: type
           }
         }
       )
@@ -134,14 +137,14 @@ defmodule ExAdmin.ApiController do
 
   def join_certifier(_, _, _), do: ""
 
-  def applications_query(start_date, end_date, certifier_id) do
-    # Check Vae.Repo.Migrations.AddApplicationStatusSQLFunction
-    # to see status(application) SQL function definition
+  def applications_query(start_date, end_date, certifier_id, type) do
+    # Check Vae.Repo.Migrations.ChangeApplicationStatus
+    # to see status(application) and booklet_status(application) SQL function definition
 
     """
     SELECT
       to_char(applications.inserted_at, 'IYYY-IW') AS week_number,
-      status(applications.*) as status,
+      #{if type == "booklet", do: "booklet_status", else: "status"}(applications.*) as status,
       count(applications.*) as count
     FROM applications
     #{join_certifier(certifier_id, "delegate", "applications.delegate_id")}
@@ -151,7 +154,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def delegates_query(start_date, end_date, certifier_id) do
+  def delegates_query(start_date, end_date, certifier_id, _type) do
     """
     SELECT
       q.delegate_name,
@@ -175,7 +178,7 @@ defmodule ExAdmin.ApiController do
     """
   end
 
-  def certifications_query(start_date, end_date, certifier_id) do
+  def certifications_query(start_date, end_date, certifier_id, _type) do
     """
     SELECT
       q.certification_name,
