@@ -113,7 +113,7 @@ defmodule VaeWeb.PageController do
     render(conn, "stats.html",
       title: "Statistiques Avril",
       description: "Statistiques de démarrage de candidatures VAE sur Avril",
-      start_date: Vae.String.blank_is_nil(params["start_date"]) || (Date.utc_today() |> Timex.shift(months: -6)),
+      start_date: Vae.String.blank_is_nil(params["start_date"]) || (Date.utc_today() |> Timex.shift(months: -6) |> Timex.beginning_of_week()),
       # start_date: Vae.String.blank_is_nil(params["start_date"]) || (Date.utc_today() |> Timex.shift(months: -6) |> Date.beginning_of_week()),
       end_date: Vae.String.blank_is_nil(params["end_date"]) || Date.utc_today()
     )
