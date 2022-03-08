@@ -109,6 +109,16 @@ defmodule VaeWeb.PageController do
     )
   end
 
+  def stats(conn, params) do
+    render(conn, "stats.html",
+      title: "Statistiques Avril",
+      description: "Statistiques de démarrage de candidatures VAE sur Avril",
+      start_date: Vae.String.blank_is_nil(params["start_date"]) || (Date.utc_today() |> Timex.shift(months: -6)),
+      # start_date: Vae.String.blank_is_nil(params["start_date"]) || (Date.utc_today() |> Timex.shift(months: -6) |> Date.beginning_of_week()),
+      end_date: Vae.String.blank_is_nil(params["end_date"]) || Date.utc_today()
+    )
+  end
+
   def delegate_contact(conn, _params) do
     render(conn, "delegate_contact.html",
       title: "Me répertorier en tant que certificateur sur Avril",
@@ -189,10 +199,10 @@ defmodule VaeWeb.PageController do
     |> json(:ok)
   end
 
-  def stats(conn, _params) do
-    redirect(conn,
-      external:
-        "https://datastudio.google.com/u/0/reporting/1t7iUT7wGQn9U7ODZeDyXIvIRlK-BJAZs/page/1M"
-    )
-  end
+  # def stats(conn, _params) do
+  #   redirect(conn,
+  #     external:
+  #       "https://datastudio.google.com/u/0/reporting/1t7iUT7wGQn9U7ODZeDyXIvIRlK-BJAZs/page/1M"
+  #   )
+  # end
 end

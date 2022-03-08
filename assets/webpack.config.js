@@ -22,6 +22,9 @@ module.exports = (env, options) => ({
       './js/admin.js',
       './css/admin.scss',
     ],
+    stats: [
+      './js/stats.js',
+    ],
   },
   output: {
     filename: '[name].js',

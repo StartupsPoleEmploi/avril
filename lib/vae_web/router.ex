@@ -74,6 +74,7 @@ defmodule VaeWeb.Router do
     get("/tester-mon-eligibilite-vae", VaeWeb.UserController, :eligibility)
     post("/close-app-status", VaeWeb.PageController, :close_status)
     get("/stats", VaeWeb.PageController, :stats)
+    get("/sql", VaeWeb.StatsController, :sql)
 
     # Public navigation
     resources("/rome", VaeWeb.RomeController, only: [:index, :show])

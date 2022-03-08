@@ -1,0 +1,30 @@
+script type="text/javascript" src=Routes.static_path(@conn, "/js/stats.js")
+
+h1.title.is-1.has-text-centered Stats Avril
+h2.subtitle.is-3.has-text-centered Evolution des candidatures démarrées chaque semaine
+
+.container
+  div style="margin-bottom: 3rem;"
+    form method="GET"
+      .columns
+        .column.is-4.is-offset-2
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label for="start_date" From date
+            .field-body
+              .field
+                p.control.is-expanded
+                  input.input type="date" name="start_date" value=@start_date autocomplete="off"
+        .column.is-4
+          .field.is-horizontal
+            .field-label.is-normal
+              label.label for="end_date" To date
+            .field-body
+              .field
+                p.control.is-expanded
+                  input.input type="date" name="end_date" value=@end_date autocomplete="off"
+
+    p.has-text-centered.is-italic NB: Une semaine démarre le lundi et termine le dimanche.
+
+
+#applications-plot.plot-container data-url="/sql?query=applications&start_date=#{@start_date}&end_date=#{@end_date}"

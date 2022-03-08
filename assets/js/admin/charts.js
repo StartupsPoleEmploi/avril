@@ -17,34 +17,37 @@ import {
   YAxis,
 } from 'recharts';
 
+import DefaultTooltipContent from 'recharts/lib/component/DefaultTooltipContent';
+
 const KEY_MAP = {
   week_number: 'semaine',
-  created: '1. Créée',
-  delegated: '2. Avec certificateur',
-  submitted: '3. Candidatures transmises',
-  inadmissible: '4. Candidatures transmises pas encore admissible après relance',
-  admissible: '4bis. Candidatures transmises admissible après relance',
-  no_booklet: '1. Pas de livret 1',
-  booklet_started: '2. Livret 1 démarré',
-  booklet_finished: '3. Livret 1 terminé',
-  resumed: '4. Avec pièce jointe',
+  created: 'Candidatures créées',
+  delegated: 'Avec certificateur',
+  submitted: 'Candidatures transmises',
+  inadmissible: 'Candidatures transmises pas encore admissible après relance',
+  admissible: 'Candidatures transmises admissible après relance',
+  no_booklet: 'Pas de livret 1',
+  booklet_started: 'Livret 1 démarré',
+  booklet_finished: 'Livret 1 terminé',
+  resumed: 'Avec pièce jointe',
 }
 
 const COLORS = {
-  'created': '#808080',
+  'created': '#c7c7c7',
   'delegated': '#66d1ff',
-  'submitted': '#0aea69',
+  'submitted': '#18495e',
   'inadmissible': '#d35400',
   'admissible': '#06632d',
-  'no_booklet': '#808080',
-  'booklet_started': '#3498db',
-  'booklet_finished': '#1f6390',
-  'resumed': '#2c3e50',
+  'no_booklet': '#c7c7c7',
+  'booklet_started': '#66d1ff',
+  'booklet_finished': '#3498db',
+  'resumed': '#18495e',
 }
 
 const statusToKey = s => {
+  const number = s.replace(/-[a-z]+$/, '');
   const withoutNumber = s.replace(/^\d+-/, '');
-  return KEY_MAP[withoutNumber] || withoutNumber;
+  return `${parseInt(number) + 1}. ${KEY_MAP[withoutNumber] || withoutNumber}`;
 }
 
 const statusToColor = s => {
@@ -55,7 +58,7 @@ const statusToColor = s => {
 const getAvailableStatuses = rows => {
   return rows.reduce((statuses, row) => {
     return statuses.concat(statuses.indexOf(row[1]) > -1 ? [] : [row[1]])
-  }, []).sort().map(s => s.replace(/^\d+-/, ''));
+  }, []).sort();
 }
 
 const formatDataToChart = ({columns, rows}) => {
@@ -113,7 +116,6 @@ const Aggregate = ({data}) => {
     }, result)
   }, {});
   const total = Object.values(aggregatedData).reduce((t, d) => (t+d), 0)
-  console.log(aggregatedData)
   return (
     <ul>
       { sortBy(Object.entries(aggregatedData), ([k, v]) => k).map(([k, v]) =>
@@ -125,32 +127,62 @@ const Aggregate = ({data}) => {
 }
 
 const getLines = type => {
-  return [{
-    label: 'Relance à 30 jours',
-    color: 'red',
-    date: moment().add(-30, 'days'),
-  }, {
-    label: 'MEP Livret 1 Educ nat',
-    color: '#3498db',
-    date: moment('2019-12-11'),
-  }, {
-    label: 'MEP Livret 1 pour tous',
-    color: '#3498db',
-    date: moment('2020-02-26'),
-  }, {
-    label: 'MEP 1.2',
-    color: 'green',
-    date: moment('2020-05-15'),
-  }, {
-    label: 'MEP Livret 1 facultatif',
-    color: '#3498db',
-    date: moment('2022-02-22'),
-  }]
+  if (window.location.pathname === '/admin') { // Dirty
+    return [{
+      label: 'Relance à 30 jours',
+      color: 'red',
+      date: moment().add(-30, 'days'),
+    }, {
+      label: 'MEP Livret 1 Educ nat',
+      color: '#3498db',
+      date: moment('2019-12-11'),
+    }, {
+      label: 'MEP Livret 1 pour tous',
+      color: '#3498db',
+      date: moment('2020-02-26'),
+    }, {
+      label: 'MEP 1.2',
+      color: 'green',
+      date: moment('2020-05-15'),
+    }, {
+      label: 'MEP Livret 1 facultatif',
+      color: '#3498db',
+      date: moment('2022-02-22'),
+    }]
+  } else {
+    return [];
+  }
 }
+
+// const CustomTooltip = props => {
+//   // payload[0] doesn't exist when tooltip isn't visible
+//   if (props.payload[0] != null) {
+//     // mutating props directly is against react's conventions
+//     // so we create a new payload with the name and value fields set to what we want
+//     const newPayload = [
+//       {
+//         name: 'Name',
+//         // all your data which created the tooltip is located in the .payload property
+//         value: props.payload[0].payload.name,
+//         // you can also add "unit" here if you need it
+//       },
+//       ...props.payload,
+//     ];
+
+//     // we render the default, but with our overridden payload
+//     return <DefaultTooltipContent {...props} payload={newPayload} />;
+//   }
+
+//   // we just render the default
+//   return <DefaultTooltipContent {...props} />;
+// };
 
 const renderChart = name => {
   const $container = document.querySelector(`#${name}-plot`);
   if ($container && $container.dataset.url) {
+
+    $container.innerHTML = 'Chargement en cours ...'
+
     fetch($container.dataset.url)
       .then(res => res.json())
       .then(data => {
@@ -177,7 +209,7 @@ const renderChart = name => {
                 <Legend wrapperStyle={{bottom: -5}} />
                 { formatDataToBar(data).map(c =>
                   <Bar key={c.key} dataKey={c.label} stackId="a" fill={c.color}>
-                    {c.isLast && <LabelList position="top" valueAccessor={total}/>}
+                    {false && c.isLast && <LabelList position="top" valueAccessor={total}/>}
                   </Bar>
                 )}
               </BarChart>
