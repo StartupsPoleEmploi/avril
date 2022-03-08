@@ -90,7 +90,7 @@ config :vae, VaeWeb.Mailer,
   template_error_deliver: true,
   template_error_to: System.get_env("DEV_EMAILS") || "avril@pole-emploi.fr",
   avril_name: "Avril - la VAE facile - service numérique de Pôle emploi",
-  avril_from: "avril@fabrique.social.gouv.fr",
+  avril_from: "contact@avril.pole-emploi.fr",
   avril_to: "avril@fabrique.social.gouv.fr"
 
 config :vae, :pow,
