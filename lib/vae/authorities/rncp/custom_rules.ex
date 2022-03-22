@@ -33,8 +33,8 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   )
 
   @wrong_educ_nat_certifiers ~w(
-    230 367 2028 2514 4495 4496 4500 4503 4505
-    18363 25467 28557 34824 34827 34829 34862
+    230 367 2028 2514 2829 4495 4496 4500 4503 4505
+    18363 25467 28557 34824 34827 34829 34862 36004
   )
   @missing_educ_nat_certifiers ~w(4875 34825 34826 34828 35044)
 
@@ -114,11 +114,19 @@ defmodule Vae.Authorities.Rncp.CustomRules do
 
   def custom_data_transformations(%{
     rncp_id: rncp_id
-    } = data) when rncp_id in ["31181", "31182", "25471", "34595", "35864", "25522", "31519"] do
-      Map.merge(data, %{
-        certifiers: [Repo.get_by(Certifier, slug: @gobelins)]
-      })
-    end
+  } = data) when rncp_id in ["31181", "31182", "25471", "34595", "35864", "25522", "31519"] do
+    Map.merge(data, %{
+      certifiers: [Repo.get_by(Certifier, slug: @gobelins)]
+    })
+  end
+
+  def custom_data_transformations(%{
+    rncp_id: "28557"
+  } = data) do
+    Map.merge(data, %{
+      certifiers: [Repo.get_by(Certifier, slug: @sports)]
+    })
+  end
 
   def custom_data_transformations(%{
     rncp_id: rncp_id,

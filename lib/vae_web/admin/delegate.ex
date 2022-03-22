@@ -34,6 +34,7 @@ defmodule Vae.ExAdmin.Delegate do
         row(:slug)
         row(:name)
         row(:is_prc)
+        row(:has_mandatory_booklet)
         row(:address_name)
         row(:address)
         row(:city)
@@ -162,6 +163,7 @@ defmodule Vae.ExAdmin.Delegate do
 
         input(delegate, :name)
         input(delegate, :is_prc)
+        input(delegate, :has_mandatory_booklet)
         input(delegate, :address_name)
         input(delegate, :address)
         input(delegate, :telephone)

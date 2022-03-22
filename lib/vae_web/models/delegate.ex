@@ -13,6 +13,7 @@ defmodule Vae.Delegate do
   schema "delegates" do
     field(:is_active, :boolean, default: false)
     field(:is_prc, :boolean, default: false)
+    field(:has_mandatory_booklet, :boolean, default: false)
     field(:slug, :string)
     field(:name, :string)
     field(:academy_id, :string)
@@ -124,6 +125,7 @@ defmodule Vae.Delegate do
       :secondary_person_name,
       :is_active,
       :is_prc,
+      :has_mandatory_booklet,
       :geom,
       :city,
       :administrative,

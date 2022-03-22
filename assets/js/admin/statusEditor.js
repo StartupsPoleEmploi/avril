@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import {markdown} from 'markdown';
 import moment from 'moment';
-import DatePicker, { registerLocale, setDefaultLocale }  from 'react-datepicker';
-import { fr } from 'date-fns/locale';
+import DatePicker, { registerLocale }  from 'react-datepicker';
+import fr from 'date-fns/locale/fr';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../css/admin/react-datepicker.scss';
