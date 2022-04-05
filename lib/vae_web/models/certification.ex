@@ -67,9 +67,7 @@ defmodule Vae.Certification do
     many_to_many(
       :delegates,
       Delegate,
-      join_through: "certifications_delegates",
-      on_replace: :delete,
-      on_delete: :delete_all
+      join_through: "certifications_delegates"
     )
 
     many_to_many(
