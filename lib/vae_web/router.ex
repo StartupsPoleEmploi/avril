@@ -105,10 +105,6 @@ defmodule VaeWeb.Router do
     get("/candidatures/:id/admissible", VaeWeb.UserApplicationController, :admissible)
     get("/candidatures/:id/inadmissible", VaeWeb.UserApplicationController, :inadmissible)
 
-    # Still used?
-    get("/candidats/:id/admissible", VaeWeb.JobSeekerController, :admissible)
-    get("/candidats/:id/inadmissible", VaeWeb.JobSeekerController, :inadmissible)
-
     # Old URL redirections
     get("/professions", VaeWeb.Redirector, to: "/metiers")
     get("/delegates/:id", VaeWeb.Redirector, to: "/diplomes?certificateur=:id")

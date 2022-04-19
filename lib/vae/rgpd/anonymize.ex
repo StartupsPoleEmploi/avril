@@ -1,6 +1,6 @@
 defmodule Vae.Rgpd.Anonymize do
   import Ecto.Query
-  alias Vae.{JobSeeker, User, UserApplication, Repo, Resume}
+  alias Vae.{User, UserApplication, Repo, Resume}
 
   @anonymous_mail_domain "@anonymous.com"
 
@@ -13,14 +13,13 @@ defmodule Vae.Rgpd.Anonymize do
       |> Stream.run()
     end, timeout: :infinity)
 
-    delete_job_seekers() |> IO.inspect()
   end
 
   def users_query(field_name\\:updated_at) do
     from(u in User)
     |> where([u], fragment("? < now() - interval '2 years'", field(u, ^field_name)))
     |> where([u], not u.is_admin and not u.is_delegate)
-    |> where([u], not like(u.email, ^"%#{@anonymous_mail_domain}"))
+    # |> where([u], not like(u.email, ^"%#{@anonymous_mail_domain}"))
   end
 
   def anonymize(%User{} = user) do
@@ -32,6 +31,7 @@ defmodule Vae.Rgpd.Anonymize do
 
     User.changeset(user, %{
       email: "#{first_name}.#{last_name}#{@anonymous_mail_domain}",
+      name: "#{first_name} #{last_name}",
       first_name: first_name,
       last_name: last_name,
       pe_id: nil,
@@ -69,12 +69,5 @@ defmodule Vae.Rgpd.Anonymize do
         error
 
     end
-  end
-
-  def delete_job_seekers do
-    from(j in Vae.JobSeeker)
-    |> where([j], fragment("? < now() - interval '2 years'", j.updated_at))
-    |> Repo.delete_all(timeout: :infinity)
-    # |> Repo.aggregate(:count, :id)
   end
 end

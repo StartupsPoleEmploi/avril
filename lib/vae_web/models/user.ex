@@ -20,7 +20,6 @@ defmodule Vae.User do
     Delegate,
     Experience,
     Identity,
-    JobSeeker,
     ProvenExperience,
     Repo,
     Skill,
@@ -30,13 +29,12 @@ defmodule Vae.User do
   schema "users" do
     pow_user_fields()
 
+    field(:name, :string)
     field(:first_name, :string)
     field(:last_name, :string)
     field(:is_admin, :boolean)
     field(:is_delegate, :boolean)
     field(:pe_id, :string)
-
-    belongs_to(:job_seeker, JobSeeker, on_replace: :update)
 
     has_many(:applications, UserApplication, on_replace: :delete, on_delete: :delete_all)
 
@@ -50,6 +48,7 @@ defmodule Vae.User do
 
   @fields ~w(
     email
+    name
     first_name
     last_name
     pe_id
