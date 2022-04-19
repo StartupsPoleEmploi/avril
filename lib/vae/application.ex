@@ -22,7 +22,6 @@ defmodule Vae.Application do
         supervisor(VaeWeb.Endpoint, []),
         Vae.Scheduler,
         Pow.Store.Backend.MnesiaCache,
-        supervisor(Vae.Event.EventSupervisor, []),
         worker(Vae.Status.Server, []),
         Vae.PoleEmploi.OAuth.Clients,
       ]
