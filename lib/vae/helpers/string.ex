@@ -1,4 +1,5 @@
 defmodule Vae.String do
+  require Integer
   @moduledoc """
   `String` method helpers
   """
@@ -101,5 +102,28 @@ defmodule Vae.String do
 
   def prepend_if_not_repeat(prepend, string) do
     if String.starts_with?(String.downcase(string), String.downcase(prepend)), do: string, else: "#{prepend} #{string}"
+  end
+
+
+
+  def random_human_readable_name() do
+    replicate = fn el, number -> for _ <- 1..number, do: el end
+    probabilize = fn list ->
+      Enum.reduce(Enum.with_index(list), [], fn {el, i}, res -> res ++ replicate.(el, length(list) - i) end)
+    end
+
+    vowels = "eaiuoy" |> String.graphemes() |> probabilize.()
+    consonants = "strnldmcpvhgfbqjxzkw" |> String.graphemes() |> probabilize.()
+
+    length = (:rand.uniform(6) + 6) |> IO.inspect()
+
+    Enum.to_list(1..length)
+    |> Enum.map(fn v ->
+      case v do
+        v when Integer.is_odd(v) -> Enum.random(consonants)
+        _v -> Enum.random(vowels)
+      end
+    end)
+    |> Enum.join("")
   end
 end

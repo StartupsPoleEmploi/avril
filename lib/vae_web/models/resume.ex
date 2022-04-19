@@ -66,15 +66,16 @@ defmodule Vae.Resume do
     |> ExAws.request()
   end
 
-  def delete(resume) do
-    result =
-      ExAws.S3.delete_object(
-        Application.get_env(:ex_aws, :s3)[:bucket],
-        file_path(resume)
-      )
-      |> ExAws.request()
+  def delete_file(resume) do
+    ExAws.S3.delete_object(
+      Application.get_env(:ex_aws, :s3)[:bucket],
+      file_path(resume)
+    )
+    |> ExAws.request()
+  end
 
-    case result do
+  def delete(resume) do
+    case delete_file(resume) do
       {:ok, _body} ->
         Repo.delete(resume)
 

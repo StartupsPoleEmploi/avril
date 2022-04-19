@@ -1,7 +1,7 @@
 defmodule Vae.JobSeeker do
   use VaeWeb, :model
 
-  alias Vae.{Analytic, Event, Repo}
+  alias Vae.{Analytic, Event, Repo, User}
   alias __MODULE__
 
   schema "job_seekers" do
@@ -20,6 +20,8 @@ defmodule Vae.JobSeeker do
 
     embeds_many(:events, Event, on_replace: :delete)
     embeds_many(:analytics, Analytic, on_replace: :delete)
+
+    has_one(:user, User, foreign_key: :job_seeker_id, on_delete: :nilify_all)
 
     timestamps()
   end
