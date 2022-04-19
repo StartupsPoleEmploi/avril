@@ -79,7 +79,6 @@ defmodule Vae.User do
     |> put_embed_if_necessary(params, :skills)
     |> put_embed_if_necessary(params, :experiences)
     |> put_embed_if_necessary(params, :proven_experiences)
-    |> put_param_assoc(:job_seeker, params)
     |> extract_identity_data()
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)

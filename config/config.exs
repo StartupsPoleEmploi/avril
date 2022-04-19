@@ -119,14 +119,6 @@ config :vae, Vae.Scheduler,
       schedule: "45 5 1,15 * *",
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
-    # registered_campaign_task: [
-    #   schedule: "30 10 * * 2",
-    #   task: &Vae.CampaignDiffuser.Datalake.process_reinscrits/0
-    # ],
-    # new_registered_campaign_task: [
-    #   schedule: "30 14 * * 2",
-    #   task: &Vae.CampaignDiffuser.Datalake.process_primo_inscrits/0
-    # ],
     meetings_task: [
       schedule: "0 5,13 * * *",
       task: &Vae.Meetings.fetch_meetings/0
@@ -134,6 +126,10 @@ config :vae, Vae.Scheduler,
     update_certification_search_view: [
       schedule: "0 3 * * *",
       task: &Vae.Search.FullTextSearch.refresh_materialized_view/0
+    ],
+    anonymization_task: [
+      schedule: "0 4 1 * *",
+      task: &Vae.Rgpd.Anonymize.anonymize_all/0
     ]
   ], else: []
 

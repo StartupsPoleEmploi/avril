@@ -160,8 +160,6 @@ defmodule VaeWeb.Router do
   # API
   scope "/" do
     pipe_through [:accepts_json]
-    post("/mail_events", VaeWeb.MailEventsController, :new_event)
-
     get("/search", VaeWeb.SearchController, :public_search)
 
     # API
