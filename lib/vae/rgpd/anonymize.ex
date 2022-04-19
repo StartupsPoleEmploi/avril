@@ -62,10 +62,10 @@ defmodule Vae.Rgpd.Anonymize do
         r
         |> cast(%{
           filename: "anonymous.pdf",
-          file: nil,
+          name: nil,
           category: nil,
           url: "https://avril.pole-emploi.fr/files/anonymous.pdf"
-        }, [:filename, :file, :category, :url])
+        }, [:filename, :name, :category, :url])
         |> Repo.update()
 
       error ->
