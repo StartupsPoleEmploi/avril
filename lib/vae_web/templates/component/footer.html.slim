@@ -27,6 +27,7 @@ footer.footer
             li= render "active_link.html", text: "Nous contacter", class: "", to: Routes.page_path(@conn, :contact), conn: @conn
         ul.is-horizontal
           li= render "active_link.html", text: "Conditions générales d'utilisation", to: Routes.page_path(@conn, :terms_of_use), conn: @conn
+          li= render "active_link.html", text: "Politique de confidentialité", to: Routes.page_path(@conn, :privacy_policy), conn: @conn
           li= render "active_link.html", text: "L'accessibilité", to: Routes.page_path(@conn, :accessibility_promess), conn: @conn
       .column.is-3
         = link to: Routes.root_path(@conn, :index), do: img_tag "/images/republique-francaise.png", alt: "Logo République Française"

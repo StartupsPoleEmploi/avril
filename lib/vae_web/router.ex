@@ -60,6 +60,7 @@ defmodule VaeWeb.Router do
     get("/vae", VaeWeb.PageController, :vae)
     get("/faq", VaeWeb.PageController, :faq)
     get("/conditions-generales-d-utilisation", VaeWeb.PageController, :terms_of_use)
+    get("/politique-de-confidentialite", VaeWeb.PageController, :privacy_policy)
     get("/justificatifs-vae", VaeWeb.PageController, :receipts)
     get("/synthese-vae", VaeWeb.PageController, :synthesis)
     get("/bien-choisir-son-diplome-vae", VaeWeb.PageController, :choose_certification)

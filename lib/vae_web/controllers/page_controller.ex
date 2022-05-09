@@ -39,6 +39,15 @@ defmodule VaeWeb.PageController do
     )
   end
 
+  def privacy_policy(conn, _params) do
+    render(conn, "privacy_policy.html",
+      title: "Politique de confidentialité",
+      description:
+        "Découvrez la politique de confidentialité d'Avril.",
+      is_landing: true
+    )
+  end
+
   def receipts(conn, _params) do
     render(conn, "receipts.html",
       title: "Les justificatifs de la VAE",

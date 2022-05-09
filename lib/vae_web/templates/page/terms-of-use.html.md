@@ -16,10 +16,13 @@ Tél. 01 40 30 60 00.
 59100 Roubaix
 Tél. 09 72 10 10 07
 
+Le produit Avril est en phase de transfert vers le ministère du Travail, de l'Emploi et de l'Insertion. Reva est la nouvelle plateforme numérique visant à simplifier le processus de reconnaissance et de validation des acquis et de l'expérience
+
 
 ## 2. Objet du site Avril
 
 Le site internet [avril.pole-emploi.fr](https://avril.pole-emploi.fr/) a pour objet de permettre à l’utilisateur, sur la base des informations qu’il fournit (métier pour lequel l’utilisateur souhaite un diplôme et ville de résidence), d'identifier une liste de certifications et le parcours V.A.E. - Validation des Acquis de l'Expérience – associé et d’entrer en relation avec les organismes certificateurs de son choix.
+Le site permet aussi à l'utilisateur de constituer une candidature complète (recavabilité de la démarche VAE) en procédant au recueil de données nécessaires au traitement de cette candidature, en stricte conformité du cerfa en vigueur.
 
 ## 3. Modalités de connexion sur le site Avril
 
@@ -31,9 +34,9 @@ L’utilisateur peut se connecter avec les identifiant et mot de passe de son co
 
 **Recherche de certifications**
 
-Dans le moteur de recherche disponible sur le site, l’utilisateur renseigne le métier pour lequel il souhaite un diplôme. Ces informations doivent être obligatoirement renseignées pour la délivrance du service.
+Dans le moteur de recherche disponible sur le site, l’utilisateur renseigne le métier pour lequel il souhaite un diplôme. Cette informations doit être obligatoirement renseignée pour la délivrance du service.
 
-Une liste de certifications correspondant à la cible lui est proposé et des informations complémentaires sont fournies afin d’orienter l’utilisateur dans le parcours V.A.E pour chaque certification.
+Une liste de certifications correspondant à la cible lui est proposée et des informations complémentaires sont fournies afin d’orienter l’utilisateur dans le parcours V.A.E pour chaque certification.
 
 **Inscription aux réunions d’information**
 
@@ -57,7 +60,7 @@ D'autre part, l'utilisateur a la possibilité de déposer des documents justific
 
 Ces données sont transmises aux organismes de certification en cas de demande de mise en relation à l’initiative de l’utilisateur et après consentement exprès de celui-ci.
 
-Les données sont conservées pendant 12 mois afin de permettre aux utilisateurs d’être recontactés et mis en relation avec les certificateurs dans l'optique de démarrer une démarche VAE.
+Les données sont conservées pendant 24 mois afin de permettre aux utilisateurs d’être recontactés et mis en relation avec les certificateurs dans l'optique de démarrer une démarche VAE.
 
 Conformément aux articles 12 à 23 du règlement général (UE) sur la protection des données n°2016/679 du 27 avril 2016 et à la loi Informatique et libertés n°78-17 du 6 janvier 1978 modifiée, l’utilisateur bénéficie d’un droit d’accès, de rectification, de limitation, d’effacement, de définir des directives sur le sort des données après sa mort et le droit de porter une réclamation devant la Commission nationale de l’informatique et des libertés pour les données le concernant.
 
