@@ -4,7 +4,50 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   alias Vae.{Certification, Certifier, Rome, Repo, UserApplication}
   alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
 
-  def fiche_to_certification(fiche, %{import_date: import_date}) do
+  def rncp_to_certification() do
+    %{
+      rncp_id: {"NUMERO_FICHE", &String.replace_prefix(&1, "RNCP", "")},
+      label: {"INTITULE", &String.slice(&1, 0, 225)},
+      acronym: {"ABREGE/CODE", fn a -> if a != "Autre", do: a end},
+      activities: {"ACTIVITES_VISEES", &HtmlEntities.decode/1},
+      abilities: {"CAPACITES_ATTESTEES", &HtmlEntities.decode/1},
+      activity_area: {"SECTEURS_ACTIVITE", &(&1)},
+      accessible_job_type: {"TYPE_EMPLOI_ACCESSIBLES", &(&1)},
+      level: {"NOMENCLATURE_EUROPE/NIVEAU", fn l ->
+        l
+        |> String.replace_prefix("NIV", "")
+        |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
+      end},
+      is_rncp_active: {"ACTIF", &(&1 == "Oui")},
+      is_active: {"ACTIF", &(&1 == "Oui")},
+      end_of_rncp_validity: {"DATE_FIN_ENREGISTREMENT", fn d ->
+        case Timex.parse(d, "%d/%m/%Y", :strftime) do
+          {:ok, datetime} -> datetime |> DateTime.to_date()
+          _ -> nil
+        end
+      end}
+    }
+  end
+
+  # def str_path_to_atom_list(str_path) do
+  #   String.split("/")
+  #   |> Enum.map(&String.to_atom(&1))
+  # end
+
+  def api_fiche_to_certification_params(api_data) do
+
+    Enum.reduce(rncp_to_certification(), %{}, fn({key, {path, func}}, result) ->
+      value = get_in(api_data, String.split(path, "/")) |> func.()
+      Map.put(result, key, value)
+    end)
+  end
+
+  def xml_fiche_params_to_certification(fiche) do
+    xml_fiche_to_certification_params(fiche)
+    |> insert_or_update_by_rncp_id()
+  end
+
+  def xml_fiche_to_certification_params(fiche) do
     data = SweetXml.xmap(fiche,
       rncp_id: ~x"./NUMERO_FICHE/text()"s |> transform_by(&String.replace_prefix(&1, "RNCP", "")),
       label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
@@ -28,22 +71,12 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end)
     )
 
-    if data.is_rncp_active && data.end_of_rncp_validity == ~D[2024-01-01] do
-      FileLogger.log_into_file("inactive_date.csv", [data.rncp_id, data.acronym, data.label])
-    end
-
-    Logger.info("#################################")
-    Logger.info("Updating RNCP_ID: #{data.rncp_id}")
-    Logger.info("#################################")
-
-    data
-    |> Map.merge(%{
+    Map.merge(data, %{
       romes: parse_romes(fiche),
       certifiers: parse_certifiers(fiche, data),
-      last_rncp_import_date: import_date
     })
     |> CustomRules.custom_data_transformations()
-    |> insert_or_update_by_rncp_id()
+
   end
 
   def parse_romes(fiche) do
