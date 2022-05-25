@@ -42,6 +42,12 @@ defmodule Vae.ExAdmin.Certification do
         row(:abilities)
         row(:activity_area)
         row(:accessible_job_type)
+        row(:rncp_update, fn c ->
+          IO.inspect(conn)
+          changeset = Vae.Certification.rncp_changeset(c)
+          Helpers.print_in_json(changeset.changes)
+        end)
+
       end
 
       panel "ROME" do

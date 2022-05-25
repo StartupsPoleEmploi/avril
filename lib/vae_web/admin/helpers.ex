@@ -54,16 +54,22 @@ defmodule Vae.ExAdmin.Helpers do
 
   def print_in_json(nil), do: nil
 
-  def print_in_json(struct) do
+  def print_in_json(%{__struct__: _} = struct) do
+    struct
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> print_in_json()
+  end
+
+  def print_in_json(anything) do
     markup do
-      struct
-      |> Map.from_struct()
-      |> Map.delete(:__meta__)
+      anything
       |> Jason.encode!(pretty: true)
       |> pre()
       |> Phoenix.HTML.raw()
     end
   end
+
 
   def form_select_tag(%struct{} = object, association_name, options \\ []) do
     object = Repo.preload(object, association_name)

@@ -28,17 +28,16 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         end
       end},
       romes: {"CODES_ROME", fn rome_data ->
-        codes = Enum.map(rome_data, &(&1["CODE"]))
+        codes = Enum.map((rome_data || []), &(&1["CODE"]))
         Repo.all(from r in Rome, [where: r.code in ^codes])
       end},
       certifiers: {"CERTIFICATEURS", fn (certificateurs_data, data) ->
         Enum.map(certificateurs_data, fn %{
-          "NOM_CERTIFICATEUR" => certificateur_name,
-          "SIRET_CERTIFICATEUR" => siret
-        } ->
+          "NOM_CERTIFICATEUR" => certificateur_name
+        } = cd ->
           %{
             name: AuthorityMatcher.prettify_name(certificateur_name),
-            siret: String.replace(siret, ~r/\s+/, "")
+            siret: (if cd["SIRET_CERTIFICATEUR"], do: String.replace(cd["SIRET_CERTIFICATEUR"], ~r/\s+/, ""))
           }
         end)
         |> Enum.map(&match_or_build_certifier(&1))
@@ -205,7 +204,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       end
       |> Repo.preload([:certifiers, :romes])
       |> Certification.changeset(Map.merge(fields, %{last_rncp_import_date: Timex.today()}))
-      |> Repo.insert_or_update()
+      # |> Repo.insert_or_update()
     rescue
       e -> Logger.error(inspect(e))
     end
