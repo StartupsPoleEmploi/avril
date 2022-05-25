@@ -51,79 +51,11 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   end
 
   def api_fiche_to_certification_params(api_data) do
-    IO.inspect(api_data)
     Enum.reduce(rncp_to_certification(), %{}, fn({key, {path, func}}, result) ->
       sub_data = get_in(api_data, String.split(path, "/"))
       value = if is_function(func, 2), do: func.(sub_data, result), else: func.(sub_data)
       Map.put(result, key, value)
     end)
-  end
-
-  def xml_fiche_params_to_certification(fiche) do
-    xml_fiche_to_certification_params(fiche)
-    |> insert_or_update_by_rncp_id()
-  end
-
-  def xml_fiche_to_certification_params(fiche) do
-    xmapper = Vae.Map.map_values(rncp_to_certification(), fn({key, {path, func}}) ->
-      transform_by(SweetXml.sigil_x(<<"./#{path}/text()">>, 's'), func)
-    end)
-
-    SweetXml.xmap(fiche, xmapper)
-
-    # data = SweetXml.xmap(fiche,
-    #   rncp_id: ~x"./NUMERO_FICHE/text()"s |> transform_by(&String.replace_prefix(&1, "RNCP", "")),
-    #   label: ~x"./INTITULE/text()"s |> transform_by(&String.slice(&1, 0, 225)),
-    #   acronym: ~x"./ABREGE/CODE/text()"s |> transform_by(fn a -> if a != "Autre", do: a end),
-    #   activities: ~x"./ACTIVITES_VISEES/text()"s |> transform_by(&HtmlEntities.decode/1),
-    #   abilities: ~x"./CAPACITES_ATTESTEES/text()"s |> transform_by(&HtmlEntities.decode/1),
-    #   activity_area: ~x"./SECTEURS_ACTIVITE/text()"s,
-    #   accessible_job_type: ~x"./TYPE_EMPLOI_ACCESSIBLES/text()"s,
-    #   level: ~x"./NOMENCLATURE_EUROPE/NIVEAU/text()"s |> transform_by(fn l ->
-    #     l
-    #     |> String.replace_prefix("NIV", "")
-    #     |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
-    #   end),
-    #   is_rncp_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui")),
-    #   is_active: ~x"./ACTIF/text()"s |> transform_by(&(&1 == "Oui")),
-    #   end_of_rncp_validity: ~x"./DATE_FIN_ENREGISTREMENT/text()"s |> transform_by(fn d ->
-    #     case Timex.parse(d, "%d/%m/%Y", :strftime) do
-    #       {:ok, datetime} -> datetime |> DateTime.to_date()
-    #       _ -> nil
-    #     end
-    #   end)
-    # )
-
-    # Map.merge(data, %{
-    #   romes: parse_romes(fiche),
-    #   certifiers: parse_certifiers(fiche, data),
-    # })
-    # |> CustomRules.custom_data_transformations()
-
-  end
-
-  def parse_romes(fiche) do
-    Logger.info("Parsing romes")
-    SweetXml.xpath(fiche, ~x"./CODES_ROME/ROME"l)
-      |> Enum.map(fn node -> SweetXml.xpath(node, ~x"./CODE/text()"s) end)
-      |> Enum.map(fn code -> Repo.get_by(Rome, code: code) end)
-  end
-
-  def parse_certifiers(fiche, data) do
-    Logger.info("Parsing certifiers")
-    SweetXml.xpath(fiche, ~x"./CERTIFICATEURS/CERTIFICATEUR"l)
-      |> Enum.map(fn node ->
-        SweetXml.xmap(node,
-          name: ~x"./NOM_CERTIFICATEUR/text()"s |> transform_by(&AuthorityMatcher.prettify_name/1),
-          siret: ~x"./SIRET_CERTIFICATEUR/text()"s |> transform_by(&String.replace(&1, ~r/\s+/, ""))
-        )
-      end)
-      |> Enum.map(&match_or_build_certifier(&1))
-      |> Enum.filter(&not(is_nil(&1)))
-      |> CustomRules.add_educ_nat_certifiers(data)
-      |> CustomRules.reject_educ_nat_certifiers(data)
-      |> Enum.uniq_by(&(&1.slug))
-      |> Enum.sort_by(&(&1.id))
   end
 
   def move_applications_if_inactive_and_set_newer_certification(fiche) do
@@ -177,36 +109,9 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   end
 
   def create_certifier_and_maybe_delegate(%{name: _name} = params, _opts \\ []) do
-    certifier = %Certifier{}
+    %Certifier{}
     |> Certifier.changeset(params)
-    |> FileLogger.log_changeset()
-    |> Repo.insert!()
-
-    # if opts[:with_delegate] && (not is_nil(certifier)) do
-    #   (AuthorityMatcher.find_by_slug_or_closer_distance_match(Delegate, name, opts[:tolerance]) ||
-    #     %Delegate{name: name})
-    #   |> Delegate.changeset(%{
-    #     certifiers: [certifier]
-    #   })
-    #   |> FileLogger.log_changeset()
-    #   |> Repo.insert_or_update!()
-    # end
-
-    certifier
-  end
-
-  def insert_or_update_by_rncp_id(%{rncp_id: rncp_id} = fields) do
-    try do
-      Repo.get_by(Certification, rncp_id: rncp_id)
-      |> case do
-        nil -> %Certification{rncp_id: rncp_id}
-        %Certification{} = c -> c
-      end
-      |> Repo.preload([:certifiers, :romes])
-      |> Certification.changeset(Map.merge(fields, %{last_rncp_import_date: Timex.today()}))
-      # |> Repo.insert_or_update()
-    rescue
-      e -> Logger.error(inspect(e))
-    end
+    # |> FileLogger.log_changeset()
+    # |> Repo.insert!()
   end
 end

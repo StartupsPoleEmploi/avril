@@ -1,6 +1,8 @@
 defmodule Vae.Authorities.Rncp.Api do
   require Logger
 
+  alias Vae.Certification
+
   @api_config Application.get_env(:vae, :rncp)
   @base_url @api_config[:url]
   @api_key @api_config[:api_key]
@@ -11,9 +13,12 @@ defmodule Vae.Authorities.Rncp.Api do
     |> List.first()
   end
 
-  def query(params = %{}) do
+  def query(params \\ %{}) do
+    base_params = %{REPERTOIRE: "RNCP"}
     with(
-      {:ok, response} <- HTTPoison.get("#{@base_url}?#{URI.encode_query(params)}", @headers),
+      query_params <- Map.merge(base_params, params),
+      url <- "#{@base_url}?#{URI.encode_query(query_params)}",
+      {:ok, response} <- HTTPoison.get(url, @headers),
       {:ok, %{"fiches" => results}} <- response.body |> Jason.decode()
     ) do
       results
@@ -21,6 +26,21 @@ defmodule Vae.Authorities.Rncp.Api do
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
         []
+    end
+  end
+
+  def all(page \\ 1) do
+    Logger.info("Querying page #{page}")
+    case query(%{PAGE: page}) do
+      [] -> Logger.info("Finished at page #{page}")
+      list when is_list(list) ->
+        Enum.map(list, fn fiche ->
+          fiche
+          |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
+          |> Certification.rncp_changeset()
+          |> Certification.rncp_update()
+        end)
+        all(page+1)
     end
   end
 end

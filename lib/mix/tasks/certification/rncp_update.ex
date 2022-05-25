@@ -35,16 +35,16 @@ defmodule Mix.Tasks.RncpUpdate do
     prepare_avril_data()
 
     Logger.info("Parsing fiches to certifications")
-    build_and_transform_stream(
-      filename,
-      &FicheHandler.fiche_to_certification(&1, options)
-    )
+    # build_and_transform_stream(
+    #   filename,
+    #   &FicheHandler.fiche_to_certification(&1, options)
+    # )
 
-    Logger.info("Linking old certifications with new ones")
-    build_and_transform_stream(
-      filename,
-      &FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1)
-    )
+    # Logger.info("Linking old certifications with new ones")
+    # build_and_transform_stream(
+    #   filename,
+    #   &FicheHandler.move_applications_if_inactive_and_set_newer_certification(&1)
+    # )
 
     clean_avril_data(options)
   end

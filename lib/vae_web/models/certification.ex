@@ -1,4 +1,6 @@
 defmodule Vae.Certification do
+  require Logger
+
   use VaeWeb, :model
 
   alias __MODULE__
@@ -228,16 +230,44 @@ defmodule Vae.Certification do
     end)
   end
 
-  def rncp_changeset(%Certification{rncp_id: rncp_id}) do
-    rncp_id
-    |> Vae.Authorities.Rncp.Api.get()
-    |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
-    |> Vae.Authorities.Rncp.FicheHandler.insert_or_update_by_rncp_id()
+
+  def rncp_changeset(%{rncp_id: rncp_id} = params) do
+    rncp_changeset(rncp_id, params)
   end
 
-  def rncp_update(%Certification{} = certification) do
+  def rncp_changeset(cert_infos, params \\ nil)
+
+  def rncp_changeset(rncp_id, params) when is_binary(rncp_id) do
+    rncp_changeset(
+      Repo.get_by(Certification, rncp_id: rncp_id) || %{rncp_id: rncp_id},
+      params
+    )
+  end
+
+  def rncp_changeset(%Certification{rncp_id: rncp_id} = certification, params) do
+    params = params || (
+      rncp_id
+      |> Vae.Authorities.Rncp.Api.get()
+      |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
+    )
+
     certification
-    |> rncp_changeset()
+    # |> Repo.preload([:certifiers, :romes])
+    |> Certification.changeset(params)
+  end
+
+  def rncp_update(changeset) do
+    case IO.inspect(changeset) do
+      %Ecto.Changeset{changes: %{certifiers: certifiers}} when is_list(certifiers) ->
+        Logger.warn("Not updating, certifiers change: #{inspect(certifiers)}")
+        {:ok, nil}
+      changeset -> rncp_update!(changeset)
+    end
+  end
+
+  def rncp_update!(changeset) do
+    changeset
+    |> change(%{last_rncp_import_date: Timex.today()})
     |> Repo.insert_or_update()
   end
 

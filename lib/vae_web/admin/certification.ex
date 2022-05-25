@@ -27,6 +27,16 @@ defmodule Vae.ExAdmin.Certification do
     show certification do
       attributes_table() do
         row(:rncp_id, fn c -> Phoenix.HTML.Link.link(c.rncp_id, to: "https://www.francecompetences.fr/recherche/rncp/#{c.rncp_id}/", target: "_blank") end)
+        row(:last_rncp_import_date)
+        row(:rncp_update, fn c ->
+          if conn.params["rncp"] == "check" do
+            changeset = Vae.Certification.rncp_changeset(c)
+            Helpers.print_in_json(changeset.changes)
+          else
+            Phoenix.HTML.Link.link("Check RNCP changes", to: "?rncp=check")
+          end
+        end)
+        row(:end_of_rncp_validity)
         row(:is_rncp_active)
         row(:is_active)
         row(:newer_certification)
@@ -36,18 +46,10 @@ defmodule Vae.ExAdmin.Certification do
         row(:label)
         row(:level)
         row(:nb_applications, &Helpers.count_and_link_to_all(&1, :applications))
-        row(:last_rncp_import_date)
-        row(:end_of_rncp_validity)
         row(:activities)
         row(:abilities)
         row(:activity_area)
         row(:accessible_job_type)
-        row(:rncp_update, fn c ->
-          IO.inspect(conn)
-          changeset = Vae.Certification.rncp_changeset(c)
-          Helpers.print_in_json(changeset.changes)
-        end)
-
       end
 
       panel "ROME" do
@@ -129,12 +131,14 @@ defmodule Vae.ExAdmin.Certification do
     def update_rncp(conn, %{id: id}) do
       c = Vae.Repo.get(Vae.Certification, id)
 
-      case Vae.Certification.rncp_update(c) do
-        {:ok, _} ->
+      c
+      |> Certification.rncp_changeset()
+      |> Certification.rncp_update()
+      |> case do
+        {:ok, %Certification{}} ->
           conn
           |> Phoenix.Controller.put_flash(:notice, "Certification mise à jour")
           |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
-          # |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Certification))
         _ ->
           conn
           |> Phoenix.Controller.put_flash(:danger, "La certification n'a pas été mise à jour.")
