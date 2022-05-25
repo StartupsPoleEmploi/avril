@@ -115,6 +115,28 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
+    member_action :rncp_update,
+      &__MODULE__.update_rncp/2,
+      label: "Refresh from RNCP",
+      icon: "refresh"
+
+    def update_rncp(conn, %{id: id}) do
+      c = Vae.Repo.get(Vae.Certification, id)
+
+      case Vae.Certification.rncp_update(c) do
+        {:ok, _} ->
+          conn
+          |> Phoenix.Controller.put_flash(:notice, "Certification mise à jour")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
+          # |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Certification))
+        _ ->
+          conn
+          |> Phoenix.Controller.put_flash(:danger, "La certification n'a pas été mise à jour.")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
+      end
+    end
+
+
     filter(:newer_certification, type: :present_only)
     filter(:applications, scope: :recent)
     # filter(:delegates, scope: :active)

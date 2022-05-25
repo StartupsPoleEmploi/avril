@@ -228,6 +228,13 @@ defmodule Vae.Certification do
     end)
   end
 
+  def rncp_update(%Certification{rncp_id: rncp_id}) do
+    rncp_id
+    |> Vae.Authorities.Rncp.Api.get()
+    |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
+    |> Vae.Authorities.Rncp.FicheHandler.insert_or_update_by_rncp_id()
+  end
+
   defimpl Phoenix.Param, for: Vae.Certification do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"

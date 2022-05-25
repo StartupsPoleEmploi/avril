@@ -1,8 +1,9 @@
 defmodule Vae.Authorities.Rncp.Api do
   require Logger
 
-  @base_url "https://api.francecompetences.fr/referentiels/v1/fiches"
-  @api_key "b70405cf-cd36-4df2-a666-987236c57050"
+  @api_config Application.get_env(:vae, :rncp)
+  @base_url @api_config[:url]
+  @api_key @api_config[:api_key]
   @headers ["X-Gravitee-Api-Key": @api_key, "Content-Type": "application/json"]
 
   def get(rncp_id) do
@@ -11,11 +12,8 @@ defmodule Vae.Authorities.Rncp.Api do
   end
 
   def query(params = %{}) do
-    base_params = %{
-      STATUT: "ACTIF"
-    }
     with(
-      {:ok, response} <- HTTPoison.get("#{@base_url}?#{URI.encode_query(Map.merge(base_params, params))}", @headers),
+      {:ok, response} <- HTTPoison.get("#{@base_url}?#{URI.encode_query(params)}", @headers),
       {:ok, %{"fiches" => results}} <- response.body |> Jason.decode()
     ) do
       results
