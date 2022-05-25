@@ -7,10 +7,10 @@ h2.subtitle.is-3.has-text-centered Evolution des candidatures démarrées chaque
   div style="margin-bottom: 3rem;"
     form method="GET"
       .columns
-        .column.is-4.is-offset-2
+        .column.is-4.is-offset-1
           .field.is-horizontal
             .field-label.is-normal
-              label.label for="start_date" From date
+              label.label for="start_date" Date de début
             .field-body
               .field
                 p.control.is-expanded
@@ -18,11 +18,13 @@ h2.subtitle.is-3.has-text-centered Evolution des candidatures démarrées chaque
         .column.is-4
           .field.is-horizontal
             .field-label.is-normal
-              label.label for="end_date" To date
+              label.label for="end_date" Date de fin
             .field-body
               .field
                 p.control.is-expanded
                   input.input type="date" name="end_date" value=@end_date autocomplete="off"
+        .column.is-1
+          button.button.is-primary type="submit" Changer les dates
 
     p.has-text-centered.is-italic NB: Une semaine démarre le lundi et termine le dimanche.
 
