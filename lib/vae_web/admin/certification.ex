@@ -139,6 +139,7 @@ defmodule Vae.ExAdmin.Certification do
       c = Vae.Repo.get(Vae.Certification, id)
 
       c
+      |> IO.inspect()
       |> Certification.rncp_changeset()
       |> IO.inspect()
       |> Vae.Maybe.if(conn.params["force"] == "rncp", &Certification.rncp_update!(&1), &Certification.rncp_update(&1))

@@ -8,7 +8,7 @@ defmodule Vae.Authorities.Rncp.Api do
 
   def get(rncp_id) do
     query(%{NUMERO_FICHE: "RNCP#{rncp_id}"})
-    |> List.first()
+    |> Enum.find(fn fiche -> fiche["NUMERO_FICHE"] == "RNCP#{rncp_id}" end)
   end
 
   def query(params \\ %{}) do
