@@ -64,12 +64,11 @@ defmodule Vae.ExAdmin.Helpers do
   def print_in_json(anything) do
     markup do
       anything
-      |> Jason.encode!(pretty: true)
+      |> Poison.encode!(pretty: true)
       |> pre()
       |> Phoenix.HTML.raw()
     end
   end
-
 
   def form_select_tag(%struct{} = object, association_name, options \\ []) do
     object = Repo.preload(object, association_name)
@@ -133,5 +132,13 @@ defmodule Vae.ExAdmin.Helpers do
 
   def struct_to_string(struct) do
     struct |> Atom.to_string() |> String.split(".") |> List.last()
+  end
+end
+
+defimpl Poison.Encoder, for: Tuple do
+  def encode(data, options) when is_tuple(data) do
+    data
+    |> Tuple.to_list()
+    |> Poison.Encoder.List.encode(options)
   end
 end

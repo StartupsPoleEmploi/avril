@@ -230,16 +230,11 @@ defmodule Vae.Certification do
     end)
   end
 
-
-  def rncp_changeset(%{rncp_id: rncp_id} = params) do
-    rncp_changeset(rncp_id, params)
-  end
-
   def rncp_changeset(cert_infos, params \\ nil)
 
   def rncp_changeset(rncp_id, params) when is_binary(rncp_id) do
     rncp_changeset(
-      Repo.get_by(Certification, rncp_id: rncp_id) || %{rncp_id: rncp_id},
+      Repo.get_by(Certification, rncp_id: rncp_id) || %Certification{rncp_id: rncp_id},
       params
     )
   end
@@ -249,6 +244,7 @@ defmodule Vae.Certification do
       rncp_id
       |> Vae.Authorities.Rncp.Api.get()
       |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
+      |> IO.inspect()
     )
 
     certification
@@ -260,7 +256,7 @@ defmodule Vae.Certification do
     case IO.inspect(changeset) do
       %Ecto.Changeset{changes: %{certifiers: certifiers}} when is_list(certifiers) ->
         Logger.warn("Not updating, certifiers change: #{inspect(certifiers)}")
-        {:ok, nil}
+        {:ok, Ecto.Changeset.fetch_field!(changeset, :certifiers)}
       changeset -> rncp_update!(changeset)
     end
   end

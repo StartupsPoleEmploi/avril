@@ -29,11 +29,17 @@ defmodule Vae.ExAdmin.Certification do
         row(:rncp_id, fn c -> Phoenix.HTML.Link.link(c.rncp_id, to: "https://www.francecompetences.fr/recherche/rncp/#{c.rncp_id}/", target: "_blank") end)
         row(:last_rncp_import_date)
         row(:rncp_update, fn c ->
-          if conn.params["rncp"] == "check" do
-            changeset = Vae.Certification.rncp_changeset(c)
-            Helpers.print_in_json(changeset.changes)
+          if conn.params["check"] == "rncp" do
+            c
+            |> Vae.Certification.rncp_changeset()
+            |> Map.get(:changes)
+            |> IO.inspect()
+            |> case do
+              changes when changes == %{} -> "No changes from RNCP"
+              changes -> Helpers.print_in_json(changes)
+            end
           else
-            Phoenix.HTML.Link.link("Check RNCP changes", to: "?rncp=check")
+            Phoenix.HTML.Link.link("Check RNCP changes", to: "?check=rncp")
           end
         end)
         row(:end_of_rncp_validity)
@@ -126,22 +132,29 @@ defmodule Vae.ExAdmin.Certification do
     member_action :rncp_update,
       &__MODULE__.update_rncp/2,
       label: "Refresh from RNCP",
-      icon: "refresh"
+      icon: "refresh",
+      class: "rncp_forcable"
 
     def update_rncp(conn, %{id: id}) do
       c = Vae.Repo.get(Vae.Certification, id)
 
       c
       |> Certification.rncp_changeset()
-      |> Certification.rncp_update()
+      |> IO.inspect()
+      |> Vae.Maybe.if(conn.params["force"] == "rncp", &Certification.rncp_update!(&1), &Certification.rncp_update(&1))
       |> case do
         {:ok, %Certification{}} ->
           conn
           |> Phoenix.Controller.put_flash(:notice, "Certification mise à jour")
           |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
+        {:ok, certifiers} when is_list(certifiers) ->
+          certifiers_name = Enum.map(certifiers, &(&1.name)) |> Enum.join(", ")
+          conn
+          |> Phoenix.Controller.put_flash(:error, "La certification n'a pas été mise à jour car les certifiers vont changer. Voici la nouvelle liste: #{certifiers_name}")
+          |> Phoenix.Controller.redirect(to: "#{ExAdmin.Utils.admin_resource_path(c)}?to_force=rncp")
         _ ->
           conn
-          |> Phoenix.Controller.put_flash(:danger, "La certification n'a pas été mise à jour.")
+          |> Phoenix.Controller.put_flash(:error, "La certification n'a pas été mise à jour: une erreur est survenue")
           |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
       end
     end
@@ -156,7 +169,7 @@ defmodule Vae.ExAdmin.Certification do
       preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]
 
       %{
-        index: [default_sort: [asc: :rncp_id], preload: [:certifiers, :delegates, :recent_applications]],
+        index: [default_sort: [asc: :id], preload: [:certifiers, :delegates, :recent_applications]],
         show: [
           preload: [:certifiers, :included_delegates, :excluded_delegates, [delegates: :certifiers], :romes, :newer_certification, :older_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]

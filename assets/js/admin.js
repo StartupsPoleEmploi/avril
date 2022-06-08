@@ -140,6 +140,18 @@ const selectMultipleWithMultiSelect = () => {
   })
 }
 
+const queryString = key => Object.fromEntries((new URLSearchParams(window.location.search)).entries())[key];
+
+const transformForcableActions = () => {
+  const needsToForce = queryString('to_force');
+  if (!needsToForce) return;
+  $(`aside.main-sidebar li a.${needsToForce}_forcable`).each((i, el) => {
+    $(el).attr('href', `${$(el).attr('href')}?force=${needsToForce}`);
+    $(el).attr('data-confirm', 'Confirmez-vous cette action?');
+    $(el).find('span').append(' (force)');
+  });
+};
+
 const autocompleteDelegateAddress = () => autocomplete('input#delegate_address');
 // {
 //   const $input = $('input#delegate_address');
@@ -172,5 +184,6 @@ $(document).ready(() => {
   trimPaste();
   doubleClickUncheckPresenceRadioInputs();
   autocompleteDelegateAddress();
+  transformForcableActions();
 })
 
