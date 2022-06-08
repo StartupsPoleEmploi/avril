@@ -1,9 +1,9 @@
 defmodule Vae.Authorities.Rncp.FicheHandler do
   require Logger
-  import SweetXml
+  # import SweetXml
   import Ecto.Query
-  alias Vae.{Certification, Certifier, Rome, Repo, UserApplication}
-  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules, FileLogger}
+  alias Vae.{Certification, Certifier, Rome, Repo}
+  alias Vae.Authorities.Rncp.{AuthorityMatcher, CustomRules}
 
   def rncp_to_certification() do
     [
@@ -17,7 +17,15 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       level: {"NOMENCLATURE_EUROPE/NIVEAU", fn l ->
         l
         |> String.replace_prefix("NIV", "")
-        |> Vae.Maybe.if(&Vae.String.is_present?/1, &String.to_integer/1)
+        |> case do
+          num when is_integer(num) -> num
+          str when is_binary(str) ->
+            case Integer.parse(str) do
+              {int, _rest} -> int
+              _ -> nil
+            end
+          _ -> nil
+        end
       end},
       is_rncp_active: {"ACTIF", &(&1 == "Oui")},
       is_active: {"ACTIF", &(&1 == "Oui")},
@@ -46,6 +54,13 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         |> CustomRules.reject_educ_nat_certifiers(data)
         |> Enum.uniq_by(&(&1.slug))
         |> Enum.sort_by(&(&1.id))
+      end},
+      newer_certification: {"NOUVELLE_CERTIFICATION", fn new_certification_data ->
+        if new_certification_data do
+          new_certification_data
+          |> String.replace_prefix("RNCP", "")
+          |> (&Repo.get_by(Certification, %{rncp_id: &1})).()
+        end
       end}
     ]
   end
@@ -58,42 +73,42 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     end)
   end
 
-  def move_applications_if_inactive_and_set_newer_certification(fiche) do
-    rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
-      String.replace_prefix(nb, "RNCP", "")
-    end))
+  # def move_applications_if_inactive_and_set_newer_certification(fiche) do
+  #   rncp_id = SweetXml.xpath(fiche, ~x"./NUMERO_FICHE/text()"s |> transform_by(fn nb ->
+  #     String.replace_prefix(nb, "RNCP", "")
+  #   end))
 
-    with(
-      %Certification{is_rncp_active: false, applications: old_applications} = certification <-
-        Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload([:applications, :older_certification]),
-      newer_rncp_id when not is_nil(newer_rncp_id) <-
-        SweetXml.xpath(fiche, ~x"./NOUVELLE_CERTIFICATION/text()"l
-          |> transform_by(fn l ->
-            l
-            |> Enum.map(&String.replace_prefix(to_string(&1), "RNCP", ""))
-            |> Enum.sort_by(&String.to_integer(&1))
-            |> List.last()
-          end)
-        ),
-      %Certification{is_rncp_active: true, applications: new_applications} = newer_certification <-
-        Repo.get_by(Certification, rncp_id: newer_rncp_id) |> Repo.preload(:applications)
-    ) do
-      Logger.info("RNCP#{rncp_id} has newer version #{newer_rncp_id}")
+  #   with(
+  #     %Certification{is_rncp_active: false, applications: old_applications} = certification <-
+  #       Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload([:applications, :older_certification]),
+  #     newer_rncp_id when not is_nil(newer_rncp_id) <-
+  #       SweetXml.xpath(fiche, ~x"./NOUVELLE_CERTIFICATION/text()"l
+  #         |> transform_by(fn l ->
+  #           l
+  #           |> Enum.map(&String.replace_prefix(to_string(&1), "RNCP", ""))
+  #           |> Enum.sort_by(&String.to_integer(&1))
+  #           |> List.last()
+  #         end)
+  #       ),
+  #     %Certification{is_rncp_active: true, applications: new_applications} = newer_certification <-
+  #       Repo.get_by(Certification, rncp_id: newer_rncp_id) |> Repo.preload(:applications)
+  #   ) do
+  #     Logger.info("RNCP#{rncp_id} has newer version #{newer_rncp_id}")
 
-      Enum.each(old_applications, fn
-        %UserApplication{user_id: user_id} = a1 ->
-          if a2 = Enum.find(new_applications, &(&1.user_id == user_id)) do
-            (if UserApplication.get_comparison_score(a1, a2) > 0, do: a2, else: a1)
-            |> Repo.delete()
-          end
-      end)
+  #     Enum.each(old_applications, fn
+  #       %UserApplication{user_id: user_id} = a1 ->
+  #         if a2 = Enum.find(new_applications, &(&1.user_id == user_id)) do
+  #           (if UserApplication.get_comparison_score(a1, a2) > 0, do: a2, else: a1)
+  #           |> Repo.delete()
+  #         end
+  #     end)
 
-      newer_certification
-      |> Repo.preload(:applications, force: true)
-      |> Certification.changeset(%{older_certification: Repo.preload(certification, :applications, force: true)})
-      |> Repo.update()
-    end
-  end
+  #     newer_certification
+  #     |> Repo.preload(:applications, force: true)
+  #     |> Certification.changeset(%{older_certification: Repo.preload(certification, :applications, force: true)})
+  #     |> Repo.update()
+  #   end
+  # end
 
   def match_or_build_certifier(%{name: name} = params, opts \\ []) do
     siret_param = params[:siret]
@@ -114,4 +129,8 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     # |> FileLogger.log_changeset()
     # |> Repo.insert!()
   end
+
+  def ensure_certifiers(%Ecto.Changeset{} = changeset), do: Ecto.Changeset.apply_changes(changeset)
+  def ensure_certifiers(%Certifier{} = certifier), do: certifier
+
 end

@@ -23,7 +23,7 @@ defmodule VaeWeb.DelegateEmail do
     )
   end
 
-  def delegate_access_info(delegate, endpoint \\ URI.endpoint()) do
+  def delegate_access_info(delegate, _endpoint \\ URI.endpoint()) do
     Mailer.build_email(
       "delegate/delegate_access_info.html",
       :avril,
@@ -35,7 +35,7 @@ defmodule VaeWeb.DelegateEmail do
     )
   end
 
-  def inform_optional_booklet(delegate, endpoint \\ URI.endpoint()) do
+  def inform_optional_booklet(delegate, _endpoint \\ URI.endpoint()) do
     Mailer.build_email(
       "delegate/inform_optional_booklet.html",
       :avril,

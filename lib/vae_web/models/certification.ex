@@ -248,12 +248,11 @@ defmodule Vae.Certification do
     )
 
     certification
-    # |> Repo.preload([:certifiers, :romes])
     |> Certification.changeset(params)
   end
 
   def rncp_update(changeset) do
-    case IO.inspect(changeset) do
+    case changeset do
       %Ecto.Changeset{changes: %{certifiers: certifiers}} when is_list(certifiers) ->
         Logger.warn("Not updating, certifiers change: #{inspect(certifiers)}")
         {:ok, Ecto.Changeset.fetch_field!(changeset, :certifiers)}
@@ -265,6 +264,18 @@ defmodule Vae.Certification do
     changeset
     |> change(%{last_rncp_import_date: Timex.today()})
     |> Repo.insert_or_update()
+  end
+
+  def transfert_old_applications_to_newer_certification() do
+    from(c in Certification, where: not is_nil(c.newer_certification_id) and not c.is_rncp_active)
+    |> Repo.all()
+    |> Enum.each(fn %Certification{
+      id: id,
+      newer_certification_id: newer_certification_id
+    } ->
+      from(u in UserApplication, where: u.certification_id == ^id)
+      |> Repo.update_all(set: [certification_id: newer_certification_id])
+    end)
   end
 
   defimpl Phoenix.Param, for: Vae.Certification do

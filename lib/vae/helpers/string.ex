@@ -22,13 +22,13 @@ defmodule Vae.String do
     |> String.to_integer()
   end
 
+  def to_id(_param), do: nil
+
   def to_id_string(param) when is_binary(param) do
     param
     |> String.split("-")
     |> List.first()
   end
-
-  def to_id(_param), do: nil
 
   def wordify(word) do
     String.split(word, ~r/\s+/)

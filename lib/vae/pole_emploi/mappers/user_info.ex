@@ -1,5 +1,4 @@
 defmodule Vae.PoleEmploi.Mappers.UserInfoMapper do
-  alias Vae.Repo
 
   def map(%OAuth2.Response{body: body}) do
     %{

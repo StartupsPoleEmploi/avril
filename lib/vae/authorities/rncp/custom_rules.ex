@@ -2,7 +2,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
   alias Vae.{Certifier, Repo, Rome}
   import SweetXml
-  alias Vae.Authorities.Rncp.FileLogger
+  alias Vae.Authorities.Rncp.{FileLogger, FicheHandler}
 
   @current_year Date.utc_today().year
 
@@ -61,12 +61,13 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     accessible_vae && !ignored_intitule && !ignored_acronym
   end
 
-  def reject_educ_nat_certifiers(certifiers, %{
+  def reject_educ_nat_certifiers(certifiers_or_changesets, %{
     acronym: acronym,
     rncp_id: rncp_id,
     label: label,
     is_rncp_active: is_rncp_active
   }) do
+    certifiers = Enum.map(certifiers_or_changesets, &FicheHandler.ensure_certifiers(&1))
     certifier_slugs = Enum.map(certifiers, fn %Certifier{slug: slug} -> slug end)
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
       is_educ_nat = slug == @educ_nat
@@ -82,11 +83,13 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     end)
   end
 
-  def add_educ_nat_certifiers(certifiers, %{
+  def add_educ_nat_certifiers(certifiers_or_changesets, %{
     acronym: acronym,
     rncp_id: rncp_id,
     is_rncp_active: is_rncp_active
   }) do
+    certifiers = Enum.map(certifiers_or_changesets, &FicheHandler.ensure_certifiers(&1))
+
     is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
     is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))
     is_bts = acronym == "BTS"
