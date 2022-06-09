@@ -40,7 +40,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         Repo.all(from r in Rome, [where: r.code in ^codes])
       end},
       certifiers: {"CERTIFICATEURS", fn (certificateurs_data, data) ->
-        Enum.map(certificateurs_data, fn %{
+        Enum.map(certificateurs_data || [], fn %{
           "NOM_CERTIFICATEUR" => certificateur_name
         } = cd ->
           %{
