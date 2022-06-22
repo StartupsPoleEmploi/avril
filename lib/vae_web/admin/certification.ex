@@ -179,7 +179,7 @@ defmodule Vae.ExAdmin.Certification do
 
       conn
       |> Phoenix.Controller.put_flash(:notice, "Voici les certifications qui n'ont pas été mises à jour automatiquement lors du dernier import RNCP du #{last_update}")
-      |> Phoenix.Controller.redirect(to: "#{ExAdmin.Utils.admin_resource_path(Vae.Certification)}?q%5Blast_rncp_import_date_lte%5D=#{last_update}")
+      |> Phoenix.Controller.redirect(to: "#{ExAdmin.Utils.admin_resource_path(Vae.Certification)}?q%5Bis_rncp_active_eq%5D=true&q%5Blast_rncp_import_date_lte%5D=#{last_update}")
     end
 
     filter(:newer_certification, type: :present_only)
