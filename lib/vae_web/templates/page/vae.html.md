@@ -2,7 +2,7 @@
 
 **La VAE** ou **Validation des Acquis de l’Expérience**, est le 3ème moyen en France pour obtenir un diplôme, titre ou certificat depuis 2002. Sans retourner en formation, que vous soyez demandeur d’emploi, salarié, non salarié ou sans activité, la VAE peut vous permettre d’obtenir un <span class="text-nowrap">« vrai diplôme »</span> !
 
-En effet, La **VAE** vous permet de faire reconnaitre la valeur de vos expériences et d’acquérir le diplôme qui s’y rapporte ! Ainsi « toute personne, quels que soient son âge, sa nationalité, son statut et son niveau de formation, qui justifie d’au moins 1 an d’expérience en rapport direct avec la certification visée, peut prétendre à la VAE ». Cette certification qui peut être un diplôme, un titre ou un certificat de qualification professionnelle doit être inscrite au [Répertoire national des certifications professionnelles](http://www.rncp.cncp.gouv.fr).
+En effet, La **VAE** vous permet de faire reconnaitre la valeur de vos expériences et d’acquérir le diplôme qui s’y rapporte ! Ainsi « toute personne, quels que soient son âge, sa nationalité, son statut et son niveau de formation, qui justifie d’au moins 1 an d’expérience en rapport direct avec la certification visée, peut prétendre à la VAE ». Cette certification qui peut être un diplôme, un titre ou un certificat de qualification professionnelle doit être inscrite au [Répertoire national des certifications professionnelles](https://www.francecompetences.fr/recherche_certificationprofessionnelle).
 
 Le parcours VAE peut varier d’un certificateur à l’autre. **« Avril, la VAE facile »** vous indique les étapes de la VAE du diplôme, titre ou certificat que vous souhaitez valider. Chaque parcours VAE comporte au moins 3 étapes qui sont :
 

@@ -23,7 +23,6 @@ footer.footer
           ul
             li
               h5.title.is-6 Support
-            li= link("CRISP", to: "#", class: "")
             li= render "active_link.html", text: "Nous contacter", class: "", to: Routes.page_path(@conn, :contact), conn: @conn
         ul.is-horizontal
           li= render "active_link.html", text: "Conditions générales d'utilisation", to: Routes.page_path(@conn, :terms_of_use), conn: @conn
