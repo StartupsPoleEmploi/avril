@@ -3077,7 +3077,7 @@ th {
   width: 100%;
   max-width: 100%;
   margin-bottom: 20px;
-  table-layout: fixed;
+  /*table-layout: fixed;*/
 }
 
 .table>tbody>tr>td,.table>tbody>tr>th,.table>tfoot>tr>td,.table>tfoot>tr>th,.table>thead>tr>td,.table>thead>tr>th {
