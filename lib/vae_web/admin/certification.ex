@@ -33,10 +33,11 @@ defmodule Vae.ExAdmin.Certification do
             c
             |> Vae.Certification.rncp_changeset()
             |> Map.get(:changes)
+            |> Helpers.readable_changes()
             |> IO.inspect()
             |> case do
               changes when changes == %{} -> "No changes from RNCP"
-              changes -> Helpers.print_in_json(changes)
+              changes -> Helpers.print_in_json(changes |> Map.merge(%{current_certifiers: Enum.map(certification.certifiers, &(&1.slug))}))
             end
           else
             Phoenix.HTML.Link.link("Check RNCP changes", to: "?check=rncp")

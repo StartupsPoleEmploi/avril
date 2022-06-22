@@ -52,6 +52,17 @@ defmodule Vae.ExAdmin.Helpers do
   end
   def csv_espace(other), do: other
 
+  def readable_changes(changes) do
+    Enum.map(changes, fn {key, value} ->
+      readable_value = case value do
+        [%Ecto.Changeset{}, _] = assoc_changes -> Enum.map(assoc_changes, &Ecto.Changeset.fetch_field!(&1, :slug))
+        anything -> anything
+      end
+      {key, readable_value}
+    end)
+    |> Map.new()
+  end
+
   def print_in_json(nil), do: nil
 
   def print_in_json(%{__struct__: _} = struct) do

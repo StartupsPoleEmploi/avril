@@ -247,8 +247,13 @@ defmodule Vae.Certification do
       rncp_id
       |> Vae.Authorities.Rncp.Api.get()
       |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
-      |> IO.inspect()
+      # |> IO.inspect()
     )
+
+    if certification.id && certification.last_rncp_import_date < Date.utc_today() do
+      Logger.error("Certification not updated!")
+      Logger.error(inspect(certification))
+    end
 
     certification
     |> Certification.changeset(params)
@@ -256,9 +261,10 @@ defmodule Vae.Certification do
 
   def rncp_update(changeset) do
     case changeset do
-      %Ecto.Changeset{changes: %{certifiers: certifiers}} when is_list(certifiers) ->
-        Logger.warn("Not updating, certifiers change: #{inspect(certifiers)}")
-        {:ok, Ecto.Changeset.fetch_field!(changeset, :certifiers)}
+      %Ecto.Changeset{data: %Certification{id: id}, changes: %{certifiers: certifiers}} when is_list(certifiers) and not is_nil(id) ->
+        new_certifiers = Ecto.Changeset.fetch_field!(changeset, :certifiers)
+        Logger.warn("Not updating certification ##{Ecto.Changeset.fetch_field!(changeset, :id)}: certifiers change: #{Enum.map(new_certifiers, &(&1.slug)) |> Enum.join(", ")}")
+        {:ok, new_certifiers}
       changeset -> rncp_update!(changeset)
     end
   end
@@ -270,8 +276,13 @@ defmodule Vae.Certification do
   end
 
   def transfert_old_applications_to_newer_certification() do
-    from(c in Certification, where: not is_nil(c.newer_certification_id) and not c.is_rncp_active)
+    from(
+      c in Certification,
+      where: not is_nil(c.newer_certification_id) and not c.is_rncp_active,
+      preload: [:applications]
+    )
     |> Repo.all()
+    |> Enum.filter(fn %Certification{applications: applications} -> length(applications) > 0 end)
     |> Enum.each(fn %Certification{
       id: id,
       newer_certification_id: newer_certification_id
