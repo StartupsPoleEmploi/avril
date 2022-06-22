@@ -174,10 +174,19 @@ defmodule Vae.User do
 
   def address(%{identity: %Identity{full_address: address}}), do: Address.address(address)
 
+  def delegatable?(%User{email: email}) do
+    Repo.exists?(
+      from d in Delegate,
+      where: d.email == ^email or d.secondary_email == ^email
+    )
+  end
+
+  def delegatable?(_), do: false
+
   def delegates(%User{is_delegate: true, email: email}) do
     Repo.all(
       from d in Delegate,
-      where: d.email == ^email,
+      where: d.email == ^email or d.secondary_email == ^email,
       order_by: {:asc, d.name}
     )
   end

@@ -8,7 +8,7 @@ defmodule VaeWeb.Mailer do
     layout: {VaeWeb.EmailsView, :layout}
 
   alias Swoosh.Email
-  alias Vae.User
+  alias Vae.{Delegate, User}
 
   @config Application.get_env(:vae, VaeWeb.Mailer)
   @override_to System.get_env("DEV_EMAILS")

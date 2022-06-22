@@ -87,16 +87,22 @@ defmodule VaeWeb.DelegateAuthenticatedController do
         |> put_flash(:warning, "Vous devez d'abord vous connecter puis cliquer de nouveau sur le lien fourni dans l'email")
         |> redirect(to: Routes.login_path(conn, :new))
       %User{} = current_user ->
-        case current_user |> User.changeset(%{is_delegate: true}) |> Repo.update() do
-          {:ok, updated_user} ->
-            conn
-            |> sync_user(updated_user)
-            |> put_flash(:success, "Bienvenue sur votre espace certificateur !")
-            |> redirect(to: Routes.delegate_authenticated_path(conn, :index))
-          _ ->
-            conn
-            |> put_flash(:danger, "Une erreur est survenue. Merci de réessayer plus tard")
-            |> redirect(to: Routes.root_path(conn, :index))
+        if User.delegatable?(current_user) do
+          case current_user |> User.changeset(%{is_delegate: true}) |> Repo.update() do
+            {:ok, updated_user} ->
+              conn
+              |> sync_user(updated_user)
+              |> put_flash(:success, "Bienvenue sur votre espace certificateur !")
+              |> redirect(to: Routes.delegate_authenticated_path(conn, :index))
+            _ ->
+              conn
+              |> put_flash(:danger, "Une erreur est survenue. Merci de réessayer plus tard")
+              |> redirect(to: Routes.root_path(conn, :index))
+          end
+        else
+          conn
+          |> put_flash(:danger, "Votre adresse mail n'est associée à aucun delegate. Merci de nous contacter si vous pensez que c'est une erreur")
+          |> redirect(to: Routes.root_path(conn, :index))
         end
     end
   end

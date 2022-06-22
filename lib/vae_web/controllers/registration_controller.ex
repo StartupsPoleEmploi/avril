@@ -2,7 +2,7 @@ defmodule VaeWeb.RegistrationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{Delegate, User}
+  alias Vae.{User}
 
   def new(conn, _params) do
     changeset = Pow.Plug.change_user(conn)
@@ -14,7 +14,7 @@ defmodule VaeWeb.RegistrationController do
     |> Pow.Plug.create_user(user_params)
     |> case do
       {:ok, current_user, conn} ->
-        if Repo.exists?(from d in Delegate, where: [email: ^current_user.email]) do
+        if User.delegatable?(current_user) do
           send_delegate_access_confirmation_email(conn, current_user)
         else
           maybe_create_application_and_redirect(conn)
