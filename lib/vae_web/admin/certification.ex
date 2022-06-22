@@ -163,6 +163,24 @@ defmodule Vae.ExAdmin.Certification do
       end
     end
 
+    collection_action :"filter-locked",
+      &__MODULE__.filter_locked/2,
+      label: "View RNCP Locked",
+      icon: "lock"
+
+    def filter_locked(conn, _infos) do
+      last_update = Vae.Repo.one(
+        from c in Vae.Certification,
+        order_by: [fragment("? DESC NULLS LAST", c.last_rncp_import_date)],
+        limit: 1
+      )
+      |> Map.get(:last_rncp_import_date)
+      |> Timex.shift(days: -1)
+
+      conn
+      |> Phoenix.Controller.put_flash(:notice, "Voici les certifications qui n'ont pas été mises à jour automatiquement lors du dernier import RNCP du #{last_update}")
+      |> Phoenix.Controller.redirect(to: "#{ExAdmin.Utils.admin_resource_path(Vae.Certification)}?q%5Blast_rncp_import_date_lte%5D=#{last_update}")
+    end
 
     filter(:newer_certification, type: :present_only)
     filter(:applications, scope: :recent)
