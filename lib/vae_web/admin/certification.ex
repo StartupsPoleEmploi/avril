@@ -56,6 +56,7 @@ defmodule Vae.ExAdmin.Certification do
         row(:abilities)
         row(:activity_area)
         row(:accessible_job_type)
+        row(:external_notes)
       end
 
       panel "ROME" do
@@ -107,6 +108,7 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym, readonly: true)
         input(certification, :label, readonly: true)
         input(certification, :level, readonly: true)
+        input(certification, :external_notes, type: :text, placeholder: "Extra infos for the candidate")
 
         content do
           Helpers.form_select_tag(certification, :excluded_delegates, [

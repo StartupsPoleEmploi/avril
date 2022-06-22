@@ -21,6 +21,8 @@ defmodule Vae.Certification do
     field(:abilities, :string)
     field(:activity_area, :string)
     field(:accessible_job_type, :string)
+    field(:external_notes, :string)
+
 
     belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
     has_one(:older_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
@@ -126,7 +128,8 @@ defmodule Vae.Certification do
       :activities,
       :abilities,
       :activity_area,
-      :accessible_job_type
+      :accessible_job_type,
+      :external_notes
     ])
     |> sanitize_html_fields([:activities, :abilities, :activity_area, :accessible_job_type])
     |> add_army_acronym()

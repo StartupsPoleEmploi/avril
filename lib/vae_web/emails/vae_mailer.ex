@@ -65,6 +65,7 @@ defmodule VaeWeb.Mailer do
   defp format_mailer!(:avril_from), do: {@config[:avril_name], String.downcase(@config[:avril_from])}
   defp format_mailer!(:avril_to), do: {@config[:avril_name], String.downcase(@config[:avril_to])}
   defp format_mailer!(%User{} = user), do: User.formatted_email(user)
+  defp format_mailer!(%Delegate{email: email, secondary_email: secondary_email}) when not is_nil(secondary_email), do: [String.downcase(email), String.downcase(secondary_email)]
   defp format_mailer!(%{name: name, email: email}), do: {name, String.downcase(email)}
   defp format_mailer!(%{Name: name, Email: email}), do: {name, String.downcase(email)}
   defp format_mailer!(%{email: email}), do: String.downcase(email)
