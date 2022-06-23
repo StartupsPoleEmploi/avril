@@ -17,9 +17,14 @@ defmodule Vae.Authorities.Rncp.Api do
       query_params <- Map.merge(base_params, params),
       url <- "#{@base_url}?#{URI.encode_query(query_params)}",
       {:ok, response} <- HTTPoison.get(url, @headers),
-      {:ok, %{"fiches" => results}} <- response.body |> Jason.decode()
+      {:ok, json} <- response.body |> Jason.decode()
     ) do
-      results
+      case json do
+        %{"fiches" => results} -> results
+        %{"message" => message} ->
+          Logger.info("Message: #{message}")
+          []
+      end
     else
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
