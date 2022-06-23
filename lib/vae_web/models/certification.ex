@@ -250,10 +250,10 @@ defmodule Vae.Certification do
       # |> IO.inspect()
     )
 
-    if certification.id && certification.last_rncp_import_date < Date.utc_today() do
-      Logger.error("Certification not updated!")
-      Logger.error(inspect(certification))
-    end
+    # if certification.id && certification.last_rncp_import_date < Date.utc_today() do
+    #   Logger.error("Certification not updated!")
+    #   Logger.error(inspect(certification))
+    # end
 
     certification
     |> Certification.changeset(params)
