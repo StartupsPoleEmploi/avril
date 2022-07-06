@@ -49,7 +49,7 @@ defmodule Vae.ExAdmin.Delegate do
           |> case do
             %Vae.User{} = user -> [
                 "#{d.email} ",
-                Helpers.link_to_resource(user, namify: fn u -> "(Voir dans l'admin)" end)
+                Helpers.link_to_resource(user, namify: fn _u -> "(Voir dans l'admin)" end)
               ]
             nil -> d.email
           end
@@ -64,7 +64,7 @@ defmodule Vae.ExAdmin.Delegate do
             |> case do
               %Vae.User{} = user -> [
                   "#{d.secondary_email} ",
-                  Helpers.link_to_resource(user, namify: fn u -> "(Voir dans l'admin)" end)
+                  Helpers.link_to_resource(user, namify: fn _u -> "(Voir dans l'admin)" end)
                 ]
               nil -> d.secondary_email
             end

@@ -136,6 +136,7 @@ defmodule Vae.Certification do
     |> add_default_acronym()
     |> remove_acronym_in_label()
     |> put_param_assoc(:older_certification, params)
+    |> put_param_assoc(:newer_certification, params)
     |> put_param_assoc(:romes, params)
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_delegates, params)
@@ -258,7 +259,7 @@ defmodule Vae.Certification do
       %Ecto.Changeset{data: %Certification{id: id}, changes: %{certifiers: certifiers}} when is_list(certifiers) and not is_nil(id) ->
         new_certifiers = Ecto.Changeset.fetch_field!(changeset, :certifiers)
         Logger.warn("Not updating certification ##{Ecto.Changeset.fetch_field!(changeset, :id)}: certifiers change: #{Enum.map(new_certifiers, &(&1.slug)) |> Enum.join(", ")}")
-        {:ok, new_certifiers}
+        {:ok, {changeset.data, new_certifiers}}
       changeset -> rncp_update!(changeset)
     end
   end

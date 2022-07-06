@@ -30,6 +30,7 @@ defmodule Vae.ExAdmin.Certification do
         row(:last_rncp_import_date)
         row(:rncp_update, fn c ->
           if conn.params["check"] == "rncp" do
+            current_certifiers = Enum.map(certification.certifiers, &(&1.slug))
             c
             |> Vae.Certification.rncp_changeset()
             |> Map.get(:changes)
@@ -37,7 +38,10 @@ defmodule Vae.ExAdmin.Certification do
             |> IO.inspect()
             |> case do
               changes when changes == %{} -> "No changes from RNCP"
-              changes -> Helpers.print_in_json(changes |> Map.merge(%{current_certifiers: Enum.map(certification.certifiers, &(&1.slug))}))
+              changes ->
+                changes
+                |> Helpers.calc_diffs(:certifiers, current_certifiers)
+                |> Helpers.print_in_json()
             end
           else
             Phoenix.HTML.Link.link("Check RNCP changes", to: "?check=rncp")
@@ -142,16 +146,14 @@ defmodule Vae.ExAdmin.Certification do
       c = Vae.Repo.get(Vae.Certification, id)
 
       c
-      |> IO.inspect()
       |> Certification.rncp_changeset()
-      |> IO.inspect()
       |> Vae.Maybe.if(conn.params["force"] == "rncp", &Certification.rncp_update!(&1), &Certification.rncp_update(&1))
       |> case do
-        {:ok, %Certification{}} ->
+        {:ok, %Certification{} = c} ->
           conn
           |> Phoenix.Controller.put_flash(:notice, "Certification mise à jour")
           |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
-        {:ok, certifiers} when is_list(certifiers) ->
+        {:ok, {c, certifiers}} when is_list(certifiers) ->
           certifiers_name = Enum.map(certifiers, &(&1.name)) |> Enum.join(", ")
           conn
           |> Phoenix.Controller.put_flash(:error, "La certification n'a pas été mise à jour car les certifiers vont changer. Voici la nouvelle liste: #{certifiers_name}")
@@ -160,6 +162,49 @@ defmodule Vae.ExAdmin.Certification do
           conn
           |> Phoenix.Controller.put_flash(:error, "La certification n'a pas été mise à jour: une erreur est survenue")
           |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(c))
+      end
+    end
+
+    collection_action :rncp_update,
+      &__MODULE__.update_rncp/2,
+      label: "Refresh from RNCP",
+      icon: "refresh",
+      class: "is_batch rncp_forcable"
+
+    def update_rncp(conn, %{ids: ids}) do
+      proper_ids = ids
+      |> String.split(",")
+      |> Enum.map(&String.to_integer(&1))
+
+      from(c in Vae.Certification, where: c.id in ^proper_ids)
+      |> Vae.Repo.all()
+      |> Enum.reduce({:ok, []}, fn c, result ->
+        case result do
+          {:ok, done} ->
+            c
+            |> Certification.rncp_changeset()
+            |> Vae.Maybe.if(conn.params["force"] == "rncp", &Certification.rncp_update!(&1), &Certification.rncp_update(&1))
+            |> case do
+              {:ok, %Certification{} = c} -> {:ok, [c | done]}
+              error -> error
+            end
+          error -> error
+        end
+      end)
+      |> case do
+        {:ok, certifications} when is_list(certifications) ->
+          conn
+          |> Phoenix.Controller.put_flash(:notice, "#{length(certifications)} certifications mises à jour")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Vae.Certification))
+        {:ok, {certification, certifiers}} when is_list(certifiers) ->
+          certifiers_name = Enum.map(certifiers, &(&1.name)) |> Enum.join(", ")
+          conn
+          |> Phoenix.Controller.put_flash(:error, "La certification #{certification.id} n'a pas été mise à jour car les certifiers vont changer. Voici la nouvelle liste: #{certifiers_name}")
+          |> Phoenix.Controller.redirect(to: "#{ExAdmin.Utils.admin_resource_path(Vae.Certification)}?to_force=rncp")
+        {:error, error} ->
+          conn
+          |> Phoenix.Controller.put_flash(:error, "La certification n'a pas été mise à jour: une erreur est survenue: #{inspect(error)}")
+          |> Phoenix.Controller.redirect(to: ExAdmin.Utils.admin_resource_path(Vae.Certification))
       end
     end
 

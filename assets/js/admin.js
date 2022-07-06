@@ -176,6 +176,16 @@ const autocompleteDelegateAddress = () => autocomplete('input#delegate_address')
 //   }
 // }
 
+const updateCollectionActionsIds = () => {
+  $('.collection_selection').on('change', e => {
+    const selectedIds = $('.collection_selection:checked').map((i, $el) => $($el).val()).toArray();
+    $('ul.sidebar-menu li a.is_batch').each((i, $a) => {
+      $($a).attr('href', `${$($a).attr('href').replace(/\?.*$/, '')}?ids=${selectedIds.join(',')}`)
+    })
+  });
+
+};
+
 $(document).ready(() => {
   addDelegateGeolocationMap();
   textareaToSimditor();
@@ -185,5 +195,6 @@ $(document).ready(() => {
   doubleClickUncheckPresenceRadioInputs();
   autocompleteDelegateAddress();
   transformForcableActions();
+  updateCollectionActionsIds();
 })
 

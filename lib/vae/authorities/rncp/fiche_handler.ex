@@ -61,6 +61,13 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
           |> String.replace_prefix("RNCP", "")
           |> (&Repo.get_by(Certification, %{rncp_id: &1})).()
         end
+      end},
+      older_certification: {"ANCIENNE_CERTIFICATION", fn old_certification_data ->
+        if old_certification_data do
+          old_certification_data
+          |> String.replace_prefix("RNCP", "")
+          |> (&Repo.get_by(Certification, %{rncp_id: &1})).()
+        end
       end}
     ]
   end
@@ -68,6 +75,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   def api_fiche_to_certification_params(nil), do: %{}
 
   def api_fiche_to_certification_params(api_data) do
+    IO.inspect(api_data)
     Enum.reduce(rncp_to_certification(), %{}, fn({key, {path, func}}, result) ->
       sub_data = get_in(api_data, String.split(path, "/"))
       value = if is_function(func, 2), do: func.(sub_data, result), else: func.(sub_data)

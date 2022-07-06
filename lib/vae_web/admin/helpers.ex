@@ -52,15 +52,39 @@ defmodule Vae.ExAdmin.Helpers do
   end
   def csv_espace(other), do: other
 
+  def readable_changeset(%Ecto.Changeset{data: data, action: action} = change) do
+    field = if Map.has_key?(data, :slug), do: :slug, else: :id
+    "#{Ecto.Changeset.fetch_field!(change, field)} (#{action})"
+  end
+
   def readable_changes(changes) do
     Enum.map(changes, fn {key, value} ->
       readable_value = case value do
-        [%Ecto.Changeset{}, _] = assoc_changes -> Enum.map(assoc_changes, &Ecto.Changeset.fetch_field!(&1, :slug))
+        %Ecto.Changeset{} = assoc_changes -> readable_changeset(assoc_changes)
+        [%Ecto.Changeset{} | _] = assoc_changes ->
+          Enum.map(assoc_changes, &readable_changeset(&1))
+          |> Enum.sort_by(&(&1))
         anything -> anything
       end
       {key, readable_value}
     end)
     |> Map.new()
+  end
+
+  def calc_diffs(changes, field, current_value) do
+    case Map.get(changes, field) do
+      new_value when is_list(new_value) ->
+        new_value_no_operations = Enum.map(new_value, &String.trim(Regex.replace(~r/\([a-z]+\)/, &1, "")))
+        changes
+        |> Map.delete(field)
+        |> Map.put("current_#{field}", current_value)
+        |> Map.put("new_#{field}", new_value)
+        |> Map.put("diff_#{field}", %{
+          add: new_value_no_operations -- current_value,
+          remove: current_value -- new_value_no_operations
+        })
+      _ -> changes
+    end
   end
 
   def print_in_json(nil), do: nil
