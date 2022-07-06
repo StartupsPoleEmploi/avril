@@ -112,28 +112,32 @@ config :vae, :pow,
 config :vae, Vae.Scheduler,
   jobs: if Mix.env() == :prod, do: [
     raise_unsubmitted_applications: [
-      schedule: "0 5 * * *",
+      schedule: "0 5 * * *", # 5AM every day
       task: {Vae.UserApplications.FollowUp, :send_unsubmitted_raise_email, []}
     ],
     get_admissibility_updates: [
-      schedule: "30 5 * * *",
+      schedule: "30 5 * * *", # 5.30AM every day
       task: {Vae.UserApplications.FollowUp, :send_admissibility_update_email, []}
     ],
     send_delegate_recap: [
-      schedule: "45 5 1,15 * *",
+      schedule: "45 5 1,15 * *", # 5.45AM first and 15th of month
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}
     ],
     meetings_task: [
-      schedule: "0 5,13 * * *",
+      schedule: "0 5,13 * * *", # 5AM & 1PM every day
       task: &Vae.Meetings.fetch_meetings/0
     ],
     update_certification_search_view: [
-      schedule: "0 3 * * *",
+      schedule: "0 6 * * *", # 6AM every day
       task: &Vae.Search.FullTextSearch.refresh_materialized_view/0
     ],
     anonymization_task: [
-      schedule: "0 4 1 * *",
+      schedule: "0 2 1 * *", # 2AM on the first of month
       task: &Vae.Rgpd.Anonymize.anonymize_all/0
+    ],
+    rncp_update_task: [
+      schedule: "0 3 1 * *", # 3AM on the first of month
+      task: &Vae.Authorities.Rncp.Update.update_all/0
     ]
   ], else: []
 

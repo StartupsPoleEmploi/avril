@@ -247,13 +247,7 @@ defmodule Vae.Certification do
       rncp_id
       |> Vae.Authorities.Rncp.Api.get()
       |> Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params()
-      # |> IO.inspect()
     )
-
-    # if certification.id && certification.last_rncp_import_date < Date.utc_today() do
-    #   Logger.error("Certification not updated!")
-    #   Logger.error(inspect(certification))
-    # end
 
     certification
     |> Certification.changeset(params)
@@ -290,6 +284,10 @@ defmodule Vae.Certification do
       from(u in UserApplication, where: u.certification_id == ^id)
       |> Repo.update_all(set: [certification_id: newer_certification_id])
     end)
+  end
+
+  def fake_certification() do
+    Repo.get_by(Certification, rncp_id: "0")
   end
 
   defimpl Phoenix.Param, for: Vae.Certification do

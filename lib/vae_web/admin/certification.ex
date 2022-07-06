@@ -169,11 +169,7 @@ defmodule Vae.ExAdmin.Certification do
       icon: "lock"
 
     def filter_locked(conn, _infos) do
-      last_update = Vae.Repo.one(
-        from c in Vae.Certification,
-        order_by: [fragment("? DESC NULLS LAST", c.last_rncp_import_date)],
-        limit: 1
-      )
+      last_update = Certification.fake_certification()
       |> Map.get(:last_rncp_import_date)
       |> Timex.shift(days: -1)
 
