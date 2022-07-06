@@ -240,6 +240,16 @@ defmodule Vae.Delegate do
     |> String.trim()
   end
 
+  def users(%Delegate{email: email, secondary_email: secondary_email}) do
+    Repo.all(
+      from u in Vae.User,
+      where: (u.email in ^[email, secondary_email])
+    )
+  end
+
+  def users(_), do: []
+
+
   defimpl Phoenix.Param, for: Vae.Delegate do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"

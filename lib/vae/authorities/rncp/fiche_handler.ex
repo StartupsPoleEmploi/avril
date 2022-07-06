@@ -65,6 +65,8 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     ]
   end
 
+  def api_fiche_to_certification_params(nil), do: %{}
+
   def api_fiche_to_certification_params(api_data) do
     Enum.reduce(rncp_to_certification(), %{}, fn({key, {path, func}}, result) ->
       sub_data = get_in(api_data, String.split(path, "/"))

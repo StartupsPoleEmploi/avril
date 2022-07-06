@@ -41,11 +41,45 @@ defmodule Vae.ExAdmin.Delegate do
         row(:administrative)
         row(:telephone)
         row(:website)
-        row(:email)
+        row(:email, fn d ->
+          Vae.Repo.one(
+            from u in Vae.User,
+            where: (u.email == ^d.email)
+          )
+          |> case do
+            %Vae.User{} = user -> [
+                "#{d.email} ",
+                Helpers.link_to_resource(user, namify: fn u -> "(Voir dans l'admin)" end)
+              ]
+            nil -> d.email
+          end
+        end)
         row(:person_name)
-        row(:secondary_email)
+        row(:secondary_email, fn d ->
+          if (d.secondary_email) do
+            Vae.Repo.one(
+              from u in Vae.User,
+              where: (u.email == ^d.secondary_email)
+            )
+            |> case do
+              %Vae.User{} = user -> [
+                  "#{d.secondary_email} ",
+                  Helpers.link_to_resource(user, namify: fn u -> "(Voir dans l'admin)" end)
+                ]
+              nil -> d.secondary_email
+            end
+          end
+        end)
         row(:secondary_person_name)
         row(:academy_id)
+        row(:delegate_access, fn d ->
+          Vae.Delegate.users(d)
+          |> case do
+            [] -> "No delegate access created 😣"
+            [%Vae.User{is_delegate: false} | _] -> "User created but confirmation email not clicked 😕"
+            users -> "Delegate access created! 🥳"
+          end
+        end)
         row(:has_coordinates, fn d -> if not is_nil(d.geom), do: "Yes :)", else: "No :(" end)
         row(:nb_applications, &Helpers.count_and_link_to_all(&1, :applications))
         row(:nb_meetings, fn _d -> length(meetings) end)
