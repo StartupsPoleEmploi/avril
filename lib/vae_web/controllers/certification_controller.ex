@@ -7,7 +7,8 @@ defmodule VaeWeb.CertificationController do
     Profession,
     Repo,
     Rome,
-    User
+    User,
+    UserApplication
   }
 
   def cast_array(str), do: String.split(str, ",") |> Enum.map(&String.to_integer/1)
@@ -72,7 +73,7 @@ defmodule VaeWeb.CertificationController do
     end
   end
 
-  def show(conn, %{"id" => id} = _params) do
+  def show(conn, %{"id" => id} = params) do
     with(
       {id, rest} <- Integer.parse(id),
       slug <- Regex.replace(~r/^\-/, rest, ""),
@@ -98,15 +99,20 @@ defmodule VaeWeb.CertificationController do
           |> limit(^nb_similars)
           |> Repo.all()
 
-        existing_application = case Repo.preload(Pow.Plug.current_user(conn), :applications) do
-          %User{applications: applications} ->
-            Enum.find(applications, &(&1.certification_id == certification.id))
-          _ -> nil
-        end
+        # current_applications = case Repo.preload(Pow.Plug.current_user(conn), [applications: :certification]) do
+        #   %User{applications: applications} -> applications
+        #   nil -> []
+        # end
+
+        existing_application = Repo.get_by(UserApplication, user_id: Pow.Plug.current_user(conn).id, certification_id: id)
+        # Enum.find(current_applications, &(&1.certification_id == certification.id))
+
+        transferable_applications = if params["transferable"], do: User.transferable_applications(Pow.Plug.current_user(conn)), else: []
 
         render(
           conn,
           "show.html",
+          transferable_applications: transferable_applications,
           existing_application: existing_application,
           is_asp: Certification.is_asp?(certification),
           certification: certification,
@@ -121,12 +127,27 @@ defmodule VaeWeb.CertificationController do
     end
   end
 
-  def select(conn, %{"certification_id" => certification_id} = _params) do
+  def select(conn, %{"certification_id" => certification_id} = params) do
     certification_id = Vae.String.to_id(certification_id)
 
-    conn
-    |> Plug.Conn.put_session(:certification_id, certification_id)
-    |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
+    transferable_applications = User.transferable_applications(Pow.Plug.current_user(conn))
+
+    if length(transferable_applications) > 0 && params["user_application_id"] != "new" do
+      if params["user_application_id"] do
+        {:ok, user_application} = Repo.get(UserApplication, params["user_application_id"])
+        |> UserApplication.changeset(%{certification_id: certification_id})
+        |> Repo.update()
+
+        redirect(conn, external: Vae.User.profile_url(conn, user_application))
+      else
+        redirect(conn, to: Routes.certification_path(conn, :show, certification_id, transferable: ""))
+      end
+    else
+      conn
+      |> Plug.Conn.put_session(:certification_id, certification_id)
+      |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
+    end
+
   end
 
   defp enrich_filter_values(%{rome_code: rome_code} = filters) do

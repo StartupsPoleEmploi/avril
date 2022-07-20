@@ -167,6 +167,13 @@ defmodule Vae.UserApplication do
     )
   end
 
+  def transferable_applications_query() do
+    from(a in UserApplication)
+    |> preload(:certification)
+    |> join(:inner, [a], c in assoc(a, :certification))
+    |> where([a, c], is_nil(a.submitted_at) and not c.is_active)
+  end
+
   def from_application_id_and_user_id(application_id, user_id) do
     from(
       a in __MODULE__,

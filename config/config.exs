@@ -136,7 +136,7 @@ config :vae, Vae.Scheduler,
       task: &Vae.Rgpd.Anonymize.anonymize_all/0
     ],
     rncp_update_task: [
-      schedule: "0 3 1 * *", # 3AM on the first of month
+      schedule: "0 3 1,15 * *", # 3AM on the first and 15th of month
       task: &Vae.Authorities.Rncp.Update.update_all/0
     ]
   ], else: []

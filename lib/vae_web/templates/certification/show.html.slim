@@ -86,3 +86,6 @@
       .has-text-centered
         h4.subtitle.is-4 Besoin d'approfondir les recherches ?
         = link("Rechercher mon diplôme en VAE", to: Routes.root_path(@conn, :index), class: "button is-yellow is-large is-rounded")
+
+= if length(@transferable_applications) > 0 do
+  = render("transferable.html", conn: @conn, certification: @certification, applications: @transferable_applications)

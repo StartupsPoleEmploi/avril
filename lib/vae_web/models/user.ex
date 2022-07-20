@@ -195,4 +195,11 @@ defmodule Vae.User do
 
   def delegate_ids(user), do: Enum.map(User.delegates(user), &(&1.id))
 
+  def transferable_applications(%User{id: user_id}) do
+    from(
+      a in UserApplication.transferable_applications_query(),
+      where: a.user_id == ^user_id
+    ) |> Repo.all()
+  end
+
 end

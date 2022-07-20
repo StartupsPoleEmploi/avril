@@ -1,0 +1,30 @@
+.modal.is-active.is-clipped
+  .modal-background
+  .modal-card
+    form action=Routes.certification_select_path(@conn, :select, @certification.id) method="POST"
+      input type="hidden" name="_method" value="put"
+      input type="hidden" name="_csrf_token" value=Plug.CSRFProtection.get_csrf_token()
+      header.modal-card-head
+        p.modal-card-title Candidature dont le diplôme est devenu inactif
+        a.delete aria-label="close" href=Routes.certification_path(@conn, :show, @certification)
+      section.modal-card-body
+        .content
+          p Vous avez démarré une candidature dont le diplôme a été notifié comme inactif. Vous avez la possibilité de :
+          ul style="list-style: none;"
+            = for application <- @applications do
+              li
+                label.radio
+                  input type="radio" name="user_application_id" value=application.id required="required"
+                  '  Transférer votre candidature existante de
+                  strong #{Certification.name(application.certification)}
+                  '  démarée le #{Timex.format!(application.inserted_at, "%d/%m/%Y", :strftime)} vers ce diplôme
+                  strong #{Certification.name(@certification)}
+                  |  actif
+            li
+              label.radio
+                input type="radio" name="user_application_id" value="new" required="required"
+                '  Démarrer une nouvelle VAE pour le diplôme #{Certification.name(@certification)}
+
+      footer.modal-card-foot style="justify-content: space-between;"
+        button.button.is-primary.is-rounded type="submit" Instancier ma VAE pour ce diplôme
+        a.button.is-default aria-label="close" href=Routes.certification_path(@conn, :show, @certification) Ne rien faire
