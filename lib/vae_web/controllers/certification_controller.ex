@@ -99,13 +99,11 @@ defmodule VaeWeb.CertificationController do
           |> limit(^nb_similars)
           |> Repo.all()
 
-        # current_applications = case Repo.preload(Pow.Plug.current_user(conn), [applications: :certification]) do
-        #   %User{applications: applications} -> applications
-        #   nil -> []
-        # end
-
-        existing_application = Repo.get_by(UserApplication, user_id: Pow.Plug.current_user(conn).id, certification_id: id)
-        # Enum.find(current_applications, &(&1.certification_id == certification.id))
+        existing_application = case Pow.Plug.current_user(conn) do
+          nil -> nil
+          %User{id: user_id} ->
+            Repo.get_by(UserApplication, user_id: user_id, certification_id: id)
+        end
 
         transferable_applications = if params["transferable"], do: User.transferable_applications(Pow.Plug.current_user(conn)), else: []
 
