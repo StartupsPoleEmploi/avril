@@ -44,8 +44,7 @@ defmodule VaeWeb.ContactEmail do
     name: name,
     address: address,
     email: email,
-    tel: tel,
-    person_name: person_name
+    tel: tel
   } = params) do
     Mailer.build_email(
       "contact/delegate_submit.html",
@@ -58,7 +57,7 @@ defmodule VaeWeb.ContactEmail do
         email_address: email,
         tel: tel,
         website: params[:website],
-        person_name: person_name,
+        person_name: params[:person_name],
         comment: params[:comment]
       }
     )
@@ -68,8 +67,7 @@ defmodule VaeWeb.ContactEmail do
     name: name,
     address: address,
     email: email,
-    tel: tel,
-    person_name: person_name
+    tel: tel
   }) do
     Mailer.build_email(
       "contact/delegate_confirm.html",
@@ -81,7 +79,7 @@ defmodule VaeWeb.ContactEmail do
         email_address: email,
         tel: tel,
         website: params[:website],
-        person_name: person_name,
+        person_name: params[:person_name],
         comment: params[:comment]
       }
     )
