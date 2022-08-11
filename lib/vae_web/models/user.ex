@@ -173,6 +173,7 @@ defmodule Vae.User do
   end
 
   def address(%{identity: %Identity{full_address: address}}), do: Address.address(address)
+  def address(_), do: nil
 
   def delegatable?(%User{email: email}) do
     Repo.exists?(
