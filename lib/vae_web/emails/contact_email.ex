@@ -45,7 +45,6 @@ defmodule VaeWeb.ContactEmail do
     address: address,
     email: email,
     tel: tel,
-    website: website,
     person_name: person_name
   } = params) do
     Mailer.build_email(
@@ -58,11 +57,11 @@ defmodule VaeWeb.ContactEmail do
         address: address,
         email_address: email,
         tel: tel,
-        website: website,
+        website: params[:website],
         person_name: person_name,
         comment: params[:comment]
       }
-    ) |> IO.inspect()
+    )
   end
 
   def delegate_confirm(%{
@@ -70,9 +69,7 @@ defmodule VaeWeb.ContactEmail do
     address: address,
     email: email,
     tel: tel,
-    website: website,
-    person_name: person_name,
-    comment: comment
+    person_name: person_name
   }) do
     Mailer.build_email(
       "contact/delegate_confirm.html",
@@ -83,9 +80,9 @@ defmodule VaeWeb.ContactEmail do
         address: address,
         email_address: email,
         tel: tel,
-        website: website,
+        website: params[:website],
         person_name: person_name,
-        comment: comment
+        comment: params[:comment]
       }
     )
   end
