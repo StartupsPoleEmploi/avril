@@ -68,7 +68,7 @@ defmodule VaeWeb.ContactEmail do
     address: address,
     email: email,
     tel: tel
-  }) do
+  } = params) do
     Mailer.build_email(
       "contact/delegate_confirm.html",
       :avril,
