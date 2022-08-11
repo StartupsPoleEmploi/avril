@@ -202,4 +202,6 @@ defmodule Vae.User do
     ) |> Repo.all()
   end
 
+  def transferable_applications(_), do: []
+
 end
