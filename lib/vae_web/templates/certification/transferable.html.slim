@@ -20,8 +20,10 @@
               li
                 label.radio
                   input type="radio" name="user_application_id" value=application.id required="required"
-                  '  Transférer votre candidature existante démarée le #{Timex.format!(application.inserted_at, "%d/%m/%Y", :strftime)}
-                  | vers la nouvelle version de votre diplôme
+                  '  Transférer votre candidature existante de
+                  strong #{Certification.name(application.certification)}
+                  '  démarée le #{Timex.format!(application.inserted_at, "%d/%m/%Y", :strftime)}
+                  |  vers ce diplôme
             li
               label.radio
                 input type="radio" name="user_application_id" value="new" required="required"
@@ -29,4 +31,4 @@
 
       footer.modal-card-foot style="justify-content: space-between;"
         button.button.is-primary.is-rounded type="submit" Valider mon choix
-        a.button.is-default aria-label="close" href=Routes.certification_path(@conn, :show, @certification) Annuler
+        a.button.is-default aria-label="close" href=Routes.certification_path(@conn, :show, @certification) Fermer ce message
