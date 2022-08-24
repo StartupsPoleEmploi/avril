@@ -9,22 +9,24 @@
         a.delete aria-label="close" href=Routes.certification_path(@conn, :show, @certification)
       section.modal-card-body
         .content
-          p Vous avez démarré une candidature dont le diplôme a été notifié comme inactif. Vous avez la possibilité de :
+          p
+            | Le diplôme sélectionné dans votre candidature est désormais inactif,
+            | c’est-à-dire qu’il n’est plus possible de l’obtenir dans la version
+            | que vous aviez choisie.
+            br
+            | Vous pouvez au choix :
           ul style="list-style: none;"
             = for application <- @applications do
               li
                 label.radio
                   input type="radio" name="user_application_id" value=application.id required="required"
-                  '  Transférer votre candidature existante de
-                  strong #{Certification.name(application.certification)}
-                  '  démarée le #{Timex.format!(application.inserted_at, "%d/%m/%Y", :strftime)} vers ce diplôme
-                  strong #{Certification.name(@certification)}
-                  |  actif
+                  '  Transférer votre candidature existante démarée le #{Timex.format!(application.inserted_at, "%d/%m/%Y", :strftime)}
+                  | vers la nouvelle version de votre diplôme
             li
               label.radio
                 input type="radio" name="user_application_id" value="new" required="required"
-                '  Démarrer une nouvelle VAE pour le diplôme #{Certification.name(@certification)}
+                '  Démarrer une nouvelle VAE
 
       footer.modal-card-foot style="justify-content: space-between;"
-        button.button.is-primary.is-rounded type="submit" Instancier ma VAE pour ce diplôme
-        a.button.is-default aria-label="close" href=Routes.certification_path(@conn, :show, @certification) Ne rien faire
+        button.button.is-primary.is-rounded type="submit" Valider mon choix
+        a.button.is-default aria-label="close" href=Routes.certification_path(@conn, :show, @certification) Annuler
