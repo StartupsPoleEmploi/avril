@@ -164,6 +164,7 @@ defmodule VaeWeb.ApplicationEmail do
             hash: application.delegate_access_hash
           ),
         username: User.fullname(application.user),
+        application: application,
         certification_name: Certification.name(application.certification),
         has_booklet: application.booklet_1 && application.booklet_1.completed_at,
         date_format: @date_format,

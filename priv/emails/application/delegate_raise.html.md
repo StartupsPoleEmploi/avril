@@ -1,23 +1,17 @@
-[SUJET]: # (<%= @username %> souhaite toujours faire une VAE et attend un contact de votre part !)
+[SUJET]: # (<%= @username %> est sans nouvelle de votre part pour sa candidature VAE)
 
-# Bonjour,
+Bonjour,
 
-### <%= @username %> souhaite démarrer une VAE pour le diplôme <%= @certification_name %>. Soutenez sa démarche !
+<%= @username %> a adressé sa candidature VAE pour un <%= @certification_name %> 
+le <%= Timex.format!(@application.submitted_at, @date_format, :strftime) %> 
+et il est sans nouvelle de votre part.
 
-Le service Avril l'a accompagné·e dans sa recherche de diplôme et de certificateur
-mais nous savons qu'un candidat sur deux a besoin d'être encouragé dans son projet de VAE.
-
-<%= if @has_booklet do %>
-Le candidat a certifié exacte l'intégralité des renseignements fournis dans son dossier de recevabilité.
-<% else %>
-Le candidat n'a pas complété son dossier de recevabilité mais il est toujours temps de lui suggérer de
-le faire sur Avril si vous le désirez.
-<% end %>
-
-Nous vous invitons à consulter son profil et à le recontacter pour lui présenter votre procédure d’accès à la VAE.
+Merci de ne pas l'oublier
 
 <%= if @has_booklet do %>
 **[Voir sa candidature et télécharger son dossier de recevabilité](<%= @url %>)**
 <% else %>
 **[Voir sa candidature](<%= @url %>)**
 <% end %>
+
+Merci
