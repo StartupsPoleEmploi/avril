@@ -30,6 +30,7 @@ defmodule VaeWeb.Schema.Types.Application do
     field(:booklet_hash, :string)
     field(:inserted_at, :naive_datetime)
     field(:submitted_at, :naive_datetime)
+    field(:raised_at, :naive_datetime)
 
     field(:meeting, :meeting) do
       resolve(fn %UserApplication{} = ua, _args, _ ->
@@ -142,6 +143,12 @@ defmodule VaeWeb.Schema.Types.Application do
     field(:submit_application, :application) do
       arg(:id, non_null(:id))
       resolve(&Resolvers.Application.submit_application/3)
+    end
+
+    @desc "Raise delegate by email on submitted application"
+    field(:raise_application, :application) do
+      arg(:id, non_null(:id))
+      resolve(&Resolvers.Application.raise_application/3)
     end
 
     @desc "Delete an application"

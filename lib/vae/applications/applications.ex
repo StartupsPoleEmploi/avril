@@ -112,6 +112,12 @@ defmodule Vae.Applications do
 
   def set_submitted_now(application), do: {:ok, application}
 
+  def set_raised_now(%UserApplication{} = application) do
+    application
+    |> UserApplication.raised_now_changeset()
+    |> Repo.update()
+  end
+
   def delete_resume(resume), do: Resume.delete(resume)
 
   def get_booklet(application) do

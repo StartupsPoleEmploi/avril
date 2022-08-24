@@ -21,6 +21,7 @@ defmodule Vae.UserApplication do
     field(:delegate_access_hash, :string)
     field(:admissible_at, :utc_datetime)
     field(:inadmissible_at, :utc_datetime)
+    field(:raised_at, :utc_datetime)
     field(:booklet_hash, :string)
 
     belongs_to(:user, User, foreign_key: :user_id)
@@ -141,6 +142,10 @@ defmodule Vae.UserApplication do
 
   def submitted_now_changeset(application) do
     change(application, %{submitted_at: DateTime.truncate(DateTime.utc_now(), :second)})
+  end
+
+  def raised_now_changeset(application) do
+    change(application, %{raised_at: DateTime.truncate(DateTime.utc_now(), :second)})
   end
 
   def admissible_now(application) do

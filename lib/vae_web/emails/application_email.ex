@@ -151,6 +151,27 @@ defmodule VaeWeb.ApplicationEmail do
     )
   end
 
+  def delegate_raise(application, endpoint \\ URI.endpoint()) do
+    application = Repo.preload(application, [:user, :delegate, :certification])
+
+    Mailer.build_email(
+      "application/delegate_raise.html",
+      :avril,
+      application.delegate,
+      %{
+        url:
+          Routes.user_application_url(endpoint, :show, application,
+            hash: application.delegate_access_hash
+          ),
+        username: User.fullname(application.user),
+        certification_name: Certification.name(application.certification),
+        has_booklet: application.booklet_1 && application.booklet_1.completed_at,
+        date_format: @date_format,
+        footer_note: :delegate
+      }
+    )
+  end
+
   def wrong_educ_nat(application, endpoint \\ URI.endpoint()) do
     application = Repo.preload(application, [:user, :delegate, :certification])
 

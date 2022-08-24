@@ -6,9 +6,10 @@ defmodule VaeWeb.Resolvers.Application do
   import Geo.PostGIS
 
   alias Vae.{Applications, Delegate, Meeting, Repo, UserApplication}
-  alias VaeWeb.ApplicationEmail
+  alias VaeWeb.{ApplicationEmail, Mailer}
 
   @application_not_found "La candidature est introuvable"
+  @application_must_be_submitted "La candidature n'a pas été transmise. Relance impossible."
   @no_delegate_found "Aucun certificateur n'a été trouvé"
   @delegate_not_found "Le certificateur est introuvable"
   @no_meeting_found "Nous n'avons pas pu récupérer les réunions d'information"
@@ -162,6 +163,32 @@ defmodule VaeWeb.Resolvers.Application do
           error_response("Une erreur est survenue", inspect(msg))
       end
     else
+      {:application, _error} ->
+        error_response(@application_not_found, format_application_error_message(application_id))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        error_response(@submit_error, changeset)
+
+      _ ->
+        error_response("Une erreur est survenue", "")
+    end
+  end
+
+  def raise_application(_, %{id: application_id}, %{context: %{current_user: user}}) do
+    with(
+      {:application, %UserApplication{submitted_at: submitted_at} = application} when not is_nil(submitted_at) <-
+           {:application, Applications.get_application_from_id_and_user_id(application_id, user.id)}
+    ) do
+      case VaeWeb.ApplicationEmail.delegate_raise(application) |> Mailer.send() do
+        {:ok, _} -> Applications.set_raised_now(application)
+        {:error, msg} ->
+          Logger.error(fn -> "Error, while sending application #{inspect(msg)}" end)
+          error_response("Une erreur est survenue", inspect(msg))
+      end
+    else
+      {:application, %UserApplication{submitted_at: nil}} ->
+        error_response(@application_must_be_submitted, format_application_error_message(application_id))
+
       {:application, _error} ->
         error_response(@application_not_found, format_application_error_message(application_id))
 

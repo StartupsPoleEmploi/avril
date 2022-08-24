@@ -108,6 +108,7 @@ defmodule Vae.ExAdmin.User do
           column(:submitted_at)
           column(:admissible_at)
           column(:inadmissible_at)
+          column(:raised_at)
         end
       end
     end

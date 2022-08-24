@@ -58,6 +58,7 @@ defmodule Vae.ExAdmin.UserApplication do
         row(:submitted_at)
         row(:admissible_at)
         row(:inadmissible_at)
+        row(:raised_at)
         row(:updated_at)
         row(:meeting_infos, fn a -> Helpers.print_in_json(a.meeting) end)
         row(:booklet_1, fn a -> Helpers.print_in_json(a.booklet_1) end)
@@ -138,7 +139,7 @@ defmodule Vae.ExAdmin.UserApplication do
     filter(:delegate, type: :hidden)
     filter(:certification, type: :hidden)
     filter(:user, type: :hidden)
-    filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at])
+    filter([:id, :inserted_at, :updated_at, :submitted_at, :admissible_at, :inadmissible_at, :raised_at])
 
     @all_preloads [:delegate, :user, :certification, :meeting]
 
