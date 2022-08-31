@@ -133,7 +133,10 @@ defmodule VaeWeb.CertificationController do
     if length(transferable_applications) > 0 && params["user_application_id"] != "new" do
       if params["user_application_id"] do
         {:ok, user_application} = Repo.get(UserApplication, params["user_application_id"])
-        |> UserApplication.changeset(%{certification_id: certification_id})
+        |> UserApplication.changeset(%{
+          certification_id: certification_id,
+          delegate_id: nil,
+        })
         |> Repo.update()
 
         redirect(conn, external: Vae.User.profile_url(conn, user_application))

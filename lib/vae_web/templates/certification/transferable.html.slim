@@ -5,22 +5,19 @@
       input type="hidden" name="_method" value="put"
       input type="hidden" name="_csrf_token" value=Plug.CSRFProtection.get_csrf_token()
       header.modal-card-head
-        p.modal-card-title Candidature dont le diplôme est devenu inactif
+        p.modal-card-title Transférer une précédente candidature ?
         a.delete aria-label="close" href=Routes.certification_path(@conn, :show, @certification)
       section.modal-card-body
         .content
-          p
-            | Le diplôme sélectionné dans votre candidature est désormais inactif,
-            | c’est-à-dire qu’il n’est plus possible de l’obtenir dans la version
-            | que vous aviez choisie.
-            br
-            | Vous pouvez au choix :
+          p Vous avez déjà effectué des démarches VAE pour #{Vae.String.inflect(length(@applications), "autre diplôme")}. Nous vous proposons de transférer vos données et pièces jointes saisies vers cette nouvelle candidature.
+
+          p Souhaitez-vous :
           ul style="list-style: none;"
-            = for application <- @applications do
-              li
+            = for {application, i} <- Enum.with_index(@applications) do
+              li style="margin-bottom: 1rem;"
                 label.radio
-                  input type="radio" name="user_application_id" value=application.id required="required"
-                  '  Transférer votre candidature existante de
+                  input type="radio" name="user_application_id" value=application.id required="required" checked=i==0
+                  '  Transférer votre candidature de
                   strong #{Certification.name(application.certification)}
                   '  démarée le #{Timex.format!(application.inserted_at, "%d/%m/%Y", :strftime)}
                   |  vers ce diplôme
@@ -30,5 +27,5 @@
                 '  Démarrer une nouvelle VAE
 
       footer.modal-card-foot style="justify-content: space-between;"
-        button.button.is-primary.is-rounded type="submit" Valider mon choix
+        button.button.is-primary.is-rounded type="submit" data-disable-with="Enregistrement ..." Valider mon choix
         a.button.is-default aria-label="close" href=Routes.certification_path(@conn, :show, @certification) Fermer ce message

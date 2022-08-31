@@ -35,20 +35,28 @@ defmodule VaeWeb.RegistrationController do
   end
 
   def maybe_create_application_and_redirect(conn) do
-    conn = with(
-      current_user when not is_nil(current_user) <- Pow.Plug.current_user(conn),
-      certification_id when not is_nil(certification_id) <- Plug.Conn.get_session(conn, :certification_id),
-      {:ok, application} when not is_nil(application) <-
-        Vae.UserApplication.find_or_create_with_params(%{
-          user_id: current_user.id,
-          certification_id: certification_id
-        })
-    ) do
-      conn
-      |> Plug.Conn.delete_session(:certification_id)
-      |> Plug.Conn.assign(:current_application, application)
+    current_user = Pow.Plug.current_user(conn)
+    certification_id = Plug.Conn.get_session(conn, :certification_id)
+    transferable_applications = User.transferable_applications(current_user)
+
+    if certification_id && length(transferable_applications) > 0 do
+      redirect(conn, to: Routes.certification_path(conn, :show, certification_id, transferable: ""))
     else
-      _error -> conn
+      conn = with(
+        %User{id: user_id} <- current_user,
+        certification_id when not is_nil(certification_id) <- certification_id,
+        {:ok, application} when not is_nil(application) <-
+          Vae.UserApplication.find_or_create_with_params(%{
+            user_id: user_id,
+            certification_id: certification_id
+          })
+      ) do
+        conn
+        |> Plug.Conn.delete_session(:certification_id)
+        |> Plug.Conn.assign(:current_application, application)
+      else
+        _error -> conn
+      end
     end
     redirect(conn, external: get_after_signup_path(conn))
   end
