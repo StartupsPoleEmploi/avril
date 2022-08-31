@@ -24,7 +24,7 @@ defmodule Vae.Certification do
     field(:external_notes, :string)
 
 
-    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id)
+    belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
     has_one(:older_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
 
     many_to_many(
