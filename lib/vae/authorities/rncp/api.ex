@@ -33,11 +33,15 @@ defmodule Vae.Authorities.Rncp.Api do
   end
 
   def query_all(fiche_fn, page \\ 1) do
-    Logger.info("Querying page #{page}")
     case query(%{PAGE: page}) do
       [] -> Logger.info("Finished at page #{page}")
       list when is_list(list) ->
-        Enum.map(list, fiche_fn)
+        Enum.map(list, fn fiche ->
+          Logger.info("#################################")
+          Logger.info("# Page #{page}: Fiche #{fiche["NUMERO_FICHE"]} #")
+          Logger.info("#################################")
+          fiche_fn.(fiche)
+        end)
         query_all(fiche_fn, page+1)
     end
   end
