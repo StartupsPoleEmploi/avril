@@ -47,7 +47,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 1m
-    image: node:14.13.1
+    image: node:16.17.0
     restart: always
     volumes:
       - ../avril-livret1:/app
@@ -65,7 +65,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 1m
-    image: node:14.13.1
+    image: node:16.17.0
     restart: always
     volumes:
       - ../avril-profil:/app
