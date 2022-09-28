@@ -191,6 +191,10 @@ defmodule Vae.Certification do
       end
   end
 
+  def is_reva?(%Certification{internal_notes: internal_notes}) do
+    String.contains?(internal_notes || "", "REVA")
+  end
+
   def add_default_acronym(%Changeset{} = changeset) do
     if Vae.String.is_blank?(get_field(changeset, :acronym)) do
       put_change(changeset, :acronym, "Diplôme")
