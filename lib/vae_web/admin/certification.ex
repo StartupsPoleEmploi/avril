@@ -62,6 +62,7 @@ defmodule Vae.ExAdmin.Certification do
         row(:activity_area)
         row(:accessible_job_type)
         row(:external_notes)
+        row(:internal_notes)
       end
 
       panel "ROME" do
@@ -113,6 +114,7 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :acronym, readonly: true)
         input(certification, :label, readonly: true)
         input(certification, :level, readonly: true)
+        input(certification, :internal_notes, type: :text, placeholder: "Internal infos (REVA)")
         input(certification, :external_notes, type: :text, placeholder: "Extra infos for the candidate")
 
         content do
@@ -226,7 +228,7 @@ defmodule Vae.ExAdmin.Certification do
     filter(:newer_certification, type: :present_only)
     filter(:applications, scope: :recent)
     # filter(:delegates, scope: :active)
-    filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :last_rncp_import_date, :end_of_rncp_validity, :activities]
+    filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :last_rncp_import_date, :end_of_rncp_validity, :activities, :internal_notes]
 
     query do
       preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]

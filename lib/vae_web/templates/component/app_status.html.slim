@@ -1,12 +1,14 @@
 = if status = @conn.assigns[:app_status] do
-  - %{message: message, level: level, image: image} = status
-  .app-status.notification.is-top role="alert" class="is-#{level}"
-    button.delete aria-label="Fermer" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token()
-    .container
-      .columns
-        .column.content class="is-#{if Vae.String.is_present?(image), do: "9", else: "12" }"
-          = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw()
-        = if Vae.String.is_present?(image) do
-          .column.is-3.is-hidden-mobile.is-flex
-            = img_tag "/images/#{image}"
+  - %{message: message, level: level, image: image, home_only: home_only} = status
+  = if !home_only || Phoenix.Controller.current_path(@conn) == "/" do
+    .app-status.notification.is-top role="alert" class="is-#{level}"
+      button.delete aria-label="Fermer" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token()
+      .container
+        .columns
+          .column class="is-#{if Vae.String.is_present?(image), do: "9", else: "12" }"
+            .content
+              = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw()
+          = if Vae.String.is_present?(image) do
+            .column.is-3.is-hidden-mobile.is-flex
+              = img_tag "/images/#{image}"
 

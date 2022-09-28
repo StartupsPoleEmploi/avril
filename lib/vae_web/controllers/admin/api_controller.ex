@@ -52,6 +52,7 @@ defmodule ExAdmin.ApiController do
            message: status,
            level: params["level"] || "info",
            image: params["image"],
+           home_only: !!params["home_only"],
            starts_at:
              if(not Vae.String.is_blank?(params["starts_at"]),
                do: Timex.parse!(params["starts_at"], "{ISO:Extended:Z}")

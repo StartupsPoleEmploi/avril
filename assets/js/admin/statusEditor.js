@@ -101,7 +101,12 @@ class StatusForm extends React.Component {
         </div>
         { !this.state.isEdit ? (
           <div>
-            <p>Le message suivant sera affiché {this.renderDateRange()} : </p>
+            <p>
+              Le message suivant sera affiché
+              {this.renderDateRange()}
+              {this.state.status.home_only ? ' sur la page d\'accueil uniquement' : ''}
+              :
+            </p>
             <div className={`app-status alert alert-${this.state.status.level}`} dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.status.message)}}></div>
             {this.state.status.image && (
               <p>Avec l'image <img src={`/images/${this.state.status.image}`} style={{maxWidth: '15rem'}} /></p>
@@ -183,6 +188,19 @@ class StatusForm extends React.Component {
               </div>
             </div>
             <div className="form-group">
+              <div className="col-sm-offset-2 col-sm-10">
+                <div className="checkbox">
+                  <label>
+                    <input
+                      type="checkbox"
+                      onChange={e => this.editStatus('home_only', !this.state.status.home_only)}
+                      value={this.state.status && this.state.status.home_only}
+                    /> Page d'accueil uniquement
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="form-group">
               <label htmlFor="status" className="col-sm-2 control-label">Image</label>
               <div className="col-sm-10">
                 <select
@@ -197,6 +215,7 @@ class StatusForm extends React.Component {
                   <option value="mon-diplome.png">Diplôme</option>
                   <option value="recevabilite.svg">Recevabilité</option>
                   <option value="tampon-vae.svg">Tampon</option>
+                  <option value="Reva-logo-experimentation.svg">REVA</option>
                 </select>
               </div>
             </div>
