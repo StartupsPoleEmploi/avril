@@ -105,6 +105,20 @@ defmodule Vae.ExAdmin.Helpers do
     end
   end
 
+  def email_with_link(entity, key \\ :email) do
+    with(
+      email when not is_nil(email) <- Map.get(entity, key),
+      user when not is_nil(user) <- Vae.Repo.get_by(Vae.User, email: email)
+    ) do
+      [
+        "#{email} ",
+        link_to_resource(user, namify: fn _u -> "(Voir dans l'admin)" end)
+      ]
+    else
+      _ -> Map.get(entity, key)
+    end
+  end
+
   def form_select_tag(%struct{} = object, association_name, options \\ []) do
     object = Repo.preload(object, association_name)
 

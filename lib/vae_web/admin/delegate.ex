@@ -41,35 +41,9 @@ defmodule Vae.ExAdmin.Delegate do
         row(:administrative)
         row(:telephone)
         row(:website)
-        row(:email, fn d ->
-          Vae.Repo.one(
-            from u in Vae.User,
-            where: (u.email == ^d.email)
-          )
-          |> case do
-            %Vae.User{} = user -> [
-                "#{d.email} ",
-                Helpers.link_to_resource(user, namify: fn _u -> "(Voir dans l'admin)" end)
-              ]
-            nil -> d.email
-          end
-        end)
+        row(:email, &Helpers.email_with_link(&1))
         row(:person_name)
-        row(:secondary_email, fn d ->
-          if (d.secondary_email) do
-            Vae.Repo.one(
-              from u in Vae.User,
-              where: (u.email == ^d.secondary_email)
-            )
-            |> case do
-              %Vae.User{} = user -> [
-                  "#{d.secondary_email} ",
-                  Helpers.link_to_resource(user, namify: fn _u -> "(Voir dans l'admin)" end)
-                ]
-              nil -> d.secondary_email
-            end
-          end
-        end)
+        row(:secondary_email, &Helpers.email_with_link(&1, :secondary_email))
         row(:secondary_person_name)
         row(:academy_id)
         row(:delegate_access, fn d ->
