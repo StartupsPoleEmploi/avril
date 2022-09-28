@@ -104,7 +104,11 @@ defmodule Vae.String do
     if String.starts_with?(String.downcase(string), String.downcase(prepend)), do: string, else: "#{prepend} #{string}"
   end
 
-
+  def has_all_kind_of_chars?(string) do
+    String.match?(string, ~r/[a-zA-Z]/) &&
+    String.match?(string, ~r/\d/) &&
+    String.match?(string, ~r/[&\-_@\*\+=\.,;:!?]/)
+  end
 
   def random_human_readable_name() do
     replicate = fn el, number -> for _ <- 1..number, do: el end

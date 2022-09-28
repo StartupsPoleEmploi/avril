@@ -7,9 +7,11 @@ section.section.is-vertical.register-page.pow-page
           = form_for @changeset, Routes.signup_path(@conn, :create), [as: :user], fn f ->
             = if @changeset.action do
               .notification.is-danger
-                ' Une erreur est survenue:
-                = for {key, error} <- f.errors do
-                  span= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
+                .content
+                  ' Mon compte n'a pas encore été créé :
+                  ul
+                    = for {key, error} <- f.errors do
+                      li= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
             .field
               = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
             .field

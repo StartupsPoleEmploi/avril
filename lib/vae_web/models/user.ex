@@ -83,6 +83,7 @@ defmodule Vae.User do
     |> validate_required([:email])
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
+    |> validate_password_rules()
   end
 
   def do_password_changeset(changeset, %{
@@ -98,6 +99,24 @@ defmodule Vae.User do
   end
 
   def do_password_changeset(changeset, _), do: changeset
+
+
+  defp validate_password_rules(changeset) do
+    password_rules = [
+      # {"doit avoir une longueur de minimum #{Application.get_env(:vae, :pow)[:password_min_length]} caractères", &(String.length(&1) >= Application.get_env(:vae, :pow)[:password_min_length])},
+      {"doit contenir au moins une lettre, un nombre et un caractère spécial parmis & - _ @ * + = . , ; : ! ?", &Vae.String.has_all_kind_of_chars?(&1)},
+    ]
+
+    Ecto.Changeset.validate_change(changeset, :password, fn :password, password ->
+      Enum.reduce(password_rules, nil, fn {msg, test_fn}, error_msg ->
+        error_msg || !test_fn.(password) && msg
+      end)
+      |> case do
+        error_msg when is_binary(error_msg) -> [password: error_msg]
+        _ -> []
+      end
+    end)
+  end
 
   def extract_identity_data(changeset) do
     duplicated_fields = ~w(email first_name last_name)a
