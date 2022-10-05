@@ -26,7 +26,7 @@ defmodule Vae.Certification do
 
 
     belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
-    has_one(:older_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
+    has_one(:older_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify, on_delete: :nilify_all)
 
     many_to_many(
       :certifiers,
