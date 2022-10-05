@@ -14,8 +14,8 @@ defmodule Vae.Authorities.Rncp.Update do
         |> Certification.rncp_update()
       else if certification = Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload(:applications) do
         try do
-          Repo.delete(certification)
-          Logger.info("Certification RNCP#{rncp_id} deleted")
+          Logger.info("Certification should be RNCP#{rncp_id} deleted?")
+          # Repo.delete(certification)
         rescue
           error ->
             Logger.error(inspect(error))
