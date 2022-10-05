@@ -48,14 +48,15 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   def wrong_educ_nat_certifiers(), do: @wrong_educ_nat_certifiers
   def missing_educ_nat_certifiers, do: @missing_educ_nat_certifiers
 
-  def accepted_fiche?(fiche) do
-    accessible_vae = xpath(fiche, ~x"./SI_JURY_VAE/text()"s) == "Oui"
+  def accepted_fiche?(fiche_params) do
+    accessible_vae = get_in(fiche_params, ["SI_JURY_VAE", "ACTIF"]) == "Oui"
 
-    intitule = xpath(fiche, ~x"./INTITULE/text()"s) |> String.downcase()
+    intitule = fiche_params["INTITULE"] |> String.downcase()
+
     ignored_intitule = @ignored_fiche_intitules
       |> Enum.any?(&String.starts_with?(intitule, String.downcase(&1)))
 
-    acronym = xpath(fiche, ~x"./ABREGE/CODE/text()"s)
+    acronym = get_in(fiche_params, ["ABREGE", "CODE"])
     ignored_acronym = acronym in @ignored_fiche_acronyms
 
     accessible_vae && !ignored_intitule && !ignored_acronym
