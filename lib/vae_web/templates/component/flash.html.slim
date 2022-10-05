@@ -3,4 +3,7 @@
   = if message = get_flash(@conn, type) do
     .flash.notification.is-top class="is-#{type}" role="alert"
       button.delete aria-label="Fermer" type="button" onclick="$(event.target).parents('.notification').remove();"
-      p= message
+      .content
+        = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw()
+
+

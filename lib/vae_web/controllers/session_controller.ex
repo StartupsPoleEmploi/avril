@@ -21,7 +21,7 @@ defmodule VaeWeb.SessionController do
         changeset = Pow.Plug.change_user(conn, conn.params["user"])
 
         conn
-        |> put_flash(:danger, "L'authentification a échoué. Merci de réessayer ou de cliquer sur \"Mot de passe oublié ?\" si vous ne parvenez pas à le retrouver.")
+        |> put_flash(:danger, "L'authentification a échoué. Merci de réessayer ou de cliquer sur \"[Mot de passe oublié ?](/reset-password/new)\" si vous ne parvenez pas à le retrouver.\n\nNB: les règles de sécurité ont évoluées sur Avril et votre mot de passe a certainement été réinitialisé automatiquement.")
         |> render("new.html", changeset: changeset)
     end
   end

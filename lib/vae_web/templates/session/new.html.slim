@@ -10,10 +10,6 @@ section.section.pow-page
                 ' Une erreur est survenue:
                 = for {key, error} <- f.errors do
                   span= "#{key} #{VaeWeb.ErrorHelpers.translate_error(error)}"
-              - else
-                p
-                  strong L'authentification a échoué.
-                p Merci de réessayer ou de cliquer sur réinitialiser votre mot de passe si vous ne parvenez pas à le retrouver.
           .field
             = render VaeWeb.ComponentView, "pe-connect-button.html", conn: @conn
           .field
@@ -21,11 +17,13 @@ section.section.pow-page
           .field
             .control
               = text_input f, :email, class: "input is-large", required: "required", placeholder: "Email", autocomplete: "off"
-              = error_tag f, :email
+              = if @changeset.action do
+                = error_tag f, :email
           .field
             .control
               = password_input f, :password, class: "input is-large", required: "required", placeholder: "Mot de passe", autocomplete: "off"
-              = error_tag f, :password
+              / = if @changeset.action do
+                = error_tag f, :password
           .field
             label.checkbox
               = checkbox f, :persistent_session
