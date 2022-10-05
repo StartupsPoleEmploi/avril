@@ -1,7 +1,6 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
   alias Vae.{Certifier, Repo, Rome}
-  import SweetXml
   alias Vae.Authorities.Rncp.{FileLogger, FicheHandler}
 
   @current_year Date.utc_today().year

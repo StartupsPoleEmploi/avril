@@ -9,7 +9,7 @@ defmodule Vae.Authorities.Rncp.Update do
     Api.query_all(fn fiche ->
       %{rncp_id: rncp_id} = params = Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params(fiche)
 
-      if CustomRules.accepted_fiche?(params) do
+      if CustomRules.accepted_fiche?(fiche) do
         Certification.rncp_changeset(rncp_id, params)
         |> Certification.rncp_update()
       else if Repo.get_by(Certification, rncp_id: rncp_id) do
