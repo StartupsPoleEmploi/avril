@@ -12,8 +12,15 @@ defmodule Vae.Authorities.Rncp.Update do
       if CustomRules.accepted_fiche?(fiche) do
         Certification.rncp_changeset(rncp_id, params)
         |> Certification.rncp_update()
-      else if Repo.get_by(Certification, rncp_id: rncp_id) do
-        Logger.warn("Certification RNCP#{rncp_id} should not be imported in Avril")
+      else if certification = Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload(:applications) do
+        try do
+          Repo.delete(certification)
+          Logger.info("Certification RNCP#{rncp_id} deleted")
+        rescue
+          error ->
+            Logger.error(error)
+            Logger.warn("Certification RNCP#{rncp_id} should not be imported in Avril and has applications")
+        end
       end
       end
     end, page)
