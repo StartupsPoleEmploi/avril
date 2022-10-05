@@ -18,7 +18,7 @@ defmodule Vae.Authorities.Rncp.Update do
           Logger.info("Certification RNCP#{rncp_id} deleted")
         rescue
           error ->
-            Logger.error(error)
+            Logger.error(inspect(error))
             Logger.warn("Certification RNCP#{rncp_id} should not be imported in Avril and has applications")
         end
       end
