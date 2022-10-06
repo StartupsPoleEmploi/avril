@@ -138,6 +138,10 @@ config :vae, Vae.Scheduler,
     rncp_update_task: [
       schedule: "0 3 1,15 * *", # 3AM on the first and 15th of month
       task: &Vae.Authorities.Rncp.Update.update_all/0
+    ],
+    security_reset_password_task: [
+      schedule: "0 4 1 * *", # 4AM on the first of month
+      task: &Vae.User.reset_old_users_password/0
     ]
   ], else: []
 

@@ -78,7 +78,7 @@ defmodule Vae.UserApplication do
   end
 
   def init_booklet_hash(changeset) do
-    change(changeset, booklet_hash: changeset.data.booklet_hash || generate_hash(64))
+    change(changeset, booklet_hash: changeset.data.booklet_hash || Vae.String.generate_hash(64))
   end
 
   def delete_with_resumes(%UserApplication{} = ua) do
@@ -113,7 +113,7 @@ defmodule Vae.UserApplication do
 
   def generate_delegate_access_hash_changeset(application) do
     change(application, %{
-      delegate_access_hash: application.delegate_access_hash || generate_hash(64),
+      delegate_access_hash: application.delegate_access_hash || Vae.String.generate_hash(64),
       delegate_access_refreshed_at: DateTime.utc_now() |> DateTime.truncate(:second)
     })
   end
@@ -255,10 +255,6 @@ defmodule Vae.UserApplication do
         )
     }
     |> Vae.URI.to_absolute_string(endpoint)
-  end
-
-  defp generate_hash(length) do
-    :crypto.strong_rand_bytes(length) |> Base.url_encode64() |> binary_part(0, length)
   end
 
   def merge_applications_with_unicity_constraint(list1, list2) do

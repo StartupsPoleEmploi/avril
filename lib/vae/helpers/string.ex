@@ -16,6 +16,11 @@ defmodule Vae.String do
     :crypto.hash(:md5, string |> Base.encode16())
   end
 
+  def generate_hash(nb_chars) do
+    :crypto.strong_rand_bytes(nb_chars) |> Base.url_encode64() |> binary_part(0, nb_chars)
+  end
+
+
   def to_id(param) when is_binary(param) do
     param
     |> to_id_string()

@@ -10,6 +10,8 @@ defmodule Vae.User do
   use Pow.Extension.Ecto.Schema,
     extensions: [PowResetPassword]
 
+  import Ecto.Query
+
   import Pow.Ecto.Schema.Changeset,
     only: [password_changeset: 3]
 
@@ -35,6 +37,8 @@ defmodule Vae.User do
     field(:is_admin, :boolean)
     field(:is_delegate, :boolean)
     field(:pe_id, :string)
+    field(:reset_password_sent_at, :utc_datetime)
+    field(:password_hash, :string)
 
     has_many(:applications, UserApplication, on_replace: :delete, on_delete: :delete_all)
 
@@ -116,6 +120,15 @@ defmodule Vae.User do
         _ -> []
       end
     end)
+  end
+
+  def reset_random_password(user) do
+    password = "#{Vae.String.generate_hash(8)}@#{Vae.String.generate_hash(8)}1"
+    password_changeset(user, %{
+      password: password,
+      password_confirmation: password,
+    }, @pow_config)
+    |> Repo.update()
   end
 
   def extract_identity_data(changeset) do
@@ -223,5 +236,18 @@ defmodule Vae.User do
   end
 
   def transferable_applications(_), do: []
+
+  def reset_old_users_password() do
+    from(u in User, where: fragment("?::date", u.inserted_at) < ^~D[2022-09-29])
+    |> Repo.update_all(set: [reset_password_sent_at: DateTime.utc_now()])
+
+    six_months_ago = Date.utc_today() |> Timex.shift(months: -6)
+    from(u in User, where:
+      fragment("?::date", u.inserted_at) < ^six_months_ago and
+      not is_nil(u.reset_password_sent_at) and not is_nil(u.password_hash)
+    )
+    |> Repo.all()
+    |> Enum.each(&User.reset_random_password(&1))
+  end
 
 end
