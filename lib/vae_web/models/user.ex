@@ -38,7 +38,6 @@ defmodule Vae.User do
     field(:is_delegate, :boolean)
     field(:pe_id, :string)
     field(:reset_password_sent_at, :utc_datetime)
-    field(:password_hash, :string)
 
     has_many(:applications, UserApplication, on_replace: :delete, on_delete: :delete_all)
 
@@ -238,8 +237,8 @@ defmodule Vae.User do
   def transferable_applications(_), do: []
 
   def reset_old_users_password() do
-    from(u in User, where: fragment("?::date", u.inserted_at) < ^~D[2022-09-29])
-    |> Repo.update_all(set: [reset_password_sent_at: DateTime.utc_now()])
+    # from(u in User, where: fragment("?::date", u.inserted_at) < ^~D[2022-09-29])
+    # |> Repo.update_all(set: [reset_password_sent_at: DateTime.utc_now()])
 
     six_months_ago = Date.utc_today() |> Timex.shift(months: -6)
     from(u in User, where:
