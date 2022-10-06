@@ -57,8 +57,8 @@ defmodule VaeWeb.RegistrationController do
       else
         _error -> conn
       end
+      redirect(conn, external: get_after_signup_path(conn))
     end
-    redirect(conn, external: get_after_signup_path(conn))
   end
 
   def get_after_signup_path(conn) do
