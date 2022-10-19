@@ -18,7 +18,8 @@ defmodule Vae.ExAdmin.Delegate do
         Enum.map(d.certifiers, &Helpers.link_to_resource(&1)) |> Enum.intersperse(", ")
       end)
       # column(:nb_active_certifications, fn a -> length(a.certifications) end)
-      column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
+      column(:nb_quarter_applications, fn a -> length(a.quarter_applications) end)
+      # column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
       column(:administrative)
       column(:city)
       column(:email)
@@ -259,8 +260,8 @@ defmodule Vae.ExAdmin.Delegate do
     query do
       %{
         all: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
-        index: [preload: [:certifiers, :certifications, :recent_applications], default_sort: [asc: :id]],
-        show: [preload: [:certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [recent_applications: [:user, :certification]]]],
+        index: [preload: [:certifiers, :certifications, :quarter_applications], default_sort: [asc: :id]],
+        show: [preload: [:certifiers, :included_certifications, :excluded_certifications, [certifications: :certifiers], [quarter_applications: [:user, :certification]]]],
         edit: [preload: [:certifiers, :rncp_certifications, :included_certifications, :excluded_certifications]],
         update: [preload: [:rncp_certifications, :included_certifications, :excluded_certifications]],
       }

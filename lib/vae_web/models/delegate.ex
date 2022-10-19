@@ -79,6 +79,7 @@ defmodule Vae.Delegate do
 
     has_many(:applications, UserApplication)
     has_many(:recent_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '16 days'"}])
+    has_many(:quarter_applications, UserApplication, where: [submitted_at: {:fragment, "? > now() - interval '3 months'"}])
 
     has_many(
       :users,
@@ -104,8 +105,6 @@ defmodule Vae.Delegate do
 
     struct
     |> Repo.preload([
-      :recent_applications,
-      :applications,
       :certifiers,
       :certifications,
       :included_certifications,

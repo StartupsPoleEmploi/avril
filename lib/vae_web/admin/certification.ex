@@ -19,7 +19,8 @@ defmodule Vae.ExAdmin.Certification do
         Enum.map(d.certifiers, &Helpers.link_to_resource/1) |> Enum.intersperse(", ")
       end)
       column(:nb_active_delegates, fn a -> length(a.delegates) end)
-      column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
+      column(:nb_quarter_applications, fn a -> length(a.quarter_applications) end)
+      # column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
 
       actions()
     end
@@ -234,7 +235,7 @@ defmodule Vae.ExAdmin.Certification do
       preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]
 
       %{
-        index: [default_sort: [asc: :id], preload: [:certifiers, :delegates, :recent_applications]],
+        index: [default_sort: [asc: :id], preload: [:certifiers, :delegates, :quarter_applications]],
         show: [
           preload: [:certifiers, :included_delegates, :excluded_delegates, [delegates: :certifiers], :romes, :newer_certification, :older_certification] ++ [
             applications: [:delegate, :user, :certification, :certifiers]
