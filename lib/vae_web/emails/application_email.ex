@@ -84,6 +84,7 @@ defmodule VaeWeb.ApplicationEmail do
         delegate_person_name: application.delegate.person_name,
         delegate_phone_number: application.delegate.telephone,
         delegate_email: application.delegate.email,
+        user_phone: application.user.identity && (application.user.identity.mobile_phone || application.user.identity.home_phone),
         delegate_website: application.delegate.website,
         image_url: URI.static_url(endpoint, "/images/group.png"),
         footer_note: :inscrit_avril
