@@ -32,7 +32,8 @@ defmodule Vae.ExAdmin.User do
       :first_name,
       :last_name,
       :email,
-      :pe_id
+      :pe_id,
+      :is_delegate
     ])
 
     csv do

@@ -17,10 +17,11 @@ defmodule Vae.ExAdmin.Delegate do
       column(:certifiers, fn d ->
         Enum.map(d.certifiers, &Helpers.link_to_resource(&1)) |> Enum.intersperse(", ")
       end)
-      column(:nb_active_certifications, fn a -> length(a.certifications) end)
+      # column(:nb_active_certifications, fn a -> length(a.certifications) end)
       column(:nb_recent_applications, fn a -> length(a.recent_applications) end)
       column(:administrative)
       column(:city)
+      column(:email)
 
       actions()
     end
@@ -253,7 +254,7 @@ defmodule Vae.ExAdmin.Delegate do
     filter([:is_prc])
     filter(:applications, scope: :recent)
     # filter(:certifications, scope: :active)
-    filter([:is_active, :id, :slug, :email, :city, :administrative, :internal_notes])
+    filter([:is_active, :id, :slug, :name, :email, :city, :administrative, :internal_notes])
 
     query do
       %{
