@@ -14,6 +14,7 @@ defmodule VaeWeb.ComponentView do
     Phoenix.HTML.Link.link(label, to: to, class: "button is-back #{params[:class]}")
   end
 
+  # @deprecated use tag_commander to manage scripts with cookies
   def render("analytics", %{conn: conn}) do
     dimension1 =
       case conn.remote_ip do
@@ -83,6 +84,7 @@ defmodule VaeWeb.ComponentView do
     |> Phoenix.HTML.raw()
   end
 
+  # @deprecated use tag_commander to manage scripts with cookies
   def render("hotjar", _) do
     if @tracking_config[:hotjar] do
       {:safe,
@@ -102,6 +104,7 @@ defmodule VaeWeb.ComponentView do
     end
   end
 
+  # @deprecated use tag_commander to manage scripts with cookies
   def render("crisp", _) do
     if @tracking_config[:crisp] do
       {:safe,
@@ -119,15 +122,6 @@ defmodule VaeWeb.ComponentView do
     end
   end
 
-
-
-  # def render("tag_commander", _) do
-  #   if @tracking_config[:tag_commander] do
-  #     url = "https://cdn.tagcommander.com#{@tracking_config[:tag_commander]}.js"
-
-  #     {:safe, ""}
-  #   end
-  # end
   def render("tag_commander", _) do
     if @tracking_config[:tag_commander] do
       url = "https://cdn.tagcommander.com#{@tracking_config[:tag_commander]}.js"
