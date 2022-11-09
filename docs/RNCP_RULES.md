@@ -22,6 +22,8 @@ pour règles :
 - les fiches dont l'intitulé démarre par :
   + Un des meilleurs ouvriers de France
   + Ecole polytechnique
+- les fiches dont l'acronyme est :
+  + BEPA
 
 ## Certifications associées à l'éducation nationale alors qu'elles ne le sont pas dans le RNCP :
 
@@ -29,24 +31,50 @@ pour règles :
 - les BTS au RNCP associées au ministère de l'enseignement suppérieur
 - les ID RNCP suivants :
   + 4875
-  + 4877
   + 34825
+  + 34826
   + 34828
+  + 35044
 
 ## Certifications dissociées de l'éducation nationale alors qu'elles le sont dans le RNCP :
 
-- Les fiches avec l'un des acronymes suivants :
+- les fiches avec l'un des acronymes suivants :
   + CQP
   + DEUST
   + DUT
   + MASTER
   + Licence Professionnelle
   + Titre ingénieur
-- La fiche au RNCP ID 4505
+- les fiches déjà associées au ministère de la jeunesse, des sports et de la cohésion sociale
+- les ID RNCP suivants :
+  + 230
+  + 367
+  + 2028
+  + 2514
+  + 2829
+  + 4495
+  + 4496
+  + 4500
+  + 4503
+  + 4505
+  + 18363
+  + 25467
+  + 28557
+  + 34824
+  + 34827
+  + 34829
+  + 34862
+  + 36004
 
 ## Certifications dissociées du ministère de la jeunesse, des sports et de la cohésion sociale alors qu'elle l'est dans le RNCP
 
 - La fiche au RNCP ID 492
+
+## Certifications rendues actives alors qu'elles sont inactives au RNCP :
+- les ID RNCP suivants :
+  + 25520
+  + 25522
+  + 25471
 
 ## Certifications rendues inactives alors qu'elles sont actives au RNCP :
 
@@ -58,35 +86,30 @@ pour règles :
   + 5440
   + 31191
 - les fiches de CCI France dont l'ID RNCP **n'est pas** parmis les suivants :
-  + 28669
-  + 23937
-  + 23870
-  + 27095
-  + 27413
-  + 23966
-  + 23872
-  + 26286
-  + 16615
-  + 28736
+  + 11200
   + 23827
-  + 26901
-  + 27096
-  + 32362
-  + 23940
-  + 29535
-  + 27365
-  + 28764
-  + 23675
-  + 23939
   + 23869
-  + 23970
-  + 28627
+  + 23872
   + 23932
+  + 23937
+  + 23939
+  + 23940
+  + 26901
+  + 27095
+  + 27096
+  + 27365
+  + 27413
+  + 28669
+  + 28764
+  + 29535
+  + 32362
+  + 34353
+  + 34928
+  + 34965
+  + 34999
+  + 35001
+  + 35010
 
 ## Certifications avec acronyme personnalisé BATC
 
 - La fiche à l'ID RNCP 23909
-
-## Certifications avec un code ROME supplémentaire M1203
-
-- La fiche à l'ID RNCP 4877
