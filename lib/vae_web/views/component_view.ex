@@ -87,20 +87,13 @@ defmodule VaeWeb.ComponentView do
   # @deprecated use tag_commander to manage scripts with cookies
   def render("hotjar", _) do
     if @tracking_config[:hotjar] do
-      {:safe,
-       """
-        <!-- Hotjar Tracking Code for http://avril.pole-emploi.fr -->
-        <script>
-        (function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:#{@tracking_config[:hotjar]},hjsv:5};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-        })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+      {:safe, """
+        <script type=\"text/javascript\">
+          var now = new Date(); var expires= new Date(now.setFullYear(now.getFullYear()+1));
+          var cookie = `TC_CONFIG={Hotjar_key : #{@tracking_config[:hotjar]}}; expires=${expires.toUTCString()}; path=/`;
+          document.cookie = cookie;
         </script>
-       """}
+      """}
     end
   end
 
