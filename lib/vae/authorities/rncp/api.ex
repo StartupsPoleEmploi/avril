@@ -24,6 +24,9 @@ defmodule Vae.Authorities.Rncp.Api do
         %{"message" => message} ->
           Logger.info("Message: #{message}")
           []
+        %{"globalErrors" => errors} ->
+          Logger.error(fn -> inspect(errors) end)
+          []
       end
     else
       {:error, reason} ->
