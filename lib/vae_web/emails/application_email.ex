@@ -165,6 +165,7 @@ defmodule VaeWeb.ApplicationEmail do
             hash: application.delegate_access_hash
           ),
         username: User.fullname(application.user),
+        user_phone: application.user.identity && (application.user.identity.mobile_phone || application.user.identity.home_phone),
         application: application,
         certification_name: Certification.name(application.certification),
         has_booklet: application.booklet_1 && application.booklet_1.completed_at,
