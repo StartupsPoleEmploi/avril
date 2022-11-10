@@ -90,7 +90,7 @@ defmodule VaeWeb.ComponentView do
       {:safe, """
         <script type=\"text/javascript\">
           var now = new Date(); var expires= new Date(now.setFullYear(now.getFullYear()+1));
-          var cookie = `TC_CONFIG={Hotjar_key : #{@tracking_config[:hotjar]}}; expires=${expires.toUTCString()}; path=/`;
+          var cookie = `TC_CONFIG={"hotjar_key": "@tracking_config[:hotjar]"}; expires=${expires.toUTCString()}; path=/`;
           document.cookie = cookie;
         </script>
       """}
