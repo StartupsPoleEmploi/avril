@@ -31,12 +31,13 @@ defmodule Vae.Authorities.Rncp.Api do
     else
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
-        []
+        nil
     end
   end
 
   def query_all(fiche_fn, page \\ 1) do
     case query(%{PAGE: page}) do
+      nil -> Logger.info("Stopped at page #{page}")
       [] -> Logger.info("Finished at page #{page}")
       list when is_list(list) ->
         Enum.map(list, fn fiche ->
