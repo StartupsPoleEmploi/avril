@@ -28,14 +28,19 @@ defmodule VaeWeb.SessionController do
 
   def delete(conn, _params) do
 
+
     redirect_to = case Pow.Plug.current_user(conn) do
       %Vae.User{pe_id: pe_id} when not is_nil(pe_id) ->
-        {:external, "https://authentification-candidat.pole-emploi.fr/compte/deconnexion/compte/deconnexion?id_token_hint=#{pe_id}&redirect_uri=#{Routes.root_url(conn, :index)}" }
+        IO.inspect("###########")
+        IO.inspect("https://authentification-candidat.pole-emploi.fr/compte/deconnexion?#{URI.encode_query(%{id_token_hint: pe_id, redirect_uri: Routes.auth_url(conn, :callback, "pole-emploi")})}")
+        IO.inspect("###########")
+        {:external, "https://authentification-candidat.pole-emploi.fr/compte/deconnexion?#{URI.encode_query(%{id_token_hint: pe_id, redirect_uri: Routes.auth_url(conn, :callback, "pole-emploi")})}" }
       _ ->
         {:to, Routes.root_path(conn, :index)}
     end
 
     conn
+    |> Plug.Conn.delete_session(:certification_id)
     |> Plug.Conn.delete_session(Application.get_env(:ex_admin, :override_user_id_session_key))
     |> Pow.Plug.delete()
     |> PowPersistentSession.Plug.delete()

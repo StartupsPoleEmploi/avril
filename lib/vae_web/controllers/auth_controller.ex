@@ -12,7 +12,7 @@ defmodule VaeWeb.AuthController do
 
     {:ok, client} = PoleEmploi.OAuth.Clients.add_client(client, client.params[:state], client.params[:nonce])
 
-    url = PoleEmploi.OAuth.get_authorize_url!(client)
+    url = PoleEmploi.OAuth.get_authorize_url!(client) |> IO.inspect()
 
     put_session(conn, :referer, referer)
     |> redirect(external: url)
