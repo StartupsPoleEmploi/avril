@@ -15,7 +15,7 @@ defmodule VaeWeb.SessionController do
         conn
         |> maybe_make_session_persistent(user_params)
         |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
-        |> redirect(external: VaeWeb.RegistrationController.get_after_signup_path(conn))
+        # |> redirect(external: VaeWeb.RegistrationController.get_after_signup_path(conn))
 
       {:error, conn} ->
         changeset = Pow.Plug.change_user(conn, conn.params["user"])

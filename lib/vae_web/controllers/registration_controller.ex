@@ -34,12 +34,12 @@ defmodule VaeWeb.RegistrationController do
     |> redirect(to: Routes.root_path(conn, :index))
   end
 
-  def maybe_create_application_and_redirect(conn) do
+  def maybe_create_application_and_redirect(conn, after_transfert_proposal \\ false) do
     current_user = Pow.Plug.current_user(conn)
     certification_id = Plug.Conn.get_session(conn, :certification_id)
     transferable_applications = User.transferable_applications(current_user)
 
-    if certification_id && length(transferable_applications) > 0 do
+    if certification_id && length(transferable_applications) > 0 && !after_transfert_proposal do
       redirect(conn, to: Routes.certification_path(conn, :show, certification_id, transferable: ""))
     else
       conn = with(

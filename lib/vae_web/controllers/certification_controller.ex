@@ -146,7 +146,7 @@ defmodule VaeWeb.CertificationController do
     else
       conn
       |> Plug.Conn.put_session(:certification_id, certification_id)
-      |> VaeWeb.RegistrationController.maybe_create_application_and_redirect()
+      |> VaeWeb.RegistrationController.maybe_create_application_and_redirect(true)
     end
 
   end
