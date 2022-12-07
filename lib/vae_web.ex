@@ -99,7 +99,7 @@ defmodule VaeWeb do
             |> String.replace_suffix("", "_id#{if cardinality == :many, do: "s"}")
             |> String.to_atom(),
           actual_key when not is_nil(actual_key) <- Enum.find([key, key_with_id], &Map.has_key?(params, &1)),
-          value <- params[actual_key]
+          value when not is_nil(value) <- params[actual_key]
         ) do
           case {cardinality, value} do
             {:one, id} when is_integer(id) or is_binary(id) -> Repo.get(assoc_struct, id)
