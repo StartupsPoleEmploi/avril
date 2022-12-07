@@ -41,7 +41,10 @@ defmodule VaeWeb.Resolvers.ErrorHandler do
       end)
     end)
     |> Enum.reduce("", fn {k, v}, acc ->
-      joined_errors = Enum.join(v, "; ")
+      joined_errors = case v do
+        list when is_list(v) -> list |> Enum.join("; ")
+        other -> inspect(other)
+      end
       "#{acc}#{k}: #{joined_errors}\n"
     end)
   end
