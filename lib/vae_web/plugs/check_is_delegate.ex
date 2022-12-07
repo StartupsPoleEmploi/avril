@@ -7,7 +7,6 @@ defmodule VaeWeb.Plugs.CheckIsDelegate do
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    IO.inspect(Pow.Plug.current_user(conn))
     case Pow.Plug.current_user(conn) do
       %User{is_delegate: is_delegate, is_admin: is_admin} when is_delegate or is_admin -> conn
       %User{} ->

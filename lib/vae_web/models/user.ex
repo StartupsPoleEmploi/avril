@@ -70,7 +70,7 @@ defmodule Vae.User do
       model.email ||
       get_in(model.identity || %{}, [:email])
     ) |> case do
-      string when is_binary(string) -> string |> String.downcase() |> String.trim()
+      string when is_binary(string) -> Vae.String.sanitize_email(string)
       _ -> nil
     end
 

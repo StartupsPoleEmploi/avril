@@ -19,6 +19,17 @@ defmodule Vae.Map do
     Map.new(map, fn {k, v} -> {k, map_func.({k, v})} end)
   end
 
+  def transform_if_present(map, key, transform_fn) do
+    case map[key] do
+      nil -> map
+      value -> Map.put(map, key, transform_fn.(value))
+    end
+  end
+
+  def transform_if_present(map, list) when is_list(list) do
+    Enum.reduce(list, map, fn({key, transform_fn}, acc) -> transform_if_present(acc, key, transform_fn) end)
+  end
+
   def params_with_ids(params) do
     map_values(params, fn {_k, v} -> Vae.String.to_id(v) end)
   end

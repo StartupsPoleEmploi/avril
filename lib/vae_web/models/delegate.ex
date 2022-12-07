@@ -97,11 +97,12 @@ defmodule Vae.Delegate do
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
-    # academy_id is mistakenly parsed as integer while a string is expected here
-    params = case params[:academy_id] do
-      v when is_integer(v) -> Map.put(params, :academy_id, Integer.to_string(v))
-      _ -> params
-    end
+
+    params = Vae.Map.transform_if_present(params, [
+      {:academy_id, &Integer.to_string(&1)}, # academy_id is mistakenly parsed as integer while a string is expected here
+      {:email, &Vae.String.sanitize_email(&1)},
+      {:secondary_email, &Vae.String.sanitize_email(&1)},
+    ])
 
     struct
     |> Repo.preload([

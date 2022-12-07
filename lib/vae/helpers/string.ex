@@ -115,6 +115,8 @@ defmodule Vae.String do
     String.match?(string, ~r/[&\-_@\*\+=\.,;:!?]/)
   end
 
+  def sanitize_email(email), do: email |> String.downcase() |> String.trim()
+
   def random_human_readable_name() do
     replicate = fn el, number -> for _ <- 1..number, do: el end
     probabilize = fn list ->
