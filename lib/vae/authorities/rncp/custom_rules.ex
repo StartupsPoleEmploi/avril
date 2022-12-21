@@ -76,7 +76,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in @wrong_educ_nat_certifiers
       is_already_sports = Enum.any?(certifiers, &(&1.slug == @sports))
-      is_educ_nat && (is_ignored_acronym || is_custom_rncp || is_already_sports
+      is_educ_nat && (is_ignored_acronym || is_custom_rncp || is_already_sports)
     end)
   end
 
