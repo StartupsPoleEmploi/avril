@@ -17,7 +17,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   @ignored_acronyms_for_educ_nat [
     "CQP",
     "DEUST",
-    "DUT",
+    "BUT",
     "MASTER",
     "Licence Professionnelle",
     "Titre ingénieur",
@@ -42,10 +42,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   @solidarite "ministere-charge-de-la-solidarite"
   @sports "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"
   @gobelins "gobelins-l-ecole-de-l-image"
-
-  def cci_certifications_rncp_ids(), do: @cci_certifications_rncp_ids
-  def wrong_educ_nat_certifiers(), do: @wrong_educ_nat_certifiers
-  def missing_educ_nat_certifiers, do: @missing_educ_nat_certifiers
+  @agriculture "ministere-charge-de-l-agriculture"
 
   def accepted_fiche?(fiche_params) do
     accessible_vae = get_in(fiche_params, ["SI_JURY_VAE", "ACTIF"]) == "Oui"
@@ -61,34 +58,41 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     accessible_vae && !ignored_intitule && !ignored_acronym
   end
 
-  def reject_educ_nat_certifiers(certifiers_or_changesets, %{
+  def transform_certifiers(certifiers_or_changesets, fiche_params) do
+    certifiers = Enum.map(certifiers_or_changesets, &FicheHandler.ensure_certifiers(&1))
+
+    certifiers
+    |> reject_educ_nat_certifiers(fiche_params)
+    |> reject_agriculture_certifier(fiche_params)
+    |> add_educ_nat_certifiers(fiche_params)
+  end
+
+  def reject_educ_nat_certifiers(certifiers, %{
     acronym: acronym,
     rncp_id: rncp_id,
-    label: label,
-    is_rncp_active: is_rncp_active
   }) do
-    certifiers = Enum.map(certifiers_or_changesets, &FicheHandler.ensure_certifiers(&1))
-    certifier_slugs = Enum.map(certifiers, fn %Certifier{slug: slug} -> slug end)
     Enum.reject(certifiers, fn %Certifier{slug: slug} ->
       is_educ_nat = slug == @educ_nat
       is_ignored_acronym = Enum.member?(@ignored_acronyms_for_educ_nat, acronym)
       is_custom_rncp = rncp_id in @wrong_educ_nat_certifiers
-      is_already_sports = Enum.member?(certifier_slugs, @sports)
-      if is_educ_nat && (is_ignored_acronym || is_custom_rncp || is_already_sports) do
-        FileLogger.log_into_file("men_rejected.csv", [rncp_id, acronym, label, is_rncp_active])
-        true
-      else
-        false
-      end
+      is_already_sports = Enum.any?(certifiers, &(&1.slug == @sports))
+      is_educ_nat && (is_ignored_acronym || is_custom_rncp || is_already_sports
     end)
   end
 
-  def add_educ_nat_certifiers(certifiers_or_changesets, %{
+  def reject_agriculture_certifier(certifiers, %{
+    level: level
+  }) do
+    Enum.reject(certifiers, fn %Certifier{slug: slug} ->
+      slug === @agriculture && level > 5
+    end)
+  end
+
+  def add_educ_nat_certifiers(certifiers, %{
     acronym: acronym,
     rncp_id: rncp_id,
     is_rncp_active: is_rncp_active
   }) do
-    certifiers = Enum.map(certifiers_or_changesets, &FicheHandler.ensure_certifiers(&1))
 
     is_enseignement_superieur = Enum.any?(certifiers, &(&1.slug == @ens_sup))
     is_solidarite = Enum.any?(certifiers, &(&1.slug == @solidarite))

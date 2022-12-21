@@ -50,8 +50,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         end)
         |> Enum.map(&match_or_build_certifier(&1))
         |> Enum.filter(&not(is_nil(&1)))
-        |> CustomRules.add_educ_nat_certifiers(data)
-        |> CustomRules.reject_educ_nat_certifiers(data)
+        |> CustomRules.transform_certifiers(data)
         |> Enum.uniq_by(&(&1.slug))
         |> Enum.sort_by(&(&1.id))
       end},

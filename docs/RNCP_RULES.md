@@ -41,7 +41,7 @@ pour règles :
 - les fiches avec l'un des acronymes suivants :
   + CQP
   + DEUST
-  + DUT
+  + BUT
   + MASTER
   + Licence Professionnelle
   + Titre ingénieur
@@ -66,9 +66,13 @@ pour règles :
   + 34862
   + 36004
 
-## Certifications dissociées du ministère de la jeunesse, des sports et de la cohésion sociale alors qu'elle l'est dans le RNCP
+## Certification dissociée du ministère de la jeunesse, des sports et de la cohésion sociale alors qu'elle l'est dans le RNCP
 
 - La fiche au RNCP ID 492
+
+## Certifications dissociées du ministère de l'agriculture alors qu'elles le sont dans le RNCP
+
+- Les fiches dont le niveau est > 5
 
 ## Certifications rendues actives alors qu'elles sont inactives au RNCP :
 - les ID RNCP suivants :
