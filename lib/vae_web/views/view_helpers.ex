@@ -10,7 +10,7 @@ defmodule VaeWeb.ViewHelpers do
   """
   def level_info_by_level(3), do: "CAP / BEP"
   def level_info_by_level(4), do: "Bac / BP / BT"
-  def level_info_by_level(5), do: "Bac +2 / DUT / BTS"
+  def level_info_by_level(5), do: "Bac +2 / BTS"
   def level_info_by_level(6), do: "Bac +3 / Bac +4"
   def level_info_by_level(7), do: "Bac +5 et plus"
   def level_info_by_level(8), do: "Bac +8"
