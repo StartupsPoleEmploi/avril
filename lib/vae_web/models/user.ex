@@ -103,12 +103,11 @@ defmodule Vae.User do
 
   def do_password_changeset(changeset, _), do: changeset
 
-
   defp validate_password_rules(changeset) do
-    password_rules = [
+    password_rules = if Mix.env() == :prod, do: [
       # {"doit avoir une longueur de minimum #{Application.get_env(:vae, :pow)[:password_min_length]} caractères", &(String.length(&1) >= Application.get_env(:vae, :pow)[:password_min_length])},
       {"doit contenir au moins une lettre, un nombre et un caractère spécial parmis & - _ @ * + = . , ; : ! ?", &Vae.String.has_all_kind_of_chars?(&1)},
-    ]
+    ], else: []
 
     Ecto.Changeset.validate_change(changeset, :password, fn :password, password ->
       Enum.reduce(password_rules, nil, fn {msg, test_fn}, error_msg ->
