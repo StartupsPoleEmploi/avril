@@ -28,7 +28,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         end
       end},
       is_rncp_active: {"ACTIF", &(&1 == "Oui")},
-      is_active: {"ACTIF", &(&1 == "Oui")},
+      is_active: {nil, &(&1["Actif"] == "Oui" && CustomRules.accepted_fiche?(&1))},
       end_of_rncp_validity: {"DATE_FIN_ENREGISTREMENT", fn d ->
         case Timex.parse(d, "%d/%m/%Y", :strftime) do
           {:ok, datetime} -> datetime |> DateTime.to_date()
@@ -76,7 +76,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
   def api_fiche_to_certification_params(api_data) do
     # IO.inspect(api_data)
     Enum.reduce(rncp_to_certification(), %{}, fn({key, {path, func}}, result) ->
-      sub_data = get_in(api_data, String.split(path, "/"))
+      sub_data = if path, do: get_in(api_data, String.split(path, "/")), else: api_data
       value = if is_function(func, 2), do: func.(sub_data, result), else: func.(sub_data)
       Map.put(result, key, value)
     end)

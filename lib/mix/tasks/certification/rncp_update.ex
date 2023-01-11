@@ -90,14 +90,6 @@ defmodule Mix.Tasks.RncpUpdate do
     Logger.info("#{nb_updated} certifications made inactive")
   end
 
-  # defp build_and_transform_stream(filename, transform) do
-  #   File.stream!(filename)
-  #   |> SweetXml.stream_tags(:FICHE, discard: [:FICHE])
-  #   |> Stream.filter(fn {_, fiche} -> CustomRules.accepted_fiche?(fiche) end)
-  #   |> Stream.each(fn {_, fiche} -> transform.(fiche) end)
-  #   |> Stream.run()
-  # end
-
   def update_search_indexes() do
     Logger.info("Update Search Index")
     Vae.Search.FullTextSearch.refresh_materialized_view()

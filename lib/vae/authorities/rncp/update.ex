@@ -15,11 +15,13 @@ defmodule Vae.Authorities.Rncp.Update do
       else if certification = Repo.get_by(Certification, rncp_id: rncp_id) |> Repo.preload(:applications) do
         try do
           Logger.info("Certification should be RNCP#{rncp_id} deleted?")
-          # Repo.delete(certification)
+          Repo.delete(certification)
         rescue
           error ->
             Logger.error(inspect(error))
-            Logger.warn("Certification RNCP#{rncp_id} should not be imported in Avril and has applications")
+            Logger.warn("Certification RNCP#{rncp_id} should not be imported in Avril and has applications. Simply deactivating")
+            Certification.rncp_changeset(rncp_id, params)
+            |> Certification.rncp_update()
         end
       end
       end
