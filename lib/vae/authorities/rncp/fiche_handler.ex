@@ -43,12 +43,12 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
         Enum.map(certificateurs_data || [], fn %{
           "NOM_CERTIFICATEUR" => certificateur_name
         } = cd ->
-          %{
+          certificateur_params = %{
             name: AuthorityMatcher.prettify_name(certificateur_name),
             siret: (if cd["SIRET_CERTIFICATEUR"], do: String.replace(cd["SIRET_CERTIFICATEUR"], ~r/\s+/, ""))
           }
+          match_or_build_certifier(certificateur_params)
         end)
-        |> Enum.map(&match_or_build_certifier(&1))
         |> Enum.filter(&not(is_nil(&1)))
         |> CustomRules.transform_certifiers(data)
         |> Enum.uniq_by(&(&1.slug))
@@ -123,8 +123,9 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
     siret_param = params[:siret]
     case AuthorityMatcher.find_by_siret(params) || AuthorityMatcher.find_by_slug_or_closer_distance_match(Certifier, name, opts[:tolerance]) do
       %Certifier{siret: siret} = c when is_nil(siret) and not is_nil(siret_param) ->
-        Certifier.changeset(c, %{siret: siret}) |> Repo.update!()
-      %Certifier{} = c -> c
+        Certifier.changeset(c, %{siret: siret_param}) |> Repo.update!()
+      %Certifier{} = c ->
+        c
       nil ->
         # if opts[:build] == :force || (AuthorityMatcher.buildable_certifier?(name) && opts[:build] == :allow) do
           create_certifier_and_maybe_delegate(params, opts)

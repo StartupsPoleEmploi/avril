@@ -238,11 +238,14 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "universite-de-paris-8-paris-vincenn",
       "universite-paris-8",
       "universite-paris-8-vincennes-st-denis",
-      "universite-paris-xiii-nord-institut-universitaire-de-technologie-de-saint-denis"
+      "universite-paris-xiii-nord-institut-universitaire-de-technologie-de-saint-denis",
+      "universite-de-paris-viii-paris-vincennes"
     ],
     "universite-paris-13" => [
       "universite-paris-nord-sorbonne",
-      "universite-villetaneuse"
+      "universite-villetaneuse",
+      "universite-paris-xiii-paris-nord-villetaneuse",
+      "univ-paris-13-paris-nord-villetaneuse"
       ],
     "universite-pierre-et-marie-curie-paris-6" => [
       "universite-sorbonne-nouvelle",

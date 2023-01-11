@@ -73,6 +73,25 @@ defmodule Vae.Certifier do
   def is_army_ministry?(%Certifier{id: @army_ministry_id}), do: true
   def is_army_ministry?(_), do: false
 
+  def merge_into(%Certifier{slug: slug_to_keep, siret: siret_to_keep} = certifier_to_keep, %Certifier{slug: slug_to_remove, siret: siret_to_remove} = certifier_to_remove) do
+    %Certifier{certifications: certifications, delegates: delegates} =  certifier_to_remove
+    |> Repo.preload([certifications: :certifiers, delegates: :certifiers])
+
+    Enum.map(certifications, fn %Certification{certifiers: certifiers} = c ->
+      new_certifiers = (certifiers ++ [certifier_to_keep]) |> Enum.reject(&(&1.slug == slug_to_remove))
+      Certification.changeset(c, %{certifiers: new_certifiers}) |> Repo.update()
+    end)
+
+    Enum.map(delegates, fn %Delegate{certifiers: certifiers} = d ->
+      new_certifiers = (certifiers ++ [certifier_to_keep]) |> Enum.reject(&(&1.slug == slug_to_remove))
+      Delegate.changeset(d, %{certifiers: new_certifiers}) |> Repo.update()
+    end)
+
+    Repo.delete(certifier_to_remove)
+
+    Certifier.changeset(certifier_to_keep, %{siret: siret_to_keep || siret_to_remove}) |> Repo.update()
+  end
+
   defimpl Phoenix.Param, for: Vae.Certifier do
     def to_param(%{id: id, slug: slug}) do
       "#{id}-#{slug}"
