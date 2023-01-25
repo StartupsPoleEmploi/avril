@@ -5,6 +5,11 @@ defmodule VaeWeb.PageController do
   alias Vae.{Certification, ContactForm, Delegate, DelegateContactForm, Repo, FAQ}
   alias VaeWeb.ContactEmail
 
+  def empty(conn, _params) do
+    conn
+    |> Plug.Conn.send_resp(200, [])
+  end
+
   def index(conn, _params) do
     render(conn, "index.html",
       title: "Comment faire une VAE ?",
