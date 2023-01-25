@@ -7,6 +7,7 @@ defmodule VaeWeb.PageController do
 
   def empty(conn, _params) do
     conn
+    |> Plug.Conn.put_resp_header("content-type", "text/plain")
     |> Plug.Conn.send_resp(200, [])
   end
 
