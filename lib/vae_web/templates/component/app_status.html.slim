@@ -1,14 +1,16 @@
-= if status = @conn.assigns[:app_status] do
-  - %{message: message, level: level, image: image, home_only: home_only} = status
-  = if !home_only || Phoenix.Controller.current_path(@conn) == "/" do
-    .app-status.notification.is-top role="alert" class="is-#{level}"
-      button.delete aria-label="Fermer cette alerte" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token()
-      .container
-        .columns
-          .column class="is-#{if Vae.String.is_present?(image), do: "9", else: "12" }"
-            .content
-              = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw()
-          = if Vae.String.is_present?(image) do
-            .column.is-3.is-hidden-mobile.is-flex
-              = img_tag "/images/#{image}"
+= if statuses = @conn.assigns[:app_status] do
+  = for status <- statuses do
+    - %{message: message, level: level, image: image, home_only: home_only} = status
+    = if !home_only || Phoenix.Controller.current_path(@conn) == "/" do
+      .app-status.notification.is-top role="alert" class="is-#{level}"
+        = unless status[:unclosable] do
+          button.delete aria-label="Fermer cette alerte" type="button" data-csrf=Plug.CSRFProtection.get_csrf_token() data-id=status.id
+        .container
+          .columns
+            .column class="is-#{if Vae.String.is_present?(image), do: "9", else: "12" }"
+              .content
+                = message |> String.trim() |> Earmark.as_html!() |> Phoenix.HTML.raw()
+            = if Vae.String.is_present?(image) do
+              .column.is-3.is-hidden-mobile.is-flex
+                = img_tag "/images/#{image}"
 

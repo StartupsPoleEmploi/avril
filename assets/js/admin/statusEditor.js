@@ -1,35 +1,24 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import {markdown} from 'markdown';
-import moment from 'moment';
-import DatePicker, { registerLocale }  from 'react-datepicker';
-import fr from 'date-fns/locale/fr';
 
-import 'react-datepicker/dist/react-datepicker.css';
-import '../../css/admin/react-datepicker.scss';
+import ShowStatus from './status/Show';
+import EditStatus from './status/Edit';
 
-registerLocale('fr', fr)
-const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
-
-
-class StatusForm extends React.Component {
+class StatusEditor extends React.Component {
   state = {
-    isCancelable: this.props.status,
-    isEdit: !this.props.status,
     status: this.props.status,
+    editingId: '',
+    feedback: null,
   }
 
-  createStatus(e) {
-    e.preventDefault();
-    const $form = $(e.target);
-    $.ajax($form.attr('action'), {
+  createStatus(data) {
+    $.ajax('/admin/status', {
       method: 'POST',
-      data: this.state.status,
+      data,
       success: status => {
         this.setState({
           status,
-          isEdit: false,
-          isCancelable: true,
+          editingId: '',
           feedback: {
             success: true,
             message: 'Le bandeau a bien été soumis.'
@@ -38,8 +27,7 @@ class StatusForm extends React.Component {
       },
       fail: () => {
         this.setState({
-          isEdit: false,
-          isCancelable: true,
+          editingId: '',
           feedback: {
             success: false,
             message: 'Une erreur est survenue, ... sorry!'
@@ -49,23 +37,12 @@ class StatusForm extends React.Component {
     });
   };
 
-  editStatus(key, value) {
-    const newState = {
-      status: Object.assign({}, this.state.status, {
-        [key]: ((key.indexOf("_at") > -1 && value) ? value.toISOString() : value)
-      })
-    }
-    this.setState(newState)
-  }
-
-  deleteStatus(e) {
-    $.ajax('/admin/status', {
+  deleteStatus(id) {
+    $.ajax(`/admin/status?id=${id}`, {
       method: 'delete',
       success: status => {
         this.setState({
           status,
-          isEdit: true,
-          isCancelable: false,
           feedback: {
             success: true,
             message: 'Le bandeau a bien été supprimé.'
@@ -73,17 +50,14 @@ class StatusForm extends React.Component {
         })
       }
     });
-  }
+  };
 
-  renderDateRange() {
-    if (this.state.status) {
-      if (this.state.status.starts_at && this.state.status.ends_at)
-        return `du ${moment(this.state.status.starts_at).format(DATE_FORMAT)} au ${moment(this.state.status.ends_at).format(DATE_FORMAT)}`;
-      if (this.state.status.starts_at)
-        return `à partir du ${moment(this.state.status.starts_at).format(DATE_FORMAT)}`
-      if (this.state.status.ends_at)
-        return `jusqu'au ${moment(this.state.status.ends_at).format(DATE_FORMAT)}`
-    }
+
+  editStatus(id) {
+    this.setState({
+      editingId: id,
+      feedback: null,
+    });
   }
 
   render() {
@@ -96,141 +70,42 @@ class StatusForm extends React.Component {
             </div>
           )
         }
-        <div className="col-sm-offset-2 col-sm-10" style={{marginBottom: '2rem'}}>
-          <h1>Bandeau informatif</h1>
+        <div>
+          <h1 className="text-center">Bandeau informatif</h1>
+          <hr className="invisible" />
+          { this.state.editingId ?
+            <EditStatus
+              status={this.state.status.find(({id}) => id === this.state.editingId)}
+              token={this.props.token}
+              editStatus={id => this.editStatus(id)}
+              createStatus={data => this.createStatus(data)}
+            /> : (
+              <div>
+                {this.state.status.length > 1 &&
+                  <div className="text-center">
+                    <h3>Les bandeaux seront affichés dans l'ordre suivant: </h3>
+                    <p>(NB: pour modifier l'ordre, éditer le message le remet en bas de la file)</p>
+                    <hr className="invisible" />
+                  </div>
+                }
+                { this.state.status.map(status =>
+                  <div key={status.id}>
+                    <ShowStatus
+                      status={status}
+                      editStatus={id => this.editStatus(id)}
+                      deleteStatus={id => this.deleteStatus(id)}
+                    />
+                  </div>
+                )}
+                { !this.state.status.length && (
+                  <p>Aucun bandeau informatif enregistré actuellement.</p>
+                )}
+                <hr className="invisible" />
+                <button onClick={() => this.editStatus('new')} className="btn btn-primary">Créer un nouveau bandeau</button>
+              </div>
+            )
+          }
         </div>
-        { !this.state.isEdit ? (
-          <div>
-            <p>
-              Le message suivant sera affiché
-              {this.renderDateRange()}
-              {this.state.status.home_only ? ' sur la page d\'accueil uniquement' : ''}
-              :
-            </p>
-            <div className={`app-status alert alert-${this.state.status.level}`} dangerouslySetInnerHTML={{__html: markdown.toHTML(this.state.status.message)}}></div>
-            {this.state.status.image && (
-              <p>Avec l'image <img src={`/images/${this.state.status.image}`} style={{maxWidth: '15rem'}} /></p>
-            )}
-            <div className="row">
-              <div className="col-sm-2">
-                <button onClick={e => this.setState({isEdit: true})} className="btn btn-primary">Editer le message</button>
-              </div>
-              <div className="col-sm-2">
-                <button onClick={e => this.deleteStatus(e)} className="btn btn-danger">Supprimer le message</button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <form action="/admin/status" method="POST" className="form-horizontal" onSubmit={e => this.createStatus(e)}>
-            <input type="hidden" name="_csrf_token" value={this.props.token} />
-            <div className="form-group">
-              <label htmlFor="status" className="col-sm-2 control-label">Niveau</label>
-              <div className="col-sm-10">
-                <select
-                  className="form-control"
-                  required
-                  onChange={e => this.editStatus('level', e.target.value)}
-                  value={this.state.status && this.state.status.level || ''}
-                >
-                  <option className="text-info" value="info">Info (bleu clair)</option>
-                  <option className="text-primary" value="primary">Primary (bleu foncé)</option>
-                  <option className="text-warning" value="warning">Warning (jaune)</option>
-                  <option className="text-danger" value="danger">Danger (rouge)</option>
-                  <option className="text-success" value="success">Success (vert)</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="message" className="col-sm-2 control-label">
-                Contenu
-              <br />
-              <small>(Possibilité d'utiliser le format <a href="https://guides.github.com/features/mastering-markdown/" target="_blank">markdown</a>)</small>
-              </label>
-              <div className="col-sm-10">
-                <textarea
-                  className="form-control"
-                  rows="5"
-                  required
-                  onChange={e => this.editStatus('message', e.target.value)}
-                  value={this.state.status && this.state.status.message || ''}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="starts_at" className="col-sm-2 control-label">Date de début</label>
-              <div className="col-sm-10">
-                <DatePicker
-                  locale="fr"
-                  timeCaption="Heure"
-                  className="form-control"
-                  showTimeSelect
-                  dateFormat="dd/MM/yyyy HH:mm"
-                  minDate={new Date()}
-                  onChange={date => this.editStatus('starts_at', date)}
-                  selected={this.state.status && this.state.status.starts_at && new Date(this.state.status.starts_at)}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="ends_at" className="col-sm-2 control-label">Date de fin</label>
-              <div className="col-sm-10">
-                <DatePicker
-                  locale="fr"
-                  timeCaption="Heure"
-                  className="form-control"
-                  showTimeSelect
-                  dateFormat="dd/MM/yyyy HH:mm"
-                  // minDate={this.state.status && this.state.status.starts_at && new Date(this.state.status.starts_at)}
-                  minDate={new Date()}
-                  onChange={date => this.editStatus('ends_at', date)}
-                  selected={this.state.status && this.state.status.ends_at && new Date(this.state.status.ends_at)}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-sm-offset-2 col-sm-10">
-                <div className="checkbox">
-                  <label>
-                    <input
-                      type="checkbox"
-                      onChange={e => this.editStatus('home_only', !this.state.status.home_only)}
-                      value={this.state.status && this.state.status.home_only}
-                    /> Page d'accueil uniquement
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="status" className="col-sm-2 control-label">Image</label>
-              <div className="col-sm-10">
-                <select
-                  className="form-control"
-                  onChange={e => this.editStatus('image', e.target.value)}
-                  value={this.state.status && this.state.status.image || ''}
-                >
-                  <option value="">Aucune</option>
-                  <option value="certificateur.svg">Certificateur</option>
-                  <option value="couple.svg">Couple</option>
-                  <option value="group.png">Groupe</option>
-                  <option value="mon-diplome.png">Diplôme</option>
-                  <option value="recevabilite.svg">Recevabilité</option>
-                  <option value="tampon-vae.svg">Tampon</option>
-                  <option value="Reva-logo-experimentation.svg">REVA</option>
-                </select>
-              </div>
-            </div>
-            <div className="form-group">
-              <div className="col-sm-offset-2 col-sm-2">
-                <button type="submit" className="btn btn-primary">Enregistrer</button>
-              </div>
-              {this.state.isCancelable && (
-                <div className="col-sm-2">
-                  <button className="btn btn-info" onClick={e => this.setState({isEdit: false})}>Annuler</button>
-                </div>
-              )}
-            </div>
-          </form>
-        )}
       </div>
     );
   }
@@ -241,7 +116,7 @@ document.addEventListener('DOMContentLoaded', e => {
   if ($statusEditor) {
     $.ajax('/admin/status')
       .then(status => {
-        render( <StatusForm token={$statusEditor.dataset.token} status={status} />, $statusEditor)
+        render( <StatusEditor token={$statusEditor.dataset.token} status={status} />, $statusEditor)
       })
   }
 })

@@ -203,15 +203,17 @@ defmodule VaeWeb.Router do
   end
 
   defp fetch_app_status(conn, _opts) do
-    status = GenServer.call(Status, :get)
-    # There is a status
-    # not closed
-    # in interval
-    if status &&
-         get_session(conn, :app_status_closed) != Vae.String.encode(status.message) &&
-         (is_nil(status.starts_at) || Timex.before?(status.starts_at, Timex.now())) &&
-         (is_nil(status.ends_at) || Timex.after?(status.ends_at, Timex.now())) do
-      Plug.Conn.assign(conn, :app_status, status)
+    closed_statuses = (get_session(conn, :app_status_closed) || "") |> String.split(",", trim: true)
+
+    displayed_statuses = GenServer.call(Status, :get)
+    |> Enum.reject(fn status ->
+      is_nil(status) ||
+      Enum.member?(closed_statuses, status.id) ||
+      (status.starts_at && Timex.before?(Timex.now(), status.starts_at)) ||
+      (status.ends_at && Timex.after?(Timex.now(), status.ends_at))
+    end)
+    if length(displayed_statuses) do
+      Plug.Conn.assign(conn, :app_status, displayed_statuses)
     else
       conn
     end

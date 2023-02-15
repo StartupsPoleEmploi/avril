@@ -5,11 +5,5 @@
   @media print {
     display: none;
   }
-  &.cookies {
-    @include tablet {
-      background: no-repeat #feffd5 top right url("/images/cookie.jpg");
-    }
-    color: #947600;
-  }
 }
 

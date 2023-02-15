@@ -3,7 +3,7 @@ defmodule Vae.Status.Server do
   use GenServer
 
   @tab_name 'priv/tabs/status.tab'
-  @tab_key :message
+  @tab_key :messages
 
   ##############
   ### Server ###
@@ -37,8 +37,8 @@ defmodule Vae.Status.Server do
     {:noreply, nil}
   end
 
-  def handle_cast({:delete}, _state) do
-    delete_status()
+  def handle_cast({:delete, id}, _state) do
+    delete_status(id)
     {:noreply, nil}
   end
 
@@ -48,18 +48,30 @@ defmodule Vae.Status.Server do
 
   defp get_status() do
     case :dets.lookup(@tab_name, @tab_key) do
-      [{@tab_key, value}] -> value
-      [] -> nil
+      [{@tab_key, value}] -> value || []
+      [] -> []
     end
   end
 
   defp set_status(data) do
-    defaults = %{level: :info, starts_at: nil, ends_at: nil}
+    defaults = %{level: :info, starts_at: nil, ends_at: nil, id: UUID.uuid4(:hex), unclosable: false}
     data = Enum.into(data, defaults)
-    :dets.insert(@tab_name, {@tab_key, data})
+    :dets.insert(@tab_name, {@tab_key, statuses_without_one(data.id) ++ [data]})
   end
 
-  defp delete_status() do
-    :dets.delete(@tab_name, @tab_key)
+  defp delete_status(id) do
+    :dets.insert(@tab_name, {@tab_key, statuses_without_one(id)})
+
+    # :dets.delete(@tab_name, @tab_key)
   end
+
+  defp statuses_without_one(id) do
+    statuses = get_status()
+    case id do
+      id when is_binary(id) -> Enum.reject(statuses, &(&1.id == id))
+      _ -> statuses
+    end
+
+  end
+
 end

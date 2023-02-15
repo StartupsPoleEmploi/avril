@@ -22,17 +22,18 @@ defmodule ExAdmin.ApiController do
   def get_status(conn, _params) do
     status =
       case GenServer.call(Status, :get) do
-        nil ->
-          nil
 
-        map ->
-          Vae.Map.map_values(map, fn {k, v} ->
-            if k |> Atom.to_string() |> String.ends_with?("_at") && v do
-              Timex.format!(v, "{ISO:Extended:Z}")
-            else
-              v
-            end
+        list when is_list(list) ->
+          Enum.map(list, fn map ->
+            Vae.Map.map_values(map, fn {k, v} ->
+              if k |> Atom.to_string() |> String.ends_with?("_at") && v do
+                Timex.format!(v, "{ISO:Extended:Z}")
+              else
+                v
+              end
+            end)
           end)
+        _ -> []
       end
 
     json(conn, status)
@@ -49,10 +50,12 @@ defmodule ExAdmin.ApiController do
         Status,
         {:set,
          [
+           id: params["id"],
            message: status,
            level: params["level"] || "info",
            image: params["image"],
            home_only: !!params["home_only"],
+           unclosable: !!params["unclosable"],
            starts_at:
              if(not Vae.String.is_blank?(params["starts_at"]),
                do: Timex.parse!(params["starts_at"], "{ISO:Extended:Z}")
@@ -67,8 +70,9 @@ defmodule ExAdmin.ApiController do
     json(conn, GenServer.call(Status, :get))
   end
 
-  def delete_status(conn, _params) do
-    :ok = GenServer.cast(Status, {:delete})
+  def delete_status(conn, %{"id" => id}) do
+    IO.inspect(id)
+    :ok = GenServer.cast(Status, {:delete, id})
     json(conn, GenServer.call(Status, :get))
   end
 

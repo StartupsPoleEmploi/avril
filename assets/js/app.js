@@ -17,6 +17,7 @@ $(() => {
       method: 'POST',
       data: {
         _csrf_token: $(e.delegateTarget).attr('data-csrf'),
+        id: e.target.dataset.id,
       }
     });
   });

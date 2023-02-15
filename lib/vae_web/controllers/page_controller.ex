@@ -200,18 +200,10 @@ defmodule VaeWeb.PageController do
     end
   end
 
-  def close_status(conn, _params) do
-    message = Map.get(conn.assigns[:app_status] || %{}, :message) || ""
-
+  def close_status(conn, %{"id" => id}) do
+    ids = ((get_session(conn, :app_status_closed) || "") |> String.split(",", trim: true)) ++ [id] |> Enum.join(",")
     conn
-    |> put_session(:app_status_closed, Vae.String.encode(message))
+    |> put_session(:app_status_closed, ids)
     |> json(:ok)
   end
-
-  # def stats(conn, _params) do
-  #   redirect(conn,
-  #     external:
-  #       "https://datastudio.google.com/u/0/reporting/1t7iUT7wGQn9U7ODZeDyXIvIRlK-BJAZs/page/1M"
-  #   )
-  # end
 end
