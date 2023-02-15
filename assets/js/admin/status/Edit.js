@@ -3,7 +3,6 @@ import DatePicker, { registerLocale }  from 'react-datepicker';
 import fr from 'date-fns/locale/fr';
 
 registerLocale('fr', fr)
-const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import '../../../css/admin/react-datepicker.scss';

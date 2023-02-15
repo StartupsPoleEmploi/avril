@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {markdown} from 'markdown';
 import moment from 'moment';
 
+const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
+
 class Show extends React.Component {
 
   renderDateRange() {
