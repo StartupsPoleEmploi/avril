@@ -54,21 +54,22 @@ defmodule Vae.Status.Server do
   end
 
   defp set_status(data) do
-    defaults = %{level: :info, starts_at: nil, ends_at: nil, id: UUID.uuid4(:hex), unclosable: false}
-    data = Enum.into(data, defaults)
     :dets.insert(@tab_name, {@tab_key, statuses_without_one(data.id) ++ [data]})
   end
 
   defp delete_status(id) do
     :dets.insert(@tab_name, {@tab_key, statuses_without_one(id)})
-
     # :dets.delete(@tab_name, @tab_key)
+  end
+
+  defp delete_without_ids() do
+    :dets.insert(@tab_name, {@tab_key, Enum.reject(get_status(), &(is_nil(&1.id)))})
   end
 
   defp statuses_without_one(id) do
     statuses = get_status()
     case id do
-      id when is_binary(id) -> Enum.reject(statuses, &(&1.id == id))
+      id when is_binary(id) -> Enum.reject(statuses, &(&1.id == id || is_nil(&1.id)))
       _ -> statuses
     end
 

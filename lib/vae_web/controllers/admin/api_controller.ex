@@ -49,22 +49,23 @@ defmodule ExAdmin.ApiController do
       GenServer.cast(
         Status,
         {:set,
-         [
-           id: params["id"],
-           message: status,
-           level: params["level"] || "info",
-           image: params["image"],
-           home_only: !!params["home_only"],
-           unclosable: !!params["unclosable"],
-           starts_at:
+          %{
+            id: params["id"] || UUID.uuid4(:hex),
+            message: status,
+            level: params["level"] || "info",
+            image: params["image"],
+            home_only: !!params["home_only"],
+            unclosable: !!params["unclosable"],
+            starts_at:
              if(not Vae.String.is_blank?(params["starts_at"]),
                do: Timex.parse!(params["starts_at"], "{ISO:Extended:Z}")
              ),
-           ends_at:
+            ends_at:
              if(not Vae.String.is_blank?(params["ends_at"]),
                do: Timex.parse!(params["ends_at"], "{ISO:Extended:Z}")
-             )
-         ]}
+            )
+          }
+        }
       )
 
     json(conn, GenServer.call(Status, :get))
