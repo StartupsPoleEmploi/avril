@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {markdown} from 'markdown';
+import moment from 'moment';
 
 class Show extends React.Component {
 

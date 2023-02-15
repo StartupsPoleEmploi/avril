@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import DatePicker, { registerLocale }  from 'react-datepicker';
 import fr from 'date-fns/locale/fr';
-import moment from 'moment';
 
 registerLocale('fr', fr)
 const DATE_FORMAT = 'DD/MM/YYYY à HH[h]mm';
