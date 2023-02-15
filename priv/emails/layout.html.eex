@@ -187,7 +187,7 @@
                                   <tbody>
                                     <tr>
                                       <td style="width:600px;">
-                                        <img height="40" src="https://yg2n.mjt.lu/tplimg/yg2n/b/x47ms/gz8lg.png" style="border:0;display:block;outline:none;text-decoration:none;width:auto;margin:20px auto;height:40px;" width="auto" />
+                                        <img height="40" src="https://avril.pole-emploi.fr/images/avril-logo.png" style="border:0;display:block;outline:none;text-decoration:none;width:auto;margin:20px auto;height:40px;" width="auto" />
                                       </td>
                                     </tr>
                                   </tbody>
@@ -348,7 +348,7 @@
                             <% end %>
                             <tr>
                               <td>
-                                <img height="auto" src="http://yukq.mjt.lu/tplimg/yg2n/b/h6mr/19i9.png" style="border:0;display:block;outline:none;text-decoration:none;width:60px;margin: 20px auto;" width="60" />
+                                <img height="auto" src="https://avril.pole-emploi.fr/images/pole_emploi.png" style="border:0;display:block;outline:none;text-decoration:none;width:100px;margin: 20px auto;" width="100" />
                               </td>
                             </tr>
                           </tbody>
