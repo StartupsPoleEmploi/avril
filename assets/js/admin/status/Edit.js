@@ -142,6 +142,25 @@ class Edit extends React.Component {
           </div>
         </div>
         <div className="form-group">
+          <label htmlFor="status" className="col-sm-2 control-label">Taille du texte</label>
+          <div className="col-sm-10">
+            <select
+              className="form-control"
+              required
+              onChange={e => this.editStatus('size', e.target.value)}
+              value={this.state.status && this.state.status.size || '6'}
+            >
+              <option value="1">×3</option>
+              <option value="2">×2,5</option>
+              <option value="3">×2</option>
+              <option value="4">×1,5</option>
+              <option value="5">×1,25</option>
+              <option value="6">×1 (normal)</option>
+              <option value="7">×0,75</option>
+            </select>
+          </div>
+        </div>
+        <div className="form-group">
           <div className="col-sm-offset-2 col-sm-2">
             <button type="submit" className="btn btn-primary">Enregistrer</button>
           </div>

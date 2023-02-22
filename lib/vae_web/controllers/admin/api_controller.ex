@@ -56,6 +56,7 @@ defmodule ExAdmin.ApiController do
             image: params["image"],
             home_only: !!params["home_only"],
             unclosable: !!params["unclosable"],
+            size: params["size"] || 6,
             starts_at:
              if(not Vae.String.is_blank?(params["starts_at"]),
                do: Timex.parse!(params["starts_at"], "{ISO:Extended:Z}")
