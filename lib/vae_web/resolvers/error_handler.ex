@@ -37,7 +37,11 @@ defmodule VaeWeb.Resolvers.ErrorHandler do
   def changeset_error_to_string(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
+        string_value = case value do
+          value when is_binary(value) -> value
+          value -> inspect(value)
+        end
+        String.replace(acc, "%{#{key}}", string_value)
       end)
     end)
     |> Enum.reduce("", fn {k, v}, acc ->

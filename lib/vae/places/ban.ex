@@ -52,6 +52,10 @@ defmodule Vae.Places.Ban do
         results
       end
     else
+      {:ok, %{"code" => 500, "message" => message}} ->
+        Logger.error(fn -> inspect(message) end)
+        empty_result(query)
+
       {:error, reason} ->
         Logger.error(fn -> inspect(reason) end)
         empty_result(query)
