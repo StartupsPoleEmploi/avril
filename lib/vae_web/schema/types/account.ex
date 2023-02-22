@@ -77,6 +77,11 @@ defmodule VaeWeb.Schema.Types.Account do
       arg(:input, non_null(:password_input))
       resolve(&Resolvers.Account.update_password/3)
     end
+
+    @desc "Deletes (anonymizes) the current user's account"
+    field :delete_account, :identity do
+      resolve(&Resolvers.Account.delete_account/3)
+    end
   end
 
   input_object :identity_input do

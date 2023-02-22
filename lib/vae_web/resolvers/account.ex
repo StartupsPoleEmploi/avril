@@ -32,4 +32,8 @@ defmodule VaeWeb.Resolvers.Account do
         error_response(@update_password_error, changeset)
     end
   end
+
+  def delete_account(_, _, %{context: %{current_user: user}}) do
+    Vae.Rgpd.Anonymize.anonymize(user)
+  end
 end

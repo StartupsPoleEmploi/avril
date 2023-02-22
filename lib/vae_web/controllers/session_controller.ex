@@ -26,14 +26,9 @@ defmodule VaeWeb.SessionController do
     end
   end
 
-  def delete(conn, _params) do
-
-
+  def delete(conn, params) do
     redirect_to = case Pow.Plug.current_user(conn) do
       %Vae.User{pe_id: pe_id} when not is_nil(pe_id) ->
-        IO.inspect("###########")
-        IO.inspect("https://authentification-candidat.pole-emploi.fr/compte/deconnexion?#{URI.encode_query(%{id_token_hint: pe_id, redirect_uri: Routes.auth_url(conn, :callback, "pole-emploi")})}")
-        IO.inspect("###########")
         {:external, "https://authentification-candidat.pole-emploi.fr/compte/deconnexion?#{URI.encode_query(%{id_token_hint: pe_id, redirect_uri: Routes.auth_url(conn, :callback, "pole-emploi")})}" }
       _ ->
         {:to, Routes.root_path(conn, :index)}
@@ -44,8 +39,8 @@ defmodule VaeWeb.SessionController do
     |> Plug.Conn.delete_session(Application.get_env(:ex_admin, :override_user_id_session_key))
     |> Pow.Plug.delete()
     |> PowPersistentSession.Plug.delete()
-    |> put_flash(:info, "Vous êtes maintenant déconnecté")
-    |> redirect([redirect_to])
+    |> put_flash(:info, (if params["delete_account"], do: "Votre compte a bien été supprimé", else: "Vous êtes maintenant déconnecté"))
+    |> redirect(to: Routes.root_path(conn, :index))
   end
 
   def maybe_make_session_persistent(conn, %{"persistent_session" => "true"}) do
