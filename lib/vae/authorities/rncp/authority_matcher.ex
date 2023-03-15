@@ -195,7 +195,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     ],
     "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale" => [
       "ministere-charge-des-sports-et-de-la-jeunesse",
-      "ministere-delegue-aupres-du-ministere-de-l-education-nationale-de-la-jeunesse-et-des-sports-charge-des-sports"
+      "ministere-delegue-aupres-du-ministere-de-l-education-nationale-de-la-jeunesse-et-des-sports-charge-des-sports",
+      "ministere-des-sports-et-des-jeux-olympiques-et-paralympiques"
     ],
     "ministere-de-l-enseignement-superieur" => [
       "ministere-de-l-enseignement-superieur-de-la-recherche-et-de-l-innovation"
