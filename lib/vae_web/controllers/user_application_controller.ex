@@ -112,8 +112,8 @@ defmodule VaeWeb.UserApplicationController do
     |> case do
       nil ->
         conn
-        |> Phoenix.Controller.put_flash(:warning, "La candidature n'a pas été trouvée")
-        |> Phoenix.Controller.redirect(conn, to: Routes.root_path(conn, :index))
+        |> put_flash(:warning, "La candidature n'a pas été trouvée")
+        |> redirect(to: Routes.root_path(conn, :index))
 
       application ->
         if is_admissible do
@@ -123,8 +123,8 @@ defmodule VaeWeb.UserApplicationController do
         end
 
         conn
-        |> Phoenix.Controller.put_flash(:success, "Merci pour votre réponse")
-        |> Phoenix.Controller.redirect(to: Routes.root_path(conn, :index))
+        |> put_flash(:success, "Merci pour votre réponse")
+        |> redirect(to: Routes.root_path(conn, :index))
     end
 
   end
