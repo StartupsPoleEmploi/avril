@@ -29,44 +29,6 @@ config :vae,
   rncp: [
     url: "https://api.francecompetences.fr/referentiels/v1/fiches",
     api_key: System.get_env("RNCP_API_KEY")
-  ],
-  reminders: [
-    stock: [
-      users: [
-        template_id: 848_006,
-        form_urls: [
-          certifiers: [
-            default: %{
-              url: System.get_env("TYPEFORM_STOCK_REMINDER")
-            }
-          ]
-        ]
-      ]
-    ],
-    monthly: [
-      users: [
-        form_urls: [
-          certifiers: [
-            asp: %{
-              ids: [1, 3],
-              url: System.get_env("TYPEFORM_MONTH_BACK_ASP")
-            },
-            educ_nat: %{
-              ids: [2],
-              url: System.get_env("TYPEFORM_MONTH_BACK_EDUC_NAT")
-            },
-            labour_ministry: %{
-              ids: [4],
-              url: System.get_env("TYPEFORM_MONTH_BACK_MINISTRY")
-            },
-            other: %{
-              ids: [],
-              url: System.get_env("TYPEFORM_MONTH_BACK_OTHER")
-            }
-          ]
-        ]
-      ]
-    ]
   ]
 
 config :vae, VaeWeb.Endpoint,
@@ -115,10 +77,10 @@ config :vae, Vae.Scheduler,
       schedule: "0 5 * * *", # 5AM every day
       task: {Vae.UserApplications.FollowUp, :send_unsubmitted_raise_email, []}
     ],
-    get_admissibility_updates: [
-      schedule: "30 5 * * *", # 5.30AM every day
-      task: {Vae.UserApplications.FollowUp, :send_admissibility_update_email, []}
-    ],
+    # get_admissibility_updates: [
+    #   schedule: "30 5 * * *", # 5.30AM every day
+    #   task: {Vae.UserApplications.FollowUp, :send_admissibility_update_email, []}
+    # ],
     send_delegate_recap: [
       schedule: "45 5 1,15 * *", # 5.45AM first and 15th of month
       task: {Vae.UserApplications.FollowUp, :send_delegate_recap_email, []}

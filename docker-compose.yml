@@ -37,6 +37,8 @@ services:
     command: yarn setup
     depends_on:
       - nginx
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
     env_file:
       - ./.env
     healthcheck:
@@ -45,7 +47,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 1m
-    image: node:16.17.0
+    image: node:18.15.0
     volumes:
       - ../avril-livret1:/app
       - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh
@@ -54,6 +56,8 @@ services:
     command: yarn setup
     depends_on:
       - nginx
+    environment:
+      - NODE_OPTIONS=--openssl-legacy-provider
     env_file:
       - ./.env
     healthcheck:
@@ -62,7 +66,7 @@ services:
       timeout: 3s
       retries: 3
       start_period: 1m
-    image: node:16.17.0
+    image: node:18.15.0
     volumes:
       - ../avril-profil:/app
       - ./scripts/utils/healthcheck_retry.sh:/healthcheck_retry.sh

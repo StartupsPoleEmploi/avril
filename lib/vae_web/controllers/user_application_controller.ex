@@ -2,7 +2,7 @@ defmodule VaeWeb.UserApplicationController do
   require Logger
   use VaeWeb, :controller
 
-  alias Vae.{UserApplications.Polls, Certification, Delegate, Identity, User, UserApplication, Repo}
+  alias Vae.{Certification, Delegate, Identity, User, UserApplication, Repo}
   alias Vae.Booklet.{Cerfa, Education, CurrentSituation}
   plug VaeWeb.Plugs.ApplicationAccess,
        [verify_with_hash: :delegate_access_hash] when action in [:show, :cerfa]
@@ -100,34 +100,32 @@ defmodule VaeWeb.UserApplicationController do
   end
 
   def admissible(conn, %{"id" => id}) do
-    Repo.get(UserApplication, id)
-    |> case do
-      nil ->
-        redirect(conn, to: Routes.root_path(conn, :index))
-
-      application ->
-        UserApplication.admissible_now(application)
-
-        conn
-        |> put_flash(:success, "Merci pour votre réponse")
-        |> redirect(to: Routes.root_path(conn, :index))
-    end
+    user_application_admissibility_status(conn, true, id)
   end
 
   def inadmissible(conn, %{"id" => id}) do
+    user_application_admissibility_status(conn, false, id)
+  end
+
+  defp user_application_admissibility_status(conn, is_admissible, id) do
     Repo.get(UserApplication, id)
-    |> Repo.preload(delegate: :certifiers)
     |> case do
       nil ->
-        redirect(conn, to: Routes.root_path(conn, :index))
+        conn
+        |> Phoenix.Controller.put_flash(:warning, "La candidature n'a pas été trouvée")
+        |> Phoenix.Controller.redirect(conn, to: Routes.root_path(conn, :index))
 
       application ->
-        UserApplication.inadmissible_now(application)
-
-        url_form = Polls.define_form_url_from_application(application)
+        if is_admissible do
+          UserApplication.admissible_now(application)
+        else
+          UserApplication.inadmissible_now(application)
+        end
 
         conn
-        |> redirect(external: url_form || Routes.root_path(conn, :index))
+        |> Phoenix.Controller.put_flash(:success, "Merci pour votre réponse")
+        |> Phoenix.Controller.redirect(to: Routes.root_path(conn, :index))
     end
+
   end
 end
