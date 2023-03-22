@@ -4,7 +4,7 @@ defmodule Vae.Places.Ban do
   @base_url "https://api-adresse.data.gouv.fr/search/"
 
   def get_geoloc_from_address(address) do
-    fetch_ban_api(%{q: address, type: :housenumber, limit: 1})
+    fetch_ban_api(%{q: address, type: :housenumber, limit: 1}) || fetch_ban_api(%{q: address, type: :street, limit: 1})
   end
 
   def search_geoloc_from_address(address) do
