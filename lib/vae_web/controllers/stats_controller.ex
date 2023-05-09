@@ -66,16 +66,16 @@ defmodule VaeWeb.StatsController do
   defp where_applications_date_filter(start_date, end_date),
     do: "WHERE applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
 
-  defp applications_base_query(entity),
-    do: "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
+  # defp applications_base_query(entity),
+  #   do: "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
 
-  defp applications_base_query(entity, nil, nil), do: applications_base_query(entity)
+  # defp applications_base_query(entity, nil, nil), do: applications_base_query(entity)
 
-  defp applications_base_query(entity, start_date, end_date),
-    do:
-      "#{applications_base_query(entity)} AND applications.inserted_at #{
-        between_dates_to_sql(start_date, end_date)
-      }"
+  # defp applications_base_query(entity, start_date, end_date),
+  #   do:
+  #     "#{applications_base_query(entity)} AND applications.inserted_at #{
+  #       between_dates_to_sql(start_date, end_date)
+  #     }"
 
   defp between_dates_to_sql(start_date, nil),
     do: ">= '#{start_date}'::DATE"

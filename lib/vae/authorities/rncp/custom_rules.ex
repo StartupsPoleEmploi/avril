@@ -1,7 +1,7 @@
 defmodule Vae.Authorities.Rncp.CustomRules do
   require Logger
   alias Vae.{Certifier, Repo, Rome}
-  alias Vae.Authorities.Rncp.{FileLogger, FicheHandler}
+  alias Vae.Authorities.Rncp.FicheHandler
 
   @current_year Date.utc_today().year
 

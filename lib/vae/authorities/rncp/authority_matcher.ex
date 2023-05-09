@@ -306,11 +306,6 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     end
   end
 
-  def find_by_siret(%{siret: siret}) when not is_nil(siret) do
-    Repo.get_by(Certifier, siret: siret)
-  end
-  def find_by_siret(_), do: nil
-
   def find_by_slug_or_closer_distance_match(klass, name, tolerance \\ nil) do
     tolerance = tolerance || 0.95
     slug = name

@@ -4,7 +4,7 @@ defmodule Mix.Tasks.RncpUpdate do
   require Logger
   import Ecto.Query
   alias Vae.{Certification, Certifier, Delegate, Repo}
-  alias Vae.Authorities.Rncp.{CustomRules, FileLogger}
+  alias Vae.Authorities.Rncp.FileLogger
 
   @moduledoc """
   Update DB content with rncp xml file

@@ -7,6 +7,7 @@ defmodule Vae.Certifier do
   schema "certifiers" do
     field(:slug, :string)
     field(:name, :string)
+    field(:rncp_sync, :boolean, default: true)
     field(:siret, :string)
     field(:internal_notes, :string)
     field(:external_notes, :string)
@@ -52,7 +53,7 @@ defmodule Vae.Certifier do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:name, :siret, :internal_notes, :external_notes])
+    |> cast(params, [:name, :siret, :rncp_sync, :internal_notes, :external_notes])
     |> slugify()
     |> validate_required([:name, :slug])
     |> unique_constraint([:slug, :siret])

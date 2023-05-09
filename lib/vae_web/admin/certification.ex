@@ -78,6 +78,7 @@ defmodule Vae.ExAdmin.Certification do
         table_for certification.certifiers do
           column(:id)
           column(:name, &Helpers.link_to_resource/1)
+          column(:rncp_sync)
         end
       end
 

@@ -37,6 +37,15 @@ defmodule Vae.Certification do
     )
 
     many_to_many(
+      :certifiers_no_rncp,
+      Certifier,
+      join_through: "certifier_certifications",
+      on_delete: :delete_all,
+      on_replace: :delete,
+      where: [rncp_sync: false]
+    )
+
+    many_to_many(
       :romes,
       Rome,
       join_through: "rome_certifications",
