@@ -65,10 +65,14 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       newer_certification: &Repo.get_by(Certification, %{rncp_id: &1}),
       older_certification: &Repo.get_by(Certification, %{rncp_id: &1}),
       certifiers: fn (certifiers_data, %{rncp_id: rncp_id} = fiche_data) ->
+
         certifiers_no_rncp =
           Repo.get_by(Certification, %{rncp_id: rncp_id})
           |> Repo.preload(:certifiers_no_rncp)
-          |> Map.get(:certifiers_no_rncp)
+          |> case do
+            nil -> []
+            %Certification{certifiers_no_rncp: certifiers_no_rncp} -> certifiers_no_rncp
+          end
 
         certifiers_rncp = Enum.map(certifiers_data, &match_or_build_certifier(&1))
         |> Enum.filter(&not(is_nil(&1)))
@@ -89,7 +93,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       sub_data = if path, do: get_in(api_data, String.split(path, "/")), else: api_data
       value = if is_function(func, 2), do: func.(sub_data, result), else: func.(sub_data)
       Map.put(result, key, value)
-    end) |> IO.inspect()
+    end)
 
     Enum.reduce(embed_with_associations(), transformed_fiche_data, fn({key, func}, result) ->
       sub_data = result[key]
