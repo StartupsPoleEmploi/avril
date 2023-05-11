@@ -107,7 +107,7 @@ defmodule Vae.Delegate do
     struct
     |> Repo.preload([
       :certifiers,
-      :certifications,
+      # :certifications,
       :included_certifications,
       :excluded_certifications
     ])
@@ -141,6 +141,7 @@ defmodule Vae.Delegate do
     |> put_param_assoc(:certifiers, params)
     |> put_param_assoc(:included_certifications, params)
     |> put_param_assoc(:excluded_certifications, params)
+    |> refresh_views()
   end
 
   defp add_geolocation(%Ecto.Changeset{changes: %{address: _}} = changeset) do
@@ -152,6 +153,17 @@ defmodule Vae.Delegate do
   end
 
   defp add_geolocation(changeset), do: changeset
+
+  defp refresh_views(%Ecto.Changeset{changes: changes} = changeset) when
+    :erlang.is_map_key(changes, :certifiers) or
+    :erlang.is_map_key(changes, :included_certifications) or
+    :erlang.is_map_key(changes, :excluded_certifications)
+  do
+    spawn(fn -> :timer.sleep(1000); Certification.refresh_materialized_view() end)
+    changeset
+  end
+
+  defp refresh_views(changeset), do: changeset
 
   def slugify(%Ecto.Changeset{data: data, changes: changes} = changeset) do
     put_change(changeset, :slug, to_slug(Map.merge(data, changes)))

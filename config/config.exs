@@ -89,9 +89,12 @@ config :vae, Vae.Scheduler,
       schedule: "0 5,13 * * *", # 5AM & 1PM every day
       task: &Vae.Meetings.fetch_meetings/0
     ],
-    update_certification_search_view: [
+    update_materialized_views: [
       schedule: "0 6 * * *", # 6AM every day
-      task: &Vae.Search.FullTextSearch.refresh_materialized_view/0
+      task: fn ->
+        Vae.Search.FullTextSearch.refresh_materialized_view()
+        Vae.Certification.refresh_materialized_view()
+      end
     ],
     anonymization_task: [
       schedule: "0 2 1 * *", # 2AM on the first of month

@@ -174,6 +174,11 @@ defmodule Vae.Certification do
     )
   end
 
+  def refresh_materialized_view() do
+    Repo.query("REFRESH MATERIALIZED VIEW certifications_delegates;", [], timeout: :infinity)
+    Repo.query("REFRESH MATERIALIZED VIEW searchable_certifications;", [], timeout: :infinity)
+  end
+
   def name(%Certification{acronym: acronym, label: label}) do
     [acronym, label] |> Enum.reject(&is_nil/1) |> Enum.join(" ")
   end
