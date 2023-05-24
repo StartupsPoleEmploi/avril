@@ -1,4 +1,38 @@
 .home-page
+  = if Timex.before?(~D[2023-07-03], Timex.today()) do
+    section.section#francevae
+      .container
+        .notification.is-blue
+          .columns
+            .column.is-9
+              .content
+                p.is-size-5
+                  ' Depuis le 1er Juillet 2023, le nouveau service public de la VAE est disponible sur
+                  a href="https://france-vae.gouv.fr" target="_blank" https://france-vae.gouv.fr
+                  '  pour les diplômes des filières de la
+                  strong métallurgie
+                  ' , de la
+                  strong grande distribution
+                  ' , de la
+                  strong santé
+                  ' , du
+                  strong soin
+                  ' , de la
+                  strong dépendance
+                  '  et la
+                  strong petite enfance
+                  '  et des
+                  strong sports
+                  ' .
+                p.is-size-5 Ce site vous donne accès à un parcours VAE simplifié, modernisé et sécurisé. Vous pourrez notamment bénéficier d’un accompagnement personnalisé dès le début de votre parcours, ainsi que de la prise en charge du financement de votre parcours.
+              .columns
+                .column.is-md-6.has-text-centered
+                  a.button.is-rounded.is-medium.is-text href="https://france-vae.gouv.fr" target="_blank" En savoir plus sur la réforme de la VAE
+                .column.is-md-6.has-text-centered
+                  a.button.is-rounded.is-medium.is-primary href="https://france-vae.gouv.fr" target="_blank" Démarrer mon parcours VAE
+            .column.is-3.is-flex
+              = img_tag "/images/francevae.png", alt: "Logo France VAE", style: "object-fit: contain; max-height: 178px;"
+
   section.section.is-small#search style="padding-bottom: 4rem;"
     .container
       #search.notification.is-green.is-hero

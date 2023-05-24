@@ -211,7 +211,12 @@ defmodule Vae.Certification do
   end
 
   def is_reva?(%Certification{internal_notes: internal_notes}) do
-    String.contains?(internal_notes || "", "REVA")
+    Timex.before?(Timex.today(), ~D[2023-06-12]) && String.contains?(internal_notes || "", "REVA")
+  end
+
+  # TODO: remove dates conditions when passed
+  def is_france_vae?(%Certification{internal_notes: internal_notes} = certification) do
+    Timex.before?(~D[2023-07-03], Timex.today()) && (String.contains?(internal_notes || "", "FVAE") || String.contains?(internal_notes || "", "REVA"))
   end
 
   def add_default_acronym(%Changeset{} = changeset) do
