@@ -20,10 +20,11 @@ defmodule Vae.Repo.Migrations.AddSearchableCertificationMaterializedView do
           WHERE delegates.is_active
           AND certifications_delegates.certification_id = certifications.id
         )
-      )
+      );
       """
     )
 
+    execute("CREATE UNIQUE INDEX searchable_certifications_index ON searchable_certifications(id);")
   end
 
   def down do
@@ -39,6 +40,8 @@ defmodule Vae.Repo.Migrations.AddSearchableCertificationMaterializedView do
       """
     )
 
-    execute("DROP MATERIALIZED VIEW searchable_certifications")
+    execute("DROP INDEX searchable_certifications_index;")
+    execute("DROP MATERIALIZED VIEW searchable_certifications;")
+
   end
 end

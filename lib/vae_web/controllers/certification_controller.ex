@@ -90,13 +90,19 @@ defmodule VaeWeb.CertificationController do
 
         nb_similars = if is_active and length(certification.delegates) > 0, do: 3, else: 6
 
-        similars =
-          Certification.searchable_query()
+        query =
+          from(c in Certification,
+            join: sc in subquery(Certification.searchable_query()), on: c.id == sc.id
+          )
           |> join(:left, [c], r in assoc(c, :romes))
-          |> where([c, r], r.id in ^Enum.map(certification.romes, &(&1.id)))
-          |> where([c, r], c.id != ^certification.id)
+          |> where([c, sc, r], r.id in ^Enum.map(certification.romes, &(&1.id)))
+          |> where([c, sc, r], c.id != ^certification.id)
           |> Certification.sort_by_popularity()
           |> limit(^nb_similars)
+
+        IO.inspect(Ecto.Adapters.SQL.to_sql(:all, Repo, query))
+
+        similars = query
           |> Repo.all()
 
         existing_application = case Pow.Plug.current_user(conn) do

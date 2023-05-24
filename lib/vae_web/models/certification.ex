@@ -161,6 +161,10 @@ defmodule Vae.Certification do
   end
 
   def searchable_query() do
+    from(c in {"searchable_certifications", Certification})
+  end
+
+  def searchable_query_old() do
     from(c in Certification,
       where: c.is_active and fragment("""
         EXISTS (
