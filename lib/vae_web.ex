@@ -44,6 +44,15 @@ defmodule VaeWeb do
       end
 
       def sort_by_popularity(query \\ __MODULE__) do
+        # IO.inspect(query)
+
+        # applications_query = from(a in UserApplication, select: count(a.id), where: a.certification_id == parent_as(:certification).id)
+
+        # from(q in query,
+        #   inner_lateral_join: c in subquery(applications_query), as: :count,
+        #   order_by([desc: :count])
+        # )
+        # |> join(:inner_lateral_join, [q], c in subquery(applications_query), as: :count)
         query
         |> join(:left, [q], u in assoc(q, :applications))
         |> group_by([q, u], q.id)

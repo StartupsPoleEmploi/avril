@@ -1,5 +1,5 @@
 .home-page
-  = if Timex.before?(~D[2023-07-03], Timex.today()) do
+  = if Vae.Authorities.FranceVae.is_france_vae?() do
     section.section#francevae
       .container
         .notification.is-blue
@@ -8,7 +8,8 @@
               .content
                 p.is-size-5
                   ' Depuis le 1er Juillet 2023, le nouveau service public de la VAE est disponible sur
-                  a href="https://france-vae.gouv.fr" target="_blank" https://france-vae.gouv.fr
+                  strong
+                    a href="https://france-vae.gouv.fr" target="_blank" https://france-vae.gouv.fr
                   '  pour les diplômes des filières de la
                   strong métallurgie
                   ' , de la

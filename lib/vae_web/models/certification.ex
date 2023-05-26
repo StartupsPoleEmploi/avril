@@ -210,13 +210,21 @@ defmodule Vae.Certification do
       end
   end
 
+  def is_cnam?(%Certification{} = certification) do
+    %Certification{certifiers: certifiers} = certification |> Repo.preload(:certifiers)
+    case certifiers do
+      [%Certifier{slug: "cnam"}] -> true
+      _ -> false
+    end
+  end
+
   def is_reva?(%Certification{internal_notes: internal_notes}) do
-    Timex.before?(Timex.today(), ~D[2023-06-12]) && String.contains?(internal_notes || "", "REVA")
+    Vae.Authorities.FranceVae.is_reva?() && String.contains?(internal_notes || "", "REVA")
   end
 
   # TODO: remove dates conditions when passed
   def is_france_vae?(%Certification{internal_notes: internal_notes} = certification) do
-    Timex.before?(~D[2023-07-03], Timex.today()) && (String.contains?(internal_notes || "", "FVAE") || String.contains?(internal_notes || "", "REVA"))
+    Vae.Authorities.FranceVae.is_france_vae?() && (String.contains?(internal_notes || "", "FVAE") || String.contains?(internal_notes || "", "REVA"))
   end
 
   def add_default_acronym(%Changeset{} = changeset) do

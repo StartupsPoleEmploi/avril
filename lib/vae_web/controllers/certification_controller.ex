@@ -91,6 +91,7 @@ defmodule VaeWeb.CertificationController do
         nb_similars = if is_active and length(certification.delegates) > 0, do: 3, else: 6
 
         query =
+          # Certification.searchable_query()
           from(c in Certification,
             join: sc in subquery(Certification.searchable_query()), on: c.id == sc.id
           )
@@ -119,6 +120,7 @@ defmodule VaeWeb.CertificationController do
           transferable_applications: transferable_applications,
           existing_application: existing_application,
           is_asp: Certification.is_asp?(certification),
+          is_cnam: Certification.is_cnam?(certification),
           certification: certification,
           similars: similars
         )

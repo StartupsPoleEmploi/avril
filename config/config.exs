@@ -29,6 +29,10 @@ config :vae,
   rncp: [
     url: "https://api.francecompetences.fr/referentiels/v1/fiches",
     api_key: System.get_env("RNCP_API_KEY")
+  ],
+  deadlines: [
+    reva_end: ~D[2023-06-12],
+    fvae_start: ~D[2023-07-03]
   ]
 
 config :vae, VaeWeb.Endpoint,
