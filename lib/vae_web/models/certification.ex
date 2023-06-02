@@ -160,19 +160,16 @@ defmodule Vae.Certification do
     |> unique_constraint(:rncp_id)
   end
 
-  def searchable_query() do
+  def searchable_query_bugged() do
     from(c in {"searchable_certifications", Certification})
   end
 
-  def searchable_query_old() do
+  def searchable_query() do
     from(c in Certification,
-      where: c.is_active and fragment("""
+      where: fragment("""
         EXISTS (
-          SELECT null FROM delegates
-          INNER JOIN certifications_delegates
-          ON delegates.id = certifications_delegates.delegate_id
-          WHERE delegates.is_active
-          AND certifications_delegates.certification_id = ?
+          SELECT null FROM searchable_certifications sc
+          WHERE sc.id = ?
         )
       """, c.id)
     )
