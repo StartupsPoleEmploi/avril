@@ -106,12 +106,12 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     end
   end
 
-  def custom_data_transformations(%{
-    certifiers: [%Certifier{slug: @educ_nat} | _],
-    end_of_rncp_validity: %Date{year: year, month: month}
-  } = data) when year == @current_year and month >= 7 do
-    Map.merge(data, %{is_active: false})
-  end
+  # def custom_data_transformations(%{
+  #   certifiers: [%Certifier{slug: @educ_nat} | _],
+  #   end_of_rncp_validity: %Date{year: year, month: month}
+  # } = data) when year == @current_year and month >= 7 do
+  #   Map.merge(data, %{is_active: false})
+  # end
 
   def custom_data_transformations(%{
     rncp_id: "23909"
