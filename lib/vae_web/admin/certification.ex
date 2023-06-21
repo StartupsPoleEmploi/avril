@@ -62,6 +62,7 @@ defmodule Vae.ExAdmin.Certification do
         row(:abilities)
         row(:activity_area)
         row(:accessible_job_type)
+        row(:jury_composition)
         row(:external_notes)
         row(:internal_notes)
       end
@@ -230,7 +231,7 @@ defmodule Vae.ExAdmin.Certification do
     filter(:newer_certification, type: :present_only)
     filter(:applications, scope: :recent)
     # filter(:delegates, scope: :active)
-    filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :last_rncp_import_date, :end_of_rncp_validity, :activities, :internal_notes]
+    filter [:is_active, :is_rncp_active, :id, :rncp_id, :slug, :acronym, :label, :level, :last_rncp_import_date, :end_of_rncp_validity, :activities, :jury_composition, :internal_notes]
 
     query do
       preloads = [:certifiers, :rncp_delegates, :included_delegates, :excluded_delegates]

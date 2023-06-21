@@ -23,6 +23,7 @@ defmodule Vae.Certification do
     field(:accessible_job_type, :string)
     field(:external_notes, :string)
     field(:internal_notes, :string)
+    field(:jury_composition, :string)
 
 
     belongs_to(:newer_certification, Certification, foreign_key: :newer_certification_id, on_replace: :nilify)
@@ -141,9 +142,10 @@ defmodule Vae.Certification do
       :activity_area,
       :accessible_job_type,
       :external_notes,
-      :internal_notes
+      :internal_notes,
+      :jury_composition
     ])
-    |> sanitize_html_fields([:activities, :abilities, :activity_area, :accessible_job_type])
+    |> sanitize_html_fields([:activities, :abilities, :activity_area, :accessible_job_type, :jury_composition])
     |> add_army_acronym()
     |> add_default_acronym()
     |> remove_acronym_in_label()

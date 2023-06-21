@@ -14,6 +14,7 @@ defmodule Vae.Authorities.Rncp.FicheHandler do
       abilities: {"CAPACITES_ATTESTEES", &HtmlEntities.decode/1},
       activity_area: {"SECTEURS_ACTIVITE", &(&1)},
       accessible_job_type: {"TYPE_EMPLOI_ACCESSIBLES", &(&1)},
+      jury_composition: {"SI_JURY_VAE/COMPOSITION", &(&1)},
       level: {"NOMENCLATURE_EUROPE/NIVEAU", fn l ->
         l
         |> String.replace_prefix("NIV", "")
