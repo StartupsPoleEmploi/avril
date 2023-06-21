@@ -32,7 +32,7 @@ config :vae,
   ],
   deadlines: [
     reva_end: ~D[2023-06-12],
-    fvae_start: ~D[2023-07-03]
+    fvae_start: ~D[2023-07-04]
   ]
 
 config :vae, VaeWeb.Endpoint,

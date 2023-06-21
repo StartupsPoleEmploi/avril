@@ -34,15 +34,20 @@
       = if Vae.Certification.is_france_vae?(@certification) do
         .notification.is-blue.has-bubble
           .columns
-            .column.is-8.is-offset-2.has-text-centered.content.is-medium
-              h2.title.is-2 Votre diplôme est disponible sur le nouveau portail de la VAE
-              p
-                ' Depuis le 1er Juillet 2023, le nouveau service public de la VAE est disponible sur
-                ' https://france-vae.gouv.fr
-                ' . Ce site vous donne accès à un parcours VAE simplifié, modernisé et sécurisé.
-                ' Vous pourrez notamment bénéficier d’un accompagnement personnalisé dès le début de votre parcours,
-                ' ainsi que de la prise en charge du financement de votre parcours.
-              a.button.is-rounded.is-primary href="https://france-vae.gouv.fr" target="_blank" Démarrer mon parcours VAE
+            .column.is-8.is-offset-2.has-text-centered
+              .content.is-medium
+                h2.title.is-2 Ce diplôme est accessible sur France VAE
+                p
+                  ' Depuis le 1er Juillet 2023, le nouveau service public de la VAE est disponible sur
+                  strong
+                    a href="https://vae.gouv.fr" target="_blank" vae.gouv.fr
+                  ' . Ce site vous donne accès à un parcours VAE simplifié, modernisé et sécurisé.
+                  ' Vous pourrez notamment bénéficier d’un accompagnement personnalisé dès le début de votre parcours,
+                  ' ainsi que de la prise en charge du financement de votre parcours.
+                a.button.is-rounded.is-primary href="https://vae.gouv.fr" target="_blank" Démarrer mon parcours VAE
+            .column.is-2.is-hidden-mobile
+              = img_tag "/images/france_vae_logo.svg", alt: "Logo France VAE", style: "object-fit: contain; object-position: top; max-height: 178px;"
+
       - else
         = if @is_asp do
           .notification.is-yellow.has-bubble
