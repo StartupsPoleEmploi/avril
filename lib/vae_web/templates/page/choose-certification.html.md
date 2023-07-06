@@ -45,7 +45,7 @@ Prenez connaissance du marché de l’emploi que vous visez en recherchant des o
 
 **_5_**
 
-Rencontrez un conseiller spécialisé dans un [centre de conseils en VAE](http://www.vae.gouv.fr/?page=carte-prc) ou votre conseiller Pôle emploi. [En savoir plus](/point-relais-conseil-vae).
+Rencontrez un conseiller spécialisé dans un [centre de conseils en VAE](https://vae.centre-inffo.fr/?page=carte-prc) ou votre conseiller Pôle emploi. [En savoir plus](/point-relais-conseil-vae).
 
 **_6_**
 
@@ -56,7 +56,7 @@ Tenez aussi compte de votre projet : quel diplôme nécessite-t-il ?
 Vous pouvez approfondir votre recherche en consultant les sites utiles comme :
 
 - [Le Portail de la VAE](http://www.vae.gouv.fr)
-- [France-VAE](https://www.francevae.fr)
+- [France-VAE](https://vae.education.gouv.fr)
 - [Défi métiers](https://www.defi-metiers.fr/dossiers/vae-mode-demploi)
 
 Ceux des ministères, écoles, chambres consulaires ou branches professionnelles.
