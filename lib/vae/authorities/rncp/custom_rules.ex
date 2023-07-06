@@ -41,6 +41,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   @ens_sup "ministere-de-l-enseignement-superieur"
   @solidarite "ministere-charge-de-la-solidarite"
   @sports "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale"
+  @sante "ministere-des-affaires-sociales-et-de-la-sante"
   @gobelins "gobelins-l-ecole-de-l-image"
   @agriculture "ministere-charge-de-l-agriculture"
 
@@ -132,6 +133,14 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   } = data) do
     Map.merge(data, %{
       certifiers: [Repo.get_by(Certifier, slug: @sports)]
+    })
+  end
+
+  def custom_data_transformations(%{
+    rncp_id: "37679"
+  } = data) do
+    Map.merge(data, %{
+      certifiers: [Repo.get_by(Certifier, slug: @sante)]
     })
   end
 

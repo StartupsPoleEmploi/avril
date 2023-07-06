@@ -32,7 +32,7 @@
             .content= raw intro
     section.section.is-small#call-to-action
       = if Vae.Certification.is_france_vae?(@certification) do
-        .notification.is-blue.has-bubble
+        .notification.has-text-primary.has-background-white.is-outlined
           .columns
             .column.is-8.is-offset-2.has-text-centered
               .content.is-medium
