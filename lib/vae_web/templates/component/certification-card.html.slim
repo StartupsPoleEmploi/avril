@@ -4,9 +4,8 @@
       = link(Vae.Certification.name(@certification), to: Routes.certification_path(@conn, :show, @certification))
     p.description
       span.label-avril Niveau #{level_info_by_level(@certification.level)}
-  .card-content
-    .content
-      = raw @certification.activities
+  .card-content.content
+    = raw @certification.activities
   .card-footer
+    = link("... lire la suite", to: Routes.certification_path(@conn, :show, @certification), class: "more-link")
     = link("Je veux ce diplôme", to: Routes.certification_path(@conn, :show, @certification), class: "button has-text-weight-bold is-transparent")
-  = link("... lire la suite", to: Routes.certification_path(@conn, :show, @certification), class: "more-link")

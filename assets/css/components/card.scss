@@ -27,20 +27,17 @@
   }
 
   .card-content {
-    text-overflow: ellipsis;
-    overflow: hidden;
     flex-grow: 1;
     column-width: 1000px;
     column-gap: 2rem;
     position: relative;
-    .content {
+    margin-bottom: 2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &.content {
       font-size: 1.1rem;
+      margin-bottom: 0;
     }
-  }
-  .more-link {
-    position: absolute;
-    bottom: 4rem;
-    right: 2rem;
   }
 
   .card-footer {
@@ -48,6 +45,13 @@
     padding: 1rem 1.5rem;
     // padding-top: 0;
     border: none;
+    margin-top: 2rem;
+    position: relative;
+    .more-link {
+      position: absolute;
+      right: 2rem;
+      top: -1rem;
+    }
   }
 
   &.delegate-card {
