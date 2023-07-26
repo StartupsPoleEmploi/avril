@@ -28,7 +28,10 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     23937 23939 23940 26901 27095
     27096 27365 27413 28669 28764
     29535 32362 34353 34928 34965
-    34999 35001 35010
+    34999 35001 35010 36395 36865
+    35538 35202 36629 36123 36149
+    36390 34716 19251 34654 37523
+    36534 36141 36591 36022 34928
   )
 
   @wrong_educ_nat_certifiers ~w(
@@ -178,12 +181,12 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     Map.merge(data, %{certifiers: Enum.reject(certifiers, &(&1.slug == @sports))})
   end
 
-  def custom_data_transformations(%{
-    rncp_id: rncp_id,
-    certifiers: [%Certifier{slug: "cci-france"} | _]
-  } = data) when rncp_id not in @cci_certifications_rncp_ids do
-    Map.merge(data, %{is_active: false})
-  end
+  # def custom_data_transformations(%{
+  #   rncp_id: rncp_id,
+  #   certifiers: [%Certifier{slug: "cci-france"} | _]
+  # } = data) when rncp_id not in @cci_certifications_rncp_ids do
+  #   Map.merge(data, %{is_active: false})
+  # end
 
   def custom_data_transformations(data), do: data
 end
