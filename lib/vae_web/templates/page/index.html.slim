@@ -33,21 +33,21 @@
 
   section.section.is-small#search style="padding-bottom: 4rem;"
     .container
-      #search.notification.is-green.is-hero.has-bubble
+      #search.notification.is-green.is-hero
         .columns
-          .column.is-8 style="padding-top: 0;"
+          .column.is-8-widescreen style="padding-top: 0;"
             h1.title.is-1 La VAE va plus vite !
             .content.is-size-5
               p
                 ' La VAE (Validation de Acquis de l'Expérience) est un autre moyen d'obtenir un diplôme qui est reconnu de la même façon que les autres diplômes. C'est d'ailleurs plus de 350&nbsp;000 diplômes qui ont été obtenus en France par cette voie-là.
               p
                 ' Avril simplifie les démarches VAE pour tous : salariés, demandeurs d’emplois, bénévoles, sportifs de haut niveau, travailleurs non salariés …
-          .column.is-4.is-hidden-mobile.is-hidden-tablet-only.is-hidden-desktop-only
+        .columns
+          .column.is-7-widescreen
+            = render VaeWeb.ComponentView, "searchbar.html", conn: @conn
+          .column.is-4.is-offset-1.is-hidden-mobile.is-hidden-tablet-only.is-hidden-desktop-only.is-relative
             // https://unsplash.com/fr/photos/or6mrFMVmHM
             = img_tag "/images/hero-homepage2.png", alt: "Photo de Marie-Cécile", class: "search-img"
-        .columns
-          .column.is-7-desktop
-            = render VaeWeb.ComponentView, "searchbar.html", conn: @conn
       .columns
         .column.is-8.has-text-centered
           = link("C'est quoi la VAE ?", to: Routes.page_path(@conn, :vae), class: "button is-text is-medium is-green-hover")

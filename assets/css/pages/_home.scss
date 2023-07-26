@@ -9,16 +9,13 @@
     }
     img.search-img {
       z-index: 1;
-      position: relative;
-
-      @include widescreen {
-        float: right;
-        height: 11rem;
-        transform-origin: right;
-        transform: scale(2.7) translateX(1rem) translateY(5rem);
-      }
+      position: absolute;
+      bottom: -4.25rem;
+      max-width: none;
+      height: 29rem;
+      left: -2rem;
       @include fullhd {
-        transform: scale(3) translateX(1rem) translateY(3rem);
+        height: 32rem;
       }
     }
   }
