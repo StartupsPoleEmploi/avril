@@ -121,6 +121,15 @@ defmodule Vae.ExAdmin.Certification do
         input(certification, :external_notes, type: :text, placeholder: "Extra infos for the candidate")
 
         content do
+          certification = Vae.Repo.preload(certification, :certifiers)
+          Helpers.form_select_tag(certification, :certifiers, [
+            options: Vae.Repo.all(from c in Vae.Certifier, preload: [:active_delegates]),
+            selection_label: "#1 - Selected certifiers",
+            namify: &("#{&1.name} (#{Vae.String.inflect(length(&1.active_delegates), "active delegates")})")
+          ])
+        end
+
+        content do
           Helpers.form_select_tag(certification, :excluded_delegates, [
             options: certification.rncp_delegates,
             label: "Excluded delegates",
