@@ -133,8 +133,9 @@ defmodule VaeWeb.ApplicationEmail do
   end
 
   def user_raise(application, endpoint \\ URI.endpoint()) do
-    application = Repo.preload(application, [:user, :certification])
+    application = Repo.preload(application, [:user, :certification, :delegate])
     finish_booklet_todo = application.booklet_1 && application.booklet_1.inserted_at
+    has_meetings_available = length(Vae.Meeting.find_future_meetings_for_delegate(application.delegate)) > 0
     certification_name = Certification.name(application.certification)
     username = User.fullname(application.user)
 
@@ -147,6 +148,7 @@ defmodule VaeWeb.ApplicationEmail do
         username: username,
         certification_name: certification_name,
         finish_booklet_todo: finish_booklet_todo,
+        has_meetings_available: has_meetings_available,
         footer_note: :inscrit_avril
       }
     )

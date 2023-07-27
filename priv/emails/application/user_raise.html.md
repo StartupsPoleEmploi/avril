@@ -15,11 +15,17 @@ Dès qu’elle sera terminée, vous pourrez la transmettre au certificateur et r
 <% else %>
 Je vous contacte suite à votre visite sur Avril, le diplôme <%= @certification_name %> vous intéresse toujours ?
 
-La prochaine étape c’est le dossier de recevabilité qui ne vous prendra que quelques minutes et vous permettra de rencontrer le spécialiste VAE de votre diplôme, sans aucun engagement.
+<%= if @has_meetings_available do %>
+La prochaine étape : rencontrer le spécialiste de ce diplôme en VAE. Il est proche de chez vous et organise régulièrement des réunions d’information. A la fin de cette réunion, vous saurez tout sur votre VAE et votre futur diplôme.
 
 C’est parti ?
 
-**[Compléter ma recevabilité](<%= @application_url %>)**
+**[Choisir une réunion d’information proche de chez moi](<%= @application_url %>)**
+<% else %>
+La prochaine étape: transmettre votre candidature au spécialiste VAE pour ce diplôme proche de chez vous.
+
+**[Terminer et transmettre ma candidature](<%= @application_url %>)**
+<% end %>
 <% end %>
 
 Je vous souhaite une excellente fin de journée,

@@ -90,7 +90,9 @@ defmodule Vae.Meeting do
       |> Repo.one()
   end
 
-  def find_future_meetings_for_delegate(%Delegate{academy_id: academy_id, geom: geom} = d, radius \\ 200_000) do
+  def find_future_meetings_for_delegate(delegate, radius \\ 200_000)
+
+  def find_future_meetings_for_delegate(%Delegate{academy_id: academy_id, geom: geom} = d, radius) do
 
     from(m in Meeting)
       |> where([m], m.source == ^"#{Delegate.get_meeting_source(d)}")
@@ -99,6 +101,8 @@ defmodule Vae.Meeting do
       |> where([m], st_dwithin_in_meters(m.geom, ^geom, ^radius) or is_nil(m.geom))
       |> Repo.all()
   end
+
+  def find_future_meetings_for_delegate(nil, _radius), do: []
 
   def mark_as_deleted_and_inform(%Meeting{} = meeting) do
     %Meeting{applications: applications} = meeting |> Repo.preload([applications: :user])
