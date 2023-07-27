@@ -26,6 +26,7 @@ docker-compose.override.yml
 /priv/export_fiches_RNCP*.xml
 /priv/*.log
 /priv/*.csv
+!/priv/*.keep.csv
 
 !/**/.gitkeep
 /.elixir_ls/
