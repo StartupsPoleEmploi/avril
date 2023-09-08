@@ -50,6 +50,10 @@ defmodule Vae.Authorities.Rncp.Update do
   defp insert_fiche(%{rncp_id: rncp_id} = fiche) do
     if !Repo.get_by(Certification, rncp_id: rncp_id) do
       update_fiche(fiche)
+      case fiche[:older_certification] do
+        %Certification{rncp_id: rncp_id} -> update_certification(rncp_id)
+      _ -> nil
+      end
     end
   end
 
