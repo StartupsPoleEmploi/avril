@@ -53,12 +53,12 @@ Tenez aussi compte de votre projet : quel diplôme nécessite-t-il ?
 
 **_7_**
 
-Vous pouvez approfondir votre recherche en consultant les sites utiles comme :
+Vous pouvez approfondir votre recherche en consultant le portail de VAE, vous y trouverez toute la documentation utile : https://vae.centre-inffo.fr
 
-- [Le Portail de la VAE](http://www.vae.gouv.fr)
-- [France-VAE](https://vae.education.gouv.fr)
-- [Défi métiers](https://www.defi-metiers.fr/dossiers/vae-mode-demploi)
+Ou bien tester la VAE simplifiée (déjà possible pour plus de 200 diplômes !) sur [France-VAE](https://www.vae.gouv.fr)
 
-Ceux des ministères, écoles, chambres consulaires ou branches professionnelles.
+Obtenir un diplôme partiellement par le biais de la VAE est aussi une réussite ! 
+En effet, un bloc de compétences validé fait l’objet d’une attestation. 
+Cela peut aussi constituer une première étape pour se réorienter ou entrer en formation, 
+en ne suivant que les enseignements manquants !
 
-Obtenir un diplôme partiellement par le biais de la VAE est aussi une réussite ! En effet, un bloc de compétences validé fait l’objet d’une attestation. Cela peut aussi constituer une première étape pour se réorienter ou entrer en formation, en ne suivant que les enseignements manquants !
