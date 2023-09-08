@@ -10,6 +10,21 @@ defmodule Vae.Authorities.Rncp.Update do
     |> update_fiche()
   end
 
+  def insert_all(page \\ 1) do
+    try do
+      Logger.info("Starting insert")
+      Api.query_all(&insert_fiche(&1), page)
+      Logger.info("Insert finished at page #{page}.")
+    after
+      Logger.info("== Cleaning it up! ==")
+      Logger.info("Updating materialized views")
+      Certification.refresh_materialized_view()
+      Logger.info("Transfering old applications")
+      Certification.transfert_old_applications_to_newer_certification()
+      Logger.info("All done!")
+    end
+  end
+
   def update_all(page \\ 1) do
     try do
       Logger.info("Starting update")
@@ -30,6 +45,12 @@ defmodule Vae.Authorities.Rncp.Update do
     Certification.fake_certification()
     |> Certification.rncp_changeset()
     |> Certification.rncp_update()
+  end
+
+  defp insert_fiche(%{rncp_id: rncp_id} = fiche) do
+    if !Repo.get_by(Certification, rncp_id: rncp_id) do
+      update_fiche(fiche)
+    end
   end
 
   defp update_fiche(fiche) do
