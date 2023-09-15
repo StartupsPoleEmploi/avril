@@ -5,6 +5,7 @@ defmodule Vae.Authorities.Rncp.Api do
   @base_url @api_config[:url]
   @api_key @api_config[:api_key]
   @headers ["X-Gravitee-Api-Key": @api_key, "Content-Type": "application/json"]
+  @timeout 10_000
 
   def get(rncp_id) do
     query(%{NUMERO_FICHE: "RNCP#{rncp_id}"})
@@ -16,7 +17,7 @@ defmodule Vae.Authorities.Rncp.Api do
     with(
       query_params <- Map.merge(base_params, params),
       url <- "#{@base_url}?#{URI.encode_query(query_params)}",
-      {:ok, response} <- HTTPoison.get(url, @headers),
+      {:ok, response} <- HTTPoison.get(url, @headers, [recv_timeout: @timeout]),
       {:ok, json} <- response.body |> Jason.decode()
     ) do
       case json do
