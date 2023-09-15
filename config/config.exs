@@ -27,7 +27,7 @@ config :vae,
     tag_commander: System.get_env("TAG_COMMANDER")
   ],
   rncp: [
-    url: "https://api.francecompetences.fr/referentiels/v2.0/fiches",
+    url: "https://api.francecompetences.fr/referentiels/v1.1/fiches",
     api_key: System.get_env("RNCP_API_KEY")
   ],
   deadlines: [
