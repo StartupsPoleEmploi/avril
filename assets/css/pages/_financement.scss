@@ -1,5 +1,12 @@
 .financement-page {
   @include tablet {
-    background-image: url(/images/Madame.png); background-position: top right; background-repeat: no-repeat; background-size: 25%;
+    background-image: url(/images/Madame.png);
+    background-position: top right;
+    background-repeat: no-repeat;
+    background-size: 25%;
+
+    @media print {
+      background-image: none;
+    }
   }
 }

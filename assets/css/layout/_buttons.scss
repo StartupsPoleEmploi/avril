@@ -59,6 +59,8 @@
         left: -1rem;
       }
     }
+
+    @extend .is-hidden-print
   }
 
   &.is-pe-connect {

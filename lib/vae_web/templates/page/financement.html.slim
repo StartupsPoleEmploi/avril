@@ -3,7 +3,7 @@
     .container
       = render VaeWeb.ComponentView, "back_button", conn: @conn
       .columns
-        .column.is-6.is-offset-2
+        .column.is-6.is-offset-2.is-fullwidth-print
           h1.title.is-1.is-spaced Financer sa VAE
           h2.subtitle.is-2 Nous allons vous aider à vous y retrouver !
           .content.is-medium
@@ -17,26 +17,25 @@
   section.section
     .container
       .columns
-        .column.is-4.is-offset-2.content.is-medium
+        .column.is-4.is-offset-2.is-fullwidth-print.content.is-medium
           h4.title.is-4 En résumé
 
           p Le financement d'une VAE dépend de votre situation actuelle : salariée, demandeur d'emploi, travailleurs handicapés ...
           p Soyez rassuré, il existe des solutions et des organismes dans la majorité des cas. Il suffit juste de contacter les bonnes personnes et les bons sites !
-        .column.is-6.has-text-centered
+        .column.is-6.has-text-centered.is-hidden-print
           .section
             = link "Trouver mon financement", to: "#situation", class: "button is-primary is-rounded is-medium"
   section.section
     .container
       .columns
-        .column.is-6 style="background-image: url('/images/reunion-financement.jpg'); background-size: contain; background-repeat: no-repeat; background-position: right; background-origin: content-box;"
-        .column.is-6
-          .section.is-large
-            .content.is-medium
-              h3.title.is-3 Un parcours humain
+        .column.is-6.is-hidden-print style="background-image: url('/images/reunion-financement.jpg'); background-size: contain; background-repeat: no-repeat; background-position: right; background-origin: content-box;"
+        .column.is-6.is-fullwidth-print
+          .content.is-medium
+            h3.title.is-3 Un parcours humain
 
-              p La VAE est avant tout un parcours de coordination humaine. La VAE vous concerne vous mais aussi le certificateur (celui qui vous délivre le diplôme), l'accompagnateur (celui qui vous conseille) et le jury (qui évalue votre dossier).
+            p La VAE est avant tout un parcours de coordination humaine. La VAE vous concerne vous mais aussi le certificateur (celui qui vous délivre le diplôme), l'accompagnateur (celui qui vous conseille) et le jury (qui évalue votre dossier).
 
-              p Comme vous allez prendre du temps pour rédiger votre dossier, il en faudra tout autant pour le lire. Vous allez sans doute avoir besoin d'un accompagnement pour vous aider à obtenir de meilleurs résultats plus rapidement. C'est le temps que toutes ces personnes vont mettre à votre disposition qu'il faut financer, ainsi que des frais d'inscription, de déplacement éventuels, de jury etc. Pour cela, nous allons vous expliquer comment solliciter l'aide des différents financeurs possibles (Pôle emploi, le conseil régional, les OPCO ...)
+            p Comme vous allez prendre du temps pour rédiger votre dossier, il en faudra tout autant pour le lire. Vous allez sans doute avoir besoin d'un accompagnement pour vous aider à obtenir de meilleurs résultats plus rapidement. C'est le temps que toutes ces personnes vont mettre à votre disposition qu'il faut financer, ainsi que des frais d'inscription, de déplacement éventuels, de jury etc. Pour cela, nous allons vous expliquer comment solliciter l'aide des différents financeurs possibles (Pôle emploi, le conseil régional, les OPCO ...)
 
   section.section
     .container
@@ -53,11 +52,11 @@
   section.section
     .container
       .columns.content.is-medium
-        .column.is-4.is-offset-2.has-text-right
+        .column.is-4.is-offset-2.has-text-right.is-fullwidth-print
           h3.title.is-3 Le financement dépend de votre situation actuelle
           p Soyez tranquille, il y a toutes les chances que vous soyez financé ! Dans le cas des demandeurs d'emploi, 95% des dossiers sont financés dans leur totalité par exemple.
           p Nous vous avons résumé les différentes situations et les différentes possibilités dans des fiches de renseignement.
-        #situation.column.is-6
+        #situation.column.is-6.is-hidden-print
           .notification.is-primary
             .section
               div

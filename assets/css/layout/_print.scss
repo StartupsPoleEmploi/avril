@@ -3,6 +3,11 @@
     display: none !important;
   }
 
+  .is-fullwidth-print {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
   nav.navbar {
     margin-bottom: 60px;
     height: 0;
