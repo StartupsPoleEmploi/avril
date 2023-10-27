@@ -189,11 +189,14 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "ministere-charge-des-affaires-sociales",
       "ministere-charge-de-la-sante",
       "ministere-des-solidarites-et-de-la-sante",
-      "ministere-charge-de-la-solidarite"
+      "ministere-charge-de-la-solidarite",
+      "ministere-des-solidarites-de-l-autonomie-et-des-personnes-handicapees",
+      "ministere-de-la-sante-et-de-la-prevention"
     ],
     "ministere-du-travail" => [
       "ministere-charge-de-l-emploi",
-      "ministere-du-travail-delegation-generale-a-l-emploi-et-a-la-formation-professionnelle-dgefp"
+      "ministere-du-travail-delegation-generale-a-l-emploi-et-a-la-formation-professionnelle-dgefp",
+      "ministere-du-travail-du-plein-emploi-et-de-l-insertion"
     ],
     "ministere-de-la-jeunesse-des-sports-et-de-la-cohesion-sociale" => [
       "ministere-charge-des-sports-et-de-la-jeunesse",
@@ -201,6 +204,7 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
       "ministere-des-sports-et-des-jeux-olympiques-et-paralympiques"
     ],
     "ministere-de-l-enseignement-superieur" => [
+      "ministere-de-l-enseignement-superieur-et-de-la-recherche",
       "ministere-de-l-enseignement-superieur-de-la-recherche-et-de-l-innovation"
     ],
     "ministere-des-armees" => [
@@ -208,7 +212,8 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     ],
     "ministere-charge-de-l-agriculture" => [
       "ministere-de-l-agriculture-et-de-la-peche",
-      "ministere-de-l-agriculture-et-de-l-alimentation"
+      "ministere-de-l-agriculture-et-de-l-alimentation",
+      "ministere-de-l-agriculture-et-de-la-souverainete-alimentaire"
     ],
     "ministere-de-la-transition-ecologique-et-solidaire" => [
       "ministere-de-l-ecologie-du-developpement-durable-et-de-l-energie"
