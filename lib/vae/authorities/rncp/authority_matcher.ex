@@ -187,7 +187,9 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     ],
     "ministere-des-affaires-sociales-et-de-la-sante" => [
       "ministere-charge-des-affaires-sociales",
-      "ministere-charge-de-la-sante"
+      "ministere-charge-de-la-sante",
+      "ministere-des-solidarites-et-de-la-sante",
+      "ministere-charge-de-la-solidarite"
     ],
     "ministere-du-travail" => [
       "ministere-charge-de-l-emploi",
@@ -207,6 +209,9 @@ defmodule Vae.Authorities.Rncp.AuthorityMatcher do
     "ministere-charge-de-l-agriculture" => [
       "ministere-de-l-agriculture-et-de-la-peche",
       "ministere-de-l-agriculture-et-de-l-alimentation"
+    ],
+    "ministere-de-la-transition-ecologique-et-solidaire" => [
+      "ministere-de-l-ecologie-du-developpement-durable-et-de-l-energie"
     ],
     "universite-paris-saclay" => [
       "communaute-d-universites-et-etablissements-universite-paris-saclay",
