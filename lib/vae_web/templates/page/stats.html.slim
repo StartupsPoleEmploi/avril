@@ -28,5 +28,18 @@ h2.subtitle.is-3.has-text-centered Evolution des candidatures démarrées chaque
 
     p.has-text-centered.is-italic NB: Une semaine démarre le lundi et termine le dimanche.
 
+.container
+  .section
+    .has-text-centered style="margin-bottom: 1rem;"
+      h4.title.is-4 Candidatures entre le #{Timex.format!(@start_date, "%d/%m/%Y", :strftime)} et le #{Timex.format!(@end_date, "%d/%m/%Y", :strftime)}
+    #applications-plot.plot-container data-url="/sql?query=applications&start_date=#{@start_date}&end_date=#{@end_date}"
 
-#applications-plot.plot-container data-url="/sql?query=applications&start_date=#{@start_date}&end_date=#{@end_date}"
+  .section
+    .has-text-centered
+      h4.title.is-4 Diplômes les plus demandés
+    #certifications-table data-url="/sql?query=certifications&limit=50" data-title-certification_name="Nom du diplôme" data-title-total="Nombre total de candidatures" data-title-submitted="dont transmises"
+
+  .section
+    .has-text-centered
+      h4.title.is-4 Certificateurs les plus demandés
+    #delegates-table data-url="/sql?query=delegates&limit=50" data-title-certification_name="Nom du certificateur" data-title-total="Nombre total de candidatures" data-title-submitted="dont transmises"

@@ -6,10 +6,10 @@ import 'react-table/react-table.css';
 import {CSVLink, CSVDownload} from 'react-csv';
 
 
-const mapColumnDefinitions = columns =>
+const mapColumnDefinitions = (columns, columnNames) =>
   columns.map(columnName => ({
     accessor: columnName,
-    Header: columnName,
+    Header: columnNames[columnName] || columnName,
     filterable: columnName.indexOf('name') > -1,
     className: 'text-left',
   }));
@@ -42,6 +42,12 @@ const makeTableWithCount = (state, makeTable) => {
 
 const renderTable = name => {
   const $table = document.getElementById(`${name}-table`);
+  const columnNames = Object.fromEntries(Object.entries($table.dataset).filter(([key, val]) => {
+    console.log(val, key);
+    return key.startsWith('title');
+  }).map(([key, val]) => [key.replace(/^title/, '').toLowerCase(), val]))
+  console.log(columnNames);
+
   if ($table && $table.dataset.url) {
     fetch($table.dataset.url)
       .then(res => res.json())
@@ -58,7 +64,7 @@ const renderTable = name => {
             </div>
             <ReactTable
               data={mapRowDefinitions(columns, rows)}
-              columns={mapColumnDefinitions(columns)}
+              columns={mapColumnDefinitions(columns, columnNames)}
               multiSort={true}
               defaultFilterMethod={(filter, row, column) => {
                 const id = filter.pivotId || filter.id
