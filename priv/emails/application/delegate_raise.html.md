@@ -8,6 +8,10 @@ et il nous a demandé de vous envoyer ce message car il souhaite être recontact
 
 Merci de ne pas l'oublier 
 
+**Attention : Après le 31 décembre 2023, plus aucun candidat ne pourra passer par Avril pour vous 
+contacter. Au 31 janvier 2024, toutes les candidatures seront rendues anonymes et vous n’aurez 
+plus accès à votre espace certificateur.**
+
 <%= if @has_booklet do %>
 **[Voir sa candidature et télécharger son dossier de recevabilité](<%= @url %>)**
 <% else %>

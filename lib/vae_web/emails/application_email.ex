@@ -147,6 +147,8 @@ defmodule VaeWeb.ApplicationEmail do
         application_url: User.profile_url(endpoint, application),
         username: username,
         certification_name: certification_name,
+        delegate_phone_number: application.delegate && application.delegate.telephone,
+        delegate_email: application.delegate && application.delegate.email,
         finish_booklet_todo: finish_booklet_todo,
         has_meetings_available: has_meetings_available,
         footer_note: :inscrit_avril

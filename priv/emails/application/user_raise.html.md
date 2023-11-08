@@ -18,6 +18,14 @@ La prochaine étape: transmettre votre candidature au spécialiste VAE pour ce d
 **[Terminer et transmettre ma candidature](<%= @application_url %>)**
 <% end %>
 
+**N’attendez pas pour réaliser la prochaine étape car à compter du 31 janvier 2024 le site Avril 
+ne sera plus disponible.**
+
+<%= if @delegate_phone_number || @delegate_email do %>
+**Vous pourrez toujours contacter directement le spécialiste de votre VAE 
+ici :  <%= @delegate_phone_number %> ou par email <%= @delegate_email %>**
+<% end %>
+
 Je vous souhaite une excellente fin de journée,
 
 Marie de l’équipe Avril
