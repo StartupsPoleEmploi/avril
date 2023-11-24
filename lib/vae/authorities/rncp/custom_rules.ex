@@ -3,7 +3,7 @@ defmodule Vae.Authorities.Rncp.CustomRules do
   alias Vae.{Certifier, Repo, Rome}
   alias Vae.Authorities.Rncp.FicheHandler
 
-  @current_year Date.utc_today().year
+  # @current_year Date.utc_today().year
 
   @ignored_fiche_intitules [
     "Un des meilleurs ouvriers de France",
@@ -23,16 +23,16 @@ defmodule Vae.Authorities.Rncp.CustomRules do
     "Titre ingénieur",
   ]
 
-  @cci_certifications_rncp_ids ~w(
-    11200 23827 23869 23872 23932
-    23937 23939 23940 26901 27095
-    27096 27365 27413 28669 28764
-    29535 32362 34353 34928 34965
-    34999 35001 35010 36395 36865
-    35538 35202 36629 36123 36149
-    36390 34716 19251 34654 37523
-    36534 36141 36591 36022 34928
-  )
+  # @cci_certifications_rncp_ids ~w(
+  #   11200 23827 23869 23872 23932
+  #   23937 23939 23940 26901 27095
+  #   27096 27365 27413 28669 28764
+  #   29535 32362 34353 34928 34965
+  #   34999 35001 35010 36395 36865
+  #   35538 35202 36629 36123 36149
+  #   36390 34716 19251 34654 37523
+  #   36534 36141 36591 36022 34928
+  # )
 
   @wrong_educ_nat_certifiers ~w(
     230 367 2028 2514 2829 4495 4496 4500 4503 4505

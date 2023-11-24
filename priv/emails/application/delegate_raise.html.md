@@ -6,11 +6,11 @@ Bonjour,
 le <%= Timex.format!(@application.submitted_at, @date_format, :strftime) %> 
 et il nous a demandé de vous envoyer ce message car il souhaite être recontacté.
 
-Merci de ne pas l'oublier 
+Merci de ne pas l'oublier !
 
-**Attention : Après le 31 décembre 2023, plus aucun candidat ne pourra passer par Avril pour vous 
-contacter. Au 31 janvier 2024, toutes les candidatures seront rendues anonymes et vous n’aurez 
-plus accès à votre espace certificateur.**
+Attention **fermeture du site Avril** : Après le **31 décembre 2023**, plus aucun nouveau candidat Avril ! 
+Au **31 janvier 2024**,  vous n’aurez plus accès à votre espace certificateur sur Avril. 
+Vous ne pourrez donc plus lire à cette candidature.
 
 <%= if @has_booklet do %>
 **[Voir sa candidature et télécharger son dossier de recevabilité](<%= @url %>)**

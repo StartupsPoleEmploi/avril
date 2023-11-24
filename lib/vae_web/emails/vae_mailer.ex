@@ -162,9 +162,12 @@ defmodule VaeWeb.Mailer do
     subject = (extract_subject(processed_content) || params[:subject] || email.subject)
     |> environment_prefix(to)
     |> String.slice(0..254)
+
+    countdown = Timex.diff(~D[2024-01-31], Date.utc_today(), :days)
+    subject_with_countdown = if countdown < 31, do: "[J-#{countdown}] #{subject}", else: subject
     # md_content = Earmark.as_html!(processed_content)
     email
-    |> subject(subject)
+    |> subject(subject_with_countdown)
     |> Map.put(:text_body, remove_subject(processed_content))
     |> Map.put(:html_body, call_to_action_inline_style(email.html_body))
   end

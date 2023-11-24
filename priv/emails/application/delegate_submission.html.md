@@ -16,9 +16,9 @@ le faire sur Avril si vous le désirez.
 
 Nous vous invitons à consulter son profil et à le recontacter pour lui présenter votre procédure d’accès à la VAE.
 
-**Attention : Après le 31 décembre 2023, plus aucun candidat ne pourra passer par Avril pour vous 
-contacter. Au 31 janvier 2024, toutes les candidatures seront rendues anonymes et vous n’aurez 
-plus accès à votre espace certificateur.**
+Attention **fermeture du site Avril** : Après le **31 décembre 2023**, plus aucun nouveau candidat Avril ! 
+Au **31 janvier 2024**,  vous n’aurez plus accès à votre espace certificateur sur Avril. 
+Vous ne pourrez donc plus lire à cette candidature.
 
 <%= if @has_booklet do %>
 **[Voir sa candidature et télécharger son dossier de recevabilité](<%= @url %>)**

@@ -4,9 +4,7 @@ defmodule Mix.Tasks.Delegate.AddPrc do
   import Ecto.Query
 
   alias Vae.Repo
-  alias Vae.Certification
   alias Vae.Delegate
-  alias Vae.Rome
 
   def run(_args) do
     {:ok, _} = Application.ensure_all_started(:vae)
@@ -24,7 +22,7 @@ defmodule Mix.Tasks.Delegate.AddPrc do
     |> CSV.decode!(headers: true, num_workers: 1)
     |> Enum.each(fn %{
       "Region" => region,
-      "DEPARTEMENT" => department,
+      # "DEPARTEMENT" => department,
       "NOM" => name,
       "Mandataire" => mandataire,
       "ADRESSE" => address,

@@ -1,6 +1,6 @@
 defmodule Vae.Authorities.Rncp.AuthorityMatcher do
   require Logger
-  alias Vae.{Certifier, Repo}
+  alias Vae.Repo
   alias Vae.Authorities.Rncp.FileLogger
 
   @ignored_words ~w(de du la le d des et en)
