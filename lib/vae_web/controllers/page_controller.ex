@@ -178,25 +178,31 @@ defmodule VaeWeb.PageController do
   def submit_contact(conn, %{
         "contact_form" => variables
       }) do
-    with(
-      %Ecto.Changeset{valid?: true, changes: changes} <- ContactForm.changeset(%ContactForm{}, variables),
-      {:ok, _messages} <- Mailer.send([ContactEmail.submit(changes), ContactEmail.confirm(changes)])
-    ) do
+    if Timex.after?(Timex.today(), Application.get_env(:vae, :deadlines)[:avril_pre_close]) do
       conn
-      |> put_flash(:success, "Votre message a bien été envoyé.")
-      |> redirect(to: Routes.root_path(conn, :index))
+        |> put_flash(:warning, Application.get_env(:vae, :messages)[:support_closed])
+        |> redirect(to: Routes.root_path(conn, :index))
     else
-      %Ecto.Changeset{} = changeset ->
+      with(
+        %Ecto.Changeset{valid?: true, changes: changes} <- ContactForm.changeset(%ContactForm{}, variables),
+        {:ok, _messages} <- Mailer.send([ContactEmail.submit(changes), ContactEmail.confirm(changes)])
+      ) do
         conn
-        |> put_flash(:danger, "Votre message n'a pas pu être envoyé. Les erreurs sont décrites ci-dessous.")
-        |> render("contact.html",
-          title: "Contacter l'équipe Avril",
-          contact_changeset: changeset
-        )
-      error ->
-        conn
-         |> put_flash(:danger, "Votre message n'a pas pu être envoyé : #{inspect(error)}. Merci de réessayer plus tard.")
-         |> redirect(to: Routes.root_path(conn, :index))
+        |> put_flash(:success, "Votre message a bien été envoyé.")
+        |> redirect(to: Routes.root_path(conn, :index))
+      else
+        %Ecto.Changeset{} = changeset ->
+          conn
+          |> put_flash(:danger, "Votre message n'a pas pu être envoyé. Les erreurs sont décrites ci-dessous.")
+          |> render("contact.html",
+            title: "Contacter l'équipe Avril",
+            contact_changeset: changeset
+          )
+        error ->
+          conn
+           |> put_flash(:danger, "Votre message n'a pas pu être envoyé : #{inspect(error)}. Merci de réessayer plus tard.")
+           |> redirect(to: Routes.root_path(conn, :index))
+      end
     end
   end
 

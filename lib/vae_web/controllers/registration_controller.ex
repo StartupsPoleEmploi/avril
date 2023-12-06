@@ -10,19 +10,28 @@ defmodule VaeWeb.RegistrationController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    conn
-    |> Pow.Plug.create_user(user_params)
-    |> case do
-      {:ok, current_user, conn} ->
-        if User.delegatable?(current_user) do
-          send_delegate_access_confirmation_email(conn, current_user)
-        else
-          maybe_create_application_and_redirect(conn)
-        end
+    if Timex.after?(Timex.today(), Application.get_env(:vae, :deadlines)[:avril_pre_close]) do
+      conn
+      |> put_flash(:warning, Application.get_env(:vae, :messages)[:registration_closed])
+      |> redirect(to: Routes.root_path(conn, :index))
 
-      {:error, changeset, conn} ->
-        render(conn, "new.html", changeset: changeset)
+    else
+      conn
+      |> Pow.Plug.create_user(user_params)
+      |> case do
+        {:ok, current_user, conn} ->
+          if User.delegatable?(current_user) do
+            send_delegate_access_confirmation_email(conn, current_user)
+          else
+            maybe_create_application_and_redirect(conn)
+          end
+
+        {:error, changeset, conn} ->
+          render(conn, "new.html", changeset: changeset)
+      end
     end
+
+
   end
 
   defp send_delegate_access_confirmation_email(conn, current_user) do

@@ -32,7 +32,13 @@ config :vae,
   ],
   deadlines: [
     reva_end: ~D[2023-06-12],
-    fvae_start: ~D[2023-07-04]
+    fvae_start: ~D[2023-07-04],
+    avril_pre_close: ~D[2023-12-31],
+    avril_close: ~D[2024-01-31],
+  ],
+  messages: [
+    registration_closed: "Les inscriptions sont fermées sur Avril. Vous pouvez encore consulter votre espace personnel jusqu'au 31 Janvier 2024.\n\nPour un nouveau projet de diplôme en VAE, rendez-vous sur [France VAE](https://vae.gouv.fr).",
+    support_closed: "Le support n'est malheureusement plus disponible pour répondre à vos questions.\n\nRendez-vous sur [France VAE](https://vae.gouv.fr)."
   ]
 
 config :vae, VaeWeb.Endpoint,

@@ -163,7 +163,7 @@ defmodule VaeWeb.Mailer do
     |> environment_prefix(to)
     |> String.slice(0..254)
 
-    countdown = Timex.diff(~D[2024-01-31], Date.utc_today(), :days)
+    countdown = Timex.diff(Application.get_env(:vae, :deadlines)[:avril_close], Date.utc_today(), :days)
     subject_with_countdown = if countdown < 31, do: "[J-#{countdown}] #{subject}", else: subject
     # md_content = Earmark.as_html!(processed_content)
     email

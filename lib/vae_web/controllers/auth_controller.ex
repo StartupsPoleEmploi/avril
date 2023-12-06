@@ -22,28 +22,40 @@ defmodule VaeWeb.AuthController do
     with(
       {:ok, %{pe_id: pe_id, email: email} = user_infos} <- PoleEmploi.get_complete_user_infos(state, code)
     ) do
-      # Allow email matching temporarily
-      case pe_id && Repo.get_by(User, pe_id: pe_id) || Repo.get_by(User, email: email) do
-        %User{} = u -> User.changeset(u, user_infos)
-        nil -> User.changeset(%User{}, Map.merge(user_infos, %{
-          current_password: nil,
-          password: "AVRIL_#{pe_id}_TMP_PASSWORD",
-          password_confirmation: "AVRIL_#{pe_id}_TMP_PASSWORD"
-        }))
-      end
-      |> Repo.insert_or_update()
-      |> case do
-        {:ok, upserted_user} ->
-          conn = Pow.Plug.create(conn, upserted_user)
+      try do
+        # Allow email matching temporarily
+        case pe_id && Repo.get_by(User, pe_id: pe_id) || Repo.get_by(User, email: email) do
+          %User{} = u -> User.changeset(u, user_infos)
+          nil ->
+            if Timex.after?(Timex.today(), Application.get_env(:vae, :deadlines)[:avril_pre_close]) do
+              raise Application.get_env(:vae, :messages)[:registration_closed]
+            else
+              User.changeset(%User{}, Map.merge(user_infos, %{
+                current_password: nil,
+                password: "AVRIL_#{pe_id}_TMP_PASSWORD",
+                password_confirmation: "AVRIL_#{pe_id}_TMP_PASSWORD"
+              }))
+            end
+        end
+        |> Repo.insert_or_update()
+        |> case do
+          {:ok, upserted_user} ->
+            conn = Pow.Plug.create(conn, upserted_user)
 
-          if get_session(conn, :referer) == Routes.user_url(conn, :eligibility) do
-            redirect_to_referer(conn)
-          else
-            VaeWeb.RegistrationController.maybe_create_application_and_redirect(conn)
-          end
+            if get_session(conn, :referer) == Routes.user_url(conn, :eligibility) do
+              redirect_to_referer(conn)
+            else
+              VaeWeb.RegistrationController.maybe_create_application_and_redirect(conn)
+            end
 
-        {:error, changeset} ->
-          handle_error(conn, changeset)
+          {:error, changeset} ->
+            handle_error(conn, changeset)
+        end
+      rescue
+        e in RuntimeError ->
+          conn
+            |> put_flash(:warning, e.message)
+            |> redirect(to: Routes.root_path(conn, :index))
       end
     else
       {:error, msg} ->
