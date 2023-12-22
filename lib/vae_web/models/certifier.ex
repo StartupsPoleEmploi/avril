@@ -42,6 +42,11 @@ defmodule Vae.Certifier do
       where: [is_active: true]
     )
 
+    has_many(
+      :applications,
+      through: [:delegates, :applications]
+    )
+
     timestamps()
   end
 

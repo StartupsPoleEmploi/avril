@@ -165,7 +165,7 @@ defmodule VaeWeb.Mailer do
 
     countdown = Timex.diff(Application.get_env(:vae, :deadlines)[:avril_close], Date.utc_today(), :days)
     subject_with_countdown = if countdown < 31, do: "[J-#{countdown}] #{subject}", else: subject
-    # md_content = Earmark.as_html!(processed_content)
+    # md_content = Earmark.as_html!(processed_content) |> IO.inspect()
     email
     |> subject(subject_with_countdown)
     |> Map.put(:text_body, remove_subject(processed_content))
@@ -194,6 +194,7 @@ defmodule VaeWeb.Mailer do
 
   defp call_to_action_inline_style(html_content) do
     html_content
+    |> remarkdown_processed_content()
     |> replace_button_style(:primary)
     |> replace_button_style(:secondary)
     |> add_blockquote_background()
@@ -201,6 +202,13 @@ defmodule VaeWeb.Mailer do
 
   def add_blockquote_background(html_content) do
     String.replace(html_content, "<blockquote>", "<blockquote style=\"background-color: #f5f9fb; margin: 0; padding: 1em 2em;\">")
+  end
+
+  def remarkdown_processed_content(html_content) do
+    Regex.replace(~r/~~(.+?)~~/m, html_content, fn _, match ->
+      IO.inspect(match)
+      Earmark.as_html!(match)
+    end)
   end
 
   def replace_button_style(html_content, type) do

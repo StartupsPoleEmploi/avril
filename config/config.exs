@@ -38,7 +38,7 @@ config :vae,
   ],
   messages: [
     registration_closed: "Les inscriptions sont fermées sur Avril. Vous pouvez encore consulter votre espace personnel jusqu'au 31 Janvier 2024.\n\nPour un nouveau projet de diplôme en VAE, rendez-vous sur [France VAE](https://vae.gouv.fr).",
-    support_closed: "Le support n'est malheureusement plus disponible pour répondre à vos questions.\n\nRendez-vous sur [France VAE](https://vae.gouv.fr)."
+    support_closed: "L'assistance aux utilisateurs n'est plus disponible. Nous avons été heureux d'accompagner vos projets depuis 2017.\n\nPour toutes questions relatives à la VAE ou tous nouveaux projets de VAE rendez vous sur le site [France VAE](https://vae.gouv.fr).\n\nMerci de votre compréhension."
   ]
 
 config :vae, VaeWeb.Endpoint,
@@ -117,6 +117,10 @@ config :vae, Vae.Scheduler,
     security_reset_password_task: [
       schedule: "0 4 1 * *", # 4AM on the first of month
       task: &Vae.User.reset_old_users_password/0
+    ],
+    send_goodbye_delegate_email: [
+      schedule: "0 7 1 * *", # 7AM on the first of month
+      task: &VaeWeb.DelegateEmail.send_all_delegates/0
     ]
   ], else: []
 
