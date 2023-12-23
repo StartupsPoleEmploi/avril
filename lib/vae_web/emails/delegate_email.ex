@@ -70,7 +70,7 @@ defmodule VaeWeb.DelegateEmail do
     |> Repo.all()
 
     popular_certifications_list = Enum.map(popular_certifications, fn %Certification{} = certification ->
-      "- #{Certification.name(certification)} : #{Vae.String.inflect(delegate_certification_application_count(delegate, certification), "candidature")}\n"
+      "- #{Certification.name(certification)} : **#{Vae.String.inflect(delegate_certification_application_count(delegate, certification), "candidature")}**\n"
     end) |> Enum.join("\n")
 
     certifiers_application_count = Enum.map(delegate.certifiers, fn certifier ->
@@ -106,10 +106,10 @@ defmodule VaeWeb.DelegateEmail do
   end
 
   def send_all_delegates() do
-    from(d in Delegate, where: d.is_active, limit: 10)
+    from(d in Delegate, where: d.is_active)
     |> Repo.all()
     |> Enum.map(fn delegate ->
-      IO.inspect(delegate)
+      delegate
       |> VaeWeb.DelegateEmail.goodbye()
       |> VaeWeb.Mailer.send()
     end)

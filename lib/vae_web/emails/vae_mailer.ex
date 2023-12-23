@@ -166,6 +166,8 @@ defmodule VaeWeb.Mailer do
     countdown = Timex.diff(Application.get_env(:vae, :deadlines)[:avril_close], Date.utc_today(), :days)
     subject_with_countdown = if countdown < 31, do: "[J-#{countdown}] #{subject}", else: subject
     # md_content = Earmark.as_html!(processed_content) |> IO.inspect()
+    # IO.inspect(email.html_body, printable_limit: :infinity)
+    # IO.puts(call_to_action_inline_style(email.html_body))
     email
     |> subject(subject_with_countdown)
     |> Map.put(:text_body, remove_subject(processed_content))
@@ -205,9 +207,8 @@ defmodule VaeWeb.Mailer do
   end
 
   def remarkdown_processed_content(html_content) do
-    Regex.replace(~r/~~(.+?)~~/m, html_content, fn _, match ->
-      IO.inspect(match)
-      Earmark.as_html!(match)
+    Regex.replace(~r/<p>~~(.+?)~~<\/p>/Us, html_content, fn _, match ->
+      Earmark.as_html!(match, inner_html: true)
     end)
   end
 
