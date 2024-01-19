@@ -52,6 +52,7 @@ const renderTable = name => {
     fetch($table.dataset.url)
       .then(res => res.json())
       .then(({columns, rows}) => {
+        console.log({rows})
         render(
           <div>
             <div className="text-right">
