@@ -101,22 +101,23 @@ defmodule Vae.ExAdmin.Dashboard do
 
   defp daily_quote do
     [
-      "La Team Avril, elle est pas fragile !",
-      "Avec la team Avril, tout devient facile.",
-      "On est tous agiles, dans la team Avril",
-      "Plus de VAE stériles avec la team Avril",
-      "C'est clair la team Avril, jamais elle se défile",
-      "La team Avril, plus balaise qu'un alterophile",
-      "La team Avril, la VAE c'est son évangile",
-      "Sans la team Avril, combien sont en exil ?",
-      "Jamais la team Avril ne te lâchera d'un fil",
-      "J'te jure la team Avril, c'est la plus fertile",
-      "Partout la team Avril, elle impose son style",
-      "Comment la team Avril, est-elle si habile ?",
-      "Grâce à la team Avril, au revoir l'inutile",
-      "Je fais l'éloge d'Avril, même si ça t'horripile",
-      "Avril ne tremble pas d'un fil",
-      "Avril a les meilleurs devs, ils ne sont pas débiles !"
+      "Avec l'esprit tranquille, Avril part en exil ❤️"
+      # "La Team Avril, elle est pas fragile !",
+      # "Avec la team Avril, tout devient facile.",
+      # "On est tous agiles, dans la team Avril",
+      # "Plus de VAE stériles avec la team Avril",
+      # "C'est clair la team Avril, jamais elle se défile",
+      # "La team Avril, plus balaise qu'un alterophile",
+      # "La team Avril, la VAE c'est son évangile",
+      # "Sans la team Avril, combien sont en exil ?",
+      # "Jamais la team Avril ne te lâchera d'un fil",
+      # "J'te jure la team Avril, c'est la plus fertile",
+      # "Partout la team Avril, elle impose son style",
+      # "Comment la team Avril, est-elle si habile ?",
+      # "Grâce à la team Avril, au revoir l'inutile",
+      # "Je fais l'éloge d'Avril, même si ça t'horripile",
+      # "Avril ne tremble pas d'un fil",
+      # "Avril a les meilleurs devs, ils ne sont pas débiles !"
     ] |> (fn list ->
       daily_index = (
         Timex.today().day() +
