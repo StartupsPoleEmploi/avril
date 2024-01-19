@@ -83,6 +83,7 @@ const renderTable = name => {
 document.addEventListener('DOMContentLoaded', e => {
   renderTable('delegates');
   renderTable('certifications');
+  renderTable('certifiers');
 })
 
 

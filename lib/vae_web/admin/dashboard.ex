@@ -69,9 +69,15 @@ defmodule Vae.ExAdmin.Dashboard do
         div [style: "margin-bottom: 4rem;"] do
           a ".btn.btn-default.pull-right #{if type == "booklet", do: "Voir les candidatures", else: "Voir la recevabilité"}", href: "?type=#{if type == "booklet", do: "applications", else: "booklet"}"
         end
-        h2 "Candidatures #{if certifier, do: certifier.name} par semaines", [class: "text-center"]
+        h2 "Candidatures #{if certifier, do: certifier.name} par semaine", [class: "text-center"]
         h4 between_dates_string(start_date, end_date)
         div "#applications-plot.plot-container", ["data-url": "/admin/sql?query=applications&start_date=#{start_date}&end_date=#{end_date}&certifier_id=#{certifier_id}&type=#{type}"]
+      end
+      hr()
+      div ".section" do
+        h2 "Candidatures par certifier"
+        h4 between_dates_string(start_date, end_date)
+        div "#certifiers-table", ["data-url": "/admin/sql?query=certifiers&start_date=#{start_date}&end_date=#{end_date}"]
       end
       hr()
       div ".section" do

@@ -209,10 +209,40 @@ defmodule ExAdmin.ApiController do
     """
   end
 
+  def certifiers_query(start_date, end_date, _certifier_id, _type) do
+    """
+    SELECT
+      q.certifier_name,
+      q.total,
+      q.submitted,
+      (100 * q.submitted / NULLIF(total, 0)) AS submitted_percent,
+      q.admissible,
+      q.inadmissible AS not_yet_admissible,
+      (q.admissible + q.inadmissible) * 100 / NULLIF(q.submitted, 0) AS responded_percent,
+      q.admissible * 100 / NULLIF(q.admissible + q.inadmissible, 0) AS admissible_percent
+    FROM (
+      SELECT certifiers.name AS certifier_name,
+      (#{applications_base_query("certifier", start_date, end_date)}) AS total,
+      (#{applications_base_query("certifier", start_date, end_date)} AND applications.submitted_at IS NOT NULL) AS submitted,
+      (#{applications_base_query("certifier", start_date, end_date)} AND applications.admissible_at IS NOT NULL) AS admissible,
+      (#{applications_base_query("certifier", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
+      FROM certifiers
+    ) q
+    ORDER BY admissible_percent DESC NULLS LAST, total DESC
+    """
+  end
+
   defp where_applications_date_filter(nil, nil), do: ""
 
   defp where_applications_date_filter(start_date, end_date),
     do: "WHERE applications.inserted_at #{between_dates_to_sql(start_date, end_date)}"
+
+  defp applications_base_query("certifier"),
+    do: """
+    SELECT COUNT(*) FROM applications
+    INNER JOIN certifiers_delegates ON certifiers_delegates.delegate_id = applications.delegate_id AND certifiers_delegates.certifier_id = certifiers.id
+    INNER JOIN certifier_certifications ON certifier_certifications.certification_id = applications.certification_id AND certifier_certifications.certifier_id = certifiers.id
+    """
 
   defp applications_base_query(entity),
     do: "SELECT COUNT(*) FROM applications WHERE applications.#{entity}_id = #{entity}s.id"
