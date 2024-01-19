@@ -181,7 +181,8 @@ defmodule ExAdmin.ApiController do
       FROM delegates
       #{join_certifier(certifier_id, "delegate")}
     ) q
-    ORDER BY admissible_percent DESC NULLS LAST, total DESC
+    WHERE q.total > 0
+    ORDER BY total DESC
     """
   end
 
@@ -205,7 +206,8 @@ defmodule ExAdmin.ApiController do
       FROM certifications
       #{join_certifier(certifier_id, "certification")}
     ) q
-    ORDER BY admissible_percent DESC NULLS LAST, total DESC
+    WHERE q.total > 0
+    ORDER BY total DESC
     """
   end
 
@@ -228,7 +230,8 @@ defmodule ExAdmin.ApiController do
       (#{applications_base_query("certifier", start_date, end_date)} AND applications.inadmissible_at IS NOT NULL) AS inadmissible
       FROM certifiers
     ) q
-    ORDER BY admissible_percent DESC NULLS LAST, total DESC
+    WHERE q.total > 0
+    ORDER BY total DESC
     """
   end
 
