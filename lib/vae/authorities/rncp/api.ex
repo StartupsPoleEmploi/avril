@@ -41,10 +41,11 @@ defmodule Vae.Authorities.Rncp.Api do
       nil -> Logger.info("Stopped at page #{page}")
       [] -> Logger.info("Finished at page #{page}")
       list when is_list(list) ->
+        Logger.info("Continuing at page #{page}")
         Enum.map(list, fn fiche ->
-          Logger.info("#################################")
-          Logger.info("# Page #{page}: Fiche #{fiche["NUMERO_FICHE"]} #")
-          Logger.info("#################################")
+          # Logger.info("#################################")
+          # Logger.info("# Page #{page}: Fiche #{fiche["NUMERO_FICHE"]} #")
+          # Logger.info("#################################")
           fiche_fn.(fiche)
         end)
         query_all(fiche_fn, page+1)

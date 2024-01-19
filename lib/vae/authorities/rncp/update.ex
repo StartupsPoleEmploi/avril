@@ -43,6 +43,7 @@ defmodule Vae.Authorities.Rncp.Update do
 
   def list_non_eligible(page \\ 1) do
     Logger.info("Starting to fetch API")
+    Logger.info("RNCP_ID,ACRONYM,LABEL,ACTIVE")
     Api.query_all(&log_if_not_eligible_fiche(&1), page)
     Logger.info("Finished to fetch API")
   end
@@ -54,12 +55,11 @@ defmodule Vae.Authorities.Rncp.Update do
   end
 
   defp log_if_not_eligible_fiche(fiche) do
-    %{rncp_id: rncp_id, label: label, acronym: acronym} = params = Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params(fiche)
+    %{rncp_id: rncp_id, label: label, acronym: acronym, is_rncp_active: is_rncp_active} = params = Vae.Authorities.Rncp.FicheHandler.api_fiche_to_certification_params(fiche)
 
     accessible_vae = get_in(fiche, ["SI_JURY_VAE", "ACTIF"]) == "Oui"
-    Logger.info("RNCP_ID,ACRONYM,LABEL")
     if !accessible_vae do
-      Logger.info("#{rncp_id},#{acronym},#{label}")
+      Logger.info("#{rncp_id},#{acronym},#{label},#{is_rncp_active}")
     end
   end
 
