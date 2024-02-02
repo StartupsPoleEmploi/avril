@@ -19,8 +19,8 @@ defmodule Vae.Rgpd.Anonymize do
 
   def users_query(field_name\\:updated_at) do
     from(u in User)
-    |> where([u], fragment("? < now() - interval '2 years'", field(u, ^field_name)))
-    |> where([u], not u.is_admin and not u.is_delegate)
+    # |> where([u], fragment("? < now() - interval '2 years'", field(u, ^field_name)))
+    |> where([u], not u.is_admin)
     |> where([u], not like(u.email, ^"%#{@anonymous_mail_domain}"))
   end
 
