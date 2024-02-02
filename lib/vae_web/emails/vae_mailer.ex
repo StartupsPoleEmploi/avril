@@ -14,6 +14,10 @@ defmodule VaeWeb.Mailer do
   @override_to System.get_env("DEV_EMAILS")
   @whitelist (System.get_env("WHITELIST_EMAILS") || "") |> String.downcase() |> String.split(";")
 
+  IO.inspect("##############")
+  IO.inspect(@whitelist)
+  IO.inspect("##############")
+
   def build_email(template_name_or_id, from, to) do
     build_email(template_name_or_id, from, to, %{})
   end
