@@ -10,9 +10,9 @@ defmodule Vae.Application do
       should_start: true,
       children: [
         supervisor(Vae.Repo, []),
-        Vae.Meetings.FranceVae.Connection.Cache,
-        worker(Vae.Meetings.FranceVae.Server, []),
-        worker(Vae.Meetings.Afpa.Server, [])
+        # Vae.Meetings.FranceVae.Connection.Cache,
+        # worker(Vae.Meetings.FranceVae.Server, []),
+        # worker(Vae.Meetings.Afpa.Server, [])
       ]
     }
 
